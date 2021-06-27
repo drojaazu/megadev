@@ -19,13 +19,17 @@ It is also assumed to be running in a *nix environment. Theoretically, it should
 Your distribution may have an M68k cross architecture binutils/gcc/gdb package in its repo; search there first.
 
 If you're using Arch Linux, the tools are available in the AUR:
+
 https://aur.archlinux.org/packages/m68k-elf-binutils/
+
 https://aur.archlinux.org/packages/m68k-elf-gcc/
+
 https://aur.archlinux.org/packages/m68k-elf-gcc-bootstrap/
 
 If a prebuilt package is not available, you will need to build the tools from source:
 
 https://www.gnu.org/software/binutils/
+
 https://www.gnu.org/software/gcc/
 
 Be sure to include ```--target=m68k-elf``` when running the configure script for each package.
@@ -34,8 +38,11 @@ The make scripts assume the m68k cross compiler tools are in your path variable.
 
 ### Toolchain Manuals
 GNU assembler (as): <https://sourceware.org/binutils/docs/as/index.html>
+
 GNU linker (ld): <https://sourceware.org/binutils/docs/ld/index.html>
+
 GNU debugger (gdb): <https://sourceware.org/gdb/current/onlinedocs/gdb/>
+
 GNU compiler (gcc): <https://gcc.gnu.org/onlinedocs/gcc/>
 
 ## Getting Started
