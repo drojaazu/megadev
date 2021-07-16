@@ -21,7 +21,7 @@
 GLABEL sp_init
   CLEAR_COMM_REGS
   // Put Word RAM into 2M mode and assert control of it
-  andi.w	#~(MEMORYMODE_RET_MSK | MEMORYMODE_MODE_MSK), _GA_MEMORYMODE
+  andi.w	#~(MEMMODE_RET_MSK | MEMMODE_MODE_MSK), _GA_MEMMODE
   // This sets up the CD-ROM access loop with initial settings. It only needs
   // to be called once, here in sp_init
   INIT_ACC_LOOP
@@ -62,7 +62,7 @@ GLABEL sp_main
 	jbra 0x10000
 
 spx_filename:
-.asciz "SPX.BIN;1"
+.asciz "SPX.SMD;1"
 .align 2
 
 

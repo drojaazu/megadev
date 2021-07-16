@@ -14,21 +14,28 @@
 
 .section .text
 
+/**
+ * \fn load_file_prg_dma
+ * \brief Convenience sub to load a file to PRG RAM via DMA
+ * \param[in] A0.l Pointer to filename string
+ * \note Be sure to set the destination in the _GA_DMAADDR register
+ * beforehand
+ */
 load_file_prg_dma:
-  move.w  #ACC_OP_LOAD_WORD, access_op
+  move.w  #ACC_OP_LOAD_PRG_DMA, access_op
   jbra load_file
 
 /**
  * \fn load_file_sub
  * \brief Convenience sub to get a file loaded
- * \param[in] A0.l Pointer to filename string (zero terminated)
+ * \param[in] A0.l Pointer to filename string
  * \param[in] A1.l Pointer to destination buffer
  */
 load_file_sub:
   move.w  #ACC_OP_LOAD_WORD, access_op
+	move.l  a1, filebuff
 load_file:
   move.l  a0, filename
-  move.l  a1, filebuff
 0:jbsr    _WAITVSYNC
   jbsr check_acc_op
   bcs      0b  // wait for completion
@@ -97,7 +104,7 @@ check_acc_op:
   move.w   access_op_result, d0
   cmpi.w   #RESULT_OK, d0          // check for good status
   bne      0f                      // not good, jump down
-  move.l   cdrom_record_size, d1   // status ok, get size of the last read record
+  move.l   filesize, d1   // status ok, get size of the last read record
   bra      1f
 0:cmpi.w   #RESULT_LOAD_FAIL, d0   // check for load file failure
   bne      1f
@@ -179,7 +186,7 @@ load_process:
   bcs      load_proc_notfound  // jump down if file not found
   move.l   0x18(a0), cdread_sector_start  // get start sector
   move.l   0x1c(a0), d1                   // get file size (bytes)
-  move.l   d1, cdrom_record_size
+  move.l   d1, filesize
   /*get the file size in sectors by 'dividing' by 2048*/
   /*TODO: access_op_load_dir actually uses divu... use that here too?*/
   // or can't we just shift right 11 bits...?
@@ -501,15 +508,14 @@ filename: .long 0
 .global filebuff
 filebuff: .long 0
 
-
+.global filesize
+filesize: .long 0
 
 .global access_op
 access_op: .word 0
 
 .global access_op_result
 access_op_result: .word 0
-
-cdrom_record_size: .long 0
 
 sectors_read_count: .word  0
 

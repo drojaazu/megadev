@@ -1,6 +1,6 @@
 OUTPUT_ARCH(m68k)
 
-/* MMD Binary Layout
+/* Main CPU Module (MMD)
   The following should be defines as globals in your MMD program:
 	MMD_DEST - This is the location to which your MMD program (minus the 0x100
 	header) should be moved after it has been loaded into Word RAM. If it should
@@ -44,7 +44,7 @@ SECTIONS
 	.text MODULE_ROM_ORIGIN : AT ( ADDR(.header) + SIZEOF(.header) )
   {
     _mod_rom_org = .;
-		*(.init*)
+		*(.init)
 		_mod_text_org = .;
     *(.text*)
 		_mod_text_end = .;

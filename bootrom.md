@@ -491,7 +491,7 @@ Copies the word value in D0 and D1 into COMCMD6 and COMCMD7 cache, respectively.
 Although this does not use the Fixed Comm Flag Semantics component directly, it is likely meant to be part of its system. Therefore we recommend reviewing its code closely to make sure it does exactly what you expect before using it.
 
 ### `BOOT_SET_IFL2`
-Sets the IFL2 bit on GA_MEMORYMODE to trigger INT2 on the Sub side. Should be called during VBLANK only.
+Sets the IFL2 bit on GA_MEMMODE to trigger INT2 on the Sub side. Should be called during VBLANK only.
 
 ## Misc - Components
 

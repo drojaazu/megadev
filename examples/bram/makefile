@@ -41,8 +41,7 @@ DISC_PATH:=disc
 # NOTE: IP/SP are *always* built first, so you do not need to include them
 # here (they aren't "modules" anyway). You can still declare them as references
 # in def files as needed.
-RESIDENT_MMDS:=ipx
-RESIDENT_BINS:=spx
+RESIDENT:=ipx.mmd spx.smd
 
 # Optional compiler flags
 # Here you can add any additional compiler flags

@@ -72,12 +72,13 @@ endif
 OBJ:=$(addprefix $(OUT_PATH)/,$(addsuffix .o,$(basename $(wildcard $(SRC_PATH)/*.[cs]))))
 
 # memory resident modules (i.e. modules that should be built first)
-RESIDENT_MMDS:=$(addprefix $(DISC_PATH)/,$(addsuffix .mmd,$(RESIDENT_MMDS)))
-RESIDENT_BINS:=$(addprefix $(DISC_PATH)/,$(addsuffix .bin,$(RESIDENT_BINS)))
+RESIDENT:=$(addprefix $(DISC_PATH)/,$(RESIDENT))
 
 # program modules
 #MMD:=$(addprefix $(DISC_PATH)/,$(addsuffix .mmd,$(basename $(notdir $(wildcard $(SRC_PATH)/*.def)))))
 MMD:=$(addprefix $(DISC_PATH)/,$(basename $(notdir $(wildcard $(SRC_PATH)/*.mmd.def))))
+SMD:=$(addprefix $(DISC_PATH)/,$(basename $(notdir $(wildcard $(SRC_PATH)/*.smd.def))))
+
 BIN:=$(addprefix $(DISC_PATH)/,$(basename $(notdir $(wildcard $(SRC_PATH)/*.bin.def))))
 
 
@@ -94,7 +95,7 @@ default: disc
 
 clean: clean_disc
 	@echo -e "${BOLD}${RED}Cleaning all build artifacts...${CLEAR}"
-	@rm -rf $(BUILD_PATH)/* $(MMD)
+	@rm -rf $(BUILD_PATH)/* $(MMD) $(SMD) $(BIN)
 
 clean_boot:
 	@echo -e "${BOLD}${RED}Cleaning boot build files...${CLEAR}"
@@ -102,11 +103,11 @@ clean_boot:
 
 clean_disc:
 	@echo -e "${BOLD}${RED}Cleaning modules & ISO...${CLEAR}"
-	@rm -rf $(OUT_PATH)/$(PROJECT_NAME).iso $(MMD) $(BIN)
+	@rm -rf $(OUT_PATH)/$(PROJECT_NAME).iso $(MMD) $(SMD) $(BIN)
 
 boot: $(BUILD_PATH)/boot.bin
 
-modules: $(OBJ) $(RESIDENT_MMDS) $(RESIDENT_BINS) $(MMD) $(BIN)
+modules: $(OBJ) $(RESIDENT) $(MMD) $(SMD) $(BIN)
 
 disc: init boot modules $(OUT_PATH)/$(PROJECT_NAME).iso
 
@@ -135,7 +136,7 @@ $(BUILD_PATH)/boot.o: $(LIB_PATH)/disc_boot.s $(BUILD_PATH)/ip.bin $(BUILD_PATH)
 	@echo -e "${BOLD}${CYAN}Building ASM source $@...${CLEAR}"
 	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) -I$(SRC_PATH) $(AS_INC) -x assembler-with-cpp -c $< -o$@
 
-$(BUILD_PATH)/%.bin $(DISC_PATH)/%.bin $(DISC_PATH)/%.mmd: $(BUILD_PATH)/%.elf
+$(BUILD_PATH)/%.bin $(DISC_PATH)/%.bin $(DISC_PATH)/%.smd $(DISC_PATH)/%.mmd: $(BUILD_PATH)/%.elf
 	@echo -e "${BOLD}${CYAN}Generating binary $@...${CLEAR}"
 	@$(OBJCPY) -O binary $< $@
 
@@ -152,10 +153,14 @@ $(BUILD_PATH)/%.elf: $(SRC_PATH)/%.mmd.def
 	@$(LD) $(LD_FLAGS) -z muldefs -L$(shell pwd)/$(SRC_PATH) -T$(CFG_PATH)/module_mmd.ld -o$@ $(addprefix $(BUILD_PATH)/,$(addsuffix .o, $(basename $(filter-out :%,$(shell cat $<))))) $(addprefix -R$(BUILD_PATH)/,$(addsuffix .elf, $(basename $(subst :,,$(filter :%,$(shell cat $<)))))) 
 	@$(NM) -n $@ > $(@:.elf=.sym)
 
+$(BUILD_PATH)/%.elf: $(SRC_PATH)/%.smd.def
+	@echo -e "${BOLD}${CYAN}Linking SMD $@...${CLEAR}"
+	@$(LD) $(LD_FLAGS) -z muldefs -L$(shell pwd)/$(SRC_PATH) -T$(CFG_PATH)/module_smd.ld -o$@ $(addprefix $(BUILD_PATH)/,$(addsuffix .o, $(basename $(filter-out :%,$(shell cat $<))))) $(addprefix -R$(BUILD_PATH)/,$(addsuffix .elf, $(basename $(subst :,,$(filter :%,$(shell cat $<))))))
+	@$(NM) -n $@ > $(@:.elf=.sym)
+
 $(BUILD_PATH)/%.elf: $(SRC_PATH)/%.bin.def
 	@echo -e "${BOLD}${CYAN}Linking BIN $@...${CLEAR}"
-	
-	@$(LD) $(LD_FLAGS) -z muldefs -L$(shell pwd)/$(SRC_PATH) -T$(CFG_PATH)/module_bin.ld -o$@ $(addprefix $(BUILD_PATH)/,$(addsuffix .o, $(basename $(filter-out :%,$(shell cat $<))))) $(addprefix -R$(BUILD_PATH)/,$(addsuffix .elf, $(basename $(subst :,,$(filter :%,$(shell cat $<))))))
+	@$(LD) $(LD_FLAGS) -z muldefs -L$(shell pwd)/$(SRC_PATH) -T$(CFG_PATH)/module_bin.ld -o$@ $(addprefix $(BUILD_PATH)/,$(addsuffix .o, $(basename $(filter-out :%,$(shell cat $<))))) $(addprefix -R$(BUILD_PATH)/,$(addsuffix .elf, $(basename $(subst :,,$(filter :%,$(shell cat $<)))))) 
 	@$(NM) -n $@ > $(@:.elf=.sym)
 
 $(OUT_PATH)/$(PROJECT_NAME).iso: $(BUILD_PATH)/boot.bin

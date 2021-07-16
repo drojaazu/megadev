@@ -81,14 +81,21 @@ Build Environment &amp; Toolchain</h1>
 <h2><a class="anchor" id="autotoc_md3"></a>
 Toolchain setup</h2>
 <p>Your distribution may have an M68k cross architecture binutils/gcc/gdb package in its repo; search there first.</p>
-<p>If you're using Arch Linux, the tools are available in the AUR: <a href="https://aur.archlinux.org/packages/m68k-elf-binutils/">https://aur.archlinux.org/packages/m68k-elf-binutils/</a> <a href="https://aur.archlinux.org/packages/m68k-elf-gcc/">https://aur.archlinux.org/packages/m68k-elf-gcc/</a> <a href="https://aur.archlinux.org/packages/m68k-elf-gcc-bootstrap/">https://aur.archlinux.org/packages/m68k-elf-gcc-bootstrap/</a></p>
+<p>If you're using Arch Linux, the tools are available in the AUR:</p>
+<p><a href="https://aur.archlinux.org/packages/m68k-elf-binutils/">https://aur.archlinux.org/packages/m68k-elf-binutils/</a></p>
+<p><a href="https://aur.archlinux.org/packages/m68k-elf-gcc/">https://aur.archlinux.org/packages/m68k-elf-gcc/</a></p>
+<p><a href="https://aur.archlinux.org/packages/m68k-elf-gcc-bootstrap/">https://aur.archlinux.org/packages/m68k-elf-gcc-bootstrap/</a></p>
 <p>If a prebuilt package is not available, you will need to build the tools from source:</p>
-<p><a href="https://www.gnu.org/software/binutils/">https://www.gnu.org/software/binutils/</a> <a href="https://www.gnu.org/software/gcc/">https://www.gnu.org/software/gcc/</a></p>
+<p><a href="https://www.gnu.org/software/binutils/">https://www.gnu.org/software/binutils/</a></p>
+<p><a href="https://www.gnu.org/software/gcc/">https://www.gnu.org/software/gcc/</a></p>
 <p>Be sure to include <code>--target=m68k-elf</code> when running the configure script for each package.</p>
 <p>The make scripts assume the m68k cross compiler tools are in your path variable. If not, you will need to manually specify the paths of the tools in the global makefil.</p>
 <h2><a class="anchor" id="autotoc_md4"></a>
 Toolchain Manuals</h2>
-<p>GNU assembler (as): <a href="https://sourceware.org/binutils/docs/as/index.html">https://sourceware.org/binutils/docs/as/index.html</a> GNU linker (ld): <a href="https://sourceware.org/binutils/docs/ld/index.html">https://sourceware.org/binutils/docs/ld/index.html</a> GNU debugger (gdb): <a href="https://sourceware.org/gdb/current/onlinedocs/gdb/">https://sourceware.org/gdb/current/onlinedocs/gdb/</a> GNU compiler (gcc): <a href="https://gcc.gnu.org/onlinedocs/gcc/">https://gcc.gnu.org/onlinedocs/gcc/</a></p>
+<p>GNU assembler (as): <a href="https://sourceware.org/binutils/docs/as/index.html">https://sourceware.org/binutils/docs/as/index.html</a></p>
+<p>GNU linker (ld): <a href="https://sourceware.org/binutils/docs/ld/index.html">https://sourceware.org/binutils/docs/ld/index.html</a></p>
+<p>GNU debugger (gdb): <a href="https://sourceware.org/gdb/current/onlinedocs/gdb/">https://sourceware.org/gdb/current/onlinedocs/gdb/</a></p>
+<p>GNU compiler (gcc): <a href="https://gcc.gnu.org/onlinedocs/gcc/">https://gcc.gnu.org/onlinedocs/gcc/</a></p>
 <h1><a class="anchor" id="autotoc_md5"></a>
 Getting Started</h1>
 <p>Clone the repo and place it in a location such as /opt/megadev. In the root of the directory is <code>makefile_global</code> (the global makefile) which will be used as a system-wide base for all projects. Edit it as necessary to match your build environment.</p>
@@ -146,7 +153,6 @@ Special Thanks</h1>
 <ul>
 <li>The #nihongo crew for occasional testing on different hardware versions</li>
 <li>@plutiedev for their abundant knowledge of the hardware</li>
-<li>@biggestsonicfan for encouraging and supporting my weird ventures</li>
 <li>Ueshima Coffee for producing UCC Black </li>
 </ul>
 </div></div><!-- PageDoc -->

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['romreadparams_387',['RomreadParams',['../structRomreadParams.html',1,'']]]
+  ['palette_394',['Palette',['../structPalette.html',1,'']]]
 ];

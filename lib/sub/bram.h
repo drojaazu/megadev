@@ -19,6 +19,10 @@ enum BramStatus {
 	OtherFormat = 2
 };
 
+/**
+ * \struct BrminitRes
+ * \brief Results of bram_brminit
+ */
 typedef struct BrminitRes {
 	u16 bram_size;
 	enum BramStatus status; 
@@ -67,6 +71,10 @@ static inline BrminitRes * bram_brminit() {
 	return &init_info;
 }
 
+/**
+ * \struct BrmstatRes
+ * \brief Results of bram_brmstat
+ */
 typedef struct BrmstatRes {
 	u16 free;
 	u16 filecount;

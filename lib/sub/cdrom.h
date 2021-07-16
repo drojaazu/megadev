@@ -7,16 +7,17 @@
 #define MEGADEV__CD_SUB_CDROM_H
 
 #include "sub/cdrom_def.h"
+#include "sub/sub.h"
 #include "types.h"
 
 /**
- * \var file_buff
+ * \var filebuff
  * \brief Pointer to the buffer to store the output file
- * \note This is only used with the Sub CPU Direct Load operation!
+ * \details This is only used with the Sub CPU Direct Load operation!
  * For the DMA operations, use the GA_DMAADDR register to specify a
  * destination buffer.
  */
-extern u8 const* filebuff;
+extern u8 * filebuff;
 
 /**
  * \var filename
@@ -24,7 +25,7 @@ extern u8 const* filebuff;
  * \details The filename is in 8.3 format, made up of ISO9660 d characters, and
  * includes the version suffix.
  */
-extern char const* filename;
+extern char const * filename;
 
 /**
  * \var access_op
@@ -39,24 +40,42 @@ extern volatile u16 access_op;
  */
 extern volatile u16 access_op_result;
 
-extern void *acc_loop_jump;
+/**
+ * \var filesize
+ * \brief Size of the last succesfully loaded file, in bytes
+ */
+extern volatile u32 filesize;
 
-extern void init_acc_loop();
+/**
+ * \fn load_file
+ * \brief
+ */
+static inline u32 load_file(u16 const access_operation,
+                            char const * load_filename, u8 * buffer) {
+  access_op = access_operation;
+  if (access_op == 0)
+    return RESULT_OK;
 
-static inline u16 load_file(u8 const this_acc_op, char const * this_filename, u8 * this_filebuff) {
-  access_op = this_acc_op;
-  filename = this_filename;
-  filebuff = this_filebuff;
+  filename = load_filename;
+  filebuff = buffer;
 
   do {
     bios_waitvsync();
   } while (access_op != ACC_OP_IDLE);
 
-  return access_op_result;
+  if (access_op_result == RESULT_OK)
+    return filesize;
+  else
+    return 0;
 }
 
+typedef struct FileInfo {
+  char const filename[12];
+
+} FileInfo;
+
 // TODO file info struct!
-static inline void get_file_info_c(u8 *filename) {
+static inline void get_file_info_c(char const * filename) {
   register u32 a0_filename asm("a0") = (u32)filename;
   register u32 a0_fileinfo asm("a0");
   asm(R"(
@@ -67,25 +86,9 @@ static inline void get_file_info_c(u8 *filename) {
 1:lea #0,a0
   rts
   )"
-	  :
-		"=a"(a0_fileinfo)
-		:
-		"a"(a0_filename)
-    :
-		"d0","d1","a2"
-	);
+      : "=a"(a0_fileinfo)
+      : "a"(a0_filename)
+      : "d0", "d1", "a2");
 }
-
-/**
- * Grant 2M Word RAM access to the Main CPU and wait for confirmation
- */
-static inline void process_acc_loop() {
-  asm(R"(
-  movea.l  acc_loop_jump, a0
-  jmp      (a0)  
-	)"
-	);
-}
-
 
 #endif

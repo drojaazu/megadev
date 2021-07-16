@@ -37,12 +37,11 @@ DISC_PATH:=disc
 # first so they can be referenced by other modules.
 # Include the base name of each module only (e.g. ipx.def/ipx.mmd -> ipx)
 # MMD is for modules with MMD headers (for the main side)
-# BIN is for headerless modules (generally for the sub side)
+# SMD is for headerless modules (generally for the sub side)
 # NOTE: IP/SP are *always* built first, so you do not need to include them
 # here (they aren't "modules" anyway). You can still declare them as references
 # in def files as needed.
-RESIDENT_MMDS:=ipx
-RESIDENT_BINS:=spx
+RESIDENT:=ipx.mmd spx.smd
 
 # Optional compiler flags
 # Here you can add any additional compiler flags

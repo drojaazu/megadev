@@ -89,7 +89,7 @@ $(function() {
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
 <div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="cd__sub__def_8h.html#aba5cddc150f9a7afcb95a8b04505e737">   41</a></span>&#160;<span class="preprocessor">#define GA_RESET           0xFF8000</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#define GA_MEMORYMODE      0xFF8002</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#define GA_MEMMODE      0xFF8002</span></div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor">#define GA_CDCMODE         0xFF8004</span></div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor">#define GA_CDCRS1          0xFF8006</span></div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">#define GA_CDCHOSTDATA     0xFF8008</span></div>
@@ -132,31 +132,31 @@ $(function() {
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="preprocessor">#define GA_SUBCODEBUF      0xFF8100</span></div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="preprocessor">#define GA_SUBCODEBUFIMG   0xFF8180</span></div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
-<div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="cd__sub__def_8h.html#aca9d1934a9a0b77e2406c1eeb115a739">   88</a></span>&#160;<span class="preprocessor">#define MEMORYMODE_RET_BIT   0</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="preprocessor">#define MEMORYMODE_DMNA_BIT  1</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="preprocessor">#define MEMORYMODE_MODE_BIT  2</span></div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="preprocessor">#define MEMORYMODE_PM_BIT    3</span></div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="preprocessor">#define MEMORYMODE_WP0_BIT   8</span></div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="preprocessor">#define MEMORYMODE_WP1_BIT   9</span></div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="preprocessor">#define MEMORYMODE_WP2_BIT   10</span></div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="preprocessor">#define MEMORYMODE_WP3_BIT   11</span></div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="preprocessor">#define MEMORYMODE_WP4_BIT   12</span></div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="preprocessor">#define MEMORYMODE_WP5_BIT   13</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="preprocessor">#define MEMORYMODE_WP6_BIT   14</span></div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="preprocessor">#define MEMORYMODE_WP7_BIT   15</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="cd__sub__def_8h.html#aca9d1934a9a0b77e2406c1eeb115a739">   88</a></span>&#160;<span class="preprocessor">#define MEMMODE_RET_BIT   0</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="preprocessor">#define MEMMODE_DMNA_BIT  1</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="preprocessor">#define MEMMODE_MODE_BIT  2</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="preprocessor">#define MEMMODE_PM_BIT    3</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="preprocessor">#define MEMMODE_WP0_BIT   8</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="preprocessor">#define MEMMODE_WP1_BIT   9</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="preprocessor">#define MEMMODE_WP2_BIT   10</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="preprocessor">#define MEMMODE_WP3_BIT   11</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="preprocessor">#define MEMMODE_WP4_BIT   12</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="preprocessor">#define MEMMODE_WP5_BIT   13</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="preprocessor">#define MEMMODE_WP6_BIT   14</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="preprocessor">#define MEMMODE_WP7_BIT   15</span></div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="preprocessor">#define MEMORYMODE_RET_MSK   1 &lt;&lt; MEMORYMODE_RET_BIT</span></div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="preprocessor">#define MEMORYMODE_DMNA_MSK  1 &lt;&lt; MEMORYMODE_DMNA_BIT</span></div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="preprocessor">#define MEMORYMODE_MODE_MSK  1 &lt;&lt; MEMORYMODE_MODE_BIT</span></div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="preprocessor">#define MEMORYMODE_PM_MSK    1 &lt;&lt; MEMORYMODE_PM_BIT</span></div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="preprocessor">#define MEMORYMODE_WP0_MSK   1 &lt;&lt; MEMORYMODE_WP0_BIT</span></div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="preprocessor">#define MEMORYMODE_WP1_MSK   1 &lt;&lt; MEMORYMODE_WP1_BIT</span></div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="preprocessor">#define MEMORYMODE_WP2_MSK   1 &lt;&lt; MEMORYMODE_WP2_BIT</span></div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="preprocessor">#define MEMORYMODE_WP3_MSK   1 &lt;&lt; MEMORYMODE_WP3_BIT</span></div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="preprocessor">#define MEMORYMODE_WP4_MSK   1 &lt;&lt; MEMORYMODE_WP4_BIT</span></div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="preprocessor">#define MEMORYMODE_WP5_MSK   1 &lt;&lt; MEMORYMODE_WP5_BIT</span></div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="preprocessor">#define MEMORYMODE_WP6_MSK   1 &lt;&lt; MEMORYMODE_WP6_BIT</span></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="preprocessor">#define MEMORYMODE_WP7_MSK   1 &lt;&lt; MEMORYMODE_WP7_BIT</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="preprocessor">#define MEMMODE_RET_MSK   1 &lt;&lt; MEMMODE_RET_BIT</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="preprocessor">#define MEMMODE_DMNA_MSK  1 &lt;&lt; MEMMODE_DMNA_BIT</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="preprocessor">#define MEMMODE_MODE_MSK  1 &lt;&lt; MEMMODE_MODE_BIT</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="preprocessor">#define MEMMODE_PM_MSK    1 &lt;&lt; MEMMODE_PM_BIT</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="preprocessor">#define MEMMODE_WP0_MSK   1 &lt;&lt; MEMMODE_WP0_BIT</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="preprocessor">#define MEMMODE_WP1_MSK   1 &lt;&lt; MEMMODE_WP1_BIT</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="preprocessor">#define MEMMODE_WP2_MSK   1 &lt;&lt; MEMMODE_WP2_BIT</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="preprocessor">#define MEMMODE_WP3_MSK   1 &lt;&lt; MEMMODE_WP3_BIT</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="preprocessor">#define MEMMODE_WP4_MSK   1 &lt;&lt; MEMMODE_WP4_BIT</span></div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="preprocessor">#define MEMMODE_WP5_MSK   1 &lt;&lt; MEMMODE_WP5_BIT</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="preprocessor">#define MEMMODE_WP6_MSK   1 &lt;&lt; MEMMODE_WP6_BIT</span></div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="preprocessor">#define MEMMODE_WP7_MSK   1 &lt;&lt; MEMMODE_WP7_BIT</span></div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
 <div class="line"><a name="l00117"></a><span class="lineno"><a class="line" href="cd__sub__def_8h.html#a157291b776c62e3f539def5364769292">  117</a></span>&#160;<span class="preprocessor">#define INT1_GFX_BIT      1</span></div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="preprocessor">#define INT2_MD_BIT       2</span></div>

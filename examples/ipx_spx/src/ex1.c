@@ -1,37 +1,36 @@
 
-#include "types.h"
-#include "main/boot.h"
-#include "vdp.h"
 #include "io_def.h"
+#include "ipx.h"
+#include "main/boot.h"
 #include "main/main.h"
 #include "system.h"
-#include "ipx.h"
+#include "types.h"
+#include "vdp.h"
 
 extern u8 program_mode;
 extern u8 res_rain_chr;
 extern u16 res_rain_chr_sz;
-extern u8 res_rain_pal;
+extern Palette res_rain_pal;
 
 void main() {
-	disable_interrupts();
-	boot_load_pal_update(&res_rain_pal);
-	boot_dma_xfer_wordram(VDPPTR(AT_TILE(0x80)), &res_rain_chr, res_rain_chr_sz >> 1);
-	enable_interrupts();
+  disable_interrupts();
+  boot_load_pal_update(&res_rain_pal);
+  boot_dma_xfer_wordram(VDPPTR(AT_TILE(0x80)), &res_rain_chr,
+                        res_rain_chr_sz >> 1);
+  enable_interrupts();
 
-	boot_print("Module 1\xff", 
-		(VDPPTR(
-			NMT_POS_PLANE(1,1,BOOT_PLANE_WIDTH,BOOT_PLANEA_ADDR))
-			 | VRAM_W));
+  boot_print("Module 1\xff",
+             (VDPPTR(NMT_POS_PLANE(1, 1, BOOT_PLANEA_ADDR)) | VRAM_W));
 
-	// init_particles is defined in the ipx
-	init_particles(0x81, 0x82, 0, 0, 3, 3, 5, 1);
+  // init_particles is defined in the ipx
+  init_particles(0x81, 0x82, 0, 0, 0, 0, 3, 3, 5, 1);
 
-	do {
-		boot_vint_wait_default();
-		// process_particles is defined in the ipx
-		process_particles();
-	} while(!(*JOY1_PRESS & PAD_START_MSK));
+  do {
+    boot_vint_wait_default();
+    // process_particles is defined in the ipx
+    process_particles();
+  } while (!(*JOY1_PRESS & PAD_START_MSK));
 
-	program_mode = 1;
-	return;
+  program_mode = 1;
+  return;
 }

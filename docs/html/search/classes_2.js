@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['palette_386',['Palette',['../structPalette.html',1,'']]]
+  ['fileinfo_393',['FileInfo',['../structFileInfo.html',1,'']]]
 ];

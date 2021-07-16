@@ -1,8 +1,5 @@
 var searchData=
 [
-  ['pad_5fup_5fbit_679',['PAD_UP_BIT',['../io__def_8h.html#a5aedd26bca56b14cd931090eccfd5470',1,'io_def.h']]],
-  ['palette_680',['PALETTE',['../boot_8h.html#a284af3b711f4d2f8d61e643b7f8b0f65',1,'boot.h']]],
-  ['plane_5fwidth_681',['PLANE_WIDTH',['../boot_8h.html#a7104d7f1c3afe19e743de0a007d0ad95',1,'boot.h']]],
-  ['prg_5fram_682',['PRG_RAM',['../sub__def_8h.html#a6d50e0134bf2e5d7203715e463395fea',1,'sub_def.h']]],
-  ['prg_5fram0_683',['PRG_RAM0',['../sub__def_8h.html#aecc578f27acffb5a107bebf416d637ef',1,'sub_def.h']]]
+  ['nmt_5fpos_688',['NMT_POS',['../vdp_8h.html#a7b6d85cb7ff1bb964b5d05fcc5b3e4c8',1,'vdp.h']]],
+  ['nmt_5fpos_5fplane_689',['NMT_POS_PLANE',['../vdp_8h.html#a7abdb285050a5a763bd8a496ba23e27f',1,'vdp.h']]]
 ];

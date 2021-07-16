@@ -10,7 +10,7 @@ extern u16 global_mode;
 void main() {
 	boot_print("Example file Number One!\xff", 
 		(to_vdpptr(
-			NMT_POS_PLANE(4, 3, BOOT_PLANE_WIDTH, BOOT_PLANEA_ADDR))
+			NMT_POS_PLANE(4, 3, BOOT_PLANEA_ADDR))
 			 | VRAM_W));
 
 	do {

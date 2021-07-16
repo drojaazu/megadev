@@ -236,12 +236,12 @@ Macros</h2></td></tr>
 <tr class="memitem:aaa99115f04180b56f30160ff2f689f99"><td class="memItemLeft" align="right" valign="top"><a id="aaa99115f04180b56f30160ff2f689f99"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>_VDP_UPDATE_FLAGS</b>&#160;&#160;&#160;0xfffe29</td></tr>
 <tr class="separator:aaa99115f04180b56f30160ff2f689f99"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6a0dd4db31dffec0dac7a19b0e0ccde4"><td class="memItemLeft" align="right" valign="top"><a id="a6a0dd4db31dffec0dac7a19b0e0ccde4"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>CRAM_UPDATE_BIT</b>&#160;&#160;&#160;0</td></tr>
-<tr class="separator:a6a0dd4db31dffec0dac7a19b0e0ccde4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c90404f085daf3b1a140aa286f66f64"><td class="memItemLeft" align="right" valign="top"><a id="a7c90404f085daf3b1a140aa286f66f64"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>CRAM_UPDATE_MSK</b>&#160;&#160;&#160;1 &lt;&lt; CRAM_UPDATE_BIT</td></tr>
-<tr class="separator:a7c90404f085daf3b1a140aa286f66f64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:addb3d30b0ce2717376f747ed714c7ec6"><td class="memItemLeft" align="right" valign="top"><a id="addb3d30b0ce2717376f747ed714c7ec6"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>PAL_UPDATE_BIT</b>&#160;&#160;&#160;0</td></tr>
+<tr class="separator:addb3d30b0ce2717376f747ed714c7ec6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae1e65e83e0869654b45809f0d96c1010"><td class="memItemLeft" align="right" valign="top"><a id="ae1e65e83e0869654b45809f0d96c1010"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>PAL_UPDATE_MSK</b>&#160;&#160;&#160;1 &lt;&lt; PAL_UPDATE_BIT</td></tr>
+<tr class="separator:ae1e65e83e0869654b45809f0d96c1010"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a479343f6c6e5535da1639d8270c6724c"><td class="memItemLeft" align="right" valign="top"><a id="a479343f6c6e5535da1639d8270c6724c"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>_RANDOM</b>&#160;&#160;&#160;0xfffe2a</td></tr>
 <tr class="separator:a479343f6c6e5535da1639d8270c6724c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -490,9 +490,9 @@ Macros</h2></td></tr>
 <tr class="memitem:a76d29f3454c446c26fc9b5ac0a2f70cc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="boot__def_8h.html#a76d29f3454c446c26fc9b5ac0a2f70cc">BOOT_SET_FADEIN_PAL</a>&#160;&#160;&#160;0x000390</td></tr>
 <tr class="memdesc:a76d29f3454c446c26fc9b5ac0a2f70cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the target color palette for a fadein.  <a href="boot__def_8h.html#a76d29f3454c446c26fc9b5ac0a2f70cc">More...</a><br /></td></tr>
 <tr class="separator:a76d29f3454c446c26fc9b5ac0a2f70cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf0cf531e97b602c91b457eb9b269169"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="boot__def_8h.html#acf0cf531e97b602c91b457eb9b269169">BOOT_DMA_XFER_QUEUE</a>&#160;&#160;&#160;0x000394</td></tr>
-<tr class="memdesc:acf0cf531e97b602c91b457eb9b269169"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transfer queued VDP bound data via DMA.  <a href="boot__def_8h.html#acf0cf531e97b602c91b457eb9b269169">More...</a><br /></td></tr>
-<tr class="separator:acf0cf531e97b602c91b457eb9b269169"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad65cebfe7057718f8ca18a6a846f19be"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="boot__def_8h.html#ad65cebfe7057718f8ca18a6a846f19be">BOOT_DMA_QUEUE</a>&#160;&#160;&#160;0x000394</td></tr>
+<tr class="memdesc:ad65cebfe7057718f8ca18a6a846f19be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transfer queued VDP bound data via DMA.  <a href="boot__def_8h.html#ad65cebfe7057718f8ca18a6a846f19be">More...</a><br /></td></tr>
+<tr class="separator:ad65cebfe7057718f8ca18a6a846f19be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f3700941fc547f62776aa3e1b25db61"><td class="memItemLeft" align="right" valign="top"><a id="a8f3700941fc547f62776aa3e1b25db61"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>_UNKNOWN_44</b>&#160;&#160;&#160;0x000398</td></tr>
 <tr class="separator:a8f3700941fc547f62776aa3e1b25db61"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -977,6 +977,30 @@ Macros</h2></td></tr>
 
 </div>
 </div>
+<a id="ad65cebfe7057718f8ca18a6a846f19be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad65cebfe7057718f8ca18a6a846f19be">&#9670;&nbsp;</a></span>BOOT_DMA_QUEUE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">BOOT_DMA_QUEUE&#160;&#160;&#160;0x000394</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Transfer queued VDP bound data via DMA. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">A1.l</td><td>Pointer to queue</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>GROUP: VDP</p>
+<p>The queue is an array of DMA transfer entries in this format: 0.w Data length 2.l Destination (vdpptr) 6.l Source address The list should be terminated with a 0 word. Note that this system is extremely basic and does not account for DMA bandwidth, etc. Moreover, no array management is done and the list will need to be cleared by the user. </p>
+
+</div>
+</div>
 <a id="a7c2fb58da4aa423ea60a86353e58d883"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7c2fb58da4aa423ea60a86353e58d883">&#9670;&nbsp;</a></span>BOOT_DMA_XFER</h2>
 
@@ -1000,30 +1024,6 @@ Macros</h2></td></tr>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd><b>BREAK:</b> d0-d3/a6</dd></dl>
 <p>GROUP: VDP </p>
-
-</div>
-</div>
-<a id="acf0cf531e97b602c91b457eb9b269169"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acf0cf531e97b602c91b457eb9b269169">&#9670;&nbsp;</a></span>BOOT_DMA_XFER_QUEUE</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">BOOT_DMA_XFER_QUEUE&#160;&#160;&#160;0x000394</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Transfer queued VDP bound data via DMA. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">A1.l</td><td>Pointer to queue entry array</td></tr>
-  </table>
-  </dd>
-</dl>
-<p>GROUP: VDP</p>
-<p>The queue is an array of DMA transfer entries in this format: 0.w Data length 2.l Destination (vdpptr) 6.l Source address The list should be terminated with a 0 word. Note that this system is extremely basic and does not account for DMA bandwidth, etc. Moreover, no array management is done and the list will need to be cleared by the user. </p>
 
 </div>
 </div>
@@ -1555,8 +1555,7 @@ Sets the palette update flag on _GFX_REFRESH </dd></dl>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd><b>BREAK:</b> d1-d2/a5</dd></dl>
 <p>GROUP: Misc</p>
-<p><br  />
- Strings are terminated with 0xFF and use 0x00 for newline. The value in _FONT_TILE_BASE is added to each character byte, but no other transformations are done. This means that the font must begin at index 0x20 at the earliest (where _FONT_TILE_BASE is 0). Note that this can only use palette line 0. </p>
+<p>Strings are terminated with 0xFF and use 0x00 for newline. The value in _FONT_TILE_BASE is added to each character byte, but no other transformations are done. This means that the font must begin at index 0x20 at the earliest (where _FONT_TILE_BASE is 0). Note that this can only use palette line 0. </p>
 
 </div>
 </div>

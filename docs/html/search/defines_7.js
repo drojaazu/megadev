@@ -1,11 +1,19 @@
 var searchData=
 [
-  ['joy1_5fdelay_654',['JOY1_DELAY',['../boot_8h.html#a0eb4d43aa283d074fbb232b8279f6479',1,'boot.h']]],
-  ['joy1_5fhold_655',['JOY1_HOLD',['../boot_8h.html#a17d36e65a54f99dc1d98df765e36ba57',1,'boot.h']]],
-  ['joy1_5fpress_656',['JOY1_PRESS',['../boot_8h.html#a9ed5bee4bd105eddedcaae2d7538fb50',1,'boot.h']]],
-  ['joy1_5ftype_657',['JOY1_TYPE',['../boot_8h.html#a25cde292cbd7472dbb6b2d03734d2274',1,'boot.h']]],
-  ['joy2_5fdelay_658',['JOY2_DELAY',['../boot_8h.html#a3c34e4b1da46bd8855656dccf993d00d',1,'boot.h']]],
-  ['joy2_5fhold_659',['JOY2_HOLD',['../boot_8h.html#a0e0b56e1dcd26388c9cb2d518017e813',1,'boot.h']]],
-  ['joy2_5fpress_660',['JOY2_PRESS',['../boot_8h.html#aaf0737c777b54fe7d6f82f8c963d5ebf',1,'boot.h']]],
-  ['joytype_5fjoypad_661',['JOYTYPE_JOYPAD',['../boot__def_8h.html#a6aa02ed30b851e9ff05deece39b8b8ea',1,'boot_def.h']]]
+  ['int1_5fgfx_5fbit_649',['INT1_GFX_BIT',['../sub__def_8h.html#a157291b776c62e3f539def5364769292',1,'sub_def.h']]],
+  ['io_5fctrl1_650',['IO_CTRL1',['../io_8h.html#a381b2dbdc9ca96aa4b6302058f9e147a',1,'io.h']]],
+  ['io_5fctrl2_651',['IO_CTRL2',['../io_8h.html#aa755bce502953023dabc265d79af1eb7',1,'io.h']]],
+  ['io_5fctrl3_652',['IO_CTRL3',['../io_8h.html#ab1c68908a4becf425a157be83f2d76af',1,'io.h']]],
+  ['io_5fdata1_653',['IO_DATA1',['../io_8h.html#a1a85fd13b1b98e7fdcb397368bdf68ea',1,'io.h']]],
+  ['io_5fdata2_654',['IO_DATA2',['../io_8h.html#a075c9a12c426d7fa6f54eb85760b471f',1,'io.h']]],
+  ['io_5fdata3_655',['IO_DATA3',['../io_8h.html#ac711b14c313836e02dfdedbf942e2ae5',1,'io.h']]],
+  ['io_5frxdata1_656',['IO_RXDATA1',['../io_8h.html#abf40b819cdb4ff53aa350c4f576b073a',1,'io.h']]],
+  ['io_5frxdata2_657',['IO_RXDATA2',['../io_8h.html#a9a74f68905aa31e9323127e29b7c5231',1,'io.h']]],
+  ['io_5frxdata3_658',['IO_RXDATA3',['../io_8h.html#a1a80167f9ed84cffa7ffc8df787aec89',1,'io.h']]],
+  ['io_5fsctrl1_659',['IO_SCTRL1',['../io_8h.html#a1a16ae17b1ad32ac844b08193e6ad315',1,'io.h']]],
+  ['io_5fsctrl2_660',['IO_SCTRL2',['../io_8h.html#ae78968d6ceb5cbad079ae13949b6ab69',1,'io.h']]],
+  ['io_5fsctrl3_661',['IO_SCTRL3',['../io_8h.html#ab0306b9f75bedfee199d5e7fb41e8c64',1,'io.h']]],
+  ['io_5ftxdata1_662',['IO_TXDATA1',['../io_8h.html#a1f52d42387a9d2ac06239a65c2d3a722',1,'io.h']]],
+  ['io_5ftxdata2_663',['IO_TXDATA2',['../io_8h.html#a64dd258ce026250f483d0c46fecac3d5',1,'io.h']]],
+  ['io_5ftxdata3_664',['IO_TXDATA3',['../io_8h.html#a8e302ae63679ac9ff4090ab0ef41cd12',1,'io.h']]]
 ];

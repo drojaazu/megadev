@@ -22,6 +22,8 @@ At this point, you are ready to load files. There are four steps involved:
 	- Set the appropriate access operation
   - Wait for the operation to complete
 
+You do not need to set the CDC device destination in the _GA_CDCMODE register. This will be done automatically depending on the access operation chosen.
+
 ### Filename
 The filename must conform to [ISO9660 Level 1 standards](https://wiki.osdev.org/ISO_9660#Filenames). Basically this means that filenames must contain a) only UPPERCASE alphanumeric (A-Z, 0-9) characters and underscore, b) a maximum of 8 characters with a 3 character extension, and c) the version identifier. Finally, the filename in memory must be a standard \0 termninated C string.
 

@@ -23,9 +23,9 @@ struct SpriteObject {
 };
 
 typedef struct Palette {
-	u8 cram_offset;
-	u8 length;
-	u16 colors[];
+  u8 cram_offset;
+  u8 length; // length in words (i.e. color entries)
+  u16 colors[];
 } Palette;
 
 /**
@@ -46,7 +46,7 @@ typedef struct Palette {
 /**
  * \sa _VINT_EX_PTR
  */
-#define VINT_EX_PTR ((void*(*))_VINT_EX_PTR)
+#define VINT_EX_PTR ((void *(*))_VINT_EX_PTR)
 
 /**
  * \sa _VDP_REGS
@@ -147,7 +147,6 @@ typedef struct Palette {
  */
 #define COMSTAT7 ((volatile u16 const *)_COMSTAT7)
 
-
 /**
  * \sa _JOY1_TYPE
  */
@@ -234,12 +233,12 @@ typedef enum PlaneWidthTiles {
 /**
  * \sa _SPRTBL_PTR
  */
-#define SPRTBL_PTR ((void*)_SPRTBL_PTR)
+#define SPRTBL_PTR ((void *)_SPRTBL_PTR)
 
 /**
  * \sa _SPR_JMPTBL_PTR
  */
-#define SPR_JMPTBL_PTR ((void*(*))_SPR_JMPTBL_PTR)
+#define SPR_JMPTBL_PTR ((void *(*))_SPR_JMPTBL_PTR)
 
 /**
  * \sa _FADEIN_PAL_INDEX
@@ -261,7 +260,6 @@ typedef enum PlaneWidthTiles {
  */
 #define FADEIN_TARGET_PAL_PTR ((u8 *)_FADEIN_TARGET_PAL_PTR)
 
-
 /*
   Boot ROM function wrappers
 */
@@ -269,14 +267,12 @@ typedef enum PlaneWidthTiles {
 /**
  * \sa BOOT_VINT
  */
-static inline void boot_vint() {
-	asm("jsr %p0" ::"i"(BOOT_VINT));
-}
+static inline void boot_vint() { asm("jsr %p0" ::"i"(BOOT_VINT)); }
 
 /**
  * \sa BOOT_SET_HINT_DEFAULT
  */
-static inline void boot_set_hint_default(void* hint_routine) {
+static inline void boot_set_hint_default(void * hint_routine) {
   register u32 a1_ptr asm("a1") = (u32)hint_routine;
   asm("jsr %p0" ::"i"(BOOT_SET_HINT_DEFAULT), "a"(a1_ptr));
 }
@@ -331,7 +327,7 @@ static inline void boot_load_vdpregs_default() {
 /**
  * \sa BOOT_LOAD_VDPREGS
  */
-static inline void boot_load_vdpregs(void const* vdp_reg_data) {
+static inline void boot_load_vdpregs(void const * vdp_reg_data) {
   register u32 a1_vdpregs asm("a1") = (u32)vdp_reg_data;
   asm("jsr %p0" ::"i"(BOOT_LOAD_VDPREGS), "a"(a1_vdpregs) : "d0", "d1", "a2");
 }
@@ -389,7 +385,8 @@ static inline void boot_dma_fill(u32 vdpptr, u16 length, u16 value) {
 /**
  * \sa BOOT_LOAD_MAP
  */
-static inline void boot_load_map(u32 vdpptr, u16 width, u16 height, void* map) {
+static inline void boot_load_map(u32 vdpptr, u16 width, u16 height,
+                                 void * map) {
   register u32 d0_vdpptr asm("d0") = vdpptr;
   register u16 d1_width asm("d1") = width;
   register u16 d2_height asm("d2") = height;
@@ -418,7 +415,7 @@ static inline void boot_vdp_disp_enable() {
  * \sa BOOT_VDP_DISP_DISABLE
  */
 static inline void boot_bdp_disp_disable() {
-	asm("jsr %p0" ::"i"(BOOT_VDP_DISP_DISABLE));
+  asm("jsr %p0" ::"i"(BOOT_VDP_DISP_DISABLE));
 }
 
 /**
@@ -449,38 +446,27 @@ static inline void boot_load_font_defaults() {
 /**
  * \sa BOOT_INPUT_DELAY
  */
-static inline void boot_input_delay(u8* input, bool use_2p) {
-	register u32 a1_input asm("a1") = (u32)input;
-	register u16 d0_use_2p asm("d0") = (u16)use_2p;
+static inline void boot_input_delay(u8 * input, bool use_2p) {
+  register u32 a1_input asm("a1") = (u32)input;
+  register u16 d0_use_2p asm("d0") = (u16)use_2p;
 
-	asm("jsr %p0"
-		 :
-		 :
-        "i"(BOOT_INPUT_DELAY),
-				"a"(a1_input),
-				"d"(d0_use_2p)
-			:
-				"d1","a5"
-			);
+  asm("jsr %p0"
+      :
+      : "i"(BOOT_INPUT_DELAY), "a"(a1_input), "d"(d0_use_2p)
+      : "d1", "a5");
 }
 
 /**
  * \sa BOOT_CLEAR_COMM
  */
 static inline void boot_clear_comm() {
-	asm("jsr %p0"
-	   :
-		 :
-		  "i"(BOOT_CLEAR_COMM)
-		 :
-		  "d0","a6"
-		 );
+  asm("jsr %p0" : : "i"(BOOT_CLEAR_COMM) : "d0", "a6");
 }
 
 /**
  * \sa BOOT_PRINT
  */
-static inline void boot_print(char const* string, u32 vdpptr_pos) {
+static inline void boot_print(char const * string, u32 vdpptr_pos) {
   register u32 a1_string asm("a1") = (u32)string;
   register u32 d0_vdpptr_pos asm("d0") = vdpptr_pos;
 
@@ -489,9 +475,29 @@ static inline void boot_print(char const* string, u32 vdpptr_pos) {
 };
 
 /**
+ * \sa BOOT_NMTBL_FILL
+ */
+static inline void boot_nmtbl_fill(u32 vdpptr, u16 width, u16 height,
+                                   u16 value) {
+  register u32 d0_vdpptr asm("d0") = vdpptr;
+  register u32 d1_width asm("d1") = width;
+  register u32 d2_height asm("d2") = height;
+  register u32 d3_value asm("d3") = value;
+
+  asm(R"(
+    move.l a6, -(sp)
+    jsr %p0
+    move.l (sp)+, a6
+  )" ::"i"(BOOT_NMTBL_FILL),
+      "d"(d0_vdpptr), "d"(d1_width), "d"(d2_height), "d"(d3_value)
+      : "d1", "d2", "a5");
+};
+
+/**
  * \sa BOOT_DMA_XFER
  */
-static inline void boot_dma_xfer(u32 vdpptr_dest, u8 const* source, u16 length) {
+static inline void boot_dma_xfer(u32 vdpptr_dest, u8 const * source,
+                                 u16 length) {
   register u32 d0_vdpptr_dest asm("d0") = vdpptr_dest;
   register u32 d1_source asm("d1") = (u32)source;
   register u16 d2_length asm("d2") = length;
@@ -508,8 +514,9 @@ static inline void boot_dma_xfer(u32 vdpptr_dest, u8 const* source, u16 length) 
 /**
  * \sa BOOT_DMA_XFER_WORDRAM
  */
-static inline void boot_dma_xfer_wordram(u32 const vdpptr_dest, void const* source,
-                                 u16 const length) {
+static inline void boot_dma_xfer_wordram(u32 const vdpptr_dest,
+                                         void const * source,
+                                         u16 const length) {
   register u32 d0_vdpptr_dest asm("d0") = vdpptr_dest;
   register u32 d1_source asm("d1") = (u32)source;
   register u16 d2_length asm("d2") = length;
@@ -526,8 +533,8 @@ static inline void boot_dma_xfer_wordram(u32 const vdpptr_dest, void const* sour
 /**
  * \sa BOOT_DMA_COPY
  */
-static inline void boot_dma_copy(u32 vdpptr, u16 source, u16 length) {
-  register u32 d0_vdpptr asm("d0") = vdpptr;
+static inline void boot_dma_copy(u32 vdpptr_dest, u16 source, u16 length) {
+  register u32 d0_vdpptr asm("d0") = vdpptr_dest;
   register u16 d1_source asm("d1") = source;
   register u16 d2_length asm("d2") = length;
 
@@ -550,7 +557,7 @@ static inline void boot_copy_sprlist() {
 /**
  * \sa BOOT_CLEAR_RAM
  */
-static inline void boot_clear_ram(void* address, u32 long_count) {
+static inline void boot_clear_ram(void * address, u32 long_count) {
   register u32 a0_address asm("a0") = (u32)address;
   register u32 d7_long_count asm("d7") = long_count;
 
@@ -565,7 +572,7 @@ static inline void boot_clear_ram(void* address, u32 long_count) {
 /**
  * \sa BOOT_LOAD_PAL
  */
-static inline void boot_load_pas(u8 * pal_data) {
+static inline void boot_load_pal(Palette const * pal_data) {
   register u32 a1_pal_data asm("a1") = (u32)pal_data;
 
   asm(R"(jsr %p0)" ::"i"(BOOT_LOAD_PAL), "a"(a1_pal_data) : "d0");
@@ -574,7 +581,7 @@ static inline void boot_load_pas(u8 * pal_data) {
 /**
  * \sa BOOT_LOAD_PAL_UPDATE
  */
-static inline void boot_load_pal_update(u8 * pal_data) {
+static inline void boot_load_pal_update(Palette const * pal_data) {
   register u32 a1_pal_data asm("a1") = (u32)pal_data;
 
   asm(R"(jsr %p0)" ::"i"(BOOT_LOAD_PAL_UPDATE), "a"(a1_pal_data) : "d0");
@@ -583,8 +590,10 @@ static inline void boot_load_pal_update(u8 * pal_data) {
 /**
  * \sa BOOT_PROCESS_SPR_OBJS
  */
-static inline void boot_process_spr_objs(struct SpriteObject* const obj_array, u8 * const sprtbl_cache,
-                          u16 const obj_count, u16 const obj_size) {
+static inline void boot_process_spr_objs(struct SpriteObject * const obj_array,
+                                         Sprite * const sprtbl_cache,
+                                         u16 const obj_count,
+                                         u16 const obj_size) {
   register u32 a0_obj_array asm("a0") = (u32)obj_array;
   register u32 a1_sprtbl_cache asm("a1") = (u32)sprtbl_cache;
   register u16 d0_obj_count asm("d0") = (u16)obj_count;
@@ -593,38 +602,44 @@ static inline void boot_process_spr_objs(struct SpriteObject* const obj_array, u
   asm(R"(jsr %p0)" ::"i"(BOOT_PROCESS_SPR_OBJS), "a"(a0_obj_array),
       "a"(a1_sprtbl_cache), "d"(d0_obj_count), "d"(d1_obj_size)
       : "d2", "d3", "d4", "d6", "a2");
-}
+};
 
 /**
  * \sa BOOT_PRNG
  */
-static inline void boot_prng() {
-
-  asm("jsr %p0"
-	    :
-			:
-			"i"(BOOT_PRNG)
-			:
-			"d0");
-};
+static inline void boot_prng() { asm("jsr %p0" : : "i"(BOOT_PRNG) : "d0"); };
 
 /**
  * \sa BOOT_PRNG_MOD
  */
 static inline u16 boot_prng_mod(u16 const modulo) {
-	register u16 d0_modulo asm("d0") = modulo;
-	register u16 d0_random asm("d0");
+  register u16 d0_modulo asm("d0") = modulo;
+  register u16 d0_random asm("d0");
 
-  asm("jsr %p1"
-	    :
-			"+d"(d0_random)
-			:
-			"i"(BOOT_PRNG_MOD),
-			"d"(d0_modulo)
-			:
-			"d1");
-	
-	return d0_random;
+  asm("jsr %p1" : "+d"(d0_random) : "i"(BOOT_PRNG_MOD), "d"(d0_modulo) : "d1");
+
+  return d0_random;
 };
+
+typedef struct DmaTransfer {
+  u16 length;
+  u32 vdpptr;
+  u32 source;
+} DmaTransfer;
+
+/**
+ * \sa BOOT_DMA_QUEUE
+ */
+static inline void boot_dma_queue(DmaTransfer const queue[]) {
+  register u32 a1_queue asm("a1") = (u32)queue;
+
+  asm(R"(
+	move.l a6, -(sp)
+  jsr %p0
+	move.l (sp)+, a6
+)" ::"i"(BOOT_DMA_QUEUE),
+      "a"(a1_queue)
+      : "d0", "d1", "d2", "d3");
+}
 
 #endif
