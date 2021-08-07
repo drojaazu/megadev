@@ -2,7 +2,7 @@
 #include "sub/sub.h"
 #include "sub/cdrom.h"
 
-void load_ipx();
+void load_ipx();22
 
 extern void sp_fatal();
 

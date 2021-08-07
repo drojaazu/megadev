@@ -21,6 +21,8 @@
     FFFC00  +----------------+
 */
 
+#define BOOT_RAM_START 0xFFF700
+
 /**
  * \def _DECOMP_BUFFER
  * \brief Work RAM for graphics decompression routines
@@ -267,14 +269,11 @@
 #define _FADEIN_PAL_LENGTH 0xfffe47
 
 /**
- * \def u16 _FADEIN_INCREMENT
+ * \def u16 _FADEIN_STEP
  * \size word
- * \brief Fade in speed
- * Maximum of 0xE (brightest)
- * Subtracted by 2 on each fade iteration
- * Therefore should be set in increments of 2
+ * \brief Indicates if a fade in is still in progress
  */
-#define _FADEIN_INCREMENT 0xfffe48
+#define _FADEIN_STEP 0xfffe48
 
 /**
  * \def u32 _FADEIN_TARGET_PAL_PTR
@@ -1100,11 +1099,11 @@
  *
  * \param[in] D0.w Palette index (*byte* offset, not word!)
  * \param[in] D1.w Length (In *words*, not bytes!)
- * \param[out] Z Palette complete
+ * \param[out] Z Palette incomplete
  *
  * GROUP: VDP
  *
- * \details If Z is not set, the palette fade process is not yet complete
+ * \details If Z is set, the palette fade process is not yet complete
  * and subroutine should be called against next loop.
  *
  * \note Sets the palette update flag on _GFX_REFRESH
@@ -1115,15 +1114,17 @@
  * \fn BOOT_PAL_FADEIN
  * \brief Fade a range of the color palette from black
  *
- * \param[out] Z Palette complete
- *
  * GROUP: VDP
  *
- * \details If Z is not set, the palette fade process is not yet complete
- * and subroutine should be called against next loop.
+ * \details The fade-in routine works a little bit differently from the
+ * fade-out counterpart. Instead of checking the Z flag, the value of
+ * _FADEIN_STEP should be checked. If it is > 0, the fade is not yet complete.
  *
- * \note _SET_FADEIN_TARGET should be called first to set up the input values.
- * \note Sets the palette update flag on _GFX_REFRESH
+ * \note This may be a bug in the implementation. Using the Z flag *could*
+ * work, as the code checks whether _FADEIN_STEP is zero with a TST opcode.
+ * However, this is followed by setting the VDP flags for a palette update,
+ * which will set the Z flag if palette update flag was not already set.
+ *
  */
 #define BOOT_PAL_FADEIN 0x00038C
 
@@ -1132,6 +1133,8 @@
  * \brief Sets the target color palette for a fadein
  *
  * \param[in] A1.l Pointer to target palette structure
+ *
+ * \note This must be called before using BOOT_PAL_FADEIN
  *
  * GROUP: VDP
  */

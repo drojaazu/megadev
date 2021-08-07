@@ -26,6 +26,13 @@ typedef struct Sprite {
   u16 pos_x : 9;
 } Sprite;
 
+typedef union SpriteEx {
+  u32 as_u32[2];
+  u16 as_u16[4];
+  u8 as_u8[8];
+  Sprite as_struct;
+} SpriteEx;
+
 /**
  * \def VDP_CTRL_32
  * \brief VDP control port (32 bit)
@@ -58,7 +65,6 @@ typedef struct Sprite {
  * \param x horizontal position in the tilemap
  * \param y vertical position in the tilemap
  */
-//#define NMT_POS(x, y, width) (((y * width) + x) * 2)
 #define NMT_POS(x, y) ((y * (*PLANE_WIDTH)) + (x << 1))
 
 /**
@@ -88,7 +94,7 @@ typedef struct Sprite {
  */
 #define VDPPTR(addr)                                                           \
   (__builtin_constant_p(addr)                                                  \
-       ? ((((addr)&0x3FFF) << 16) + (((addr)&0xC000) >> 14))                   \
+       ? (unsigned)((((addr)&0x3FFF) << 16) + (((addr)&0xC000) >> 14))         \
        : to_vdpptr(addr))
 
 /**

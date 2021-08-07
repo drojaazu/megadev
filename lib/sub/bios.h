@@ -91,8 +91,7 @@ struct DrvinitParams {
  */
 inline void BIOS_DRVINIT(struct DrvinitParams const * drvinit_param) {
   register u16 d0_fcode asm("d0") = DRVINIT;
-  register struct DrvinitParams const * a0_drvinit_param asm("a0") =
-      drvinit_param;
+  register u32 a0_drvinit_param asm("a0") = (u32)drvinit_param;
   asm("jsr %p0" ::"i"(_CDBIOS), "d"(d0_fcode), "a"(a0_drvinit_param));
 };
 
@@ -101,16 +100,16 @@ inline void BIOS_DRVINIT(struct DrvinitParams const * drvinit_param) {
  */
 inline void BIOS_MSCPLAY(u16 const * track_number) {
   register u16 d0_fcode asm("d0") = MSCPLAY;
-  register u16 const * a0_track_number asm("a0") = track_number;
+  register u32 a0_track_number asm("a0") = (u32)track_number;
   asm("jsr %p0" ::"i"(_CDBIOS), "d"(d0_fcode), "a"(a0_track_number));
 };
 
 /**
  * \sa MSCPLAY1
  */
-inline void BIOS_MSCPLAY1(u16 const * track_number) {
+inline void bios_mscplay1(u16 const * track_number) {
   register u16 d0_fcode asm("d0") = MSCPLAY1;
-  register u16 const * a0_track_number asm("a0") = track_number;
+  register u32 a0_track_number asm("a0") = (u32)track_number;
   asm("jsr %p0" ::"i"(_CDBIOS), "d"(d0_fcode), "a"(a0_track_number));
 };
 
@@ -119,7 +118,7 @@ inline void BIOS_MSCPLAY1(u16 const * track_number) {
  */
 inline void bios_mscplayr(u16 const * track_number) {
   register u16 d0_fcode asm("d0") = MSCPLAYR;
-  register u16 const * a0_track_number asm("a0") = track_number;
+  register u32 a0_track_number asm("a0") = (u32)track_number;
   asm("jsr %p0" ::"i"(_CDBIOS), "d"(d0_fcode), "a"(a0_track_number));
 };
 
@@ -137,7 +136,7 @@ inline void BIOS_MSCPLAYT(u32 const * timecode) {
  */
 inline void BIOS_MSCSEEK(u32 const * track_number) {
   register u16 d0_fcode asm("d0") = MSCSEEK;
-  register u32 const * a0_track_number asm("a0") = track_number;
+  register u32 a0_track_number asm("a0") = (u32)track_number;
   asm("jsr %p0" ::"i"(_CDBIOS), "d"(d0_fcode), "a"(a0_track_number));
 };
 
@@ -173,7 +172,7 @@ inline void BIOS_ROMSEEK(u32 const * sector_number) {
  */
 inline void BIOS_MSCSEEK1(u16 const * track_number) {
   register u16 d0_fcode asm("d0") = MSCSEEK1;
-  register u16 const * a0_track_number asm("a0") = track_number;
+  register u32 a0_track_number asm("a0") = (u32)track_number;
   asm("jsr %p0" ::"i"(_CDBIOS), "d"(d0_fcode), "a"(a0_track_number));
 };
 

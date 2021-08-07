@@ -22,9 +22,15 @@ struct SpriteObject {
   u8 uk2;
 };
 
+/**
+ * \struct Palette
+ * cram_offset - address in CRAM to load palette - that is, the palette index
+ * * 2
+ * lengdth - the number of colors in the palette to load MINUS ONE
+ */
 typedef struct Palette {
   u8 cram_offset;
-  u8 length; // length in words (i.e. color entries)
+  u8 length; // length in words (i.e. color entries) MINUS ONE
   u16 colors[];
 } Palette;
 
@@ -251,9 +257,9 @@ typedef enum PlaneWidthTiles {
 #define FADEIN_PAL_LENGTH ((u8 *)_FADEIN_PAL_LENGTH)
 
 /**
- * \sa _FADEIN_INCREMENT
+ * \sa _FADEIN_STEP
  */
-#define FADEIN_INCREMENT ((u8 *)_FADEIN_INCREMENT)
+#define FADEIN_STEP ((volatile u16 *)_FADEIN_STEP)
 
 /**
  * \sa _FADEIN_TARGET_PAL_PTR
@@ -414,7 +420,7 @@ static inline void boot_vdp_disp_enable() {
 /**
  * \sa BOOT_VDP_DISP_DISABLE
  */
-static inline void boot_bdp_disp_disable() {
+static inline void boot_vdp_disp_disable() {
   asm("jsr %p0" ::"i"(BOOT_VDP_DISP_DISABLE));
 }
 
@@ -433,7 +439,27 @@ static inline void boot_vint_wait(u8 flags) {
   asm("jsr %p0" ::"i"(BOOT_VINT_WAIT), "d"(d0_flags));
 }
 
-extern bool vdp_pal_fadeout(u8 index, u8 length);
+/**
+ * \sa BOOT_PAL_FADEOUT
+ */
+static inline bool boot_pal_fadeout(u8 palette_index, u8 length) {
+  register u16 d0_palette_index asm("d0") = (u16)(palette_index << 1);
+  register u16 d1_length asm("d1") = (u16)length;
+
+  asm inline goto(R"(
+  jsr %p0
+	beq %l[fade_complete]
+	)"
+                  :
+                  : "i"(BOOT_PAL_FADEOUT), "d"(d0_palette_index), "d"(d1_length)
+                  :
+                  : fade_complete);
+
+  return false;
+
+fade_complete:
+  return true;
+}
 
 /**
  * \sa BOOT_LOAD_FONT_DEFAULTS
@@ -621,6 +647,33 @@ static inline u16 boot_prng_mod(u16 const modulo) {
   return d0_random;
 };
 
+/**
+ * \sa BOOT_SET_FADEIN_PAL
+ */
+static inline void boot_set_fadein_pal(Palette const * palette) {
+  register u32 a1_palette asm("a1") = (u32)palette;
+  register u32 a1_change asm("a1");
+
+  asm volatile("jsr %p1"
+               : "=a"(a1_change)
+               : "i"(BOOT_SET_FADEIN_PAL), "a"(a1_palette));
+};
+
+/**
+ * \sa BOOT_PAL_FADEIN
+ */
+static inline void boot_pal_fadein() {
+
+  asm inline(R"(
+  jsr %p0
+	)"
+             :
+             : "i"(BOOT_PAL_FADEIN));
+}
+
+/**
+ * For use with boot_dma_queue
+ */
 typedef struct DmaTransfer {
   u16 length;
   u32 vdpptr;
@@ -630,16 +683,18 @@ typedef struct DmaTransfer {
 /**
  * \sa BOOT_DMA_QUEUE
  */
-static inline void boot_dma_queue(DmaTransfer const queue[]) {
+static inline void boot_dma_queue(DmaTransfer const * queue) {
   register u32 a1_queue asm("a1") = (u32)queue;
+  register u32 a1_change asm("a1");
 
-  asm(R"(
+  asm volatile(R"(
 	move.l a6, -(sp)
-  jsr %p0
+  jsr %p1
 	move.l (sp)+, a6
-)" ::"i"(BOOT_DMA_QUEUE),
-      "a"(a1_queue)
-      : "d0", "d1", "d2", "d3");
+)"
+               : "=a"(a1_change)
+               : "i"(BOOT_DMA_QUEUE), "a"(a1_queue)
+               : "d0", "d1", "d2", "d3");
 }
 
 #endif

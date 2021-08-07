@@ -144,7 +144,7 @@ static void brmwrite_test() {
     boot_print(val_buffer, print_xy(23, 2));
   } while (!(*JOY1_PRESS & PAD_START_MSK));
 
-  asm(".global test_label\ntest_label:");
+  
 
   *(u16 *)MAIN_2M_BASE = writeval;
 
