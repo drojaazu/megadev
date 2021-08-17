@@ -1,6 +1,6 @@
 
 #include "io_def.h"
-#include "main/boot.h"
+#include "main/bootlib.h"
 #include "main/main.h"
 #include "types.h"
 #include "vdp.h"

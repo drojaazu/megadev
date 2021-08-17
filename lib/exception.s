@@ -11,7 +11,7 @@
 #define MEGADEV__EXCEPTION_S
 
 #include "macros.s"
-#include "main/boot_def.h"
+#include "main/bootlib_def.h"
 #include "main/main_def.h"
 #include "io_def.h"
 #include "vdp_def.h"

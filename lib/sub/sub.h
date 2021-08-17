@@ -40,6 +40,16 @@
 #define DMAADDR_PCM(addr) (((addr)&0x03FF) >> 3)
 #define DMAADDR_PRGRAM(addr) ((addr) >> 3)
 
+#define PCM_ENV ((volatile u8 *)_PCM_ENV)
+#define PCM_PAN ((volatile u8 *)_PCM_PAN)
+#define PCM_FDL ((volatile u8 *)_PCM_FDL)
+#define PCM_FDH ((volatile u8 *)_PCM_FDH)
+#define PCM_LSL ((volatile u8 *)_PCM_LSL)
+#define PCM_LSH ((volatile u8 *)_PCM_LSH)
+#define PCM_ST ((volatile u8 *)_PCM_ST)
+#define PCM_CTRL ((volatile u8 *)_PCM_CTRL)
+#define PCM_CDISABLE ((volatile u8 *)_PCM_CDISABLE)
+
 // TODO - Verify which registers get trashed
 static inline void bios_waitvsync() {
   asm(R"(

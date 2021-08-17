@@ -97,9 +97,13 @@
  *
  * \param RES0 Sub CPU reset
  * \details W: 0: Reset / 1: No effect \n R: 0: Reset in progress / 1: Reset
- * possible \param LEDR Red LED control \details RW: 0: Off / 1: On \param LEDG
- * Green LED control \details RW: 0: Off / 1: On \param Ver ROM Version \details
- * Read Only
+ * possible
+ * \param LEDR Red LED control
+ * \details RW: 0: Off / 1: On
+ * \param LEDG Green LED control
+ * \details RW: 0: Off / 1: On
+ * \param Ver ROM Version
+ * \details Read Only
  */
 #define _GA_RESET 0xFF8000
 
@@ -114,8 +118,10 @@
  * \param WP Write protect Sub CPU RAM
  * \param PM Priority Mode
  * \param MODE Word RAM layout
+ * \details 0: 2M, ll1: 1M
  * \param DMNA Main CPU will not access Word RAM
- * \param RET Give Word RAM control to Main CPU
+ * \param RET In 2M mode: Give Word RAM control to Main CPU;
+ * In 1M mode: Change 1M block ownership
  *
  */
 #define _GA_MEMMODE 0xFF8002
@@ -182,7 +188,7 @@
  * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
  * |A18|A17|A16|A15|A14|A13|A12|A11|A10|A09|A08|A07|A06|A05|A04|A03|
  *
- * \param HD CDC read data
+ * \param A DMA destination address
  * \details RW: Specifies the address for CDC DMA transfer
  * - For PCM DMA: bits up to A12 are used
  * - For 1M Word RAM: bits up to A16 are used
@@ -348,7 +354,36 @@
  */
 #define _GA_INT3TIMER 0xFF8030
 
+/**
+ * \def _GA_INTMASK
+ * \brief Interrupt mask control
+ * \details
+ * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
+ * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
+ * | |||||||||IEN6|IEN5|IEN4|IEN3|IEN2|IEN1| |
+ *
+ * IEN: Interrupt levels 1 to 6
+ * \details RW: 0 - enable, 1 - disable
+ */
 #define _GA_INTMASK 0xFF8032
+
+/**
+ * GA_INTMASK bit/mask settings
+ */
+#define INT1_GFX_BIT 1
+#define INT2_MD_BIT 2
+#define INT3_TIMER_BIT 3
+#define INT4_CDD_BIT 4
+#define INT5_CDC_BIT 5
+#define INT6_SUBCODE_BIT 6
+
+#define INT1_GFX_MSK 1 << INT1_GFX_BIT
+#define INT2_MD_MSK 1 << INT2_MD_BIT
+#define INT3_TIMER_MSK 1 << INT3_TIMER_BIT
+#define INT4_CDD_MSK 1 << INT4_CDD_BIT
+#define INT5_CDC_MSK 1 << INT5_CDC_BIT
+#define INT6_SUBCODE_MSK 1 << INT6_SUBCODE_BIT
+
 #define _GA_CDFADER 0xFF8034
 #define _GA_CDDCONTROL 0xFF8036
 #define _GA_CDDCOMM0 0xFF8038
@@ -376,6 +411,35 @@
 #define _GA_SUBCODEBUF 0xFF8100
 #define _GA_SUBCODEBUFIMG 0xFF8180
 
+#define _PCM_ENV 0xFF0001
+#define _PCM_PAN 0xFF0003
+#define _PCM_FDL 0xFF0005
+#define _PCM_FDH 0xFF0007
+#define _PCM_LSL 0xFF0009
+#define _PCM_LSH 0xFF000B
+#define _PCM_ST 0xFF000D
+#define _PCM_CTRL 0xFF000F
+#define _PCM_CDISABLE 0xFF0011
+
+#define _PCM_RAM 0xFF2000
+
+#define _PCM_PLAY_CH1_L 0xFF0021
+#define _PCM_PLAY_CH1_H 0xFF0023
+#define _PCM_PLAY_CH2_L 0xFF0025
+#define _PCM_PLAY_CH2_H 0xFF0027
+#define _PCM_PLAY_CH3_L 0xFF0029
+#define _PCM_PLAY_CH3_H 0xFF002B
+#define _PCM_PLAY_CH4_L 0xFF002D
+#define _PCM_PLAY_CH4_H 0xFF002F
+#define _PCM_PLAY_CH5_L 0xFF0031
+#define _PCM_PLAY_CH5_H 0xFF0033
+#define _PCM_PLAY_CH6_L 0xFF0035
+#define _PCM_PLAY_CH6_H 0xFF0037
+#define _PCM_PLAY_CH7_L 0xFF0039
+#define _PCM_PLAY_CH7_H 0xFF003B
+#define _PCM_PLAY_CH8_L 0xFF003D
+#define _PCM_PLAY_CH8_H 0xFF003F
+
 /**
  * GA_MEMMODE bit/mask settings
  * Note: GA registers are 16 bits, but we generally work with bit level tests
@@ -394,29 +458,13 @@
 #define MEMMODE_PM_MSK (3 << MEMMODE_PM_BIT)
 
 /**
- * GA_INTMASK bit/mask settings
- */
-#define INT1_GFX_BIT 1
-#define INT2_MD_BIT 2
-#define INT3_TIMER_BIT 3
-#define INT4_CDD_BIT 4
-#define INT5_CDC_BIT 5
-#define INT6_SUBCODE_BIT 6
-
-#define INT1_GFX_MSK 1 << INT1_GFX_BIT
-#define INT2_MD_MSK 1 << INT2_MD_BIT
-#define INT3_TIMER_MSK 1 << INT3_TIMER_BIT
-#define INT4_CDD_MSK 1 << INT4_CDD_BIT
-#define INT5_CDC_MSK 1 << INT5_CDC_BIT
-#define INT6_SUBCODE_MSK 1 << INT6_SUBCODE_BIT
-
-/**
  * GA_CDCMODE bit/mask settings
  */
 #define CDCMODE_DD0_BIT 5
 #define CDCMODE_DSR_BIT 6
 #define CDCMODE_EDT_BIT 7
 
+// these aren't right...
 #define CDC_MAINREAD_BIT 2
 #define CDC_SUBREAD_BIT 3
 #define CDC_PCMDMA_BIT 4
@@ -433,5 +481,11 @@
 #define CDCMODE_PCMDMA_MSK 1 << CDC_PCMDMA_BIT
 #define CDCMODE_PRAMDMA_MSK 1 << CDC_PRAMDMA_BIT
 #define CDCMODE_WRAMDMA_MSK 1 << CDC_WRAMDMA_BIT
+
+#define CDC_DEST_MAINREAD 2
+#define CDC_DEST_SUBREAD 3
+#define CDC_DEST_PCMDMA 4
+#define CDC_DEST_PRAMDMA 5
+#define CDC_DEST_WRAMDMA 7
 
 #endif

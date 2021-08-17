@@ -6,15 +6,11 @@ void load_ipx();
 
 extern void sp_fatal();
 
-char * filenames[3];
+char const * const filenames[] = {"EX1.MMD;1", "EX2.MMD;1", "EX3.MMD;1"};
 
 void main() {
 
   register u16 cmd0, cmd1;
-
-  filenames[0] = "EX1.MMD;1";
-  filenames[1] = "EX2.MMD;1";
-  filenames[2] = "EX3.MMD;1";
 
   do {
 
@@ -31,7 +27,7 @@ void main() {
 
     // load MMD
     case 1:
-      load_file(ACC_OP_LOAD_WORD, filenames[cmd1], (u8 *)SUB_2M_BASE);
+      load_file(ACC_OP_LOAD_CDC, filenames[cmd1], (u8 *)SUB_2M_BASE);
       grant_2m();
       if (access_op_result != RESULT_OK) {
         sp_fatal();
@@ -40,7 +36,7 @@ void main() {
 
     // load IPX
     case 0xfe:
-      load_file(ACC_OP_LOAD_WORD, "IPX.MMD;1", (u8 *)SUB_2M_BASE);
+      load_file(ACC_OP_LOAD_CDC, "IPX.MMD;1", (u8 *)SUB_2M_BASE);
       grant_2m();
       if (access_op_result != RESULT_OK) {
         sp_fatal();

@@ -98,9 +98,9 @@ Destination buffer</h2>
 <h2><a class="anchor" id="autotoc_md32"></a>
 Access operation</h2>
 <p>Finally, you will need to set the access operation on <code>access_op</code>. The operations for loading files are:</p>
-<p>ACC_OP_LOAD_WORD ACC_OP_LOAD_WORD_DMA ACC_OP_LOAD_PRG_DMA ACC_OP_LOAD_PCM_DMA</p>
+<p>ACC_OP_LOAD_CDC ACC_OP_LOAD_CDC_DMA ACC_OP_LOAD_PRG_DMA ACC_OP_LOAD_PCM_DMA</p>
 <p>(Note that we do not currently support the Main CPU read option, mostly because it is not well understood.)</p>
-<p>ACC_OP_LOAD_WORD will load the data to any memory address available to the Sub CPU, while the DMA options transfer data to a specific device given a relative address specified in the GA DMA register. ACC_OP_LOAD_WORD is the easiest to work with as you can simply specify an absolute address and be done. The DMA options likely provide greater transfer speed (limited by the optical drive, of course), though what sort of speed advantages or if any bus access issues may occur are unknown.</p>
+<p>ACC_OP_LOAD_CDC will load the data to any memory address available to the Sub CPU, while the DMA options transfer data to a specific device given a relative address specified in the GA DMA register. ACC_OP_LOAD_CDC is the easiest to work with as you can simply specify an absolute address and be done. The DMA options likely provide greater transfer speed (limited by the optical drive, of course), though what sort of speed advantages or if any bus access issues may occur are unknown.</p>
 <h2><a class="anchor" id="autotoc_md33"></a>
 Wait for data</h2>
 <p>After setting the access operation, you will need to wait for the data to completely load into your buffer. This is done by checking <code>access_op</code> in a loop (while calling the INT2 wait in the loop!) until the value has returned to ACC_OP_IDLE (i.e. 0). When that occurs, the transfer is complete. You should then check the <code>access_op_result</code> for the result code:</p>

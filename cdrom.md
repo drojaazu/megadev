@@ -41,14 +41,14 @@ The buffer where your data will be stored must be specified in one of two ways d
 ### Access operation
 Finally, you will need to set the access operation on `access_op`. The operations for loading files are:
 
-  ACC_OP_LOAD_WORD
-  ACC_OP_LOAD_WORD_DMA
+  ACC_OP_LOAD_CDC
+  ACC_OP_LOAD_CDC_DMA
   ACC_OP_LOAD_PRG_DMA
   ACC_OP_LOAD_PCM_DMA
 
 (Note that we do not currently support the Main CPU read option, mostly because it is not well understood.)
 
-ACC_OP_LOAD_WORD will load the data to any memory address available to the Sub CPU, while the DMA options transfer data to a specific device given a relative address specified in the GA DMA register. ACC_OP_LOAD_WORD is the easiest to work with as you can simply specify an absolute address and be done. The DMA options likely provide greater transfer speed (limited by the optical drive, of course), though what sort of speed advantages or if any bus access issues may occur are unknown.
+ACC_OP_LOAD_CDC will load the data to any memory address available to the Sub CPU, while the DMA options transfer data to a specific device given a relative address specified in the GA DMA register. ACC_OP_LOAD_CDC is the easiest to work with as you can simply specify an absolute address and be done. The DMA options likely provide greater transfer speed (limited by the optical drive, of course), though what sort of speed advantages or if any bus access issues may occur are unknown.
 
 ### Wait for data
 After setting the access operation, you will need to wait for the data to completely load into your buffer. This is done by checking `access_op` in a loop (while calling the INT2 wait in the loop!) until the value has returned to ACC_OP_IDLE (i.e. 0). When that occurs, the transfer is complete. You should then check the `access_op_result` for the result code:

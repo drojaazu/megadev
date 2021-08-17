@@ -25,16 +25,16 @@
 #define ACC_OP_LOAD_DIR 1
 
 /**
- * \def ACC_OP_LOAD_WORD_DMA
+ * \def ACC_OP_LOAD_CDC_DMA
  * \brief Load file to Word RAM via DMA
  */
-#define ACC_OP_LOAD_WORD_DMA 2
+#define ACC_OP_LOAD_CDC_DMA 2
 
 /**
- * \def ACC_OP_LOAD_WORD
- * \brief Load file to Word RAM via CDC copy
+ * \def ACC_OP_LOAD_CDC
+ * \brief Load file to Sub CPU memory space via CDC copy
  */
-#define ACC_OP_LOAD_WORD 3
+#define ACC_OP_LOAD_CDC 3
 
 /**
  * \def ACC_OP_LOAD_PRG_DMA

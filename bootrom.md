@@ -56,7 +56,7 @@ The routines and their associated variables within the Boot ROM library can be r
 
 You are free to pick and choose individual routines to use, but keep in mind that some are interdependent or rely on components that may not work with your project architecture. We have done our best to document the falls and their related concepts to help you decide what does and does not work for your project
 
-Please see the `main/boot_def.h` file for the full list of functions.
+Please see the `main/bootlib_def.h` file for the full list of functions.
 
 ## Using the Code
 When coding in assembly, include the `boot_def.h` file. This contains definitions for the function entry points and variable addresses.
@@ -433,12 +433,12 @@ Sets the target palette for fade in.
 ## GA CPU Communication - Components
 Functions related to inter-CPU communication via the Gate Array comm registers.
 
-### Fixed Comm Flag Semantics
+### Predefined Comm Flag Semantics
 The GA_COMFLAGS register is intended to keep the two CPUs in sync by informing each other about their status. It is a 16 bit register, split into two bytes: the upper byte for the Main CPU and the lower byte for the Sub CPU. The flags do not have an any inherent semantic meaning and the developer is free to use any or none of the flags in their program.
 
 There are a few Boot ROM library functions that use these flags, however, which inherently assigns meaning to those bits. The problem here is that we don't know what those meanings are due to a lack of documentation. We can only guess based on the context in which they appear as we reverse engineer the code. This includes understanding not just the library calls that use these bits, but what must be done on the Sub CPU side to correctly read, set and clear bits in response. Thankfully, the built in software (namely the CD player) uses these calls, meaning we have usage examples on the Sub CPU side to look at. Moreover, of the retail games identified so far that use the Boot ROM library, most of them make use of these calls and exhibit a similarity in their implementation (to the point of being nearly identical) that suggests they were built from example code.
 
-At this point, we are still investigating and have only a rough idea of what the flags represent. Therefore, we do not recommend using the functions marked as using the Fixed Comm Flag Semantics component. However, **if you plan to use the built-in vblank handler (BOOT_VINT), keep in mind that it includes a call to one of these subroutines. Please see the notes for BOOT_COMM_SYNC.**
+At this point, we are still investigating and have only a rough idea of what the flags represent. Therefore, we do not recommend using the functions marked as using the Predefined Comm Flag Semantics component. However, **if you plan to use the built-in vblank handler (BOOT_VINT), keep in mind that it includes a call to one of these subroutines. Please see the notes for BOOT_COMM_SYNC.**
 
 ## GA CPU Communication - Functions
 
@@ -446,49 +446,49 @@ At this point, we are still investigating and have only a rough idea of what the
 Clears all Gate Array COMCMD and COMFLAGS registers and the COMCMD and COMFLAGS cache.
 
 ### `BOOT_COMM_SYNC`
-Components: Fixed Comm Flag Semantics
+Components: Predefined Comm Flag Semantics
 
 Triggers INT2 on the Sub CPU via the IFL2 bit (for this reason, it should be called during VBLANK). Also syncs the COMCMD cache values to the GA registers and the COMSTAT values from registers to the cache.
 
 IFL2 is set on each call regardless, but the COMCMD/COMSTAT sync is dependent on bits 0 and 1 of Sub side COMFLAGS. If Sub side bit 0 is set, Main side's bit 0 will be set and bit 1 will be flipped. It will then loop waiting for Sub side bit 1 to either set or clear, depending on the state of Main's bit 0. When the state matches the expectation, it moves on to copying COMCMD cache to registers followed by COMSTAT registers to cache.
 
-As mentioned in the Fixed Comm Flag Semantics component description, we recommend not using this function until we have a better understanding of the flags system on both CPUs.
+As mentioned in the Predefined Comm Flag Semantics component description, we recommend not using this function until we have a better understanding of the flags system on both CPUs.
 
 Note that if you are using `BOOT_VINT` for your vblank handler, `BOOT_COMM_SYNC` is called as part of that subroutine, which is important as it takes care of the IFL2 bit. The best way to keep things flowing smoothly is to ensure bit 0 is always unset on the Sub side COMFLAGS. This will ensure that the COMCMD/COMSTAT sync is skipped and that a stuck loop is avoided.
 
 ### `BOOT_UK_COMM_CDINFO`
-Components: Fixed Comm Flag Semantics
+Components: Predefined Comm Flag Semantics
 
 Copies various CD read status values sent from the Sub CPU via COMSTAT registers, including disc read absolute and relative timecodes. One use for getting this information in real time is to time the playback of CD audio with actions on the screen. Code that implements this call suggests it is mean to be used in conjunction with `BOOT_COMM_SYNC`, with the latter called at the start of VBLANK and `BOOT_UK_COMM_CDINFO` called at the end.
 
-As mentioned in the Fixed Comm Flag Semantics component description, we recommend not using this function until we have a better understanding of the flags system on both CPUs.
+As mentioned in the Predefined Comm Flag Semantics component description, we recommend not using this function until we have a better understanding of the flags system on both CPUs.
 
 ### `BOOT_UK_COMMFLAGS_RELATED`
-Components: Fixed Comm Flag Semantics
+Components: Predefined Comm Flag Semantics
 
 Waits for bit 6 on Sub side COMFLAGS to set, then clears Main side COMFLAGS bit 2.
 
-As mentioned in the Fixed Comm Flag Semantics component description, we recommend not using this function until we have a better understanding of the flags system on both CPUs.
+As mentioned in the Predefined Comm Flag Semantics component description, we recommend not using this function until we have a better understanding of the flags system on both CPUs.
 
 ### `BOOT_SET_COMCMD0_1_CACHE`
 Copies the word value in D0 and D1 into COMCMD0 and COMCMD1 cache, respectively.
 
-Although this does not use the Fixed Comm Flag Semantics component directly, it is likely meant to be part of its system. Therefore we recommend reviewing its code closely to make sure it does exactly what you expect before using it.
+Although this does not use the Predefined Comm Flag Semantics component directly, it is likely meant to be part of its system. Therefore we recommend reviewing its code closely to make sure it does exactly what you expect before using it.
 
 ### `BOOT_SET_COMCMD2_3_CACHE`
 Copies the word value in D0 and D1 into COMCMD2 and COMCMD3 cache, respectively. In addition, if the value in D0 is 1, it also sets bit 2 on Main side COMFLAGS.
 
-Although this does not use the Fixed Comm Flag Semantics component directly, it is likely meant to be part of its system. Therefore we recommend reviewing its code closely to make sure it does exactly what you expect before using it.
+Although this does not use the Predefined Comm Flag Semantics component directly, it is likely meant to be part of its system. Therefore we recommend reviewing its code closely to make sure it does exactly what you expect before using it.
 
 ### `BOOT_SET_COMCMD4_5_CACHE`
 Copies the word value in D0 and D1 into COMCMD4 and COMCMD5 cache, respectively.
 
-Although this does not use the Fixed Comm Flag Semantics component directly, it is likely meant to be part of its system. Therefore we recommend reviewing its code closely to make sure it does exactly what you expect before using it.
+Although this does not use the Predefined Comm Flag Semantics component directly, it is likely meant to be part of its system. Therefore we recommend reviewing its code closely to make sure it does exactly what you expect before using it.
 
 ### `BOOT_SET_COMCMD6_7_CACHE`
 Copies the word value in D0 and D1 into COMCMD6 and COMCMD7 cache, respectively.
 
-Although this does not use the Fixed Comm Flag Semantics component directly, it is likely meant to be part of its system. Therefore we recommend reviewing its code closely to make sure it does exactly what you expect before using it.
+Although this does not use the Predefined Comm Flag Semantics component directly, it is likely meant to be part of its system. Therefore we recommend reviewing its code closely to make sure it does exactly what you expect before using it.
 
 ### `BOOT_SET_IFL2`
 Sets the IFL2 bit on GA_MEMMODE to trigger INT2 on the Sub side. Should be called during VBLANK only.

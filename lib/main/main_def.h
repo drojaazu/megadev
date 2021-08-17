@@ -81,7 +81,8 @@
  * \details W: 0: Cancel / 1: Request \n R: 0: Sub CPU running / 1: Acknowledge
  * \param IFL2 Send INT2 to Sub CPU
  * \details W: 0: Not used / 1: Send INT 2 to Sub CPU \n R: 0: INT 2 in progress
- * / 1: INT 2 not occurred yet \param IEN2 Mask state of INT2 on Sub CPU
+ * / 1: INT 2 not occurred yet
+ * \param IEN2 Mask state of INT2 on Sub CPU
  * \details 0: Masked / 1: Enabled
  *
  * \note Only BTST bitwise operation allowed on this register

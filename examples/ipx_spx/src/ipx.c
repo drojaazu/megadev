@@ -1,12 +1,12 @@
 
 #include "ipx.h"
-#include "main/boot.h"
+#include "main/bootlib.h"
 #include "main/main.h"
 #include "mmd_exec.h"
 #include "system.h"
 #include "vdp.h"
 
-u8 program_mode;
+u8 pcm_file;
 
 Particle particles[16];
 
@@ -108,7 +108,7 @@ void main() {
 
   // this will hold the current "mode" of the entire program
   // in this case it corresponds to the three modules on the disc
-  program_mode = 0;
+  pcm_file = 0;
 
   // The modules only show some text, so we'll prepare the font for them here
   // so it doesn't need to happen in the module itself
@@ -127,7 +127,7 @@ void main() {
     // and the argument will be the ID for that file, which is defined in
     // the SPX
     // Set the argument first
-    *GA_COMCMD1 = program_mode;
+    *GA_COMCMD1 = pcm_file;
 
     // then set the command
     *GA_COMCMD0 = 1;

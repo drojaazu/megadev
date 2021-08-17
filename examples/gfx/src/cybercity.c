@@ -1,6 +1,6 @@
 
 #include "io.h"
-#include "main/boot.h"
+#include "main/bootlib.h"
 #include "main/main.h"
 #include "types.h"
 #include "vdp.h"
@@ -47,7 +47,7 @@ __attribute__((noreturn)) void main() {
   ship_parts.uk1 = 0x20;
 
   // turn off the display while we init
-  boot_bdp_disp_disable();
+  boot_vdp_disp_disable();
   // boot rom defaults are fine...
   boot_load_vdpregs_default();
 

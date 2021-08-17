@@ -32,7 +32,7 @@ load_file_prg_dma:
  * \param[in] A1.l Pointer to destination buffer
  */
 load_file_sub:
-  move.w  #ACC_OP_LOAD_WORD, access_op
+  move.w  #ACC_OP_LOAD_CDC, access_op
 	move.l  a1, filebuff
 load_file:
   move.l  a0, filename
@@ -125,6 +125,7 @@ check_acc_op:
  */
 access_op_idle:
   jbsr      accloop_break
+.global op_switch
 op_switch:
   move.w   access_op, d0
   add.w    d0, d0
@@ -146,7 +147,7 @@ op_jmptbl:
  * \brief Load a file to Word RAM via DMA
  */ 
 access_op_load_dma_word:
-  move.b   #CDC_WRAMDMA_BIT, cdc_dev_dest
+  move.b   #CDC_DEST_WRAMDMA, cdc_dev_dest
   move.l   #load_data_dma, (load_method_ptr)
   jbra     load_process
 
@@ -155,7 +156,7 @@ access_op_load_dma_word:
  * \brief Load a file to a Sub CPU address space
  */
 access_op_load_sub:
-  move.b   #CDC_SUBREAD_BIT, cdc_dev_dest
+  move.b   #CDC_DEST_SUBREAD, cdc_dev_dest
   move.l   #load_data_sub, (load_method_ptr)
   jbra     load_process
 
@@ -164,7 +165,7 @@ access_op_load_sub:
  * \brief Load a file to PRG RAM via DMA
  */
 access_op_load_dma_prg:
-  move.b   #CDC_PRAMDMA_BIT, cdc_dev_dest
+  move.b   #CDC_DEST_PRAMDMA, cdc_dev_dest
   move.l   #load_data_dma, (load_method_ptr)
   jbra     load_process
 
@@ -173,7 +174,7 @@ access_op_load_dma_prg:
  * \brief Load a file to PCM Wave Data memory via DMA
  */
 access_op_load_dma_pcm:
-  move.b   #CDC_PCMDMA_BIT, cdc_dev_dest
+  move.b   #CDC_DEST_PCMDMA, cdc_dev_dest
   move.l   #load_data_dma, (load_method_ptr)
 
 /**

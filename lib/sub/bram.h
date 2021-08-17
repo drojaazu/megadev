@@ -7,6 +7,7 @@
 #define MEGADEV__SUB_BRAM_H
 
 #include "sub/bram_def.h"
+#include "sub/sub_def.h"
 #include "types.h"
 
 u8 bram_work_ram[0x640];

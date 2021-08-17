@@ -6,7 +6,7 @@
 #ifndef MEGADEV__CD_MAIN_BOOT_H
 #define MEGADEV__CD_MAIN_BOOT_H
 
-#include "main/boot_def.h"
+#include "main/bootlib_def.h"
 #include "types.h"
 #include "vdp.h"
 

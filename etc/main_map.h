@@ -1,9 +1,10 @@
 /*
-	This was from an old version of the bram example, it MAY be a possible way of 
-	aliasing/redefining a symbol from eg the linker script for use in asm...
+        This was from an old version of the bram example, it MAY be a possible
+   way of aliasing/redefining a symbol from eg the linker script for use in
+   asm...
 */
 
-#include "main/boot_def.h"
+#include "main/bootlib_def.h"
 
 // We'll put all of our Main side memory layout definitions here so it's
 // easier to track them all in one place

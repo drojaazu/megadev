@@ -1,13 +1,13 @@
 
 #include "io_def.h"
 #include "ipx.h"
-#include "main/boot.h"
+#include "main/bootlib.h"
 #include "main/main.h"
 #include "system.h"
 #include "types.h"
 #include "vdp.h"
 
-extern u8 program_mode;
+extern u8 pcm_file;
 extern u8 res_rain_chr;
 extern u16 res_rain_chr_sz;
 extern Palette res_rain_pal;
@@ -31,6 +31,6 @@ void main() {
     process_particles();
   } while (!(*JOY1_PRESS & PAD_START_MSK));
 
-  program_mode = 1;
+  pcm_file = 1;
   return;
 }

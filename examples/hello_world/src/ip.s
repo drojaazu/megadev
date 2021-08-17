@@ -5,7 +5,7 @@
 
 #include "macros.s"
 #include "main/main_def.h"
-#include "main/boot_def.h"
+#include "main/bootlib_def.h"
 #include "vdp_macros.s"
 #include "vdp_def.h"
 #include "io_def.h"

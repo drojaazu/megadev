@@ -134,7 +134,7 @@ inline void BIOS_MSCPLAYT(u32 const * timecode) {
 /**
  * \sa MSCSEEK
  */
-inline void BIOS_MSCSEEK(u32 const * track_number) {
+inline void bios_mscseek(u32 const * track_number) {
   register u16 d0_fcode asm("d0") = MSCSEEK;
   register u32 a0_track_number asm("a0") = (u32)track_number;
   asm("jsr %p0" ::"i"(_CDBIOS), "d"(d0_fcode), "a"(a0_track_number));
@@ -159,7 +159,7 @@ inline void BIOS_ROMREAD(u32 const * sector_number) {
 };
 
 /**
- * ROMSEEK
+ * \sa ROMSEEK
  */
 inline void BIOS_ROMSEEK(u32 const * sector_number) {
   register u16 d0_fcode asm("d0") = ROMSEEK;

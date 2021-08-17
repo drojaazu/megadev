@@ -1,5 +1,5 @@
 #include "io_def.h"
-#include "main/boot.h"
+#include "main/bootlib.h"
 #include "main/main.h"
 #include "mmd_exec.h"
 #include "printval.h"
@@ -143,8 +143,6 @@ static void brmwrite_test() {
     printval_u16_c(writeval, val_buffer);
     boot_print(val_buffer, print_xy(23, 2));
   } while (!(*JOY1_PRESS & PAD_START_MSK));
-
-  
 
   *(u16 *)MAIN_2M_BASE = writeval;
 
