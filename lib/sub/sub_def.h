@@ -2,6 +2,9 @@
  * \file sub/sub_def.h
  * \brief Hardware memory map, Gate Array (GA) register, and entry vector
  * definitions for the Sub CPU side
+ *
+ * \note All bit definitions are byte relative and should be applied to the
+ * registers cast to an 8 bit type.
  */
 
 #ifndef MEGADEV__CD_SUB_DEF_H
@@ -60,13 +63,13 @@
 #define _TRACE 0x005F64
 #define _NOCOD0 0x005F6A
 #define _NOCOD1 0x005F70
-#define _LEVEL1 0x005F76
-#define _LEVEL2 0x005F7C /* INT 2 from Main CPU */
-#define _LEVEL3 0x005F82 /* GA Timer Interrupt */
-#define _LEVEL4 0x005F88
-#define _LEVEL5 0x005F8E
-#define _LEVEL6 0x005F94
-#define _LEVEL7 0x005F9A
+#define _SLEVEL1 0x005F76
+#define _SLEVEL2 0x005F7C /* INT 2 from Main CPU */
+#define _SLEVEL3 0x005F82 /* GA Timer Interrupt */
+#define _SLEVEL4 0x005F88
+#define _SLEVEL5 0x005F8E
+#define _SLEVEL6 0x005F94
+#define _SLEVEL7 0x005F9A
 #define _TRAP00 0x005FA0
 #define _TRAP01 0x005FA6
 #define _TRAP02 0x005FAC
@@ -107,6 +110,12 @@
  */
 #define _GA_RESET 0xFF8000
 
+#define LEDR_BIT 0
+#define LEDG_BIT 1
+
+#define LEDR_MSK 1 << LEDR_BIT
+#define LEFG_MSK 1 << LEDG_BIT
+
 /**
  * \def _GA_MEMMODE
  * \brief Word RAM Memory Mode / RAM Write Protect / Priority Mode
@@ -118,13 +127,37 @@
  * \param WP Write protect Sub CPU RAM
  * \param PM Priority Mode
  * \param MODE Word RAM layout
- * \details 0: 2M, ll1: 1M
+ * \details 0: 2M, 1: 1M
  * \param DMNA Main CPU will not access Word RAM
  * \param RET In 2M mode: Give Word RAM control to Main CPU;
  * In 1M mode: Change 1M block ownership
  *
  */
 #define _GA_MEMMODE 0xFF8002
+
+// ******* _GA_MEMMODE+1
+#define GA_RET_BIT 0
+#define GA_DMNA_BIT 1
+#define GA_MODE_BIT 2
+
+/**
+ * \def GA_RET_MSK
+ * \brief Give 2M Word RAM to Main / Switch 1M Word RAM access [_GA_MEMMODE+1
+ * bitmask]
+ */
+#define GA_RET_MSK (1 << GA_RET_BIT)
+
+/**
+ * \def GA_DMNA_MSK
+ * \brief Main CPU will not access Word RAM [_GA_MEMMODE+1 bitmask]
+ */
+#define GA_DMNA_MSK (1 << GA_DMNA_BIT)
+
+/**
+ * \def GA_MODE_MSK
+ * \brief Word RAM layout [_GA_MEMMODE+1 bitmask]
+ */
+#define GA_MODE_MSK (1 << GA_MODE_BIT)
 
 /**
  * \def _GA_CDCMODE
@@ -363,7 +396,7 @@
  * | |||||||||IEN6|IEN5|IEN4|IEN3|IEN2|IEN1| |
  *
  * IEN: Interrupt levels 1 to 6
- * \details RW: 0 - enable, 1 - disable
+ * \details RW: 1 - enable, 0 - disable
  */
 #define _GA_INTMASK 0xFF8032
 
@@ -384,21 +417,200 @@
 #define INT5_CDC_MSK 1 << INT5_CDC_BIT
 #define INT6_SUBCODE_MSK 1 << INT6_SUBCODE_BIT
 
+/**
+ * \def _GA_CDFADER
+ * \brief CD Audio Fader
+ * \details
+ * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
+ * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
+ * |EFDT|FD10|FD09|FD08|FD07|FD06|FD05|FD04|FD03|FD02|FD01|FD00|DEF1|DEF0|SSF| |
+ *
+ * FD: Fade volume data (bits 4 to 14)
+ * \details W: Volume data; see documentation for details on fade rate
+ *
+ * EFDT: End of Fade Data Transfer
+ * \details R: 1 - busy; fade data transferring; 0 - ready; data can be set
+ *
+ * DEF: De-Emphasis Flag
+ * \details: W: Set the emphasis flags; this is usually set to off as it is
+ * only used by some old classical CDs, per the documentation. See said
+ * documentation for more details.
+ *
+ * \details Official documentation indicates this register is not intended
+ * for direct access from user applications. Consider using the FDRSET and
+ * FDRCHG BIOS functions.
+ */
 #define _GA_CDFADER 0xFF8034
-#define _GA_CDDCONTROL 0xFF8036
+
+/**
+ * \def _GA_CDDCTRL
+ * \brief CDD Control
+ * \details
+ * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
+ * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
+ * | |||||||D/M| |||||HOCK|DRS|DTS|
+ *
+ * DTS: Data Transfer Status
+ * \details R: 1 - indicates data is being transferr from the communications
+ * buffer to the CDD; W: 0 - abort the communication transfer (only 0 can be
+ * written to this bit)
+ *
+ * DRS: Data Receive Status
+ * \details R: 1 - indicates data is being transferr from the CDD to the
+ * communications buffer; W: 0 - abort the communication transfer (only 0 can
+ * be written to this bit)
+ *
+ * HOCK: Host Clock
+ * \details: W: 1 - Starts communication with the CDD
+ *
+ * D/M: Data/Music
+ * \details: R: 0 - CDD data is audio data; 1 - CDD data is ROM data
+ *
+ * \details Official documentation indicates this register is not intended
+ * for direct access from user applications. Consider using BIOS functions
+ * for CD drive functionality.
+ */
+#define _GA_CDDCTRL 0xFF8036
+
+/**
+ * \def _GA_CDDCOMM0
+ * \details CDD Communications
+ *
+ * \details See the documentation for more info
+ *
+ * \details Official documentation indicates this register is not intended
+ * for direct access from user applications. Consider using BIOS functions
+ * for CD drive functionality.
+ */
 #define _GA_CDDCOMM0 0xFF8038
+
+/**
+ * \def _GA_CDDCOMM1
+ * \details CDD Communications
+ *
+ * \details See the documentation for more info
+ *
+ * \details Official documentation indicates this register is not intended
+ * for direct access from user applications. Consider using BIOS functions
+ * for CD drive functionality.
+ */
 #define _GA_CDDCOMM1 0xFF803A
+
+/**
+ * \def _GA_CDDCOMM2
+ * \details CDD Communications
+ *
+ * \details See the documentation for more info
+ *
+ * \details Official documentation indicates this register is not intended
+ * for direct access from user applications. Consider using BIOS functions
+ * for CD drive functionality.
+ */
 #define _GA_CDDCOMM2 0xFF803C
+
+/**
+ * \def _GA_CDDCOMM3
+ * \details CDD Communications
+ *
+ * \details See the documentation for more info
+ *
+ * \details Official documentation indicates this register is not intended
+ * for direct access from user applications. Consider using BIOS functions
+ * for CD drive functionality.
+ */
 #define _GA_CDDCOMM3 0xFF803E
+
+/**
+ * \def _GA_CDDCOMM4
+ * \details CDD Communications
+ *
+ * \details See the documentation for more info
+ *
+ * \details Official documentation indicates this register is not intended
+ * for direct access from user applications. Consider using BIOS functions
+ * for CD drive functionality.
+ */
 #define _GA_CDDCOMM4 0xFF8040
+
+/**
+ * \def _GA_CDDCOMM5
+ * \details CDD Communications
+ *
+ * \details See the documentation for more info
+ *
+ * \details Official documentation indicates this register is not intended
+ * for direct access from user applications. Consider using BIOS functions
+ * for CD drive functionality.
+ */
 #define _GA_CDDCOMM5 0xFF8042
+
+/**
+ * \def _GA_CDDCOMM6
+ * \details CDD Communications
+ *
+ * \details See the documentation for more info
+ *
+ * \details Official documentation indicates this register is not intended
+ * for direct access from user applications. Consider using BIOS functions
+ * for CD drive functionality.
+ */
 #define _GA_CDDCOMM6 0xFF8044
+
+/**
+ * \def _GA_CDDCOMM7
+ * \details CDD Communications
+ *
+ * \details See the documentation for more info
+ *
+ * \details Official documentation indicates this register is not intended
+ * for direct access from user applications. Consider using BIOS functions
+ * for CD drive functionality.
+ */
 #define _GA_CDDCOMM7 0xFF8046
+
+/**
+ * \def _GA_CDDCOMM8
+ * \details CDD Communications
+ *
+ * \details See the documentation for more info
+ *
+ * \details Official documentation indicates this register is not intended
+ * for direct access from user applications. Consider using BIOS functions
+ * for CD drive functionality.
+ */
 #define _GA_CDDCOMM8 0xFF8048
+
+/**
+ * \def _GA_CDDCOMM9
+ * \details CDD Communications
+ *
+ * \details See the documentation for more info
+ *
+ * \details Official documentation indicates this register is not intended
+ * for direct access from user applications. Consider using BIOS functions
+ * for CD drive functionality.
+ */
 #define _GA_CDDCOMM9 0xFF804A
+
+/**
+ * \def _GA_FONTCOLOR
+ * \brief Font Color
+ * \details
+ * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
+ * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
+ * | ||||||||SC13|SC12|SC11|SC10|SC03|SC02|SC01|SC00|
+ *
+ * SC00-03: Source Color Data for font bits set to 0
+ * \details RW: Palette entry
+ *
+ * SC10-13: Source Color Data for font bits set to 1
+ * \details RW: Palette entry
+ */
 #define _GA_FONTCOLOR 0xFF804C
+
 #define _GA_FONTBITS 0xFF804E
 #define _GA_FONTDATA 0xFF8050
+
 #define _GA_STAMPSIZE 0xFF8058
 #define _GA_STAMPMAPBASE 0xFF805A
 #define _GA_IMGBUFVSIZE 0xFF805C
@@ -439,23 +651,6 @@
 #define _PCM_PLAY_CH7_H 0xFF003B
 #define _PCM_PLAY_CH8_L 0xFF003D
 #define _PCM_PLAY_CH8_H 0xFF003F
-
-/**
- * GA_MEMMODE bit/mask settings
- * Note: GA registers are 16 bits, but we generally work with bit level tests
- * against the upper or lower byte specifically. Therefore the bit values and
- * masks are relative to their specific byte rather than the full width of the
- * register.
- */
-#define MEMMODE_RET_BIT 0
-#define MEMMODE_DMNA_BIT 1
-#define MEMMODE_MODE_BIT 2
-#define MEMMODE_PM_BIT 3
-
-#define MEMMODE_RET_MSK (1 << MEMMODE_RET_BIT)
-#define MEMMODE_DMNA_MSK (1 << MEMMODE_DMNA_BIT)
-#define MEMMODE_MODE_MSK (1 << MEMMODE_MODE_BIT)
-#define MEMMODE_PM_MSK (3 << MEMMODE_PM_BIT)
 
 /**
  * GA_CDCMODE bit/mask settings

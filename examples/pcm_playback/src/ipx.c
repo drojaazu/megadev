@@ -6,7 +6,7 @@
 #include "system.h"
 #include "vdp.h"
 
-u8 pcm_file;
+u8 global_mode;
 
 void play_pcm() {
   *GA_COMCMD0 = 0x10;

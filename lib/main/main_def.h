@@ -2,6 +2,9 @@
  * \file main/main_def.h
  * \brief Hardware memory map, Gate Array (GA) register, and entry vector
  * definitions for the Main CPU side
+ *
+ * \note All bit definitions are byte relative and should be applied to the
+ * registers cast to an 8 bit type.
  */
 
 #ifndef MEGADEV__CD_MAIN_DEF_H
@@ -89,16 +92,30 @@
  */
 #define _GA_RESET 0xA12000
 
-//_GA_RESET
+// ******* _GA_RESET
 #define GA_RESET_IFL2_BIT 0
 
-// _GA_RESET+1
+// ******* _GA_RESET+1
 #define GA_RESET_SRES_BIT 0
 #define GA_RESET_SBRQ_BIT 1
 
-#define GA_RESET_IFL2_MSK 1 << GA_RESET_IFL2_BIT // Trigger INT2 on Sub CPU
-#define GA_RESET_SRES_MSK 1 << GA_RESET_SRES_BIT // Sub CPU reset
-#define GA_RESET_SBRQ_MSK 1 << GA_RESET_SBRQ_BIT // Sub CPU bus request
+/**
+ * \def GA_RESET_IFL2_MSK
+ * \brief Send INT2 trigger to Sub CPU [_GA_RESET bitmask]
+ */
+#define GA_RESET_IFL2_MSK (1 << GA_RESET_IFL2_BIT)
+
+/**
+ * \def GA_RESET_SRES_MSK
+ * \brief Sub CPU reset [_GA_RESET+1 bitmask]
+ */
+#define GA_RESET_SRES_MSK (1 << GA_RESET_SRES_BIT)
+
+/**
+ * \def GA_RESET_SBRQ_MSK
+ * \brief Sub CPU bus access request [_GA_RESET+1 bitmask]
+ */
+#define GA_RESET_SBRQ_MSK (1 << GA_RESET_SBRQ_BIT)
 
 /**
  * \def _GA_MEMMODE
@@ -157,9 +174,9 @@
 #define MEMMODE_WP6_BIT 14
 #define MEMMODE_WP7_BIT 15
 
-#define MEMMODE_RET_MSK 1 << MEMMODE_RET_BIT
+#define GA_RET_MSK 1 << MEMMODE_RET_BIT
 #define MEMMODE_DMNA_MSK 1 << MEMMODE_DMNA_BIT
-#define MEMMODE_MODE_MSK 1 << MEMMODE_MODE_BIT
+#define GA_MODE_MSK 1 << MEMMODE_MODE_BIT
 #define MEMMODE_BK0_MSK 1 << MEMMODE_BK0_BIT
 #define MEMMODE_BK1_MSK 1 << MEMMODE_BK1_BIT
 #define MEMMODE_WP0_MSK 1 << MEMMODE_WP0_BIT

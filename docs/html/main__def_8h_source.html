@@ -72,140 +72,142 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <a href="main__def_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#ifndef MEGADEV__CD_MAIN_DEF_H</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#define MEGADEV__CD_MAIN_DEF_H</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#define SYSTEMUSE_BASE 0xfffd00</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="main__def_8h.html#ac2bd451a7ae2b43989b830c62248334f">   15</a></span>&#160;<span class="preprocessor">#define _WORK_RAM 0xff0000</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="main__def_8h.html#a66ca5f8b4c1a36faa998de4742b8f09e">   20</a></span>&#160;<span class="preprocessor">#define _MAIN_2M_BASE 0x200000 </span><span class="comment">/* word RAM base in 2M mode */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#define _MAIN_1M_BASE 0x200000 </span><span class="comment">/* word RAM base in 1M mode */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#define _MAIN_1M_VRAM 0x220000 </span><span class="comment">/* VDP tiles for 1M mode */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="main__def_8h.html#a95233b95569a2fc5fa9fd2c8f4f5561f">   27</a></span>&#160;<span class="preprocessor">#define _MAIN_PRGRAM 0x20000</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="main__def_8h.html#a90d5d69e687b1a1789aef560a3899c13">   32</a></span>&#160;<span class="preprocessor">#define _IP_ENTRY 0xff0000</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="main__def_8h.html#ae0b867da2bcc6a8910ba93baec7380ec">   37</a></span>&#160;<span class="preprocessor">#define _RESET 0xfffd00</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#define _MLEVEL6 0xfffd06 </span><span class="comment">/* VBLANK interrupt */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="preprocessor">#define _MLEVEL4 0xfffd0c </span><span class="comment">/* HBLANK interrupt */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#define _MLEVEL2 0xfffd12 </span><span class="comment">/* External port interrupt */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="preprocessor">#define _MTRAP00 0xfffd18</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#define _MTRAP01 0xfffd1e</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor">#define _MTRAP02 0xfffd24</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor">#define _MTRAP03 0xfffd2a</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">#define _MTRAP04 0xfffd30</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor">#define _MTRAP05 0xfffd36</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="preprocessor">#define _MTRAP06 0xfffd3c</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">#define _MTRAP07 0xfffd42</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="preprocessor">#define _MTRAP08 0xfffd48</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="preprocessor">#define _MTRAP09 0xfffd4e</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="preprocessor">#define _MTRAP10 0xfffd54</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="preprocessor">#define _MTRAP11 0xfffd5a</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="preprocessor">#define _MTRAP12 0xfffd60</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="preprocessor">#define _MTRAP13 0xfffd66</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="preprocessor">#define _MTRAP14 0xfffd6c</span></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="preprocessor">#define _MTRAP15 0xfffd72</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="preprocessor">#define _MONKERR 0xfffd78 </span><span class="comment">// CHK Instruction</span></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">// the duplicate addresses on the next two entries is intentional</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="preprocessor">#define _MADRERR 0xfffd7e</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="preprocessor">#define _MCODERR 0xfffd7e</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="preprocessor">#define _MDIVERR 0xfffd84 </span><span class="comment">// Zero Divide</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="preprocessor">#define _MTRPERR 0xfffd8a </span><span class="comment">// TRAPV Instruction</span></div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="preprocessor">#define _MNOCOD0 0xfffd90 </span><span class="comment">// Line 1010</span></div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="preprocessor">#define _MNOCOD1 0xfffd96 </span><span class="comment">// Line 1111</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="preprocessor">#define _MSPVERR 0xfffd9c </span><span class="comment">// Priv. Violation</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="preprocessor">#define _MTRACE 0xfffda2  </span><span class="comment">// Trace</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="preprocessor">#define _VINT_EX 0xfffda8</span></div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="preprocessor">#define _MBURAM 0xfffdae</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
-<div class="line"><a name="l00089"></a><span class="lineno"><a class="line" href="main__def_8h.html#a6af86a5098b8dd712ae4e4716bbcbf3d">   89</a></span>&#160;<span class="preprocessor">#define _GA_RESET 0xA12000</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="comment">//_GA_RESET</span></div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="preprocessor">#define GA_RESET_IFL2_BIT 0</span></div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment">// _GA_RESET+1</span></div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="preprocessor">#define GA_RESET_SRES_BIT 0</span></div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="preprocessor">#define GA_RESET_SBRQ_BIT 1</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#ifndef MEGADEV__CD_MAIN_DEF_H</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#define MEGADEV__CD_MAIN_DEF_H</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#define SYSTEMUSE_BASE 0xfffd00</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
+<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="main__def_8h.html#ac2bd451a7ae2b43989b830c62248334f">   18</a></span>&#160;<span class="preprocessor">#define _WORK_RAM 0xff0000</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="main__def_8h.html#a66ca5f8b4c1a36faa998de4742b8f09e">   23</a></span>&#160;<span class="preprocessor">#define _MAIN_2M_BASE 0x200000 </span><span class="comment">/* word RAM base in 2M mode */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#define _MAIN_1M_BASE 0x200000 </span><span class="comment">/* word RAM base in 1M mode */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#define _MAIN_1M_VRAM 0x220000 </span><span class="comment">/* VDP tiles for 1M mode */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="main__def_8h.html#a95233b95569a2fc5fa9fd2c8f4f5561f">   30</a></span>&#160;<span class="preprocessor">#define _MAIN_PRGRAM 0x20000</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
+<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="main__def_8h.html#a90d5d69e687b1a1789aef560a3899c13">   35</a></span>&#160;<span class="preprocessor">#define _IP_ENTRY 0xff0000</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
+<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="main__def_8h.html#ae0b867da2bcc6a8910ba93baec7380ec">   40</a></span>&#160;<span class="preprocessor">#define _RESET 0xfffd00</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="preprocessor">#define _MLEVEL6 0xfffd06 </span><span class="comment">/* VBLANK interrupt */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#define _MLEVEL4 0xfffd0c </span><span class="comment">/* HBLANK interrupt */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor">#define _MLEVEL2 0xfffd12 </span><span class="comment">/* External port interrupt */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor">#define _MTRAP00 0xfffd18</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">#define _MTRAP01 0xfffd1e</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor">#define _MTRAP02 0xfffd24</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="preprocessor">#define _MTRAP03 0xfffd2a</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">#define _MTRAP04 0xfffd30</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="preprocessor">#define _MTRAP05 0xfffd36</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="preprocessor">#define _MTRAP06 0xfffd3c</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="preprocessor">#define _MTRAP07 0xfffd42</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="preprocessor">#define _MTRAP08 0xfffd48</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="preprocessor">#define _MTRAP09 0xfffd4e</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="preprocessor">#define _MTRAP10 0xfffd54</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="preprocessor">#define _MTRAP11 0xfffd5a</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="preprocessor">#define _MTRAP12 0xfffd60</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="preprocessor">#define _MTRAP13 0xfffd66</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="preprocessor">#define _MTRAP14 0xfffd6c</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="preprocessor">#define _MTRAP15 0xfffd72</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="preprocessor">#define _MONKERR 0xfffd78 </span><span class="comment">// CHK Instruction</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">// the duplicate addresses on the next two entries is intentional</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="preprocessor">#define _MADRERR 0xfffd7e</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="preprocessor">#define _MCODERR 0xfffd7e</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="preprocessor">#define _MDIVERR 0xfffd84 </span><span class="comment">// Zero Divide</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="preprocessor">#define _MTRPERR 0xfffd8a </span><span class="comment">// TRAPV Instruction</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="preprocessor">#define _MNOCOD0 0xfffd90 </span><span class="comment">// Line 1010</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="preprocessor">#define _MNOCOD1 0xfffd96 </span><span class="comment">// Line 1111</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="preprocessor">#define _MSPVERR 0xfffd9c </span><span class="comment">// Priv. Violation</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="preprocessor">#define _MTRACE 0xfffda2  </span><span class="comment">// Trace</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="preprocessor">#define _VINT_EX 0xfffda8</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="preprocessor">#define _MBURAM 0xfffdae</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
+<div class="line"><a name="l00093"></a><span class="lineno"><a class="line" href="main__def_8h.html#a6af86a5098b8dd712ae4e4716bbcbf3d">   93</a></span>&#160;<span class="preprocessor">#define _GA_RESET 0xA12000</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160; </div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment">// ******* _GA_RESET</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="preprocessor">#define GA_RESET_IFL2_BIT 0</span></div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="preprocessor">#define GA_RESET_IFL2_MSK 1 &lt;&lt; GA_RESET_IFL2_BIT </span><span class="comment">// Trigger INT2 on Sub CPU</span></div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="preprocessor">#define GA_RESET_SRES_MSK 1 &lt;&lt; GA_RESET_SRES_BIT </span><span class="comment">// Sub CPU reset</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="preprocessor">#define GA_RESET_SBRQ_MSK 1 &lt;&lt; GA_RESET_SBRQ_BIT </span><span class="comment">// Sub CPU bus request</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="comment">// ******* _GA_RESET+1</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="preprocessor">#define GA_RESET_SRES_BIT 0</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="preprocessor">#define GA_RESET_SBRQ_BIT 1</span></div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
-<div class="line"><a name="l00143"></a><span class="lineno"><a class="line" href="main__def_8h.html#ae39be9cf2dbd3f0b92d87fc946e20c94">  143</a></span>&#160;<span class="preprocessor">#define _GA_MEMMODE 0xA12002</span></div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160; </div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;<span class="preprocessor">#define MEMMODE_RET_BIT 0</span></div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;<span class="preprocessor">#define MEMMODE_DMNA_BIT 1</span></div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;<span class="preprocessor">#define MEMMODE_MODE_BIT 2</span></div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;<span class="preprocessor">#define MEMMODE_BK0_BIT 6</span></div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;<span class="preprocessor">#define MEMMODE_BK1_BIT 7</span></div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;<span class="preprocessor">#define MEMMODE_WP0_BIT 8</span></div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;<span class="preprocessor">#define MEMMODE_WP1_BIT 9</span></div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="preprocessor">#define MEMMODE_WP2_BIT 10</span></div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;<span class="preprocessor">#define MEMMODE_WP3_BIT 11</span></div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;<span class="preprocessor">#define MEMMODE_WP4_BIT 12</span></div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;<span class="preprocessor">#define MEMMODE_WP5_BIT 13</span></div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;<span class="preprocessor">#define MEMMODE_WP6_BIT 14</span></div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;<span class="preprocessor">#define MEMMODE_WP7_BIT 15</span></div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;<span class="preprocessor">#define MEMMODE_RET_MSK 1 &lt;&lt; MEMMODE_RET_BIT</span></div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;<span class="preprocessor">#define MEMMODE_DMNA_MSK 1 &lt;&lt; MEMMODE_DMNA_BIT</span></div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;<span class="preprocessor">#define MEMMODE_MODE_MSK 1 &lt;&lt; MEMMODE_MODE_BIT</span></div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;<span class="preprocessor">#define MEMMODE_BK0_MSK 1 &lt;&lt; MEMMODE_BK0_BIT</span></div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;<span class="preprocessor">#define MEMMODE_BK1_MSK 1 &lt;&lt; MEMMODE_BK1_BIT</span></div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<span class="preprocessor">#define MEMMODE_WP0_MSK 1 &lt;&lt; MEMMODE_WP0_BIT</span></div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;<span class="preprocessor">#define MEMMODE_WP1_MSK 1 &lt;&lt; MEMMODE_WP1_BIT</span></div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;<span class="preprocessor">#define MEMMODE_WP2_MSK 1 &lt;&lt; MEMMODE_WP2_BIT</span></div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="preprocessor">#define MEMMODE_WP3_MSK 1 &lt;&lt; MEMMODE_WP3_BIT</span></div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;<span class="preprocessor">#define MEMMODE_WP4_MSK 1 &lt;&lt; MEMMODE_WP4_BIT</span></div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;<span class="preprocessor">#define MEMMODE_WP5_MSK 1 &lt;&lt; MEMMODE_WP5_BIT</span></div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;<span class="preprocessor">#define MEMMODE_WP6_MSK 1 &lt;&lt; MEMMODE_WP6_BIT</span></div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;<span class="preprocessor">#define MEMMODE_WP7_MSK 1 &lt;&lt; MEMMODE_WP7_BIT</span></div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160; </div>
-<div class="line"><a name="l00196"></a><span class="lineno"><a class="line" href="main__def_8h.html#a74d2ccc28a8b1f5de97c85addbed743e">  196</a></span>&#160;<span class="preprocessor">#define _GA_CDCMODE 0xA12004</span></div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160; </div>
-<div class="line"><a name="l00212"></a><span class="lineno"><a class="line" href="main__def_8h.html#a14edb10abf772b1dbd5a045e67483b6a">  212</a></span>&#160;<span class="preprocessor">#define _GA_HINTVECT 0xA12006</span></div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160; </div>
-<div class="line"><a name="l00226"></a><span class="lineno"><a class="line" href="main__def_8h.html#a095776bde8179405d723ccb129c58454">  226</a></span>&#160;<span class="preprocessor">#define _GA_CDCHOSTDATA 0xA12008 </span><span class="comment">/* 16-bit CDC host data */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160; </div>
-<div class="line"><a name="l00242"></a><span class="lineno"><a class="line" href="main__def_8h.html#a17ed173b285444835464534c789669fa">  242</a></span>&#160;<span class="preprocessor">#define _GA_STOPWATCH 0xA1200C</span></div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160; </div>
-<div class="line"><a name="l00255"></a><span class="lineno"><a class="line" href="main__def_8h.html#ae6c4df6c60d0ea60ebbde8b4fc70c192">  255</a></span>&#160;<span class="preprocessor">#define _GA_COMFLAGS 0xA1200E</span></div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160; </div>
-<div class="line"><a name="l00262"></a><span class="lineno"><a class="line" href="main__def_8h.html#a88e6d9cb7635c90026d9d534f7a6052d">  262</a></span>&#160;<span class="preprocessor">#define _GA_COMCMD0 0xA12010</span></div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160; </div>
-<div class="line"><a name="l00269"></a><span class="lineno"><a class="line" href="main__def_8h.html#a25da6f7b99e604326e5e906014fcaee6">  269</a></span>&#160;<span class="preprocessor">#define _GA_COMCMD1 0xA12012</span></div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160; </div>
-<div class="line"><a name="l00276"></a><span class="lineno"><a class="line" href="main__def_8h.html#a5453f653e7ff6284cb033dd526a3077a">  276</a></span>&#160;<span class="preprocessor">#define _GA_COMCMD2 0xA12014</span></div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160; </div>
-<div class="line"><a name="l00283"></a><span class="lineno"><a class="line" href="main__def_8h.html#a581b8f55e0e80f3089c406cb806b40a9">  283</a></span>&#160;<span class="preprocessor">#define _GA_COMCMD3 0xA12016</span></div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160; </div>
-<div class="line"><a name="l00290"></a><span class="lineno"><a class="line" href="main__def_8h.html#a160448a6e145b2023ebfca037984da2e">  290</a></span>&#160;<span class="preprocessor">#define _GA_COMCMD4 0xA12018</span></div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160; </div>
-<div class="line"><a name="l00296"></a><span class="lineno"><a class="line" href="main__def_8h.html#ad207d70ea3fe63b80c21a9c537192818">  296</a></span>&#160;<span class="preprocessor">#define _GA_COMCMD5 0xA1201A</span></div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160; </div>
-<div class="line"><a name="l00303"></a><span class="lineno"><a class="line" href="main__def_8h.html#a53091a3e5f3a7f1b603e45b3defb7d76">  303</a></span>&#160;<span class="preprocessor">#define _GA_COMCMD6 0xA1201C</span></div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160; </div>
-<div class="line"><a name="l00310"></a><span class="lineno"><a class="line" href="main__def_8h.html#aa5f3656f65ebe6e5c964309232bf700a">  310</a></span>&#160;<span class="preprocessor">#define _GA_COMCMD7 0xA1201E</span></div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160; </div>
-<div class="line"><a name="l00317"></a><span class="lineno"><a class="line" href="main__def_8h.html#aa8b0c18008d8e5cd8bd6fcabe224fb2f">  317</a></span>&#160;<span class="preprocessor">#define _GA_COMSTAT0 0xA12020</span></div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160; </div>
-<div class="line"><a name="l00324"></a><span class="lineno"><a class="line" href="main__def_8h.html#afcbfddd85b811511a10d3c6a3f08d713">  324</a></span>&#160;<span class="preprocessor">#define _GA_COMSTAT1 0xA12022</span></div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160; </div>
-<div class="line"><a name="l00331"></a><span class="lineno"><a class="line" href="main__def_8h.html#a72dfceb9fe292e8e4203e1018e56a872">  331</a></span>&#160;<span class="preprocessor">#define _GA_COMSTAT2 0xA12024</span></div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160; </div>
-<div class="line"><a name="l00338"></a><span class="lineno"><a class="line" href="main__def_8h.html#a384de5b587816d103245f89debe1f3c1">  338</a></span>&#160;<span class="preprocessor">#define _GA_COMSTAT3 0xA12026</span></div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160; </div>
-<div class="line"><a name="l00345"></a><span class="lineno"><a class="line" href="main__def_8h.html#a0444941ec32d860d53d3089f19727ac4">  345</a></span>&#160;<span class="preprocessor">#define _GA_COMSTAT4 0xA12028</span></div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160; </div>
-<div class="line"><a name="l00352"></a><span class="lineno"><a class="line" href="main__def_8h.html#a8ff2c048592a6ee4ec2c8cf537266a13">  352</a></span>&#160;<span class="preprocessor">#define _GA_COMSTAT5 0xA1202A</span></div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160; </div>
-<div class="line"><a name="l00359"></a><span class="lineno"><a class="line" href="main__def_8h.html#a1ff9af8a985404dd2ae8563ca78a5864">  359</a></span>&#160;<span class="preprocessor">#define _GA_COMSTAT6 0xA1202C</span></div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160; </div>
-<div class="line"><a name="l00366"></a><span class="lineno"><a class="line" href="main__def_8h.html#a4e1cadd8ae5567117c46d35a34254560">  366</a></span>&#160;<span class="preprocessor">#define _GA_COMSTAT7 0xA1202E</span></div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160; </div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno"><a class="line" href="main__def_8h.html#a4f6cfbe156338934f526be9805005503">  106</a></span>&#160;<span class="preprocessor">#define GA_RESET_IFL2_MSK (1 &lt;&lt; GA_RESET_IFL2_BIT)</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
+<div class="line"><a name="l00112"></a><span class="lineno"><a class="line" href="main__def_8h.html#ad58bf8a0d4a0226dc2a39e758f626cee">  112</a></span>&#160;<span class="preprocessor">#define GA_RESET_SRES_MSK (1 &lt;&lt; GA_RESET_SRES_BIT)</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
+<div class="line"><a name="l00118"></a><span class="lineno"><a class="line" href="main__def_8h.html#abe0d82ab5e0696a24e154631a7d42b75">  118</a></span>&#160;<span class="preprocessor">#define GA_RESET_SBRQ_MSK (1 &lt;&lt; GA_RESET_SBRQ_BIT)</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
+<div class="line"><a name="l00161"></a><span class="lineno"><a class="line" href="main__def_8h.html#ae39be9cf2dbd3f0b92d87fc946e20c94">  161</a></span>&#160;<span class="preprocessor">#define _GA_MEMMODE 0xA12002</span></div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160; </div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;<span class="preprocessor">#define MEMMODE_RET_BIT 0</span></div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<span class="preprocessor">#define MEMMODE_DMNA_BIT 1</span></div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;<span class="preprocessor">#define MEMMODE_MODE_BIT 2</span></div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;<span class="preprocessor">#define MEMMODE_BK0_BIT 6</span></div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="preprocessor">#define MEMMODE_BK1_BIT 7</span></div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;<span class="preprocessor">#define MEMMODE_WP0_BIT 8</span></div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;<span class="preprocessor">#define MEMMODE_WP1_BIT 9</span></div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;<span class="preprocessor">#define MEMMODE_WP2_BIT 10</span></div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;<span class="preprocessor">#define MEMMODE_WP3_BIT 11</span></div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="preprocessor">#define MEMMODE_WP4_BIT 12</span></div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="preprocessor">#define MEMMODE_WP5_BIT 13</span></div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;<span class="preprocessor">#define MEMMODE_WP6_BIT 14</span></div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;<span class="preprocessor">#define MEMMODE_WP7_BIT 15</span></div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160; </div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;<span class="preprocessor">#define GA_RET_MSK 1 &lt;&lt; MEMMODE_RET_BIT</span></div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;<span class="preprocessor">#define MEMMODE_DMNA_MSK 1 &lt;&lt; MEMMODE_DMNA_BIT</span></div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;<span class="preprocessor">#define GA_MODE_MSK 1 &lt;&lt; MEMMODE_MODE_BIT</span></div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;<span class="preprocessor">#define MEMMODE_BK0_MSK 1 &lt;&lt; MEMMODE_BK0_BIT</span></div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;<span class="preprocessor">#define MEMMODE_BK1_MSK 1 &lt;&lt; MEMMODE_BK1_BIT</span></div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;<span class="preprocessor">#define MEMMODE_WP0_MSK 1 &lt;&lt; MEMMODE_WP0_BIT</span></div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;<span class="preprocessor">#define MEMMODE_WP1_MSK 1 &lt;&lt; MEMMODE_WP1_BIT</span></div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;<span class="preprocessor">#define MEMMODE_WP2_MSK 1 &lt;&lt; MEMMODE_WP2_BIT</span></div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;<span class="preprocessor">#define MEMMODE_WP3_MSK 1 &lt;&lt; MEMMODE_WP3_BIT</span></div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;<span class="preprocessor">#define MEMMODE_WP4_MSK 1 &lt;&lt; MEMMODE_WP4_BIT</span></div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;<span class="preprocessor">#define MEMMODE_WP5_MSK 1 &lt;&lt; MEMMODE_WP5_BIT</span></div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;<span class="preprocessor">#define MEMMODE_WP6_MSK 1 &lt;&lt; MEMMODE_WP6_BIT</span></div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;<span class="preprocessor">#define MEMMODE_WP7_MSK 1 &lt;&lt; MEMMODE_WP7_BIT</span></div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160; </div>
+<div class="line"><a name="l00214"></a><span class="lineno"><a class="line" href="main__def_8h.html#a74d2ccc28a8b1f5de97c85addbed743e">  214</a></span>&#160;<span class="preprocessor">#define _GA_CDCMODE 0xA12004</span></div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160; </div>
+<div class="line"><a name="l00230"></a><span class="lineno"><a class="line" href="main__def_8h.html#a14edb10abf772b1dbd5a045e67483b6a">  230</a></span>&#160;<span class="preprocessor">#define _GA_HINTVECT 0xA12006</span></div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160; </div>
+<div class="line"><a name="l00244"></a><span class="lineno"><a class="line" href="main__def_8h.html#a095776bde8179405d723ccb129c58454">  244</a></span>&#160;<span class="preprocessor">#define _GA_CDCHOSTDATA 0xA12008 </span><span class="comment">/* 16-bit CDC host data */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160; </div>
+<div class="line"><a name="l00260"></a><span class="lineno"><a class="line" href="main__def_8h.html#a17ed173b285444835464534c789669fa">  260</a></span>&#160;<span class="preprocessor">#define _GA_STOPWATCH 0xA1200C</span></div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160; </div>
+<div class="line"><a name="l00273"></a><span class="lineno"><a class="line" href="main__def_8h.html#ae6c4df6c60d0ea60ebbde8b4fc70c192">  273</a></span>&#160;<span class="preprocessor">#define _GA_COMFLAGS 0xA1200E</span></div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160; </div>
+<div class="line"><a name="l00280"></a><span class="lineno"><a class="line" href="main__def_8h.html#a88e6d9cb7635c90026d9d534f7a6052d">  280</a></span>&#160;<span class="preprocessor">#define _GA_COMCMD0 0xA12010</span></div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160; </div>
+<div class="line"><a name="l00287"></a><span class="lineno"><a class="line" href="main__def_8h.html#a25da6f7b99e604326e5e906014fcaee6">  287</a></span>&#160;<span class="preprocessor">#define _GA_COMCMD1 0xA12012</span></div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160; </div>
+<div class="line"><a name="l00294"></a><span class="lineno"><a class="line" href="main__def_8h.html#a5453f653e7ff6284cb033dd526a3077a">  294</a></span>&#160;<span class="preprocessor">#define _GA_COMCMD2 0xA12014</span></div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160; </div>
+<div class="line"><a name="l00301"></a><span class="lineno"><a class="line" href="main__def_8h.html#a581b8f55e0e80f3089c406cb806b40a9">  301</a></span>&#160;<span class="preprocessor">#define _GA_COMCMD3 0xA12016</span></div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160; </div>
+<div class="line"><a name="l00308"></a><span class="lineno"><a class="line" href="main__def_8h.html#a160448a6e145b2023ebfca037984da2e">  308</a></span>&#160;<span class="preprocessor">#define _GA_COMCMD4 0xA12018</span></div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160; </div>
+<div class="line"><a name="l00314"></a><span class="lineno"><a class="line" href="main__def_8h.html#ad207d70ea3fe63b80c21a9c537192818">  314</a></span>&#160;<span class="preprocessor">#define _GA_COMCMD5 0xA1201A</span></div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160; </div>
+<div class="line"><a name="l00321"></a><span class="lineno"><a class="line" href="main__def_8h.html#a53091a3e5f3a7f1b603e45b3defb7d76">  321</a></span>&#160;<span class="preprocessor">#define _GA_COMCMD6 0xA1201C</span></div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160; </div>
+<div class="line"><a name="l00328"></a><span class="lineno"><a class="line" href="main__def_8h.html#aa5f3656f65ebe6e5c964309232bf700a">  328</a></span>&#160;<span class="preprocessor">#define _GA_COMCMD7 0xA1201E</span></div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160; </div>
+<div class="line"><a name="l00335"></a><span class="lineno"><a class="line" href="main__def_8h.html#aa8b0c18008d8e5cd8bd6fcabe224fb2f">  335</a></span>&#160;<span class="preprocessor">#define _GA_COMSTAT0 0xA12020</span></div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160; </div>
+<div class="line"><a name="l00342"></a><span class="lineno"><a class="line" href="main__def_8h.html#afcbfddd85b811511a10d3c6a3f08d713">  342</a></span>&#160;<span class="preprocessor">#define _GA_COMSTAT1 0xA12022</span></div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160; </div>
+<div class="line"><a name="l00349"></a><span class="lineno"><a class="line" href="main__def_8h.html#a72dfceb9fe292e8e4203e1018e56a872">  349</a></span>&#160;<span class="preprocessor">#define _GA_COMSTAT2 0xA12024</span></div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160; </div>
+<div class="line"><a name="l00356"></a><span class="lineno"><a class="line" href="main__def_8h.html#a384de5b587816d103245f89debe1f3c1">  356</a></span>&#160;<span class="preprocessor">#define _GA_COMSTAT3 0xA12026</span></div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160; </div>
+<div class="line"><a name="l00363"></a><span class="lineno"><a class="line" href="main__def_8h.html#a0444941ec32d860d53d3089f19727ac4">  363</a></span>&#160;<span class="preprocessor">#define _GA_COMSTAT4 0xA12028</span></div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160; </div>
+<div class="line"><a name="l00370"></a><span class="lineno"><a class="line" href="main__def_8h.html#a8ff2c048592a6ee4ec2c8cf537266a13">  370</a></span>&#160;<span class="preprocessor">#define _GA_COMSTAT5 0xA1202A</span></div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160; </div>
+<div class="line"><a name="l00377"></a><span class="lineno"><a class="line" href="main__def_8h.html#a1ff9af8a985404dd2ae8563ca78a5864">  377</a></span>&#160;<span class="preprocessor">#define _GA_COMSTAT6 0xA1202C</span></div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160; </div>
+<div class="line"><a name="l00384"></a><span class="lineno"><a class="line" href="main__def_8h.html#a4e1cadd8ae5567117c46d35a34254560">  384</a></span>&#160;<span class="preprocessor">#define _GA_COMSTAT7 0xA1202E</span></div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160; </div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;<span class="preprocessor">#endif</span></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

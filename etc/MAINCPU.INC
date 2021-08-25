@@ -192,9 +192,9 @@ RESET_IFL2_BIT  EQU   8
 ;-----------------------------------------------------------------------
 ; MAIN-CPU MEMMODE REGISTER BIT NUMBERS & MASKS
 ;-----------------------------------------------------------------------
-MEMMODE_RET_MSK  EQU   $0001
+GA_RET_MSK  EQU   $0001
 MEMMODE_DMNA_MSK EQU   $0002
-MEMMODE_MODE_MSK EQU   $0004
+GA_MODE_MSK EQU   $0004
 MEMMODE_BK_MSK   EQU   $00C0
 MEMMODE_WP0_MSK  EQU   $0100
 MEMMODE_WP1_MSK  EQU   $0200

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['dmatransfer_391',['DmaTransfer',['../structDmaTransfer.html',1,'']]],
-  ['drvinitparams_392',['DrvinitParams',['../structDrvinitParams.html',1,'']]]
+  ['dmatransfer_375',['DmaTransfer',['../structDmaTransfer.html',1,'']]],
+  ['drvinitparams_376',['DrvinitParams',['../structDrvinitParams.html',1,'']]]
 ];

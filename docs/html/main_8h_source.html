@@ -121,7 +121,7 @@ $(function() {
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  <span class="keyword">asm</span>(R<span class="stringliteral">&quot;(</span></div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="stringliteral">1:btst %0, %p1</span></div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="stringliteral">  beq 1b</span></div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="stringliteral">)&quot; ::</span><span class="stringliteral">&quot;i&quot;</span>(<a class="code" href="sub__def_8h.html#a9479e4ae1fd745afbcacd61430b3f204">MEMMODE_RET_BIT</a>),</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="stringliteral">)&quot; ::</span><span class="stringliteral">&quot;i&quot;</span>(MEMMODE_RET_BIT),</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;      <span class="stringliteral">&quot;i&quot;</span>(<a class="code" href="main__def_8h.html#ae39be9cf2dbd3f0b92d87fc946e20c94">_GA_MEMMODE</a> + 1));</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;}</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
@@ -148,13 +148,12 @@ $(function() {
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;}</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="amain_8h_html_a1212283da0ba8d9d1c0f49a4feb512ac"><div class="ttname"><a href="main_8h.html#a1212283da0ba8d9d1c0f49a4feb512ac">grant_2m</a></div><div class="ttdeci">void grant_2m()</div><div class="ttdef"><b>Definition:</b> main.h:72</div></div>
-<div class="ttc" id="amain_8h_html_a6cdaceba8f94f0f36ee82e6732242c14"><div class="ttname"><a href="main_8h.html#a6cdaceba8f94f0f36ee82e6732242c14">wait_2m</a></div><div class="ttdeci">void wait_2m()</div><div class="ttdef"><b>Definition:</b> main.h:60</div></div>
+<div class="ttc" id="amain_8h_html_a1212283da0ba8d9d1c0f49a4feb512ac"><div class="ttname"><a href="main_8h.html#a1212283da0ba8d9d1c0f49a4feb512ac">grant_2m</a></div><div class="ttdeci">void grant_2m()</div><div class="ttdoc">Grant 2M Word RAM access to the Main CPU.</div><div class="ttdef"><b>Definition:</b> main.h:72</div></div>
+<div class="ttc" id="amain_8h_html_a6cdaceba8f94f0f36ee82e6732242c14"><div class="ttname"><a href="main_8h.html#a6cdaceba8f94f0f36ee82e6732242c14">wait_2m</a></div><div class="ttdeci">void wait_2m()</div><div class="ttdoc">Wait for Sub CPU access to 2M Word RAM.</div><div class="ttdef"><b>Definition:</b> main.h:60</div></div>
 <div class="ttc" id="amain_8h_html_afd305b52e1ed7c443ebf5786aef9d7d9"><div class="ttname"><a href="main_8h.html#afd305b52e1ed7c443ebf5786aef9d7d9">clear_comm_regs</a></div><div class="ttdeci">void clear_comm_regs()</div><div class="ttdef"><b>Definition:</b> main.h:85</div></div>
 <div class="ttc" id="amain__def_8h_html"><div class="ttname"><a href="main__def_8h.html">main_def.h</a></div><div class="ttdoc">Hardware memory map, Gate Array (GA) register, and entry vector definitions for the Main CPU side.</div></div>
-<div class="ttc" id="amain__def_8h_html_a88e6d9cb7635c90026d9d534f7a6052d"><div class="ttname"><a href="main__def_8h.html#a88e6d9cb7635c90026d9d534f7a6052d">_GA_COMCMD0</a></div><div class="ttdeci">#define _GA_COMCMD0</div><div class="ttdoc">Communication command (Main -&gt; Sub)</div><div class="ttdef"><b>Definition:</b> main_def.h:262</div></div>
-<div class="ttc" id="amain__def_8h_html_ae39be9cf2dbd3f0b92d87fc946e20c94"><div class="ttname"><a href="main__def_8h.html#ae39be9cf2dbd3f0b92d87fc946e20c94">_GA_MEMMODE</a></div><div class="ttdeci">#define _GA_MEMMODE</div><div class="ttdoc">Word RAM Memory Mode / Sub CPU RAM Write Protect.</div><div class="ttdef"><b>Definition:</b> main_def.h:143</div></div>
-<div class="ttc" id="asub__def_8h_html_a9479e4ae1fd745afbcacd61430b3f204"><div class="ttname"><a href="sub__def_8h.html#a9479e4ae1fd745afbcacd61430b3f204">MEMMODE_RET_BIT</a></div><div class="ttdeci">#define MEMMODE_RET_BIT</div><div class="ttdef"><b>Definition:</b> sub_def.h:386</div></div>
+<div class="ttc" id="amain__def_8h_html_a88e6d9cb7635c90026d9d534f7a6052d"><div class="ttname"><a href="main__def_8h.html#a88e6d9cb7635c90026d9d534f7a6052d">_GA_COMCMD0</a></div><div class="ttdeci">#define _GA_COMCMD0</div><div class="ttdoc">Communication command (Main -&gt; Sub)</div><div class="ttdef"><b>Definition:</b> main_def.h:280</div></div>
+<div class="ttc" id="amain__def_8h_html_ae39be9cf2dbd3f0b92d87fc946e20c94"><div class="ttname"><a href="main__def_8h.html#ae39be9cf2dbd3f0b92d87fc946e20c94">_GA_MEMMODE</a></div><div class="ttdeci">#define _GA_MEMMODE</div><div class="ttdoc">Word RAM Memory Mode / Sub CPU RAM Write Protect.</div><div class="ttdef"><b>Definition:</b> main_def.h:161</div></div>
 <div class="ttc" id="atypes_8h_html"><div class="ttname"><a href="types_8h.html">types.h</a></div><div class="ttdoc">Generic POSIX compatible C types.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

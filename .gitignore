@@ -1,4 +1,5 @@
+.vscode/
 dist/
 build/
-.vscode/
+docs/
 _work/

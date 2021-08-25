@@ -40,7 +40,7 @@ GLABEL sp_init
 	bne			1b
   CLEAR_COMM_REGS
 	// Put Word RAM into 2M mode and assert control of it
-	andi.w	#~(MEMMODE_RET_MSK | MEMMODE_MODE_MSK), _GA_MEMMODE
+	andi.w	#~(GA_RET_MSK | GA_MODE_MSK), _GA_MEMMODE
 	// This sets up the CD-ROM access loop with initial settings. It only needs
 	// to be called once, here in sp_init
 	INIT_ACC_LOOP

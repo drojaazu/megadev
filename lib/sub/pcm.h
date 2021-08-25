@@ -1,3 +1,8 @@
+/**
+ * \file pcm.h
+ * \brief PCM audio playback utilities
+ */
+
 #ifndef MEGADEV__PCM_H
 #define MEGADEV__PCM_H
 

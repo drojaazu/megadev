@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['clear_5fcomm_5fregs_453',['clear_comm_regs',['../main_8h.html#afd305b52e1ed7c443ebf5786aef9d7d9',1,'main.h']]]
+  ['clear_5fcomm_5fregs_440',['clear_comm_regs',['../main_8h.html#afd305b52e1ed7c443ebf5786aef9d7d9',1,'main.h']]]
 ];

@@ -94,7 +94,9 @@ FILE "track03.wav" WAVE
   TRACK 03 AUDIO
     INDEX 00 00:00:00
     INDEX 01 00:02:00
-</pre><p> The basic concept is to specify a source file, a track type and a time index, which is relative to the end of the previous entry. For track 1, we specify mode 1, which is the standard CD-ROM format allowing for 2048 bytes per sector. For audio tracks, we indicate it is an audio track and specify two time indices: The first is the pre-gap, which is played as one track naturally transitions to the other, and the second is the start point when seeking through tracks with next/previous. Per the official documentation, due to the seek time of the drive, there should be a 2 second pre-gap on each audio track.</p>
+</pre><p> The basic concept is to specify a source file, a track type and a time index, which is relative to the end of the previous entry. For track 1, we specify mode 1, which is the standard CD-ROM format allowing for 2048 bytes per sector. For audio tracks, we indicate it is an audio track and specify two time indices: The first is the pre-gap, which is played as one track naturally transitions to the other, and the second is the start point when seeking through tracks with next/previous. Per the official documentation, due to the seek time of the drive, there should be a 2 second pre-gap on each audio track. This acts as a buffer so that the audio from another track does not accidentally partially play.</p>
+<p>Note that this pregap period must exist in your source audio. That is, you must have 2 seconds of silence at the start of the actual audio file to account for this gap. If not, your audio will be cut off by two seconds at the start. You can easily add 2 seconds to your tracks with ffmpeg like so: </p><pre class="fragment">ffmpeg -i track02.wav -af "adelay=2000|2000" track02_pregap.wav
+</pre><p> Where the numeric value specified is milliseconds of blank audio.</p>
 <p>You will find <code>example.cue</code> within the <code>etc</code> directory of the megadev directory. You can copy this file and modify the audio track entries as necessary. </p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->

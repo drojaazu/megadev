@@ -7,7 +7,7 @@
 #include "types.h"
 #include "vdp.h"
 
-extern u8 pcm_file;
+extern u8 global_mode;
 extern u8 res_rain_chr;
 extern u16 res_rain_chr_sz;
 extern Palette res_rain_pal;
@@ -31,6 +31,6 @@ void main() {
     process_particles();
   } while (!(*JOY1_PRESS & PAD_START_MSK));
 
-  pcm_file = 1;
+  global_mode = 1;
   return;
 }

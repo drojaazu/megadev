@@ -103,30 +103,35 @@ typedef union SpriteEx {
  */
 static inline u32 to_vdpptr(u16 addr) {
   u32 vdpptr = (u32)addr;
-
-  // The casting above should take care of and'ing the lower word
   asm(R"(
-  #andi.l #0xffff, %0
-  lsl.l #2, %0
-  lsr.w #2, %0
-  swap %0
-  )"
-      : "+d"(vdpptr));
+		lsl.l #2, %0
+		lsr.w #2, %0
+		swap %0
+	)"
+      : "+d"(vdpptr)
+      :
+      : "cc");
 
   return vdpptr;
 }
 
+/**
+ * \fn vdpptr_to
+ * \brief Converts a VDP format address to a 16 bit VRAM address at runtime
+ */
 static inline u16 vdpptr_to(u32 vdpptr) {
   u32 out = vdpptr;
 
   asm(R"(
-    #andi.l #0x3fff000c, %0
-    ror.w #2, %0
-    lsr.l #8, %0
-    lsr.l #6, %0
-    ror.w #2, %0
-  )"
-      : "+d"(out));
+		#andi.l #0x3fff000c, %0
+		ror.w #2, %0
+		lsr.l #8, %0
+		lsr.l #6, %0
+		ror.w #2, %0
+	)"
+      : "+d"(out)
+      :
+      : "cc");
 
   return (u16)out;
 }

@@ -8,7 +8,9 @@ extern void sp_fatal();
 
 char const * const filenames[] = {"EX1.MMD;1", "EX2.MMD;1", "EX3.MMD;1"};
 
-void main() {
+void int2_exec() {}
+
+__attribute__((section(".init"))) void main() {
 
   register u16 cmd0, cmd1;
 

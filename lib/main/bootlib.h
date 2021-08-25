@@ -496,8 +496,10 @@ static inline void boot_print(char const * string, u32 vdpptr_pos) {
   register u32 a1_string asm("a1") = (u32)string;
   register u32 d0_vdpptr_pos asm("d0") = vdpptr_pos;
 
-  asm(R"(jsr %p0)" ::"i"(BOOT_PRINT), "a"(a1_string), "d"(d0_vdpptr_pos)
-      : "d1", "d2", "a5");
+  asm volatile("jsr %p1"
+               : "+a"(a1_string)
+               : "i"(BOOT_PRINT), "a"(a1_string), "d"(d0_vdpptr_pos)
+               : "d1", "d2", "a5");
 };
 
 /**

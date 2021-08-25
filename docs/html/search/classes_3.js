@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['palette_394',['Palette',['../structPalette.html',1,'']]]
+  ['palette_378',['Palette',['../structPalette.html',1,'']]],
+  ['pcmchannelsettings_379',['PcmChannelSettings',['../structPcmChannelSettings.html',1,'']]]
 ];

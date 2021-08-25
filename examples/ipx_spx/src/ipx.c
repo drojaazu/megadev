@@ -6,7 +6,7 @@
 #include "system.h"
 #include "vdp.h"
 
-u8 pcm_file;
+u8 global_mode;
 
 Particle particles[16];
 
@@ -108,7 +108,7 @@ void main() {
 
   // this will hold the current "mode" of the entire program
   // in this case it corresponds to the three modules on the disc
-  pcm_file = 0;
+  global_mode = 0;
 
   // The modules only show some text, so we'll prepare the font for them here
   // so it doesn't need to happen in the module itself
@@ -116,6 +116,7 @@ void main() {
 
   // The font uses palette entry #1, so we'll manually set that to white
   PALETTE[1] = 0xeee;
+  *VDP_UPDATE_FLAGS |= PAL_UPDATE_MSK;
 
   do {
     // make sure that the Sub CPU controls 2M Word RAM before we request the
@@ -127,7 +128,7 @@ void main() {
     // and the argument will be the ID for that file, which is defined in
     // the SPX
     // Set the argument first
-    *GA_COMCMD1 = pcm_file;
+    *GA_COMCMD1 = global_mode;
 
     // then set the command
     *GA_COMCMD0 = 1;

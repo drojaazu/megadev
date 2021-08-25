@@ -203,13 +203,16 @@ Macros</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>GA_RESET_SBRQ_BIT</b>&#160;&#160;&#160;1</td></tr>
 <tr class="separator:ae08b9e4035eef94041ef0fc43e39a542"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4f6cfbe156338934f526be9805005503"><td class="memItemLeft" align="right" valign="top"><a id="a4f6cfbe156338934f526be9805005503"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>GA_RESET_IFL2_MSK</b>&#160;&#160;&#160;1 &lt;&lt; GA_RESET_IFL2_BIT</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main__def_8h.html#a4f6cfbe156338934f526be9805005503">GA_RESET_IFL2_MSK</a>&#160;&#160;&#160;(1 &lt;&lt; GA_RESET_IFL2_BIT)</td></tr>
+<tr class="memdesc:a4f6cfbe156338934f526be9805005503"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send INT2 trigger to Sub CPU [_GA_RESET bitmask]. <br /></td></tr>
 <tr class="separator:a4f6cfbe156338934f526be9805005503"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad58bf8a0d4a0226dc2a39e758f626cee"><td class="memItemLeft" align="right" valign="top"><a id="ad58bf8a0d4a0226dc2a39e758f626cee"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>GA_RESET_SRES_MSK</b>&#160;&#160;&#160;1 &lt;&lt; GA_RESET_SRES_BIT</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main__def_8h.html#ad58bf8a0d4a0226dc2a39e758f626cee">GA_RESET_SRES_MSK</a>&#160;&#160;&#160;(1 &lt;&lt; GA_RESET_SRES_BIT)</td></tr>
+<tr class="memdesc:ad58bf8a0d4a0226dc2a39e758f626cee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sub CPU reset [_GA_RESET+1 bitmask]. <br /></td></tr>
 <tr class="separator:ad58bf8a0d4a0226dc2a39e758f626cee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe0d82ab5e0696a24e154631a7d42b75"><td class="memItemLeft" align="right" valign="top"><a id="abe0d82ab5e0696a24e154631a7d42b75"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>GA_RESET_SBRQ_MSK</b>&#160;&#160;&#160;1 &lt;&lt; GA_RESET_SBRQ_BIT</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main__def_8h.html#abe0d82ab5e0696a24e154631a7d42b75">GA_RESET_SBRQ_MSK</a>&#160;&#160;&#160;(1 &lt;&lt; GA_RESET_SBRQ_BIT)</td></tr>
+<tr class="memdesc:abe0d82ab5e0696a24e154631a7d42b75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sub CPU bus access request [_GA_RESET+1 bitmask]. <br /></td></tr>
 <tr class="separator:abe0d82ab5e0696a24e154631a7d42b75"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae39be9cf2dbd3f0b92d87fc946e20c94"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main__def_8h.html#ae39be9cf2dbd3f0b92d87fc946e20c94">_GA_MEMMODE</a>&#160;&#160;&#160;0xA12002</td></tr>
 <tr class="memdesc:ae39be9cf2dbd3f0b92d87fc946e20c94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Word RAM Memory Mode / Sub CPU RAM Write Protect.  <a href="main__def_8h.html#ae39be9cf2dbd3f0b92d87fc946e20c94">More...</a><br /></td></tr>
@@ -253,15 +256,15 @@ Macros</h2></td></tr>
 <tr class="memitem:a8f84342f7c494e0d6684184e172a5cea"><td class="memItemLeft" align="right" valign="top"><a id="a8f84342f7c494e0d6684184e172a5cea"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>MEMMODE_WP7_BIT</b>&#160;&#160;&#160;15</td></tr>
 <tr class="separator:a8f84342f7c494e0d6684184e172a5cea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad1453cb298bc30d30728ec2d3e5d0efa"><td class="memItemLeft" align="right" valign="top"><a id="ad1453cb298bc30d30728ec2d3e5d0efa"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>MEMMODE_RET_MSK</b>&#160;&#160;&#160;1 &lt;&lt; <a class="el" href="sub__def_8h.html#a9479e4ae1fd745afbcacd61430b3f204">MEMMODE_RET_BIT</a></td></tr>
-<tr class="separator:ad1453cb298bc30d30728ec2d3e5d0efa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca8b78e8ada59f9263941f8717ed14ce"><td class="memItemLeft" align="right" valign="top"><a id="aca8b78e8ada59f9263941f8717ed14ce"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>GA_RET_MSK</b>&#160;&#160;&#160;1 &lt;&lt; MEMMODE_RET_BIT</td></tr>
+<tr class="separator:aca8b78e8ada59f9263941f8717ed14ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af104ff23bede93c575f74f1d058ce3b7"><td class="memItemLeft" align="right" valign="top"><a id="af104ff23bede93c575f74f1d058ce3b7"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>MEMMODE_DMNA_MSK</b>&#160;&#160;&#160;1 &lt;&lt; MEMMODE_DMNA_BIT</td></tr>
 <tr class="separator:af104ff23bede93c575f74f1d058ce3b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7dfb12bb9789b875dc76f2e4fd13e816"><td class="memItemLeft" align="right" valign="top"><a id="a7dfb12bb9789b875dc76f2e4fd13e816"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>MEMMODE_MODE_MSK</b>&#160;&#160;&#160;1 &lt;&lt; MEMMODE_MODE_BIT</td></tr>
-<tr class="separator:a7dfb12bb9789b875dc76f2e4fd13e816"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af06efe43853940bcb60861432a0011eb"><td class="memItemLeft" align="right" valign="top"><a id="af06efe43853940bcb60861432a0011eb"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>GA_MODE_MSK</b>&#160;&#160;&#160;1 &lt;&lt; MEMMODE_MODE_BIT</td></tr>
+<tr class="separator:af06efe43853940bcb60861432a0011eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a51760eb6377c93baa0bef43c2160cc76"><td class="memItemLeft" align="right" valign="top"><a id="a51760eb6377c93baa0bef43c2160cc76"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>MEMMODE_BK0_MSK</b>&#160;&#160;&#160;1 &lt;&lt; MEMMODE_BK0_BIT</td></tr>
 <tr class="separator:a51760eb6377c93baa0bef43c2160cc76"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -359,6 +362,7 @@ Macros</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Hardware memory map, Gate Array (GA) register, and entry vector definitions for the Main CPU side. </p>
+<dl class="section note"><dt>Note</dt><dd>All bit definitions are byte relative and should be applied to the registers cast to an 8 bit type. </dd></dl>
 </div><h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="a095776bde8179405d723ccb129c58454"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a095776bde8179405d723ccb129c58454">&#9670;&nbsp;</a></span>_GA_CDCHOSTDATA</h2>
@@ -811,7 +815,7 @@ Macros</h2></td></tr>
   </dd>
 </dl>
 <p>W: 0: Not used / 1: Send INT 2 to Sub CPU <br  />
- R: 0: INT 2 in progress / 1: INT 2 not occurred yet</p><dl class="params"><dt>Parameters</dt><dd>
+ R: 0: INT 2 in progress / 1: INT 2 not occurred yet </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">IEN2</td><td>Mask state of INT2 on Sub CPU</td></tr>
   </table>

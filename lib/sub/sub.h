@@ -10,7 +10,9 @@
 #include "sub/sub_def.h"
 #include "types.h"
 
-#define GA_MEMMODE (*(volatile u16 *)_GA_MEMMODE)
+#define GA_RESET ((volatile u16 *)_GA_RESET)
+
+#define GA_MEMMODE ((volatile u16 *)_GA_MEMMODE)
 
 #define GA_COMFLAGS_MAIN ((volatile const u8 *)_GA_COMFLAGS)
 #define GA_COMFLAGS_SUB ((volatile u8 *)_GA_COMFLAGS + 1)
@@ -32,6 +34,10 @@
 #define GA_COMSTAT5 ((volatile u16 *)_GA_COMSTAT5)
 #define GA_COMSTAT6 ((volatile u16 *)_GA_COMSTAT6)
 #define GA_COMSTAT7 ((volatile u16 *)_GA_COMSTAT7)
+
+#define GA_INT3TIMER ((volatile u16 *)_GA_INT3TIMER)
+
+#define GA_INTMASK ((volatile u16 *)_GA_INTMASK)
 
 #define GA_DMAADDR ((volatile u16 *)_GA_DMAADDR)
 
@@ -64,7 +70,7 @@ static inline void bios_waitvsync() {
 
 /**
  * \fn wait_2m
- * Wait for Sub CPU access to 2M Word RAM
+ * \brief Wait for Sub CPU access to 2M Word RAM
  */
 static inline void wait_2m() {
   asm(R"(
@@ -72,12 +78,12 @@ static inline void wait_2m() {
   beq 1b
 	)"
       :
-      : "i"(MEMMODE_DMNA_BIT), "i"(_GA_MEMMODE + 1));
+      : "i"(GA_DMNA_BIT), "i"(_GA_MEMMODE + 1));
 }
 
 /**
  * \fn grant_2m
- * Grant 2M Word RAM access to the Main CPU and wait for confirmation
+ * \brief Grant 2M Word RAM access to the Main CPU
  */
 static inline void grant_2m() {
   asm(R"(
@@ -86,7 +92,35 @@ static inline void grant_2m() {
 	beq 1b
 	)"
       :
-      : "i"(MEMMODE_RET_BIT), "i"(_GA_MEMMODE + 1));
+      : "i"(GA_RET_BIT), "i"(_GA_MEMMODE + 1));
+}
+
+/**
+ * \fn set_1m
+ * \brief Set Word RAM layout to 1M/1M
+ */
+static inline void set_1m() {
+  asm(R"(
+1:bset %0, %p1
+  btst %0, %p1
+	beq 1b
+	)"
+      :
+      : "i"(GA_MODE_BIT), "i"(_GA_MEMMODE + 1));
+}
+
+/**
+ * \fn set_2m
+ * \brief Set Word RAM layout to 2M
+ */
+static inline void set_2m() {
+  asm(R"(
+1:bclr %0, %p1
+  btst %0, %p1
+	bne 1b
+	)"
+      :
+      : "i"(GA_MODE_BIT), "i"(_GA_MEMMODE + 1));
 }
 
 /**
