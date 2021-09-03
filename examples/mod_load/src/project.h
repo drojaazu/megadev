@@ -1,34 +1,89 @@
 /**
  * \file project.h
- * Project meta data configuration
+ * Project header and build configuration
  */
 
-#ifndef __PROJECT_H
-#define __PROJECT_H
+#ifndef MEGADEV__PROJECT_H
+#define MEGADEV__PROJECT_H
+
+#include "build_def.h"
 
 /**
- * It is very important that the following text strings have the *exact* length
- * as marked by the #### symbols below each entry.
+ * \def HEADER_VOL_ID
+ * \brief Disc volume ID
+ * \details This will be the "name" of the disc, as displayed in a file manager
+ * when mounted on a PC
+ * \note 11 bytes
  */
-
-// Volume ID - 11 bytes
-#define cfg_vol_id    "MOD_LOAD   "
+#define HEADER_VOL_ID "MOD_LOAD   "
 //                    "###########"
-// Overseas title - 48 bytes
-#define cfg_name_intl "MOD LOAD EXAMPLE                                "
-//                    "################################################"
-// Domestic (Japanese) title - 48 bytes
-// (You can use Shift JIS encoded Japanese here if you'd like)
-#define cfg_name_jp   "MOD LOAD EXAMPLE                                "
-//                    "################################################"
-// Game code - 16 bytes
-// Traditionally in the format: GM 00-0000-00
-#define cfg_game_id   "GM 00-0000-00   "
+
+/**
+ * \def HEADER_NAME_INTL
+ * \brief International title
+ * \details The name of the software, in plain ASCII encoding
+ * \note 48 bytes
+ */
+#define HEADER_NAME_INTL "MOD LOAD EXAMPLE                                "
+//                       "################################################"
+
+/**
+ * \def HEADER_NAME_JP
+ * \brief Domestic (Japanese) title
+ *
+ * \details The name of the software, in Shift-JIS encoding
+ *
+ * \note 48 bytes
+ *
+ * \note As Shift-JIS encompasses ASCII, plain text is acceptable here; Japanese
+ * is not actually required and it can be (and usually is) exactly the same as
+ * the international title. If you do choose to use Japanese text here, use
+ * Shift-JIS encoding and keep in mind that the characters will be *two bytes*
+ * in size and that the whole string must fit within the 48 byte allocated
+ * space. The spacing bar will not work for Japanese characters.
+ *
+ */
+#define HEADER_NAME_JP "MOD LOAD EXAMPLE                                "
+//                     "################################################"
+
+/**
+ * \def HEADER_SOFT_ID
+ * \brief Software ID
+ *
+ * \details This is a catalogging code that was assigned by Sega when the
+ * hardware was active in the market. It is meaningless at this point in time
+ * and you are free to fill it out as you please. As a matter of practicality,
+ * make it something that any existing software does not already use.
+ *
+ * \note 16 bytes
+ *
+ * \note The code traditionally appeared in the format: GM 00-0000-00
+ * More information is available here:
+ * https://plutiedev.com/rom-header#serial
+ */
+#define HEADER_SOFT_ID "GM 00-0000-00   "
+//                     "################"
+
+/**
+ * \def HEADER_REGION
+ * \brief Valid usage regions
+ *
+ * \details Defines the region(s) in which the software is valid
+ *
+ * \note 16 bytes
+ *
+ */
+#if REGION == JP
+#define HEADER_REGION "J               "
+#endif
+#if REGION == US
+#define HEADER_REGION "U               "
+#endif
+#if REGION == EU
+#define HEADER_REGION "E               "
+#endif
+// All regions, regardless of BIOS security code
+//#define HEADER_REGION "JUE             "
 //                    "################"
-// Region (16 bytes)
-// Since the region is tied to the BIOS anyway, you may as well leave this
-// as JUE
-#define cfg_region    "JUE             "
-//                    "################" 
 
 #endif

@@ -11,7 +11,7 @@ void load_ipx();
 
 extern void sp_fatal();
 
-void main() {
+__attribute__((section(".init"))) void main() {
 
   register u16 cmd0;
 

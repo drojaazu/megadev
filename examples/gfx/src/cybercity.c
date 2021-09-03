@@ -16,7 +16,6 @@ extern u16 const res_ship_pal[];
 
 extern u8 res_ship_spr[];
 
-// 6
 struct SpriteObject ship_parts;
 
 void null_func() { return; }
@@ -64,10 +63,9 @@ __attribute__((noreturn)) void main() {
 
   // load the palettes
   // In general, use the VDPPTR macro for converting a VRAM address to the
-  // VDP compatible format. It is written so that constant time values will be
+  // VDP compatible format. It is written so that constant values will be
   // calculated at compile time, and variables will be calculated at runtime
   // with the optimized conversion code
-  asm(".global test_label_here\ntest_label_here:");
   boot_dma_xfer_wordram((VDPPTR(0) | CRAM_W), res_cybercity_pal, 32 >> 1);
   boot_dma_xfer_wordram((VDPPTR(32) | CRAM_W), res_ship_pal, 32 >> 1);
 

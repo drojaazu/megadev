@@ -90,7 +90,5 @@ GLABEL sp_fatal
 	nop
 	bra 0b
 
-
-
 GLABEL sp_user
   rts

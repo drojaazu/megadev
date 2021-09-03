@@ -36,17 +36,32 @@ static void braminit_test() {
 
   SUB_ACK
 
-  boot_print("Status: \xff", print_xy(1, 2));
+  boot_print("Total Size: \xff", print_xy(1, 2));
+
+  printval_u16_c(bram_size, val_buffer);
+
+  boot_print(val_buffer, print_xy(13, 3));
+
+  boot_print("Status: \xff", print_xy(1, 3));
 
   printval_u16_c(status, val_buffer);
 
   boot_print(val_buffer, print_xy(13, 2));
 
-  boot_print("Total Size: \xff", print_xy(1, 3));
-
-  printval_u16_c(bram_size, val_buffer);
-
-  boot_print(val_buffer, print_xy(13, 3));
+  switch (status) {
+  case 0:
+    boot_print("BRAM not present or not detected!\xff", print_xy(1, 4));
+    break;
+  case 1:
+    boot_print("BRAM is not formatted!\xff", print_xy(1, 4));
+    break;
+  case 2:
+    boot_print("BRAM is in a non-standard format!\xff", print_xy(1, 4));
+    break;
+  case 3:
+    boot_print("BRAM is formatted and ready to use!\xff", print_xy(1, 4));
+    break;
+  }
 }
 
 static void brmstat_test() {

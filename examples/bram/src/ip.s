@@ -1,18 +1,16 @@
+
+// Boot security block - This must be at the top of your IP!
+#include "sec_check.s"
+
+.section .text
+
 #include "main/main_def.h"
 #include "main/bootlib_def.h"
 #include "main/main_macros.s"
 #include "vdp_def.h"
 #include "macros.s"
 
-.section .text
-
-// the security code for the region must *always* be at the very beginning of
-// the IP code
-.incbin "sec_us.bin"
-//.incbin "sec_eu.bin"
-//.incbin "sec_jp.bin"
-
-IP_ENTRY:
+ip_entry:
   // First, disable all interrupts while we do some basic init
   ori #0x700,sr
   

@@ -1,3 +1,9 @@
+
+// Boot security block - This must be at the top of your IP!
+#include "sec_check.s"
+
+.section .text
+
 /*
   Very simple Hello World example
   We'll load the BIOS font and display some text
@@ -9,12 +15,6 @@
 #include "vdp_macros.s"
 #include "vdp_def.h"
 #include "io_def.h"
-
-.section .text
-
-// the security code for the region must *always* be at the very beginning of
-// the IP code
-  .incbin "sec_us.bin"
 
 ip_entry:
   // First, disable all interrupts while we get things set up

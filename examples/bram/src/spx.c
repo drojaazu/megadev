@@ -11,7 +11,7 @@ char * filenames[3];
 
 char * examplefile;
 
-void main() {
+__attribute__((section(".init"))) void main() {
 
   register u16 cmd0, cmd1;
 

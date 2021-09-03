@@ -10,6 +10,8 @@ char const * const filenames[] = {"EX1.MMD;1", "EX2.MMD;1", "EX3.MMD;1"};
 
 void int2_exec() {}
 
+// It's a good idea to put SPX's main in .init to ensure it's at the very start
+// of the code, since we jump to where we expect it to be in memory
 __attribute__((section(".init"))) void main() {
 
   register u16 cmd0, cmd1;
