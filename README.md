@@ -48,7 +48,7 @@ GNU compiler (gcc): <https://gcc.gnu.org/onlinedocs/gcc/>
 ## Getting Started
 Clone the repo and place it in a location such as /opt/megadev. In the root of the directory is `makefile_global` (the global makefile) which will be used as a system-wide base for all projects. Edit it as necessary to match your build environment.
 
-To start a new project copy the `new_project` directory from within the Megadev location to you project directory. It contains two files: a makefile and `project.h`. Modify the makefile as you'd like to specify subdirectories and compilation options. Modify `project.h` as you'd like to reflect your project information, being careful to maintain the required text lengths. Afterwards, do `make init` in the project directory to create the directories, and move `project.h` to the source directory. You are ready to begin development.
+To start a new project copy the `new_project` directory from within the Megadev location to you project directory. It contains three files: a makefile,  `project.h` and `ip.s`. Modify the makefile as you'd like to specify subdirectories and compilation options. Modify `project.h` as you'd like to reflect your project information, being careful to maintain the required text lengths. `ip.s` is a minimal IP, your program entry. Afterwards, do `make init` in the project directory to create the directories, and move `project.h` and `ip.s` to the source directory. You are ready to begin development.
 
 If you have not already done so, you'll need to familiarize yourself with the official Mega CD documentation which is readily available online.
 
@@ -67,6 +67,27 @@ As a note, we use such terms as "kilo" and "mega" when referring to base 2 value
 
 ## Building
 The project can be built with the `make` command in the root of your project which will build sources and create an ISO. You can check the global makefile for some more specific make targets.
+
+The default target hardware is specified in the project makefile. You can also change the target per build, e.g.
+
+    make HW_CFG="REGION=US VIDEO=NTSC VRAM_SIZE=VRAM_64K"
+
+`REGION`, `VIDEO` and `VRAM_SIZE` will be available as preprocessor definitions in your code, allowing for conditional compilation.
+
+Valid values for `REGION` are:
+ - `JP` (Japan)
+ - `US` (USA)
+ - `EU` (Europe)
+
+Valid values for `VIDEO` are:
+ - `NTSC` (for JP and US regions)
+ - `PAL` (for European regions)
+
+Value values for `VRAM_SIZE` are:
+ - `VRAM_64K`
+ - `VRAM_128K`
+
+The VRAM size option only applies to the Sega Tera Drive or Mega Drives that have been modded with extra VRAM. Unless you are specifically targeting those devices with the intention of using extended VRAM, this should be left at `VRAM_64K`. This setting can be safely left off when specifying the hardware config on the command line, as it will default to 64k.
 
 Final built binaries will be placed in the `disc` subdirectory (or whatever path you set in the project makefile). You can manually add whatever additional files you'd like into this directory and they will be included in the final ISO image.
 

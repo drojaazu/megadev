@@ -167,9 +167,9 @@ Sets the specified value to `_VINT_FLAGS` and waits for the next VBLANK occuranc
 
 A wrapper for `BOOT_VINT_WAIT` that sets `_VINT_FLAGS` to 3 (bit 0 and 1 set) before waiting. This would be useful if you do not implement any extra `_VINT_FLAGS` and only use the two used by the library. In any other case, you should stick to `BOOT_VINT_WAIT` as it allows you to specify flags.
 
-### `BOOT_SET_HINT_DEFAULT`
-
 ### `BOOT_SET_HINT`
+
+### `BOOT_SET_HINT_WORKRAM`
 
 ### `BOOT_DISABLE_HINT`
 
@@ -306,7 +306,57 @@ Components: Fixed VRAM Layout (All), VDP Register Cache, Plane Width Cache
 
 Loads the Boot ROM default VDP settings to the cache and to the registers. Also updates the `_PLANE_WIDTH` cached value.
 
-TODO: enumerate the default values
+Here is the default VDP data loaded by the function, in the order in which it appears in the data, with notes highlighting important settings on each register:
+
+0x8004
+  Mode Register 1
+  - HINT disabled
+  - Normal color mode
+0x8124
+  Mode Register 2
+  - Mega Drive graphics mode
+  - NTSC (TODO: confirm that this is different per region (it probably is))
+  - Vertical blank interrupt (VINT) enabled
+  - Disable display
+0x9011
+  Plane Size
+  - 512x512 pixels (64x64 cells)
+0x8B00
+  Mode Register 3
+  - Scroll mode: full screen
+0x8C81
+  Mode Register 4
+  - 40 cell (320px) width
+0x8328
+  Window nametable address
+  - 0xA000
+0x8230
+  Plane A nametable address
+  - 0xC000
+0x8407
+  Plane B nametable address
+  - 0xE000
+0x855C
+  Sprite table address
+  - 0xB800
+0x8D2F
+  Horizontal scroll table address
+  - 0xBC00
+0x8700
+  Background color
+  - 0
+0x8A00
+  Horizontal interrupt (HINT) counter
+  - 0
+0x8F02
+  VRAM auto-increment
+  - 2
+0x9100
+  Window plane X position
+  - 0
+0x9200
+  Window plane Y position
+  - 0
 
 ### `BOOT_LOAD_VDPREGS`
 Components: VDP Reg Cache

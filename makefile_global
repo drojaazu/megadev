@@ -12,8 +12,10 @@ RED=\033[1;31m
 YELLOW=\033[1;33m
 GREEN=\033[1;32m
 
-# MEGADEV SDK paths
+# set hardware fallbacks in case the user didn't set them
+HW_CFG?=REGION=US VIDEO=NTSC VRAM_SIZE=VRAM_64K
 
+# MEGADEV SDK paths
 # library (this includes C headers)
 LIB_PATH:=$(MEGADEV_PATH)/lib
 
@@ -55,19 +57,19 @@ AS_INC:=-Wa,-I$(LIB_PATH) -Wa,-I$(RES_PATH) -Wa,-I$(BUILD_PATH)
 # because it is useful for inline asm. However, "-Wa,--bitwise-or" will
 # cause issues with the GCC created asm, so we split that off and only use it
 # with asm source files
-CC_FLAGS:=-m68000 -O1 -ffunction-sections -fno-builtin -fno-unit-at-a-time -fomit-frame-pointer -fno-gcse -Wall -Wextra -Wno-shift-negative-value -Wno-main -Wa,--register-prefix-optional
+CC_FLAGS:=-m68000 -imacros build_def.h -ffunction-sections -fno-builtin -fno-unit-at-a-time -fomit-frame-pointer -fno-gcse -Wall -Wextra -Wno-shift-negative-value -Wno-main -Wa,--register-prefix-optional
 AS_FLAGS:=-Wa,--bitwise-or
 
 LD_FLAGS:=-nostdlib
 
-CC_FLAGS+=$(OPT_FLAGS) -DREGION=$(REGION)
+CC_FLAGS+=$(OPT_FLAGS) $(addprefix -D, $(HW_CFG))
 
 # debug/final build flags
 ifeq ($(DEBUG), 1)
   CC_FLAGS+=-ggdb -DDEBUG 
 endif
 
-# SETUP OUTPUT GOALS
+# SETUP OUTPUT TARGETS
 # all code objects
 OBJ:=$(addprefix $(OUT_PATH)/,$(addsuffix .o,$(basename $(wildcard $(SRC_PATH)/*.[cs]))))
 

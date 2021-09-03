@@ -22,27 +22,6 @@
 #define FIX16_FRAC_MASK ((1 << FIX16_FRAC_BITS) - 1)
 */
 
-/**
- *  \brief Returns the lowest value between X an Y.
- */
-#define min(X, Y) (((X) < (Y)) ? (X) : (Y))
-
-/**
- *  \brief Returns the highest value between X an Y.
- */
-#define max(X, Y) (((X) > (Y)) ? (X) : (Y))
-
-/**
- *  \brief Returns the absolute value of X.
- */
-#define abs(X) (((X) < 0) ? -(X) : (X))
-
-/**
- *  \brief Returns L if X is less than L, H if X is greater than H or X if in
- * between L and H.
- */
-#define clamp(X, L, H) (min(max((X), (L)), (H)))
-
 static inline u32 mulu(u16 multiplier, u16 multiplicand) {
   u32 product = multiplier;
   asm("mulu.w %1, %0" : "+d"(product) : "d"(multiplicand) : "cc");

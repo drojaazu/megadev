@@ -18,7 +18,7 @@ extend beyond the end of sector 1, but I haven't confirmed that yet."
 DiscHeader:
 DiscType: .ascii "SEGADISCSYSTEM  "		/*Disc Type (must be one of the allowed values)*/
 
-VolumeName: .asciz cfg_vol_id         /*Volume ID, 11 bytes + 0 terminator*/
+VolumeName: .asciz HEADER_VOL_ID         /*Volume ID, 11 bytes + 0 terminator*/
 VolumeSystem:	.word 0x100, 0x1				/*System ID, Type*/
 SystemName:	.asciz "SEGASYSTEM "			/*System Name*/
 SystemVersion:	.word 0,0							/*System Version, Type*/
@@ -55,8 +55,8 @@ SP_WorkRAM:	.long 0
 # =======================================================================================	
 HardwareType:	.ascii "SEGA MEGA DRIVE "
 Copyright:	  .ascii "(C)     2020.OCT"
-NativeName:	  .ascii cfg_name_jp
-OverseasName:	.ascii cfg_name_intl
+NativeName:	  .ascii HEADER_NAME_JP
+OverseasName:	.ascii HEADER_NAME_INTL
 DiscID:		.ascii "GM 00-0000-00   "
 IO:		.ascii "J               "
 	.ascii	"                "
@@ -64,7 +64,7 @@ IO:		.ascii "J               "
 	.ascii	"                "
 	.ascii	"                "
 	.ascii	"                "
-Region:		.ascii cfg_region
+Region:		.ascii HEADER_REGION
 
 // if all the above text is correct, we should be at 0x200 anyway
 .org 0x200

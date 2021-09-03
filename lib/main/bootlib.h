@@ -1,5 +1,5 @@
 /**
- * \file boot.h
+ * \file bootlib.h
  * \brief C wrappers for Boot ROM calls
  */
 
@@ -57,6 +57,7 @@ typedef struct Palette {
 /**
  * \sa _VDP_REGS
  */
+#define VDP_REGS ((u16 *)_VDP_REGS)
 
 /**
  * \sa _COMFLAGS
@@ -276,11 +277,26 @@ typedef enum PlaneWidthTiles {
 static inline void boot_vint() { asm("jsr %p0" ::"i"(BOOT_VINT)); }
 
 /**
- * \sa BOOT_SET_HINT_DEFAULT
+ * \sa BOOT_SET_HINT_WORKRAM
  */
-static inline void boot_set_hint_default(void * hint_routine) {
+static inline void boot_set_hint_workram(void * hint_routine) {
   register u32 a1_ptr asm("a1") = (u32)hint_routine;
-  asm("jsr %p0" ::"i"(BOOT_SET_HINT_DEFAULT), "a"(a1_ptr));
+  asm("jsr %p0" ::"i"(BOOT_SET_HINT_WORKRAM), "a"(a1_ptr) : "cc");
+}
+
+/**
+ * \sa BOOT_SET_HINT
+ */
+static inline void boot_set_hint(void * hint_routine) {
+  register u32 a1_ptr asm("a1") = (u32)hint_routine;
+  asm("jsr %p0" ::"i"(BOOT_SET_HINT), "a"(a1_ptr) : "cc");
+}
+
+/**
+ * \sa BOOT_DISABLE_HINT
+ */
+static inline void boot_disable_hint() {
+  asm("jsr %p0" ::"i"(BOOT_DISABLE_HINT) : "cc");
 }
 
 /**
@@ -333,9 +349,12 @@ static inline void boot_load_vdpregs_default() {
 /**
  * \sa BOOT_LOAD_VDPREGS
  */
-static inline void boot_load_vdpregs(void const * vdp_reg_data) {
+static inline void boot_load_vdpregs(u16 const * vdp_reg_data) {
   register u32 a1_vdpregs asm("a1") = (u32)vdp_reg_data;
-  asm("jsr %p0" ::"i"(BOOT_LOAD_VDPREGS), "a"(a1_vdpregs) : "d0", "d1", "a2");
+  asm volatile("jsr %p1"
+               : "+a"(a1_vdpregs)
+               : "i"(BOOT_LOAD_VDPREGS), "a"(a1_vdpregs)
+               : "cc", "d0", "d1", "a2");
 }
 
 /**
@@ -405,7 +424,7 @@ static inline void boot_load_map(u32 vdpptr, u16 width, u16 height,
 /**
  * \sa BOOT_GFX_DECOMP
  */
-static inline void boot_gfx_decomp(u8 * data) {
+static inline void boot_gfx_decomp(u8 const * data) {
   register u32 a1_data asm("a1") = (u32)data;
   asm("jsr %p0" ::"i"(BOOT_GFX_DECOMP), "a"(a1_data));
 }
@@ -452,7 +471,7 @@ static inline bool boot_pal_fadeout(u8 palette_index, u8 length) {
 	)"
                   :
                   : "i"(BOOT_PAL_FADEOUT), "d"(d0_palette_index), "d"(d1_length)
-                  :
+                  : "cc"
                   : fade_complete);
 
   return false;
@@ -613,6 +632,14 @@ static inline void boot_load_pal_update(Palette const * pal_data) {
   register u32 a1_pal_data asm("a1") = (u32)pal_data;
 
   asm(R"(jsr %p0)" ::"i"(BOOT_LOAD_PAL_UPDATE), "a"(a1_pal_data) : "d0");
+};
+
+/**
+ * \sa BOOT_COPY_PAL
+ */
+static inline void boot_copy_pal() {
+
+  asm(R"(jsr %p0)" ::"i"(BOOT_COPY_PAL) : "cc", "a4", "d4");
 };
 
 /**

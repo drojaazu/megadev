@@ -65,7 +65,7 @@
 LOCAL loop
 
 loop:
-  btst #MEMMODE_DMNA_BIT, _GA_MEMMODE+1
+  btst #GA_DMNA_BIT, _GA_MEMMODE+1
   beq loop
 .endm
 
@@ -78,8 +78,8 @@ loop:
 LOCAL loop
 
 loop:
-  bset #MEMMODE_RET_BIT, _GA_MEMMODE+1
-  btst #MEMMODE_RET_BIT, _GA_MEMMODE+1
+  bset #GA_RET_BIT, _GA_MEMMODE+1
+  btst #GA_RET_BIT, _GA_MEMMODE+1
   beq loop
 .endm
 

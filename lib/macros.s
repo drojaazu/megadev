@@ -30,6 +30,16 @@
   .equ \name, \value
 .endm
 
+.macro FILE path, label, align=2
+  LOCAL file_end
+  LOCAL file_start
+  GLABEL \label
+  .long file_end - file_start
+file_start:
+  .incbin \path
+file_end:
+.endm
+
 .macro INTERRUPT_DISABLE
   ori #0x700, sr
 .endm

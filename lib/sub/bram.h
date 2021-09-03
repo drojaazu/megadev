@@ -38,6 +38,11 @@ BrminitRes init_info;
 
 /**
  * \sa BRMINIT
+ * \note The return status is normally only valid when there is an error, and
+ * the carry flag determines the good or bad status of BRAM. However, to make
+ * things easier to work with in C, we convert the carry flag status into a
+ * fourth status, representing a non-failure. The BramStatus enum reflects the C
+ * version status.
  */
 static inline BrminitRes * bram_brminit() {
   register u32 a0_bram_work_ram asm("a0") = (u32)bram_work_ram;

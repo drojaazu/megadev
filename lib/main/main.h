@@ -57,11 +57,11 @@
  * \fn wait_2m
  * Wait for Main CPU access to 2M Word RAM
  */
-inline void wait_2m() {
+static inline void wait_2m() {
   asm(R"(
 1:btst %0, %p1
   beq 1b
-)" ::"i"(MEMMODE_RET_BIT),
+)" ::"i"(GA_RET_BIT),
       "i"(_GA_MEMMODE + 1));
 }
 
@@ -69,12 +69,12 @@ inline void wait_2m() {
  * \fn grant_2m
  * Grant 2M Word RAM access to the Sub CPU and wait for confirmation
  */
-inline void grant_2m() {
+static inline void grant_2m() {
   asm(R"(
 1:bset %0, %p1
   btst %0, %p1
 	beq 1b
-)" ::"i"(MEMMODE_DMNA_BIT),
+)" ::"i"(GA_DMNA_BIT),
       "i"(_GA_MEMMODE + 1));
 }
 
@@ -82,7 +82,7 @@ inline void grant_2m() {
  * \fn clear_comm_regs
  * Clears the Main comm registers (COMCMD) and flags
  */
-inline void clear_comm_regs() {
+static inline void clear_comm_regs() {
   asm(R"(
   lea %p0, a0
   moveq #0, d0

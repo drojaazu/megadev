@@ -6,8 +6,8 @@
  * \note This expects the module to be already loaded at the start of 2M
  * Word RAM
  */
-inline void mmd_exec() {
-	asm("jsr MMD_EXEC" ::: "d0", "d7", "a0", "a1");
+static inline void mmd_exec() {
+  asm("jsr MMD_EXEC" ::: "d0", "d7", "a0", "a1");
 }
 
 #endif

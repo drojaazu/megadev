@@ -21,7 +21,7 @@
     FFFC00  +----------------+
 */
 
-#define BOOT_RAM_START 0xFFF700
+#define _BOOT_RAM_START 0xFFF700
 
 /**
  * \def _DECOMP_BUFFER
@@ -50,82 +50,190 @@
 #define _PALETTE3 0xFFFBE0
 
 /**
- * \def u32 _VINT_EX_PTR
+ * \var u32 _VINT_EX_PTR
  * Pointer to the VINT_EX routine used in the Boot ROM VINT handler.
  */
 #define _VINT_EX_PTR 0xFFFDAA
 
 /**
- * \def _VDP_REGS
- *
- * RAM buffer of all VDP registers (except DMA regs), making up 19 entries.
- * You will need to keep these updated manually unless you use
+ * \var u16 _VDP_REGS
+ * \brief Array of cached VDP registers
+ * \details RAM cache of all VDP registers (except DMA regs), making up 19
+ * entries. You will need to keep these updated manually unless you use
  * BOOT_LOAD_VDPREGS
- * Size: 0x26 bytes
+ *
+ * Size: 16bit * 19 = 0x26 bytes
  *
  * \ingroup boot_vdp
  */
 #define _VDP_REGS 0xFFFDB4
 
 /**
- * \def u16 _COMFLAGS
- * GA comm flags register cache
+ * \var u16 _COMFLAGS
+ * \brief GA comm flags register cache
  */
 #define _COMFLAGS 0xfffdde
 
 /**
- * \def u8 _COMFLAGS_MAIN
- * GA comm flags register cache for Main CPU
+ * \var u8 _COMFLAGS_MAIN
+ * \brief GA comm flags register cache for Main CPU
  */
 #define _COMFLAGS_MAIN 0xfffdde
 
 /**
  * \var u8 _COMFLAGS_SUB
- * GA comm flags register cache for Sub CPU
+ * \brief GA comm flags register cache for Sub CPU
  */
 #define _COMFLAGS_SUB 0xfffddf
 
 /**
- * \def _COMCMD
- * GA comm command (Main -> Sub) register cache
- * Size: 0x10 bytes
+ * \var u16 _COMCMD
+ * \brief Array of cached GA COMCMD (Main -> Sub) registers
+ * Size: 16bit * 8 = 0x10 bytes
  */
 #define _COMCMD 0xfffde0
 
+/**
+ * \var u16 _COMCMD0
+ * \brief GA COMCMD0 register cache
+ */
 #define _COMCMD0 0xfffde0
+
+/**
+ * \var u16 _COMCMD1
+ * \brief GA COMCMD1 register cache
+ */
 #define _COMCMD1 0xfffde2
+
+/**
+ * \var u16 _COMCMD2
+ * \brief GA COMCMD2 register cache
+ */
 #define _COMCMD2 0xfffde4
+
+/**
+ * \var u16 _COMCMD3
+ * \brief GA COMCMD3 register cache
+ */
 #define _COMCMD3 0xfffde6
+
+/**
+ * \var u16 _COMCMD4
+ * \brief GA COMCMD4 register cache
+ */
 #define _COMCMD4 0xfffde8
+
+/**
+ * \var u16 _COMCMD5
+ * \brief GA COMCMD5 register cache
+ */
 #define _COMCMD5 0xfffdea
+
+/**
+ * \var u16 _COMCMD6
+ * \brief GA COMCMD6 register cache
+ */
 #define _COMCMD6 0xfffdec
+
+/**
+ * \var u16 _COMCMD7
+ * \brief GA COMCMD7 register cache
+ */
 #define _COMCMD7 0xfffdee
 
 /**
- * \def _COMSTAT
- * GA comm status (Sub -> Main) register cache
- * Size: 0x10 bytes
+ * \var u16 _COMSTAT
+ * \brief Array of cached GA COMSTAT (Main -> Sub) registers
+ * Size: 16bit * 8 = 0x10 bytes
  */
 #define _COMSTAT 0xfffdf0
 
+/**
+ * \var u16 _COMSTAT0
+ * \brief GA COMSTAT0 register cache
+ */
 #define _COMSTAT0 0xfffdf0
+
+/**
+ * \var u16 _COMSTAT1
+ * \brief GA COMSTAT1 register cache
+ */
 #define _COMSTAT1 0xfffdf2
+
+/**
+ * \var u16 _COMSTAT2
+ * \brief GA COMSTAT2 register cache
+ */
 #define _COMSTAT2 0xfffdf4
+
+/**
+ * \var u16 _COMSTAT3
+ * \brief GA COMSTAT3 register cache
+ */
 #define _COMSTAT3 0xfffdf6
+
+/**
+ * \var u16 _COMSTAT4
+ * \brief GA COMSTAT4 register cache
+ */
 #define _COMSTAT4 0xfffdf8
+
+/**
+ * \var u16 _COMSTAT5
+ * \brief GA COMSTAT5 register cache
+ */
 #define _COMSTAT5 0xfffdfa
+
+/**
+ * \var u16 _COMSTAT6
+ * \brief GA COMSTAT6 register cache
+ */
 #define _COMSTAT6 0xfffdfc
+
+/**
+ * \var u16 _COMSTAT7
+ * \brief GA COMSTAT7 register cache
+ */
 #define _COMSTAT7 0xfffdfe
 
+/**
+ * \var u16 _JOY1_MOUSE_DATA
+ */
 #define _JOY1_MOUSE_DATA 0xfffe00
+
+/**
+ * \var u16 _JOY1_MOUSE_DELTAX
+ */
 #define _JOY1_MOUSE_DELTAX 0xfffe06
+
+/**
+ * \var u16 _JOY1_MOUSE_DELTAY
+ */
 #define _JOY1_MOUSE_DELTAY 0xfffe08
 
+/**
+ * \var u16 _JOY2_MOUSE_DATA
+ */
 #define _JOY2_MOUSE_DATA 0xfffe0c
+
+/**
+ * \var u16 _JOY2_MOUSE_DELTAX
+ */
 #define _JOY2_MOUSE_DELTAX 0xfffe12
+
+/**
+ * \var u16 _JOY2_MOUSE_DELTAY
+ */
 #define _JOY2_MOUSE_DELTAY 0xfffe14
 
+/**
+ * \var u8 _JOY1_TYPE
+ */
 #define _JOY1_TYPE 0xfffe18
+
+/**
+ * \var u8 _JOY2_TYPE
+ */
 #define _JOY2_TYPE 0xfffe19
 
 /**
@@ -136,44 +244,44 @@
 #define JOYTYPE_MULTITAP 7
 
 /**
- * \def u8 _JOY1_HOLD
- * \brief Port 1 controller constant input
+ * \var u8 _JOY1_HOLD
+ * \brief Port 1 controller latched input
  */
 #define _JOY1_HOLD 0xfffe20
 
 /**
- * \def u8 _JOY1_PRESS
+ * \var u8 _JOY1_PRESS
  * \brief Port 1 controller single input
  */
 #define _JOY1_PRESS 0xfffe21
 
 /**
- * \def u8 _JOY2_HOLD
- * \brief Port 2 controller constant input
+ * \var u8 _JOY2_HOLD
+ * \brief Port 2 controller latched input
  */
 #define _JOY2_HOLD 0xfffe22
 
 /**
- * \def u8 _JOY2_PRESS
+ * \var u8 _JOY2_PRESS
  * \brief Port 2 controller single input
  */
 #define _JOY2_PRESS 0xfffe23
 
 /**
- * \def _JOY1_DELAY
+ * \var u8 _JOY1_DELAY
  * \note For use with \ref BOOT_INPUT_DELAY
  */
 #define _JOY1_DELAY 0xfffe24
 
 /**
- * \def _JOY2_DELAY
+ * \var u8 _JOY2_DELAY
  * \note For use with \ref BOOT_INPUT_DELAY
  */
 #define _JOY2_DELAY 0xfffe25
 
 /**
- * \def u8 _VINT_FLAGS
- * Used by the Boot ROM VINT/VINT_WAIT routines for graphics updates
+ * \var u8 _VINT_FLAGS
+ * \details Used by the Boot ROM VINT/VINT_WAIT routines for graphics updates
  * during vblank.
  *
  * Bit 0 - Copy sprite list to VDP
@@ -182,33 +290,34 @@
 #define _VINT_FLAGS 0xfffe26
 
 /**
- * Flags for \ref VINT_FLAGS
+ * Flags for \ref _VINT_FLAGS
  */
 #define COPY_SPRLIST_BIT 0
 #define CALL_VINT_EX_BIT 1
 
 /**
- * Bitmasks for \ref VINT_FLAGS
+ * Bitmasks for \ref _VINT_FLAGS
  */
 #define COPY_SPRLIST_MSK 1 << COPY_SPRLIST_BIT
 #define CALL_VINT_EX_MSK 1 << CALL_VINT_EX_BIT
 
 /**
- * \def u8 _VINT_COUNTER
+ * \var u8 _VINT_COUNTER
  * \brief Incremented by 1 on each VINT
  */
 #define _VINT_COUNTER 0xfffe27
 
 /**
- * \def u8 _VINT_SKIP_GFX_UPDATE
- * Skips extended operations during vblank - CRAM copy, sprite list copy,
- * increase vblank counter
- * Will still perform IO updates, though
+ * \var u8 _VINT_SKIP_GFX_UPDATE
+ * \details Skips extended operations during vblank - CRAM copy, sprite list
+ * copy, increase vblank counter
+ *
+ *  Will still perform IO updates, though
  */
 #define _VINT_SKIP_GFX_UPDATE 0xfffe28
 
 /**
- * \def u8 _VDP_UPDATE_FLAGS
+ * \var u8 _VDP_UPDATE_FLAGS
  */
 #define _VDP_UPDATE_FLAGS 0xfffe29
 
@@ -218,23 +327,23 @@
 #define PAL_UPDATE_MSK 1 << PAL_UPDATE_BIT
 
 /**
- * \def u16 _RANDOM
+ * \var u16 _RANDOM
  * \brief Contains a random 16 bit value
- * \details You must make a call to \ref BOOT_PRNG on each vblank in order to
+ * \note You must make a call to \ref BOOT_PRNG on each vblank in order to
  * use this!
  */
 #define _RANDOM 0xfffe2a
 
 /**
- * \def u16 _FONT_TILE_BASE
- * The value added to each character byte when calling _PRINT_STRING. The font
- * can begin no earlier than tile index 0x20
+ * \var u16 _FONT_TILE_BASE
+ * \details The value added to each character byte when calling _PRINT_STRING.
+ * The font can begin no earlier than tile index 0x20
  */
 #define _FONT_TILE_BASE 0xfffe2c
 
 /**
- * \def u16 _PLANE_WIDTH
- * Cached value of the plane width as defined in VDP reg. 0x10.
+ * \var u16 _PLANE_WIDTH
+ * \brief Cached value of the plane width as defined in VDP reg. 0x10.
  * \note This value is stored as BYTES, which is effectively the width in
  * tiles * 2. Example: if the plane width is 32 in the register, this value
  * must be 64, and so on.
@@ -245,39 +354,36 @@
 #define _PLANE_WIDTH 0xFFFE2E
 
 /**
- * \def u32 _SPRTBL_PTR
+ * \var u32 _SPRTBL_PTR
  */
 #define _SPRTBL_PTR 0xFFFE30
 
 /**
- * \def u32 _SPR_JMPTBL_PTR
- * Pointer to the jump table for entity processing
+ * \var u32 _SPR_JMPTBL_PTR
+ * \brief Pointer to the jump table for entity processing
  */
 #define _SPR_JMPTBL_PTR 0xFFFE34
 
 /**
- * \def u8 _FADEIN_PAL_INDEX
+ * \var u8 _FADEIN_PAL_INDEX
  * \brief Palette offset on which the fade in palette should begin
  */
 #define _FADEIN_PAL_INDEX 0xfffe46
 
 /**
- * \def u8 _FADEIN_PAL_LENGTH
- * \size byte
+ * \var u8 _FADEIN_PAL_LENGTH
  * \brief Number of entries in the fade in palette
  */
 #define _FADEIN_PAL_LENGTH 0xfffe47
 
 /**
- * \def u16 _FADEIN_STEP
- * \size word
+ * \var u16 _FADEIN_STEP
  * \brief Indicates if a fade in is still in progress
  */
 #define _FADEIN_STEP 0xfffe48
 
 /**
- * \def u32 _FADEIN_TARGET_PAL_PTR
- * \size long
+ * \var u32 _FADEIN_TARGET_PAL_PTR
  * \brief Pointer to the target fade in palette
  */
 #define _FADEIN_TARGET_PAL_PTR 0xfffe4a
@@ -297,48 +403,55 @@
 /******************************************************************************/
 /**
  * \fn BOOT_RESET
- * GROUP: System
+ * \brief Reset vector
+ * \ingroup boot_system
  *
- * This is used as the default reset vector. Leads to Mega CD title screen.
+ * \details Leads to Mega CD title screen.
  */
 #define BOOT_RESET 0x000280
 
 /**
  * \fn BOOT_ENTRY
- * GROUP: System
+ * \brief Boot ROM entry
+ * \ingroup boot_system
  *
- * This is the Boot ROM entry. On cold boot, checks for TMSS, clears RAM, writes
- * Z80 driver, writes PSG data, then moves on to checking hardware region and
- * clearing VRAM. On warm boot, skips directly to region check, then jumps to
+ * \details On cold boot, checks for TMSS, clears RAM, writes
+ * Z80 program, writes PSG data, then moves on to checking hardware region and
+ * clearing VRAM.
+ *
+ * On warm boot, skips directly to region check, then jumps to
  * the reset vector. Leads to Mega CD title screen.
+ *
  */
 #define BOOT_ENTRY 0x000284
 
 /**
  * \fn BOOT_INIT
- * GROUP: System
+ * \brief System init
+ * \ingroup boot_system
  *
- * Sets default VDP regs, clears VRAM, sets default vectors, inits controllers,
- * loads Z80 data, transfers Sub CPU BIOS, loads CD player program
+ * \details Sets default VDP regs, clears VRAM, sets default vectors, inits
+ * controllers, loads Z80 data, transfers Sub CPU BIOS, loads CD player program
  */
 #define BOOT_INIT 0x000288
 
 /**
  * \fn BOOT_INIT_SP
- * GROUP: System
- * Same as above, but sets the stack pointer first.
+ * \brief System init with stack pointer set
+ * \ingroup boot_system
+ *
+ * \details Same as \ref BOOT_INIT but sets the stack pointer first
  */
 #define BOOT_INIT_SP 0x00028C
 
 /**
  * \fn BOOT_VINT
  * \brief Vertical Blank interrupt handler
- *
- * GROUP: Interrupts
+ * \ingroup boot_interrupts
  *
  * \details Copies GA comm registers to the RAM
  * mirrors, sends INT2 (VINT ocurred) to Sub CPU, updates VDP palette from
- * RAM, calls VINT_EX, updates IO (controllers).
+ * RAM, calls VINT_EX, updates IO (controllers)
  */
 #define BOOT_VINT 0x000290
 
@@ -351,19 +464,19 @@
  */
 
 /**
- * \fn BOOT_SET_HINT_DEFAULT
- * \brief Sets the default HINT vector
- * \param[in] A1.w HINT vector
+ * \fn BOOT_SET_HINT
+ * \brief Sets the HINT vector
+ * \param[in] A1.l Pointer to HINT subroutine
  * \break None
+ * \ingroup boot_interrupts
  *
- * GROUP: Interrupts
+ * \details Sets the HINT vector in the system jump table, and sets the Gate
+ * Array HINT register to the system jump table entry, and enables the interrupt
+ * on the VDP
  *
- * Sets the HINT vector in the jump table and the Gate Array register
- * and enables the interrupt on the VDP.
- *
- * \note The VDP register buffer will be updated
+ * \note The VDP register cache will be updated
  */
-#define BOOT_SET_HINT_DEFAULT 0x000294
+#define BOOT_SET_HINT 0x000294
 
 /**
  * \fn BOOT_UPDATE_INPUTS
@@ -768,16 +881,25 @@
 #define _UNKNOWN_24 0x000310
 
 /**
- * \fn BOOT_SET_HINT
- * \brief Sets the HINT vector in the jump table and points the Gate Array
- * register to the jump table entry, and enables the interrupt on the VDP.
- * \param[in] A1.w Pointer to HINT vector
+ * \fn BOOT_SET_HINT_WORKRAM
+ * \brief Sets the HINT vector for a Work RAM destination
+ * \param[in] A1.l Pointer to HINT function
+ * \ingroup boot_interrupts
  *
- * GROUP: Interrupts
+ * \details Sets the specified vector in the system jump table, and sets the
+ * Gate Array HINT register to the specified vector, and enables the interrupt
+ * on the VDP.
+ *
+ * This is functionally identical to \ref BOOT_SET_HINT, however this version
+ * sets the GA HINT register directly to the specified vector. Since the GA
+ * register is only 16 bits, it uses only the lower word of the address and
+ * expects the routine to be locaed in Work RAM, i.e. 0xFFxxxx. This means if
+ * the specified HINT routine is located elsewhere (such as Word RAM), you must
+ * use \ref BOOT_SET_HINT instead.
  *
  * \details The VDP register buffer (_VDP_REGS) is updated with this call.
  */
-#define BOOT_SET_HINT 0x000314
+#define BOOT_SET_HINT_WORKRAM 0x000314
 
 /**
  * \fn BOOT_DISABLE_HINT
@@ -795,11 +917,9 @@
  * \param[in] A1.l Pointer to string
  * \param[in] D0.l VRAM destination (vdpptr)
  * \break d1-d2/a5
+ * \ingroup boot_misc
  *
- * GROUP: Misc
- *
- * \details
- * Strings are terminated with 0xFF and use 0x00 for newline.
+ * \details Strings are terminated with 0xFF and use 0x00 for newline.
  * The value in _FONT_TILE_BASE is added to each character byte, but no other
  * transformations are done. This means that the font must begin at index 0x20
  * at the earliest (where _FONT_TILE_BASE is 0).
@@ -815,11 +935,9 @@
  * \param[in] D1.l Color bit map
  * \param[in] D2.l Tile count
  * \break d3-d4/a5
+ * \ingroup boot_vdp
  *
- * GROUP: VDP
- *
- * \details
- * The color bit map value is a long that must be in this format:
+ * \details The color bit map value is a long that must be in this format:
  * BB'BF'FB'FF
  * Where B and F are indices on the first coloe palette. B represents the back
  * ground color and F the foreground.
@@ -834,8 +952,7 @@
  * \param[in] D0.l VRAM destination (VDPPTR)
  * \param[in] D1.l Color bit map
  * \break d2-d4/a1/a5
- *
- * GROUP: Misc
+ * \ingroup boot_misc
  *
  * \details
  * See the notes in _LOAD_1BPP_TILES for more info about the color bit map.
@@ -848,8 +965,7 @@
  * \fn BOOT_LOAD_FONT_DEFAULTS
  * \brief Load the internal 1bpp ASCII font with default settings
  * \break d0-d4/a1/a5
- *
- * GROUP: Misc
+ * \ingroup boot_misc
  *
  * \details
  * This will place the tiles starting at index 0x20, making it compatible with
@@ -863,8 +979,7 @@
  * \param[in] A1.l Pointer to byte which will hold the output D-pad value
  * \param[in] D0.w If 0, use P1 input; if non-zero, use P2 input
  * \break d1/a1/a5
- *
- * GROUP: Input
+ * \ingroup boot_input
  *
  * \details
  * This is useful for working with cursors on menus as it creates a brief
@@ -880,8 +995,7 @@
  * \param[in] D0.w Start tile index
  * \param[in] A1.l Pointer to Enigma compressed data
  * \param[in] A2.l Pointer to output buffer
- *
- * GROUP: Decompression
+ * \ingroup boot_compression
  */
 #define BOOT_MAP_DECOMP 0x000330
 
@@ -893,8 +1007,7 @@
  * \param[in] D2.w Map height
  * \param[in] D3.w Initial tile index
  * \break d4-d6/a5
- *
- * GROUP: VDP
+ * \ingroup boot_vdp
  */
 #define BOOT_LOAD_MAP_VERT 0x000334
 
@@ -904,12 +1017,9 @@
  * \param[in] D0.w Modulus
  * \param[out] D0.w Random number between 0 and modulus
  * \break d1
+ * \ingroup boot_misc
  *
- * GROUP: Misc
- *
- * \details The number will be stored in d0
- *
- * \note The modulus can be used to specify an upper boundary of the random
+ * \details The modulus can be used to specify an upper boundary of the random
  * number. To specify a minimum boundary, the modulus should be set like so:
  *   mod = (upper - lower) + 1
  * Finally, the lower bound should be added to the random number result.
@@ -922,8 +1032,7 @@
  * \fn _PRNG
  * \brief Generate a new random number
  * \break d0
- *
- * GROUP: Misc
+ * \ingroup boot_misc
  *
  * \details The number will be stored in _RANDOM
  */
@@ -933,8 +1042,7 @@
  * \fn BOOT_CLEAR_COMM
  * \brief Clears all Gate Array communication registers
  * \break d0/a6
- *
- * GROUP: Comm
+ * \ingroup boot_comm
  *
  * \details This clears the COMFLAGS and COMCMD registers directly as well as
  * their RAM buffers
@@ -975,32 +1083,27 @@
  * \fn BOOT_TRIGGER_IFL2
  * \brief Send INT 2 to Sub CPU
  * \break a5
- *
- * GROUP: Comm
+ * \ingroup boot_interrupts
  */
 #define BOOT_TRIGGER_IFL2 0x000360
 
 /**
  * \fn BOOT_SEGA_LOGO
  * \brief Run the Sega logo startup code
+ * \ingroup boot_system
  *
  * \note This should never need to be called from inside the game. It is
- * called automatically as part of the security code during startup and is
- * included here only for reference.
- *
- * GROUP: System
+ * called automatically as part of the security code during startup.
  */
 #define BOOT_SEGA_LOGO 0x000364
 
 /**
  * \fn BOOT_SET_VINT
  * \brief Set a new VINT subroutine
- *
  * \param[in] A1.l Pointed to VINT subroutinte
+ * \ingroup boot_interrupts
  *
- * GROUP: Interrupts
- *
- * \note Honestly, this is relatively useless as a subroutine. It simply moves
+ * \note This is relatively useless as a subroutine. It simply moves
  * the adddress into _mlevel6+2. You may as well do the move yourself and skip
  * the stack push/extra cycles from the jsr.
  */
@@ -1009,14 +1112,12 @@
 /**
  * \fn BOOT_LOAD_MAP_HORIZ
  * \brief Load map for a horizontally-oriented contiguous group of tiles
- *
  * \param[in] D0.l Destination VRAM address (vdpptr)
  * \param[in] D1.w Map width
  * \param[in] D2.w Map height
  * \param[in] D3.w Initial tile index
  * \break d4/a5
- *
- * GROUP: VDP
+ * \ingroup boot_vdp
  */
 #define BOOT_LOAD_MAP_HORIZ 0x00036C
 
@@ -1048,13 +1149,11 @@
 /**
  * \fn BOOT_DMA_COPY
  * \brief Copy data within VRAM via DMA
- *
  * \param[in] D0.l Destination VRAM address (vdpptr)
  * \param[in] D1.w Source VRAM address
  * \param[in] D2.w Length
  * \break d3/a6
- *
- * GROUP: VDP
+ * \ingroup boot_vdp
  */
 #define BOOT_DMA_COPY 0x000374
 
@@ -1063,33 +1162,28 @@
 /**
  * \fn BOOT_TO_BCD_BYTE
  * \brief Convert a byte value to BCD
- *
  * \param[in] D1.b Hex value
  * \param[out] D1.b BCD value
- *
- * GROUP: Misc
+ * \ingroup boot_misc
  */
 #define BOOT_TO_BCD_BYTE 0x00037C
 
 /**
  * \fn BOOT_TO_BCD
  * \brief Convert a word value to BCD
- *
  * \param[in] D1.w Hex value
  * \param[out] D1.w BCD value
- *
- * GROUP: Misc
+ * \ingroup boot_misc
  */
 #define BOOT_TO_BCD 0x000380
 
 /**
  * \fn BOOT_BLANK_DISPLAY
  * \brief Blanks the display
- *
+ * \ingroup boot_vdp
+
  * \details This routine clears palette index 0 (black) and disables VDP output.
- * \note The VDP register buffer will be updated
- *
- * GROUP: VDP
+ * \note The VDP register cache will be updated
  */
 #define BOOT_BLANK_DISPLAY 0x000384
 
@@ -1100,11 +1194,10 @@
  * \param[in] D0.w Palette index (*byte* offset, not word!)
  * \param[in] D1.w Length (In *words*, not bytes!)
  * \param[out] Z Palette incomplete
- *
- * GROUP: VDP
+ * \ingroup boot_vdp
  *
  * \details If Z is set, the palette fade process is not yet complete
- * and subroutine should be called against next loop.
+ * and subroutine should be called again on the next loop iteration.
  *
  * \note Sets the palette update flag on _GFX_REFRESH
  */
@@ -1113,8 +1206,7 @@
 /**
  * \fn BOOT_PAL_FADEIN
  * \brief Fade a range of the color palette from black
- *
- * GROUP: VDP
+ * \ingroup boot_vdp
  *
  * \details The fade-in routine works a little bit differently from the
  * fade-out counterpart. Instead of checking the Z flag, the value of
@@ -1131,22 +1223,18 @@
 /**
  * \fn BOOT_SET_FADEIN_PAL
  * \brief Sets the target color palette for a fadein
- *
  * \param[in] A1.l Pointer to target palette structure
+ * \ingroup boot_vdp
  *
  * \note This must be called before using BOOT_PAL_FADEIN
- *
- * GROUP: VDP
  */
 #define BOOT_SET_FADEIN_PAL 0x000390
 
 /**
  * \fn BOOT_DMA_QUEUE
  * \brief Transfer queued VDP bound data via DMA
- *
  * \param[in] A1.l Pointer to queue
- *
- * GROUP: VDP
+ * \ingroup boot_vdp
  *
  * \details The queue is an array of DMA transfer entries in this format:
  *     0.w Data length

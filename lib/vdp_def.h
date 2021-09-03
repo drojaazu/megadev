@@ -37,7 +37,6 @@
  */
 #define _VDP_DEBUG 0xC0001C
 
-
 // All VDP registers
 /**
  * \var VDP_REG00
@@ -49,8 +48,10 @@
  *
  * \param L Blank leftmost 8 pixels to background color
  * \param IE1 Enable horizontal interrupts
- * \param CM 1 = normal 9-bit color mode (512 colour); 0 = low 3-bit color mode (8 colors)
- * \param M3 1 = freeze H/V counter on level 2 interrupt; 0 = enable H/V counter
+ * \param CM 1 = normal 9-bit color mode (512 colour); 0 = low 3-bit color mode
+ * (8 colors)
+ * \param M3 1 = freeze H/V counter on level 2 interrupt; 0 = enable
+ * H/V counter
  * \param DE 0 = enable display; 1 = disable display
  */
 #define VDP_REG00 0x8000
@@ -71,7 +72,7 @@
  * \param M5 1 = Mega Drive (mode 5) display; 0 = Master System (mode 4) display
  */
 #define VDP_REG01 0x8100
- 
+
 /**
  * \def VDP_REG02
  * \brief Plane A Name Table VRAM Address
@@ -81,7 +82,7 @@
  * | |PA6*|PA5|PA4|PA3| |||
  *
  * \param PA Bits 15-13 (PA5 to PA3) of Plane A nametable address in VRAM
-  * 
+ *
  * /details The Plane A register address is effectively the full address (which
  * must be a multiple of 0x2000) divided by 0x400
  * /note PA6 is used with 12k VRAM only
@@ -97,10 +98,10 @@
  * | |W6|W5|W4|W3|W2|W1| |
  *
  * \param W Bits 15-11 (W5 to W1) of window nametable address in VRAM
- * 
+ *
  * \note The Window register address is effectively the full address (which
  * must be a multiple of 0x800) divided by 0x400
- * 
+ *
  * \note W1 is ignored in 40 cell mode, limiting the address to a multiple of
  * 0x1000
  * \note W6 is used with 128k VRAM only
@@ -116,7 +117,7 @@
  * | ||||PB3|PB2|PB1|PB0|
  *
  * \param PB Bits 15-13 (PB2 to PB0) of Plane B nametable address in VRAM
- * 
+ *
  * \note The Plane B register address is effectively the full address (which
  * must be a multiple of $2000) divided by $2000
  * \note PB3 is used with 128k VRAM only
@@ -132,7 +133,7 @@
  * |ST7|ST6|ST5|ST4|ST3|ST2|ST1|ST0|
  *
  * \param ST Bits 15-9 (ST6 to ST0) of sprite table address in VRAM
- * 
+ *
  * \note The Sprite Table register address is effectively the full address
  *          (which must be a multiple of $200) divided by $200
  * \note ST0 is ignored in 40 cell mode, limiting the address to a multiple
@@ -150,7 +151,7 @@
  * | ||SP5||||||
  *
  * \param SP5 Bit 16 of Sprite Table address
- * 
+ *
  * \note SP5 is used with 128k VRAM only
  */
 #define VDP_REG06 0x8600
@@ -216,6 +217,12 @@
  */
 #define VDP_REG0B 0x8B00
 
+#define VDP_HSCROLL_FULLSCREEN 0b00
+#define VDP_HSCROLL_CELL 0b10
+#define VDP_HSCROLL_PIXEL 0b11
+
+#define VDP_VSCROLL_BIT 2
+
 /**
  * \def VDP_REG0C
  * \brief Mode Register 4
@@ -249,7 +256,7 @@
  * | |HS6|HS5|HS4|HS3|HS2|HS1|HS0|
  *
  * \param HS Bits 15-10 (HS5 to HS0) of horizontal scroll data address in VRAM
- * 
+ *
  * \note The Horiz Scroll Data register address is effectively the full address
  * (which must be a multiple of $400) divided by $400
  * \note HS6 is used with 128k VRAM only
@@ -267,7 +274,7 @@
  *
  * \param PB4 Bit 16 of Plane B nametable address
  * \param PA0 Bit 16 of Plane A nametable address
- * 
+ *
  * \note Both PB4 and PA0 are used with 128k VRAM only
  */
 #define VDP_REG0E 0x8E00
@@ -282,7 +289,7 @@
  *
  * \param INC Value to be added to the VDP address register after each
  * read/write to the data port
- * 
+ *
  * \note 2 is most common value in this register and many VDP related functions
  * assume that is the value in this register.
  */
@@ -306,7 +313,7 @@
  * \n 01: 64 cells (512 pixels)
  * \n 10: (Invalid)
  * \n 11: 128 cells (1024 pixels)
- * 
+ *
  * \note Height/width settings of 64x128 or 128x128 cells are invalid due to a
  * maximum plane size of $2000 bytes
  */
@@ -471,12 +478,11 @@
 
 // VDP command/bus
 // OR these values on to the vdpptr formatted base address
-#define VRAM_R   0x00000000
-#define VRAM_W   0x40000000
-#define CRAM_R   0x00000020
-#define CRAM_W   0xC0000000
-#define VSRAM_R  0x00000010
-#define VSRAM_W  0x40000010
-
+#define VRAM_R 0x00000000
+#define VRAM_W 0x40000000
+#define CRAM_R 0x00000020
+#define CRAM_W 0xC0000000
+#define VSRAM_R 0x00000010
+#define VSRAM_W 0x40000010
 
 #endif
