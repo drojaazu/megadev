@@ -1,5 +1,5 @@
 /**
- * \file memory.h
+ * \file
  * \brief Simple memory utilities
  */
 

@@ -1,5 +1,5 @@
 /**
- * \file sub/sp_header.h
+ * \file
  * \brief SP header definitions
  */
 

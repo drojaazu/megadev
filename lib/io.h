@@ -1,5 +1,5 @@
 /**
- * \file io.h
+ * \file
  * \brief C wrappers for I/O registers
  */
 

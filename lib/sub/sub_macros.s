@@ -1,5 +1,5 @@
 /**
- * \file cd_sub.s
+ * \file
  * Sub CPU Gate Array and misc. utilities for use with the Sub CPU
  */
 

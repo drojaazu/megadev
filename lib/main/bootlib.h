@@ -1,5 +1,5 @@
 /**
- * \file bootlib.h
+ * \file
  * \brief C wrappers for Boot ROM calls
  */
 

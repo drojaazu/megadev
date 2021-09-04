@@ -1,5 +1,5 @@
 /**
- * \file project.h
+ * \file
  * Project header and build configuration
  */
 

@@ -1,5 +1,5 @@
 /**
- * \file printval.h
+ * \file
  * \brief C wrappers for value to hexadecimal string conversion functions
  */
 

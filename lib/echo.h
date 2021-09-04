@@ -1,5 +1,5 @@
 /**
- * \file echo.h
+ * \file
  * \brief Echo sound driver control wrappers
  */
 
@@ -16,7 +16,7 @@
  */
 inline void echo_init_c(u32 data[]) {
   register u32 a0_data asm("a0") = (u32)data;
-  asm("jsr echo_init" :: "a"(a0_data));
+  asm("jsr echo_init" ::"a"(a0_data));
 };
 
 /**
@@ -24,7 +24,7 @@ inline void echo_init_c(u32 data[]) {
  * \brief Send command to Echo driver
  */
 inline void echo_send_command(u8 command) {
-	register u8 d0_command asm("d0") = command;
+  register u8 d0_command asm("d0") = command;
   asm("jsr Echo_SendCommand" ::"d"(d0_command) : "d1", "a1");
 };
 
@@ -33,11 +33,10 @@ inline void echo_send_command(u8 command) {
  * \brief Send a command to Echo driver with address parameter
  */
 inline void echo_send_command_ex(u8 command, u8 data[]) {
-	register u8 d0_command asm("d0") = command;
-	register u32 a0_data asm("a0") = (u32)data;
+  register u8 d0_command asm("d0") = command;
+  register u32 a0_data asm("a0") = (u32)data;
 
-	asm("jsr Echo_SendCommandEx" ::"d"(d0_command), "a"(a0_data) : "d1", "a1");
-
+  asm("jsr Echo_SendCommandEx" ::"d"(d0_command), "a"(a0_data) : "d1", "a1");
 };
 
 /**
@@ -45,9 +44,9 @@ inline void echo_send_command_ex(u8 command, u8 data[]) {
  * \brief Send a command to Echo driver with byte parameter
  */
 inline void echo_send_command_byte(u8 command, u8 param) {
-	register u8 d0_command asm("d0") = command;
-	register u8 d1_param asm("d1") = param;
-	asm("jsr Echo_SendCommandByte" :: "d"(d0_command), "d"(d1_param) : "d2", "a1");
+  register u8 d0_command asm("d0") = command;
+  register u8 d1_param asm("d1") = param;
+  asm("jsr Echo_SendCommandByte" ::"d"(d0_command), "d"(d1_param) : "d2", "a1");
 };
 
 /**
@@ -57,16 +56,14 @@ inline void echo_send_command_byte(u8 command, u8 param) {
  */
 inline void echo_play_sfx(u8 data[]) {
   register u32 a0_data asm("a0") = (u32)data;
-	asm("jsr Echo_PlaySFX" :: "a"(a0_data) : "d0", "d1", "a1");
+  asm("jsr Echo_PlaySFX" ::"a"(a0_data) : "d0", "d1", "a1");
 };
 
 /**
  * \fn echo_stop_sfx
  * \brief Stop currently playing sound effect
  */
-inline void echo_stop_sfx() {
-	asm("jsr Echo_StopSFX" ::: "d0", "d1", "a1");
-}
+inline void echo_stop_sfx() { asm("jsr Echo_StopSFX" ::: "d0", "d1", "a1"); }
 
 /**
  * \fn echo_play_bgm
@@ -75,32 +72,27 @@ inline void echo_stop_sfx() {
  */
 inline void echo_play_bgm(u8 data[]) {
   register u32 a0_data asm("a0") = (u32)data;
-  asm("jsr Echo_PlayBGM" :: "a"(a0_data) : "d0", "d1", "a1");
+  asm("jsr Echo_PlayBGM" ::"a"(a0_data) : "d0", "d1", "a1");
 };
 
 /**
  * \fn echo_stop_bgm
  * \brief Stops the currently playing background music
  */
-inline void echo_stop_bgm() {
-	asm("jsr Echo_StopBGM" ::: "d0", "d1", "a1");
-}
-
+inline void echo_stop_bgm() { asm("jsr Echo_StopBGM" ::: "d0", "d1", "a1"); }
 
 /**
  * \fn echo_pause_bgm
  * \brief Pauses the currently playing background music
  */
-inline void echo_pause_bgm() {
-	asm("jsr Echo_PauseBGM" ::: "d0", "d1", "a1");
-}
+inline void echo_pause_bgm() { asm("jsr Echo_PauseBGM" ::: "d0", "d1", "a1"); }
 
 /**
  * \fn Echo_ResumeBGM
  * \brief Resume background music playback
  */
 inline void echo_resume_bgm() {
-	asm("jsr Echo_ResumeBGM" ::: "d0", "d1", "a1");
+  asm("jsr Echo_ResumeBGM" ::: "d0", "d1", "a1");
 }
 
 /**
@@ -110,7 +102,7 @@ inline void echo_resume_bgm() {
  */
 inline void echo_play_direct(u8 data[]) {
   register u32 a0_data asm("a0") = (u32)data;
-  asm("jsr Echo_PlayDirect" :: "a"(a0_data));
+  asm("jsr Echo_PlayDirect" ::"a"(a0_data));
 };
 
 /**
@@ -120,16 +112,16 @@ inline void echo_play_direct(u8 data[]) {
  */
 inline void echo_set_pcm_rate(u8 rate) {
   register u8 d1_rate asm("d1") = rate;
-	asm("jsr Echo_SetPCMRate" ::"d"(d1_rate) : "d0");
+  asm("jsr Echo_SetPCMRate" ::"d"(d1_rate) : "d0");
 };
 
 /**
  * \fn echo_set_stereo
  * \brief Enable/disable stereo output
  */
-inline void echo_set_stereo(bool enable_stereo){
-	register u8 d0_enable_stereo asm("d0") = enable_stereo;
-	asm("jsr Echo_SetStereo" ::"d"(d0_enable_stereo));
+inline void echo_set_stereo(bool enable_stereo) {
+  register u8 d0_enable_stereo asm("d0") = enable_stereo;
+  asm("jsr Echo_SetStereo" ::"d"(d0_enable_stereo));
 };
 
 /**
@@ -138,8 +130,8 @@ inline void echo_set_stereo(bool enable_stereo){
  * \param[in] volume New volume \n (0: quiet, 255: loud)
  */
 inline void echo_set_volume(u8 volume) {
-	register u8 d0_volume asm("d0") = volume;
-	asm("jsr Echo_SetVolume" ::"d"(d0_volume));
+  register u8 d0_volume asm("d0") = volume;
+  asm("jsr Echo_SetVolume" ::"d"(d0_volume));
 };
 
 /**
@@ -155,7 +147,7 @@ inline void echo_set_volume(u8 volume) {
  */
 inline void echo_set_volume_ex(u8 data[]) {
   register u32 a0_data asm("a0") = (u32)data;
-  asm("jsr Echo_SetVolumeEx" :: "a"(a0_data));
+  asm("jsr Echo_SetVolumeEx" ::"a"(a0_data));
 };
 
 /**
@@ -168,26 +160,25 @@ inline void echo_set_volume_ex(u8 data[]) {
  * \n Bit 15: Command not yet parsed
  */
 inline u8 echo_get_status() {
-	register u8 d0_status asm("d0");
-	asm("jsr Echo_GetStatus" : "=d"(d0_status));
-	return d0_status;
+  register u8 d0_status asm("d0");
+  asm("jsr Echo_GetStatus" : "=d"(d0_status));
+  return d0_status;
 };
 
 inline u8 echo_get_flags() {
-	register u8 d0_flags asm("d0");
-	asm("jsr Echo_GetFlags" : "=d"(d0_flags));
-	return d0_flags;
+  register u8 d0_flags asm("d0");
+  asm("jsr Echo_GetFlags" : "=d"(d0_flags));
+  return d0_flags;
 };
 
 inline void echo_set_flags(u8 flags) {
-	register u8 d0_flags asm("d0") = flags;
-	asm("jsr Echo_SetFlags" ::"d"(d0_flags));
+  register u8 d0_flags asm("d0") = flags;
+  asm("jsr Echo_SetFlags" ::"d"(d0_flags));
 };
 
-
 inline void echo_clear_flags(u8 clear_mask) {
-	register u8 d0_clear_mask asm("d0") = clear_mask;
-	asm("jsr Echo_ClearFlags" ::"d"(d0_clear_mask));
+  register u8 d0_clear_mask asm("d0") = clear_mask;
+  asm("jsr Echo_ClearFlags" ::"d"(d0_clear_mask));
 };
 
 /**
@@ -208,8 +199,8 @@ inline void echo_clear_flags(u8 clear_mask) {
  * conversion at compile time, a PR or discussion is appreciated.
  */
 inline void echo_convert_list(u32 data[]) {
-	register u32 a0_data asm("a0") = (u32)data;
-  asm("jsr echo_convert_inst_list" :: "a"(a0_data));
+  register u32 a0_data asm("a0") = (u32)data;
+  asm("jsr echo_convert_inst_list" ::"a"(a0_data));
 };
 
 #endif

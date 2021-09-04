@@ -1,5 +1,5 @@
 /**
- * \file boot.s
+ * \file
  * \brief Mega CD boot sector (header and IP/SP)
  */
 

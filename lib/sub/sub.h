@@ -1,5 +1,5 @@
 /**
- * \file sub/sub.h
+ * \file
  * \brief C wrappers for hardware mapping, Gate Array (GA)
  * registers and BIOS vectors on the Sub CPU side
  */

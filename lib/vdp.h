@@ -1,5 +1,5 @@
 /**
- * \file vdp.h
+ * \file
  * \brief C wrappers for VDP usage
  */
 

@@ -1,5 +1,5 @@
 /**
- * \file sub/bram.h
+ * \file
  * \brief C wrappers for Backup RAM usage
  */
 

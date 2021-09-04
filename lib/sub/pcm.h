@@ -1,5 +1,5 @@
 /**
- * \file pcm.h
+ * \file
  * \brief PCM audio playback utilities
  */
 

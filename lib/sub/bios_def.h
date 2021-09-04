@@ -1,5 +1,5 @@
 /**
- * \file sub/bios_def.h
+ * \file
  * \brief Function codes for the _CDBIOS vector
  */
 
@@ -7,6 +7,20 @@
 #define MEGADEV__CD_SUB_BIOS_DEF_H
 
 #include "sub/sub_def.h"
+
+/**
+ * \def UNKNOWN00
+ * \brief Unknown; present in jump table but needs to be researched
+ * \ingroup bios_unknown
+ */
+#define UNKNOWN00 0x0000
+
+/**
+ * \def UNKNOWN01
+ * \brief Unknown; present in jump table but needs to be researched
+ * \ingroup bios_unknown
+ */
+#define UNKNOWN01 0x0001
 
 /**
  * \def MSCSTOP
@@ -112,6 +126,20 @@
 #define DRVINIT 0x0010
 
 /**
+ * \def UNKNOWN11
+ * \brief Unknown; present in jump table but needs to be researched
+ * \ingroup bios_unknown
+ */
+#define UNKNOWN11 0x0011
+
+/**
+ * \def UNKNOWN12
+ * \brief Unknown; present in jump table but needs to be researched
+ * \ingroup bios_unknown
+ */
+#define UNKNOWN12 0x0012
+
+/**
  * \def MSCPLAY
  * \group CD-DA
  * \brief Starts CD audio playback at the specified track & continues playing
@@ -212,20 +240,6 @@
 #define MSCSEEK1 0x0019
 
 /**
- * \def TESTENTRY
- * \group Misc
- * \brief No documentation; needs to be researched
- */
-#define TESTENTRY 0x001E
-
-/**
- * \def TESTENTRYLOOP
- * \group Misc
- * \brief No documentation; needs to be researched
- */
-#define TESTENTRYLOOP 0x001F
-
-/**
  * \def ROMREADN
  * \group CD-ROM
  * \brief Same function as ROMREAD, but stops after reading the requested
@@ -260,7 +274,7 @@
  * \def CDBCHK
  * \group Misc
  * \brief Query the BIOS on the status of the last command
- * \break d0-d1/a0-a1
+ * \break d0
  *
  * \param[out] CC Command has been executed
  * \param[out] CS BIOS is busy
@@ -274,7 +288,7 @@
  * \def CDBSTAT
  * \group Misc
  * \brief Retrieve CD BIOS status
- * \break d0-d1/a0-a1
+ * \break d0-d1/a0
  *
  * \param[out] A0.l Pointer to status info structure
  *
@@ -328,9 +342,9 @@
 
 /**
  * \def FDRSET
- * \group Fader
  * \brief Sets the audio volume
- * \break d0-d1/a0-a1
+ * \break d0-d1/a0
+ * \ingroup bios_fader
  *
  * \param[in] D1.w Volume
  *
@@ -351,7 +365,7 @@
  * \group Fader
  * \brief  Ramps the audio volume from its current level to a new level at
  * the requested rate
- * \break d0-d1/a0-a1
+ * \break d0-d1/a0
  *
  * \param[in] D1.l Volume & Ramp
  * \details The input is two 16 bit values
@@ -369,7 +383,7 @@
  * \def CDCSTART
  * \group CDC
  * \brief Starts reading data from the current logical sector into the CDC
- * \break d0-d1/a0-a1
+ * \break d0-d1/a0
  *
  * \note The BIOS pre-seeks by 2 to 4 sectors and data read actually begins
  * before the requested sector. It is up to the caller to identify the correct
@@ -382,6 +396,7 @@
  * \def CDCSTARTP
  * \group CDC
  * \brief No official documentation on this call; needs to be researched
+ * \ingroup bios_unknown
  */
 #define CDCSTARTP 0x0088
 
@@ -389,7 +404,7 @@
  * \def CDCSTOP
  * \group CDC
  * \brief Stop reading data into the CDC buffer
- * \break d0-d1/a0-a1
+ * \break d0/a0
  *
  * \note If a sector is being read when CDCSTOP is called, it is discarded.
  */
@@ -399,7 +414,7 @@
  * \def CDCSTAT
  * \group CDC
  * \brief Query the status of the CDC buffer
- * \break d0-d1/a0-a1
+ * \break d0-d1/a0
  *
  * \param[out] CC Sector available for read
  * \param[out] CS Sector not ready
@@ -410,7 +425,7 @@
  * \def CDCREAD
  * \group CDC
  * \brief Reads sector of data in preparation for transfer
- * \break d0-d1/a0-a1
+ * \break d0-d1/a0
  *
  * \param[out] CC Sector ready for transfer
  * \param[out] CS Sector not ready
@@ -428,7 +443,7 @@
  * \def CDCTRN
  * \group CDC
  * \brief Transfer one sector of data from the CDC to Sub CPU RAM
- * \break d0-d1/a0-a1
+ * \break d0-d1/a0
  *
  * \param[in] A0.l Pointer to sector destination buffer (0x920 bytes)
  * \param[in] A1.l Pointer to header destination buffer (4 bytes)
@@ -446,7 +461,7 @@
  * \group CDC
  * \brief Informs the CDC that the current sector has been read and that the
  * caller is ready for the next sector
- * \break d0-d1/a0-a1
+ * \break d0
  */
 #define CDCACK 0x008D
 
@@ -537,14 +552,14 @@
  */
 #define SCDPQL 0x0094
 
-#define LEDREADY 0
-#define LEDDISCIN 1
-#define LEDACCESS 2
-#define LEDSTANDBY 3
-#define LEDERROR 4
-#define LEDMODE5 5
-#define LEDMODE6 6
-#define LEDMODE7 7
+#define LED_READY 0
+#define LED_DISCIN 1
+#define LED_ACCESS 2
+#define LED_STANDBY 3
+#define LED_ERROR 4
+#define LED_MODE5 5
+#define LED_MODE6 6
+#define LED_MODE7 7
 
 /**
  * \def LEDSET
@@ -561,7 +576,7 @@
  * LEDDISCIN (1)     on              off         CD ready / disk ok
  * LEDACCESS (2)     on              on          CD accessing
  * LEDSTANDBY (3)    blink           off         standby mode
- * LEDERROR (4)      blink           blink       reserved
+ * LED_ERROR (4)      blink           blink       reserved
  * LEDMODE5 (5)      blink           on          reserved
  * LEDMODE6 (6)      off             blink       reserved
  * LEDMODE7 (7)      off             on          reserved

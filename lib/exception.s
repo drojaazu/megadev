@@ -1,5 +1,5 @@
 /**
- * \file exceptions.s
+ * \file
  * \brief Simple exception handler
  * \details Intended for the Main CPU
  *

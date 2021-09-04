@@ -1,5 +1,5 @@
 /**
- * \file sub/cdrom_def.h
+ * \file
  * \brief CD-ROM file access definitions
  */
 

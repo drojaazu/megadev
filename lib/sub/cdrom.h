@@ -1,5 +1,5 @@
 /**
- * \file sub/cdrom.h
+ * \file
  * \brief C wrappers for CD-ROM file access
  */
 

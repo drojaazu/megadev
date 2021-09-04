@@ -1,5 +1,5 @@
 /**
- * \file echo.s
+ * \file
  * \brief Echo sound driver control
  * 
  * Converted for use with GAS

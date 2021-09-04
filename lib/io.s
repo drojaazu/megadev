@@ -1,5 +1,5 @@
 /**
- * \file io.s
+ * \file
  * \brief IO utilities
  */
 

@@ -1,5 +1,5 @@
 /**
- * \file sec_check.s
+ * \file
  */
 
 .section .text

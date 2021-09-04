@@ -1,5 +1,5 @@
 /**
- * \file sub/cdrom.s
+ * \file
  * CD-ROM File Access API
  * Subdirectories are *not* supported. All files should be in the root.
  */

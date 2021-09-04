@@ -85,7 +85,7 @@ GLABEL sp_fatal
 	move.w #0xff, _GA_COMSTAT0
 	// make both LEDs blink (which is normally disallowed but Sega QA isn't
 	// here to boss us around)
-	moveq	#LEDERROR, d1
+	moveq	#LED_ERROR, d1
   CDBIOS #LEDSET
 0:nop
 	nop

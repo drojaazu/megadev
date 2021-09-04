@@ -1,5 +1,5 @@
 /**
- * \file vdp_def.h
+ * \file
  * \brief VDP hardware definitions
  */
 
@@ -9,7 +9,7 @@
 // VDP ports
 
 /**
- * \var VDP_CTRL
+ * \var _VDP_CTRL
  * \brief VDP control port
  * \details 16 bit wide - a 32 bit write is equivalent to two consecutive
  * 16 bit writes
@@ -18,7 +18,7 @@
 #define _VDP_CTRL 0xC00004
 
 /**
- * \var VDP_DATA
+ * \var _VDP_DATA
  * \brief VDP data port
  * \details 16 bit wide - a 32 bit write is equivalent to two consecutive
  * 16 bit writes
@@ -26,13 +26,13 @@
 #define _VDP_DATA 0xC00000
 
 /**
- * \var VDP_HVCOUNT
+ * \var _VDP_HVCOUNT
  * \brief HV Counter
  */
 #define _VDP_HVCOUNT 0xC00008
 
 /**
- * \var VDP_DEBUG
+ * \var _VDP_DEBUG
  * \brief VDP debug port
  */
 #define _VDP_DEBUG 0xC0001C

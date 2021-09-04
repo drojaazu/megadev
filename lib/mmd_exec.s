@@ -1,5 +1,5 @@
 /**
- * \file mmd_exec_main.s
+ * \file
  */
 
 #include "macros.s"

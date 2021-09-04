@@ -1,5 +1,5 @@
 /**
- * \file main/main_macros.s
+ * \file
  * Main CPU Gate Array and misc. utilities
  */
 

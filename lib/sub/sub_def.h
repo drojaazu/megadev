@@ -1,5 +1,5 @@
 /**
- * \file sub/sub_def.h
+ * \file
  * \brief Hardware memory map, Gate Array (GA) register, and entry vector
  * definitions for the Sub CPU side
  *

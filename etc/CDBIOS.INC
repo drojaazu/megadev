@@ -875,7 +875,7 @@ BIOS_SCDPQL macro
 ;         LEDDISCIN (1)     on              off         CD ready / disk ok
 ;         LEDACCESS (2)     on              on          CD accessing
 ;         LEDSTANDBY (3)    blink           off         standby mode
-;         LEDERROR (4)      blink           blink       reserved
+;         LED_ERROR (4)      blink           blink       reserved
 ;         LEDMODE5 (5)      blink           on          reserved
 ;         LEDMODE6 (6)      off             blink       reserved
 ;         LEDMODE7 (7)      off             on          reserved

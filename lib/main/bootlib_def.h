@@ -1,5 +1,5 @@
 /**
- * \file main/bootlib_def.h
+ * \file
  * \brief Boot ROM call vector & memory definitions
  */
 

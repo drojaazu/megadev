@@ -1,5 +1,5 @@
 /**
- * \file math.h
+ * \file
  * \brief Numerical utilities
  */
 

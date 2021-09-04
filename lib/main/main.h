@@ -1,5 +1,5 @@
 /**
- * \file main/main.h
+ * \file
  * \brief C wrappers for hardware mapping, Gate Array (GA) registers and BIOS
  * vectors on the Main CPU side
  */

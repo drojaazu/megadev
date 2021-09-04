@@ -1,5 +1,5 @@
 /**
- * \file cd_sub_cdrom_macros.h
+ * \file
  * CD-ROM File Access Wrapper Macros
  */
 

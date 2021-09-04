@@ -1,5 +1,5 @@
 /**
- * \file sub/bram_def.h
+ * \file
  * \brief Function codes for the _BURAM vector
  */
 

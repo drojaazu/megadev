@@ -1,5 +1,5 @@
 /**
- * \file main/main_def.h
+ * \file
  * \brief Hardware memory map, Gate Array (GA) register, and entry vector
  * definitions for the Main CPU side
  *

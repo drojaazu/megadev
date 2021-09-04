@@ -1,5 +1,5 @@
 /**
- * \file macros.s
+ * \file
  * \brief General purpose asm macros for use with the Main CPU
  */
 

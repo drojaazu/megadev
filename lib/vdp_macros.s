@@ -1,5 +1,5 @@
 /**
- * \file vdp.h
+ * \file
  * \brief Mega Drive Video Display Processor (VDP)
  */
 

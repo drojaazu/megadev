@@ -1,5 +1,5 @@
 /**
- * \file md_sys_def.h
+ * \file
  * \brief Misc. Mega Drive system registers
  */
 
