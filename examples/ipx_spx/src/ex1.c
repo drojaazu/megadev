@@ -15,7 +15,7 @@ extern Palette res_rain_pal;
 void main() {
   disable_interrupts();
   boot_load_pal_update(&res_rain_pal);
-  boot_dma_xfer_wordram(VDPPTR(AT_TILE(0x80)), &res_rain_chr,
+  boot_dma_xfer_wordram(VDPPTR(VRAM_AT(0x80)), &res_rain_chr,
                         res_rain_chr_sz >> 1);
   enable_interrupts();
 

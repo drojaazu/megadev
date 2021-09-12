@@ -15,7 +15,7 @@ extern Palette res_snow_pal;
 void main() {
   disable_interrupts();
   boot_load_pal_update(&res_snow_pal);
-  boot_dma_xfer_wordram(VDPPTR(AT_TILE(0x80)), &res_snow_chr,
+  boot_dma_xfer_wordram(VDPPTR(VRAM_AT(0x80)), &res_snow_chr,
                         res_snow_chr_sz >> 1);
   enable_interrupts();
 
