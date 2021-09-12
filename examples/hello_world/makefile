@@ -19,9 +19,6 @@ HW_CFG=REGION=US VIDEO=NTSC VRAM_SIZE=VRAM_64K
 # (relative to the location of the makefile)
 SRC_PATH:=src
 
-# Build project in debug mode
-DEBUG:=1
-
 # Resources path
 # This is where graphics, audio and any other non-code content should be
 # stored.

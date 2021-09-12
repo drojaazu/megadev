@@ -181,16 +181,16 @@ static inline BrmreadRes * bram_brmread(char const * filename, u8 * buffer) {
   return &brmread_results;
 }
 
-typedef struct BrmwriteParams {
-  char filename[11];
+typedef struct BramFileInfo {
+  char const filename[11];
   u8 mode;
   u16 blocksize;
-} BrmwriteParams;
+} BramFileInfo;
 
 /**
  * \sa BRMWRITE
  */
-static inline bool bram_brmwrite(BrmwriteParams const * params,
+static inline bool bram_brmwrite(BramFileInfo const * params,
                                  u8 const * data) {
   register u16 d0_fcode asm("d0") = BRMWRITE;
   register u32 a0_params asm("a0") = (u32)params;
@@ -288,7 +288,7 @@ enum BrmverifyStatus { NoMatch = -1, FileNotFound = 0, Match = 1 };
  * \sa BRMVERIFY
  */
 static inline enum BrmverifyStatus
-bram_brmverify(BrmwriteParams const * params) {
+bram_brmverify(BramFileInfo const * params) {
   register u16 d0_fcode asm("d0") = BRMVERIFY;
   register u32 a0_params asm("a0") = (u32)params;
   register u16 d0_result asm("d0");

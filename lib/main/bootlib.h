@@ -26,7 +26,7 @@ struct SpriteObject {
  * \struct Palette
  * cram_offset - address in CRAM to load palette - that is, the palette index
  * * 2
- * lengdth - the number of colors in the palette to load MINUS ONE
+ * length - the number of colors in the palette to load MINUS ONE
  */
 typedef struct Palette {
   u8 cram_offset;
@@ -36,6 +36,7 @@ typedef struct Palette {
 
 /**
  * \sa _DECOMP_BUFFER
+ * \note: Size: u8[0x200]
  */
 #define DECOMP_BUFFER ((u8 *)_DECOMP_BUFFER)
 
@@ -46,6 +47,7 @@ typedef struct Palette {
 
 /**
  * \sa _PALETTE
+ * \note Size: u16[64]
  */
 #define PALETTE ((u16 *)_PALETTE)
 
@@ -197,7 +199,7 @@ typedef struct Palette {
 /**
  * \sa _VINT_COUNTER
  */
-#define VINT_COUNTER ((u8 *)_VINT_COUNTER)
+#define VINT_COUNTER ((volatile u8 *)_VINT_COUNTER)
 
 /**
  * \sa _VINT_SKIP_GFX_UPDATE

@@ -89,7 +89,7 @@ __attribute__((section(".init"))) void main() {
     case 5:
       wait_2m();
 
-      BrmwriteParams info;
+      BramFileInfo info;
 
       info.filename[0] = 'B';
       info.filename[1] = 'R';

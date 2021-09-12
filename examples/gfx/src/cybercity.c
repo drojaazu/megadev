@@ -70,7 +70,7 @@ __attribute__((noreturn)) void main() {
   boot_dma_xfer_wordram((VDPPTR(32) | CRAM_W), res_ship_pal, 32 >> 1);
 
   // boot_gfx_decomp requires that we set the VDP address first
-  *VDP_CTRL_32 = VDPPTR(AT_TILE(1)) | VRAM_W;
+  *VDP_CTRL_32 = VDPPTR(VRAM_AT(1)) | VRAM_W;
   boot_gfx_decomp(res_cybercity_bldg_cmp_nem);
 
   // first word of Nemesis compression is the tile count, with the msb
@@ -78,12 +78,12 @@ __attribute__((noreturn)) void main() {
   // next free tile +1 to account for the blank 0 tile
   u16 free_tile = ((*(u16 *)res_cybercity_bldg_cmp_nem) & 0x7fff) + 1;
 
-  *VDP_CTRL_32 = VDPPTR(AT_TILE(free_tile)) | VRAM_W;
+  *VDP_CTRL_32 = VDPPTR(VRAM_AT(free_tile)) | VRAM_W;
   boot_gfx_decomp(res_cybercity_farbg_cmp_nem);
 
   free_tile += ((*(u16 *)res_cybercity_farbg_cmp_nem) & 0x7fff);
 
-  boot_dma_xfer_wordram(VDPPTR(AT_TILE(free_tile)) | VRAM_W, res_ship_chr,
+  boot_dma_xfer_wordram(VDPPTR(VRAM_AT(free_tile)) | VRAM_W, res_ship_chr,
                         1920 >> 1);
 
   boot_load_map(VDPPTR(NMT_POS_PLANE(0, 2, BOOT_PLANEA_ADDR)) | VRAM_W,

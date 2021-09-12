@@ -254,9 +254,9 @@ access_op_load_dir:
   moveq    #0, d0
 2:move.b   0(a1), d0  // no more entries? (size is 0)
   beq      7f         // no more, jump down
-  move.b   0x19(a1), 0x17(a0)   //file flags*/
-  move.l   6(a1), 0x18(a0)      //file start sector
-  move.l   0xe(a1), 0x1c(a0)    //file size in bytes
+  move.b   0x19(a1), 0x17(a0)   //file flags
+  move.l   6(a1), 0x18(a0)      //file start sector (big endian)
+  move.l   0xe(a1), 0x1c(a0)    //file size in bytes (big endian)
   moveq    #0, d1               // d1 will be filename char index
 4:move.b   0x21(a1,d1.w), (a0,d1.w)  // filename
   addq.w   #1, d1

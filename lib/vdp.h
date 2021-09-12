@@ -74,18 +74,18 @@ typedef union SpriteEx {
 #define NMT_POS_PLANE(x, y, plane_addr) (NMT_POS(x, y) + plane_addr)
 
 /**
- * \def AT_TILE
- * \brief Byte offset to the specified tile index
+ * \def VRAM_AT
+ * \brief VRAM address for the given tile index
  * (assuming tile data begins at 0 in VRAM)
  */
-#define AT_TILE(tile_idx) ((tile_idx) << 5)
+#define VRAM_AT(chridx) ((chridx) << 5)
 
 /**
  * \def TILE_AT
- * \brief Tile index of the specified byte offset
+ * \brief Tile index of the specified VRAM address
  * (assuming tile data begins at 0 in VRAM)
  */
-#define TILE_AT(offset) ((offset) >> 5)
+#define TILE_AT(vram_addr) ((vram_addr) >> 5)
 
 /**
  * \def VDPPTR

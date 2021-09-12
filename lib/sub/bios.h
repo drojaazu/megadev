@@ -15,10 +15,10 @@
 static inline void bios_mscstop() {
   register u16 d0_fcode asm("d0") = MSCSTOP;
 
-  asm("jsr %p1"
-      : "+d"(d0_fcode)
-      : "i"(_CDBIOS), "d"(d0_fcode)
-      : "cc", "a0", "a1");
+  asm volatile("jsr %p1"
+               : "+d"(d0_fcode)
+               : "i"(_CDBIOS), "d"(d0_fcode)
+               : "cc", "a0", "a1");
 }
 
 /**
@@ -27,10 +27,10 @@ static inline void bios_mscstop() {
 static inline void bios_mscpauseon() {
   register u16 d0_fcode asm("d0") = MSCPAUSEON;
 
-  asm("jsr %p1"
-      : "+d"(d0_fcode)
-      : "i"(_CDBIOS), "d"(d0_fcode)
-      : "cc", "a0", "a1");
+  asm volatile("jsr %p1"
+               : "+d"(d0_fcode)
+               : "i"(_CDBIOS), "d"(d0_fcode)
+               : "cc", "a0", "a1");
 }
 
 /**
@@ -39,10 +39,10 @@ static inline void bios_mscpauseon() {
 static inline void bios_mscpauseoff() {
   register u16 d0_fcode asm("d0") = MSCPAUSEOFF;
 
-  asm("jsr %p1"
-      : "+d"(d0_fcode)
-      : "i"(_CDBIOS), "d"(d0_fcode)
-      : "cc", "a0", "a1");
+  asm volatile("jsr %p1"
+               : "+d"(d0_fcode)
+               : "i"(_CDBIOS), "d"(d0_fcode)
+               : "cc", "a0", "a1");
 };
 
 /**
@@ -51,10 +51,10 @@ static inline void bios_mscpauseoff() {
 static inline void bios_mscscanff() {
   register u16 d0_fcode asm("d0") = MSCSCANFF;
 
-  asm("jsr %p1"
-      : "+d"(d0_fcode)
-      : "i"(_CDBIOS), "d"(d0_fcode)
-      : "cc", "a0", "a1");
+  asm volatile("jsr %p1"
+               : "+d"(d0_fcode)
+               : "i"(_CDBIOS), "d"(d0_fcode)
+               : "cc", "a0", "a1");
 };
 
 /**
@@ -63,10 +63,10 @@ static inline void bios_mscscanff() {
 static inline void bios_mscscanfr() {
   register u16 d0_fcode asm("d0") = MSCSCANFR;
 
-  asm("jsr %p1"
-      : "+d"(d0_fcode)
-      : "i"(_CDBIOS), "d"(d0_fcode)
-      : "cc", "a0", "a1");
+  asm volatile("jsr %p1"
+               : "+d"(d0_fcode)
+               : "i"(_CDBIOS), "d"(d0_fcode)
+               : "cc", "a0", "a1");
 };
 
 /**
@@ -75,10 +75,10 @@ static inline void bios_mscscanfr() {
 static inline void bios_mscscanoff() {
   register u16 d0_fcode asm("d0") = MSCSCANOFF;
 
-  asm("jsr %p1"
-      : "+d"(d0_fcode)
-      : "i"(_CDBIOS), "d"(d0_fcode)
-      : "cc", "a0", "a1");
+  asm volatile("jsr %p1"
+               : "+d"(d0_fcode)
+               : "i"(_CDBIOS), "d"(d0_fcode)
+               : "cc", "a0", "a1");
 };
 
 /**
@@ -87,10 +87,10 @@ static inline void bios_mscscanoff() {
 static inline void bios_rompauseon() {
   register u16 d0_fcode asm("d0") = ROMPAUSEON;
 
-  asm("jsr %p1"
-      : "+d"(d0_fcode)
-      : "i"(_CDBIOS), "d"(d0_fcode)
-      : "cc", "a0", "a1");
+  asm volatile("jsr %p1"
+               : "+d"(d0_fcode)
+               : "i"(_CDBIOS), "d"(d0_fcode)
+               : "cc", "a0", "a1");
 };
 
 /**
@@ -99,10 +99,10 @@ static inline void bios_rompauseon() {
 static inline void bios_rompauseoff() {
   register u16 d0_fcode asm("d0") = ROMPAUSEOFF;
 
-  asm("jsr %p1"
-      : "+d"(d0_fcode)
-      : "i"(_CDBIOS), "d"(d0_fcode)
-      : "cc", "a0", "a1");
+  asm volatile("jsr %p1"
+               : "+d"(d0_fcode)
+               : "i"(_CDBIOS), "d"(d0_fcode)
+               : "cc", "a0", "a1");
 };
 
 /**
@@ -111,10 +111,10 @@ static inline void bios_rompauseoff() {
 static inline void bios_drvopen() {
   register u16 d0_fcode asm("d0") = DRVOPEN;
 
-  asm("jsr %p1"
-      : "+d"(d0_fcode)
-      : "i"(_CDBIOS), "d"(d0_fcode)
-      : "cc", "a0", "a1");
+  asm volatile("jsr %p1"
+               : "+d"(d0_fcode)
+               : "i"(_CDBIOS), "d"(d0_fcode)
+               : "cc", "a0", "a1");
 };
 
 struct DrvinitParams {
@@ -129,10 +129,10 @@ static inline void bios_drvinit(struct DrvinitParams const * drvinit_param) {
   register u16 d0_fcode asm("d0") = DRVINIT;
   register u32 a0_drvinit_param asm("a0") = (u32)drvinit_param;
 
-  asm("jsr %p2"
-      : "+d"(d0_fcode), "+a"(a0_drvinit_param)
-      : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_drvinit_param)
-      : "cc", "a1");
+  asm volatile("jsr %p2"
+               : "+d"(d0_fcode), "+a"(a0_drvinit_param)
+               : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_drvinit_param)
+               : "cc", "a1");
 };
 
 /**
@@ -142,10 +142,10 @@ static inline void bios_mscplay(u16 const * track_number) {
   register u16 d0_fcode asm("d0") = MSCPLAY;
   register u32 a0_track_number asm("a0") = (u32)track_number;
 
-  asm("jsr %p2"
-      : "+d"(d0_fcode), "+a"(a0_track_number)
-      : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_track_number)
-      : "cc", "a1");
+  asm volatile("jsr %p2"
+               : "+d"(d0_fcode), "+a"(a0_track_number)
+               : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_track_number)
+               : "cc", "a1");
 };
 
 /**
@@ -155,23 +155,24 @@ static inline void bios_mscplay1(u16 const * track_number) {
   register u16 d0_fcode asm("d0") = MSCPLAY1;
   register u32 a0_track_number asm("a0") = (u32)track_number;
 
-  asm("jsr %p2"
-      : "+d"(d0_fcode), "+a"(a0_track_number)
-      : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_track_number)
-      : "cc", "a1");
+  asm volatile("jsr %p2"
+               : "+d"(d0_fcode), "+a"(a0_track_number)
+               : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_track_number)
+               : "cc", "a1");
 };
 
 /**
  * \sa MSCPLAYR
  */
+
 static inline void bios_mscplayr(u16 const * track_number) {
   register u16 d0_fcode asm("d0") = MSCPLAYR;
   register u32 a0_track_number asm("a0") = (u32)track_number;
 
-  asm("jsr %p2"
-      : "+d"(d0_fcode), "+a"(a0_track_number)
-      : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_track_number)
-      : "cc", "a1");
+  asm volatile("jsr %p2"
+               : "+d"(d0_fcode), "+a"(a0_track_number)
+               : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_track_number)
+               : "cc", "a1");
 };
 
 /**
@@ -181,10 +182,10 @@ static inline void bios_mscplayt(u32 const * timecode) {
   register u16 d0_fcode asm("d0") = MSCPLAYT;
   register u32 a0_time_code asm("a0") = (u32)timecode;
 
-  asm("jsr %p2"
-      : "+d"(d0_fcode), "+a"(a0_time_code)
-      : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_time_code)
-      : "cc", "a1");
+  asm volatile("jsr %p2"
+               : "+d"(d0_fcode), "+a"(a0_time_code)
+               : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_time_code)
+               : "cc", "a1");
 };
 
 /**
@@ -194,10 +195,10 @@ static inline void bios_mscseek(u32 const * track_number) {
   register u16 d0_fcode asm("d0") = MSCSEEK;
   register u32 a0_track_number asm("a0") = (u32)track_number;
 
-  asm("jsr %p2"
-      : "+d"(d0_fcode), "+a"(a0_track_number)
-      : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_track_number)
-      : "cc", "a1");
+  asm volatile("jsr %p2"
+               : "+d"(d0_fcode), "+a"(a0_track_number)
+               : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_track_number)
+               : "cc", "a1");
 };
 
 /**
@@ -207,10 +208,10 @@ static inline void bios_mscseekt(u32 const * timecode) {
   register u16 d0_fcode asm("d0") = MSCSEEKT;
   register u32 a0_time_code asm("a0") = (u32)timecode;
 
-  asm("jsr %p2"
-      : "+d"(d0_fcode), "+a"(a0_time_code)
-      : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_time_code)
-      : "cc", "a1");
+  asm volatile("jsr %p2"
+               : "+d"(d0_fcode), "+a"(a0_time_code)
+               : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_time_code)
+               : "cc", "a1");
 };
 
 /**
@@ -220,10 +221,10 @@ static inline void bios_romread(u32 const * sector_number) {
   register u16 d0_fcode asm("d0") = ROMREAD;
   register u32 a0_sector_number asm("a0") = (u32)sector_number;
 
-  asm("jsr %p2"
-      : "+d"(d0_fcode), "+a"(a0_sector_number)
-      : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_sector_number)
-      : "cc", "a1");
+  asm volatile("jsr %p2"
+               : "+d"(d0_fcode), "+a"(a0_sector_number)
+               : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_sector_number)
+               : "cc", "a1");
 };
 
 /**
@@ -233,10 +234,10 @@ static inline void bios_romseek(u32 const * sector_number) {
   register u16 d0_fcode asm("d0") = ROMSEEK;
   register u32 a0_sector_number asm("a0") = (u32)sector_number;
 
-  asm("jsr %p2"
-      : "+d"(d0_fcode), "+a"(a0_sector_number)
-      : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_sector_number)
-      : "cc", "a1");
+  asm volatile("jsr %p2"
+               : "+d"(d0_fcode), "+a"(a0_sector_number)
+               : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_sector_number)
+               : "cc", "a1");
 };
 
 /**
@@ -246,10 +247,10 @@ static inline void bios_mscseek1(u16 const * track_number) {
   register u16 d0_fcode asm("d0") = MSCSEEK1;
   register u32 a0_track_number asm("a0") = (u32)track_number;
 
-  asm("jsr %p2"
-      : "+d"(d0_fcode), "+a"(a0_track_number)
-      : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_track_number)
-      : "cc", "a1");
+  asm volatile("jsr %p2"
+               : "+d"(d0_fcode), "+a"(a0_track_number)
+               : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_track_number)
+               : "cc", "a1");
 };
 
 struct RomreadParams {
@@ -264,10 +265,10 @@ static inline void bios_romreadn(struct RomreadParams const * param) {
   register u16 d0_fcode asm("d0") = ROMREADN;
   register u32 a0_param asm("a0") = (u32)param;
 
-  asm("jsr %p2"
-      : "+d"(d0_fcode), "+a"(a0_param)
-      : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_param)
-      : "cc", "a1");
+  asm volatile("jsr %p2"
+               : "+d"(d0_fcode), "+a"(a0_param)
+               : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_param)
+               : "cc", "a1");
 };
 
 /**
@@ -277,10 +278,10 @@ static inline void bios_romreade(struct RomreadParams const * param) {
   register u16 d0_fcode asm("d0") = ROMREADE;
   register u32 a0_param asm("a0") = (u32)param;
 
-  asm("jsr %p2"
-      : "+d"(d0_fcode), "+a"(a0_param)
-      : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_param)
-      : "cc", "a1");
+  asm volatile("jsr %p2"
+               : "+d"(d0_fcode), "+a"(a0_param)
+               : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_param)
+               : "cc", "a1");
 };
 
 /**
@@ -289,7 +290,7 @@ static inline void bios_romreade(struct RomreadParams const * param) {
 static inline void bios_cdbchk() {
   register u16 d0_fcode asm("d0") = CDBCHK;
 
-  asm("jsr %p1" : "+d"(d0_fcode) : "i"(_CDBIOS), "d"(d0_fcode) : "cc");
+  asm volatile("jsr %p1" : "+d"(d0_fcode) : "i"(_CDBIOS), "d"(d0_fcode) : "cc");
 };
 
 typedef struct CDBStatus {
@@ -307,10 +308,10 @@ static inline CDBStatus const * bios_cdbstat() {
   register u16 d0_fcode asm("d0") = CDBSTAT;
   register u32 a0_ptr asm("a0");
 
-  asm("jsr %p2"
-      : "+d"(d0_fcode), "=a"(a0_ptr)
-      : "i"(_CDBIOS), "d"(d0_fcode)
-      : "cc", "d1");
+  asm volatile("jsr %p2"
+               : "+d"(d0_fcode), "=a"(a0_ptr)
+               : "i"(_CDBIOS), "d"(d0_fcode)
+               : "cc", "d1");
 
   return (CDBStatus *)a0_ptr;
 }
@@ -322,10 +323,10 @@ static inline void bios_fdrset(u16 const volume) {
   register u16 d0_fcode asm("d0") = FDRSET;
   register u16 const d1_volume asm("d1") = volume;
 
-  asm("jsr %p1"
-      : "+d"(d0_fcode)
-      : "i"(_CDBIOS), "d"(d0_fcode), "d"(d1_volume)
-      : "cc");
+  asm volatile("jsr %p1"
+               : "+d"(d0_fcode)
+               : "i"(_CDBIOS), "d"(d0_fcode), "d"(d1_volume)
+               : "cc");
 };
 
 /**
@@ -335,10 +336,10 @@ static inline void bios_fdrchg(u32 const volume) {
   register u16 d0_fcode asm("d0") = FDRCHG;
   register u32 d1_volume asm("d1") = volume;
 
-  asm("jsr %p1"
-      : "+d"(d0_fcode), "+d"(d1_volume)
-      : "i"(_CDBIOS), "d"(d0_fcode), "d"(d1_volume)
-      : "cc");
+  asm volatile("jsr %p1"
+               : "+d"(d0_fcode), "+d"(d1_volume)
+               : "i"(_CDBIOS), "d"(d0_fcode), "d"(d1_volume)
+               : "cc");
 };
 
 /**
@@ -347,7 +348,10 @@ static inline void bios_fdrchg(u32 const volume) {
 static inline void bios_cdcstart() {
   register u16 d0_fcode asm("d0") = CDCSTART;
 
-  asm("jsr %p1" : "+d"(d0_fcode) : "i"(_CDBIOS), "d"(d0_fcode) : "cc", "d1");
+  asm volatile("jsr %p1"
+               : "+d"(d0_fcode)
+               : "i"(_CDBIOS), "d"(d0_fcode)
+               : "cc", "d1");
 };
 
 /**
@@ -356,7 +360,7 @@ static inline void bios_cdcstart() {
 static inline void bios_cdcstop() {
   register u16 d0_fcode asm("d0") = CDCSTOP;
 
-  asm("jsr %p1" : "+d"(d0_fcode) : "i"(_CDBIOS), "d"(d0_fcode) : "cc");
+  asm volatile("jsr %p1" : "+d"(d0_fcode) : "i"(_CDBIOS), "d"(d0_fcode) : "cc");
 };
 
 /**
@@ -366,7 +370,10 @@ static inline void bios_cdcstop() {
 static inline void bios_cdcstat() {
   register u16 d0_fcode asm("d0") = CDCSTAT;
 
-  asm("jsr %p1" : "+d"(d0_fcode) : "i"(_CDBIOS), "d"(d0_fcode) : "cc", "d1");
+  asm volatile("jsr %p1"
+               : "+d"(d0_fcode)
+               : "i"(_CDBIOS), "d"(d0_fcode)
+               : "cc", "d1");
 };
 
 /**
@@ -397,10 +404,11 @@ static inline void bios_cdctrn(u8 * sector_dest, u8 * header_dest) {
   register u8 * a0_sector_dest asm("a0") = sector_dest;
   register u8 * a1_header_dest asm("a1") = header_dest;
 
-  asm("jsr %p3"
-      : "+d"(d0_fcode), "+a"(a0_sector_dest), "+a"(a1_header_dest)
-      : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_sector_dest), "a"(a1_header_dest)
-      : "cc", "d1");
+  asm volatile("jsr %p3"
+               : "+d"(d0_fcode), "+a"(a0_sector_dest), "+a"(a1_header_dest)
+               : "i"(_CDBIOS), "d"(d0_fcode), "a"(a0_sector_dest),
+                 "a"(a1_header_dest)
+               : "cc", "d1");
 };
 
 /**
@@ -409,7 +417,7 @@ static inline void bios_cdctrn(u8 * sector_dest, u8 * header_dest) {
 static inline void bios_cdcack() {
   register u16 d0_fcode asm("d0") = CDCACK;
 
-  asm("jsr %p1" : "+d"(d0_fcode) : "i"(_CDBIOS), "d"(d0_fcode) : "cc");
+  asm volatile("jsr %p1" : "+d"(d0_fcode) : "i"(_CDBIOS), "d"(d0_fcode) : "cc");
 };
 
 #endif

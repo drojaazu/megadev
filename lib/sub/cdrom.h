@@ -75,10 +75,11 @@ typedef struct FileInfo {
 } FileInfo;
 
 // TODO file info struct!
-static inline void get_file_info_c(char const * filename) {
+static inline FileInfo * get_file_info_c(char const * filename) {
   register u32 a0_filename asm("a0") = (u32)filename;
   register u32 a0_fileinfo asm("a0");
-  asm(R"(
+
+  asm volatile(R"(
   jsr get_file_info
   bcc 1f
   rts
@@ -86,9 +87,9 @@ static inline void get_file_info_c(char const * filename) {
 1:lea #0,a0
   rts
   )"
-      : "=a"(a0_fileinfo)
-      : "a"(a0_filename)
-      : "d0", "d1", "a2");
+               : "=a"(a0_fileinfo)
+               : "a"(a0_filename)
+               : "d0", "d1", "a2");
 }
 
 #endif
