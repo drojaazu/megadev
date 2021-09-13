@@ -336,7 +336,7 @@ static inline void bios_fdrchg(u32 const volume) {
   register u16 d0_fcode asm("d0") = FDRCHG;
   register u32 d1_volume asm("d1") = volume;
 
-  asm volatile("jsr %p1"
+  asm volatile("jsr %p2"
                : "+d"(d0_fcode), "+d"(d1_volume)
                : "i"(_CDBIOS), "d"(d0_fcode), "d"(d1_volume)
                : "cc");

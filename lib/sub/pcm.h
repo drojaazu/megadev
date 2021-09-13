@@ -26,10 +26,10 @@
 typedef struct PcmChannelSettings {
   u8 envelope;
   u8 panning;
+u8 frequencyLo;
   u8 frequencyHi;
-  u8 frequencyLo;
-  u8 loopPointHi;
   u8 loopPointLo;
+  u8 loopPointHi;
   u8 start;
 } PcmChannelSettings;
 

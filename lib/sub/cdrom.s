@@ -45,7 +45,7 @@ load_file:
   rts
 
 /**
- * \fn get_file_info
+ * \fn find_file
  * \brief Get a pointer to the cached file info entry
  * \param[in] A0.l Pointer to file name
  * \param[out] CS File not found
@@ -53,13 +53,13 @@ load_file:
  * \param[out] A0.l Pointer to file list entry (if found)
  * \break d0-d1/a1-a2
  */
-.global get_file_info
-get_file_info:
+.global find_file
+find_file:
   // part 1 - get filename length
   // we need this for string comparison
   moveq    #0, d1     // d1 will hold the size
   movea.l  a0, a1     // a1 is the string work register
-  moveq    #0xa, d0   // max length of filename (without version info)
+  moveq    #0xa, d0   // max length of filename (without version info) - 11 bytes
 0:tst.b    (a1)       // begin check for end of string
   beq      1f         // Hit \0 - end of filename string
   cmpi.b   #';', (a1)  // Hit ; - end of filename string
@@ -77,7 +77,7 @@ get_file_info:
   lea      dir_cache, a2   // directory cache in a2
 2:COMPARE_STRING           // compare the filename to this dir entry
   beq      3f              // found the file!
-  adda.w   #0x20, a2       // not found, move to next entry
+  adda.w   #22, a2       // not found, move to next entry
   dbf      d0, 2b
 
   move     #1, ccr     // couldn't find the file! report file not found
@@ -183,10 +183,10 @@ access_op_load_dma_pcm:
  */
 load_process:
   movea.l  (filename), a0
-  jbsr     get_file_info       // get file info from dir cache
+  jbsr     find_file       // get file info from dir cache
   bcs      load_proc_notfound  // jump down if file not found
-  move.l   0x18(a0), cdread_sector_start  // get start sector
-  move.l   0x1c(a0), d1                   // get file size (bytes)
+  move.l   14(a0), cdread_sector_start  // get start sector
+  move.l   18(a0), d1                   // get file size (bytes)
   move.l   d1, filesize
   /*get the file size in sectors by 'dividing' by 2048*/
   /*TODO: access_op_load_dir actually uses divu... use that here too?*/
@@ -202,8 +202,8 @@ test_label:
 3:move.w   #ACC_OP_IDLE, access_op   // set the acc loop back to idle
   bra      access_op_idle            // and jump back into the loop
 load_proc_notfound:
-  /* we set the not found result here as opposed to the get_file_info subroutine
-   * so we don't tamper with the load process results, in case get_file_info is
+  /* we set the not found result here as opposed to the find_file subroutine
+   * so we don't tamper with the load process results, in case find_file is
    * called elsewhere
   */
   move.w   #RESULT_NOT_FOUND, access_op_result
@@ -254,9 +254,8 @@ access_op_load_dir:
   moveq    #0, d0
 2:move.b   0(a1), d0  // no more entries? (size is 0)
   beq      7f         // no more, jump down
-  move.b   0x19(a1), 0x17(a0)   //file flags
-  move.l   6(a1), 0x18(a0)      //file start sector (big endian)
-  move.l   0xe(a1), 0x1c(a0)    //file size in bytes (big endian)
+  move.l   6(a1), 14(a0)      //file start sector (big endian)
+  move.l   0xe(a1), 18(a0)    //file size in bytes (big endian)
   moveq    #0, d1               // d1 will be filename char index
 4:move.b   0x21(a1,d1.w), (a0,d1.w)  // filename
   addq.w   #1, d1
@@ -270,7 +269,7 @@ access_op_load_dir:
 6:addq.w   #1, dir_entry_count  //this file entry is done, add it to the count
   adda.l   d0, a1      //move to next entry in dir record
                        // (d0 holds dir record length)
-  adda.l   #0x20, a0   // move to next entry in the file list
+  adda.l   #22, a0   // move to next entry in the file list
   bra      2b          // and do it all again
 7:subq.w   #1, record_size  // any more sectors left in the dir record?
   bne      1b          // yes, jump back and do it all again
@@ -560,9 +559,9 @@ sector_buffer: .space 0x800
 
 /**
  * Cache for the file info entries
- * 0x20 bytes per entry * 128 files = 4K buffer
+ * 22 bytes per entry * 128 files = 2.75k buffer
  * This can be adjusted as necessary
  */
-dir_cache: .space 0x1000
+dir_cache: .space 2816
 
 #endif

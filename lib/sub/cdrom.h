@@ -70,26 +70,28 @@ static inline u32 load_file(u16 const access_operation,
 }
 
 typedef struct FileInfo {
-  char const filename[12];
-
+  char const filename[14]; // FILENAME.EXT;1
+  u32 offset;              // in SECTORS
+  u32 size;                // in BYTES
 } FileInfo;
 
 // TODO file info struct!
-static inline FileInfo * get_file_info_c(char const * filename) {
+static inline FileInfo * find_file_c(char const * filename) {
   register u32 a0_filename asm("a0") = (u32)filename;
   register u32 a0_fileinfo asm("a0");
 
   asm volatile(R"(
-  jsr get_file_info
+  jsr find_file
   bcc 1f
   rts
-  // if not found set "null" on the return ptr
-1:lea #0,a0
+1:lea 0,a0
   rts
   )"
-               : "=a"(a0_fileinfo)
+               : "+a"(a0_fileinfo)
                : "a"(a0_filename)
                : "d0", "d1", "a2");
+
+  return (FileInfo *)a0_fileinfo;
 }
 
 #endif

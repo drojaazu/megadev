@@ -76,7 +76,6 @@ __attribute__((section(".init"))) void main() {
   } while (1);
 }
 
-bool pcmPutUpper = false;
 /**
  * This is a very simple playback driver.
  * All PCM data must be already loaded into the buffer
@@ -93,6 +92,7 @@ bool pcmPutUpper = false;
  */
 void pcm_playback(u8 * pcm_data, u32 pcm_data_size) {
 
+  bool pcmPutUpper = false;
   // 32kb blocks
   u8 pcmram_blocks = pcm_data_size / 0x8000;
 
