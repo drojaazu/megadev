@@ -31,7 +31,7 @@ struct SpriteObject {
 typedef struct Palette {
   u8 cram_offset;
   u8 length; // length in words (i.e. color entries) MINUS ONE
-  u16 colors[];
+  s16 colors[];
 } Palette;
 
 /**
@@ -43,18 +43,18 @@ typedef struct Palette {
 /**
  * \sa _SPRITE_LIST
  */
-#define SPRITE_LIST ((Sprite *)_SPRITE_LIST)
+#define SPRITE_LIST (*((Sprite(*)[80])_SPRITE_LIST))
 
 /**
  * \sa _PALETTE
- * \note Size: u16[64]
+ * \note Size: s16[64]
  */
-#define PALETTE ((u16 *)_PALETTE)
+#define PALETTE (*((s16(*)[64])_PALETTE))
 
 /**
  * \sa _VINT_EX_PTR
  */
-#define VINT_EX_PTR ((void *(*))_VINT_EX_PTR)
+#define VINT_EX_PTR ((volatile void *(*))_VINT_EX_PTR)
 
 /**
  * \sa _VDP_REGS
@@ -533,13 +533,15 @@ static inline void boot_nmtbl_fill(u32 vdpptr, u16 width, u16 height,
   register u32 d2_height asm("d2") = height;
   register u32 d3_value asm("d3") = value;
 
-  asm(R"(
+  asm volatile(R"(
     move.l a6, -(sp)
-    jsr %p0
+    jsr %p1
     move.l (sp)+, a6
-  )" ::"i"(BOOT_NMTBL_FILL),
-      "d"(d0_vdpptr), "d"(d1_width), "d"(d2_height), "d"(d3_value)
-      : "d1", "d2", "a5");
+  )"
+               : "+d"(d2_height)
+               : "i"(BOOT_NMTBL_FILL), "d"(d0_vdpptr), "d"(d1_width),
+                 "d"(d2_height), "d"(d3_value)
+               : "cc", "d5", "a5");
 };
 
 /**

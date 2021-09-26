@@ -7,15 +7,13 @@ void load_ipx();
 
 extern void sp_fatal();
 
-char * filenames[3];
+char const * filenames[3];
 
-char * examplefile;
+BramFileInfo const file_info = {"BRMEX", 0, 1};
 
 __attribute__((section(".init"))) void main() {
 
   register u16 cmd0, cmd1;
-
-  examplefile = "BRMEX      ";
 
   do {
 
@@ -55,7 +53,7 @@ __attribute__((section(".init"))) void main() {
 
       // the filename must fill up 11 bytes followed by a 0 terminator
       // for a total of 12 bytes
-      BrmserchRes * search = bram_brmserch(examplefile);
+      BrmserchRes * search = bram_brmserch(&file_info.filename);
       // null means file was not found
       if (search == NULL) {
         *GA_COMSTAT1 = 0xFFFF;
@@ -72,7 +70,7 @@ __attribute__((section(".init"))) void main() {
 
       wait_2m();
 
-      BrmreadRes * read = bram_brmread(examplefile, (u8 *)SUB_2M_BASE);
+      BrmreadRes * read = bram_brmread(&file_info.filename, (u8 *)SUB_2M_BASE);
 
       if (!read->success) {
         *GA_COMSTAT1 = 0xffff;
@@ -89,23 +87,7 @@ __attribute__((section(".init"))) void main() {
     case 5:
       wait_2m();
 
-      BramFileInfo info;
-
-      info.filename[0] = 'B';
-      info.filename[1] = 'R';
-      info.filename[2] = 'M';
-      info.filename[3] = 'E';
-      info.filename[4] = 'X';
-      info.filename[5] = ' ';
-      info.filename[6] = ' ';
-      info.filename[7] = ' ';
-      info.filename[8] = ' ';
-      info.filename[9] = ' ';
-      info.filename[10] = ' ';
-      info.mode = 0;
-      info.blocksize = 1;
-
-      if (!bram_brmwrite(&info, (u8 *)SUB_2M_BASE)) {
+      if (!bram_brmwrite(&file_info, (u8 *)SUB_2M_BASE)) {
         *GA_COMSTAT1 = 0xFFFF;
       }
       grant_2m();
@@ -122,7 +104,7 @@ __attribute__((section(".init"))) void main() {
     // brmdel
     case 7:
       asm("nop");
-      if (bram_brmdel(examplefile))
+      if (bram_brmdel(&file_info.filename))
         *GA_COMSTAT1 = 0;
       else
         *GA_COMSTAT1 = 0xffff;
@@ -133,7 +115,6 @@ __attribute__((section(".init"))) void main() {
       asm("nop");
 
       wait_2m();
-      asm(".global test_label\ntest_label:");
 
       if (!bram_brmdir("*\0", (u8 *)SUB_2M_BASE, 0, 0x100))
         *GA_COMSTAT1 = 0xffff;

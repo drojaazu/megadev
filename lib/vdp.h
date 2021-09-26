@@ -30,6 +30,9 @@ typedef union SpriteEx {
   u32 as_u32[2];
   u16 as_u16[4];
   u8 as_u8[8];
+  s32 as_s32[2];
+  s16 as_s16[4];
+  s8 as_s8[8];
   Sprite as_struct;
 } SpriteEx;
 

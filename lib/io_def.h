@@ -152,9 +152,9 @@
 #define PAD_DOWN_MSK 1 << PAD_DOWN_BIT
 #define PAD_LEFT_MSK 1 << PAD_LEFT_BIT
 #define PAD_RIGHT_MSK 1 << PAD_RIGHT_BIT
-#define PAD_A_MSK 1 << PAD_A_BIT
-#define PAD_B_MSK 1 << PAD_B_BIT
-#define PAD_C_MSK 1 << PAD_C_BIT
+#define PAD_A_MSK (1 << PAD_A_BIT)
+#define PAD_B_MSK (1 << PAD_B_BIT)
+#define PAD_C_MSK (1 << PAD_C_BIT)
 #define PAD_ABC_MSK (PAD_A_MSK | PAD_B_MSK | PAD_C_MSK)
 #define PAD_START_MSK 1 << PAD_START_BIT
 

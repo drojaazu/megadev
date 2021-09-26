@@ -116,9 +116,7 @@ void pcm_playback(u8 * pcm_data, u32 pcm_data_size) {
   // begin looping over the rest of the data, loading from the upper
   // wave ram block
   for (u16 block_iter = 0; block_iter < (pcmram_blocks - 1); ++block_iter) {
-    if (pcmPutUpper)
-      wb_select = 0x88;
-    else
+    if (!pcmPutUpper)
       wb_select = 0x80;
 
     for (u8 copyIter = 0; copyIter < 8; ++copyIter) {

@@ -112,7 +112,7 @@ BrmserchRes brmserch_results;
 /**
  * \sa BRMSERCH
  */
-static inline BrmserchRes * bram_brmserch(char const * filename) {
+static inline BrmserchRes * bram_brmserch(char const (*filename)[11]) {
   register u16 d0_fcode asm("d0") = BRMSERCH;
   register u32 a0_filename asm("a0") = (u32)filename;
 
@@ -153,7 +153,8 @@ BrmreadRes brmread_results;
 /**
  * \sa BRMREAD
  */
-static inline BrmreadRes * bram_brmread(char const * filename, u8 * buffer) {
+static inline BrmreadRes * bram_brmread(char const (*filename)[11],
+                                        u8 * buffer) {
   register u16 d0_fcode asm("d0") = BRMREAD;
   register u32 a0_filename asm("a0") = (u32)filename;
   register u32 a1_buffer asm("a1") = (u32)buffer;
@@ -190,8 +191,7 @@ typedef struct BramFileInfo {
 /**
  * \sa BRMWRITE
  */
-static inline bool bram_brmwrite(BramFileInfo const * params,
-                                 u8 const * data) {
+static inline bool bram_brmwrite(BramFileInfo const * params, u8 const * data) {
   register u16 d0_fcode asm("d0") = BRMWRITE;
   register u32 a0_params asm("a0") = (u32)params;
   register u32 a1_data asm("a1") = (u32)data;
@@ -216,7 +216,7 @@ failed:
 /**
  * \sa BRMDEL
  */
-static inline bool bram_brmdel(char const * filename) {
+static inline bool bram_brmdel(char const (*filename)[11]) {
   register u16 d0_fcode asm("d0") = BRMDEL;
   register u32 a0_filename asm("a0") = (u32)filename;
 
@@ -287,8 +287,7 @@ enum BrmverifyStatus { NoMatch = -1, FileNotFound = 0, Match = 1 };
 /**
  * \sa BRMVERIFY
  */
-static inline enum BrmverifyStatus
-bram_brmverify(BramFileInfo const * params) {
+static inline enum BrmverifyStatus bram_brmverify(BramFileInfo const * params) {
   register u16 d0_fcode asm("d0") = BRMVERIFY;
   register u32 a0_params asm("a0") = (u32)params;
   register u16 d0_result asm("d0");
