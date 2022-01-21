@@ -9,10 +9,18 @@
 #include "main/main_macros.s"
 #include "vdp_def.h"
 #include "macros.s"
+#include "mmd_layout.s"
 
 ip_entry:
   // First, disable all interrupts while we get things set up
   ori #0x700,sr
+
+  // clear ram
+  moveq #0, d0
+  move.l #(MODULE_RAM_LENGTH / 4), d7
+  lea MODULE_RAM_ORIGIN, a0
+0:move.l d0, (a0)+
+  dbra d7, 0b
 
   move.l	#BOOT_VINT, (_MLEVEL6 + 2)
 

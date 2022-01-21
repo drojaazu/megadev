@@ -106,7 +106,7 @@ __attribute__((noreturn)) void main() {
 
     boot_process_spr_objs(&ship_parts, SPRITE_LIST, 0, 0x1a);
 
-    *VINT_FLAGS = 1;
+    *VINT_FLAGS = COPY_SPRLIST_MSK;
     boot_vint_wait_default();
 
     wait_a++;

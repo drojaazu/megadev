@@ -112,7 +112,7 @@ BrmserchRes brmserch_results;
 /**
  * \sa BRMSERCH
  */
-static inline BrmserchRes * bram_brmserch(char const (*filename)[11]) {
+static inline BrmserchRes * bram_brmserch(char const * filename) {
   register u16 d0_fcode asm("d0") = BRMSERCH;
   register u32 a0_filename asm("a0") = (u32)filename;
 
@@ -153,8 +153,7 @@ BrmreadRes brmread_results;
 /**
  * \sa BRMREAD
  */
-static inline BrmreadRes * bram_brmread(char const (*filename)[11],
-                                        u8 * buffer) {
+static inline BrmreadRes * bram_brmread(char const * filename, u8 * buffer) {
   register u16 d0_fcode asm("d0") = BRMREAD;
   register u32 a0_filename asm("a0") = (u32)filename;
   register u32 a1_buffer asm("a1") = (u32)buffer;

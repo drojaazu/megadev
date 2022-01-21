@@ -9,11 +9,19 @@
 #include "main/main_macros.s"
 #include "vdp_def.h"
 #include "macros.s"
+#include "ipx_layout.s"
 
 IP_ENTRY:
   // First, disable all interrupts while we do some basic init
   ori #0x700,sr
   
+  // clear ram
+  moveq #0, d0
+  move.l #(MODULE_RAM_LENGTH / 4), d7
+  lea MODULE_RAM_ORIGIN, a0
+0:move.l d0, (a0)+
+  dbra d7, 0b
+
   // set palette entry 0 (background) to black
   move.l #0xC0000000, (_VDP_CTRL)
   move.w #0x0000, (_VDP_DATA)

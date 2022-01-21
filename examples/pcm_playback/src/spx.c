@@ -3,7 +3,17 @@
 #include "sub/pcm.h"
 #include "sub/sub.h"
 
-void pcm_playback(u8 * pcm_data, u32 pcm_data_size);
+// void PCM_PLAYBACK_C(u8 * pcm_data, u32 pcm_data_size);
+
+static inline void PCM_PLAYBACK_C(u8 * pcm_data, u32 pcm_data_size) {
+  register u32 a0_pcm_data asm("a0") = (u32)pcm_data;
+  register u32 d0_data_size asm("d0") = pcm_data_size;
+
+  asm volatile("jsr PCM_PLAYBACK"
+               : "+d"(d0_data_size), "+a"(a0_pcm_data)
+               : "d"(d0_data_size), "a"(a0_pcm_data)
+               : "cc", "d6", "d7", "a1", "a2");
+}
 
 const PcmChannelSettings pcmSettings = {0xff, 0xff, 0x6b, 0x5, 0, 0, 0};
 
@@ -46,7 +56,8 @@ __attribute__((section(".init"))) void main() {
       // info)
       *GA_COMFLAGS_SUB |= 0x80;
       // pcm_playback((u8 *)PRG_RAM2, 0x39bc1);
-      pcm_playback((u8 *)PRG_RAM2, 0x40000);
+      // pcm_playback((u8 *)PRG_RAM2, 0x40000);
+      PCM_PLAYBACK_C((u8 *)PRG_RAM2, 0x40000);
       *((volatile u8 *)_PCM_CDISABLE) = 0xff;
 
       *GA_COMFLAGS_SUB &= ~0x80;

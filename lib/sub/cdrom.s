@@ -4,9 +4,6 @@
  * Subdirectories are *not* supported. All files should be in the root.
  */
 
-#ifndef MEGADEV__CD_SUB_CDROM_S
-#define MEGADEV__CD_SUB_CDROM_S
-
 #include "macros.s"
 #include "sub/cdrom_def.h"
 #include "sub/sub_macros.s"
@@ -124,7 +121,7 @@ check_acc_op:
  * than calling any of these functions directly
  */
 access_op_idle:
-  jbsr      accloop_break
+  jbsr      accloop_reentry
 .global op_switch
 op_switch:
   move.w   access_op, d0
@@ -288,7 +285,7 @@ cdacc_loop_loaddir_err:
  */
 load_data_sub:
   // we want to save the call site in order to properly return, since we'll
-  // be messing with the stack by calling accloop_break
+  // be messing with the stack by calling accloop_reentry
   POP       return_ptr
   move.w    #0, sectors_read_count
   move.w    #0x1e, read_retry_count
@@ -314,7 +311,7 @@ load_data_begin:
   CDBIOS #ROMREADN    // begin the data read
 
   move.w  #0x258, read_timeout
-1:bsr      accloop_break  /*take a break here and come back next VINT*/
+1:bsr      accloop_reentry  /*take a break here and come back next VINT*/
 2:CDBIOS #CDCSTAT            /*check CDC status since our read call*/
   bcc      3f              /*we have a sector read to be read*/
   subq.w  #1, read_timeout  /*count down read timeout & try again*/
@@ -381,7 +378,7 @@ load_data_failure:
   # since I'm not 100% clear on the effect of CDC mode
 load_data_maincpudest:
   move.w  #6, read_timeout
-1:bsr      accloop_break
+1:bsr      accloop_reentry
   btst    #7, _GA_CDCMODE  /*check EDT*/
   bne      9b
   subq.w  #1, read_timeout
@@ -396,7 +393,7 @@ load_data_maincpudest:
  */
 load_data_dma:
   // we want to save the call site in order to properly return, since we'll
-  // be messing with the stack by calling accloop_break
+  // be messing with the stack by calling accloop_reentry
   POP       return_ptr
   move.w    #0, sectors_read_count
   move.w    #0x1e, read_retry_count
@@ -422,7 +419,7 @@ load_data_dma_begin:
   CDBIOS #ROMREADN    // begin the data read
 
   move.w   #0x258, read_timeout // set up for reading
-1:bsr      accloop_break    // take a break here and come back next VINT
+1:bsr      accloop_reentry    // take a break here and come back next VINT
 2:CDBIOS #CDCSTAT               // check on the CDC on the status of our data
   bcc      3f                // sector is ready! jump down
   subq.w   #1, read_timeout  // not ready yet,count down read timeout
@@ -445,7 +442,7 @@ load_data_dma_begin:
 
 6:move.w   #6, read_timeout  // next we want the signal from the CDC that 
                              // everything is done
-7:bsr       accloop_break   // give it some time...
+7:bsr       accloop_reentry   // give it some time...
   btst     #CDCMODE_EDT_BIT-8, _GA_CDCMODE  // check that the EDT bit is set
   beq       0f               // not set yet, retry
   move.b   (cdc_frame_check), d0  // CDC is done, let's prepare for next frame
@@ -482,9 +479,8 @@ load_data_dma_failure:
   in the INT2 call ptr
   Should be called as subroutine rather than directly
 */
-accloop_break:
+accloop_reentry:
   POP      acc_loop_jump
-  // TODO shouldn't this be an RTE?
   rts
 
 .section .bss
@@ -563,5 +559,3 @@ sector_buffer: .space 0x800
  * This can be adjusted as necessary
  */
 dir_cache: .space 2816
-
-#endif

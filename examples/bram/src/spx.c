@@ -53,7 +53,7 @@ __attribute__((section(".init"))) void main() {
 
       // the filename must fill up 11 bytes followed by a 0 terminator
       // for a total of 12 bytes
-      BrmserchRes * search = bram_brmserch(&file_info.filename);
+      BrmserchRes * search = bram_brmserch(file_info.filename);
       // null means file was not found
       if (search == NULL) {
         *GA_COMSTAT1 = 0xFFFF;
@@ -70,7 +70,7 @@ __attribute__((section(".init"))) void main() {
 
       wait_2m();
 
-      BrmreadRes * read = bram_brmread(&file_info.filename, (u8 *)SUB_2M_BASE);
+      BrmreadRes * read = bram_brmread(file_info.filename, (u8 *)SUB_2M_BASE);
 
       if (!read->success) {
         *GA_COMSTAT1 = 0xffff;

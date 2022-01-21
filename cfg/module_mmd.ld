@@ -30,7 +30,7 @@ MEMORY
 SECTIONS
 {
 	ENTRY(main)
-	.header :
+	.header 0 :
 	{
 		SHORT(DEFINED(MMD_FLAGS) ? MMD_FLAGS : 0)
 		LONG(MMD_DEST)

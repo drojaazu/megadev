@@ -191,7 +191,7 @@ static inline void bios_mscplayt(u32 const * timecode) {
 /**
  * \sa MSCSEEK
  */
-static inline void bios_mscseek(u32 const * track_number) {
+static inline void bios_mscseek(u16 const * track_number) {
   register u16 d0_fcode asm("d0") = MSCSEEK;
   register u32 a0_track_number asm("a0") = (u32)track_number;
 

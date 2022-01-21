@@ -490,6 +490,9 @@ There are a few Boot ROM library functions that use these flags, however, which 
 
 At this point, we are still investigating and have only a rough idea of what the flags represent. Therefore, we do not recommend using the functions marked as using the Predefined Comm Flag Semantics component. However, **if you plan to use the built-in vblank handler (BOOT_VINT), keep in mind that it includes a call to one of these subroutines. Please see the notes for BOOT_COMM_SYNC.**
 
+NOTES:
+A fresh look at this suggests that bit 0 SET indicates that the comm registers have been updated and that a fresh copy to the local cache of the opposite CPU should be made, and that bit 1 SET indicates the the CPU is ready for the copy (and inversely, that bit 1 CLEAR indicates the CPU is busy (registers comms have not yet fully propagated?) and that a copy should not yet be made).
+
 ## GA CPU Communication - Functions
 
 ### `BOOT_CLEAR_COMM`

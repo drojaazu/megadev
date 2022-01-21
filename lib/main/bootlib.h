@@ -44,6 +44,7 @@ typedef struct Palette {
  * \sa _SPRITE_LIST
  */
 #define SPRITE_LIST (*((Sprite(*)[80])_SPRITE_LIST))
+//#define SPRITE_LIST ((Sprite *)_SPRITE_LIST)
 
 /**
  * \sa _PALETTE
