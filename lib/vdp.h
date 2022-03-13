@@ -60,7 +60,7 @@ typedef union SpriteEx {
  * \def VDP_DATA_16
  * \brief VDP data port (16 bit)
  */
-#define VDP_DATA_16 ((volatile u16 *)_VDP_DATA)
+#define VDP_DATA_16 ((volatile s16 *)_VDP_DATA)
 
 /**
  * \def NMT_POS

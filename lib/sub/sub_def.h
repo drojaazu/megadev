@@ -53,7 +53,7 @@
 #define _USERCALL0 0x005F28 /* SP Init */
 #define _USERCALL1 0x005F2E /* SP Main */
 #define _USERCALL2 0x005F34 /* SP INT2 */
-#define _USERCALL3 0x005F3A /* SP User Interrupt */
+#define _USERCALL3 0x005F3A /* SP User Call */
 #define _ADRERR 0x005F40
 #define _CODERR 0x005F46
 #define _DIVERR 0x005F4C
@@ -63,12 +63,12 @@
 #define _TRACE 0x005F64
 #define _NOCOD0 0x005F6A
 #define _NOCOD1 0x005F70
-#define _SLEVEL1 0x005F76
+#define _SLEVEL1 0x005F76 /* Graphics operation complete */
 #define _SLEVEL2 0x005F7C /* INT 2 from Main CPU */
 #define _SLEVEL3 0x005F82 /* GA Timer Interrupt */
-#define _SLEVEL4 0x005F88
-#define _SLEVEL5 0x005F8E
-#define _SLEVEL6 0x005F94
+#define _SLEVEL4 0x005F88 /* CDD complete */
+#define _SLEVEL5 0x005F8E /* CDC complete */
+#define _SLEVEL6 0x005F94 /* Subcode buffer full */
 #define _SLEVEL7 0x005F9A
 #define _TRAP00 0x005FA0
 #define _TRAP01 0x005FA6
@@ -114,7 +114,7 @@
 #define LEDG_BIT 1
 
 #define LEDR_MSK 1 << LEDR_BIT
-#define LEFG_MSK 1 << LEDG_BIT
+#define LEDG_MSK 1 << LEDG_BIT
 
 /**
  * \def _GA_MEMMODE
@@ -397,6 +397,12 @@
  *
  * IEN: Interrupt levels 1 to 6
  * \details RW: 1 - enable, 0 - disable
+ *
+ * Note: The hardware manual states interval for interrupt is actually:
+ * (n + 1) * 30.72
+ * (probably to account for a 0 index)
+ * This does not seem to properly reflected in emulators, but initial tests on
+ * hardware show it to be accurate
  */
 #define _GA_INTMASK 0xFF8032
 

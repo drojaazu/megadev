@@ -413,8 +413,8 @@ static inline void boot_dma_fill(u32 vdpptr, u16 length, u16 value) {
 /**
  * \sa BOOT_LOAD_MAP
  */
-static inline void boot_load_map(u32 vdpptr, u16 width, u16 height,
-                                 void * map) {
+static inline void boot_load_map(u32 const vdpptr, u16 const width,
+                                 u16 const height, void const * map) {
   register u32 d0_vdpptr asm("d0") = vdpptr;
   register u16 d1_width asm("d1") = width;
   register u16 d2_height asm("d2") = height;

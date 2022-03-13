@@ -12,11 +12,11 @@ RED=\033[1;31m
 YELLOW=\033[1;33m
 GREEN=\033[1;32m
 
-# set hardware fallbacks in case the user didn't set them
+# Hardware fallbacks in case the user didn't set them
 HW_CFG?=REGION=US VIDEO=NTSC VRAM_SIZE=VRAM_64K
 
-# MEGADEV SDK paths
-# library (this includes C headers)
+## MEGADEV SDK Paths
+# library (ASM and C)
 LIB_PATH:=$(MEGADEV_PATH)/lib
 
 # build time tools
@@ -25,13 +25,13 @@ TOOLS_PATH:=$(MEGADEV_PATH)/tools
 # linker scripts
 CFG_PATH:=$(MEGADEV_PATH)/cfg
 
+## Toolchain Config
 # specify your M68k GNU toolchain prefix
 M68K_PREFIX?=m68k-elf-
 
-# NOTE: we assume all commands appear somewhere in PATH.
-# If you've manually configured/built some of these
-# tools and their directories are not listed in PATH
-# you will need to specify the full path of each command
+# we assume all commands appear somewhere in $PATH
+# if this is not the case, you will need to specify
+# the full path of each command
 
 # m68k toolset
 CC:=$(M68K_PREFIX)gcc
@@ -43,8 +43,19 @@ AS:=$(M68K_PREFIX)as
 # z80 toolset
 ASM_Z80:=sjasmplus
 
-# set the actual build work path to be a "mirror" of the src folder structure
+## Project Output
 BUILD_PATH:=$(OUT_PATH)/$(SRC_PATH)
+
+# all code objects
+OBJ:=$(addprefix $(OUT_PATH)/,$(addsuffix .o,$(wildcard $(SRC_PATH)/*.[cs])))
+
+# memory resident modules (i.e. modules that should be built first)
+RESIDENT:=$(addprefix $(DISC_PATH)/,$(RESIDENT))
+
+# compiled modules
+MMD:=$(addprefix $(DISC_PATH)/,$(basename $(notdir $(wildcard $(SRC_PATH)/*.mmd.def))))
+SMD:=$(addprefix $(DISC_PATH)/,$(basename $(notdir $(wildcard $(SRC_PATH)/*.smd.def))))
+BIN:=$(addprefix $(DISC_PATH)/,$(basename $(notdir $(wildcard $(SRC_PATH)/*.bin.def))))
 
 # setup includes
 INC:=-I$(LIB_PATH) -I$(RES_PATH) -I$(BUILD_PATH) 
@@ -59,24 +70,15 @@ AS_INC:=-Wa,-I$(LIB_PATH) -Wa,-I$(RES_PATH) -Wa,-I$(BUILD_PATH)
 # with asm source files
 CC_FLAGS:=-m68000 -imacros build_def.h $(OPT_FLAGS) $(addprefix -D, $(HW_CFG)) $(if $(DEBUG), -DDEBUG) -fno-builtin -fomit-frame-pointer -fno-gcse -Wall -Wextra -Wno-main -Wa,--register-prefix-optional
 AS_FLAGS:=-Wa,--bitwise-or
-
 LD_FLAGS:=-nostdlib
 
-# SETUP OUTPUT TARGETS
-# all code objects
-OBJ:=$(addprefix $(OUT_PATH)/,$(addsuffix .o,$(basename $(wildcard $(SRC_PATH)/*.[cs]))))
+# user functions
+define link_module
+	@$(LD) $(LD_FLAGS) -z muldefs -L$(shell pwd)/$(SRC_PATH) -T$(3) -o$(2) $(addprefix $(BUILD_PATH)/,$(addsuffix .o, $(filter-out :%,$(shell cat $(1))))) $(addprefix -R$(BUILD_PATH)/,$(addsuffix .elf, $(subst :,,$(filter :%,$(shell cat $(1))))))
+	@$(NM) -n $2 > $(@:.elf=.sym)
+endef
 
-# memory resident modules (i.e. modules that should be built first)
-RESIDENT:=$(addprefix $(DISC_PATH)/,$(RESIDENT))
-
-# program modules
-#MMD:=$(addprefix $(DISC_PATH)/,$(addsuffix .mmd,$(basename $(notdir $(wildcard $(SRC_PATH)/*.def)))))
-MMD:=$(addprefix $(DISC_PATH)/,$(basename $(notdir $(wildcard $(SRC_PATH)/*.mmd.def))))
-SMD:=$(addprefix $(DISC_PATH)/,$(basename $(notdir $(wildcard $(SRC_PATH)/*.smd.def))))
-
-BIN:=$(addprefix $(DISC_PATH)/,$(basename $(notdir $(wildcard $(SRC_PATH)/*.bin.def))))
-
-
+# makefile targets
 default: disc
 
 .PHONY: clean
@@ -135,28 +137,25 @@ $(BUILD_PATH)/%.bin $(DISC_PATH)/%.bin $(DISC_PATH)/%.smd $(DISC_PATH)/%.mmd: $(
 	@echo -e "${BOLD}${CYAN}Generating binary $@...${CLEAR}"
 	@$(OBJCPY) -O binary $< $@
 
-$(BUILD_PATH)/%.o: $(SRC_PATH)/%.c
+$(BUILD_PATH)/%.c.o $(BUILD_PATH)/%.o: $(SRC_PATH)/%.c
 	@echo -e "${BOLD}${CYAN}Building C source $@...${CLEAR}"
 	@$(CC) $(CC_FLAGS) $(INC) $(AS_INC) -c $< -o$@
 
-$(BUILD_PATH)/%.o: $(SRC_PATH)/%.s
+$(BUILD_PATH)/%.s.o $(BUILD_PATH)/%.o: $(SRC_PATH)/%.s
 	@echo -e "${BOLD}${CYAN}Building ASM source $@...${CLEAR}"
 	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $< -o$@
 
 $(BUILD_PATH)/%.elf: $(SRC_PATH)/%.mmd.def
 	@echo -e "${BOLD}${CYAN}Linking MMD $@...${CLEAR}"
-	@$(LD) $(LD_FLAGS) -z muldefs -L$(shell pwd)/$(SRC_PATH) -T$(CFG_PATH)/module_mmd.ld -o$@ $(addprefix $(BUILD_PATH)/,$(addsuffix .o, $(basename $(filter-out :%,$(shell cat $<))))) $(addprefix -R$(BUILD_PATH)/,$(addsuffix .elf, $(basename $(subst :,,$(filter :%,$(shell cat $<)))))) 
-	@$(NM) -n $@ > $(@:.elf=.sym)
+	$(call link_module, $<, $@, $(CFG_PATH)/module_mmd.ld)
 
 $(BUILD_PATH)/%.elf: $(SRC_PATH)/%.smd.def
 	@echo -e "${BOLD}${CYAN}Linking SMD $@...${CLEAR}"
-	@$(LD) $(LD_FLAGS) -z muldefs -L$(shell pwd)/$(SRC_PATH) -T$(CFG_PATH)/module_smd.ld -o$@ $(addprefix $(BUILD_PATH)/,$(addsuffix .o, $(basename $(filter-out :%,$(shell cat $<))))) $(addprefix -R$(BUILD_PATH)/,$(addsuffix .elf, $(basename $(subst :,,$(filter :%,$(shell cat $<))))))
-	@$(NM) -n $@ > $(@:.elf=.sym)
+	$(call link_module, $<, $@, $(CFG_PATH)/module_smd.ld)
 
 $(BUILD_PATH)/%.elf: $(SRC_PATH)/%.bin.def
 	@echo -e "${BOLD}${CYAN}Linking BIN $@...${CLEAR}"
-	@$(LD) $(LD_FLAGS) -z muldefs -L$(shell pwd)/$(SRC_PATH) -T$(CFG_PATH)/module_bin.ld -o$@ $(addprefix $(BUILD_PATH)/,$(addsuffix .o, $(basename $(filter-out :%,$(shell cat $<))))) $(addprefix -R$(BUILD_PATH)/,$(addsuffix .elf, $(basename $(subst :,,$(filter :%,$(shell cat $<)))))) 
-	@$(NM) -n $@ > $(@:.elf=.sym)
+	$(call link_module, $<, $@, $(CFG_PATH)/module_bin.ld)
 
 $(OUT_PATH)/$(PROJECT_NAME).iso: $(BUILD_PATH)/boot.bin
 	@echo -e "${BOLD}${CYAN}Generating ISO... ${CLEAR}"

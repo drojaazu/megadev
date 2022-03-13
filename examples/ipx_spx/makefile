@@ -48,7 +48,7 @@ RESIDENT:=ipx.mmd spx.smd
 
 # Optional compiler flags
 # Here you can add any additional compiler flags
-OPT_FLAGS:=-O2 -fstack-usage -fconserve-stack
+OPT_FLAGS:=-O1 -fstack-usage -fconserve-stack
 
 # Z80 CPU code path
 # Z80 building is not currently supported... someday!

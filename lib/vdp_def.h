@@ -221,7 +221,7 @@
 #define VDP_HSCROLL_CELL 0b10
 #define VDP_HSCROLL_PIXEL 0b11
 
-#define VDP_VSCROLL_BIT 2
+#define VDP_VSCROLL_MODE 2
 
 /**
  * \def VDP_REG0C

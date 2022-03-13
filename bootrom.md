@@ -558,7 +558,7 @@ There is a standard ASCII font in the Boot ROM data which can be used if you don
 
 You must also set the `_FONT_TILE_BASE` variable to the tile index of the first tile of the font within VRAM *minus 32*. The reason for this is because ASCII codes begin at 32, and the print function simply matches an ASCII character to a tile index. Since `_FONT_TILE_BASE` cannot be negative, this implies the font must be loaded at tile index 32 or later, but cannot be placed before index 32. When placed at index 32, `_FONT_TILE_BASE` will be 0. This is the configuration the BIOS works with and you can observe this by viewing the VRAM tiles while the "Produced by or under license..." screen is being displayed.
 
-The other font load function, `_FONT_LOAD_FONT_DEFAULTS` simplifies things by loading the font to index 32, setting `_FONT_TILE_BASE` to 0, and setting the 1bpp color definition to palette index #1. This is the simplest method to load the font and is useful in situations where you don't need to be meticulous about VRAM management.
+The other font load function, `_FONT_LOAD_FONT_DEFAULTS` simplifies things by loading the font to tile index 32, setting `_FONT_TILE_BASE` to 0, and setting the 1bpp color definition to palette index #1. This is the simplest method to load the font and is useful in situations where you don't need to be meticulous about VRAM management.
 
 ## Misc - Functions
 

@@ -14,7 +14,6 @@ MEMORY
 
 SECTIONS
 {
-	ENTRY(main)
   MODULE_ROM_ORIGIN : 
   {
     _mod_rom_org = .;
