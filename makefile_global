@@ -25,43 +25,51 @@ TOOLS_PATH:=$(MEGADEV_PATH)/tools
 # linker scripts
 CFG_PATH:=$(MEGADEV_PATH)/cfg
 
-## Toolchain Config
-# specify your M68k GNU toolchain prefix
-M68K_PREFIX?=m68k-elf-
-
+## Toolchain
 # we assume all commands appear somewhere in $PATH
 # if this is not the case, you will need to specify
 # the full path of each command
+M68K_PREFIX?=m68k-elf-
 
-# m68k toolset
 CC:=$(M68K_PREFIX)gcc
 OBJCPY:=$(M68K_PREFIX)objcopy
 NM:=$(M68K_PREFIX)nm
 LD:=$(M68K_PREFIX)ld
 AS:=$(M68K_PREFIX)as
 
-# z80 toolset
-ASM_Z80:=sjasmplus
+Z80_AS:=sjasmplus
 
 ## Project Output
 BUILD_PATH:=$(OUT_PATH)/$(SRC_PATH)
 
-# all code objects
-OBJ:=$(addprefix $(OUT_PATH)/,$(addsuffix .o,$(wildcard $(SRC_PATH)/*.[cs])))
+MMD_DEF:=$(wildcard $(SRC_PATH)/*.mmd.def)
+SMD_DEF:=$(wildcard $(SRC_PATH)/*.smd.def)
+BIN_DEF:=$(wildcard $(SRC_PATH)/*.bin.def)
+MOD_DEF:=$(strip $(MMD_DEF) $(SMD_DEF) $(BIN_DEF))
 
-# memory resident modules (i.e. modules that should be built first)
-RESIDENT:=$(addprefix $(DISC_PATH)/,$(RESIDENT))
+# RMODS are "resident" modules, which will be built first
+# this ensures they can be referenced as libraries in later modules
+SRC:=$(if $(MOD_DEF),$(sort $(filter %.c %.s, $(shell cat $(MOD_DEF)))),)
+#$(info SRC: $(SRC))
+RMOD:=$(if $(MOD_DEF),$(sort $(filter-out ip.bin sp.bin, $(filter %.mmd %.smd %.bin, $(shell cat $(MOD_DEF))))),)
+#$(info RMOD: $(RMOD))
+MOD:=$(filter-out $(RMOD),$(basename $(notdir $(MOD_DEF))))
+#$(info MOD: $(MOD))
+OBJ:=$(addsuffix .o,$(SRC))
+#$(info OBJ: $(OBJ))
 
-# compiled modules
-MMD:=$(addprefix $(DISC_PATH)/,$(basename $(notdir $(wildcard $(SRC_PATH)/*.mmd.def))))
-SMD:=$(addprefix $(DISC_PATH)/,$(basename $(notdir $(wildcard $(SRC_PATH)/*.smd.def))))
-BIN:=$(addprefix $(DISC_PATH)/,$(basename $(notdir $(wildcard $(SRC_PATH)/*.bin.def))))
+OUT_RMOD:=$(addprefix $(DISC_PATH)/,$(RMOD))
+#$(info OUT_RMOD: $(OUT_RMOD))
+OUT_MOD:=$(addprefix $(DISC_PATH)/,$(MOD))
+#$(info OUT_MOD: $(OUT_MOD))
+OUT_OBJ:=$(addprefix $(BUILD_PATH)/,$(OBJ))
+#$(info OUT_OBJ: $(OUT_OBJ))
 
 # setup includes
-INC:=-I$(LIB_PATH) -I$(RES_PATH) -I$(BUILD_PATH) 
+INC:=-I$(SRC_PATH) -I$(LIB_PATH) -I$(RES_PATH) -I$(BUILD_PATH) 
 # We have to manually pass the includes to the assembler
 # Each entry here should match each entry in INC, with a prefix of "-Wa,"
-AS_INC:=-Wa,-I$(LIB_PATH) -Wa,-I$(RES_PATH) -Wa,-I$(BUILD_PATH) 
+AS_INC:=-Wa,-I$(SRC_PATH) -Wa,-I$(LIB_PATH) -Wa,-I$(RES_PATH) -Wa,-I$(BUILD_PATH)
 
 # build flags
 # Note: we include "-Wa,--register-prefix-optional" as a default C option
@@ -72,91 +80,86 @@ CC_FLAGS:=-m68000 -imacros build_def.h $(OPT_FLAGS) $(addprefix -D, $(HW_CFG)) $
 AS_FLAGS:=-Wa,--bitwise-or
 LD_FLAGS:=-nostdlib
 
-# user functions
-define link_module
-	@$(LD) $(LD_FLAGS) -z muldefs -L$(shell pwd)/$(SRC_PATH) -T$(3) -o$(2) $(addprefix $(BUILD_PATH)/,$(addsuffix .o, $(filter-out :%,$(shell cat $(1))))) $(addprefix -R$(BUILD_PATH)/,$(addsuffix .elf, $(subst :,,$(filter :%,$(shell cat $(1))))))
-	@$(NM) -n $2 > $(@:.elf=.sym)
+define msg_info
+	@echo -e "${BOLD}${CYAN}$(1)${CLEAR}"
 endef
 
-# makefile targets
-default: disc
+define msg_warning
+	@echo -e "${BOLD}${RED}$(1)${CLEAR}"
+endef
 
-.PHONY: clean
+# args: 1: input list, 2: output, 3: link script, 4: rmods
+define link_module
+	@$(eval mod_elf:= $(BUILD_PATH)/$(notdir $(2)).elf)
+	$(call msg_info,Linking module $(notdir $(2)))
+	@$(LD) $(LD_FLAGS) -z muldefs -T$(3) $(1) $(if $(4), $(foreach r,$(4),-R $(BUILD_PATH)/$(r).elf)) -o $(mod_elf)
+	@$(NM) -n $(mod_elf) > $(BUILD_PATH)/$(basename $(notdir $(mod_elf))).sym
+	@$(OBJCPY) -O binary $(mod_elf) $(2)
+endef
 
-# TODO: need to get secondary working to preserve MMD elfs
-# this should be done by reworking the target variables above
-# to create a target for the elfs, and use that as secondary
-# (along the same lines, need a target for the MMD intermediary files
-# so they can be used in clean properly)
-.SECONDARY: $(BUILD_PATH)/*.elf
+default: init boot_sector objects modules iso
 
-clean: clean_disc
-	@echo -e "${BOLD}${RED}Cleaning all build artifacts...${CLEAR}"
-	@rm -rf $(BUILD_PATH)/* $(MMD) $(SMD) $(BIN)
+$(shell $(MEGADEV_PATH)/makedefs.sh $(SRC_PATH) > makefile_mdefs)
+include makefile_mdefs
 
-clean_boot:
-	@echo -e "${BOLD}${RED}Cleaning boot build files...${CLEAR}"
-	@rm -rf $(BUILD_PATH)/ip.* $(BUILD_PATH)/sp.* $(BUILD_PATH)/boot.*
+.PHONY: clean pristine boot_sector modules iso init
 
-clean_disc:
-	@echo -e "${BOLD}${RED}Cleaning modules & ISO...${CLEAR}"
-	@rm -rf $(OUT_PATH)/$(PROJECT_NAME).iso $(MMD) $(SMD) $(BIN)
+.SECONDARY:
 
-boot: $(BUILD_PATH)/boot.bin
+vpath %.c $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
+vpath %.h $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
+vpath %.s $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
+vpath %.mmd.def $(SRC_PATH)
+vpath %.smd.def $(SRC_PATH)
+vpath %.bin.def $(SRC_PATH)
+vpath %.elf $(BUILD_PATH)
+vpath %.o $(BUILD_PATH)
 
-modules: $(OBJ) $(RESIDENT) $(MMD) $(SMD) $(BIN)
+clean:
+	$(call msg_warning,Removing all build artifacts)
+	@rm -rf makefile_mdefs
+	@rm -rf $(BUILD_PATH)/* $(OUT_RMOD) $(OUT_MOD)
 
-disc: init boot modules $(OUT_PATH)/$(PROJECT_NAME).iso
+pristine: clean
+	$(call msg_warning,Removing ISO image and build paths)
+	@rm -rf $(OUT_PATH)/$(PROJECT_NAME).iso
+	@rm -rf $(BUILD_PATH) $(DISC_PATH)
+
+boot_sector: $(BUILD_PATH)/boot.bin
+
+objects: $(OUT_OBJ)
+
+modules: objects $(OUT_RMOD) $(OUT_MOD)
+
+iso: $(BUILD_PATH)/boot.bin
+	$(call msg_info,Building ISO image $(PROJECT_NAME).iso)
+	@mkisofs -quiet -iso-level 1 -G $< -pad -V "$(PROJECT_NAME)" -o $(OUT_PATH)/$(PROJECT_NAME).iso $(DISC_PATH)
 
 init:
 	@mkdir -p $(BUILD_PATH) $(DISC_PATH) $(SRC_PATH)
 
-$(BUILD_PATH)/ip.elf: $(BUILD_PATH)/ip.o
-	@echo -e "${BOLD}${CYAN}Linking IP $@...${CLEAR}"
+# create intermediary ip/sp ELFs in case we want to link against them as resident modules (RMODs)
+$(BUILD_PATH)/ip.bin.elf: $(BUILD_PATH)/ip.s.o
 	@$(LD) $(LD_FLAGS) -T$(CFG_PATH)/ip.ld -o$@ $<
-	@$(NM) -n $@ > $(BUILD_PATH)/ip.sym
+	@$(NM) -n $@ > $(basename $@).sym
 
-$(BUILD_PATH)/sp.elf: $(BUILD_PATH)/sp_header.o $(BUILD_PATH)/sp.o
-	@echo -e "${BOLD}${CYAN}Linking SP $@...${CLEAR}"
+$(BUILD_PATH)/sp.bin.elf: $(BUILD_PATH)/sp_header.s.o $(BUILD_PATH)/sp.s.o
 	@$(LD) $(LD_FLAGS) -T$(CFG_PATH)/sp.ld -o$@ $^
-	@$(NM) -n $@ > $(BUILD_PATH)/sp.sym
+	@$(NM) -n $@ > $(basename $@).sym
 
-$(BUILD_PATH)/boot.bin: $(BUILD_PATH)/boot.o
-	@echo -e "${BOLD}${CYAN}Generating boot sector $@...${CLEAR}"
-	@$(OBJCPY) -O binary $(BUILD_PATH)/boot.o $@
+$(BUILD_PATH)/boot.s.o: ip.bin.elf sp.bin.elf
+	@$(OBJCPY) -O binary $(BUILD_PATH)/ip.bin.elf $(BUILD_PATH)/ip.bin
+	@$(OBJCPY) -O binary $(BUILD_PATH)/sp.bin.elf $(BUILD_PATH)/sp.bin
+	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $(LIB_PATH)/boot.s -o$@
 
-$(BUILD_PATH)/sp_header.o: $(LIB_PATH)/sub/sp_header.s
-	@echo -e "${BOLD}${CYAN}Building ASM source $@...${CLEAR}"
-	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) -I$(SRC_PATH) $(AS_INC) -x assembler-with-cpp -c $< -o$@
-
-$(BUILD_PATH)/boot.o: $(LIB_PATH)/disc_boot.s $(BUILD_PATH)/ip.bin $(BUILD_PATH)/sp.bin
-	@echo -e "${BOLD}${CYAN}Building ASM source $@...${CLEAR}"
-	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) -I$(SRC_PATH) $(AS_INC) -x assembler-with-cpp -c $< -o$@
-
-$(BUILD_PATH)/%.bin $(DISC_PATH)/%.bin $(DISC_PATH)/%.smd $(DISC_PATH)/%.mmd: $(BUILD_PATH)/%.elf
-	@echo -e "${BOLD}${CYAN}Generating binary $@...${CLEAR}"
+$(BUILD_PATH)/boot.bin: $(BUILD_PATH)/boot.s.o
+	$(call msg_info,Generating boot sector...)
 	@$(OBJCPY) -O binary $< $@
 
-$(BUILD_PATH)/%.c.o $(BUILD_PATH)/%.o: $(SRC_PATH)/%.c
-	@echo -e "${BOLD}${CYAN}Building C source $@...${CLEAR}"
+$(BUILD_PATH)/%.c.o: %.c
+	$(call msg_info,Compiling source $(notdir $<))
 	@$(CC) $(CC_FLAGS) $(INC) $(AS_INC) -c $< -o$@
 
-$(BUILD_PATH)/%.s.o $(BUILD_PATH)/%.o: $(SRC_PATH)/%.s
-	@echo -e "${BOLD}${CYAN}Building ASM source $@...${CLEAR}"
+$(BUILD_PATH)/%.s.o: %.s
+	$(call msg_info,Compiling source $(notdir $<))
 	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $< -o$@
-
-$(BUILD_PATH)/%.elf: $(SRC_PATH)/%.mmd.def
-	@echo -e "${BOLD}${CYAN}Linking MMD $@...${CLEAR}"
-	$(call link_module, $<, $@, $(CFG_PATH)/module_mmd.ld)
-
-$(BUILD_PATH)/%.elf: $(SRC_PATH)/%.smd.def
-	@echo -e "${BOLD}${CYAN}Linking SMD $@...${CLEAR}"
-	$(call link_module, $<, $@, $(CFG_PATH)/module_smd.ld)
-
-$(BUILD_PATH)/%.elf: $(SRC_PATH)/%.bin.def
-	@echo -e "${BOLD}${CYAN}Linking BIN $@...${CLEAR}"
-	$(call link_module, $<, $@, $(CFG_PATH)/module_bin.ld)
-
-$(OUT_PATH)/$(PROJECT_NAME).iso: $(BUILD_PATH)/boot.bin
-	@echo -e "${BOLD}${CYAN}Generating ISO... ${CLEAR}"
-	@mkisofs -quiet -iso-level 1 -G $< -pad -V "$(PROJECT_NAME)" -o $@ $(DISC_PATH)

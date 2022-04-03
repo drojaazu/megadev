@@ -5,7 +5,7 @@
 
 The Mega Drive by itself has no operating system. The data on the cartridge is the sum of all the code that will run on the hardware. There is no standard library to reference. There is not even a simple `print` statement to have text show up on the screen, unless you write one yourself.
 
-Writing a game for retro hardware is, in a way, writing an "operating system" from scratch, which is both thrilling and drudgery. Before you can really dig into the fun stuff, you have to plan how to manage your hardware resources (especially VRAM) and how to architect your program. The complexity of this planning/design phase escalates once we bring the Mega CD into the picture. You now have a second CPU, non-persistent memory regions and buffer ownership to manage as well.
+Writing a game for retro hardware is, in a way, writing an "operating system" from scratch, which is both a thrill and drudgery. Before you can really dig into the fun stuff, you have to plan how to manage your hardware resources (especially VRAM) and how to architect your program. The complexity of this planning/design phase escalates once we bring the Mega CD into the picture. You now have a second CPU, non-persistent memory regions and buffer ownership to manage as well.
 
 This is why, before anything else, you should familiarize yourself with the hardware. First, read the "Mega CD Outline" official documentation. This provides a decent introduction to the hardware and its capabilities. Next, browse the "Mega CD BIOS Manual," "Mega CD Hardware Manual," and "Mega CD Software Development Manual." While don't have to read these closely (and frankly, some of the translations throughout make things even more confusing at times), but at least give them a glance to get an idea of some of the terminology used.
 
@@ -13,11 +13,11 @@ Before starting, you should have a basic understanding of these Mega CD specific
 
   - Which components are managed by which CPU (i.e. VDP & VRAM -> Main CPU, CD Drive & Internal BRAM -> Sub CPU)
   - Work RAM
-	- Word RAM
-	- PRG RAM
-	- The Gate Array (at a high level, don't need to memorize registers...)
-	- The Gate Array Comm Flags/Command/Status registers (...except for these)
-	- The IP/SP
+  - Word RAM
+  - PRG RAM
+  - The Gate Array (at a high level, you don't need to focus too much on registers...)
+  - The Gate Array Comm Flags/Command/Status registers (...except for these)
+  - The IP/SP
 
 ## The Kernel
 Unlike a cartridge based Mega Drive game, where the entire program and all its data is present as one fixed, contiguous block of memory space, the parts of a Mega CD game come and go in the form of files read from disc. Because the data is transient, we need a "master program" that does the low level work of deciding which program file to load, executing it, and then choosing the next file to run.

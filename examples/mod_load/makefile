@@ -34,18 +34,6 @@ OUT_PATH:=build
 # You can include any extra files you'd like here
 DISC_PATH:=disc
 
-# Memory resident modules
-# This is a list of modules which may remain in memory and which may be used
-# by other running code as a sort of "library." As such, they need to be built
-# first so they can be referenced by other modules.
-# Include the base name of each module only (e.g. ipx.def/ipx.mmd -> ipx)
-# MMD is for modules with MMD headers (for the main side)
-# BIN is for headerless modules (generally for the sub side)
-# NOTE: IP/SP are *always* built first, so you do not need to include them
-# here (they aren't "modules" anyway). You can still declare them as references
-# in def files as needed.
-RESIDENT:=
-
 # Optional compiler flags
 # Here you can add any additional compiler flags
 OPT_FLAGS:=-O1 -fstack-usage -fconserve-stack

@@ -54,7 +54,7 @@ The routines and their associated variables within the Boot ROM library can be r
 - Misc: Everything else
 - Unknown: Subroutines that are not yet fully understood
 
-You are free to pick and choose individual routines to use, but keep in mind that some are interdependent or rely on components that may not work with your project architecture. We have done our best to document the falls and their related concepts to help you decide what does and does not work for your project
+You are free to pick and choose individual routines to use, but keep in mind that some are interdependent or rely on components that may not work with your project architecture. We have done our best to document the calls and their related concepts to help you decide what does and does not work for your project
 
 Please see the `main/bootlib_def.h` file for the full list of functions.
 
@@ -92,9 +92,9 @@ Let's take a closer look at that block of memory, which we will refer to as the 
 
 As you can see, it is neatly divided into three sub blocks. If, for example, you do not use any of the decompression routines, you are free to use the Decompression Buffer space for your own code. We will indicate which functions/components use these sub blocks in the reference below.
 
-One very important thing to keep in mind is the stack. By default, the stack is set to 0xFFFD00. With the Boot ROM Use block ending at 0xFFFC00, this means there is only 256 bytes for the stack. This is generally enough for most cases, but some C code may not optimize well and create many nested function calls or large stack frames. Be mindful of this when developing in C. When coding asm, be careful of how many registers you push.
+One very important thing to keep in mind is the stack. By default, the stack is set to 0xFFFD00. With the Boot ROM Use block ending at 0xFFFC00, this means there is only 256 bytes for the stack. This is generally enough for most cases, but some C code may not optimize well and could create many nested function calls or large stack frames. Be mindful of this when developing in C. When coding asm, be careful of how many registers you push when calling subroutines.
 
-Alternatively, the stack can be moved to a lower location and allocated more space if you feel that is necessary. This would free up the 0xFFFC0 to 0xFFFD0 range for your own use as well.
+Alternatively, the stack can be moved to a lower location and allocated more space if you feel that is necessary. This would free up the 0xFFFC00 to 0xFFFD00 range for your own use as well.
 
 ### System Use Block
 We've already examined the System Use Block closely in the design.md file. To summarize, it is a 768 byte block at 0xFFFD00, extending to the end of addressable memory. It is generally regarded as off-limits within official documentation, though only half of it is actually used in normal operation, meaning the rest of the space can be used freely.

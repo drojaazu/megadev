@@ -170,6 +170,33 @@ s16 __modsi3(s32 dividend, s16 divisor) { return mods(dividend, divisor); }
 
 u16 __umodsi3(u32 dividend, u16 divisor) { return modu(dividend, divisor); }
 
+// TODO: test making this s32 and removing the size from the asm and see if
+// casting it will make it choose the correct size
+static inline s16 abs(s16 val) {
+  asm(R"(
+      tst.w %0
+      bpl 1f
+      neg.w %0
+      1:)"
+      : "+d"(val)
+      :
+      : "cc");
+  return val;
+}
+
+static inline bool is_neg(s16 val) {
+  bool out = false;
+  asm(R"(
+      tst.w %1
+      bpl 1f
+      mov.b #1, %0
+      1:)"
+      : "+d"(out)
+      : "d"(val)
+      : "cc");
+  return out;
+}
+
 static inline u16 bcd(u16 value) {
   u16 temp;
   asm(R"(
@@ -182,7 +209,7 @@ static inline u16 bcd(u16 value) {
 		abcd %1, %0)"
       : "+d"(value)
       : "d"(temp)
-      : "d1", "cc");
+      : "cc");
   return value;
 }
 

@@ -17,8 +17,8 @@ Finally, in the early part of SP main subroutine (_usercall1), you'll want to lo
 
 ## Usage
 At this point, you are ready to load files. There are four steps involved:
-  - Set the pointer to the filename in `filename`
-	- Set the destination in either the GA DMA register or `file_dest_ptr` depending on transfer type
+  - Set the pointer to the filename string in `filename`
+	- Set the destination buffer in either the GA DMA register or `file_dest_ptr` depending on transfer type
 	- Set the appropriate access operation
   - Wait for the operation to complete
 
@@ -27,7 +27,7 @@ You do not need to set the CDC device destination in the _GA_CDCMODE register. T
 ### Filename
 The filename must conform to [ISO9660 Level 1 standards](https://wiki.osdev.org/ISO_9660#Filenames). Basically this means that filenames must contain a) only UPPERCASE alphanumeric (A-Z, 0-9) characters and underscore, b) a maximum of 8 characters with a 3 character extension, and c) the version identifier. Finally, the filename in memory must be a standard \0 termninated C string.
 
-Note that you can keep your filenames as lowercase on your local system. the ISO creation process will convert them as necessary. (Also note that if you mount the ISO on your local system, they may appear lowercase in your file manager. However, they are UPPERCASE in the filesystem, which is how you will be accessing then on the Mega CD.) You must limit the filename size to 8.3, however, and use only valid characters (A to Z, 0 to 9, and _).
+Note that you can keep your filenames as lowercase on your local system. The ISO creation process will convert them as necessary. (Also note that if you mount the ISO on your local system, they may appear lowercase in your file manager. However, they are UPPERCASE in the filesystem on disc, which is how you will be accessing then on the Mega CD.) You must limit the filename size to 8.3, however, and use only valid characters (A to Z, 0 to 9, and _).
 
 You may not be familiar with the version identifier as is not shown in directory listings. It is a part of the ISO9660 standard, though, and is present within the filesystem table. In reality, it is not used by applications and foregoing a lot of unnecessary background information, it simply means your filenames will be appended with `;1` when referring to them within the filesystem.
 

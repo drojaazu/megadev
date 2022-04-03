@@ -68,7 +68,7 @@ As a note, we use such terms as "kilo" and "mega" when referring to base 2 value
 ## Building
 The project can be built with the `make` command in the root of your project which will build sources and create an ISO. You can check the global makefile for some more specific make targets.
 
-The default target hardware is specified in the project makefile. You can also change the target per build, e.g.
+The default target hardware is specified in the project makefile. You can also change the targets per build, e.g.
 
     make HW_CFG="REGION=US VIDEO=NTSC VRAM_SIZE=VRAM_64K"
 
@@ -89,7 +89,21 @@ Value values for `VRAM_SIZE` are:
 
 The VRAM size option only applies to the Sega Tera Drive or Mega Drives that have been modded with extra VRAM. Unless you are specifically targeting those devices with the intention of using extended VRAM, this should be left at `VRAM_64K`. This setting can be safely left off when specifying the hardware config on the command line, as it will default to 64k.
 
-Final built binaries will be placed in the `disc` subdirectory (or whatever path you set in the project makefile). You can manually add whatever additional files you'd like into this directory and they will be included in the final ISO image.
+Built modules will be placed in the `disc` subdirectory (or whatever path you set in the project makefile). You can manually add additional files into this directory and they will be included in the final ISO image.
+
+### make targets
+
+init
+
+clean
+
+boot_sector 
+
+modules
+
+objects
+
+iso - does not trigger recompile! Will only rebuild boot.bin (ip/sp)
 
 ## Library Sources & Workspace Configuration
 Be sure to add `$(megadev_path)/lib` to the include path of your IDE or project configuration.

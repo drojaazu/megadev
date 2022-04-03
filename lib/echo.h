@@ -29,14 +29,14 @@ inline void echo_send_command(u8 command) {
 };
 
 /**
- * \fn echo_send_command_ex
+ * \fn echo_send_command_ptr
  * \brief Send a command to Echo driver with address parameter
  */
-inline void echo_send_command_ex(u8 command, u8 data[]) {
+inline void echo_send_command_ptr(u8 command, u8 data[]) {
   register u8 d0_command asm("d0") = command;
   register u32 a0_data asm("a0") = (u32)data;
 
-  asm("jsr Echo_SendCommandEx" ::"d"(d0_command), "a"(a0_data) : "d1", "a1");
+  asm("jsr echo_sendcmdptr" ::"d"(d0_command), "a"(a0_data) : "d1", "a1");
 };
 
 /**
@@ -46,7 +46,7 @@ inline void echo_send_command_ex(u8 command, u8 data[]) {
 inline void echo_send_command_byte(u8 command, u8 param) {
   register u8 d0_command asm("d0") = command;
   register u8 d1_param asm("d1") = param;
-  asm("jsr Echo_SendCommandByte" ::"d"(d0_command), "d"(d1_param) : "d2", "a1");
+  asm("jsr echo_sendcmdbyte" ::"d"(d0_command), "d"(d1_param) : "d2", "a1");
 };
 
 /**
@@ -102,7 +102,7 @@ inline void echo_resume_bgm() {
  */
 inline void echo_play_direct(u8 data[]) {
   register u32 a0_data asm("a0") = (u32)data;
-  asm("jsr Echo_PlayDirect" ::"a"(a0_data));
+  asm("jsr echo_playdirect" ::"a"(a0_data));
 };
 
 /**
@@ -131,7 +131,7 @@ inline void echo_set_stereo(bool enable_stereo) {
  */
 inline void echo_set_volume(u8 volume) {
   register u8 d0_volume asm("d0") = volume;
-  asm("jsr Echo_SetVolume" ::"d"(d0_volume));
+  asm("jsr echo_setvolume" ::"d"(d0_volume));
 };
 
 /**
@@ -147,7 +147,7 @@ inline void echo_set_volume(u8 volume) {
  */
 inline void echo_set_volume_ex(u8 data[]) {
   register u32 a0_data asm("a0") = (u32)data;
-  asm("jsr Echo_SetVolumeEx" ::"a"(a0_data));
+  asm("jsr echo_setvolumeex" ::"a"(a0_data));
 };
 
 /**
@@ -161,24 +161,24 @@ inline void echo_set_volume_ex(u8 data[]) {
  */
 inline u8 echo_get_status() {
   register u8 d0_status asm("d0");
-  asm("jsr Echo_GetStatus" : "=d"(d0_status));
+  asm("jsr echo_getstatus" : "=d"(d0_status));
   return d0_status;
 };
 
 inline u8 echo_get_flags() {
   register u8 d0_flags asm("d0");
-  asm("jsr Echo_GetFlags" : "=d"(d0_flags));
+  asm("jsr echo_getflags" : "=d"(d0_flags));
   return d0_flags;
 };
 
 inline void echo_set_flags(u8 flags) {
   register u8 d0_flags asm("d0") = flags;
-  asm("jsr Echo_SetFlags" ::"d"(d0_flags));
+  asm("jsr echo_setflags" ::"d"(d0_flags));
 };
 
 inline void echo_clear_flags(u8 clear_mask) {
   register u8 d0_clear_mask asm("d0") = clear_mask;
-  asm("jsr Echo_ClearFlags" ::"d"(d0_clear_mask));
+  asm("jsr echo_clearflags" ::"d"(d0_clear_mask));
 };
 
 /**

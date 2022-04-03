@@ -1,4 +1,4 @@
 ipx_layout.s
 ipx_init.s
 ipx.c
-:ip
+ip.bin

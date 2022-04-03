@@ -5,8 +5,6 @@
 #include "macros.s"
 #include "main/main_def.h"
 
-.section .text
-
 /**
  * \brief Setup and run a loaded MMD formatted module
  * \note This expects the module to be already loaded at the start of 2M

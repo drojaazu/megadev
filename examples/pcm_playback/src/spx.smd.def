@@ -2,4 +2,4 @@ spx.c
 spx_layout.s
 spx_pcm.s
 pcmplay_v2.s
-:sp
+sp.bin
