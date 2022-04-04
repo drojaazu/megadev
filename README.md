@@ -118,9 +118,9 @@ For C source, header files without `_def` or `_macros` in the filename should be
 Megadev provides three main areas of functionality: Modules, CD-ROM Access and System ROM Mappings.
 
 ## Modules
-The memory layout of a standard Mega Drive cartridge game is relatively simple, with a large contiguous block of address space (32 Megabits!) available to the program. Things are not so simple with the Mega CD, however. Memory is broken up into three distinct blocks (Word RAM, PRG RAM and Work RAM), all of which are extremely small in comparison (2, 4, and 0.5 Megabits, respectively).
+The memory layout of a standard Mega Drive cartridge game is relatively simple, with one contiguous block of address space (4 Megabits) available to the program at all times. Things are not so simple with the Mega CD, however. Memory is broken up into three distinct blocks called Word RAM, PRG RAM and Work RAM) whidh are 2, 4, and 0.5 Megabits, respectively.
 
-The tradeoff is that the Compact Disc can contain many hundreds of megabits of data, but the configuration and role of each block of available memory during runtime is dependent on the developer and should be one of the fundamental aspects to keep in mind when planning your program architecture. Even with a solid memory map in hand, actually building your code to run at certain offsets and doing so efficiently can become very complicated, very quickly.
+The configuration and role of each block of available memory during runtime is dependent on the developer and should be one of the fundamental aspects to keep in mind when planning your program architecture. Even with a solid memory map in hand, actually building your code to run at certain offsets and doing so efficiently can become very complicated, very quickly.
 
 Modules attempt to make things a bit easier on the developer by providing a somewhat generalized system for compiling code and data into binaries. You can think of modules as very small "ROMs" on the disc. This is how most Mega CD games work: the title screen is a module, the options screen is a module, each stage is a module, and so on. It is one self-contained piece of the game as a whole.
 
