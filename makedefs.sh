@@ -5,7 +5,7 @@
 shopt -s nullglob
 defpath="$1/*.def"
 for def in $defpath; do
-	echo "HERE: $def"
+	#echo "HERE: $def"
 	type=$(echo "$def" | grep -Eo '\.[binsmd]{3}\.def$')
 	src=$(grep --color=never -e .s$ -e .c$ "$def")
 	rmod=$(grep --color=never -e .mmd$ -e .smd$ -e .bin$ "$def")

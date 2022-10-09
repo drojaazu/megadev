@@ -1,7 +1,7 @@
 /*
-        This was from an old version of the bram example, it MAY be a possible
-   way of aliasing/redefining a symbol from eg the linker script for use in
-   asm...
+				This was from an old version of the bram example, it MAY be a possible
+	 way of aliasing/redefining a symbol from eg the linker script for use in
+	 asm...
 */
 
 #include "main/bootlib_def.h"
@@ -12,24 +12,24 @@
 /*
 
 FF0000  +----------------+
-        | IPX ROM        |
-        |                |
-        |                |
-        |                |
-        |                |
+				| IPX ROM        |
+				|                |
+				|                |
+				|                |
+				|                |
 FFE000  +----------------+
-        | IPX RAM        |
-        |                |
+				| IPX RAM        |
+				|                |
 FFF600  +----------------+
-        | IP Resident    |
+				| IP Resident    |
 FFF700  +----------------+
-        | Boot ROM Use   |
-        |                |
+				| Boot ROM Use   |
+				|                |
 FFFC00  +----------------+
-        | Stack          |
+				| Stack          |
 FFFD00  +----------------+
-        | System / Boot  |
-        |       ROM Use  |
+				| System / Boot  |
+				|       ROM Use  |
 FFFFFF  +----------------+
 
 */
@@ -43,7 +43,7 @@ FFFFFF  +----------------+
 // Assuming we do plan to use the Boot ROM, we can just subtract 0x100 from the
 // already defined beginning of Boot ROM work RAM. (Refer to the modules readme
 // for a look at the Boot ROM memory map.)
-#define RESIDENT_IP_ORIGIN (_DECOMP_BUFFER - 0x100)
+#define RESIDENT_IP_ORIGIN (_BLIB_DECOMP - 0x100)
 
 // If we don't plan to use the Boot ROM, then the upper bound is the System
 // Use block at 0xFFFD00. However, this is also the location of the stack, so we
@@ -52,8 +52,8 @@ FFFFFF  +----------------+
 // #define RESIDENT_IP_ORIGIN (SYSTEMUSE_BASE - 0x300)
 
 /*
-  Next we define the IPX boundaries. Of the 0xF600 bytes remaining, we'll
-  allocate 0x1600 bytes for RAM and leave the rest for ROM.
+	Next we define the IPX boundaries. Of the 0xF600 bytes remaining, we'll
+	allocate 0x1600 bytes for RAM and leave the rest for ROM.
 */
 #define IPX_ROM_ORIGIN _ip_text_len
 #define IPX_RAM_ORIGIN 0xFFF600

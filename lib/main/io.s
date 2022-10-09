@@ -1,6 +1,6 @@
 /**
- * \file
- * \brief IO utilities
+ * @file
+ * @brief IO utilities
  */
 
 #ifndef MEGADEV__IO_S
@@ -37,8 +37,8 @@
 .section .text
 
 /**
- * \fn init_ext
- * \brief Initialize IO port for serial communication
+ * @fn init_ext
+ * @brief Initialize IO port for serial communication
  */
 FUNC init_ext
 	INTERRUPT_DISABLE
@@ -53,9 +53,9 @@ FUNC init_ext
 	rts
 
 /**
- * \fn ext_rx
- * \brief Read a byte from the external port
- * \param[out] D0.b 
+ * @fn ext_rx
+ * @brief Read a byte from the external port
+ * @param[out] D0.b 
  */
 /* TODO: How does RERR play into this? */
 FUNC ext_rx
@@ -65,9 +65,9 @@ FUNC ext_rx
 	rts
 
 /**
- * \fn ext_tx
- * \brief Transmit a byte to the external port
- * \param[in] D0.b Byte to transmit
+ * @fn ext_tx
+ * @brief Transmit a byte to the external port
+ * @param[in] D0.b Byte to transmit
  */
 FUNC ext_tx
 2:move.b (EXT_SCTRL), d1

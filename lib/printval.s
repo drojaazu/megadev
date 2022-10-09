@@ -1,5 +1,5 @@
 /**
- * \file
+ * @file
  * Utilities for printing hexadecimal values using the Boot ROM library
  * print function
  */
@@ -9,8 +9,8 @@
 .section .text
 
 /**
- * \fn printval_u8
- * \brief Print an 8 bit value as hexadecimal ascii
+ * @fn printval_u8
+ * @brief Print an 8 bit value as hexadecimal ascii
  * param[in] d0.b value
  * param[in] a0.l ptr to store output values
  */
@@ -25,8 +25,8 @@ FUNC printval_u8
 	rts
 
 /**
- * \fn printval_u16
- * \brief Print a 16 bit value as hexadecimal ascii
+ * @fn printval_u16
+ * @brief Print a 16 bit value as hexadecimal ascii
  * param[in] d0.w value
  * param[in] a0.l ptr to store output values
  */
@@ -40,8 +40,8 @@ FUNC printval_u16
 	rts
 
 /**
- * \fn printval_u32
- * \brief Print a 32 bit value as hexadecimal ascii
+ * @fn printval_u32
+ * @brief Print a 32 bit value as hexadecimal ascii
  * param[in] d0.l value
  * param[in] a0.l ptr to store output values
  */

@@ -26,22 +26,22 @@ ip_entry:
     this, so let's go ahead and point the VINT vector (interrupt level 6) to
     the built in handler.
   */
-  move.l	#BOOT_VINT, (_MLEVEL6 + 2)
+  move.l	#_BLIB_VINT_HANDLER, (_MLEVEL6 + 2)
 
   move.b #0, (_GA_COMFLAGS)
 
   // We'll also use the Boot ROM VDP defaults
   // (these defaults include disabling the display)
-  jbsr BOOT_LOAD_VDPREGS_DEFAULT
+  jbsr _BLIB_LOAD_VDPREGS_DEFAULT
   
   // Clear all of VRAM to give a fresh start
-  jbsr BOOT_CLEAR_VRAM
+  jbsr _BLIB_CLEAR_VRAM
 
   /*
     Now we'll load the internal Boot ROM font into the VDP with the default
     settings
   */
-  jbsr BOOT_LOAD_FONT_DEFAULTS
+  jbsr _BLIB_LOAD_FONT_DEFAULTS
   
   // The font uses palette entry #1, so we'll manually set that to white
   move.l #0xC0020000, (_VDP_CTRL)
@@ -52,25 +52,25 @@ ip_entry:
   jbsr nmtbl_xy_pos
 
   lea str_hello, a1
-  jbsr BOOT_PRINT
+  jbsr _BLIB_PRINT
 
   // And finally enable the display
-  jbsr BOOT_VDP_DISP_ENABLE
+  jbsr _BLIB_VDP_DISP_ENABLE
 
   // and restore interrupts
   andi #0xF8FF,sr
 
 loop:
-  jbsr BOOT_VINT_WAIT_DEFAULT
+  jbsr _BLIB_VINT_HANDLER_WAIT_DEFAULT
   // Inputs are updated as part of the default vint wait subroutine
   // so we can assume the input value is current
-  and.b #PAD_START_MSK, _JOY1_PRESS
+  and.b #PAD_START_MSK, _BLIB_JOY1_PRESS
 	beq loop
 	
-  jmp BOOT_ENTRY
+  jmp _BLIB_RESET
 
 FUNC nmtbl_xy_pos
-1:move.w (_PLANE_WIDTH), d1  // d1 - tiles per row 
+1:move.w (_BLIB_PLANE_WIDTH), d1  // d1 - tiles per row 
   move.w d0, d2  // d0 - x/y offset (upper/lower bytes of the word)
   lsr.w #8, d2  // d2 has x pos
   and.w #0xff, d0  // filter d0 so it only has y pos

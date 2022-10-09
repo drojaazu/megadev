@@ -66,7 +66,7 @@ PCM_WAIT:
 
 
 /**
- * \brief Loads one 32k buffer with data
+ * @brief Loads one 32k buffer with data
  * IN:
  *  a0.l - ptr to pcm data
  *  d0.l - size of pcm data (32kb or less)

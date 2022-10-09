@@ -1,6 +1,6 @@
 /**
- * \file
- * \brief SP header definitions
+ * @file
+ * @brief SP header definitions
  */
 
 .section .header

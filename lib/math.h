@@ -1,6 +1,6 @@
 /**
- * \file
- * \brief Math functions
+ * @file
+ * @brief Math functions
  */
 
 #ifndef MEGADEV__MATH_H
@@ -215,7 +215,7 @@ static inline u16 bcd(u16 value) {
 
 /*
   simple fixed point math
-  Q10.6 for 16 bit, Q24.8 for 32 bit by default
+  Q12.4 for 16 bit, Q24.8 for 32 bit by default
   Mostly taken from SGDK
   https://github.com/Stephane-D/SGDK
 */
@@ -227,12 +227,14 @@ typedef int32_t f32;
 #define FIX16_FRAC_BITS (16 - FIX16_INT_BITS)
 #define FIX32_INT_BITS 24
 #define FIX32_FRAC_BITS (32 - FIX32_INT_BITS)
+#define FIX16_FRAC_MASK (1 << FIX16_FRAC_BITS)
+#define FIX32_FRAC_MASK (1 << FIX32_FRAC_BITS)
 
-#define frac_to_f16(value) ((f16)((value) * (1 << FIX16_FRAC_BITS)))
+#define frac_to_f16(value) ((f16)((value)*FIX16_FRAC_MASK))
 #define int_to_f16(value) ((f16)((value) << FIX16_FRAC_BITS))
 #define f16_to_int(value) ((s16)((value) >> FIX16_FRAC_BITS))
 
-#define frac_to_f32(value) ((f32)((value) * (1 << FIX32_FRAC_BITS)))
+#define frac_to_f32(value) ((f32)((value)*FIX32_FRAC_MASK))
 #define int_to_f32(value) ((f32)((value) << FIX32_FRAC_BITS))
 #define f32_to_int(value) ((s32)((value) >> FIX32_FRAC_BITS))
 

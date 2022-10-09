@@ -1,5 +1,5 @@
 /**
- * \file
+ * @file
  */
 
 .section .text

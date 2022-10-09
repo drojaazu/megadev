@@ -1,34 +1,30 @@
 /**
- * \file
- * \brief Echo sound driver control
+ * @file echo.s
+ * @brief Echo sound driver control (for Main CPU)
  * 
- * Converted for use with GAS
+ * Converted for use with GNU AS and Megadev
  */
 
 #ifndef MEGADEV__ECHO_S
 #define MEGADEV__ECHO_S
 
 #include "macros.s"
-#include "z80_def.h"
-
-#define ECHO_CMD_PLAY_SFX 2
-#define ECHO_CMD_STOP_SFX 3
-#define ECHO_CMD_PLAY_BGM 4
-#define ECHO_CMD_STOP_BGM 5
-#define ECHO_CMD_RESUME_BGM 6
-#define ECHO_CMD_SET_PCM_RATE 7
-#define ECHO_CMD_PAUSE_BGM 8
-#define ECHO_CMD_SET_STEREO 9
+#include "echo_def.h"
 
 .section .text
 
+/**
+ * @fn echo_init
+ * @brief Initialize Echo driver
+ * @param[in] A0.l Pointer to instrument list
+ */
 FUNC echo_init
     movem.l d0-d1/a0, -(sp)
 
     Z80_DO_RESET
     Z80_DO_BUSREQ
 
-    move.b  #0x01, (0xA01FFF)  // Command: load pointer list
+    move.b  #ECHO_CMD_LOAD_LIST, (0xA01FFF)  // Command: load pointer list
     move.b  #0x00, (0xA01FFB)  // No other command yet
 
     move.l  a0, d0             // Easier to manipulate here
@@ -76,7 +72,7 @@ FUNC echo_init
 
 FUNC echo_convert_inst_list
     movem.l d0-d1/a0-a1, -(sp)
-    move.l     a0,a1
+    move.l  a0,a1
 1:  move.l  (a0)+, d0   // Easier to manipulate here
     beq 2f
     move.b  d0, 1(a1)   // Store low address byte
@@ -98,7 +94,14 @@ FUNC echo_convert_inst_list
     rts
 
 
-FUNC Echo_SendCommand
+
+/**
+ * @fn echo_sendcmd
+ * @brief Send command to Echo driver
+ * @param[in] D0.b Echo command
+ * @clobber d1/a1
+ */
+FUNC echo_sendcmd
 1:  Z80_DO_BUSREQ                 // We need the Z80 bus
 
     lea     (0xA01FFF), a1  // First try the 1st slot
@@ -118,111 +121,84 @@ FUNC Echo_SendCommand
     rts                     // End of subroutine
 
 /**
- * \break d1/a1
+ * @fn echo_sendcmdptr
+ * @brief Send command to Echo driver with pointer to data
+ * @param[in] D0.b Echo command
+ * @param[in] A0.l Pointer to data
+ * @clobber d0-d1/a1
  */
-FUNC Echo_SendCommandEx
-    movem.l d0, -(sp)         // Save registers
-1:  Z80_DO_BUSREQ                 // We need the Z80 bus
+FUNC echo_sendcmdptr
+1:  Z80_DO_BUSREQ           // We need the Z80 bus
 
-    lea     (0xA01FFF), a1           // First try the 1st slot
-    tst.b   (a1)                    // Is 1st slot available?
-    beq.s   3f                    // If so, move on
-    subq.l  #4, a1                  // Try 2nd slot otherwise
+    lea     (0xA01FFF), a1  // First try the 1st slot
+    tst.b   (a1)            // Is 1st slot available?
+    beq.s   3f              // If so, move on
+    subq.l  #4, a1          // Try 2nd slot otherwise
 
-    tst.b   (a1)                    // Check if 2nd slot is ready
-    beq.s   3f                  // Too busy?
-    Z80_DO_BUSRELEASE                   // Let Echo continue
-2:  move.w  #0xFF, d1                 // Give it some time
-    dbf     d1, 2b                       // ...
-    bra.s   1b                      // Try again
+    tst.b   (a1)            // Check if 2nd slot is ready
+    beq.s   3f              // Too busy?
+    Z80_DO_BUSRELEASE       // Let Echo continue
+2:  move.w  #0xFF, d1       // Give it some time
+    dbf     d1, 2b          // ...
+    bra.s   1b              // Try again
 
-3:  move.b  d0, (a1)                // Write command ID
+3:  move.b  d0, (a1)        // Write command ID
 
-    move.l  a0, d0                  // Easier to manipulate here
-    move.b  d0, -2(a1)              // Store low address byte
-    lsr.l   #7, d0                  // Get high address byte
-    lsr.b   #1, d0                    // We skip one bit
-    bset.l  #7, d0                    // Point into bank window
-    move.b  d0, -1(a1)              // Store high address byte
+    move.l  a0, d0          // Easier to manipulate here
+    move.b  d0, -2(a1)      // Store low address byte
+    lsr.l   #7, d0          // Get high address byte
+    lsr.b   #1, d0          // We skip one bit
+    bset.l  #7, d0          // Point into bank window
+    move.b  d0, -1(a1)      // Store high address byte
 
-    lsr.w   #8, d0                  // Get bank byte
-    move.w  d0, d1                    // Parse 32X bit separately
-    lsr.w   #1, d1                    // Put 32X bit in place
-    and.b   #0x7F, d0                  // Filter out unused bit from addresses
-    and.b   #0x80, d1                  // Filter out all but 32X bit
-    or.b    d1, d0                    // Put everything together
-    move.b  d0, -3(a1)              // Store bank byte
+    lsr.w   #8, d0          // Get bank byte
+    move.w  d0, d1          // Parse 32X bit separately
+    lsr.w   #1, d1          // Put 32X bit in place
+    and.b   #0x7F, d0       // Filter out unused bit from addresses
+    and.b   #0x80, d1       // Filter out all but 32X bit
+    or.b    d1, d0          // Put everything together
+    move.b  d0, -3(a1)      // Store bank byte
 
-    Z80_DO_BUSRELEASE                 // We're done with the Z80 bus
+    Z80_DO_BUSRELEASE       // We're done with the Z80 bus
 
-    movem.l (sp)+, d0         // Restore registers
-    rts                             // End of subroutine
+    rts                     // End of subroutine
 
 
 /**
- * \break d2/a1
+ * @fn echo_sendcmdbyte
+ * @brief Send command to Echo driver with byte data
+ * @param[in] D0.b Echo command
+ * @param[in] D1.b Byte parameter
+ * @clobber d2/a1
  */
-FUNC Echo_SendCommandByte
-1:  Z80_DO_BUSREQ                 // We need the Z80 bus
+FUNC echo_sendcmdbyte
+1:  Z80_DO_BUSREQ           // We need the Z80 bus
 
-    lea     (0xA01FFF), a1           // First try the 1st slot
-    tst.b   (a1)                    // Is 1st slot available?
-    beq.s   3f                    // If so, move on
-    subq.l  #4, a1                  // Try 2nd slot otherwise
+    lea     (0xA01FFF), a1  // First try the 1st slot
+    tst.b   (a1)            // Is 1st slot available?
+    beq.s   3f              // If so, move on
+    subq.l  #4, a1          // Try 2nd slot otherwise
 
-    tst.b   (a1)                    // Check if 2nd slot is ready
-    beq.s   3f                  // Too busy?
-    Z80_DO_BUSRELEASE                   // Let Echo continue
-2:  move.w  #0xFF, d2                 // Give it some time
-    dbf     d2, 2b                       // ...
-    bra.s   1b                     // Try again
+    tst.b   (a1)            // Check if 2nd slot is ready
+    beq.s   3f              // Too busy?
+    Z80_DO_BUSRELEASE       // Let Echo continue
+2:  move.w  #0xFF, d2       // Give it some time
+    dbf     d2, 2b          // ...
+    bra.s   1b              // Try again
 
-3:  move.b  d0, (a1)                // Write command ID
-    move.b  d1, -3(a1)              // Write parameter
-    Z80_DO_BUSRELEASE                 // We're done with the Z80 bus
-    rts                             // End of subroutine
+3:  move.b  d0, (a1)        // Write command ID
+    move.b  d1, -3(a1)      // Write parameter
+    Z80_DO_BUSRELEASE       // We're done with the Z80 bus
+    rts                     // End of subroutine
 
-
-FUNC Echo_PlaySFX
-    move.b  #ECHO_CMD_PLAY_SFX, d0                // Command 0x02 = play SFX
-    bsr     Echo_SendCommandEx    // Send command to Echo   
-    rts                             // End of subroutine
-
-
-FUNC Echo_StopSFX
-    move.b  #ECHO_CMD_STOP_SFX, d0                // Command 0x03 = stop SFX
-    bsr     Echo_SendCommand        // Send command to Echo    
-    rts                             // End of subroutine
-
-
-FUNC Echo_PlayBGM
-    move.b  #ECHO_CMD_PLAY_BGM, d0                // Command 0x04 = play BGM
-    bsr     Echo_SendCommandEx    // Send command to Echo
-    rts                             // End of subroutine
-
-
-FUNC Echo_StopBGM
-    move.b  #ECHO_CMD_STOP_BGM, d0                // Command 0x05 = stop BGM
-    bsr     Echo_SendCommand        // Send command to Echo
-    rts                             // End of subroutine
 
 /**
- * \fn Echo_PauseBGM
- * \brief Pause background music playback
+ * @fn echo_playdirect
+ * @brief Injects events into the BGM stream for the next tick
+ * @param[in] A0.l pointer to stream data
+ * @clobber TODO
  */
-FUNC Echo_PauseBGM
-    move.b  #ECHO_CMD_PAUSE_BGM, d0                // Command 0x08 = pause BGM
-    bsr     Echo_SendCommand        // Send command to Echo
-    rts                             // End of subroutine
-
-
-FUNC Echo_ResumeBGM
-    move.b  #ECHO_CMD_RESUME_BGM, d0                // Command 0x06 = resume BGM
-    bsr     Echo_SendCommand        // Send command to Echo
-    rts                             // End of subroutine
-
-
-FUNC Echo_PlayDirect
+FUNC echo_playdirect
     Z80_DO_BUSREQ              // We need the Z80 bus
     movem.l d0-d1/a0-a2, -(sp)  // Save registers
 
@@ -263,7 +239,7 @@ FUNC Echo_PlayDirect
     rts
 
 /**
- * \brief Look-up table used to know how many bytes each event has as argument
+ * @brief Look-up table used to know how many bytes each event has as argument
  */
 ArgTable:
     .byte    1,1,1,0, 1,1,1,0, 1,1,1,1, 1,0,0,0      // 0x00-0x0F (key on)
@@ -283,24 +259,13 @@ ArgTable:
     .byte    0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0      // 0xE0-0xEF (lock channel)
     .byte    1,1,1,0, 1,1,1,0, 2,2,1,1, 0,0,1,0      // 0xF0-0xFF (miscellaneous)
 
-
-FUNC Echo_SetPCMRate
-    move.b  #ECHO_CMD_SET_PCM_RATE, d0                // Command 0x07 = set PCM rate
-    bsr     Echo_SendCommandByte    // Send command to Echo
-    rts                             // End of subroutine
-
-
-FUNC Echo_SetStereo
-    movem.l d0-d1, -(sp)            // Save registers
-    tst.b   d0                      // Check what we want to do
-    seq.b   d1                      // Put parameter in place
-    move.b  #ECHO_CMD_SET_STEREO, d0                // Command 0x09 = set stereo
-    bsr     Echo_SendCommandByte    // Send command to Echo
-    movem.l (sp)+, d0-d1            // Restore registers
-    rts                             // End of subroutine
-
-
-FUNC Echo_SetVolume
+/**
+ * @fn echo_setvolume
+ * @brief Changes the global volume for every channel
+ * @param[in] D0.b New volume (0 = quietest, 255 = loudest)
+ * @clobber TODO
+ */
+FUNC echo_setvolume
     Z80_DO_BUSREQ                 // We need the Z80 bus
     movem.l d0-d1/a0-a1, -(sp)      // Save registers
     
@@ -358,7 +323,17 @@ Echo_PSGVolTable:
     .byte    0x01,0x01,0x01,0x01,0x01,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00
 
 
-FUNC Echo_SetVolumeEx
+/**
+ * @fn echo_setvolumeex
+ * @brief Changes the global volume for each individual channel
+ * @param[in] A0.l Pointer to volume structure
+ *   8 bytes with FM volumes (0..127)
+ *   4 bytes with PSG volumes (0..15)
+ *   1 byte with PCM toggle (0/1)
+ *   3 reserved (unused for now)
+ * @clobber TODO
+ */
+FUNC echo_setvolumeex
     Z80_DO_BUSREQ                 // We need the Z80 bus
     movem.l a0-a1, -(sp)            // Save registers
     
@@ -386,8 +361,17 @@ FUNC Echo_SetVolumeEx
     Z80_DO_BUSRELEASE                 // We're done with the Z80 bus
     rts                             // End of subroutine
 
-
-FUNC Echo_GetStatus
+/**
+ * @fn echo_getstatus
+ * @brief Gets the current status of Echo
+ * @param[out] D0.w Status
+ *   Bit #0: SFX is playing
+ *   Bit #1: BGM is playing
+ *   Bit #14: direct events not played
+ *   Bit #15: command still not parsed
+ * @clobber TODO
+ */
+FUNC echo_getstatus
     movem.l d1-d2/a1, -(sp)         // Save registers
 
     clr.w   d0                      // Set all needed bits to 0
@@ -439,27 +423,26 @@ AndTable:  .byte 0xFF,0xFF, 0xFF,0xFE,0xFF,0xFD, 0xFF,0xFF,0xFF
 OrTable:   .byte 0x00,0x00, 0x01,0x00,0x02,0x00, 0x00,0x00,0x00
 .align 2
 
-//****************************************************************************
-// Echo_GetFlags
-// Gets the current values of the flags.
-//
-// output d0.b ... Bitmask with flags
-//****************************************************************************
 
-FUNC Echo_GetFlags
+/**
+ * @fn echo_getflags
+ * @brief Gets the current values of the flags
+ * @param[out] D0.b Bitmask with flags
+ * @clobber TODO
+ */
+FUNC echo_getflags
     Z80_DO_BUSREQ                 // Request Z80 bus
     move.b  (0xA01FF2), d0           // Get the flags
     Z80_DO_BUSRELEASE                 // Done with Z80 RAM
     rts                             // End of subroutine
 
-//****************************************************************************
-// Echo_SetFlags
-// Sets flags from the 68000.
-//
-// input d0.b ... Bitmask of flags to be set (1 = set, 0 = intact)
-//****************************************************************************
-
-FUNC Echo_SetFlags
+/**
+ * @fn echo_setflags
+ * @brief Sets flags from the 68000
+ * @param[in] D0.b Bitmask of flags to set
+ * @clobber TODO
+ */
+FUNC echo_setflags
     subq.w  #4, sp                  // Buffer for the events
     move.b  #0xFA, (sp)                // Set flags
     move.b  d0, 1(sp)                 // <bitmask>
@@ -467,20 +450,19 @@ FUNC Echo_SetFlags
     
     move.l  a0, -(sp)               // Issue the events
     lea     4(sp), a0
-    bsr     Echo_PlayDirect
+    bsr     echo_playdirect
     move.l  (sp)+, a0
     
     addq.w  #4, sp                  // Done with the buffer
     rts                             // End of subroutine
 
-//****************************************************************************
-// Echo_ClearFlags
-// Clear flags from the 68000.
-//
-// input d0.b ... Bitmask of flags to be cleared (1 = clear, 0 = intact)
-//****************************************************************************
-
-FUNC Echo_ClearFlags
+/**
+ * @fn echo_clearflags
+ * @brief Clear flags from the 68000
+ * @param[in] D0.b Bitmask of flags to clear
+ * @clobber TODO
+ */
+FUNC echo_clearflags
     not.b   d0                      // Bitmask is inverted
     subq.w  #4, sp                  // Buffer for the events
     move.b  #0xFB, (sp)                // Set flags
@@ -490,10 +472,12 @@ FUNC Echo_ClearFlags
     
     move.l  a0, -(sp)               // Issue the events
     lea     4(sp), a0
-    bsr     Echo_PlayDirect
+    bsr     echo_playdirect
     move.l  (sp)+, a0
     
     addq.w  #4, sp                  // Done with the buffer
     rts                             // End of subroutine
+
+
 
 #endif

@@ -1,98 +1,98 @@
 /**
- * \file
- * \brief I/O register definitions
+ * @file
+ * @brief I/O register definitions
  */
 
 #ifndef MEGADEV__IO_DEF_H
 #define MEGADEV__IO_DEF_H
 
 /**
- * \var u8 _IO_DATA1
- * \brief Data port for port 1
+ * @var u8 _IO_DATA1
+ * @brief Data port for port 1
  */
 #define _IO_DATA1 0xA10003
 
 /**
- * \var u8 _IO_DATA2
- * \brief Data port for port 2
+ * @var u8 _IO_DATA2
+ * @brief Data port for port 2
  */
 #define _IO_DATA2 0xA10005
 
 /**
- * \var u8 _IO_DATA3
- * \brief Data port for port 3
+ * @var u8 _IO_DATA3
+ * @brief Data port for port 3
  */
 #define _IO_DATA3 0xA10007
 
 /**
- * \var u8 _IO_CTRL1
- * \brief Control port for port 1
+ * @var u8 _IO_CTRL1
+ * @brief Control port for port 1
  */
 #define _IO_CTRL1 0xA10009
 
 /**
- * \var u8 _IO_CTRL2
- * \brief Control port for port 2
+ * @var u8 _IO_CTRL2
+ * @brief Control port for port 2
  */
 #define _IO_CTRL2 0xA1000B
 
 /**
- * \var u8 _IO_CTRL3
- * \brief Control port for port 3
+ * @var u8 _IO_CTRL3
+ * @brief Control port for port 3
  */
 #define _IO_CTRL3 0xA1000D
 
 /**
- * \var u8 _IO_TXDATA1
- * \brief Transmit data port for port 1
+ * @var u8 _IO_TXDATA1
+ * @brief Transmit data port for port 1
  */
 #define _IO_TXDATA1 0xA1000F
 
 /**
- * \var u8 _IO_RXDATA1
- * \brief Receive data port for port 1
+ * @var u8 _IO_RXDATA1
+ * @brief Receive data port for port 1
  */
 #define _IO_RXDATA1 0xA10011
 
 /**
- * \var u8 _IO_SCTRL1
- * \brief Serial control port for port 1
+ * @var u8 _IO_SCTRL1
+ * @brief Serial control port for port 1
  */
 #define _IO_SCTRL1 0xA10013
 
 /**
- * \var u8 _IO_TXDATA2
- * \brief Transmit data port for port 2
+ * @var u8 _IO_TXDATA2
+ * @brief Transmit data port for port 2
  */
 #define _IO_TXDATA2 0xA10015
 
 /**
- * \var u8 _IO_RXDATA2
- * \brief Receive data port for port 2
+ * @var u8 _IO_RXDATA2
+ * @brief Receive data port for port 2
  */
 #define _IO_RXDATA2 0xA10017
 
 /**
- * \var u8 _IO_SCTRL2
- * \brief Serial control port for port 2
+ * @var u8 _IO_SCTRL2
+ * @brief Serial control port for port 2
  */
 #define _IO_SCTRL2 0xA10019
 
 /**
- * \var u8 _IO_TXDATA3
- * \brief Transmit data port for port 3
+ * @var u8 _IO_TXDATA3
+ * @brief Transmit data port for port 3
  */
 #define _IO_TXDATA3 0xA1001B
 
 /**
- * \var u8 _IO_RXDATA3
- * \brief Receive data port for port 3
+ * @var u8 _IO_RXDATA3
+ * @brief Receive data port for port 3
  */
 #define _IO_RXDATA3 0xA1001D
 
 /**
- * \var u8 _IO_SCTRL3
- * \brief Serial control port for port 3
+ * @var u8 _IO_SCTRL3
+ * @brief Serial control port for port 3
  */
 #define _IO_SCTRL3 0xA1001F
 

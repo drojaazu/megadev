@@ -1,6 +1,6 @@
 /**
- * \file
- * \brief POSIX compatible C99 bool
+ * @file
+ * @brief POSIX compatible C99 bool
  */
 
 #ifndef MEGADEV__STDBOOL_H

@@ -1,6 +1,6 @@
 /**
- * \file
- * \brief Z80 hardware definitions
+ * @file
+ * @brief Z80 hardware definitions
  */
 
 #ifndef MEGADEV__Z80_DEF_H

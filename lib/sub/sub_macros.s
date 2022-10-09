@@ -1,5 +1,5 @@
 /**
- * \file
+ * @file
  * Sub CPU Gate Array and misc. utilities for use with the Sub CPU
  */
 
@@ -9,10 +9,10 @@
 #include "sub/sub_def.h"
 
 /**
- * \macro BURAM
- * \param fcode BRAM function code
- * \brief Call the specified internal Backup RAM function
- * \break d0
+ * @macro BURAM
+ * @param fcode BRAM function code
+ * @brief Call the specified internal Backup RAM function
+ * @clobber d0
  */
 .macro BURAM fcode
 	move.w    \fcode, d0
@@ -20,10 +20,10 @@
 .endm
 
 /**
- * \macro CDBIOS
- * \param fcode BIOS function code
- * \brief Call the specified internal BIOS function
- * \break d0
+ * @macro CDBIOS
+ * @param fcode BIOS function code
+ * @brief Call the specified internal BIOS function
+ * @clobber d0
  */
 .macro CDBIOS fcode
 	move.w    \fcode, d0
@@ -31,10 +31,10 @@
 .endm
 
 /**
- * \macro CDBOOT
- * \param fcode CD Boot function code
- * \brief Call the specified internal CD Boot function
- * \break d0
+ * @macro CDBOOT
+ * @param fcode CD Boot function code
+ * @brief Call the specified internal CD Boot function
+ * @clobber d0
  */
 .macro CDBOOT fcode
 	move.w    \fcode, d0

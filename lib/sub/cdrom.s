@@ -1,21 +1,23 @@
 /**
- * \file
+ * @file
  * CD-ROM File Access API
  * Subdirectories are *not* supported. All files should be in the root.
  */
 
 #include "macros.s"
 #include "sub/cdrom_def.h"
-#include "sub/sub_macros.s"
 #include "sub/bios_def.h"
+#include "sub/gatearr_def.h"
+
+#include "sub/sub_macros.s"
 
 .section .text
 
 /**
- * \fn load_file_prg_dma
- * \brief Convenience sub to load a file to PRG RAM via DMA
- * \param[in] A0.l Pointer to filename string
- * \note Be sure to set the destination in the _GA_DMAADDR register
+ * @fn load_file_prg_dma
+ * @brief Convenience sub to load a file to PRG RAM via DMA
+ * @param[in] A0.l Pointer to filename string
+ * @note Be sure to set the destination in the _GA_DMAADDR register
  * beforehand
  */
 load_file_prg_dma:
@@ -23,10 +25,10 @@ load_file_prg_dma:
   jbra load_file
 
 /**
- * \fn load_file_sub
- * \brief Convenience sub to get a file loaded
- * \param[in] A0.l Pointer to filename string
- * \param[in] A1.l Pointer to destination buffer
+ * @fn load_file_sub
+ * @brief Convenience sub to get a file loaded
+ * @param[in] A0.l Pointer to filename string
+ * @param[in] A1.l Pointer to destination buffer
  */
 load_file_sub:
   move.w  #ACC_OP_LOAD_CDC, access_op
@@ -42,13 +44,13 @@ load_file:
   rts
 
 /**
- * \fn find_file
- * \brief Get a pointer to the cached file info entry
- * \param[in] A0.l Pointer to file name
- * \param[out] CS File not found
- * \param[out] CC File found
- * \param[out] A0.l Pointer to file list entry (if found)
- * \break d0-d1/a1-a2
+ * @fn find_file
+ * @brief Get a pointer to the cached file info entry
+ * @param[in] A0.l Pointer to file name
+ * @param[out] CS File not found
+ * @param[out] CC File found
+ * @param[out] A0.l Pointer to file list entry (if found)
+ * @clobber d0-d1/a1-a2
  */
 .global find_file
 find_file:
@@ -86,13 +88,13 @@ find_file:
 
 
 /**
- * \fn check_acc_op
- * \brief Check if an access operation is still in proces. If  completed,
+ * @fn check_acc_op
+ * @brief Check if an access operation is still in proces. If  completed,
  * returns the last result code
- * \param[out] CS Access op in progress
- * \param[out] CC Access op complete (access loop is idle)
- * \param[out] D0.w Result code (if op is complete)
- * \param[out] D1.w Size of file in bytes (if result is OK); number of sectors
+ * @param[out] CS Access op in progress
+ * @param[out] CC Access op complete (access loop is idle)
+ * @param[out] D0.w Result code (if op is complete)
+ * @param[out] D1.w Size of file in bytes (if result is OK); number of sectors
  * read (if result not OK)
  */
 check_acc_op:
@@ -115,9 +117,9 @@ check_acc_op:
   Functions below this point shouldn't be called by the user
 */
 /**
- * \fn access_op_idle
- * \brief CD-ROM access operation switch
- * \warning The operation should be requested by setting the access_op value rather
+ * @fn access_op_idle
+ * @brief CD-ROM access operation switch
+ * @warning The operation should be requested by setting the access_op value rather
  * than calling any of these functions directly
  */
 access_op_idle:
@@ -140,8 +142,8 @@ op_jmptbl:
   .word    access_op_load_dma_pcm - op_jmptbl
 
 /**
- * \fn access_op_load_dma_word
- * \brief Load a file to Word RAM via DMA
+ * @fn access_op_load_dma_word
+ * @brief Load a file to Word RAM via DMA
  */ 
 access_op_load_dma_word:
   move.b   #CDC_DEST_WRAMDMA, cdc_dev_dest
@@ -149,8 +151,8 @@ access_op_load_dma_word:
   jbra     load_process
 
 /**
- * \fn access_op_load_sub
- * \brief Load a file to a Sub CPU address space
+ * @fn access_op_load_sub
+ * @brief Load a file to a Sub CPU address space
  */
 access_op_load_sub:
   move.b   #CDC_DEST_SUBREAD, cdc_dev_dest
@@ -158,8 +160,8 @@ access_op_load_sub:
   jbra     load_process
 
 /**
- * \fn access_op_load_dma_prg
- * \brief Load a file to PRG RAM via DMA
+ * @fn access_op_load_dma_prg
+ * @brief Load a file to PRG RAM via DMA
  */
 access_op_load_dma_prg:
   move.b   #CDC_DEST_PRAMDMA, cdc_dev_dest
@@ -167,16 +169,16 @@ access_op_load_dma_prg:
   jbra     load_process
 
 /**
- * \fn access_op_load_dma_pcm
- * \brief Load a file to PCM Wave Data memory via DMA
+ * @fn access_op_load_dma_pcm
+ * @brief Load a file to PCM Wave Data memory via DMA
  */
 access_op_load_dma_pcm:
   move.b   #CDC_DEST_PCMDMA, cdc_dev_dest
   move.l   #load_data_dma, (load_method_ptr)
 
 /**
- * \fn load_process
- * \brief Shared code for the file load operations
+ * @fn load_process
+ * @brief Shared code for the file load operations
  */
 load_process:
   movea.l  (filename), a0
@@ -207,8 +209,8 @@ load_proc_notfound:
   bra      3b
 
 /**
- * \fn access_op_load_dir
- * \brief Load and cache the root directory entries (filename, offset, size)
+ * @fn access_op_load_dir
+ * @brief Load and cache the root directory entries (filename, offset, size)
  */
 access_op_load_dir:
   move.b  #3, cdc_dev_dest            // set CDC data destination
@@ -280,8 +282,8 @@ cdacc_loop_loaddir_err:
 
 
 /**
- * \fn load_data_sub
- * \brief Load data using CDCTRN (only available for Sub CPU Read)
+ * @fn load_data_sub
+ * @brief Load data using _BIOS_CDCTRN (only available for Sub CPU Read)
  */
 load_data_sub:
   // we want to save the call site in order to properly return, since we'll
@@ -292,7 +294,7 @@ load_data_sub:
 
 load_data_begin:
   move.b   cdc_dev_dest, (_GA_CDCMODE)
-  lea      cdread_sector_start, a0 // point to sector struct for ROMREADN
+  lea      cdread_sector_start, a0 // point to sector struct for _BIOS_ROMREADN
 
   /*
     Next we want to partially convert the start sector to MM:SS:FF format and
@@ -307,12 +309,12 @@ load_data_begin:
                      // value MM:SS:FF format)
   move.b   d0, cdc_frame_check  // cache for later error checking
 
-  CDBIOS #CDCSTOP     // stop any current CDC transfers
-  CDBIOS #ROMREADN    // begin the data read
+  CDBIOS #_BIOS_CDCSTOP     // stop any current CDC transfers
+  CDBIOS #_BIOS_ROMREADN    // begin the data read
 
   move.w  #0x258, read_timeout
 1:bsr      accloop_reentry  /*take a break here and come back next VINT*/
-2:CDBIOS #CDCSTAT            /*check CDC status since our read call*/
+2:CDBIOS #_BIOS_CDCSTAT            /*check CDC status since our read call*/
   bcc      3f              /*we have a sector read to be read*/
   subq.w  #1, read_timeout  /*count down read timeout & try again*/
   bge      1b
@@ -320,9 +322,9 @@ load_data_begin:
   bge      load_data_begin
   bra      load_data_failure          /*failed completely, jump down*/
 
-3:CDBIOS #CDCREAD    /*read out the data from the CDC*/
+3:CDBIOS #_BIOS_CDCREAD    /*read out the data from the CDC*/
   bcs      4f      /*sector not ready, this shouldn't happen since*/
-                  /*CDCSTAT said we were good; jump down & try again*/
+                  /*_BIOS_CDCSTAT said we were good; jump down & try again*/
   move.l  d0, cdc_read_timecode  /*the timecode for the read sector comes back in d0*/
   move.b  cdc_frame_check, d0    /*bring back the frame count we calculated earlier*/
   cmp.b    cdc_read_timecode+2, d0  /*and check it against the frame count from CDC*/
@@ -338,10 +340,10 @@ load_data_begin:
   bge      load_data_begin
   bra      load_data_failure
 6:cmpi.b  #2, cdc_dev_dest  /*is this a main CPU read?*/
-  beq      load_data_maincpudest    /*if so, jump down; main cpu can't use CDCTRN*/
-  movea.l  (filebuff), a0  /*setup CDCTRN pointers*/
+  beq      load_data_maincpudest    /*if so, jump down; main cpu can't use _BIOS_CDCTRN*/
+  movea.l  (filebuff), a0  /*setup _BIOS_CDCTRN pointers*/
   lea      cdc_read_timecode, a1
-  CDBIOS #CDCTRN            /*transfer data from CDC to RAM*/
+  CDBIOS #_BIOS_CDCTRN            /*transfer data from CDC to RAM*/
   bcs      7f
   move.b  cdc_frame_check, d0      /*check against our expected frame count again*/
   cmp.b    cdc_read_timecode+2, d0  
@@ -358,7 +360,7 @@ load_data_begin:
   cmpi.b  #0x75, cdc_frame_check  /* check if we're past 75 frames (0 indexed,BCD)*/
   bcs      9f        /*not yet*/
   move.b  #0, cdc_frame_check    /*frame counter rolled past 75, reset our check*/
-9:CDBIOS #CDCACK        /*send ack to CDC*/
+9:CDBIOS #_BIOS_CDCACK        /*send ack to CDC*/
   move.w  #6, read_timeout    /*reset error counters*/
   move.w  #0x1e, read_retry_count
   addi.l  #0x800, filebuff  /*move the dest buffer up a sector*/
@@ -388,8 +390,8 @@ load_data_maincpudest:
 
 
 /**
- * \fn load_data_dma
- * \brief Load data without CDCTRN (for DMA processes)
+ * @fn load_data_dma
+ * @brief Load data without _BIOS_CDCTRN (for DMA processes)
  */
 load_data_dma:
   // we want to save the call site in order to properly return, since we'll
@@ -400,7 +402,7 @@ load_data_dma:
 
 load_data_dma_begin:
   move.b   cdc_dev_dest, (_GA_CDCMODE)
-  lea      cdread_sector_start, a0  // point to sector struct for ROMREADN
+  lea      cdread_sector_start, a0  // point to sector struct for _BIOS_ROMREADN
 
   /*
     Next we want to partially convert the start sector to MM:SS:FF format and
@@ -415,12 +417,12 @@ load_data_dma_begin:
                      // value MM:SS:FF format)
   move.b   d0, cdc_frame_check  // cache for later error checking
 
-  CDBIOS #CDCSTOP     // stop any current CDC transfers
-  CDBIOS #ROMREADN    // begin the data read
+  CDBIOS #_BIOS_CDCSTOP     // stop any current CDC transfers
+  CDBIOS #_BIOS_ROMREADN    // begin the data read
 
   move.w   #0x258, read_timeout // set up for reading
 1:bsr      accloop_reentry    // take a break here and come back next VINT
-2:CDBIOS #CDCSTAT               // check on the CDC on the status of our data
+2:CDBIOS #_BIOS_CDCSTAT               // check on the CDC on the status of our data
   bcc      3f                // sector is ready! jump down
   subq.w   #1, read_timeout  // not ready yet,count down read timeout
   bge      1b                // and try again
@@ -428,9 +430,9 @@ load_data_dma_begin:
   bge      load_data_dma_begin   // and try again
   bra      load_data_dma_failure // failed after all attempts, return error
 
-3:CDBIOS #CDCREAD     // read out the data from the CDC to the destination
+3:CDBIOS #_BIOS_CDCREAD     // read out the data from the CDC to the destination
   bcs      4f      // data not ready, this really shouldn't happen since
-                   // CDCSTAT said we were good; jump down & try again
+                   // _BIOS_CDCSTAT said we were good; jump down & try again
   lsr      #8, d0  // the timecode for the loaded sector comes back in d0
                    // shift it over to get the frame offset into the low byte
   move.b   cdc_frame_check, d1   // bring back the expected frame offset...
@@ -459,7 +461,7 @@ load_data_dma_begin:
   bge      7b
   bra      load_data_dma_failure
 
-9:CDBIOS #CDCACK          // send ack to CDC (required after every sector/frame)
+9:CDBIOS #_BIOS_CDCACK          // send ack to CDC (required after every sector/frame)
   move.w   #6, read_timeout          // reset error counters for next sector
   move.w   #0x1e, read_retry_count
   addq.w   #1, sectors_read_count    // add to the sectors loaded count
@@ -493,7 +495,7 @@ acc_loop_jump: .long 0
 
 load_method_ptr: .long 0
 
-// the two longs are the table used by ROMREADN/ROMREADE, so
+// the two longs are the table used by _BIOS_ROMREADN/ROMREADE, so
 //# it is necessary that there are two consecutive long values!
 cdread_sector_start: .long 0
 cdread_sector_count: .long 0

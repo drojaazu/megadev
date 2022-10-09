@@ -2,8 +2,8 @@
 #define MEGADEV__CD_SUB_COMMSYNC_S
 
 /**
- * \file
- * \brief Gate Array comm register sync for use with BOOT_COMM_SYNC in the
+ * @file
+ * @brief Gate Array comm register sync for use with _BLIB_COMM_SYNC in the
  * Boot ROM library (EXPERIMENTAL)
  * 
  * This still needs a fair amount of research...

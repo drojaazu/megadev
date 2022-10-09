@@ -1,0 +1,10 @@
+CompileFlags:
+  # Treat code as C++, use C++17 standard, enable more warnings.
+  Add: [-xc++, -std=c++17, -Wall]
+Diagnostics:
+  ClangTidy:
+    Add: [performance*, modernize*]
+    Remove: [modernize-use-trailing-return-type, modernize-avoid-c-arrays]
+    CheckOptions:
+      readability-identifier-naming.VariableCase: SnakeCase
+

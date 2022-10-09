@@ -29,14 +29,14 @@ ip_entry:
   // disable VDP display and maintain MD mode (mode 5)
   move.w #(VDP_REG01 | 0x44), (_VDP_CTRL)
 
-	jbsr BOOT_LOAD_VDPREGS_DEFAULT
+	jbsr _BLIB_LOAD_VDPREGS_DEFAULT
 
   // clear out VRAM
   // (note: this does not clear CRAM!)
 	// This is a Boot ROM library call that makes use of the VDP register cache
 	// Even if you don't plan to use the Boot ROM library, this call is safe
 	// to use here as the memory will not be preserved after we jump to the IPX
-  jbsr BOOT_CLEAR_VRAM
+  jbsr _BLIB_CLEAR_VRAM
 
 	// our example IP here is super tiny, and while it should remain quite
 	// small, you could put a very simple message/graphic here to indicate
@@ -63,7 +63,7 @@ ip_entry:
 	bne			1b
 	WAIT_2M
 
-	jbsr BOOT_VDP_DISP_ENABLE
+	jbsr _BLIB_VDP_DISP_ENABLE
 
 	// Reset the stack since we're starting fresh
 	movea.l (0), sp
@@ -74,7 +74,7 @@ ip_entry:
 	// fall apart)
 	// instead, we'll jump right into the IPX entry currently in Word RAM
 	// which will copy itself into Work RAM
-	jbra _MAIN_2M_BASE + 0x100
+	jbra _WRDRAM + 0x100
 
   // minimal VINT handler
 	// the sub cpu must receive level 2 interrupts in order to keep

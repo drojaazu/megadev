@@ -1,0 +1,3 @@
+$(DISC_PATH)/cyber.mmd: mmd_layout.s.o cybercity.c.o cybercity_res.s.o 
+	$(call link_module, $^, $@, $(CFG_PATH)/module_mmd.ld)
+

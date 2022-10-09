@@ -1,9 +1,9 @@
 /**
- * \file
- * \brief Simple exception handler
- * \details Intended for the Main CPU
+ * @file
+ * @brief Simple exception handler
+ * @details Intended for the Main CPU
  *
- * \note printval.s is expected to be compiled into the final assembly in which
+ * @note printval.s is expected to be compiled into the final assembly in which
  * this is iused!
  */
 
@@ -13,13 +13,21 @@
 #include "macros.s"
 #include "main/bootlib_def.h"
 #include "main/main_def.h"
-#include "io_def.h"
-#include "vdp_def.h"
+#include "main/io_def.h"
+#include "main/vdp_def.h"
 
 .section .text
 
+// TODO this is embarrasing, make this better
+// - save stack frame
+// - reset vdp to a known state
+// - clear VRAM
+// - load font
+// - *precalculate the text positions*
+// - display text
+
 /**
- * \fn install_handlers
+ * @fn install_handlers
  * Repoints the exception vectors in the system jump table to our text display
  * routines
  */
@@ -109,9 +117,9 @@ ex_group1_stack_copy:
 FUNC handle_exception
 	ori #0x700,sr
 	// todo: should probably reset VDP first
-	jbsr BOOT_CLEAR_NMTBL
-	jbsr BOOT_LOAD_FONT_DEFAULTS
-	move.w #0, (_FONT_TILE_BASE)
+	jbsr _BLIB_CLEAR_TABLES
+	jbsr _BLIB_LOAD_FONT_DEFAULTS
+	move.w #0, (_BLIB_FONT_TILE_BASE)
 
 	// set color to white
 	move.l #0xC0020000, (_VDP_CTRL)
@@ -121,13 +129,13 @@ FUNC handle_exception
 	move.w #0x0205, d0
 	jbsr nmtbl_xy_pos
 	movea.l (err_str_ptr), a1
-	jbsr BOOT_PRINT
+	jbsr _BLIB_PRINT
 
 	// PC=
 	move.w #0x0306, d0
 	jbsr nmtbl_xy_pos
 	lea str_pc, a1
-	jbsr BOOT_PRINT
+	jbsr _BLIB_PRINT
 
 	// pc val
 	move.l (pc_val), d0
@@ -136,13 +144,13 @@ FUNC handle_exception
 	move.w #0x0806, d0
 	jbsr nmtbl_xy_pos
 	lea str_cache, a1
-	jbsr BOOT_PRINT
+	jbsr _BLIB_PRINT
 
 	// SR=
 	move.w #0x0307, d0
 	jbsr nmtbl_xy_pos
 	lea str_sr, a1
-	jbsr BOOT_PRINT
+	jbsr _BLIB_PRINT
 
   // sr val
 	move.w (sr_val), d0
@@ -151,13 +159,13 @@ FUNC handle_exception
 	move.w #0x0807, d0
 	jbsr nmtbl_xy_pos
 	lea str_cache, a1
-	jbsr BOOT_PRINT
+	jbsr _BLIB_PRINT
 
 	// OP=
 	move.w #0x0308, d0
 	jbsr nmtbl_xy_pos
 	lea str_op, a1
-	jbsr BOOT_PRINT
+	jbsr _BLIB_PRINT
 
   // op val
 	move.w (op_val), d0
@@ -166,13 +174,13 @@ FUNC handle_exception
 	move.w #0x0808, d0
 	jbsr nmtbl_xy_pos
 	lea str_cache, a1
-	jbsr BOOT_PRINT
+	jbsr _BLIB_PRINT
 
 	// ADDR=
 	move.w #0x0309, d0
 	jbsr nmtbl_xy_pos
 	lea str_addr, a1
-	jbsr BOOT_PRINT
+	jbsr _BLIB_PRINT
 
   // addr val
 	move.l (addr_val), d0
@@ -181,16 +189,16 @@ FUNC handle_exception
 	move.w #0x0809, d0
 	jbsr nmtbl_xy_pos
 	lea str_cache, a1
-	jbsr BOOT_PRINT
+	jbsr _BLIB_PRINT
 
-1:jbsr BOOT_UPDATE_INPUTS
-  and.b #PAD_START_MSK, _JOY1_PRESS
+1:jbsr _BLIB_UPDATE_INPUTS
+  and.b #PAD_START_MSK, _BLIB_JOY1_PRESS
 	beq 1b
 
-	jmp BOOT_ENTRY
+	jmp _BLIB_RESET
 
 FUNC nmtbl_xy_pos
-1:move.w (_PLANE_WIDTH), d1  // d1 - tiles per row
+1:move.w (_BLIB_PLANE_WIDTH), d1  // d1 - tiles per row
 	move.w d0, d2  // d0 - x/y offsey (upper/lower bytes of the word)
 	lsr.w #8, d2  // d2 has x pos
 	and.w #0xff, d0  // filter d0 so it only has y pos

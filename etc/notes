@@ -5,5 +5,5 @@ __attribute__((interrupt)) void hint()  {
 
 Equivalent to a JMP/BRA for a defined address:
 void vint() {
-	goto *_BOOT_VINT;
+	goto *__BLIB_VINT_HANDLER;
 }

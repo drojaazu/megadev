@@ -22,22 +22,22 @@ ip_entry:
 0:move.l d0, (a0)+
   dbra d7, 0b
 
-  move.l	#BOOT_VINT, (_MLEVEL6 + 2)
+  move.l	#_BLIB_VINT_HANDLER, (_MLEVEL6 + 2)
 
-  jbsr BOOT_LOAD_VDPREGS_DEFAULT
+  jbsr _BLIB_LOAD_VDPREGS_DEFAULT
 
-  jbsr BOOT_CLEAR_VRAM
+  jbsr _BLIB_CLEAR_VRAM
 
-  jbsr BOOT_LOAD_FONT_DEFAULTS
+  jbsr _BLIB_LOAD_FONT_DEFAULTS
   
   // The font uses palette entry #1, so we'll manually set that to white
   move.l #0xC0020000, (_VDP_CTRL)
   move.w #0x0EEE, (_VDP_DATA)
 
   // And finally enable the display
-  jbsr BOOT_VDP_DISP_ENABLE
+  jbsr _BLIB_VDP_DISP_ENABLE
 
-  jbsr BOOT_CLEAR_COMM
+  jbsr _BLIB_CLEAR_COMM
 
   // and restore interrupts
   andi #0xF8FF,sr
@@ -47,7 +47,7 @@ ip_entry:
 prep_load:
   movea.l (0), sp  // Reset the stack since we're "starting fresh"
 
-  jbsr BOOT_CLEAR_NMTBL // clear the screen
+  jbsr _BLIB_CLEAR_TABLES // clear the screen
 
   GRANT_2M  // give Word RAM to Sub
 

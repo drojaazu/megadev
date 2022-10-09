@@ -44,9 +44,9 @@ __attribute__((section(".init"))) void main() {
       break;
 
     case 0x10:
-      clear_pcm_ram_c();
+      pcm_clear_ram_c();
 
-      config_pcm_channels_c(CHANNEL(1), &pcmSettings);
+      pcm_config_channel_c(CHANNEL(1), &pcmSettings);
 
       // we use the highest bit of the comflags to inform main that the
       // audio is playing

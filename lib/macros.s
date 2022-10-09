@@ -1,12 +1,12 @@
 /**
- * \file
- * \brief General purpose asm macros for use with the Main CPU
+ * @file
+ * @brief General purpose asm macros for use with the Main CPU
  */
 
 #ifndef MACROS_S
 #define MACROS_S
 
-#include "z80_def.h"
+#include "main/z80_def.h"
 
 .macro FUNC name, align=2
   //.section .text.asm.\name
@@ -34,6 +34,7 @@
   LOCAL file_end
   LOCAL file_start
   GLABEL \label
+  GLABEL \label\()_size
   .long file_end - file_start
 file_start:
   .incbin \path
@@ -62,31 +63,18 @@ loop:
 .endm
 
 .macro Z80_DO_RESET
-  move.w  #0x000, (_Z80_RESET)  // Assert reset line
-  nop
-  nop
-  nop
-  nop
-  nop
-  nop
-  nop
-  nop
-  nop
-  nop
-  nop
-  nop
-  nop
-  nop
-  nop
-  nop
-  move.w  #0x100, (_Z80_RESET) // Release reset line
+  move.w  #0x000, (_Z80_RESET)
+  .rept 8
+    nop
+  .endr
+  move.w  #0x100, (_Z80_RESET)
 .endm
 
 /**
- * \brief Convert a value to binary coded decimal
- * \param[in] D0.w Value to convert
- * \param[out] D0.w Value as BCD
- * \break D1
+ * @brief Convert a value to binary coded decimal
+ * @param[in] D0.w Value to convert
+ * @param[out] D0.w Value as BCD
+ * @clobber D1
  */
 .macro HEX2BCD
 	ext.l	d0
@@ -99,32 +87,32 @@ loop:
 .endm
 
 /**
- * \brief Push a value on to the stack
- * \param reg Register holding the value to push
+ * @brief Push a value on to the stack
+ * @param reg Register holding the value to push
  */
 .macro PUSH reg
 	move.l \reg, -(sp)
 .endm
 
 /**
- * \brief Pop a value from the stack
- * \param reg Register to hold the popped value
+ * @brief Pop a value from the stack
+ * @param reg Register to hold the popped value
  */
 .macro POP reg
 	move.l  (sp)+, \reg
 .endm
 
 /**
- * \brief Push multiple values on to the stack
- * \param regs Register list
+ * @brief Push multiple values on to the stack
+ * @param regs Register list
  */
 .macro PUSHM regs
 	movem.l \regs, -(sp)
 .endm
 
 /**
- * \brief Pop multiple values from the stack
- * \param regs Register list
+ * @brief Pop multiple values from the stack
+ * @param regs Register list
  */
 .macro POPM regs
 	movem.l (sp)+, \regs

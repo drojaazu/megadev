@@ -28,7 +28,7 @@
 MAINCPU_INC equ 1
 ;-----------------------------------------------------------------------;
 
-MAIN_2M_BASE    equ     $200000         ;word RAM base in 2M bit mode
+WRDRAM    equ     $200000         ;word RAM base in 2M bit mode
 MAIN_1M_BASE    equ     $200000         ;word RAM base in 1M bit mode
 IP_START        equ     $ff0000         ;start of IP program
 MAINOS_ADDR     equ     $ff1000         ;start of Main OS (Main CPU Prog)

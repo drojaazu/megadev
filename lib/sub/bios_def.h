@@ -1,6 +1,6 @@
 /**
- * \file
- * \brief Function codes for the _CDBIOS vector
+ * @file
+ * @brief Function codes for the _CDBIOS vector
  */
 
 #ifndef MEGADEV__CD_SUB_BIOS_DEF_H
@@ -9,597 +9,598 @@
 #include "sub/sub_def.h"
 
 /**
- * \def UNKNOWN00
- * \brief Unknown; present in jump table but needs to be researched
- * \ingroup bios_unknown
+ * @def _BIOS_UNKNOWN00
+ * @brief Unknown; present in jump table but needs to be researched
+ * @ingroup bios_unknown
  */
-#define UNKNOWN00 0x0000
+#define _BIOS_UNKNOWN00 0x0000
 
 /**
- * \def UNKNOWN01
- * \brief Unknown; present in jump table but needs to be researched
- * \ingroup bios_unknown
+ * @def _BIOS_UNKNOWN01
+ * @brief Unknown; present in jump table but needs to be researched
+ * @ingroup bios_unknown
  */
-#define UNKNOWN01 0x0001
+#define _BIOS_UNKNOWN01 0x0001
 
 /**
- * \def MSCSTOP
- * \group CD-DA
- * \brief Stops playing CD audio if it is playing
- * \break d0-d1/a0-a1
+ * @def _BIOS_MSCSTOP
+ * @ingroup CD-DA
+ * @brief Stops playing CD audio if it is playing
+ * @clobber d0-d1/a0-a1
  */
-#define MSCSTOP 0x0002
+#define _BIOS_MSCSTOP 0x0002
 
 /**
  *
- * \def MSCPAUSEON
- * \group CD-DA
- * \brief Pauses the drive when a track is playing
- * \break d0-d1/a0-a1
+ * @def _BIOS_MSCPAUSEON
+ * @ingroup CD-DA
+ * @brief Pauses the drive when a track is playing
+ * @clobber d0-d1/a0-a1
  *
- * \note If the drive is left paused it will stop after a programmable delay
- * (see \ref _CDBPAUSE)
+ * @note If the drive is left paused it will stop after a programmable delay
+ * (see @ref _CDBPAUSE)
  */
-#define MSCPAUSEON 0x0003
+#define _BIOS_MSCPAUSEON 0x0003
 
 /**
- * \def MSCPAUSEOFF
- * \group CD-DA
- * \brief Resumes playing a track after a pause
- * \break d0-d1/a0-a1
+ * @def _BIOS_MSCPAUSEOFF
+ * @ingroup CD-DA
+ * @brief Resumes playing a track after a pause
+ * @clobber d0-d1/a0-a1
  *
- * \note If the drive has timed out and stopped, the BIOS will seek to the pause
+ * @note If the drive has timed out and stopped, the BIOS will seek to the pause
  * time (with the attendant delay) and resume playing
  */
-#define MSCPAUSEOFF 0x0004
+#define _BIOS_MSCPAUSEOFF 0x0004
 
 /**
- * \def MSCSCANFF
- * \group CD-DA
- * \brief Starts playing from the current position in fast forward
- * \break d0-d1/a0-a1
+ * @def _BIOS_MSCSCANFF
+ * @ingroup CD-DA
+ * @brief Starts playing from the current position in fast forward
+ * @clobber d0-d1/a0-a1
  */
-#define MSCSCANFF 0x0005
+#define _BIOS_MSCSCANFF 0x0005
 
 /**
- * \def MSCSCANFR
- * \group CD-DA
- * \brief Starts playing from the current position in fast reverse
- * \break d0-d1/a0-a1
+ * @def _BIOS_MSCSCANFR
+ * @ingroup CD-DA
+ * @brief Starts playing from the current position in fast reverse
+ * @clobber d0-d1/a0-a1
  */
-#define MSCSCANFR 0x0006
+#define _BIOS_MSCSCANFR 0x0006
 
 /**
- * \def MSCSCANOFF
- * \group CD-DA
- * \brief Returns to normal play mode
- * \break d0-d1/a0-a1
+ * @def _BIOS_MSCSCANOFF
+ * @ingroup CD-DA
+ * @brief Returns to normal play mode
+ * @clobber d0-d1/a0-a1
  *
- * \note If the drive was paused before the scan was initiated, it will be
+ * @note If the drive was paused before the scan was initiated, it will be
  * returned to pause.
  */
-#define MSCSCANOFF 0x0007
+#define _BIOS_MSCSCANOFF 0x0007
 
 /**
- * \def ROMPAUSEON
- * \group CD-ROM
- * \brief Stops reading data into the CDC and pauses
- * \break d0-d1/a0-a1
+ * @def _BIOS_ROMPAUSEON
+ * @ingroup CD-ROM
+ * @brief Stops reading data into the CDC and pauses
+ * @clobber d0-d1/a0-a1
  */
-#define ROMPAUSEON 0x0008
+#define _BIOS_ROMPAUSEON 0x0008
 
 /**
- * \def ROMPAUSEOFF
- * \group CD-ROM
- * \brief Resumes reading data into the CDC from the current logical sector
- * \break d0-d1/a0-a1
+ * @def _BIOS_ROMPAUSEOFF
+ * @ingroup CD-ROM
+ * @brief Resumes reading data into the CDC from the current logical sector
+ * @clobber d0-d1/a0-a1
  */
-#define ROMPAUSEOFF 0x0009
+#define _BIOS_ROMPAUSEOFF 0x0009
 
 /**
- * \def DRVOPEN
- * \group Drive
- * \brief Opens the CD drive door
- * \break d0-d1/a0-a1
+ * @def _BIOS_DRVOPEN
+ * @ingroup Drive
+ * @brief Opens the CD drive door
+ * @clobber d0-d1/a0-a1
  *
- * \note This is only applicable to Model 1 hardware.
+ * @note This is only applicable to Model 1 hardware.
  */
-#define DRVOPEN 0x000A
+#define _BIOS_DRVOPEN 0x000A
 
 /**
- * \def DRVINIT
- * \group Drive
- * \brief Closes the disk tray and reads the TOC from the CD
- * \break d0-d1/a1
+ * @def _BIOS_DRVINIT
+ * @ingroup Drive
+ * @brief Closes the disk tray and reads the TOC from the CD
+ * @clobber d0-d1/a1
  *
- * \param[in] A0.l Pointer to initilization parameters
+ * @param[in] A0.l Pointer to initilization parameters
  *
- * \details Takes a pointer to two bytes (initialization params):
+ * @details Takes a pointer to two bytes (initialization params):
  *  byte 1 - track number from which to read TOC (normally 0x01); if bit 7 of
  *           this value is set, BIOS will start to play the first track
-             automatically
+						 automatically
  *  byte 2 - last track to read (0xff will read all tracks)
  *
  * Pauses for 2 seconds after reading the TOC. Waits for a DRVOPEN request if
  * there is no disk in the drive.
  */
-#define DRVINIT 0x0010
+#define _BIOS_DRVINIT 0x0010
 
 /**
- * \def UNKNOWN11
- * \brief Unknown; present in jump table but needs to be researched
- * \ingroup bios_unknown
+ * @def _BIOS_UNKNOWN11
+ * @brief Unknown; present in jump table but needs to be researched
+ * @ingroup bios_unknown
  */
-#define UNKNOWN11 0x0011
+#define _BIOS_UNKNOWN11 0x0011
 
 /**
- * \def UNKNOWN12
- * \brief Unknown; present in jump table but needs to be researched
- * \ingroup bios_unknown
+ * @def _BIOS_UNKNOWN12
+ * @brief Unknown; present in jump table but needs to be researched
+ * @ingroup bios_unknown
  */
-#define UNKNOWN12 0x0012
+#define _BIOS_UNKNOWN12 0x0012
 
 /**
- * \def MSCPLAY
- * \group CD-DA
- * \brief Starts CD audio playback at the specified track & continues playing
+ * @def _BIOS_MSCPLAY
+ * @ingroup CD-DA
+ * @brief Starts CD audio playback at the specified track & continues playing
  * through subsequent tracks
- * \break d0-d1/a0-a1
+ * @clobber d0-d1/a0-a1
  *
- * \param[in] A0.l Pointer to track number (16 bit)
+ * @param[in] A0.l Pointer to track number (16 bit)
  */
-#define MSCPLAY 0x0011
+#define _BIOS_MSCPLAY 0x0011
 
 /**
- * \def MSCPLAY1
- * \group CD-DA
- * \brief Plays the specified track once then pause
- * \break d0-d1/a0-a1
+ * @def _BIOS_MSCPLAY1
+ * @ingroup CD-DA
+ * @brief Plays the specified track once then pause
+ * @clobber d0-d1/a0-a1
  *
- * \param[in] A0.l Pointer to track number (16 bit)
+ * @param[in] A0.l Pointer to track number (16 bit)
  */
-#define MSCPLAY1 0x0012
+#define _BIOS_MSCPLAY1 0x0012
 
 /**
- * \def MSCPLAYR
- * \group CD-DA
- * \brief Plays the specified track on repeat
- * \break d0-d1/a0-a1
+ * @def _BIOS_MSCPLAYR
+ * @ingroup CD-DA
+ * @brief Plays the specified track on repeat
+ * @clobber d0-d1/a0-a1
  *
- * \param[in] A0.l Pointer to track number (16 bit)
+ * @param[in] A0.l Pointer to track number (16 bit)
  */
-#define MSCPLAYR 0x0013
+#define _BIOS_MSCPLAYR 0x0013
 
 /**
- * \def MSCPLAYT
- * \group CD-DA
- * \brief Starts playing from the specified time
- * \break d0-d1/a0-a1
+ * @def _BIOS_MSCPLAYT
+ * @ingroup CD-DA
+ * @brief Starts playing from the specified time
+ * @clobber d0-d1/a0-a1
  *
- * \param[in] A0.l Pointer to BCD time code in the format mm:ss:ff:00
+ * @param[in] A0.l Pointer to BCD time code in the format mm:ss:ff:00
  *   (32 bit)
  */
-#define MSCPLAYT 0x0014
+#define _BIOS_MSCPLAYT 0x0014
 
 /**
- * \def MSCSEEK
- * \group CD-DA
- * \brief Seeks to the beginning of the specified track and pauses
- * \break d0-d1/a0-a1
+ * @def _BIOS_MSCSEEK
+ * @ingroup CD-DA
+ * @brief Seeks to the beginning of the specified track and pauses
+ * @clobber d0-d1/a0-a1
  *
- * \param[in] A0.l Pointer to track number (16 bit)
+ * @param[in] A0.l Pointer to track number (16 bit)
  */
-#define MSCSEEK 0x0015
+#define _BIOS_MSCSEEK 0x0015
 
 /**
- * \def MSCSEEKT
- * \group CD-DA
- * \brief Seeks to a specified time
- * \break d0-d1/a0-a1
+ * @def _BIOS_MSCSEEKT
+ * @ingroup CD-DA
+ * @brief Seeks to a specified time
+ * @clobber d0-d1/a0-a1
  *
- * \param[in] A0.l Pointer to BCD time code in the format mm:ss:ff:00
+ * @param[in] A0.l Pointer to BCD time code in the format mm:ss:ff:00
  *   (32 bit)
  */
-#define MSCSEEKT 0x0016
+#define _BIOS_MSCSEEKT 0x0016
 
 /**
- * \def ROMREAD
- * \group CD-ROM
- * \brief Begins reading data from the CDROM at the designated logical sector
- * \break d0-d1/a0-a1
+ * @def _BIOS_ROMREAD
+ * @ingroup CD-ROM
+ * @brief Begins reading data from the CDROM at the designated logical sector
+ * @clobber d0-d1/a0-a1
  *
- * \param[in] A0.l Pointer to the logical sector number (32 bit)
+ * @param[in] A0.l Pointer to the logical sector number (32 bit)
  *
- * \details Executes a CDCSTART to begin the read, but does not stop
+ * @details Executes a CDCSTART to begin the read, but does not stop
  * automatically.
  *
- * \note ROMREAD actually pre-seeks by 2 sectors, but doesn't start passing data
+ * @note ROMREAD actually pre-seeks by 2 sectors, but doesn't start passing data
  * to the CDC until the desired sector is reached.
  */
-#define ROMREAD 0x0017
+#define _BIOS_ROMREAD 0x0017
 
 /**
- * \def ROMSEEK
- * \group CD-ROM
- * \brief Seeks to the designated logical sector and pauses
- * \break d0-d1/a0-a1
+ * @def _BIOS_ROMSEEK
+ * @ingroup CD-ROM
+ * @brief Seeks to the designated logical sector and pauses
+ * @clobber d0-d1/a0-a1
  *
- * \param[in] A0.l Pointer to the logical sector number (32 bit)
+ * @param[in] A0.l Pointer to the logical sector number (32 bit)
  */
-#define ROMSEEK 0x0018
+#define _BIOS_ROMSEEK 0x0018
 
 /**
- * \def MSCSEEK1
- * \group CD-DA
- * \brief Seek to the beginning of the selected track and pause; when BIOS
+ * @def _BIOS_MSCSEEK1
+ * @ingroup CD-DA
+ * @brief Seek to the beginning of the selected track and pause; when BIOS
  * detects a pause state, the track is played once
- * \break d0-d1/a0-a1
+ * @clobber d0-d1/a0-a1
  *
- * \param[in] A0.l Pointer to track number (16 bit)
+ * @param[in] A0.l Pointer to track number (16 bit)
  */
-#define MSCSEEK1 0x0019
+#define _BIOS_MSCSEEK1 0x0019
 
 /**
- * \def ROMREADN
- * \group CD-ROM
- * \brief Same function as ROMREAD, but stops after reading the requested
+ * @def _BIOS_ROMREADN
+ * @ingroup CD-ROM
+ * @brief Same function as ROMREAD, but stops after reading the requested
  * number of sectors
- * \break d0-d1/a0-a1
+ * @clobber d0-d1/a0-a1
  *
- * \param[in] A0.l Pointer to a sector read info structure
+ * @param[in] A0.l Pointer to a sector read info structure
  *
- * \details The structure is made up of two 32 bit values:
+ * @details The structure is made up of two 32 bit values:
  *       dc.l 0x00000001   // First sector to read
  *       dc.l 0x00001234   // Number of sectors to read
  */
-#define ROMREADN 0x0020
+#define _BIOS_ROMREADN 0x0020
 
 /**
- * \def ROMREADE
- * \group CD-ROM
- * \brief Same as ROMREAD, but reads between two logical sectors
- * \break d0-d1/a0-a1
+ * @def _BIOS_ROMREADE
+ * @ingroup CD-ROM
+ * @brief Same as ROMREAD, but reads between two logical sectors
+ * @clobber d0-d1/a0-a1
  *
- * \param[in] A0.l Pointer to a sector read info structure
+ * @param[in] A0.l Pointer to a sector read info structure
  *
- * \details The structure is made up of two 32 bit values:
+ * @details The structure is made up of two 32 bit values:
  *       dc.l 0x00000001   // First sector to read
  *       dc.l 0x00001234   // Number of logical sectors to read
  * OUT:
  *  none
  */
-#define ROMREADE 0x0021
+#define _BIOS_ROMREADE 0x0021
 
 /**
- * \def CDBCHK
- * \group Misc
- * \brief Query the BIOS on the status of the last command
- * \break d0
+ * @def _BIOS_CDBCHK
+ * @ingroup Misc
+ * @brief Query the BIOS on the status of the last command
+ * @clobber d0
  *
- * \param[out] CC Command has been executed
- * \param[out] CS BIOS is busy
+ * @param[out] CC Command has been executed
+ * @param[out] CS BIOS is busy
  *
- * \note Success indicates the command has been executed, NOT necessarily
+ * @note Success indicates the command has been executed, NOT necessarily
  * that it has completed.
  */
-#define CDBCHK 0x0080
+#define _BIOS_CDBCHK 0x0080
 
 /**
- * \def CDBSTAT
- * \group Misc
- * \brief Retrieve CD BIOS status
- * \break d0-d1/a0
+ * @def _BIOS_CDBSTAT
+ * @ingroup Misc
+ * @brief Retrieve CD BIOS status
+ * @clobber d0-d1/a0
  *
- * \param[out] A0.l Pointer to status info structure
+ * @param[out] A0.l Pointer to status info structure
  *
  * Please refer to the BIOS manual for details about the returned data
  */
-#define CDBSTAT 0x0081
+#define _BIOS_CDBSTAT 0x0081
 
 /**
- * \def CDBTOCWRITE
- * \group Misc
- * \brief Writes data to disc TOC stored in memory
- * \break d0-d1/a0-a1
+ * @def _BIOS_CDBTOCWRITE
+ * @ingroup Misc
+ * @brief Writes data to disc TOC stored in memory
+ * @clobber d0-d1/a0-a1
  *
- * \param[in] A0.l Pointer to TOC data
+ * @param[in] A0.l Pointer to TOC data
  *
- * \details A TOC entry is four bytes long, where the first three bytes are
+ * @details A TOC entry is four bytes long, where the first three bytes are
  * the BCD timecode of the start of the track and the lowest byte is the track
  * number. The most significant bit of the frame byte of the timecode indicates
  * whether the track is CD-ROM or CD-DA. Please refer to the BIOS manual for
  * more information.
  */
-#define CDBTOCWRITE 0x0082
+#define _BIOS_CDBTOCWRITE 0x0082
 
 /**
- * \def CDBTOCREAD
- * \group Misc
- * \brief Reads the TOC entry for a given track
- * \break d0-d1/a0-a1
+ * @def _BIOS_CDBTOCREAD
+ * @ingroup Misc
+ * @brief Reads the TOC entry for a given track
+ * @clobber d0-d1/a0-a1
  *
- * \param[in] D1.w Track number
- * \param[out] D0.l Track start timecode (BCD, low byte is track number)
- * \param[out] D1.b Track type (00 - CD-DA, 0xFF - CD-ROM)
+ * @param[in] D1.w Track number
+ * @param[out] D0.l Track start timecode (BCD, low byte is track number)
+ * @param[out] D1.b Track type (00 - CD-DA, 0xFF - CD-ROM)
  *
- * \note The low byte of D0 will be 0 on error.
+ * @note The low byte of D0 will be 0 on error.
  */
-#define CDBTOCREAD 0x0083
+#define _BIOS_CDBTOCREAD 0x0083
 
 /**
- * \def CDBPAUSE
- * \group Misc
- * \brief Sets the time that the drive spins down from pause to standby
- * \break d0-d1/a0-a1
+ * @def _BIOS_CDBPAUSE
+ * @ingroup Misc
+ * @brief Sets the time that the drive spins down from pause to standby
+ * @clobber d0-d1/a0-a1
  *
- * \param[in] D1.w Pause time (in ticks of 1/75 second)
+ * @param[in] D1.w Pause time (in ticks of 1/75 second)
  *
- * \details Normal ranges for this delay time are 0x1194 - 0xFFFE. A delay of
+ * @details Normal ranges for this delay time are 0x1194 - 0xFFFE. A delay of
  * 0xFFFF prevents the drive from stopping, but can damage the drive if used
  * improperly.
  */
-#define CDBPAUSE 0x0084
+#define _BIOS_CDBPAUSE 0x0084
 
 /**
- * \def FDRSET
- * \brief Sets the audio volume
- * \break d0-d1/a0
- * \ingroup bios_fader
+ * @def _BIOS_FDRSET
+ * @brief Sets the audio volume
+ * @clobber d0-d1/a0
+ * @ingroup bios_fader
  *
- * \param[in] D1.w Volume
+ * @param[in] D1.w Volume
  *
- * \details Setting the upper bit of the value changes the master volume
+ * @details Setting the upper bit of the value changes the master volume
  *   16 bit volume         (0x0000 to 0x0400)
  *   16 bit master volume  (0x8000 to 0x8400)
  *
- * \note The master volume sets a maximum level which the volume level
+ * @note The master volume sets a maximum level which the volume level
  * canot exceed.
  *
- * \note There is a delay of up to 13ms before the volume begins to change
+ * @note There is a delay of up to 13ms before the volume begins to change
  * and another 23ms for the new volume level to take effect.
  */
-#define FDRSET 0x0085
+#define _BIOS_FDRSET 0x0085
 
 /**
- * \def FDRCHG
- * \group Fader
- * \brief  Ramps the audio volume from its current level to a new level at
+ * @def _BIOS_FDRCHG
+ * @ingroup Fader
+ * @brief  Ramps the audio volume from its current level to a new level at
  * the requested rate
- * \break d0-d1/a0
+ * @clobber d0-d1/a0
  *
- * \param[in] D1.l Volume & Ramp
- * \details The input is two 16 bit values
+ * @param[in] D1.l Volume & Ramp
+ * @details The input is two 16 bit values
  *   High word: new volume (min 0x0000, max 0x0400)
  *    Low word: change rate in steps per vblank
  *        0x0001 - slow
  *        0x0200 - fast
  *        0x0400 - immediate
  *
- * \note There is a delay of up to 13ms before the volume begins to change.
+ * @note There is a delay of up to 13ms before the volume begins to change.
  */
-#define FDRCHG 0x0086
+#define _BIOS_FDRCHG 0x0086
 
 /**
- * \def CDCSTART
- * \group CDC
- * \brief Starts reading data from the current logical sector into the CDC
- * \break d0-d1/a0
+ * @def _BIOS_CDCSTART
+ * @ingroup CDC
+ * @brief Starts reading data from the current logical sector into the CDC
+ * @clobber d0-d1/a0
  *
- * \note The BIOS pre-seeks by 2 to 4 sectors and data read actually begins
+ * @note The BIOS pre-seeks by 2 to 4 sectors and data read actually begins
  * before the requested sector. It is up to the caller to identify the correct
  * starting sector (usually by checking the time codes in the headers as
  * they are read from the CDC buffer).
  */
-#define CDCSTART 0x0087
+#define _BIOS_CDCSTART 0x0087
 
 /**
- * \def CDCSTARTP
- * \group CDC
- * \brief No official documentation on this call; needs to be researched
- * \ingroup bios_unknown
+ * @def _BIOS_CDCSTARTP
+ * @ingroup CDC
+ * @brief No official documentation on this call; needs to be researched
+ * @ingroup bios_unknown
  */
-#define CDCSTARTP 0x0088
+#define _BIOS_CDCSTARTP 0x0088
 
 /**
- * \def CDCSTOP
- * \group CDC
- * \brief Stop reading data into the CDC buffer
- * \break d0/a0
+ * @def _BIOS_CDCSTOP
+ * @ingroup CDC
+ * @brief Stop reading data into the CDC buffer
+ * @clobber d0/a0
  *
- * \note If a sector is being read when CDCSTOP is called, it is discarded.
+ * @note If a sector is being read when CDCSTOP is called, it is discarded.
  */
-#define CDCSTOP 0x0089
+#define _BIOS_CDCSTOP 0x0089
 
 /**
- * \def CDCSTAT
- * \group CDC
- * \brief Query the status of the CDC buffer
- * \break d0-d1/a0
+ * @def _BIOS_CDCSTAT
+ * @ingroup CDC
+ * @brief Query the status of the CDC buffer
+ * @clobber d0-d1/a0
  *
- * \param[out] CC Sector available for read
- * \param[out] CS Sector not ready
+ * @param[out] CC Sector available for read
+ * @param[out] CS Sector not ready
  */
-#define CDCSTAT 0x008A
+#define _BIOS_CDCSTAT 0x008A
 
 /**
- * \def CDCREAD
- * \group CDC
- * \brief Reads sector of data in preparation for transfer
- * \break d0-d1/a0
+ * @def _BIOS_CDCREAD
+ * @ingroup CDC
+ * @brief Reads sector of data in preparation for transfer
+ * @clobber d0-d1/a0
  *
- * \param[out] CC Sector ready for transfer
- * \param[out] CS Sector not ready
- * \param[out] D0.l Sector header timecode (BCD)
- * \details The low byte of D0 is the sector mode:
+ * @param[out] CC Sector ready for transfer
+ * @param[out] CS Sector not ready
+ * @param[out] D0.l Sector header timecode (BCD)
+ * @details The low byte of D0 is the sector mode:
  *   00 - CD-DA
  *   01 - CD-ROM mode 1
  *   02 - CD-ROM mode 2
  *
- * \note Be sure to set the device destination register BEFORE calling CDCREAD!
+ * @note Be sure to set the device destination register BEFORE calling CDCREAD!
  */
-#define CDCREAD 0x008B
+#define _BIOS_CDCREAD 0x008B
 
 /**
- * \def CDCTRN
- * \group CDC
- * \brief Transfer one sector of data from the CDC to Sub CPU RAM
- * \break d0-d1/a0
+ * @def _BIOS_CDCTRN
+ * @ingroup CDC
+ * @brief Transfer one sector of data from the CDC to Sub CPU RAM
+ * @clobber d0-d1/a0
  *
- * \param[in] A0.l Pointer to sector destination buffer (0x920 bytes)
- * \param[in] A1.l Pointer to header destination buffer (4 bytes)
- * \param[out] CC Sector transfer completed successfully
- * \param[out] CS Sector transfer failed
- * \param[out] A0.l Pointer to next sector destination address (A0 + 0x920)
- * \param[out] A1.l Pointer to next header destination address (A1 + 4)
+ * @param[in] A0.l Pointer to sector destination buffer (0x920 bytes)
+ * @param[in] A1.l Pointer to header destination buffer (4 bytes)
+ * @param[out] CC Sector transfer completed successfully
+ * @param[out] CS Sector transfer failed
+ * @param[out] A0.l Pointer to next sector destination address (A0 + 0x920)
+ * @param[out] A1.l Pointer to next header destination address (A1 + 4)
  *
- * \note The device destination must be set to Sub CPU read beforehand!
+ * @note The device destination must be set to Sub CPU read beforehand!
  */
-#define CDCTRN 0x008C
+#define _BIOS_CDCTRN 0x008C
 
 /**
- * \def CDCACK
- * \group CDC
- * \brief Informs the CDC that the current sector has been read and that the
+ * @def _BIOS_CDCACK
+ * @ingroup CDC
+ * @brief Informs the CDC that the current sector has been read and that the
  * caller is ready for the next sector
- * \break d0
+ * @clobber d0
  */
-#define CDCACK 0x008D
+#define _BIOS_CDCACK 0x008D
 
 /**
- * \def SCDINIT
- * \group Subcodes
- * \brief Initializes the BIOS for subcode reads
+ * @def _BIOS_SCDINIT
+ * @ingroup Subcodes
+ * @brief Initializes the BIOS for subcode reads
  *
- * \param[in] A0.l Pointer to work buffer (at least 0x750 bytes)
+ * @param[in] A0.l Pointer to work buffer (at least 0x750 bytes)
  */
-#define SCDINIT 0x008E
+#define _BIOS_SCDINIT 0x008E
 
 /**
- * SCDSTART
- * \group Subcodes
- * \brief Enables reading subcode data by the CDC
- * \break d0-d1/a0-a1
+ * @def _BIOS_SCDSTART
+ * @ingroup Subcodes
+ * @brief Enables reading subcode data by the CDC
+ * @clobber d0-d1/a0-a1
  *
- * \param[in] D1.w Subcode read flags
+ * @param[in] D1.w Subcode read flags
  *
- * \details Flags
+ * @details Flags
  *    0: --------
  *    1: --RSTUVW
  *    2: PQ------
  *    3: PQRSTUVW
  */
-#define SCDSTART 0x008F
+#define _BIOS_SCDSTART 0x008F
 
 /**
- * \def SCDSTOP
- * \group Subcodes
- * \brief Disables reading subcode data by the CDC
- * \break d0-d1/a0-a1
+ * @def _BIOS_SCDSTOP
+ * @ingroup Subcodes
+ * @brief Disables reading subcode data by the CDC
+ * @clobber d0-d1/a0-a1
  */
-#define SCDSTOP 0x0090
+#define _BIOS_SCDSTOP 0x0090
 
 /**
- * \def SCDSTAT
- * \group Subcodes
- * \brief Check subcode error status
- * \break d0-d1/a0-a1
+ * @def _BIOS_SCDSTAT
+ * @ingroup Subcodes
+ * @brief Check subcode error status
+ * @clobber d0-d1/a0-a1
  *
- * \param[out] D0.l errqcodecrc / errpackcirc / scdflag / restrcnt
- * \param[out] D1.l erroverrun / errpacketbufful / errqcodefufful /
+ * @param[out] D0.l errqcodecrc / errpackcirc / scdflag / restrcnt
+ * @param[out] D1.l erroverrun / errpacketbufful / errqcodefufful /
  * errpackfufful
  */
-#define SCDSTAT 0x0091
+#define _BIOS_SCDSTAT 0x0091
 
 /**
- * \def SCDREAD
- * \group Subcodes
- * \brief Reads R through W subcode channels
- * \break d0-d1/a1
+ * @def _BIOS_SCDREAD
+ * @ingroup Subcodes
+ * @brief Reads R through W subcode channels
+ * @clobber d0-d1/a1
  *
- * \param[in] A0.l Address of the Q code buffer (minimum 24 bytes)
- * \param[out] CC Read successful
- * \param[out] CS Read failed
- * \param[out] A0.l Address of next Q code buffer (A0.l + 24)
+ * @param[in] A0.l Address of the Q code buffer (minimum 24 bytes)
+ * @param[out] CC Read successful
+ * @param[out] CS Read failed
+ * @param[out] A0.l Address of next Q code buffer (A0.l + 24)
  *
  */
-#define SCDREAD 0x0092
+#define _BIOS_SCDREAD 0x0092
 
 /**
- * \def SCDPQ
- * \group Subcodes
- * \brief Gets P & Q codes from subcode
- * \break d0-d1/a1
+ * @def _BIOS_SCDPQ
+ * @ingroup Subcodes
+ * @brief Gets P & Q codes from subcode
+ * @clobber d0-d1/a1
  *
- * \param[in] A0.l Address of the Q code buffer (minimum 12 bytes)
- * \param[out] CC Read successful
- * \param[out] CS Read failed
- * \param[out] A0.l Address of next Q code buffer (A0.l + 12)
+ * @param[in] A0.l Address of the Q code buffer (minimum 12 bytes)
+ * @param[out] CC Read successful
+ * @param[out] CS Read failed
+ * @param[out] A0.l Address of next Q code buffer (A0.l + 12)
  *
  */
-#define SCDPQ 0x0093
+#define _BIOS_SCDPQ 0x0093
 
 /**
- * \def SCDPQL
- * \group Subcodes
- * \brief Gets the last P & Q codes
- * \break d0-d1/a1
+ * @def _BIOS_SCDPQL
+ * @ingroup Subcodes
+ * @brief Gets the last P & Q codes
+ * @clobber d0-d1/a1
  *
- * \param[in] A0.l Address of the Q code buffer (minimum 12 bytes)
- * \param[out] CC Read successful
- * \param[out] CS Read failed
- * \param[out] A0.l Address of next Q code buffer (A0.l + 12)
+ * @param[in] A0.l Address of the Q code buffer (minimum 12 bytes)
+ * @param[out] CC Read successful
+ * @param[out] CS Read failed
+ * @param[out] A0.l Address of next Q code buffer (A0.l + 12)
  *
  */
-#define SCDPQL 0x0094
+#define _BIOS_SCDPQL 0x0094
 
-#define LED_READY 0
-#define LED_DISCIN 1
-#define LED_ACCESS 2
-#define LED_STANDBY 3
-#define LED_ERROR 4
-#define LED_MODE5 5
-#define LED_MODE6 6
-#define LED_MODE7 7
+#define _LED_READY 0
+#define _LED_DISCIN 1
+#define _LED_ACCESS 2
+#define _LED_STANDBY 3
+#define _LED_ERROR 4
+#define _LED_MODE5 5
+#define _LED_MODE6 6
+#define _LED_MODE7 7
 
 /**
- * \def LEDSET
- * \group Misc
- * \brief Controls the status LEDs on the front of the CD unit
- * \break d0-d1/a0-a1
+ * @def _BIOS_LEDSET
+ * @ingroup Misc
+ * @brief Controls the status LEDs on the front of the CD unit
+ * @clobber d0-d1/a0-a1
  *
- * \param[in] D1.w Status code
+ * @param[in] D1.w Status code
  *
- * \details
- * MODE          Ready (green)   Access (red)    System Indication
- * ---------------------------------------------------------------
- * LEDREADY (0)      on              blink       CD ready / no disk
- * LEDDISCIN (1)     on              off         CD ready / disk ok
- * LEDACCESS (2)     on              on          CD accessing
- * LEDSTANDBY (3)    blink           off         standby mode
- * LED_ERROR (4)      blink           blink       reserved
- * LEDMODE5 (5)      blink           on          reserved
- * LEDMODE6 (6)      off             blink       reserved
- * LEDMODE7 (7)      off             on          reserved
- * LEDSYSTEM (?)                                 return control to BIOS
+ * @details
+ * |MODE          |Green|Red  |System Indication
+ * |:------------:|:---:|:---:|:----------------:|
+ * |LEDREADY (0)  |on   |blink|CD ready / no disk|
+ * |LEDDISCIN (1) |on   |off  |CD ready / disk ok|
+ * |LEDACCESS (2) |on   |on   |CD accessing      |
+ * |LEDSTANDBY (3)|blink|off  |standby mode      |
+ * |LED_ERROR (4) |blink|blink|reserved          |
+ * |LEDMODE5 (5)  |blink|on   |reserved          |
+ * |LEDMODE6 (6)  |off  |blink|reserved          |
+ * |LEDMODE7 (7)  |off  |on   |reserved          |
+ * |LEDSYSTEM (?) |     |     |return control to BIOS|
+ *
  */
-#define LEDSET 0x0095
+#define _BIOS_LEDSET 0x0095
 
-#define CDC_MODE0 2 // CD-DA
-#define CDC_MODE1 0 // CD-ROM with full error correction
-#define CDC_MODE2 1 // CD-ROM with CRC only
+#define _BIOS_CDC_MODE0 2 // CD-DA
+#define _BIOS_CDC_MODE1 0 // CD-ROM with full error correction
+#define _BIOS_CDC_MODE2 1 // CD-ROM with CRC only
 
 /**
- * \def CDCSETMODE
- * \group CDC
- * \brief Sets the mode in which the CD should be read
- * \break UNKNOWN (TODO)
+ * @def _BIOS_CDCSETMODE
+ * @ingroup CDC
+ * @brief Sets the mode in which the CD should be read
+ * @clobber UNKNOWN (TODO)
  *
- * \param[in] D1.w Mode bit flags
+ * @param[in] D1.w Mode bit flags
  *
- * \note Use the predefined CDC_MODE0, CDC_MODE1, CDC_MODE2 values
+ * @note Use the predefined CDC_MODE0, CDC_MODE1, CDC_MODE2 values
  * to set the CDC mode
  *
- * \details
+ * @details
  *   These are the allowed bit fields
  *   Bit
  *    0     CD Mode 2
@@ -607,22 +608,22 @@
  *    2     Transfer error block with data
  *    3     Re-read last data
  */
-#define CDCSETMODE 0x0096
+#define _BIOS_CDCSETMODE 0x0096
 
 /**
- * \def WONDERREQ
- * \group Misc
- * \brief No documentation; research needed. Presumably exclusive to the
+ * @def _BIOS_WONDERREQ
+ * @ingroup Misc
+ * @brief No documentation; research needed. Presumably exclusive to the
  *   WonderMega hardware
  */
-#define WONDERREQ 0x0097
+#define _BIOS_WONDERREQ 0x0097
 
 /**
- * \def WONDERCHK
- * \group Misc
- * \brief No documentation; research needed. Presumably exclusive to the
+ * @def _BIOS_WONDERCHK
+ * @ingroup Misc
+ * @brief No documentation; research needed. Presumably exclusive to the
  *   WonderMega hardware
  */
-#define WONDERCHK 0x0098
+#define _BIOS_WONDERCHK 0x0098
 
 #endif

@@ -1,13 +1,13 @@
 /**
- * \file
- * \brief Mega Drive Video Display Processor (VDP)
+ * @file
+ * @brief Mega Drive Video Display Processor (VDP)
  */
 
 #ifndef MEGADEV__VDP_MACROS_S
 #define MEGADEV__VDP_MACROS_S
 
 /**
- * \brief Convert 16 bit VRAM address to vdpptr format
+ * @brief Convert 16 bit VRAM address to vdpptr format
  */
 .macro TO_VDPPTR dreg=d0
   andi.l #0xffff, \dreg

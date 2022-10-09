@@ -1,6 +1,6 @@
 /**
- * \file boot.s
- * \brief Mega CD boot sector (header and IP/SP)
+ * @file boot.s
+ * @brief Mega CD boot sector (header and IP/SP)
  */
 
 /*

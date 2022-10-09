@@ -1,6 +1,6 @@
 /**
- * \file
- * \brief Generic POSIX compatible C types
+ * @file
+ * @brief Generic POSIX compatible C types
  */
 
 #ifndef MEGADEV__TYPES_H

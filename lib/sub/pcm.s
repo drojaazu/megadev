@@ -1,14 +1,16 @@
 #include "sub/sub_def.h"
+#include "sub/pcm_def.h"
 #include "macros.s"
 
 .section .text
 
-.global clearPcmRam
-clearPcmRam:
+/**
+ * @sa pcm_clear_ram_c
+ * @clobber d0-d2/a6
+ */
+GLABEL pcm_clear_ram
 	// disable channels
 	move.b #0xff, _PCM_CDISABLE
-	// set control register to access wave banks
-	//move.b #0x80, _PCM_CTRL
 	moveq #0, d0
 	move.b #0x80, d1
 
@@ -26,12 +28,26 @@ clearPcmRam:
 	rts
 
 /**
- * IN:
- * a5 - pointer to array of PCM channel settings
- * 
+ * @sa pcm_config_channel_c
+ * @param[in] D0.b Channel
+ * @param[in] A5.l Pointer to array of channel settings
+ * @clobber d0/a5-a6
  */
-.global configPcmChannels
-configPcmChannels:
+GLABEL pcm_config_channel
+	lea _PCM_ENV, a6
+	move.b d0, _PCM_CTRL
+	moveq #6, d0
+1:move.b (a5)+, (a6)
+  // short pause to wait for the change to take effect
+	.rept 4
+    nop
+  .endr
+	addq #2, a6
+	dbf d0, 1b
+	rts
+
+/*
+GLABEL pcm_config_channel
 	movem.l d2-d7, -(sp)
 	lea 0xff0000, a6
 	move.b d0, _PCM_CTRL
@@ -47,4 +63,4 @@ configPcmChannels:
 	movem.l (sp)+, d2-d7
 	rts
 
-
+*/
