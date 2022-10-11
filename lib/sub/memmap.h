@@ -1,13 +1,15 @@
 /**
- * @file sub.h
- * @brief C wrappers for Sub CPU side hardware mappings, Gate Array (GA) registers and BIOS vectors
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file memmap.h
+ * @brief C wrappers for Sub CPU memory map & system vectors
  */
 
 #ifndef MEGADEV__CD_GA_SUB_H
 #define MEGADEV__CD_GA_SUB_H
 
-#include "sub/sub_def.h"
-#include "types.h"
+#include "stdint.h"
+#include "sub/memmap_def.h"
 
 #define DMAADDR_WORDRAM1M(addr) (((addr) &0x3FFF) >> 3)
 #define DMAADDR_WORDRAM2M(addr) (((addr) &0x7FFF) >> 3)

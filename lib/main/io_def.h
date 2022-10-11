@@ -1,10 +1,12 @@
 /**
- * @file
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file io_def.h
  * @brief I/O register definitions
  */
 
-#ifndef MEGADEV__IO_DEF_H
-#define MEGADEV__IO_DEF_H
+#ifndef MEGADEV__MAIN_IO_DEF_H
+#define MEGADEV__MAIN_IO_DEF_H
 
 /**
  * @var u8 _IO_DATA1

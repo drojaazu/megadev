@@ -4,9 +4,9 @@
 
 .section .text
 
-#include "main/main_def.h"
+#include "main/memmap_def.h"
 #include "main/bootlib_def.h"
-#include "main/main_macros.s"
+#include "main/macros.s"
 #include "vdp_def.h"
 #include "macros.s"
 #include "ipx_layout.s"
@@ -27,7 +27,7 @@ IP_ENTRY:
   move.w #0x0000, (_VDP_DATA)
 
   // disable VDP display and maintain MD mode (mode 5)
-  move.w #(VDP_REG01 | 0x44), (_VDP_CTRL)
+  move.w #(_VDP_MODE2 | 0x44), (_VDP_CTRL)
 
 	jbsr _BLIB_LOAD_VDPREGS_DEFAULT
 

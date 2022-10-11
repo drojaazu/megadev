@@ -3,7 +3,7 @@
  */
 
 #include "macros.s"
-#include "main/main_def.h"
+#include "main/memmap_def.h"
 #include "main/gatearr_def.h"
 
 /**

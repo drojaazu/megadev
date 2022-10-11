@@ -103,7 +103,7 @@ VDP_HIntReg     equ        rg_dat+$15     ;fffdc3
 VDP_ModeSet3    equ        rg_dat+$17     ;fffdc5
 VDP_ModeSet4    equ        rg_dat+$19     ;fffdc7
 VDP_HScroll     equ        rg_dat+$1B     ;fffdc9
-VDP_Reg14       equ        rg_dat+$1D     ;fffdcb
+_VDP_DMA_SZ2       equ        rg_dat+$1D     ;fffdcb
 VDP_AutoInc     equ        rg_dat+$1F     ;fffdcd
 VDP_ScrollSize  equ        rg_dat+$21     ;fffdcf
 VDP_WindowHPos  equ        rg_dat+$23     ;fffdd1

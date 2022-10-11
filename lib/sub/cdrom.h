@@ -1,5 +1,7 @@
 /**
- * @file
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file cdrom.h
  * @brief C wrappers for CD-ROM file access
  */
 
@@ -7,7 +9,7 @@
 #define MEGADEV__CD_SUB_CDROM_H
 
 #include "sub/cdrom_def.h"
-#include "sub/sub.h"
+#include "sub/memmap.h"
 #include "types.h"
 
 /**
@@ -50,7 +52,8 @@ extern volatile u32 filesize;
  * @fn load_file
  * @brief
  */
-static inline u32 load_file (u16 const access_operation, char const * load_filename, u8 * buffer)
+static inline u32 load_file (
+	u16 const access_operation, char const * load_filename, u8 * buffer)
 {
 	access_op = access_operation;
 	if (access_op == 0)
@@ -83,16 +86,17 @@ static inline FileInfo * find_file_c (char const * filename)
 	register u32 a0_filename asm("a0") = (u32) filename;
 	register u32 a0_fileinfo asm("a0");
 
-	asm volatile(R"(
-  jsr find_file
-  bcc 1f
-  rts
-1:lea 0,a0
-  rts
-  )"
-							 : "+a"(a0_fileinfo)
-							 : "a"(a0_filename)
-							 : "d0", "d1", "a2");
+	asm volatile(
+		"\
+			jsr find_file \n\
+			bcc 1f \n\
+			rts \n\
+		1:lea 0,a0 \n\
+			rts \n\
+		"
+		: "+a"(a0_fileinfo)
+		: "a"(a0_filename)
+		: "d0", "d1", "a2");
 
 	return (FileInfo *) a0_fileinfo;
 }

@@ -1,4 +1,6 @@
 /**
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
  * @file pcm.h
  * @brief PCM audio playback utilities
  */
@@ -46,9 +48,9 @@ static inline void pcm_clear_ram_c()
 {
 	asm volatile(
 		"\
-    move.l a6, -(sp) \n\
-    jsr pcm_clear_ram \n\
-    move.l (sp)+, a6 \n\
+		move.l a6, -(sp) \n\
+		jsr pcm_clear_ram \n\
+		move.l (sp)+, a6 \n\
 		"
 		:
 		:
@@ -61,16 +63,17 @@ static inline void pcm_clear_ram_c()
  * @param ctrlregChannel Channel index
  * @param settings Pointer to PcmChannelSettings
  */
-static inline void pcm_config_channel_c (u8 const ctrlregChannel, PcmChannelSettings const * settings)
+static inline void pcm_config_channel_c (
+	u8 const ctrlregChannel, PcmChannelSettings const * settings)
 {
 	register u8 d0_channel asm("d0") = ctrlregChannel;
 	register u32 a5_settings asm("a5") = (u32) settings;
 
 	asm volatile(
 		"\
-    move.l a6, -(sp) \n\
-    jsr pcm_config_channel \n\
-    move.l (sp)+, a6 \n\
+		move.l a6, -(sp) \n\
+		jsr pcm_config_channel \n\
+		move.l (sp)+, a6 \n\
 		"
 		: "+d"(d0_channel), "+a"(a5_settings)
 		: "d"(d0_channel), "a"(a5_settings));

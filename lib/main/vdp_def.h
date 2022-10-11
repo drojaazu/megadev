@@ -1,5 +1,7 @@
 /**
- * @file
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file vdp_def.h
  * @brief VDP hardware definitions
  */
 
@@ -16,6 +18,29 @@
  * @note Reading this port (16 bit) returns the VDP status
  */
 #define _VDP_CTRL 0xC00004
+
+// Status Register bits
+#define BIT_PAL_HARDWARE 0
+#define BIT_DMA_IN_PROGRESS 1
+#define BIT_HBLANK_IN_PROGRESS 2
+#define BIT_VBLANK_IN_PROGRESS 3
+#define BIT_ODD_FRAME 4
+#define BIT_SPR_COLLISION 5
+#define BIT_SPR_LIMIT 6
+#define BIT_VINT_TRIGGERED 7
+#define BIT_FIFO_FULL 8
+#define BIT_FIFO_EMPTY 9
+
+// Status Register masks
+#define MSK_PAL_HARDWARE (1 << BIT_PAL_HARDWARE)
+#define MSK_DMA_IN_PROGRESS (1 << BIT_DMA_IN_PROGRESS)
+#define MSK_HBLANK_IN_PROGRESS (1 << BIT_HBLANK_IN_PROGRESS)
+#define MSK_VBLANK_IN_PROGRESS (1 << BIT_VBLANK_IN_PROGRESS)
+#define MSK_ODD_FRAME (1 << BIT_ODD_FRAME)
+#define MSK_SPR_COLLISION (1 << BIT_SPR_COLLISION)
+#define MSK_SPR_LIMIT (1 << BIT_SPR_LIMIT)
+#define MSK_VINT_TRIGGERED (1 << BIT_VINT_TRIGGERED)
+#define MSK_FIFO_FULL (1 << BIT_FIFO_FULL)
 
 /**
  * @var _VDP_DATA
@@ -39,7 +64,7 @@
 
 // All VDP registers
 /**
- * @var VDP_REG00
+ * @var _VDP_MODE1
  * @brief Mode Register 1
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -54,10 +79,10 @@
  * H/V counter
  * @param DE 0 = enable display; 1 = disable display
  */
-#define VDP_REG00 0x8000
+#define _VDP_MODE1 0x8000
 
 /**
- * @def VDP_REG01
+ * @def _VDP_MODE2
  * @brief Mode Register 2
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -71,10 +96,10 @@
  * @param M2 1 = 240 pixel (30 cell) PAL mode; 0 = 224 pixel (28 cell) NTSC mode
  * @param M5 1 = Mega Drive (mode 5) display; 0 = Master System (mode 4) display
  */
-#define VDP_REG01 0x8100
+#define _VDP_MODE2 0x8100
 
 /**
- * @def VDP_REG02
+ * @def _VDP_PLA_ADDR
  * @brief Plane A Name Table VRAM Address
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -87,10 +112,10 @@
  * must be a multiple of 0x2000) divided by 0x400
  * /note PA6 is used with 12k VRAM only
  */
-#define VDP_REG02 0x8200
+#define _VDP_PLA_ADDR 0x8200
 
 /**
- * @def VDP_REG03
+ * @def _VDP_WD_ADDR
  * @brief Window Name Table VRAM Address
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -106,10 +131,10 @@
  * 0x1000
  * @note W6 is used with 128k VRAM only
  */
-#define VDP_REG03 0x8300
+#define _VDP_WD_ADDR 0x8300
 
 /**
- * @def VDP_REG04
+ * @def _VDP_PLB_ADDR
  * @brief Plane B Name Table VRAM Address
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -122,10 +147,10 @@
  * must be a multiple of $2000) divided by $2000
  * @note PB3 is used with 128k VRAM only
  */
-#define VDP_REG04 0x8400
+#define _VDP_PLB_ADDR 0x8400
 
 /**
- * @def VDP_REG05
+ * @def _VDP_SPR_ADDR
  * @brief Sprite Table VRAM Address
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -140,10 +165,10 @@
  * of $400
  * @note ST7 is used with 128k VRAM only
  */
-#define VDP_REG05 0x8500
+#define _VDP_SPR_ADDR 0x8500
 
 /**
- * @def VDP_REG06
+ * @def _VDP_SPR_ADDR2
  * @brief Sprite Table VRAM Address (128k VRAM)
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -154,10 +179,10 @@
  *
  * @note SP5 is used with 128k VRAM only
  */
-#define VDP_REG06 0x8600
+#define _VDP_SPR_ADDR2 0x8600
 
 /**
- * @def VDP_REG07
+ * @def _VDP_BGCOLOR
  * @brief Background Color
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -167,24 +192,24 @@
  * @param PL Palette line
  * @param C Palette index (color)
  */
-#define VDP_REG07 0x8700
+#define _VDP_BGCOLOR 0x8700
 
 /**
- * @def VDP_REG08
+ * @def _VDP_M3_HS
  * @brief Unused
  * @details Master System horizontal scroll register
  */
-#define VDP_REG08 0x8800
+#define _VDP_M3_HS 0x8800
 
 /**
- * @def VDP_REG09
+ * @def _VDP_M3_VS
  * @brief Unused
  * @details Master System vertical scroll register
  */
-#define VDP_REG09 0x8900
+#define _VDP_M3_VS 0x8900
 
 /**
- * @def VDP_REG0A
+ * @def _VDP_HINT_COUNT
  * @brief Horizontal Interrupt Counter
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -193,10 +218,10 @@
  *
  * @param H Number of scanlines between horizontal interrupts
  */
-#define VDP_REG0A 0x8A00
+#define _VDP_HINT_COUNT 0x8A00
 
 /**
- * @def VDP_REG0B
+ * @def _VDP_MODE3
  * @brief Mode Register 3
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -215,7 +240,7 @@
  * \n 10: 8 pixel rows
  * \n 11: Single pixel rows
  */
-#define VDP_REG0B 0x8B00
+#define _VDP_MODE3 0x8B00
 
 #define VDP_HSCROLL_FULLSCREEN 0b00
 #define VDP_HSCROLL_CELL 0b10
@@ -224,7 +249,7 @@
 #define VDP_VSCROLL_MODE 2
 
 /**
- * @def VDP_REG0C
+ * @def _VDP_MODE4
  * @brief Mode Register 4
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -245,10 +270,10 @@
  * \n 10: No interlace
  * \n 11: Interlace double resolution
  */
-#define VDP_REG0C 0x8C00
+#define _VDP_MODE4 0x8C00
 
 /**
- * @def VDP_REG0D
+ * @def _VDP_HS_ADDR
  * @brief Horizontal Scroll Data VRAM Address
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -262,10 +287,10 @@
  * @note HS6 is used with 128k VRAM only
  *
  */
-#define VDP_REG0D 0x8D00
+#define _VDP_HS_ADDR 0x8D00
 
 /**
- * @def VDP_REG0E
+ * @def _VDP_PL_ADDR2
  * @brief Plane A/B Name Table VRAM Address (128k VRAM)
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -277,10 +302,10 @@
  *
  * @note Both PB4 and PA0 are used with 128k VRAM only
  */
-#define VDP_REG0E 0x8E00
+#define _VDP_PL_ADDR2 0x8E00
 
 /**
- * @def VDP_REG0F
+ * @def _VDP_AUTOINC
  * @brief Auto-Increment Value
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -293,10 +318,10 @@
  * @note 2 is most common value in this register and many VDP related functions
  * assume that is the value in this register.
  */
-#define VDP_REG0F 0x8F00
+#define _VDP_AUTOINC 0x8F00
 
 /**
- * @def VDP_REG10
+ * @def _VDP_PL_SIZE
  * @brief Plane Dimensions
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -317,10 +342,10 @@
  * @note Height/width settings of 64x128 or 128x128 cells are invalid due to a
  * maximum plane size of $2000 bytes
  */
-#define VDP_REG10 0x9000
+#define _VDP_PL_SIZE 0x9000
 
 /**
- * @def VDP_REG11
+ * @def _VDP_WD_HPOS
  * @brief Window Plane Horizontal Position
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -333,10 +358,10 @@
  * @param HP Horizontal position on screen to start drawing the
  * window plane (in cells)
  */
-#define VDP_REG11 0x9100
+#define _VDP_WD_HPOS 0x9100
 
 /**
- * @def VDP_REG12
+ * @def _VDP_WD_VPOS
  * @brief Window Plane Vertical Position
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -349,10 +374,10 @@
  * @param VP Vertical position on screen to start drawing the
  * window plane (in cells)
  */
-#define VDP_REG12 0x9200
+#define _VDP_WD_VPOS 0x9200
 
 /**
- * @def VDP_REG13
+ * @def _VDP_DMA_SZ1
  * @brief DMA Length (Low Byte)
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -361,10 +386,10 @@
  *
  * L7-L0: Low byte of DMA length in bytes, divided by 2
  */
-#define VDP_REG13 0x9300
+#define _VDP_DMA_SZ1 0x9300
 
 /**
- * @def VDP_REG14
+ * @def _VDP_DMA_SZ2
  * @brief DMA Length (High Byte)
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -373,10 +398,10 @@
  *
  * H7-H0: High byte of DMA length in bytes, divided by 2
  */
-#define VDP_REG14 0x9400
+#define _VDP_DMA_SZ2 0x9400
 
 /**
- * @def VDP_REG15
+ * @def _VDP_DMA_SRC1
  * @brief DMA Source (Low Byte)
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -385,10 +410,10 @@
  *
  * L7-L0: Low byte of DMA source address, divided by 2
  */
-#define VDP_REG15 0x9500
+#define _VDP_DMA_SRC1 0x9500
 
 /**
- * @def VDP_REG16
+ * @def _VDP_DMA_SRC2
  * @brief DMA Source (Mid Byte)
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -397,10 +422,10 @@
  *
  * M7-M0: Middle byte of DMA source address, divided by 2
  */
-#define VDP_REG16 0x9600
+#define _VDP_DMA_SRC2 0x9600
 
 /**
- * @def VDP_REG17
+ * @def _VDP_DMA_SRC3
  * @brief DMA Source (High Byte)
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -414,67 +439,7 @@
  *        10 = VRAM fill (source can be left blank)
  *        11 = VRAM to VRAM copy
  */
-#define VDP_REG17 0x9700
-
-// Convenience aliases to some useful registers
-
-/**
- * Width/height of graphics planes
- */
-#define VDP_PLANE_SZ VDP_REG10
-
-/**
- * DMA length low byte (16 bit)
- */
-#define VDP_DMA_SZ_LO VDP_REG13
-
-/**
- * DMA length high byte (16 bit)
- */
-#define VDP_DMA_SZ_HI VDP_REG14
-
-/**
- * DMA source address low byte (22/23 bit)
- */
-#define VDP_DMA_SRC_LO VDP_REG15
-
-/**
- * DMA source address mid byte (22/23 bit)
- */
-#define VDP_DMA_SRC_MD VDP_REG16
-
-/**
- * DMA source address high byte (22/23 bit)
- *
- * If doing 68k -> VRAM transfer, bit 6 is used as the top bit of the source
- * address (23 bit source address)
- * If doing VRAM -> VRAM copy, both bits 6 and 7 must be set (22 bit source
- * address)
- */
-#define VREG_DMA_SRC_HI VDP_REG17
-
-// Status Register bits
-#define PAL_HARDWARE_BIT 0
-#define DMA_IN_PROGRESS_BIT 1
-#define HBLANK_IN_PROGRESS_BIT 2
-#define VBLANK_IN_PROGRESS_BIT 3
-#define ODD_FRAME_BIT 4
-#define SPR_COLLISION_BIT 5
-#define SPR_LIMIT_BIT 6
-#define VINT_TRIGGERED_BIT 7
-#define FIFO_FULL_BIT 8
-#define FIFO_EMPTY_BIT 9
-
-// Status Register masks
-#define PAL_HARDWARE_MSK (1 << PAL_HARDWARE_BIT)
-#define DMA_IN_PROGRESS_MSK (1 << DMA_IN_PROGRESS_BIT)
-#define HBLANK_IN_PROGRESS_MSK (1 << HBLANK_IN_PROGRESS_BIT)
-#define VBLANK_IN_PROGRESS_MSK (1 << VBLANK_IN_PROGRESS_BIT)
-#define ODD_FRAME_MSK (1 << ODD_FRAME_BIT)
-#define SPR_COLLISION_MSK (1 << SPR_COLLISION_BIT)
-#define SPR_LIMIT_MSK (1 << SPR_LIMIT_BIT)
-#define VINT_TRIGGERED_MSK (1 << VINT_TRIGGERED_BIT)
-#define FIFO_FULL_MSK (1 << FIFO_FULL_BIT)
+#define _VDP_DMA_SRC3 0x9700
 
 // VDP command/bus
 // OR these values on to the vdpptr formatted base address

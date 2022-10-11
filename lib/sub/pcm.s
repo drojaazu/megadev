@@ -1,4 +1,9 @@
-#include "sub/sub_def.h"
+/**
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ */
+ 
+#include "sub/memmap_def.h"
 #include "sub/pcm_def.h"
 #include "macros.s"
 
@@ -38,10 +43,10 @@ GLABEL pcm_config_channel
 	move.b d0, _PCM_CTRL
 	moveq #6, d0
 1:move.b (a5)+, (a6)
-  // short pause to wait for the change to take effect
+	// short pause to wait for the change to take effect
 	.rept 4
-    nop
-  .endr
+		nop
+	.endr
 	addq #2, a6
 	dbf d0, 1b
 	rts

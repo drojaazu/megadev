@@ -1,7 +1,7 @@
 
 #include "io.h"
 #include "main/bootlib.h"
-#include "main/main.h"
+#include "main/memmap.h"
 #include "types.h"
 #include "vdp.h"
 

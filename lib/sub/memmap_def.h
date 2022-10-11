@@ -1,6 +1,8 @@
 /**
- * @file sub_def.h
- * @brief Sub CPU RAM mappings & system jump table
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file memmap_def.h
+ * @brief Sub CPU memory map & system vectors
  *
  * @note All bit definitions are byte relative and should be applied to the
  * registers cast to an 8 bit type.

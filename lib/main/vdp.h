@@ -84,7 +84,7 @@ typedef union SpriteEx
  * @param x horizontal position in the tilemap
  * @param y vertical position in the tilemap
  */
-#define NMT_POS(x, y) ((y * (*BLIB_PLANE_WIDTH)) + (x << 1))
+#define NMT_POS(x, y) ((y * (BLIB_PLANE_WIDTH)) + (x << 1))
 
 #define NMT_POS2(x, y, width) (y * width + (x << 1))
 
@@ -94,7 +94,8 @@ typedef union SpriteEx
  */
 #define NMT_POS_PLANE(x, y, plane_addr) (NMT_POS (x, y) + plane_addr)
 
-#define NMT_POS_PLANE2(x, y, width, plane_addr) (NMT_POS2 (x, y, width) + plane_addr)
+#define NMT_POS_PLANE2(x, y, width, plane_addr) \
+	(NMT_POS2 (x, y, width) + plane_addr)
 
 /**
  * @def VRAM_AT
@@ -116,7 +117,9 @@ typedef union SpriteEx
  * possible
  */
 #define VDPPTR(addr) \
-	(__builtin_constant_p (addr) ? (unsigned) ((((addr) &0x3FFF) << 16) + (((addr) &0xC000) >> 14)) : to_vdpptr (addr))
+	(__builtin_constant_p (addr) \
+			? (unsigned) ((((addr) &0x3FFF) << 16) + (((addr) &0xC000) >> 14)) \
+			: to_vdpptr (addr))
 
 /**
  * @fn to_vdpptr
@@ -127,9 +130,9 @@ static inline u32 to_vdpptr (u16 addr)
 	u32 vdpptr = (u32) addr;
 	asm(
 		"\
-		lsl.l #2, %0 \n\
-		lsr.w #2, %0 \n\
-		swap %0 \n\
+		lsl.l #2, %0 \n \
+		lsr.w #2, %0 \n \
+		swap %0 \n \
 		"
 		: "+d"(vdpptr)
 		:

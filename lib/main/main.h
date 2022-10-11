@@ -1,23 +1,17 @@
 /**
- * @file
- * @brief C wrappers for hardware mapping, Gate Array (GA) registers and BIOS
- * vectors on the Main CPU side
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file main.h
+ * @brief C wrappers for Main side hardware definitions
  */
 
-#ifndef MEGADEV__CD_GA_MAIN_H
-#define MEGADEV__CD_GA_MAIN_H
+#ifndef MEGADEV__MAIN_MAIN_H
+#define MEGADEV__MAIN_MAIN_H
 
-#include "main/main_def.h"
-#include "types.h"
-
-/**
- * @sa _WRDRAM
- */
-#define WRDRAM ((volatile void *) _WRDRAM)
-
-/**
- * @sa _PRGRAM
- */
-#define PRGRAM ((volatile void *) _PRGRAM)
+#include "gatearr.h"
+#include "io.h"
+#include "memmap.h"
+#include "vdp.h"
+#include "z80.h"
 
 #endif

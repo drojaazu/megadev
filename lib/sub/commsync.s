@@ -1,18 +1,21 @@
-#ifndef MEGADEV__CD_SUB_COMMSYNC_S
-#define MEGADEV__CD_SUB_COMMSYNC_S
-
 /**
- * @file
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file commsync.s
  * @brief Gate Array comm register sync for use with _BLIB_COMM_SYNC in the
  * Boot ROM library (EXPERIMENTAL)
  * 
  * This still needs a fair amount of research...
  */
 
+ #ifndef MEGADEV__CD_SUB_COMMSYNC_S
+#define MEGADEV__CD_SUB_COMMSYNC_S
+
+
 .section .text
 
 #include "macros.s"
-#include "sub_def.h"
+#include "memmap_def.h"
 
 FUNC comm_sync
 	lea _GA_COMFLAGS+1, a0

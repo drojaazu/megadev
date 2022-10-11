@@ -1,12 +1,14 @@
 /**
- * @file
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file bram_def.h
  * @brief Function codes for the _BURAM vector
  */
 
 #ifndef MEGADEV__CD_SUB_BRAM_DEF_H
 #define MEGADEV__CD_SUB_BRAM_DEF_H
 
-#include "sub/sub_def.h"
+#include "sub/memmap_def.h"
 
 /**
  * @def BRMINIT

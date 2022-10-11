@@ -6,7 +6,7 @@
 
 #include "macros.s"
 #include "sub/bios_def.h"
-#include "sub/sub_macros.s"
+#include "sub/macros.s"
 
 .section .text
 

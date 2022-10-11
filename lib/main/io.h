@@ -1,5 +1,7 @@
 /**
- * @file
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file io.h
  * @brief C wrappers for I/O registers
  */
 
@@ -7,7 +9,7 @@
 #define MEGADEV__IO_H
 
 #include "io_def.h"
-#include "types.h"
+#include "stdint.h"
 
 /**
  * @sa _IO_DATA1
@@ -96,9 +98,14 @@ extern void init_ext();
  */
 static inline u8 ext_rx_c()
 {
-	register u8 d0_data asm("d0");
-	asm("jsr ext_rx" : "+d"(d0_data));
-	return d0_data;
+	register u8 D0 asm("d0");
+	asm(
+		"\
+			jsr ext_rx \n\
+		"
+		: "+d"(D0));
+
+	return D0;
 }
 
 /**
@@ -107,8 +114,14 @@ static inline u8 ext_rx_c()
  */
 static inline void ext_tx_c (register u8 data)
 {
-	register u8 d0_data asm("d0") = data;
-	asm("jsr ext_tx" ::"d"(d0_data));
+	register u8 D0 asm("d0") = data;
+
+	asm(
+		"\
+			jsr ext_tx \n\
+		"
+		:
+		: "d"(D0));
 }
 
 #endif

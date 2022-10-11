@@ -1,7 +1,7 @@
 
 #include "ipx.h"
 #include "main/bootlib.h"
-#include "main/main.h"
+#include "main/memmap.h"
 #include "mmd_exec.h"
 #include "system.h"
 #include "vdp.h"
@@ -17,7 +17,9 @@ void init_particle (u8 particle_idx)
 	particles[particle_idx].status = Falling;
 	particles[particle_idx].pos_x = boot_prng_mod (320) + 128;
 	particles[particle_idx].pos_y = boot_prng_mod (5) + 123;
-	particles[particle_idx].speed = boot_prng_mod ((settings.max_speed - settings.min_speed) + 1) + settings.min_speed;
+	particles[particle_idx].speed =
+		boot_prng_mod ((settings.max_speed - settings.min_speed) + 1) +
+		settings.min_speed;
 	particles[particle_idx].end_at = boot_prng_mod (11) + 320;
 	particles[particle_idx].timer = 0;
 

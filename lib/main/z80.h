@@ -1,3 +1,10 @@
+/**
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file z80.h
+ * @brief C wrappers for Z80 hardware definitions
+ */
+
 #ifndef MEGADEV__Z80_H
 #define MEGADEV__Z80_H
 
@@ -13,7 +20,10 @@ void load_z80_program (u8 * data, u16 length)
 	register u32 a0_data asm("a0") = (u32) data;
 	register u16 d0_length asm("d0") = length;
 
-	asm volatile("jsr LOAD_Z80_PROGRAM" : "+d"(d0_length), "+a"(a0_data) : "d"(d0_length), "a"(a0_data) : "a1", "cc");
+	asm volatile("jsr LOAD_Z80_PROGRAM"
+							 : "+d"(d0_length), "+a"(a0_data)
+							 : "d"(d0_length), "a"(a0_data)
+							 : "a1", "cc");
 };
 
 #endif

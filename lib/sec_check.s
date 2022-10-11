@@ -1,10 +1,14 @@
 /**
- * @file
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file sec_check.s
+ * @brief Mega CD security block inclusion
+ *
+ * @note
+ * This file should be included at the top of you IP asm!
  */
 
 .section .text
-
-// This file should be included at the top of you IP asm!
 
 #ifdef REGION
 #if REGION == JP

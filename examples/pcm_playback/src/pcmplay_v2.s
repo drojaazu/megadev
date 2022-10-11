@@ -1,5 +1,5 @@
 #include "macros.s"
-#include "sub/sub_def.h"
+#include "sub/memmap_def.h"
 
 // driver as a whole will consiste of two parts
 // the outer piece will take a pointer to the pcm data and a length in bytes

@@ -1,18 +1,20 @@
 /**
- * @file
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file io.s
  * @brief IO utilities
  */
 
-#ifndef MEGADEV__IO_S
-#define MEGADEV__IO_S
+#ifndef MEGADEV__MAIN_IO_S
+#define MEGADEV__MAIN_IO_S
 
 #include "macros.s"
 #include "io_def.h"
 
 /*
-  External comm port
+	External comm port
 	The front controller ports and rear EXT port (only present on early model
-  Mega Drives) can be put into serial mode for communication with external
+	Mega Drives) can be put into serial mode for communication with external
 	devices, e.g. with your PC as a debugging tool.
 	For each of the EQU entries below, modify the number in the definition to
 	change the port to be used for serial communication:
@@ -25,8 +27,8 @@
 .equ EXT_RXDATA, IO_RXDATA3
 .equ EXT_TXDATA, IO_TXDATA3
 /*
-  External comm port speed
-  Sets the transfer speed of the external device port
+	External comm port speed
+	Sets the transfer speed of the external device port
 		3 - 300 bps
 		2 - 1200 bps
 		1 - 2400 bps
@@ -71,9 +73,9 @@ FUNC ext_rx
  */
 FUNC ext_tx
 2:move.b (EXT_SCTRL), d1
-  btst #SCTRL_TFUL_BIT, d1 // make sure transmit queue is not full
-  bne 2b
-  move.b d0, EXT_TXDATA
-  rts
+	btst #SCTRL_TFUL_BIT, d1 // make sure transmit queue is not full
+	bne 2b
+	move.b d0, EXT_TXDATA
+	rts
 
 #endif

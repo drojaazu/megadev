@@ -1,12 +1,12 @@
 /**
- * @file
- * @brief General purpose asm macros for use with the Main CPU
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file macros.s
+ * @brief General purpose asm macros
  */
 
 #ifndef MACROS_S
 #define MACROS_S
-
-#include "main/z80_def.h"
 
 .macro FUNC name, align=2
   //.section .text.asm.\name
@@ -47,27 +47,6 @@ file_end:
 
 .macro INTERRUPT_ENABLE
   andi #0xF8FF, sr
-.endm
-
-.altmacro
-.macro Z80_DO_BUSREQ
-LOCAL loop
-	move.w #0x100, _Z80_BUSREQ
-loop:
-  btst #0,  _Z80_BUSREQ
-	bne.s	loop
-.endm
-
-.macro Z80_DO_BUSRELEASE
-	move.w  #0, _Z80_BUSREQ
-.endm
-
-.macro Z80_DO_RESET
-  move.w  #0x000, (_Z80_RESET)
-  .rept 8
-    nop
-  .endr
-  move.w  #0x100, (_Z80_RESET)
 .endm
 
 /**

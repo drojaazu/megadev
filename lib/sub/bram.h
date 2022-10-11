@@ -1,5 +1,7 @@
 /**
- * @file
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file bram.h
  * @brief C wrappers for Backup RAM usage
  */
 
@@ -7,7 +9,7 @@
 #define MEGADEV__SUB_BRAM_H
 
 #include "sub/bram_def.h"
-#include "sub/sub_def.h"
+#include "sub/memmap_def.h"
 #include "types.h"
 
 u8 bram_WRKRAM[0x640];
@@ -55,15 +57,16 @@ static inline BrminitRes * bram_brminit()
 	register u16 d0_bram_size asm("d0");
 	register u16 d1_bram_status asm("d1");
 
-	asm inline(R"(
-  jsr %p2
-  bcs 2f
-  move.w #3, d1
-2:
-	)"
-						 : "=d"(d0_bram_size), "=d"(d1_bram_status)
-						 : "i"(_BURAM), "d"(d0_fcode), "a"(a0_bram_WRKRAM), "a"(a1_bram_string_ram)
-						 : "cc");
+	asm inline(
+		"\
+			jsr %p2 \n\
+			bcs 2f \n\
+			move.w #3, d1 \n\
+		2: \n\
+		"
+		: "=d"(d0_bram_size), "=d"(d1_bram_status)
+		: "i"(_BURAM), "d"(d0_fcode), "a"(a0_bram_WRKRAM), "a"(a1_bram_string_ram)
+		: "cc");
 
 	init_info.bram_size = d0_bram_size;
 	init_info.status = (enum BramStatus) d1_bram_status;
@@ -95,7 +98,12 @@ static inline BrmstatRes * bram_brmstat()
 	register u16 d0_free asm("d0");
 	register u16 d1_filecount asm("d1");
 
-	asm inline("jsr %p2" : "=d"(d0_free), "=d"(d1_filecount) : "i"(_BURAM), "d"(d0_fcode), "a"(a1_bram_string_ram));
+	asm inline(
+		"\
+		jsr %p2 \n\
+		"
+		: "=d"(d0_free), "=d"(d1_filecount)
+		: "i"(_BURAM), "d"(d0_fcode), "a"(a1_bram_string_ram));
 
 	brmstat_results.free = d0_free;
 	brmstat_results.filecount = d1_filecount;
@@ -127,15 +135,16 @@ static inline BrmserchRes * bram_brmserch (char const * filename)
 	// if the file is not found, we'll return null
 	// the user should check that the dataptr member of the struct
 	// is not null to determine the file was found
-	asm inline(R"(
-  jsr %p3
-  bcc 2f
-  lea 0, a0
-2:
-	)"
-						 : "=d"(d0_filesize), "=d"(d1_filemode), "=a"(a0_dataptr)
-						 : "i"(_BURAM), "d"(d0_fcode), "a"(a0_filename)
-						 : "a1", "cc");
+	asm inline(
+		"\
+			jsr %p3 \n\
+			bcc 2f \n\
+			lea 0, a0 \n\
+		2: \n\
+		"
+		: "=d"(d0_filesize), "=d"(d1_filemode), "=a"(a0_dataptr)
+		: "i"(_BURAM), "d"(d0_fcode), "a"(a0_filename)
+		: "a1", "cc");
 
 	if (a0_dataptr == NULL)
 		return NULL;
@@ -167,14 +176,15 @@ static inline BrmreadRes * bram_brmread (char const * filename, u8 * buffer)
 	register u16 d0_size asm("d0");
 	register u8 d1_mode asm("d1");
 
-	asm inline(R"(
-		jsr %p2
-		bcc 2f
-		move.w #0xffff, d0
-	2:
-	)"
-						 : "=d"(d0_size), "=d"(d1_mode)
-						 : "i"(_BURAM), "d"(d0_fcode), "a"(a0_filename), "a"(a1_buffer));
+	asm inline(
+		"\
+		jsr %p2 \n\
+		bcc 2f \n\
+		move.w #0xffff, d0 \n\
+	2: \n\
+	"
+		: "=d"(d0_size), "=d"(d1_mode)
+		: "i"(_BURAM), "d"(d0_fcode), "a"(a0_filename), "a"(a1_buffer));
 
 	if (d0_size == 0xffff)
 	{
@@ -206,16 +216,17 @@ static inline bool bram_brmwrite (BramFileInfo const * params, u8 const * data)
 	register u32 a0_params asm("a0") = (u32) params;
 	register u32 a1_data asm("a1") = (u32) data;
 
-	asm inline goto(R"(
-	moveq #0, d1
-  jsr %p0
-  bcs %l[failed]
-2:
-	)"
-									:
-									: "i"(_BURAM), "d"(d0_fcode), "a"(a0_params), "a"(a1_data)
-									: "d1", "cc"
-									: failed);
+	asm inline goto(
+		"\
+		moveq #0, d1 \n\
+		jsr %p0 \n\
+		bcs %l[failed] \n\
+		2: \n\
+		"
+		:
+		: "i"(_BURAM), "d"(d0_fcode), "a"(a0_params), "a"(a1_data)
+		: "d1", "cc"
+		: failed);
 
 	return true;
 
@@ -249,7 +260,8 @@ failed:
 /**
  * @sa BRMDIR
  */
-static inline bool bram_brmdir (char const * filename, u8 * dirbuffer, u16 const fileskip, u16 const dirsize)
+static inline bool bram_brmdir (
+	char const * filename, u8 * dirbuffer, u16 const fileskip, u16 const dirsize)
 {
 	register u16 d0_fcode asm("d0") = BRMDIR;
 	register u32 a0_filename asm("a0") = (u32) filename;
@@ -261,7 +273,11 @@ static inline bool bram_brmdir (char const * filename, u8 * dirbuffer, u16 const
 	bcs %l[too_large]
 	)"
 									:
-									: "i"(_BURAM), "d"(d0_fcode), "d"(d1_params), "a"(a0_filename), "a"(a1_dirbuffer)
+									: "i"(_BURAM),
+									"d"(d0_fcode),
+									"d"(d1_params),
+									"a"(a0_filename),
+									"a"(a1_dirbuffer)
 									: "cc"
 									: too_large);
 
@@ -309,15 +325,16 @@ static inline enum BrmverifyStatus bram_brmverify (BramFileInfo const * params)
 	register u32 a0_params asm("a0") = (u32) params;
 	register u16 d0_result asm("d0");
 
-	asm inline(R"(
-	jsr %p0
-	bcs 1f
-	moveq #1, d0
-1:
-	)"
-						 : "=d"(d0_result)
-						 : "i"(_BURAM), "d"(d0_fcode), "a"(a0_params)
-						 : "a1");
+	asm inline(
+		"\
+			jsr %p0 \n\
+			bcs 1f \n\
+			moveq #1, d0 \n\
+		1: \n\
+		"
+		: "=d"(d0_result)
+		: "i"(_BURAM), "d"(d0_fcode), "a"(a0_params)
+		: "a1");
 
 	return d0_result;
 }

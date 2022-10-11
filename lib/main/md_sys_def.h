@@ -21,8 +21,8 @@
  * @param RGN Hardware region: 0 - Domestic (Japan); 1 - International
  * (Europe or US)
  */
-#define REG_VERSION 0x0A10001
+#define REG_VERSION 0x0A1'0001
 
-#define REG_TMSS , 0x0A14000
+#define REG_TMSS , 0x0A1'4000
 
 #endif

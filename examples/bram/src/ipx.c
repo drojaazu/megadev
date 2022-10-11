@@ -1,6 +1,6 @@
 #include "io_def.h"
 #include "main/bootlib.h"
-#include "main/main.h"
+#include "main/memmap.h"
 #include "mmd_exec.h"
 #include "printval.h"
 #include "system.h"
@@ -14,7 +14,8 @@
 
 #define SUB_ACK *GA_COMCMD0 = 0;
 
-#define print_xy(x, y) (VDPPTR (NMT_POS_PLANE (x, y, _BLIB_PLANEA_ADDR)) | VRAM_W)
+#define print_xy(x, y) \
+	(VDPPTR (NMT_POS_PLANE (x, y, _BLIB_PLANEA_ADDR)) | VRAM_W)
 
 char val_buffer[5];
 
@@ -349,10 +350,12 @@ void main()
 			boot_vint_wait_default();
 			for (int clearloop = 3; clearloop < 10; ++clearloop)
 			{
-				VDP_CTRL_32 = (VDPPTR (NMT_POS_PLANE (1, clearloop, _BLIB_PLANEA_ADDR)) | VRAM_W);
+				VDP_CTRL_32 =
+					(VDPPTR (NMT_POS_PLANE (1, clearloop, _BLIB_PLANEA_ADDR)) | VRAM_W);
 				VDP_DATA_16 = 0;
 			}
-			VDP_CTRL_32 = (VDPPTR (NMT_POS_PLANE (1, (menupos + 3), _BLIB_PLANEA_ADDR)) | VRAM_W);
+			VDP_CTRL_32 =
+				(VDPPTR (NMT_POS_PLANE (1, (menupos + 3), _BLIB_PLANEA_ADDR)) | VRAM_W);
 			VDP_DATA_16 = '>';
 
 			if ((*JOY1_PRESS & PAD_DOWN_MSK))

@@ -1,7 +1,7 @@
 
 #include "io_def.h"
 #include "main/bootlib.h"
-#include "main/main.h"
+#include "main/memmap.h"
 #include "types.h"
 #include "vdp.h"
 
@@ -9,7 +9,8 @@ extern u16 global_mode;
 
 void main()
 {
-	boot_print ("Example file Number One!\xff", (to_vdpptr (NMT_POS_PLANE (4, 3, _BLIB_PLANEA_ADDR)) | VRAM_W));
+	boot_print ("Example file Number One!\xff",
+		(to_vdpptr (NMT_POS_PLANE (4, 3, _BLIB_PLANEA_ADDR)) | VRAM_W));
 
 	do
 	{

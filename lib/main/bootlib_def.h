@@ -1,4 +1,6 @@
 /**
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
  * @file bootlib_def.h
  * @brief Boot ROM call vector & memory definitions
  */
@@ -21,9 +23,9 @@
 #define _WRKRAM_BLIB 0xFFF700
 
 /**
- * @sa BLIB_DECOMP
+ * @sa BLIB_BUFFER
  */
-#define _BLIB_DECOMP 0xFFF700
+#define _BLIB_BUFFER 0xFFF700
 
 /**
  * @sa BLIB_SPRLIST
@@ -31,6 +33,7 @@
 #define _BLIB_SPRLIST 0xFFF900
 
 /**
+ * @def _BLIB_PALETTE
  * @sa BLIB_PALETTE
  */
 #define _BLIB_PALETTE 0xFFFB80
@@ -399,6 +402,10 @@
 /**
  * @sa blib_update_inputs
  *
+ * @param[out] _BLIB_JOY1_PRESS
+ * @param[out] _BLIB_JOY1_HOLD
+ * @param[out] _BLIB_JOY2_PRESS
+ * @param[out] _BLIB_JOY2_HOLD
  * @clobber d6-d7/a5-a6
  */
 #define _BLIB_UPDATE_INPUTS 0x000298
@@ -460,19 +467,32 @@
 #define _BLIB_VDP_FILL_CLEAR 0x0002B8
 
 /**
+ * @def _BLIB_DMA_FILL_CLEAR
  * @sa blib_dma_fill_clear
+ * @param[in] D0.l Address (vdpptr format)
+ * @param[in] D1.w Length (in words)
  * @clobber d0-d3/a6
  */
 #define _BLIB_DMA_FILL_CLEAR 0x0002BC
 
 /**
+ * @def _BLIB_DMA_FILL
  * @sa blib_dma_fill
+ * @param[in] D0.l Address (vdpptr format)
+ * @param[in] D1.w Length (in words)
+ * @param[in] D2.w Value
  * @clobber d0-d3/a6
  */
 #define _BLIB_DMA_FILL 0x0002C0
 
 /**
+ * @def _BLIB_LOAD_MAP
  * @sa blib_load_map
+ *
+ * @param[in] D0.l VRAM Address (vdpptr format)
+ * @param[in] D1.w Map width
+ * @param[in] D2.w Map height
+ * @param[in] A1.l Pointer to map data
  * @clobber d0-d3/a1/a5
  */
 #define _BLIB_LOAD_MAP 0x0002C4
@@ -667,23 +687,11 @@
 #define _UNKNOWN_24 0x000310
 
 /**
- * @fn _BLIB_SET_HINT_WORKRAM
- * @brief Sets the HINT vector for a Work RAM destination
+ * @def _BLIB_SET_HINT_WORKRAM
+ * @sa blib_set_hint_workram
  * @param[in] A1.l Pointer to HINT function
- * @ingroup boot_interrupts
  *
- * @details Sets the specified vector in the system jump table, and sets the
- * Gate Array HINT register to the specified vector, and enables the interrupt
- * on the VDP.
  *
- * This is functionally identical to @ref _BLIB_SET_HINT, however this version
- * sets the GA HINT register directly to the specified vector. Since the GA
- * register is only 16 bits, it uses only the lower word of the address and
- * expects the routine to be locaed in Work RAM, i.e. 0xFFxxxx. This means if
- * the specified HINT routine is located elsewhere (such as Word RAM), you must
- * use @ref _BLIB_SET_HINT instead.
- *
- * @details The VDP register buffer (_BLIB_VDPREGS) is updated with this call.
  */
 #define _BLIB_SET_HINT_WORKRAM 0x000314
 

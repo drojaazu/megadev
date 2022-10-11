@@ -1,5 +1,5 @@
-#include "sub/sub_def.h"
-#include "sub/sub_macros.s"
+#include "sub/memmap_def.h"
+#include "sub/macros.s"
 #include "sub/cdrom_def.h"
 #include "sub/cdrom_macros.s"
 #include "macros.s"

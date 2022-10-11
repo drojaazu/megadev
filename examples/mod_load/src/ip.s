@@ -4,9 +4,9 @@
 
 .section .text
 
-#include "main/main_def.h"
+#include "main/memmap_def.h"
 #include "main/bootlib_def.h"
-#include "main/main_macros.s"
+#include "main/macros.s"
 #include "vdp_def.h"
 #include "macros.s"
 

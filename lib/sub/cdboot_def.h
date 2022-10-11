@@ -6,7 +6,7 @@
 #ifndef MEGADEV__CD_SUB_CDBOOT_DEF_H
 #define MEGADEV__CD_SUB_CDBOOT_DEF_H
 
-#include "sub/sub_def.h"
+#include "sub/memmap_def.h"
 
 /**
  * @def CBTINIT

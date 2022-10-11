@@ -1,4 +1,9 @@
-
+/**
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file pcm_def.h
+ * @brief PCM audio definitions
+ */
 
 #ifndef MEGADEV__SUB_PCM_DEF_H
 #define MEGADEV__SUB_PCM_DEF_H

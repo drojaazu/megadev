@@ -1,6 +1,8 @@
 /**
- * @file
- * @brief POSIX compatible C99 bool
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file stdbool.h
+ * @brief POSIX-y C99 bool
  */
 
 #ifndef MEGADEV__STDBOOL_H

@@ -1,5 +1,7 @@
 /**
- * @file
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file cdrom_def.h
  * @brief CD-ROM file access definitions
  */
 

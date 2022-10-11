@@ -43,7 +43,7 @@ FFFFFF  +----------------+
 // Assuming we do plan to use the Boot ROM, we can just subtract 0x100 from the
 // already defined beginning of Boot ROM work RAM. (Refer to the modules readme
 // for a look at the Boot ROM memory map.)
-#define RESIDENT_IP_ORIGIN (_BLIB_DECOMP - 0x100)
+#define RESIDENT_IP_ORIGIN (_BLIB_BUFFER - 0x100)
 
 // If we don't plan to use the Boot ROM, then the upper bound is the System
 // Use block at 0xFFFD00. However, this is also the location of the stack, so we
