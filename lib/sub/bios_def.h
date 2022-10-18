@@ -5,8 +5,8 @@
  * @brief Function codes for the _CDBIOS vector
  */
 
-#ifndef MEGADEV__CD_SUB_BIOS_DEF_H
-#define MEGADEV__CD_SUB_BIOS_DEF_H
+#ifndef MEGADEV__SUB_BIOS_DEF_H
+#define MEGADEV__SUB_BIOS_DEF_H
 
 /**
  * @defgroup bios_cdda [Sub] BIOS calls related to CD audio playback

@@ -1,11 +1,12 @@
 /**
- * @file
- * @brief C wrappers for hardware mapping, Gate Array (GA) registers and BIOS
- * vectors on the Main CPU side
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file memmap.h
+ * @brief C wrappers for main CPU side hardware memory map & system vectors
  */
 
-#ifndef MEGADEV__CD_GA_MAIN_H
-#define MEGADEV__CD_GA_MAIN_H
+#ifndef MEGADEV__MAIN_MEMMAP_H
+#define MEGADEV__MAIN_MEMMAP_H
 
 #include "main/memmap_def.h"
 
@@ -28,10 +29,10 @@
  */
 
 // L6 interrupt = VINT
-#define MLEVEL6_VECTOR ((void volatile *(*) ) (_MLEVEL6 + 2))
+#define MLEVEL6_VECTOR (*((void volatile *(*) ) (_MLEVEL6 + 2)))
 // L4 interrupt = HINT
-#define MLEVEL4_VECTOR ((void volatile *(*) ) (_MLEVEL4 + 2))
+#define MLEVEL4_VECTOR (*((void volatile *(*) ) (_MLEVEL4 + 2)))
 // L2 interrupt = Ext. port
-#define MLEVEL2_VECTOR ((void volatile *(*) ) (_MLEVEL2 + 2))
+#define MLEVEL2_VECTOR (*((void volatile *(*) ) (_MLEVEL2 + 2)))
 
 #endif

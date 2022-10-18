@@ -5,8 +5,8 @@
  * @brief C wrappers for CD-ROM file access
  */
 
-#ifndef MEGADEV__CD_SUB_CDROM_H
-#define MEGADEV__CD_SUB_CDROM_H
+#ifndef MEGADEV__SUB_CDROM_H
+#define MEGADEV__SUB_CDROM_H
 
 #include "sub/cdrom_def.h"
 #include "sub/memmap.h"

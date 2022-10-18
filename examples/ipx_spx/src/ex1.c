@@ -20,7 +20,7 @@ void main()
 		VDPPTR (VRAM_AT (0x80)), &res_rain_chr, res_rain_chr_sz >> 1);
 	enable_interrupts();
 
-	boot_print ("Module 1\xff",
+	blib_print ("Module 1\xff",
 		(VDPPTR (NMT_POS_PLANE (1, 1, _BLIB_PLANEA_ADDR)) | VRAM_W));
 
 	// init_particles is defined in the ipx
@@ -28,10 +28,10 @@ void main()
 
 	do
 	{
-		boot_vint_wait_default();
+		blib_vint_wait_default();
 		// process_particles is defined in the ipx
 		process_particles();
-	} while (! (*JOY1_PRESS & PAD_START_MSK));
+	} while (! (BLIB_JOY1_PRESS & PAD_START_MSK));
 
 	global_mode = 1;
 	return;

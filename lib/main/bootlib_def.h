@@ -5,8 +5,8 @@
  * @brief Boot ROM call vector & memory definitions
  */
 
-#ifndef MEGADEV__CD_MAIN__BLIB_DEF_H
-#define MEGADEV__CD_MAIN__BLIB_DEF_H
+#ifndef MEGADEV__MAIN_BOOTLIB_DEF_H
+#define MEGADEV__MAIN_BOOTLIB_DEF_H
 
 /**
  * @defgroup blib_vdp Boot Library VDP related
@@ -402,7 +402,7 @@
 /**
  * @sa blib_update_inputs
  *
- * @param[out] _BLIB_JOY1_PRESS
+ * @param[out] _BLIB__BLIB_JOY1_PRESS
  * @param[out] _BLIB_JOY1_HOLD
  * @param[out] _BLIB_JOY2_PRESS
  * @param[out] _BLIB_JOY2_HOLD
@@ -595,10 +595,10 @@
 #define _BLIB_GFX_DECOMP_RAM 0x0002F0
 
 /**
- * @sa blib_process_spr_objs
+ * @sa blib_process_sprobjs
  * @clobber d0-d4/d6/a2
  */
-#define _BLIB_PROCESS_SPR_OBJS 0x0002F4
+#define _blib_process_sprobjs 0x0002F4
 
 /**
  * @sa blib_clear_ram

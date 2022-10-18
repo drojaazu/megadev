@@ -5,8 +5,8 @@
  * @brief VDP hardware definitions
  */
 
-#ifndef MEGADEV__VDP_DEF_H
-#define MEGADEV__VDP_DEF_H
+#ifndef MEGADEV__MAIN_VDP_DEF_H
+#define MEGADEV__MAIN_VDP_DEF_H
 
 // VDP ports
 

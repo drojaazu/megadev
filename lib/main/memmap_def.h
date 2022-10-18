@@ -2,15 +2,14 @@
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
  * @file memmap_def.h
- * @brief Hardware memory map, Gate Array (GA) register, and entry vector
- * definitions for the Main CPU side
+ * @brief Main CPU side hardware memory map & system vectors
  *
  * @note All bit definitions are byte relative and should be applied to the
  * registers cast to an 8 bit type.
  */
 
-#ifndef MEGADEV__CD_MAIN_DEF_H
-#define MEGADEV__CD_MAIN_DEF_H
+#ifndef MEGADEV__MAIN_MEMMAP_DEF_H
+#define MEGADEV__MAIN_MEMMAP_DEF_H
 
 #define SYSTEMUSE_BASE 0xfffd00
 

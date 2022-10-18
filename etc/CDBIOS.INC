@@ -199,7 +199,7 @@ BURAM macro fcode
 ;   nothing
 ;-----------------------------------------------------------------------
 BIOS_DRVINIT macro
-      CDBIOS #DRVINIT
+      CDBIOS #_BIOS_DRVINIT
       endm
 
 ;-----------------------------------------------------------------------
@@ -523,7 +523,7 @@ BIOS_CDBCHK macro
 ;   a0.l  address of BIOS status table
 ;-----------------------------------------------------------------------
 BIOS_CDBSTAT macro
-      CDBIOS #CDBSTAT
+      CDBIOS #_BIOS_CDBSTAT
       endm
 
 ;-----------------------------------------------------------------------
@@ -885,7 +885,7 @@ BIOS_SCDPQL macro
 ;   nothing
 ;-----------------------------------------------------------------------
 BIOS_LEDSET macro
-      CDBIOS #LEDSET
+      CDBIOS #_BIOS_LEDSET
       endm
 
 

@@ -5,8 +5,8 @@
  * @brief C wrappers for Sub CPU memory map & system vectors
  */
 
-#ifndef MEGADEV__CD_GA_SUB_H
-#define MEGADEV__CD_GA_SUB_H
+#ifndef MEGADEV__SUB_MEMMAP_H
+#define MEGADEV__SUB_MEMMAP_H
 
 #include "stdint.h"
 #include "sub/memmap_def.h"

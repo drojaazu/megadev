@@ -3,8 +3,8 @@
  * @brief C wrappers for VDP usage
  */
 
-#ifndef MEGADEV__VDP_H
-#define MEGADEV__VDP_H
+#ifndef MEGADEV__MAIN_VDP_H
+#define MEGADEV__MAIN_VDP_H
 
 #include "types.h"
 #include "vdp_def.h"

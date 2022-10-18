@@ -23,8 +23,8 @@
  * documented and useful and have wrappers in this header.
  */
 
-#ifndef MEGADEV__CD_MAIN__BLIB_H
-#define MEGADEV__CD_MAIN__BLIB_H
+#ifndef MEGADEV__MAIN_BOOTLIB_H
+#define MEGADEV__MAIN_BOOTLIB_H
 
 #include "main/bootlib_def.h"
 #include "types.h"
@@ -32,14 +32,14 @@
 
 struct SpriteObject
 {
-	u16 status;
+	u16 jmptbl_offset;
 	u16 flags;
 	u8 * spriteDef;
 	u32 posX;
 	u32 posY;
 	u32 moveX;
 	u32 moveY;
-	u8 uk1;
+	u8 shared_flags;
 	u8 uk2;
 };
 
@@ -333,7 +333,7 @@ typedef struct Palette
 
 /**
  * @enum PlaneWidthTiles
- * @brief Use with @ref _BLIB_PLANE_WIDTH to represent the width in tiles
+ * @brief Use with @ref BLIB_PLANE_WIDTH to represent the width in tiles
  * instead of bytes
  */
 typedef enum PlaneWidthTiles
@@ -365,14 +365,14 @@ typedef enum PlaneWidthTiles
  * @var u32 BLIB_SPRTBL_PTR
  * @sa _BLIB_SPRTBL_PTR
  */
-#define BLIB_SPRTBL_PTR ((void *) _BLIB_SPRTBL_PTR)
+#define BLIB_SPRTBL_PTR (*((u8 *) _BLIB_SPRTBL_PTR))
 
 /**
  * @var u32 BLIB_SPR_JMPTBL_PTR
  * @brief Pointer to the jump table for entity processing
  * @sa _BLIB_SPR_JMPTBL_PTR
  */
-#define BLIB_SPR_JMPTBL_PTR ((u8 *) _BLIB_SPR_JMPTBL_PTR)
+#define BLIB_SPR_JMPTBL_PTR (*((void **) _BLIB_SPR_JMPTBL_PTR))
 
 /**
  * @var u8 BLIB_FADEIN_PAL_INDEX
@@ -770,13 +770,14 @@ static inline void blib_load_map (
 	register u16 D1 asm("d1") = width;
 	register u16 D2 asm("d2") = height;
 	register u32 A1 asm("a1") = (u32) map;
-	asm(
+
+	asm volatile(
 		"\
-			jsr %p0 \n\
+			jsr %p1 \n\
 		"
-		:
+		: "+d"(D2)
 		: "i"(_BLIB_LOAD_MAP), "d"(D0), "d"(D1), "d"(D2), "a"(A1)
-		: "d3", "a5");
+		: "d3", "a5", "cc");
 }
 
 /**
@@ -918,7 +919,7 @@ static inline bool blib_pal_fadeout (u8 palette_index, u8 length)
 	register u16 D0 asm("d0") = (u16) (palette_index << 1);
 	register u16 D1 asm("d1") = (u16) length;
 
-	asm inline goto(
+	asm goto(
 		"\
   		jsr %p0 \n\
 			beq %l[fade_complete] \n\
@@ -1237,7 +1238,7 @@ static inline void blib_copy_pal()
 };
 
 /**
- * @fn blib_process_spr_objs
+ * @fn blib_process_sprobjs
  * @brief Update/display sprite objects
  * @param[in] A0.l Pointer to object array
  * @param[in] A1.l Pointer to sprite list buffer
@@ -1245,7 +1246,7 @@ static inline void blib_copy_pal()
  * @param[in] D1.w Object size
  * @ingroup blib_vdp
  */
-static inline void blib_process_spr_objs (struct SpriteObject * const obj_array,
+static inline void blib_process_sprobjs (struct SpriteObject * const obj_array,
 	Sprite * const sprtbl_cache,
 	u16 const obj_count,
 	u16 const obj_size)
@@ -1260,7 +1261,7 @@ static inline void blib_process_spr_objs (struct SpriteObject * const obj_array,
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_PROCESS_SPR_OBJS), "a"(A0), "a"(A1), "d"(D0), "d"(D1)
+		: "i"(_blib_process_sprobjs), "a"(A0), "a"(A1), "d"(D0), "d"(D1)
 		: "d2", "d3", "d4", "d6", "a2");
 };
 
@@ -1353,7 +1354,7 @@ static inline void blib_set_fadein_pal (Palette const * palette)
 static inline void blib_pal_fadein()
 {
 
-	asm inline(
+	asm(
 		"\
   		jsr %p0 \n\
 		"

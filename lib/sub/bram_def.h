@@ -5,8 +5,8 @@
  * @brief Function codes for the _BURAM vector
  */
 
-#ifndef MEGADEV__CD_SUB_BRAM_DEF_H
-#define MEGADEV__CD_SUB_BRAM_DEF_H
+#ifndef MEGADEV__SUB_BRAM_DEF_H
+#define MEGADEV__SUB_BRAM_DEF_H
 
 #include "sub/memmap_def.h"
 

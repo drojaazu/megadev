@@ -3,8 +3,8 @@
  * @brief Misc. Mega Drive system registers
  */
 
-#ifndef MEGADEV__MD_SYS_DEF_H
-#define MEGADEV__MD_SYS_DEF_H
+#ifndef MEGADEV__MAIN_MD_SYS_DEF_H
+#define MEGADEV__MAIN_MD_SYS_DEF_H
 
 /**
  * @def REG_VERSION

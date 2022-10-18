@@ -7,8 +7,8 @@
  * this is iused!
  */
 
-#ifndef MEGADEV__EXCEPTION_S
-#define MEGADEV__EXCEPTION_S
+#ifndef MEGADEV__MAIN_EXCEPTION_S
+#define MEGADEV__MAIN_EXCEPTION_S
 
 #include "macros.s"
 #include "main/bootlib_def.h"

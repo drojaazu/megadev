@@ -8,8 +8,8 @@
  * This still needs a fair amount of research...
  */
 
- #ifndef MEGADEV__CD_SUB_COMMSYNC_S
-#define MEGADEV__CD_SUB_COMMSYNC_S
+#ifndef MEGADEV__SUB_COMMSYNC_S
+#define MEGADEV__SUB_COMMSYNC_S
 
 
 .section .text

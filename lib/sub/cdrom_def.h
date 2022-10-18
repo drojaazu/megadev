@@ -5,8 +5,8 @@
  * @brief CD-ROM file access definitions
  */
 
-#ifndef MEGADEV__CD_SUB_CDROM_DEF_H
-#define MEGADEV__CD_SUB_CDROM_DEF_H
+#ifndef MEGADEV__SUB_CDROM_DEF_H
+#define MEGADEV__SUB_CDROM_DEF_H
 
 /*
  * Access Operations
@@ -16,7 +16,9 @@
 /**
  * @def ACC_OP_IDLE
  * @brief No access operation
- * @note This should be set whenever there is no disc IO to be done
+ *
+ * @note
+ * This should be set whenever there is no disc IO to be done
  */
 #define ACC_OP_IDLE 0
 

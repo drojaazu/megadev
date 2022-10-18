@@ -8,8 +8,8 @@
  * registers cast to an 8 bit type.
  */
 
-#ifndef MEGADEV__CD_SUB_DEF_H
-#define MEGADEV__CD_SUB_DEF_H
+#ifndef MEGADEV__SUB_MEMMAP_DEF_H
+#define MEGADEV__SUB_MEMMAP_DEF_H
 
 /**
  * @brief Program RAM (PRG RAM)

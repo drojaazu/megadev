@@ -22,14 +22,14 @@ GLABEL sp_init
 	// it's important to drvinit/cdbstat here even if bios already did it
 	// otherwise there may be issues with CD audio track playback
 	lea drvinit_tracklist, a0
-	CDBIOS #DRVINIT
+	CDBIOS #_BIOS_DRVINIT
 	// loop until done reading the disc TOC
-1:CDBIOS #CDBSTAT
+1:CDBIOS #_BIOS_CDBSTAT
 	andi.b	#0xf0, (_CDSTAT).w
 	bne			1b
   CLEAR_COMM_REGS
   // Put Word RAM into 2M mode and assert control of it
-  andi.w	#~(GA_RET_MSK | GA_MODE_MSK), _GA_MEMMODE
+  andi.w	#~(MSK_GA_RET | MSK_GA_MODE), _GA_MEMMODE
   // This sets up the CD-ROM access loop with initial settings. It only needs
   // to be called once, here in sp_init
   INIT_ACC_LOOP
@@ -84,8 +84,8 @@ GLABEL sp_fatal
 	move.w #0xff, _GA_COMSTAT0
 	// make both LEDs blink (which is normally disallowed but Sega QA isn't
 	// here to boss us around)
-	moveq	#LED_ERROR, d1
-  CDBIOS #LEDSET
+	moveq	#_LED_ERROR, d1
+  CDBIOS #_BIOS_LEDSET
 0:nop
 	nop
 	bra 0b

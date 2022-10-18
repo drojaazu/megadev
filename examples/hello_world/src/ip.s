@@ -64,7 +64,7 @@ loop:
   jbsr _BLIB_VINT_HANDLER_WAIT_DEFAULT
   // Inputs are updated as part of the default vint wait subroutine
   // so we can assume the input value is current
-  and.b #PAD_START_MSK, _BLIB_JOY1_PRESS
+  and.b #PAD_START_MSK, _BLIB__BLIB_JOY1_PRESS
 	beq loop
 	
   jmp _BLIB_RESET

@@ -71,7 +71,7 @@ We will discuss the components and variables in use in each section.
 ## Memory Usage
 Perhaps the biggest deciding factor for using the Boot ROM or not is its use of Work RAM. As we have discussed in design.md, Work RAM is the smallest of the runtime buffers available yet is the most important. Of the 63.25KB of space available in Work RAM, another 1.25KB could be lost if you choose to use the Boot ROM library.
 
-That isn't a huge amount of space, admittedly, but consider that that 63.25KB of space will hold the kernel, resources, runtime RAM and the stack. It can fill up quickly, and 1.25KB of space may be valuable.
+That isn't a huge amount of space, admittedly, but consider that that 63.25KB of space will hold the kernel, global resources, runtime RAM and the stack. It can fill up quickly, and 1.25KB of space may be valuable.
 
 On the other hand, the space taken by the Boot ROM library would probably be similarly allocated by your own code, namely, a decompression buffer (for compressed graphics), a sprite list cache and a palette cache.
 
@@ -253,9 +253,6 @@ Only one bit is actually used by the library functions: bit 0, to indicate the p
 
 The rest of the bits are free for you to use as needed.
 
-### Entity Component
-Entities - made up of multiple sprites
-
 ## VDP/Graphics - Functions
 
 ### `_BLIB_DMA_FILL_CLEAR`
@@ -409,11 +406,11 @@ Components: VDP Reg Cache, DMA, Palette Cache, VDP Update Flags
 
 Copies the palette cache to CRAM.
 
-### `_BLIB_PROCESS_ENTITIES`
-Update the state of an array of entities. Please see the Entities section.
+### `_BLIB_UPDATE_SPROBJS`
+Update the state of an array of sprite objects. Please see the Sprite Objects section.
 
-### `_BLIB_DISP_ENTITY`
-Display an entity. Please see the entities section.
+### `_BLIB_DISP_SPROBJ`
+Display an sprite object. Please see the Sprite Objects section.
 
 ### `_BLIB_COPY_SPRLIST`
 Components: Sprite Cache, VDP Register Cache, VINT Flags
@@ -471,6 +468,25 @@ Properties: Other Memory
 Sets the target palette for fade in.
 
 
+## Sprite Objects Component
+A sprite object is any element appearing on screen as a VDP sprite with its own rendering state. Such objects may appear as a single sprite or multiple sprites positioned relatively to act as one unit.
+
+(The term "sprite object" is not official and the concept is often simply referred to as an "object" but this term has different meanings in the context of software development. We feel sprite object (shortened to sprobj) is both succinct and unique.)
+
+In most games (including the Boot ROM library), sprite objects have state related to their position, velocity and x/y flipping, etc. Moreover, they contain a pointer to a function which is run on each update.
+
+The SpriteObject represents the object and its state.
+TODO jmptble_offset is offset into _BLIB_SPR_JMPTBL_PTR
+ptr to SpriteList
+
+sprite list is:
+byte 0 - number of sprites in list
+byte 1 - shared priority/pal/flip flags
+each sprite in the list is 6 bytes, in the Sonic 1 format ( http://info.sonicretro.org/SCHG:Sonic_the_Hedgehog_(16-bit)/Object_Editing#Mappings_editing - 5 bytes) plus a padding byte at the end
+
+### `_BLIB_UPDATE_SPROBJS`
+
+### `_BLIB_DISP_SPROBJ`
 
 ## Decompression
 

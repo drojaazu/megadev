@@ -2,8 +2,8 @@
 #include "io.h"
 #include "main/bootlib.h"
 #include "main/memmap.h"
+#include "main/vdp.h"
 #include "types.h"
-#include "vdp.h"
 
 extern u8 res_cybercity_bldg_cmp_nem[];
 extern u8 res_cybercity_farbg_cmp_nem[];
@@ -25,7 +25,7 @@ void null_func()
 
 void vint_ex()
 {
-	boot_copy_sprlist();
+	blib_copy_sprlist();
 }
 
 void (*spr_funcs[2])();
@@ -44,41 +44,41 @@ __attribute__ ((noreturn)) void main()
 	spr_funcs[0] = null_func;
 	spr_funcs[1] = null_func;
 
-	*SPR_JMPTBL_PTR = spr_funcs;
+	BLIB_SPR_JMPTBL_PTR = spr_funcs;
 
 	ship_parts.spriteDef = res_ship_spr;
 	ship_parts.posX = 150 << 16;
 	ship_parts.posY = 140 << 16;
 	ship_parts.status = 1;
-	ship_parts.uk1 = 0x20;
+	ship_parts.shared_flags = 0x20;
 
 	// turn off the display while we init
-	boot_vdp_disp_disable();
+	blib_vdp_disp_disable();
 	// boot rom defaults are fine...
-	boot_load_vdpregs_default();
+	blib_load_vdpregs_default();
 
 	// We use the PlaneWidthTiles enum to assign the value in *tiles*, which is
 	// more intuitive than the count in nmtbl entries
 	// See the documentation on PLANE_WIDTH for more
-	*PLANE_WIDTH = Width32;
+	BLIB_PLANE_WIDTH = Width32;
 
 	// The load VDP regs Boot ROM routines expect a zero terminated array of
 	// raw register values
 	// See the documentation on _BLIB_LOAD_VDPREGS for more
 	u16 vdp_planewidth_reg[] = {0x9010, 0};
-	boot_load_vdpregs (vdp_planewidth_reg);
+	blib_load_vdpregs (vdp_planewidth_reg);
 
 	// load the palettes
 	// In general, use the VDPPTR macro for converting a VRAM address to the
 	// VDP compatible format. It is written so that constant values will be
 	// calculated at compile time, and variables will be calculated at runtime
 	// with the optimized conversion code
-	boot_dma_xfer_wordram ((VDPPTR (0) | CRAM_W), res_cybercity_pal, 32 >> 1);
-	boot_dma_xfer_wordram ((VDPPTR (32) | CRAM_W), res_ship_pal, 32 >> 1);
+	blib_dma_xfer_wordram ((VDPPTR (0) | CRAM_W), res_cybercity_pal, 32 >> 1);
+	blib_dma_xfer_wordram ((VDPPTR (32) | CRAM_W), res_ship_pal, 32 >> 1);
 
-	// boot_gfx_decomp requires that we set the VDP address first
+	// blib_gfx_decomp requires that we set the VDP address first
 	VDP_CTRL_32 = VDPPTR (VRAM_AT (1)) | VRAM_W;
-	boot_gfx_decomp (res_cybercity_bldg_cmp_nem);
+	blib_gfx_decomp (res_cybercity_bldg_cmp_nem);
 
 	// first word of Nemesis compression is the tile count, with the msb
 	// determining XOR mode so we can use this (with the msb cleared) to get the
@@ -86,24 +86,25 @@ __attribute__ ((noreturn)) void main()
 	u16 free_tile = ((*(u16 *) res_cybercity_bldg_cmp_nem) & 0x7fff) + 1;
 
 	VDP_CTRL_32 = VDPPTR (VRAM_AT (free_tile)) | VRAM_W;
-	boot_gfx_decomp (res_cybercity_farbg_cmp_nem);
+	blib_gfx_decomp (res_cybercity_farbg_cmp_nem);
 
 	free_tile += ((*(u16 *) res_cybercity_farbg_cmp_nem) & 0x7fff);
 
-	boot_dma_xfer_wordram (VDPPTR (VRAM_AT (free_tile)) | VRAM_W, res_ship_chr, 1920 >> 1);
+	blib_dma_xfer_wordram (
+		VDPPTR (VRAM_AT (free_tile)) | VRAM_W, res_ship_chr, 1920 >> 1);
 
-	boot_load_map (VDPPTR (NMT_POS_PLANE (0, 2, _BLIB_PLANEA_ADDR)) | VRAM_W,
+	blib_load_map (VDPPTR (NMT_POS_PLANE (0, 2, _BLIB_PLANEA_ADDR)) | VRAM_W,
 		res_cybercity_bldg_map[0] - 1,
 		res_cybercity_bldg_map[1] - 1,
 		res_cybercity_bldg_map + 2);
-	boot_load_map (VDPPTR (_BLIB_PLANEB_ADDR) | VRAM_W,
+	blib_load_map (VDPPTR (_BLIB_PLANEB_ADDR) | VRAM_W,
 		res_cybercity_farbg_map[0] - 1,
 		res_cybercity_farbg_map[1] - 1,
 		res_cybercity_farbg_map + 2);
 
-	boot_vdp_disp_enable();
+	blib_vdp_disp_enable();
 
-	*VINT_EX_PTR = vint_ex;
+	*BLIB_VINT_EX_PTR = vint_ex;
 
 	u16 scroll_a = 0;
 	u8 scroll_b = 0;
@@ -113,10 +114,10 @@ __attribute__ ((noreturn)) void main()
 	do
 	{
 
-		boot_process_spr_objs (&ship_parts, SPRITE_LIST, 0, 0x1a);
+		blib_process_sprobjs (&ship_parts, BLIB_SPRLIST, 0, 0x1a);
 
-		*VINT_FLAGS = COPY_SPRLIST_MSK;
-		boot_vint_wait_default();
+		BLIB_VINT_FLAGS = COPY_SPRLIST_MSK;
+		blib_vint_wait_default();
 
 		wait_a++;
 		wait_b++;
@@ -135,23 +136,23 @@ __attribute__ ((noreturn)) void main()
 			wait_b = 0;
 		}
 
-		if (*JOY1_HOLD & PAD_RIGHT_MSK)
+		if (BLIB_JOY1_HOLD & PAD_RIGHT_MSK)
 		{
 			ship_parts.posX += (3 << 16);
 			wait_a++;
 		}
 
-		if (*JOY1_HOLD & PAD_LEFT_MSK)
+		if (BLIB_JOY1_HOLD & PAD_LEFT_MSK)
 		{
 			ship_parts.posX -= (3 << 16);
 		}
 
-		if (*JOY1_HOLD & PAD_UP_MSK)
+		if (BLIB_JOY1_HOLD & PAD_UP_MSK)
 		{
 			ship_parts.posY -= (3 << 16);
 		}
 
-		if (*JOY1_HOLD & PAD_DOWN_MSK)
+		if (BLIB_JOY1_HOLD & PAD_DOWN_MSK)
 		{
 			ship_parts.posY += (3 << 16);
 		}

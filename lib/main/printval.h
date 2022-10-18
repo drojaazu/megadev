@@ -5,8 +5,8 @@
  * @brief C wrappers for hex string conversion functions
  */
 
-#ifndef MEGADEV__PRINTVAL_H
-#define MEGADEV__PRINTVAL_H
+#ifndef MEGADEV__MAIN_PRINTVAL_H
+#define MEGADEV__MAIN_PRINTVAL_H
 
 #include "types.h"
 

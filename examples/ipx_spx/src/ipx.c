@@ -133,7 +133,7 @@ void main()
 
 	// The modules only show some text, so we'll prepare the font for them here
 	// so it doesn't need to happen in the module itself
-	boot_load_font_defaults();
+	blib_load_font_defaults();
 
 	// The font uses palette entry #1, so we'll manually set that to white
 	PALETTE[1] = 0xeee;
@@ -179,7 +179,7 @@ void main()
 
 		// module has exited and program_mode was updated
 		// Clear the tiles on the screen and prepare the next iteration
-		boot_clear_nmtbl();
+		blib_clear_tables();
 
 	} while (1);
 }

@@ -17,24 +17,6 @@
 
 #define GA_COMFLAGS_SUB ((volatile const u8 *) _GA_COMFLAGS + 1)
 
-#define GA_COMCMD0 ((u16 volatile *) _GA_COMCMD0)
-#define GA_COMCMD1 ((u16 volatile *) _GA_COMCMD1)
-#define GA_COMCMD2 ((u16 volatile *) _GA_COMCMD2)
-#define GA_COMCMD3 ((u16 volatile *) _GA_COMCMD3)
-#define GA_COMCMD4 ((u16 volatile *) _GA_COMCMD4)
-#define GA_COMCMD5 ((u16 volatile *) _GA_COMCMD5)
-#define GA_COMCMD6 ((u16 volatile *) _GA_COMCMD6)
-#define GA_COMCMD7 ((u16 volatile *) _GA_COMCMD7)
-
-#define GA_COMSTAT0 ((u16 volatile const *) _GA_COMSTAT0)
-#define GA_COMSTAT1 ((u16 volatile const *) _GA_COMSTAT1)
-#define GA_COMSTAT2 ((u16 volatile const *) _GA_COMSTAT2)
-#define GA_COMSTAT3 ((u16 volatile const *) _GA_COMSTAT3)
-#define GA_COMSTAT4 ((u16 volatile const *) _GA_COMSTAT4)
-#define GA_COMSTAT5 ((u16 volatile const *) _GA_COMSTAT5)
-#define GA_COMSTAT6 ((u16 volatile const *) _GA_COMSTAT6)
-#define GA_COMSTAT7 ((u16 volatile const *) _GA_COMSTAT7)
-
 /**
  * @note We do not dereference the pointers in the defines
  * as the bit sets need to be done on each byte.

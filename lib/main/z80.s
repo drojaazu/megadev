@@ -1,4 +1,5 @@
-
+#ifndef MEGADEV__MAIN_Z80_S
+#define MEGADEV__MAIN_Z80_S
 
 #include "macros.s"
 #include "z80_def.h"
@@ -29,3 +30,5 @@ FUNC LOAD_Z80_PROGRAM
 	
 	INTERRUPT_ENABLE
 	rts
+
+#endif

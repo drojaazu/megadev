@@ -37,7 +37,7 @@ The basic concept is to specify a source file, a track type and a time index, wh
 
 Note that this pregap period must exist in your source audio. That is, you must have 2 seconds of silence at the start of the actual audio file to account for this gap. If not, your audio will be cut off by two seconds at the start. You can easily add 2 seconds to your tracks with ffmpeg like so:
 
-    ffmpeg -i track02.wav -af "adelay=2000|2000" track02_pregap.wav
+    ffmpeg -i track02.wav -af "aformat=s16:44100, adelay=2000|2000" track02_pregap.wav
 
 Where the numeric value specified is milliseconds of blank audio.
 

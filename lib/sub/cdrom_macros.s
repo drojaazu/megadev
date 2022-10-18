@@ -5,8 +5,8 @@
  * @brief CD-ROM File Access Wrapper Macros
  */
 
-#ifndef MEGADEV__CD_SUB_CDROM_MACROS_H
-#define MEGADEV__CD_SUB_CDROM_MACROS_H
+#ifndef MEGADEV__SUB_CDROM_MACROS_H
+#define MEGADEV__SUB_CDROM_MACROS_H
 
 #include "sub/cdrom_def.h"
 

@@ -5,10 +5,11 @@
  * Sub CPU Gate Array and misc. utilities for use with the Sub CPU
  */
 
-#ifndef MEGADEV__CD_macros_S
-#define MEGADEV__CD_macros_S
+#ifndef MEGADEV__SUB_MACROS_S
+#define MEGADEV__SUB_MACROS_S
 
 #include "sub/memmap_def.h"
+#include "sub/gatearr_def.h"
 
 /**
  * @macro BURAM

@@ -1,5 +1,7 @@
-# MEGADEV - Sega Mega CD Development Framework
+# [ M E G A D E V ]
 *AV INTELLIGENT TERMINAL WITH OPTICAL DISC DRIVE*
+
+Megadev is a Sega Mega CD devkit in C and 68k asm using a modern GNU build toolchain.
 
 ## WORK IN PROGRESS - PREVIEW VERSION
 This project has not had extensive testing outside of the developer's personal projects. It is certain that there are bugs throughout. It is also well understood that it is not quite user friendly yet and there are inconsistencies in naming choices and usage throughout.

@@ -5,8 +5,8 @@
  * @brief PCM audio playback utilities
  */
 
-#ifndef MEGADEV__PCM_H
-#define MEGADEV__PCM_H
+#ifndef MEGADEV__SUB_PCM_H
+#define MEGADEV__SUB_PCM_H
 
 #include "types.h"
 

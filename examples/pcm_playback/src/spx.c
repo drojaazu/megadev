@@ -71,7 +71,7 @@ __attribute__ ((section (".init"))) void main()
 
 			// load IPX
 			case 0xfe:
-				load_file (ACC_OP_LOAD_CDC, "IPX.MMD;1", (u8 *) SUB_2M_BASE);
+				load_file (ACC_OP_LOAD_CDC, "IPX.MMD;1", (u8 *) _WRDRAM_2M);
 				grant_2m();
 				if (access_op_result != RESULT_OK)
 				{

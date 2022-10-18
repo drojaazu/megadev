@@ -1,10 +1,18 @@
 /**
- * @file
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file mmd_exec.s
+ * @brief Set up and run a loaded MMD formatted module
+ * @note This expects a module to be already loaded at the start of Word RAM
  */
+
+#ifndef MEGADEV__MAIN_MMD_EXEC_S
+#define MEGADEV__MAIN_MMD_EXEC_S
 
 #include "macros.s"
 #include "main/memmap_def.h"
 #include "main/gatearr_def.h"
+#include "main/gatearr_macros.s"
 
 /**
  * @brief Setup and run a loaded MMD formatted module
@@ -31,3 +39,5 @@ FUNC MMD_EXEC
 	beq 4f
 	GRANT_2M
 4:jmp			(a0)  // jump to the module entry
+
+#endif

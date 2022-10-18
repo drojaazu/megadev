@@ -10,9 +10,9 @@
 // be sure to re-enable them in main()!
 ori #0x700,sr
 
-#include "mmd_exec.s"
+#include "main/mmd_exec.s"
 
 .section .text
 
-#include "printval.s"
-#include "exception.s"
+#include "main/printval.s"
+#include "main/exception.s"
