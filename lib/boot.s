@@ -58,10 +58,10 @@ SP_WorkRAM:	.long 0
 #  Game Header
 # =======================================================================================	
 HardwareType:	.ascii "SEGA MEGA DRIVE "
-Copyright:	  .ascii "(C)     2020.OCT"
+Copyright:	  .ascii "(C)     2022.NOV"
 NativeName:	  .ascii HEADER_NAME_JP
 OverseasName:	.ascii HEADER_NAME_INTL
-DiscID:		.ascii "GM 00-0000-00   "
+DiscID:		.ascii HEADER_SOFT_ID
 IO:		.ascii "J               "
 	.ascii	"                "
 	.ascii	"                "

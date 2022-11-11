@@ -635,25 +635,14 @@
 #define _BLIB_DISP_SPR_OBJ 0x000300
 
 /**
- * @fn _BLIB_VINT_HANDLER_WAIT
- * @brief Wait for vertical interrupt
+ * @sa blib_vint_wait
  * @clobber d0
- *
- * GROUP: Interrupts
- *
- * @note This will also make a call to _PRNG
  */
 #define _BLIB_VINT_HANDLER_WAIT 0x00304
 
 /**
- * @fn _BLIB_VINT_HANDLER_WAIT_DEFAULT
- * @brief Wait for vertical interrupt with default flags
+ * @sa blib_vint_wait_default
  * @clobber d0
- *
- * GROUP: Interrupts
- *
- * @details This will set the default VINT flags (copy sprite list & call
- * VINT_EX) before waiting for VINT This will also make a call to _PRNG
  */
 #define _BLIB_VINT_HANDLER_WAIT_DEFAULT 0x000308
 

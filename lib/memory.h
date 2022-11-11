@@ -15,13 +15,14 @@
 static inline void memset8 (u8 value, u8 * dest, u32 length)
 {
 	--length;
-	asm(R"(
-	1:move.b %0, (%1)+
-		dbf 1b, %2
-	)"
-			:
-			: "d"(value), "a"(dest), "d"(length)
-			: "cc");
+	asm(
+		"\
+		1:move.b %2, (%0)+ \n\
+			dbf 1b, %1 \n\
+		"
+		: "+a"(dest), "+d"(length)
+		: "d"(value)
+		: "cc");
 }
 
 /**

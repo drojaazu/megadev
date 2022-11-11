@@ -78,6 +78,14 @@ typedef union SpriteEx
  */
 #define VDP_DATA_16 (*((u16 volatile *) _VDP_DATA))
 
+#define VDP_DATA_16 (*((u16 volatile *) _VDP_DATA))
+
+#define VDP_HVCOUNT (*((u16 volatile *) _VDP_HVCOUNT))
+
+#define VDP_HVCOUNT_V (*((u8 volatile *) _VDP_HVCOUNT))
+
+#define VDP_HVCOUNT_H (*((u8 volatile *) (_VDP_HVCOUNT + 1)))
+
 /**
  * @def NMT_POS
  * @brief Generates the nametable offset for a tile at pos x/y

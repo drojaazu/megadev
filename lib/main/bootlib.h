@@ -27,6 +27,7 @@
 #define MEGADEV__MAIN_BOOTLIB_H
 
 #include "main/bootlib_def.h"
+#include "math.h"
 #include "types.h"
 #include "vdp.h"
 
@@ -34,11 +35,11 @@ struct SpriteObject
 {
 	u16 jmptbl_offset;
 	u16 flags;
-	u8 * spriteDef;
-	u32 posX;
-	u32 posY;
-	u32 moveX;
-	u32 moveY;
+	u8 const * spriteDef;
+	f32 posX;
+	f32 posY;
+	f32 moveX;
+	f32 moveY;
 	u8 shared_flags;
 	u8 uk2;
 };
@@ -567,7 +568,7 @@ static inline u8 blib_detect_controller (u8 * io_data_port)
 			jsr %p0 \n\
 		"
 		: "=d"(D6)
-		: "i"(_BLIB_SET_HINT), "a"(A6)
+		: "i"(_BLIB_DETECT_CONTROLLER), "a"(A6)
 		: "cc");
 
 	return D6;
@@ -579,6 +580,8 @@ static inline u8 blib_detect_controller (u8 * io_data_port)
  * @ingroup blib_vdp
  *
  * @note This does not clear CRAM.
+ *
+ * @todo this isn't clearing the sprite list for some reason...?
  *
  */
 static inline void blib_clear_vram()
@@ -791,12 +794,12 @@ static inline void blib_load_map (
  * Gate Array HINT register to the specified vector, and enables the interrupt
  * on the VDP.
  *
- * This is functionally identical to @ref _BLIB_SET_HINT, however this version
+ * This is functionally identical to @ref blib_set_hint, however this version
  * sets the GA HINT register directly to the specified vector. Since the GA
  * register is only 16 bits, it uses only the lower word of the address and
  * expects the routine to be locaed in Work RAM, i.e. 0xFFxxxx. This means if
  * the specified HINT routine is located elsewhere (such as Word RAM), you must
- * use @ref _BLIB_SET_HINT instead.
+ * use @ref blib_set_hint instead.
  *
  * @details
  * The VDP register buffer (_BLIB_VDPREGS) is updated with this call.
@@ -873,7 +876,17 @@ static inline void blib_vdp_disp_disable()
 }
 
 /**
+ * @fn blib_vint_wait_default
+ * @brief Wait for vertical interrupt with default flags
+ * @ingroup Interrupts
  * @sa _BLIB_VINT_HANDLER_WAIT_DEFAULT
+ *
+ * @details This will set the default VINT flags (copy sprite list & call
+ * VINT_EX) before waiting for VINT This will also make a call to _PRNG
+ *
+ * @note This will also make a call to _PRNG
+ *
+ * @warning This will enable all interrupts before waiting for the VINT!
  */
 static inline void blib_vint_wait_default()
 {
@@ -887,7 +900,14 @@ static inline void blib_vint_wait_default()
 }
 
 /**
+ * @fn blib_vint_wait
+ * @brief Wait for vertical interrupt
+ * @ingroup Interrupts
  * @sa _BLIB_VINT_HANDLER_WAIT
+ *
+ * @note This will also make a call to _PRNG
+ *
+ * @warning This will enable all interrupts before waiting for the VINT!
  */
 static inline void blib_vint_wait (u8 flags)
 {
@@ -1246,8 +1266,8 @@ static inline void blib_copy_pal()
  * @param[in] D1.w Object size
  * @ingroup blib_vdp
  */
-static inline void blib_process_sprobjs (struct SpriteObject * const obj_array,
-	Sprite * const sprtbl_cache,
+static inline void blib_process_sprobjs (struct SpriteObject const * obj_array,
+	Sprite const * sprtbl_cache,
 	u16 const obj_count,
 	u16 const obj_size)
 {

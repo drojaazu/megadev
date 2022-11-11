@@ -26,6 +26,8 @@
 #define PCM_CTRL ((volatile u8 *) _PCM_CTRL)
 #define PCM_CDISABLE ((volatile u8 *) _PCM_CDISABLE)
 
+#define SP_INT2 (*((void volatile *(*) ) (_USERCALL2 + 2)))
+
 // TODO - Verify which registers get trashed
 static inline void bios_waitvsync()
 {

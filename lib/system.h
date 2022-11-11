@@ -6,7 +6,7 @@
  */
 static inline void disable_interrupts()
 {
-	asm("ori #0x700,sr");
+	asm("or #0x700,sr");
 }
 
 /**
@@ -14,7 +14,7 @@ static inline void disable_interrupts()
  */
 static inline void enable_interrupts()
 {
-	asm("andi #0xF8FF,sr");
+	asm("and #0xF8FF,sr");
 }
 
 #endif

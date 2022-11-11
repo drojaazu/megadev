@@ -2,7 +2,7 @@
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
  * @file printval.s
- * @brief Utilities for printing hexadecimal values using the Boot ROM library
+ * @brief Utilities for converting hex values to ASCII for printing
  * print function
  */
 
