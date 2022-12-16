@@ -11,7 +11,7 @@
 #include "gatearr.h"
 #include "io.h"
 #include "memmap.h"
-#include "vdp.h"
+#include "main/vdp.h"
 #include "z80.h"
 
 #endif

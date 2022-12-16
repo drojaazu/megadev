@@ -8,7 +8,7 @@
 #ifndef MEGADEV__IO_H
 #define MEGADEV__IO_H
 
-#include "io_def.h"
+#include "main/io_def.h"
 #include "stdint.h"
 
 /**

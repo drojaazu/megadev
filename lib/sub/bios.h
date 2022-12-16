@@ -491,7 +491,7 @@ static inline struct cdbstat const * bios_cdbstat()
  * @def _BIOS_FDRSET
  * @brief Sets the audio volume
  * @sa _BIOS_FDRSET
- * @ingroup  bios_fader
+ * @ingroup bios_fader
  *
  * @details Setting the upper bit of the value changes the master volume
  *   16 bit volume         (0x0000 to 0x0400)

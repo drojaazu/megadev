@@ -1,6 +1,0 @@
-$(DISC_PATH)/ipx.mmd: ipx_layout.s.o ipx_init.s.o ipx.c.o 
-	$(call link_module, $^, $@, $(CFG_PATH)/module_mmd.ld, ip.bin)
-
-$(DISC_PATH)/spx.smd: spx_layout.s.o spx.c.o 
-	$(call link_module, $^, $@, $(CFG_PATH)/module_smd.ld, sp.bin)
-

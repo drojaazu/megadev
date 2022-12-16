@@ -1,5 +1,6 @@
 
 #include "sub/cdrom.h"
+#include "sub/gatearr.h"
 #include "sub/memmap.h"
 
 void load_ipx();
@@ -55,7 +56,7 @@ __attribute__ ((section (".init"))) void main()
 		}
 
 		// not reaching here?
-		asm(".global test_label\ntest_label:");
+		asm (".global test_label\ntest_label:");
 		*GA_COMSTAT0 = *GA_COMCMD0;
 		do
 		{

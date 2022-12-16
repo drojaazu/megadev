@@ -1,10 +1,11 @@
 #include "ipx.h"
-#include "io_def.h"
 #include "main/bootlib.h"
+#include "main/gatearr.h"
+#include "main/io_def.h"
 #include "main/memmap.h"
-#include "mmd_exec.h"
+#include "main/mmd_exec.h"
+#include "main/vdp.h"
 #include "system.h"
-#include "vdp.h"
 
 u8 global_mode;
 
@@ -49,8 +50,8 @@ void main()
 	MLEVEL6_VECTOR = (void *(*) ) _BLIB_VINT_HANDLER;
 	enable_interrupts();
 	blib_load_font_defaults();
-	PALETTE[1] = 0xeee;
-	*VDP_UPDATE_FLAGS |= PAL_UPDATE_MSK;
+	BLIB_PALETTE[1] = 0xeee;
+	BLIB_VDP_UPDATE_FLAGS |= PAL_UPDATE_MSK;
 
 	blib_print ("PCM Audio Playback\xff",
 		(VDPPTR (NMT_POS_PLANE (1, 1, _BLIB_PLANEA_ADDR)) | VRAM_W));

@@ -9,7 +9,7 @@
 #define MEGADEV__MAIN_IO_S
 
 #include "macros.s"
-#include "io_def.h"
+#include "main/io_def.h"
 
 /*
 	External comm port

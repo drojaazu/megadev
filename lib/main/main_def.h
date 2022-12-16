@@ -9,10 +9,10 @@
 #define MEGADEV__MAIN_MAIN_DEF_H
 
 #include "gatearr_def.h"
-#include "io_def.h"
+#include "main/io_def.h"
 #include "md_sys_def.h"
 #include "memmap_def.h"
-#include "vdp_def.h"
+#include "main/vdp_def.h"
 #include "z80_def.h"
 
 #endif

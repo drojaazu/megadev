@@ -6,7 +6,7 @@
  * print function
  */
 
-#include "macros.s"
+#include "../macros.s"
 
 .section .text
 

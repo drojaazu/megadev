@@ -9,15 +9,31 @@
 #define MEGADEV__MAIN_BOOTLIB_DEF_H
 
 /**
- * @defgroup blib_vdp Boot Library VDP related
+ * @defgroup blib_vdp Main CPU / Boot Lib / VDP
  */
 
 /**
- * @defgroup blib_input Boot Library user input related
+ * @defgroup blib_input Main CPU / Boot Lib / User input
  */
 
 /**
- * @defgroup blib_mic Boot Library misc
+ * @defgroup blib_int Main CPU / Boot Lib / Interrupts
+ */
+
+/**
+ * @defgroup blib_cmp Main CPU / Boot Lib / Compression
+ */
+
+/**
+ * @defgroup blib_comm Main CPU / Boot Lib / CPU Comm
+ */
+
+/**
+ * @defgroup blib_system Main CPU / Boot Lib / System calls
+ */
+
+/**
+ * @defgroup blib_misc Main CPU / Boot Lib / Misc
  */
 
 #define _WRKRAM_BLIB 0xFFF700
@@ -33,7 +49,6 @@
 #define _BLIB_SPRLIST 0xFFF900
 
 /**
- * @def _BLIB_PALETTE
  * @sa BLIB_PALETTE
  */
 #define _BLIB_PALETTE 0xFFFB80
@@ -85,7 +100,6 @@
 #define _BLIB_COMCMD 0xfffde0
 
 /**
- * @var u16 _BLIB_COMCMD0
  * @brief GA COMCMD0 register cache
  */
 #define _BLIB_COMCMD0 0xfffde0
@@ -188,41 +202,49 @@
 
 /**
  * @sa BLIB_JOY1_MOUSE_DATA
+ * @ingroup blib_input
  */
 #define _BLIB_JOY1_MOUSE_DATA 0xfffe00
 
 /**
  * @sa BLIB_JOY1_MOUSE_DX
+ * @ingroup blib_input
  */
 #define _BLIB_JOY1_MOUSE_DX 0xfffe06
 
 /**
  * @sa BLIB_JOY1_MOUSE_DY
+ * @ingroup blib_input
  */
 #define _BLIB_JOY1_MOUSE_DY 0xfffe08
 
 /**
  * @sa BLIB_JOY2_MOUSE_DATA
+ * @ingroup blib_input
  */
 #define _BLIB_JOY2_MOUSE_DATA 0xfffe0c
 
 /**
  * @sa BLIB_JOY2_MOUSE_DX
+ * @ingroup blib_input
  */
 #define _BLIB_JOY2_MOUSE_DX 0xfffe12
 
 /**
  * @sa BLIB_JOY2_MOUSE_DY
+ * @ingroup blib_input
  */
 #define _BLIB_JOY2_MOUSE_DY 0xfffe14
 
 /**
  * @sa BLIB_JOY1_TYPE
+ * @ingroup blib_input
  */
 #define _BLIB_JOY1_TYPE 0xfffe18
 
 /**
  * @sa BLIB_JOY2_TYPE
+ * @ingroup blib_input
  */
 #define _BLIB_JOY2_TYPE 0xfffe19
 
@@ -235,41 +257,49 @@
 
 /**
  * @sa BLIB_JOY1_HOLD
+ * @ingroup blib_input
  */
 #define _BLIB_JOY1_HOLD 0xfffe20
 
 /**
  * @sa BLIB_JOY1_PRESS
+ * @ingroup blib_input
  */
 #define _BLIB_JOY1_PRESS 0xfffe21
 
 /**
  * @sa BLIB_JOY2_HOLD
+ * @ingroup blib_input
  */
 #define _BLIB_JOY2_HOLD 0xfffe22
 
 /**
  * @sa BLIB_JOY2_PRESS
+ * @ingroup blib_input
  */
 #define _BLIB_JOY2_PRESS 0xfffe23
 
 /**
  * @sa BLIB_JOY1_DELAY
+ * @ingroup blib_input
  */
 #define _BLIB_JOY1_DELAY 0xfffe24
 
 /**
  * @sa BLIB_JOY2_DELAY
+ * @ingroup blib_input
  */
 #define _BLIB_JOY2_DELAY 0xfffe25
 
 /**
  * @sa BLIB_VINT_FLAGS
+ * @ingroup blib_int
  */
 #define _BLIB_VINT_FLAGS 0xfffe26
 
 /**
  * Flags for @ref _BLIB_VINT_FLAGS
+ * @ingroup blib_int
  */
 #define COPY_SPRLIST_BIT 0
 #define CALL_VINT_EX_BIT 1
@@ -282,16 +312,19 @@
 
 /**
  * @sa BLIB_VINT_COUNTER
+ * @ingroup blib_int
  */
 #define _BLIB_VINT_COUNTER 0xfffe27
 
 /**
  * @sa BLIB_VINT_SKIP_GFX
+ * @ingroup blib_int
  */
 #define _BLIB_VINT_SKIP_GFX 0xfffe28
 
 /**
  * @sa BLIB_VDP_UPDATE_FLAGS
+ * @ingroup blib_vdp
  */
 #define _BLIB_VDP_UPDATE_FLAGS 0xfffe29
 
@@ -302,46 +335,55 @@
 
 /**
  * @sa BLIB_RANDOM
+ * @ingroup blib_misc
  */
 #define _BLIB_RANDOM 0xfffe2a
 
 /**
  * @sa BLIB_FONT_TILE_BASE
+ * @ingroup blib_misc
  */
 #define _BLIB_FONT_TILE_BASE 0xfffe2c
 
 /**
  * @sa BLIB_PLANE_WIDTH
+ * @ingroup blib_vdp
  */
 #define _BLIB_PLANE_WIDTH 0xFFFE2E
 
 /**
  * @sa BLIB_SPRTBL_PTR
+ * @ingroup blib_vdp
  */
 #define _BLIB_SPRTBL_PTR 0xFFFE30
 
 /**
  * @sa BLIB_SPR_JMPTBL_PTR
+ * @ingroup blib_vdp
  */
 #define _BLIB_SPR_JMPTBL_PTR 0xFFFE34
 
 /**
  * @sa BLIB_FADEIN_PAL_INDEX
+ * @ingroup blib_vdp
  */
 #define _BLIB_FADEIN_PAL_INDEX 0xfffe46
 
 /**
  * @sa BLIB_FADEIN_PAL_LENGTH
+ * @ingroup blib_vdp
  */
 #define _BLIB_FADEIN_PAL_LENGTH 0xfffe47
 
 /**
  * @sa BLIB_FADEIN_STEP
+ * @ingroup blib_vdp
  */
 #define _BLIB_FADEIN_STEP 0xfffe48
 
 /**
  * @sa BLIB_FADEIN_TARGET_PAL_PTR
+ * @ingroup blib_vdp
  */
 #define _BLIB_FADEIN_TARGET_PAL_PTR 0xfffe4a
 
@@ -360,12 +402,14 @@
 /******************************************************************************/
 
 /**
- * @sa blib_cdbios_entry
+ * @sa blib_bios_entry
+ * @ingroup blib_system
  */
-#define _BLIB_CDBIOS_ENTRY 0x000280
+#define _BLIB_BIOS_ENTRY 0x000280
 
 /**
  * @sa blib_reset
+ * @ingroup blib_system
  */
 #define _BLIB_RESET 0x000284
 
@@ -381,6 +425,7 @@
 
 /**
  * @sa blib_vint_handler
+ * @ingroup blib_int
  */
 #define _BLIB_VINT_HANDLER 0x000290
 
@@ -396,17 +441,19 @@
  * @sa blib_set_hint
  * @param[in] A1.l Pointer to HINT handler subroutine
  * @clobber None
+ * @ingroup blib_int
  */
 #define _BLIB_SET_HINT 0x000294
 
 /**
  * @sa blib_update_inputs
  *
- * @param[out] _BLIB__BLIB_JOY1_PRESS
+ * @param[out] _BLIB_JOY1_PRESS
  * @param[out] _BLIB_JOY1_HOLD
  * @param[out] _BLIB_JOY2_PRESS
  * @param[out] _BLIB_JOY2_HOLD
  * @clobber d6-d7/a5-a6
+ * @ingroup blib_input
  */
 #define _BLIB_UPDATE_INPUTS 0x000298
 
@@ -414,30 +461,35 @@
  * @sa blib_detect_controller
  * @param[in] a6.l Pointer to joypad data port
  * @param[out] d6.b Controller type
+ * @ingroup blib_input
  */
 #define _BLIB_DETECT_CONTROLLER 0x00029C
 
 /**
  * @sa blib_clear_vram
  * @clobber d0-d3/a6
+ * @ingroup blib_vdp
  */
 #define _BLIB_CLEAR_VRAM 0x0002A0
 
 /**
  * @sa blib_clear_tables
  * @clobber d0-d3/a6
+ * @ingroup blib_vdp
  */
 #define _BLIB_CLEAR_TABLES 0x0002A4
 
 /**
  * @sa blib_clear_vsram
  * @clobber d0-d2
+ * @ingroup blib_vdp
  */
 #define _BLIB_CLEAR_VSRAM 0x0002A8
 
 /**
  * @sa blib_load_vdpregs_default
  * @clobber d0-d1/a1-a2
+ * @ingroup blib_vdp
  */
 #define _BLIB_LOAD_VDPREGS_DEFAULT 0x0002AC
 
@@ -445,6 +497,7 @@
  * @sa blib_load_vdpregs
  * @param[in] A1.l Pointer to register data
  * @clobber d0-d1/a2
+ * @ingroup blib_vdp
  */
 #define _BLIB_LOAD_VDPREGS 0x0002B0
 
@@ -454,6 +507,7 @@
  * @param[in] D1.w Length (in words)
  * @param[in] D2.w Value
  * @clobber d0-d2
+ * @ingroup blib_vdp
  */
 #define _BLIB_VDP_FILL 0x0002B4
 
@@ -463,6 +517,7 @@
  * @param[in] D1.w Length (in words)
  * @ingroup blib_vdp
  * @clobber d0-d2
+ * @ingroup blib_vdp
  */
 #define _BLIB_VDP_FILL_CLEAR 0x0002B8
 
@@ -472,6 +527,7 @@
  * @param[in] D0.l Address (vdpptr format)
  * @param[in] D1.w Length (in words)
  * @clobber d0-d3/a6
+ * @ingroup blib_vdp
  */
 #define _BLIB_DMA_FILL_CLEAR 0x0002BC
 
@@ -482,6 +538,7 @@
  * @param[in] D1.w Length (in words)
  * @param[in] D2.w Value
  * @clobber d0-d3/a6
+ * @ingroup blib_vdp
  */
 #define _BLIB_DMA_FILL 0x0002C0
 
@@ -494,6 +551,7 @@
  * @param[in] D2.w Map height
  * @param[in] A1.l Pointer to map data
  * @clobber d0-d3/a1/a5
+ * @ingroup blib_vdp
  */
 #define _BLIB_LOAD_MAP 0x0002C4
 
@@ -506,8 +564,7 @@
  * @param[in] D3.w Template
  * @param[in] A1.l Pointer to map data
  * @clobber d0-d3/a1/a5
- *
- * GROUP: VDP
+ * @ingroup blib_vdp
  *
  * @details This is very similar to _VDP_LOAD_MAP, however, the input map data
  * is made up of only single bytes. The value is placed in the lower byte of D3,
@@ -520,26 +577,28 @@
 /**
  * @sa blib_nmtbl_fill
  * @clobber d0-d3/d5/a5
+ * @ingroup blib_vdp
  */
 #define _BLIB_NMTBL_FILL 0x0002CC
 
 /**
  * @sa blib_dma_xfer
  * @clobber d0-d3/a6
+ * @ingroup blib_vdp
  */
 #define _BLIB_DMA_XFER 0x0002D0
 
 /**
  * @sa blib_dma_xfer_wrdram
  * @clobber d0-d3/a6
+ * @ingroup blib_vdp
  */
-#define _BLIB_DMA_XFER_WORDRAM 0x0002D4
+#define _blib_dma_xfer_wrdram 0x0002D4
 
 /**
  * @fn _BLIB_VDP_DISP_ENABLE
  * @brief Enable VDP output
- *
- * GROUP: VDP
+ * @ingroup blib_vdp
  *
  * @details Sets bit 6 on VDP reg. #1. The VDP register buffer is updated.
  */
@@ -548,8 +607,7 @@
 /**
  * @fn _BLIB_VDP_DISP_DISABLE
  * @brief Disable VDP output
- *
- * GROUP: VDP
+ * @ingroup blib_vdp
  *
  * @details Clears bit 6 on VDP reg. #1. The VDP register buffer is updated.
  */
@@ -720,7 +778,7 @@
  * @param[in] D0.l VRAM destination (VDPPTR)
  * @param[in] D1.l Color bit map
  * @clobber d2-d4/a1/a5
- * @ingroup boot_misc
+ * @ingroup blib_misc
  *
  * @details
  * See the notes in _LOAD_1BPP_TILES for more info about the color bit map.
@@ -747,7 +805,7 @@
  * @param[in] D0.w Start tile index
  * @param[in] A1.l Pointer to Enigma compressed data
  * @param[in] A2.l Pointer to output buffer
- * @ingroup boot_compression
+ * @ingroup blib_cmp
  */
 #define _BLIB_MAP_DECOMP 0x000330
 
@@ -815,7 +873,7 @@
  * @fn _BLIB_TRIGGER_IFL2
  * @brief Send INT 2 to Sub CPU
  * @clobber a5
- * @ingroup boot_interrupts
+ * @ingroup blib_int
  */
 #define _BLIB_TRIGGER_IFL2 0x000360
 
@@ -833,7 +891,7 @@
  * @fn _BLIB_SET_VINT
  * @brief Set a new VINT subroutine
  * @param[in] A1.l Pointed to VINT subroutinte
- * @ingroup boot_interrupts
+ * @ingroup blib_int
  *
  * @note This is relatively useless as a subroutine. It simply moves
  * the adddress into _mlevel6+2. You may as well do the move yourself and skip
@@ -891,7 +949,7 @@
  * @brief Convert a byte value to BCD
  * @param[in] D1.b Hex value
  * @param[out] D1.b BCD value
- * @ingroup boot_misc
+ * @ingroup blib_misc
  */
 #define _BLIB_TO_BCD_BYTE 0x00037C
 
@@ -900,7 +958,7 @@
  * @brief Convert a word value to BCD
  * @param[in] D1.w Hex value
  * @param[out] D1.w BCD value
- * @ingroup boot_misc
+ * @ingroup blib_misc
  */
 #define _BLIB_TO_BCD 0x000380
 
@@ -916,16 +974,19 @@
 
 /**
  * @sa blib_pal_fadeout
+ * @ingroup blib_vdp
  */
 #define _BLIB_PAL_FADEOUT 0x000388
 
 /**
  * @sa blib_pal_fadein
+ * @ingroup blib_vdp
  */
 #define _BLIB_PAL_FADEIN 0x00038C
 
 /**
  * @sa blib_set_fadein_pal
+ * @ingroup blib_vdp
  */
 #define _BLIB_SET_FADEIN_PAL 0x000390
 

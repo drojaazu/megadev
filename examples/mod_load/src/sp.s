@@ -137,8 +137,8 @@ cmd02_play_cdda:
 	add.w d1, d1
 	lea	cd_track(pc,d1.w), a0
 	move.w	#0x400, d1
-	CDBIOS #FDRSET
-	CDBIOS #MSCPLAYR
+	CDBIOS #_BIOS_FDRSET
+	CDBIOS #_BIOS_MSCPLAYR
 	bra			command_complete_sync
 cd_track:
 	.word 2

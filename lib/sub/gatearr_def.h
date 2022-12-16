@@ -9,7 +9,7 @@
 #define MEGADEV__SUB_GATEARR_DEF_H
 
 /**
- * @defgroup sub_ga_regs Sub CPU Gate Array Registers
+ * @defgroup sub_ga_regs Sub CPU / Gate Array Registers
  */
 
 /**

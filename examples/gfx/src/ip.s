@@ -4,9 +4,10 @@
 
 .section .text
 
-#include "main/memmap_def.h"
+#include "main/main_def.h"
 #include "main/bootlib_def.h"
-#include "main/macros.s"
+#include "main/gatearr_macros.s"
+#include "main/gatearr_def.h"
 #include "main/vdp_def.h"
 #include "macros.s"
 #include "mmd_layout.s"

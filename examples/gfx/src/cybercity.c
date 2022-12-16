@@ -1,6 +1,6 @@
 
-#include "io.h"
 #include "main/bootlib.h"
+#include "main/io.h"
 #include "main/memmap.h"
 #include "main/vdp.h"
 #include "types.h"
@@ -49,7 +49,7 @@ __attribute__ ((noreturn)) void main()
 	ship_parts.spriteDef = res_ship_spr;
 	ship_parts.posX = 150 << 16;
 	ship_parts.posY = 140 << 16;
-	ship_parts.status = 1;
+	ship_parts.jmptbl_offset = 1;
 	ship_parts.shared_flags = 0x20;
 
 	// turn off the display while we init
@@ -73,8 +73,8 @@ __attribute__ ((noreturn)) void main()
 	// VDP compatible format. It is written so that constant values will be
 	// calculated at compile time, and variables will be calculated at runtime
 	// with the optimized conversion code
-	blib_dma_xfer_wordram ((VDPPTR (0) | CRAM_W), res_cybercity_pal, 32 >> 1);
-	blib_dma_xfer_wordram ((VDPPTR (32) | CRAM_W), res_ship_pal, 32 >> 1);
+	blib_dma_xfer_wrdram ((VDPPTR (0) | CRAM_W), res_cybercity_pal, 32 >> 1);
+	blib_dma_xfer_wrdram ((VDPPTR (32) | CRAM_W), res_ship_pal, 32 >> 1);
 
 	// blib_gfx_decomp requires that we set the VDP address first
 	VDP_CTRL_32 = VDPPTR (VRAM_AT (1)) | VRAM_W;
@@ -90,7 +90,7 @@ __attribute__ ((noreturn)) void main()
 
 	free_tile += ((*(u16 *) res_cybercity_farbg_cmp_nem) & 0x7fff);
 
-	blib_dma_xfer_wordram (
+	blib_dma_xfer_wrdram (
 		VDPPTR (VRAM_AT (free_tile)) | VRAM_W, res_ship_chr, 1920 >> 1);
 
 	blib_load_map (VDPPTR (NMT_POS_PLANE (0, 2, _BLIB_PLANEA_ADDR)) | VRAM_W,

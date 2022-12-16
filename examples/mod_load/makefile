@@ -4,7 +4,7 @@
 ################################################################################
 
 # Path to the Megadev directory
-MEGADEV_PATH:=/home/ryou/Projects/megadev
+MEGADEV_PATH:=/opt/megadev
 
 # This will be used for filename output
 PROJECT_NAME=mod_load

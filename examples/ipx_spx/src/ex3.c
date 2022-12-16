@@ -1,11 +1,11 @@
 
-#include "io_def.h"
 #include "ipx.h"
 #include "main/bootlib.h"
+#include "main/io_def.h"
 #include "main/memmap.h"
+#include "main/vdp.h"
 #include "system.h"
 #include "types.h"
-#include "vdp.h"
 
 extern u8 global_mode;
 extern u8 res_bubbles_chr;
@@ -15,8 +15,8 @@ extern Palette res_bubbles_pal;
 void main()
 {
 	disable_interrupts();
-	boot_load_pal_update (&res_bubbles_pal);
-	boot_dma_xfer_wordram (
+	blib_load_pal_update (&res_bubbles_pal);
+	blib_dma_xfer_wrdram (
 		VDPPTR (VRAM_AT (0x80)), &res_bubbles_chr, res_bubbles_chr_sz >> 1);
 	enable_interrupts();
 

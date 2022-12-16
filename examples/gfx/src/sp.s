@@ -1,4 +1,4 @@
-#include "sub/memmap_def.h"
+#include "sub/gatearr_def.h"
 #include "sub/macros.s"
 #include "sub/cdrom_macros.s"
 #include "sub/cdrom_def.h"
@@ -67,7 +67,7 @@ GLABEL sp_main
   // We'll repoint stack to the end of the first bank of PRG-RAM to free up RAM
 	// a little bit (since at this point, as we're about to enter the main loop,
 	// we're not returning to anything)
-	lea			PRG_RAM1, sp
+	lea			_PRGRAM_1M_1, sp
 
   /*
 	  The architecture of the command loop is like so: we constantly poll COMCMD0
@@ -145,8 +145,8 @@ cmd02_play_cdda:
 	add.w d1, d1
 	lea	cd_track(pc,d1.w), a0
 	move.w	#0x400, d1
-	CDBIOS #FDRSET
-	CDBIOS #MSCPLAYR
+	CDBIOS #_BIOS_FDRSET
+	CDBIOS #_BIOS_MSCPLAYR
 	bra			command_complete_sync
 cd_track:
 	.word 2

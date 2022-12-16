@@ -5,9 +5,10 @@
 .section .text
 
 #include "main/memmap_def.h"
+#include "main/gatearr_macros.s"
 #include "main/bootlib_def.h"
 #include "main/macros.s"
-#include "vdp_def.h"
+#include "main/vdp_def.h"
 #include "macros.s"
 #include "ipx_layout.s"
 

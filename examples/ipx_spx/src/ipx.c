@@ -1,10 +1,11 @@
 
 #include "ipx.h"
 #include "main/bootlib.h"
+#include "main/gatearr.h"
 #include "main/memmap.h"
-#include "mmd_exec.h"
+#include "main/mmd_exec.h"
+#include "main/vdp.h"
 #include "system.h"
-#include "vdp.h"
 
 u8 global_mode;
 
@@ -15,21 +16,21 @@ InitSettings settings;
 void init_particle (u8 particle_idx)
 {
 	particles[particle_idx].status = Falling;
-	particles[particle_idx].pos_x = boot_prng_mod (320) + 128;
-	particles[particle_idx].pos_y = boot_prng_mod (5) + 123;
+	particles[particle_idx].pos_x = blib_prng_mod (320) + 128;
+	particles[particle_idx].pos_y = blib_prng_mod (5) + 123;
 	particles[particle_idx].speed =
-		boot_prng_mod ((settings.max_speed - settings.min_speed) + 1) +
+		blib_prng_mod ((settings.max_speed - settings.min_speed) + 1) +
 		settings.min_speed;
-	particles[particle_idx].end_at = boot_prng_mod (11) + 320;
+	particles[particle_idx].end_at = blib_prng_mod (11) + 320;
 	particles[particle_idx].timer = 0;
 
-	SPRITE_LIST[particle_idx].next = particle_idx + 1;
-	SPRITE_LIST[particle_idx].pos_y = 128;
-	SPRITE_LIST[particle_idx].pos_x = particles[particle_idx].pos_x;
-	SPRITE_LIST[particle_idx].tile = settings.main_tile;
-	SPRITE_LIST[particle_idx].palette = settings.palette;
-	SPRITE_LIST[particle_idx].width = settings.main_width;
-	SPRITE_LIST[particle_idx].height = settings.main_height;
+	BLIB_SPRLIST[particle_idx].next = particle_idx + 1;
+	BLIB_SPRLIST[particle_idx].pos_y = 128;
+	BLIB_SPRLIST[particle_idx].pos_x = particles[particle_idx].pos_x;
+	BLIB_SPRLIST[particle_idx].tile = settings.main_tile;
+	BLIB_SPRLIST[particle_idx].palette = settings.palette;
+	BLIB_SPRLIST[particle_idx].width = settings.main_width;
+	BLIB_SPRLIST[particle_idx].height = settings.main_height;
 }
 
 void init_particles (u16 main_tile,
@@ -84,9 +85,9 @@ void process_particles()
 				continue;
 			}
 
-			SPRITE_LIST[iter].tile = settings.end_tile;
-			SPRITE_LIST[iter].width = settings.main_width;
-			SPRITE_LIST[iter].height = settings.main_height;
+			BLIB_SPRLIST[iter].tile = settings.end_tile;
+			BLIB_SPRLIST[iter].width = settings.main_width;
+			BLIB_SPRLIST[iter].height = settings.main_height;
 			particles[iter].timer = settings.end_countdown;
 			goto update_sprites;
 		}
@@ -103,14 +104,14 @@ void process_particles()
 		}
 
 	update_sprites:
-		SPRITE_LIST[iter].pos_x = particles[iter].pos_x;
-		SPRITE_LIST[iter].pos_y = particles[iter].pos_y;
+		BLIB_SPRLIST[iter].pos_x = particles[iter].pos_x;
+		BLIB_SPRLIST[iter].pos_y = particles[iter].pos_y;
 	}
 }
 
 void vint_ex()
 {
-	boot_copy_sprlist();
+	blib_copy_sprlist();
 }
 
 // At this point, the full IPX binary has been copies to Work RAM and all
@@ -121,7 +122,7 @@ void main()
 
 	// repoint the VINT vector to the boot rom library version
 	MLEVEL6_VECTOR = (void *(*) ) _BLIB_VINT_HANDLER;
-	*VINT_EX_PTR = vint_ex;
+	*BLIB_VINT_EX_PTR = vint_ex;
 
 	// don't forget, we disabled interrupts earlier in the IPX (ipx_init.s)
 	// but be sure we've re-pointed the the vblank handler vector
@@ -136,8 +137,8 @@ void main()
 	blib_load_font_defaults();
 
 	// The font uses palette entry #1, so we'll manually set that to white
-	PALETTE[1] = 0xeee;
-	*VDP_UPDATE_FLAGS |= PAL_UPDATE_MSK;
+	BLIB_PALETTE[1] = 0xeee;
+	BLIB_VDP_UPDATE_FLAGS |= PAL_UPDATE_MSK;
 
 	do
 	{
@@ -161,7 +162,7 @@ void main()
 		{
 			// the NOP is so GCC doesn't optimize the loop away
 			// though since comstat is marked volatile it should be fine...
-			asm("nop");
+			asm ("nop");
 		} while (*GA_COMSTAT0 == 0);
 
 		// reset the command to none (0) once we have the acknowledgment
@@ -170,7 +171,7 @@ void main()
 		// the Sub CPU side work will be complete when COMSTAT0 returns to 0
 		do
 		{
-			asm("nop");
+			asm ("nop");
 		} while (*GA_COMSTAT0 != 0);
 
 		// Sub CPU side work is complete and the MMD should now be in 2M Word RAM

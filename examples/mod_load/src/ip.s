@@ -7,7 +7,8 @@
 #include "main/memmap_def.h"
 #include "main/bootlib_def.h"
 #include "main/macros.s"
-#include "vdp_def.h"
+#include "main/vdp_def.h"
+#include "main/gatearr_macros.s"
 #include "macros.s"
 
 
@@ -56,7 +57,7 @@ prep_load:
   bra prep_load
 
 // Include the code for the MMD loader here
-#include "mmd_exec.s"
+#include "main/mmd_exec.s"
 
 .section .bss
 .global global_mode

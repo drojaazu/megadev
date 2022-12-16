@@ -116,7 +116,7 @@ Some Boot ROM library calls do not use any RAM at all and can be called no matte
 
 ## System
 
-__BLIB_CDBIOS_ENTRY
+__BLIB_BIOS_ENTRY
 
 __BLIB_RESET
 
@@ -270,7 +270,7 @@ Components: DMA, VDP Register Cache
 
 Performs a DMA transfer to VRAM.
 
-### `_BLIB_DMA_XFER_WORDRAM`
+### `_blib_dma_xfer_wrdram`
 Components: DMA, VDP Register Cache
 
 Performs a DMA transfer to VRAM for source data in Word RAM.
