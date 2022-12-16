@@ -12,9 +12,10 @@
 #include "macros.s"
 #include "main/memmap_def.h"
 #include "main/bootlib_def.h"
-#include "vdp_macros.s"
-#include "vdp_def.h"
-#include "io_def.h"
+#include "main/vdp_macros.s"
+#include "main/gatearr_def.h"
+#include "main/vdp_def.h"
+#include "main/io_def.h"
 
 ip_entry:
   // First, disable all interrupts while we get things set up
@@ -64,7 +65,7 @@ loop:
   jbsr _BLIB_VINT_HANDLER_WAIT_DEFAULT
   // Inputs are updated as part of the default vint wait subroutine
   // so we can assume the input value is current
-  and.b #PAD_START_MSK, _BLIB__BLIB_JOY1_PRESS
+  and.b #PAD_START_MSK, _BLIB_JOY1_PRESS
 	beq loop
 	
   jmp _BLIB_RESET
