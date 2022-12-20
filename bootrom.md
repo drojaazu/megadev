@@ -481,8 +481,12 @@ ptr to SpriteList
 
 sprite list is:
 byte 0 - number of sprites in list
-byte 1 - shared priority/pal/flip flags
+byte 1 - unknown
 each sprite in the list is 6 bytes, in the Sonic 1 format ( http://info.sonicretro.org/SCHG:Sonic_the_Hedgehog_(16-bit)/Object_Editing#Mappings_editing - 5 bytes) plus a padding byte at the end
+
+After much analysis and testing, the code interacts with the sprite list unknown byte mentioned above, but does do anything with it. Its value is copied to offset 0x19 within the sprobj as part of the `_BLIB_DISP_SPROBJ` routine. If the h flip flag is set, it adds to this same offset. Aside form that, the value seems to have no effect on what is displayed and it's unclear for what it is intended.
+
+The sprobjs calls are used by the BIOS CD player and Wondermega Collection.
 
 ### `_BLIB_UPDATE_SPROBJS`
 

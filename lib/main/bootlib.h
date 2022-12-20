@@ -42,7 +42,7 @@ struct SpriteObject
 	s32 moveX;
 	s32 moveY;
 	u8 shared_flags;
-	u8 uk2;
+	u8 unknown;
 };
 
 /**
