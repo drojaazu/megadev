@@ -1,5 +1,7 @@
 /**
- * @file
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file vdp.h
  * @brief C wrappers for VDP usage
  */
 

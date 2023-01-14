@@ -13,21 +13,52 @@
  * The below settings will appear in the program header, located within the boot
  * sector of the disc.
  *******************************************************************************
- * These are *size sensitive* and must occupy exactly the amount of space      *
- * listed. You can use the sizing bar (######) below each entry to ensure your *
- * text fits, and unused space should be filled with spaces.                   *
+ *    These are *size sensitive* and must occupy exactly the amount of space   *
+ *   listed. You can use the sizing guide (######) below each entry to ensure  *
+ *        your text fits, and unused space should be filled with spaces.       *
  *******************************************************************************
  */
 
 /**
  * @def HEADER_VOL_ID
  * @brief Disc volume ID
- * @details This will be the "name" of the disc, as displayed in a file manager
- * when mounted on a PC
+ * @details
+ * This will be the "name" of the disc, as displayed in a file manager when
+ * mounted on a PC
  * @note 11 bytes
  */
 #define HEADER_VOL_ID "GFX_EXAMPLE"
 //                    "###########"
+
+/**
+ * @def HEADER_HARDWARE
+ * @brief Target hardware
+ * @details
+ * This line indicates the hardware on which the game is meant to run. Despite
+ * obviously targeting the Mega CD, the actual identifier should be Mega Drive
+ * or Genesis, e.g.:
+ *  SEGA MEGA DRIVE
+ *  SEGA GENESIS
+ * @note 16 bytes
+ * @todo autogenerate this based on hardware settings in the project makefile
+ */
+#define HEADER_HARDWARE "SEGA MEGA DRIVE "
+//                      "################"
+
+/**
+ * @def HEADER_COPYRIGHT
+ * @brief Publisher copyright & date
+ * @details
+ * This line indicates the publisher name or ID and the build date
+ * In retail games from the time, it was commonly written with (C)
+ * along with the published code then the year and month, e.g.:
+ *  (C)SEGA 1994.AUG\n
+ *  (C)T-76 1994.FEB\n
+ * @note 16 bytes
+ * @todo autogenerate the date
+ */
+#define HEADER_COPYRIGHT "(C)     2022.NOV"
+//                       "################"
 
 /**
  * @def HEADER_NAME_INTL
@@ -94,7 +125,7 @@
 #define HEADER_REGION "E               "
 #endif
 // All regions, regardless of BIOS security code
-//#define HEADER_REGION "JUE             "
+// #define HEADER_REGION "JUE             "
 //                    "################"
 
 #endif

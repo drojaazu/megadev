@@ -158,7 +158,7 @@ $(BUILD_PATH)/boot.bin: $(BUILD_PATH)/boot.s.o
 
 $(BUILD_PATH)/%.c.o: %.c
 	$(call msg_info,Compiling source $(notdir $<))
-	@$(CC) $(CC_FLAGS) $(INC) $(AS_INC) -c $< -o$@
+	@$(CC) $(CC_FLAGS) $(INC) -Ilib/gcc.h $(AS_INC) -c $< -o$@
 
 $(BUILD_PATH)/%.s.o: %.s
 	$(call msg_info,Compiling source $(notdir $<))

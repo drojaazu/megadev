@@ -11,7 +11,6 @@
 #ifndef MEGADEV__SUB_COMMSYNC_S
 #define MEGADEV__SUB_COMMSYNC_S
 
-
 .section .text
 
 #include "macros.s"

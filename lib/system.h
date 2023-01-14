@@ -1,3 +1,10 @@
+/**
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file system.h
+ * @brief System utilities
+ */
+
 #ifndef MEGADEV__SYSTEM_H
 #define MEGADEV__SYSTEM_H
 
@@ -6,7 +13,7 @@
  */
 static inline void disable_interrupts()
 {
-	asm("or #0x700,sr");
+	asm ("or #0x700,sr");
 }
 
 /**
@@ -14,7 +21,7 @@ static inline void disable_interrupts()
  */
 static inline void enable_interrupts()
 {
-	asm("and #0xF8FF,sr");
+	asm ("and #0xF8FF,sr");
 }
 
 #endif

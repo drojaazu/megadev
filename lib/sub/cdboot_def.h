@@ -1,5 +1,7 @@
 /**
- * @file
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file cdboot_def.h
  * @brief Function codes for the _CDBOOT vector
  */
 

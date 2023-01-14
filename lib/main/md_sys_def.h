@@ -1,6 +1,8 @@
 /**
- * @file
- * @brief Misc. Mega Drive system registers
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file md_sys_def.h
+ * @brief Misc Mega Drive system registers
  */
 
 #ifndef MEGADEV__MAIN_MD_SYS_DEF_H
@@ -8,7 +10,7 @@
 
 /**
  * @def REG_VERSION
- * @brief Plane B Name Table VRAM Address
+ * @brief Version register
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
  * |-:|-:|-:|-:|-:|-:|-:|-:|

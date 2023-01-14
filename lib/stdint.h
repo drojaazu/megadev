@@ -10,73 +10,73 @@
 
 /**
  * @typedef int8_t
- * @brief 8 bits signed integer (equivalent to char).
+ * @brief 8 bits signed integer
  */
 typedef char int8_t;
 
 /**
  * @typedef s8
- * @brief 8 bits signed integer (equivalent to char).
+ * @brief 8 bits signed integer
  */
 typedef int8_t s8;
 
 /**
  * @typedef int16_t
- * @brief 16 bits signed integer (equivalent to short).
+ * @brief 16 bits signed integer
  */
 typedef short int16_t;
 
 /**
  * @typedef s16
- * @brief 16 bits signed integer (equivalent to short).
+ * @brief 16 bits signed integer
  */
 typedef int16_t s16;
 
 /**
  * @typedef int32_t
- * @brief 32 bits signed integer (equivalent to long).
+ * @brief 32 bits signed integer
  */
 typedef long int32_t;
 
 /**
  * @typedef s32
- * @brief 32 bits signed integer (equivalent to long).
+ * @brief 32 bits signed integer
  */
 typedef int32_t s32;
 
 /**
  * @typedef uint8_t
- * @brief 8 bits unsigned integer (equivalent to unsigned char).
+ * @brief 8 bits unsigned integer
  */
 typedef unsigned char uint8_t;
 
 /**
  * @typedef u8
- * @brief 8 bits unsigned integer (equivalent to unsigned char).
+ * @brief 8 bits unsigned integer
  */
 typedef uint8_t u8;
 
 /**
  * @typedef uint16_t
- * @brief 16 bits unsigned integer (equivalent to unsigned short)
+ * @brief 16 bits unsigned integer
  */
 typedef unsigned short uint16_t;
 
 /**
  * @typedef u16
- * @brief 16 bits unsigned integer (equivalent to unsigned short)
+ * @brief 16 bits unsigned integer
  */
 typedef uint16_t u16;
 
 /**
  * @typedef uint32_t
- * @brief 32 bits unsigned integer (equivalent to unsigned long)
+ * @brief 32 bits unsigned integer
  */
 typedef unsigned long uint32_t;
 
 /**
  * @typedef u32
- * @brief 32 bits unsigned integer (equivalent to unsigned long)
+ * @brief 32 bits unsigned integer
  */
 typedef uint32_t u32;
 
