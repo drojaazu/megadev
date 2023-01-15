@@ -284,15 +284,15 @@ A fresh look at this suggests that bit 0 SET indicates that the comm registers h
 
 ## System Group
 
-__BLIB_BIOS_ENTRY
+### __BLIB_BIOS_ENTRY
 
-__BLIB_RESET
+### __BLIB_RESET
 
-__BLIB_INIT
+### __BLIB_INIT
 
-__BLIB_INIT_SP
+### __BLIB_INIT_SP
 
-__BLIB_SEGA_LOGO
+### __BLIB_SEGA_LOGO
 
 
 ## Interrupts Group
@@ -351,7 +351,7 @@ Components: DMA, VDP Register Cache
 
 Performs a DMA transfer to VRAM.
 
-### `_blib_dma_xfer_wrdram`
+### `_BLIB_DMA_XFER_WRDRAM`
 Components: DMA, VDP Register Cache
 
 Performs a DMA transfer to VRAM for source data in Word RAM.
@@ -361,7 +361,7 @@ Components: DMA, VDP Register Cache
 
 Performs a DMA copy.
 
-### `_BLIB_DMA_XFER_QUEUE`
+### `_BLIB_DMA_QUEUE`
 Components: DMA, VDP Register Cache
 
 A simple DMA queue. Processes a list of DMA transfers from Word RAM.
@@ -487,7 +487,7 @@ Components: VDP Reg Cache, DMA, Palette Cache, VDP Update Flags
 
 Copies the palette cache to CRAM.
 
-### `_BLIB_UPDATE_SPROBJS`
+### `_BLIB_PROCESS_SPROBJS`
 Update the state of an array of sprite objects. Please see the Sprite Objects section.
 
 ### `_BLIB_DISP_SPROBJ`
@@ -550,10 +550,6 @@ Sets the target palette for fade in.
 
 
 
-
-### `_BLIB_UPDATE_SPROBJS`
-
-### `_BLIB_DISP_SPROBJ`
 
 ## Decompression
 
@@ -660,7 +656,17 @@ Converts the specified 8bit value to binary coded decimal (BCD).
 
 ## Unknown Functions
 
+### `_BLIB_UNKNOWN_1F`
+
 ### `_BLIB_UNKNOWN_24`
+
+### `_BLIB_UNKNOWN_35`
+
+### `_BLIB_UNKNOWN_36`
+
+### `_BLIB_UNKNOWN_37`
+
+### `_BLIB_UNKNOWN_38`
 
 ### `_BLIB_UNKNOWN_3B`
 
