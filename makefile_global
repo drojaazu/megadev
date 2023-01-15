@@ -4,6 +4,11 @@
 # for your project below this line
 ################################################################################
 
+
+# TODO test that setting this here won't overwrite an existing value
+# maybe need to use ?= like below?
+# MEGADEV_PATH:=/opt/megadev
+
 # fancy colors cause we're fancy
 CLEAR=\033[0m
 BOLD=\033[1m
@@ -88,6 +93,68 @@ define msg_warning
 	@echo -e "${BOLD}${RED}$(1)${CLEAR}"
 endef
 
+vpath %.c $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
+vpath %.h $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
+vpath %.s $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
+vpath %.mmd.def $(SRC_PATH)
+vpath %.smd.def $(SRC_PATH)
+vpath %.bin.def $(SRC_PATH)
+vpath %.mmd $(BUILD_PATH)
+vpath %.smd $(BUILD_PATH)
+vpath %.bin $(BUILD_PATH)
+vpath %.elf $(BUILD_PATH)
+vpath %.c.o $(BUILD_PATH)
+vpath %.s.o $(BUILD_PATH)
+# TODO need to change extension on files going into the -R list
+# TODO would also be nice to have individual files rebuilt based on timestamp...
+
+# need to specify paths here as they're called through a secondary make
+$(BUILD_PATH)/%.c.o: $(SRC_PATH)/%.c
+	$(call msg_info,Compiling source $(notdir $<))
+	@$(CC) $(CC_FLAGS) $(INC) $(AS_INC) -c $< -o $@
+
+$(BUILD_PATH)/%.s.o: $(SRC_PATH)/%.s
+	$(call msg_info,Compiling source $(notdir $<))
+	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $^ -o $@
+
+$(BUILD_PATH)/%.mmd: $(BUILD_PATH)/%.elf
+	@echo -e "${BOLD}${CYAN}making mmd elf${CLEAR}"
+
+$(BUILD_PATH)/%.smd: $(BUILD_PATH)/%.elf
+	@echo -e "${BOLD}${CYAN}making smd elf${CLEAR}"
+
+$(BUILD_PATH)/%.bin: $(BUILD_PATH)/%.elf
+	@echo -e "${BOLD}${CYAN}making bin elf${CLEAR}"
+
+$(BUILD_PATH)/%.elf: $(SRC_PATH)/%.mmd.def
+	$(eval LIST:=$(addprefix $(BUILD_PATH)/,$(shell cat $<)))
+	$(eval REQ_LIST:=$(filter-out %.c %.s, $(LIST)))
+	$(eval BUILD_LIST:=$(addsuffix .o, $(filter %.c %.s, $(LIST))))
+	$(MAKE) $(REQ_LIST)
+	$(MAKE) $(BUILD_LIST)
+	$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_mmd.ld $(BUILD_LIST) $(foreach symref,$(REQ_LIST),-R $(symref)) -o $@
+	@echo -e "${BOLD}${CYAN}derp mmd${CLEAR}"
+
+$(BUILD_PATH)/%.elf: $(SRC_PATH)/%.smd.def
+	$(eval LIST:=$(addprefix $(BUILD_PATH)/,$(shell cat $<)))
+	$(eval REQ_LIST:=$(filter-out %.c %.s, $(LIST)))
+	$(eval BUILD_LIST:=$(addsuffix .o, $(filter %.c %.s, $(LIST))))
+	$(MAKE) $(REQ_LIST)
+	$(MAKE) $(BUILD_LIST)
+	$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_smd.ld $(BUILD_LIST) $(foreach symref,$(REQ_LIST),-R $(symref)) -o $@
+	@echo -e "${BOLD}${CYAN}derp smd${CLEAR}"
+
+$(BUILD_PATH)/%.elf: $(SRC_PATH)/%.bin.def
+	$(eval LIST:=$(addprefix $(BUILD_PATH)/,$(shell cat $<)))
+	$(eval REQ_LIST:=$(filter-out %.c %.s, $(LIST)))
+	$(eval BUILD_LIST:=$(addsuffix .o, $(filter %.c %.s, $(LIST))))
+	$(MAKE) $(REQ_LIST)
+	$(MAKE) $(BUILD_LIST)
+	$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_bin.ld $(BUILD_LIST) $(foreach symref,$(REQ_LIST),-R $(symref)) -o $@
+	@echo -e "${BOLD}${CYAN}derp bin${CLEAR}"
+
+
+
 # args: 1: input list, 2: output, 3: link script, 4: rmods
 define link_module
 	@$(eval mod_elf:= $(BUILD_PATH)/$(notdir $(2)).elf)
@@ -106,14 +173,6 @@ include makefile_mdefs
 
 .SECONDARY:
 
-vpath %.c $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
-vpath %.h $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
-vpath %.s $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
-vpath %.mmd.def $(SRC_PATH)
-vpath %.smd.def $(SRC_PATH)
-vpath %.bin.def $(SRC_PATH)
-vpath %.elf $(BUILD_PATH)
-vpath %.o $(BUILD_PATH)
 
 clean:
 	$(call msg_warning,Removing all build artifacts)
@@ -155,11 +214,3 @@ $(BUILD_PATH)/boot.s.o: ip.bin.elf sp.bin.elf
 $(BUILD_PATH)/boot.bin: $(BUILD_PATH)/boot.s.o
 	$(call msg_info,Generating boot sector...)
 	@$(OBJCPY) -O binary $< $@
-
-$(BUILD_PATH)/%.c.o: %.c
-	$(call msg_info,Compiling source $(notdir $<))
-	@$(CC) $(CC_FLAGS) $(INC) -Ilib/gcc.h $(AS_INC) -c $< -o$@
-
-$(BUILD_PATH)/%.s.o: %.s
-	$(call msg_info,Compiling source $(notdir $<))
-	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $< -o$@
