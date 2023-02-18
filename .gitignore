@@ -1,6 +1,6 @@
 .vscode/
-dist/
 build/
+disc/
 docs/
-_work/
+etc/
 *.code-workspace

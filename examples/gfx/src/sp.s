@@ -10,7 +10,6 @@
 	header and the jump table
 */
 
-
 // Here we include the CD-ROM file access code
 #include "sub/cdrom.s"
 .section .text
