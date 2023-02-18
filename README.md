@@ -99,13 +99,9 @@ Built modules will be placed in the `disc` subdirectory (or whatever path you se
 
 `clean` - Removes all artifacts from the build path.
 
-`pristine` - Calls `clean` and also removes the project ISO image and all build paths.
-
 `init` - Creates the necessary build paths; called automatically by default, so it really isn't necessary to be specified manually, except perhaps.
 
 `boot_sector` - Builds the IP/SP and generates the disc boot sector.
-
-`objects` - Compiles all source code (.s/.c) listed in module definition files.
 
 `modules` - Links all modules and outputs to the disc staging directory.
 
