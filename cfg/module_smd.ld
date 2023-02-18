@@ -1,8 +1,7 @@
 OUTPUT_ARCH(m68k)
 
 /* Sub CPU Module (SMD)
-	Does not contain a header, but does specify a ROM and RAM region for
-	bounds checking
+	Does not contain a header, but does specify ROM and RAM regions
 */
 
 MEMORY

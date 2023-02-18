@@ -80,6 +80,36 @@
 //                    "###########"
 
 /**
+ * @def HEADER_HARDWARE
+ * @brief Target hardware
+ * @details
+ * This line indicates the hardware on which the game is meant to run. Despite
+ * obviously targeting the Mega CD, the actual identifier should be Mega Drive
+ * or Genesis, e.g.:
+ *  SEGA MEGA DRIVE
+ *  SEGA GENESIS
+ * @note 16 bytes
+ * @todo autogenerate this based on hardware settings in the project makefile
+ */
+#define HEADER_HARDWARE "SEGA MEGA DRIVE "
+//                      "################"
+
+/**
+ * @def HEADER_COPYRIGHT
+ * @brief Publisher copyright & date
+ * @details
+ * This line indicates the publisher name or ID and the build date
+ * In retail games from the time, it was commonly written with (C)
+ * along with the published code then the year and month, e.g.:
+ *  (C)SEGA 1994.AUG\n
+ *  (C)T-76 1994.FEB\n
+ * @note 16 bytes
+ * @todo autogenerate the date
+ */
+#define HEADER_COPYRIGHT "(C)     2022.NOV"
+//                       "################"
+
+/**
  * @def HEADER_NAME_INTL
  * @brief International title
  * @details The name of the software, in plain ASCII encoding
@@ -144,7 +174,7 @@
 #define HEADER_REGION "E               "
 #endif
 // All regions, regardless of BIOS security code
-//#define HEADER_REGION "JUE             "
+// #define HEADER_REGION "JUE             "
 //                    "################"
 
 #endif

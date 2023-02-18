@@ -5,7 +5,7 @@
  * @brief Mega CD security block inclusion
  *
  * @note
- * This file should be included at the top of you IP asm!
+ * This file should be included at the top of you IP asm source!
  */
 
 .section .text

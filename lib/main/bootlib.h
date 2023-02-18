@@ -42,7 +42,7 @@ struct SpriteObject
 	s32 moveX;
 	s32 moveY;
 	u8 shared_flags;
-	u8 uk2;
+	u8 unknown;
 };
 
 /**
@@ -1162,7 +1162,7 @@ static inline void blib_dma_xfer_wrdram (
 			move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_blib_dma_xfer_wrdram), "d"(D0), "d"(D1), "d"(D2)
+		: "i"(_BLIB_DMA_XFER_WRDRAM), "d"(D0), "d"(D1), "d"(D2)
 		: "d3");
 };
 
@@ -1315,7 +1315,7 @@ static inline void blib_process_sprobjs (struct SpriteObject const * obj_array,
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_blib_process_sprobjs), "a"(A0), "a"(A1), "d"(D0), "d"(D1)
+		: "i"(_BLIB_PROCESS_SPROBJS), "a"(A0), "a"(A1), "d"(D0), "d"(D1)
 		: "d2", "d3", "d4", "d6", "a2");
 };
 

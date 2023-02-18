@@ -1,7 +1,9 @@
 /**
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
  * @file cdrom.s
  * @brief CD-ROM File Access API
- *
+ * 
  * @note
  * Subdirectories are *not* supported. All files should be in the root.
  */

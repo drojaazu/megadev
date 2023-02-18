@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file main.h
+ * @file main_def.h
  * @brief Main side hardware definitions
  */
 
@@ -10,9 +10,9 @@
 
 #include "gatearr_def.h"
 #include "main/io_def.h"
+#include "main/vdp_def.h"
 #include "md_sys_def.h"
 #include "memmap_def.h"
-#include "main/vdp_def.h"
 #include "z80_def.h"
 
 #endif

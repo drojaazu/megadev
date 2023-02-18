@@ -1,8 +1,37 @@
+#
+# [ M E G A D E V ]   a Sega Mega CD devkit
+#
+
+# Global Makefile & Build Settings
+
+# Toolchain Setup
+# we assume all commands appear somewhere in $PATH
+# if this is not the case, you will need to specify the full path in the
+# prefix
+M68K_PREFIX?=m68k-elf-
+
+CC:=$(M68K_PREFIX)gcc
+OBJCPY:=$(M68K_PREFIX)objcopy
+NM:=$(M68K_PREFIX)nm
+LD:=$(M68K_PREFIX)ld
+AS:=$(M68K_PREFIX)as
+
+# (Z80 building not yet supported)
+Z80_AS:=sjasmplus
+
+# Hardware Defaults
+# in case they are not set in the project makefile
+HW_CFG?=REGION=US VIDEO=NTSC VRAM_SIZE=VRAM_64K
 
 ################################################################################
-# You shouldn't need to configure anything further
-# for your project below this line
+# STOP!
+# You should not need to change anything below this line unless you really,
+# really know what you're doing.
 ################################################################################
+
+# TODO test that setting this here won't overwrite an existing value
+# maybe need to use ?= like below?
+# MEGADEV_PATH:=/opt/megadev
 
 # fancy colors cause we're fancy
 CLEAR=\033[0m
@@ -12,11 +41,8 @@ RED=\033[1;31m
 YELLOW=\033[1;33m
 GREEN=\033[1;32m
 
-# Hardware fallbacks in case the user didn't set them
-HW_CFG?=REGION=US VIDEO=NTSC VRAM_SIZE=VRAM_64K
-
-## MEGADEV SDK Paths
-# library (ASM and C)
+## PATHS
+# Megadev library code (ASM and C)
 LIB_PATH:=$(MEGADEV_PATH)/lib
 
 # build time tools
@@ -25,45 +51,20 @@ TOOLS_PATH:=$(MEGADEV_PATH)/tools
 # linker scripts
 CFG_PATH:=$(MEGADEV_PATH)/cfg
 
-## Toolchain
-# we assume all commands appear somewhere in $PATH
-# if this is not the case, you will need to specify
-# the full path of each command
-M68K_PREFIX?=m68k-elf-
-
-CC:=$(M68K_PREFIX)gcc
-OBJCPY:=$(M68K_PREFIX)objcopy
-NM:=$(M68K_PREFIX)nm
-LD:=$(M68K_PREFIX)ld
-AS:=$(M68K_PREFIX)as
-
-Z80_AS:=sjasmplus
-
-## Project Output
+## build artifacts path
 BUILD_PATH:=$(OUT_PATH)/$(SRC_PATH)
 
-MMD_DEF:=$(wildcard $(SRC_PATH)/*.mmd.def)
-SMD_DEF:=$(wildcard $(SRC_PATH)/*.smd.def)
-BIN_DEF:=$(wildcard $(SRC_PATH)/*.bin.def)
-MOD_DEF:=$(strip $(MMD_DEF) $(SMD_DEF) $(BIN_DEF))
+# Begin collecting project module configurations
+MMD_DEFS:=$(wildcard $(SRC_PATH)/*.mmd.def)
+SMD_DEFS:=$(wildcard $(SRC_PATH)/*.smd.def)
+BIN_DEFS:=$(wildcard $(SRC_PATH)/*.bin.def)
+MODULE_DEFS:=$(strip $(MMD_DEFS) $(SMD_DEFS) $(BIN_DEFS))
 
-# RMODS are "resident" modules, which will be built first
-# this ensures they can be referenced as libraries in later modules
-SRC:=$(if $(MOD_DEF),$(sort $(filter %.c %.s, $(shell cat $(MOD_DEF)))),)
-#$(info SRC: $(SRC))
-RMOD:=$(if $(MOD_DEF),$(sort $(filter-out ip.bin sp.bin, $(filter %.mmd %.smd %.bin, $(shell cat $(MOD_DEF))))),)
-#$(info RMOD: $(RMOD))
-MOD:=$(filter-out $(RMOD),$(basename $(notdir $(MOD_DEF))))
-#$(info MOD: $(MOD))
-OBJ:=$(addsuffix .o,$(SRC))
-#$(info OBJ: $(OBJ))
+MODULES:=$(basename $(notdir $(MODULE_DEFS)))
+#$(info MODULES: $(MODULES))
 
-OUT_RMOD:=$(addprefix $(DISC_PATH)/,$(RMOD))
-#$(info OUT_RMOD: $(OUT_RMOD))
-OUT_MOD:=$(addprefix $(DISC_PATH)/,$(MOD))
-#$(info OUT_MOD: $(OUT_MOD))
-OUT_OBJ:=$(addprefix $(BUILD_PATH)/,$(OBJ))
-#$(info OUT_OBJ: $(OUT_OBJ))
+MODULES_OUT:=$(addprefix $(DISC_PATH)/,$(MODULES))
+$(info MODULES_OUT: $(MODULES_OUT))
 
 # setup includes
 INC:=-I$(SRC_PATH) -I$(LIB_PATH) -I$(RES_PATH) -I$(BUILD_PATH) 
@@ -88,57 +89,99 @@ define msg_warning
 	@echo -e "${BOLD}${RED}$(1)${CLEAR}"
 endef
 
-# args: 1: input list, 2: output, 3: link script, 4: rmods
-define link_module
-	@$(eval mod_elf:= $(BUILD_PATH)/$(notdir $(2)).elf)
-	$(call msg_info,Linking module $(notdir $(2)))
-	@$(LD) $(LD_FLAGS) -z muldefs -T$(3) $(1) $(if $(4), $(foreach r,$(4),-R $(BUILD_PATH)/$(r).elf)) -o $(mod_elf)
-	@$(NM) -n $(mod_elf) > $(BUILD_PATH)/$(basename $(notdir $(mod_elf))).sym
-	@$(OBJCPY) -O binary $(mod_elf) $(2)
-endef
-
-default: init boot_sector objects modules iso
-
-$(shell $(MEGADEV_PATH)/makedefs.sh $(SRC_PATH) > makefile_mdefs)
-include makefile_mdefs
-
-.PHONY: clean pristine boot_sector modules iso init
-
-.SECONDARY:
-
-vpath %.c $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
-vpath %.h $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
-vpath %.s $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
 vpath %.mmd.def $(SRC_PATH)
 vpath %.smd.def $(SRC_PATH)
 vpath %.bin.def $(SRC_PATH)
+vpath %.c $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
+vpath %.h $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
+vpath %.s $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
+vpath %.mmd $(DISC_PATH)
+vpath %.smd $(DISC_PATH)
+vpath %.bin $(DISC_PATH)
 vpath %.elf $(BUILD_PATH)
-vpath %.o $(BUILD_PATH)
+vpath %.c.o $(BUILD_PATH)
+vpath %.s.o $(BUILD_PATH)
+
+# need to specify paths here as they're called through a secondary make
+$(BUILD_PATH)/%.c.o: %.c
+	$(call msg_info,Compiling source $(notdir $<))
+	@$(CC) $(CC_FLAGS) $(INC) -c $^ -o $@
+
+$(BUILD_PATH)/%.s.o: %.s
+	$(call msg_info,Compiling source $(notdir $<))
+	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $^ -o $@
+
+# TODO merge the module exports since they're 99% identical
+$(DISC_PATH)/%.mmd: $(BUILD_PATH)/%.mmd.elf
+	$(call msg_info,Exporting module $(notdir $@))
+	@$(OBJCPY) -O binary $< $@
+
+$(DISC_PATH)/%.smd: $(BUILD_PATH)/%.smd.elf
+	$(call msg_info,Exporting module $(notdir $@))
+	@$(OBJCPY) -O binary $< $@
+
+$(DISC_PATH)/%.bin: $(BUILD_PATH)/%.bin.elf
+	$(call msg_info,Exporting module $(notdir $@))
+	@$(OBJCPY) -O binary $< $@
+
+# TODO merge the module linking rules since they're 99% identical
+# (move it into a function that takes the linker script, maybe)
+$(BUILD_PATH)/%.mmd.elf: %.mmd.def
+	$(eval LIST:=$(addprefix $(BUILD_PATH)/,$(file <$<)))
+	$(eval REQ_LIST:=$(addsuffix .elf, $(filter-out %.c %.s, $(LIST))))
+	$(eval BUILD_LIST:=$(addsuffix .o, $(filter %.c %.s, $(LIST))))
+	@$(MAKE) -s $(REQ_LIST)
+	@$(MAKE) -s $(BUILD_LIST)
+	$(call msg_info,Linking module $(notdir $@))
+	@$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_mmd.ld $(BUILD_LIST) $(foreach symref,$(REQ_LIST),-R $(symref)) -o $@
+	@$(NM) -n $@ > $(basename $@).sym
+
+$(BUILD_PATH)/%.smd.elf: %.smd.def
+	$(eval LIST:=$(addprefix $(BUILD_PATH)/,$(file <$<)))
+	$(eval REQ_LIST:=$(addsuffix .elf, $(filter-out %.c %.s, $(LIST))))
+	$(eval BUILD_LIST:=$(addsuffix .o, $(filter %.c %.s, $(LIST))))
+	@$(MAKE) -s $(REQ_LIST)
+	@$(MAKE) -s $(BUILD_LIST)
+	$(call msg_info,Linking module $(notdir $@))
+	@$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_smd.ld $(BUILD_LIST) $(foreach symref,$(REQ_LIST),-R $(symref)) -o $@
+	@$(NM) -n $@ > $(basename $@).sym
+
+$(BUILD_PATH)/%.bin.elf: %.bin.def
+	$(eval LIST:=$(addprefix $(BUILD_PATH)/,$(file <$<)))
+	$(eval REQ_LIST:=$(addsuffix .elf, $(filter-out %.c %.s, $(LIST))))
+	$(eval BUILD_LIST:=$(addsuffix .o, $(filter %.c %.s, $(LIST))))
+	@$(MAKE) -s $(REQ_LIST)
+	@$(MAKE) -s $(BUILD_LIST)
+	$(call msg_info,Linking module $(notdir $@))
+	@$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_bin.ld $(BUILD_LIST) $(foreach symref,$(REQ_LIST),-R $(symref)) -o $@
+	@$(NM) -n $@ > $(basename $@).sym
+
+default: init boot_sector modules iso
+
+.PHONY: init boot_sector modules iso clean
+
+.SECONDARY: 
 
 clean:
-	$(call msg_warning,Removing all build artifacts)
-	@rm -rf makefile_mdefs
-	@rm -rf $(BUILD_PATH)/* $(OUT_RMOD) $(OUT_MOD)
-
-pristine: clean
-	$(call msg_warning,Removing ISO image and build paths)
+	$(call msg_warning,Removing build artifacts & disc image)
+	@rm -rf $(BUILD_PATH)/* $(MODULES_OUT)
 	@rm -rf $(OUT_PATH)/$(PROJECT_NAME).iso
-	@rm -rf $(BUILD_PATH) $(DISC_PATH)
 
 boot_sector: $(BUILD_PATH)/boot.bin
 
-objects: $(OUT_OBJ)
+modules: $(MODULES_OUT)
 
-modules: objects $(OUT_RMOD) $(OUT_MOD)
-
+# TODO make the ISO settings user configurable
 iso: $(BUILD_PATH)/boot.bin
-	$(call msg_info,Building ISO image $(PROJECT_NAME).iso)
-	@mkisofs -quiet -iso-level 1 -G $< -pad -V "$(PROJECT_NAME)" -o $(OUT_PATH)/$(PROJECT_NAME).iso $(DISC_PATH)
+	$(call msg_info,Generating ISO image $(PROJECT_NAME).iso)
+	@mkisofs -quiet -iso-level 1 -G $< -pad -V "$(PROJECT_NAME)" \
+		-sysid "MEGA_CD" -appid "" -publisher "" -preparer "" \
+		-o $(OUT_PATH)/$(PROJECT_NAME).iso $(DISC_PATH)
 
 init:
 	@mkdir -p $(BUILD_PATH) $(DISC_PATH) $(SRC_PATH)
 
-# create intermediary ip/sp ELFs in case we want to link against them as resident modules (RMODs)
+# special rules for boot sector binaries
 $(BUILD_PATH)/ip.bin.elf: $(BUILD_PATH)/ip.s.o
 	@$(LD) $(LD_FLAGS) -T$(CFG_PATH)/ip.ld -o$@ $<
 	@$(NM) -n $@ > $(basename $@).sym
@@ -155,11 +198,3 @@ $(BUILD_PATH)/boot.s.o: ip.bin.elf sp.bin.elf
 $(BUILD_PATH)/boot.bin: $(BUILD_PATH)/boot.s.o
 	$(call msg_info,Generating boot sector...)
 	@$(OBJCPY) -O binary $< $@
-
-$(BUILD_PATH)/%.c.o: %.c
-	$(call msg_info,Compiling source $(notdir $<))
-	@$(CC) $(CC_FLAGS) $(INC) $(AS_INC) -c $< -o$@
-
-$(BUILD_PATH)/%.s.o: %.s
-	$(call msg_info,Compiling source $(notdir $<))
-	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $< -o$@

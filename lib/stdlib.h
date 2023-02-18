@@ -42,4 +42,9 @@ static inline short abs16 (short val)
 	return val;
 }
 
+typedef struct {
+  int quot;
+  int rem;
+} div_t;
+
 #endif

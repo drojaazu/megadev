@@ -40,162 +40,209 @@
 
 /**
  * @sa BLIB_BUFFER
+ * @ingroup blib_cmp
  */
 #define _BLIB_BUFFER 0xFFF700
 
 /**
  * @sa BLIB_SPRLIST
+ * @ingroup blib_vdp
  */
 #define _BLIB_SPRLIST 0xFFF900
 
 /**
  * @sa BLIB_PALETTE
+ * @ingroup blib_vdp
  */
 #define _BLIB_PALETTE 0xFFFB80
 
 /**
  * @sa BLIB_PAL0
+ * @ingroup blib_vdp
  */
 #define _BLIB_PAL0 0xFFFB80
 
 /**
  * @sa BLIB_PAL1
+ * @ingroup blib_vdp
  */
 #define _BLIB_PAL1 0xFFFBA0
 
 /**
  * @sa BLIB_PAL2
+ * @ingroup blib_vdp
  */
 #define _BLIB_PAL2 0xFFFBC0
 
 /**
  * @sa BLIB_PAL3
+ * @ingroup blib_vdp
  */
 #define _BLIB_PAL3 0xFFFBE0
 
 /**
  * @sa BLIB_VINT_EX_PTR
+ * @ingroup blib_int
  */
 #define _BLIB_VINT_EX_PTR 0xFFFDAA
 
 /**
  * @sa BLIB_VDPREGS
+ * @ingroup BLIB_PAL3
  */
 #define _BLIB_VDPREGS 0xFFFDB4
 
 /**
  * @sa BLIB_COMFLAGS_MAIN
+ * @ingroup blib_comm
  */
 #define _BLIB_COMFLAGS_MAIN 0xfffdde
 
 /**
  * @sa BLIB_COMFLAGS_SUB
+ * @ingroup blib_comm
  */
 #define _BLIB_COMFLAGS_SUB 0xfffddf
 
 /**
  * @sa BLIB_COMCMD
+ * @ingroup blib_comm
+ *
+ * @note
  * Size: 16bit * 8 = 0x10 bytes
  */
 #define _BLIB_COMCMD 0xfffde0
 
 /**
  * @brief GA COMCMD0 register cache
+ * @ingroup blib_comm
  */
 #define _BLIB_COMCMD0 0xfffde0
 
 /**
  * @var u16 _BLIB_COMCMD1
+ * @ingroup blib_comm
+ *
  * @brief GA COMCMD1 register cache
  */
 #define _BLIB_COMCMD1 0xfffde2
 
 /**
  * @var u16 _BLIB_COMCMD2
+ * @ingroup blib_comm
+ *
  * @brief GA COMCMD2 register cache
  */
 #define _BLIB_COMCMD2 0xfffde4
 
 /**
  * @var u16 _BLIB_COMCMD3
+ * @ingroup blib_comm
+ *
  * @brief GA COMCMD3 register cache
  */
 #define _BLIB_COMCMD3 0xfffde6
 
 /**
  * @var u16 _BLIB_COMCMD4
+ * @ingroup blib_comm
+ *
  * @brief GA COMCMD4 register cache
  */
 #define _BLIB_COMCMD4 0xfffde8
 
 /**
  * @var u16 _BLIB_COMCMD5
+ * @ingroup blib_comm
+ *
  * @brief GA COMCMD5 register cache
  */
 #define _BLIB_COMCMD5 0xfffdea
 
 /**
  * @var u16 _BLIB_COMCMD6
+ * @ingroup blib_comm
+ *
  * @brief GA COMCMD6 register cache
  */
 #define _BLIB_COMCMD6 0xfffdec
 
 /**
  * @var u16 _BLIB_COMCMD7
+ * @ingroup blib_comm
+ *
  * @brief GA COMCMD7 register cache
  */
 #define _BLIB_COMCMD7 0xfffdee
 
 /**
  * @sa BLIB_COMSTAT
+ * @ingroup blib_comm
+ *
  * Size: 16bit * 8 = 0x10 bytes
  */
 #define _BLIB_COMSTAT 0xfffdf0
 
 /**
  * @var u16 _BLIB_COMSTAT0
+ * @ingroup blib_comm
+ *
  * @brief GA COMSTAT0 register cache
  */
 #define _BLIB_COMSTAT0 0xfffdf0
 
 /**
  * @var u16 _BLIB_COMSTAT1
+ * @ingroup blib_comm
+ *
  * @brief GA COMSTAT1 register cache
  */
 #define _BLIB_COMSTAT1 0xfffdf2
 
 /**
  * @var u16 _BLIB_COMSTAT2
+ * @ingroup blib_comm
+ *
  * @brief GA COMSTAT2 register cache
  */
 #define _BLIB_COMSTAT2 0xfffdf4
 
 /**
  * @var u16 _BLIB_COMSTAT3
+ * @ingroup blib_comm
+ *
  * @brief GA COMSTAT3 register cache
  */
 #define _BLIB_COMSTAT3 0xfffdf6
 
 /**
  * @var u16 _BLIB_COMSTAT4
+ * @ingroup blib_comm
+ *
  * @brief GA COMSTAT4 register cache
  */
 #define _BLIB_COMSTAT4 0xfffdf8
 
 /**
  * @var u16 _BLIB_COMSTAT5
+ * @ingroup blib_comm
+ *
  * @brief GA COMSTAT5 register cache
  */
 #define _BLIB_COMSTAT5 0xfffdfa
 
 /**
  * @var u16 _BLIB_COMSTAT6
+ * @ingroup blib_comm
+ *
  * @brief GA COMSTAT6 register cache
  */
 #define _BLIB_COMSTAT6 0xfffdfc
 
 /**
  * @var u16 _BLIB_COMSTAT7
+ * @ingroup blib_comm
+ *
  * @brief GA COMSTAT7 register cache
  */
 #define _BLIB_COMSTAT7 0xfffdfe
@@ -593,7 +640,7 @@
  * @clobber d0-d3/a6
  * @ingroup blib_vdp
  */
-#define _blib_dma_xfer_wrdram 0x0002D4
+#define _BLIB_DMA_XFER_WRDRAM 0x0002D4
 
 /**
  * @fn _BLIB_VDP_DISP_ENABLE
@@ -656,7 +703,7 @@
  * @sa blib_process_sprobjs
  * @clobber d0-d4/d6/a2
  */
-#define _blib_process_sprobjs 0x0002F4
+#define _BLIB_PROCESS_SPROBJS 0x0002F4
 
 /**
  * @sa blib_clear_ram
@@ -665,7 +712,7 @@
 #define _BLIB_CLEAR_RAM 0x0002F8
 
 /**
- * @fn _UNKNOWN_1F
+ * @fn _BLIB_UNKNOWN_1F
  *
  * Calls _CLEAR_REGION in a loop with d5 as the counter, but this may be buggy
  * since d7 should be down to 0 after the first iteration. Not sure what is
@@ -681,16 +728,16 @@
  *
  * GROUP: Unknown
  */
-#define _UNKNOWN_1F 0x0002FC
+#define _BLIB_UNKNOWN_1F 0x0002FC
 
 /**
- * @fn _BLIB_DISP_SPR_OBJ
+ * @fn _BLIB_DISP_SPROBJ
  * @brief Display a sprite structure
  * @param[in] A0.l Pointer to parent sprite object
  * @param[in] D6.b Initial value for "next" sprite
  * @clobber d0-d4/a1-a2
  */
-#define _BLIB_DISP_SPR_OBJ 0x000300
+#define _BLIB_DISP_SPROBJ 0x000300
 
 /**
  * @sa blib_vint_wait
@@ -711,7 +758,7 @@
 #define _BLIB_COPY_SPRLIST 0x00030C
 
 /**
- * @fn _UNKNOWN_24
+ * @fn _BLIB_UNKNOWN_24
  *
  * A very small routine, but it's unclear what it would have been used for.
  *
@@ -731,7 +778,7 @@
  * BREAK:
  *  d1
  */
-#define _UNKNOWN_24 0x000310
+#define _BLIB_UNKNOWN_24 0x000310
 
 /**
  * @def _BLIB_SET_HINT_WORKRAM
@@ -861,13 +908,13 @@
  */
 #define _BLIB_UK_COMMFLAGS_RELATED 0x00034C
 
-#define _UNKNOWN_35 0x000350
+#define _BLIB_UNKNOWN_35 0x000350
 
-#define _UNKNOWN_36 0x000354
+#define _BLIB_UNKNOWN_36 0x000354
 
-#define _UNKNOWN_37 0x000358
+#define _BLIB_UNKNOWN_37 0x000358
 
-#define _UNKNOWN_38 0x00035C
+#define _BLIB_UNKNOWN_38 0x00035C
 
 /**
  * @fn _BLIB_TRIGGER_IFL2
@@ -934,7 +981,7 @@
  * BREAK:
  *  d4/a5
  */
-#define _UKNOWN_3B 0x000370
+#define _BLIB_UNKNOWN_3B 0x000370
 
 /**
  * @sa blib_dma_copy
@@ -942,7 +989,7 @@
  */
 #define _BLIB_DMA_COPY 0x000374
 
-#define _UNKNOWN_3D 0x000378
+#define _BLIB_UNKNOWN_3D 0x000378
 
 /**
  * @fn _BLIB_TO_BCD_BYTE
