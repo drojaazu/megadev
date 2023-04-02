@@ -250,6 +250,21 @@ byte 0 - number of sprites in list
 byte 1 - unknown
 each sprite in the list is 6 bytes, in the Sonic 1 format ( http://info.sonicretro.org/SCHG:Sonic_the_Hedgehog_(16-bit)/Object_Editing#Mappings_editing - 5 bytes) plus a padding byte at the end
 
+/**
+ * @brief This appears to be a Sega "standard," as it is the mapping format
+ * used in Sonic the Hedgehog as well as the Mega CD Boot ROM. Need to check
+ * if it is used elsewhere in Sega first party games; it's likely that it is.
+ *
+ * In the Mega CD Boot ROM, the collection of mappings that make up an object
+ * is a structure defined by a two byte header: byte 1 is the count of sprites
+ * in the object *minus 1* (zero indexed), and thus the number of mappings in
+ * the following array; byte 2 is shared flags that are set on all mappings as
+ * they are processed (x/y flip; possibly other flags? need to revisit this in
+ * the disassembly and take better notes); this is followed by the array of
+ * 5 byte mappings, though each map is padding with an empty byte at the end,
+ * to make them 6 bytes each (likely for CPU alignment)
+ */
+
 After much analysis and testing, the code interacts with the sprite list unknown byte mentioned above, but does do anything with it. Its value is copied to offset 0x19 within the sprobj as part of the `_BLIB_DISP_SPROBJ` routine. If the h flip flag is set, it adds to this same offset. Aside form that, the value seems to have no effect on what is displayed and it's unclear for what it is intended.
 
 The sprobjs calls are used by the BIOS CD player and Wondermega Collection.

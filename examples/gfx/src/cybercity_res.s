@@ -20,7 +20,7 @@ GLABEL res_cybercity_pal
 GLABEL res_ship_pal
 .incbin "../res/ship.pal"
 
-GLABEL res_ship_spr
+GLABEL res_ship_layout
 .incbin "../res/ship.spr"
 
 GLABEL res_ship_chr

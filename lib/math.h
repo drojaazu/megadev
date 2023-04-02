@@ -8,8 +8,7 @@
 #ifndef MEGADEV__MATH_H
 #define MEGADEV__MATH_H
 
-#include "fpoint.h"
-#include "stdint.h"
+#include "types.h"
 
 /*
 	CPU opcode wrappers
@@ -18,50 +17,50 @@
 /**
  * @brief Performs unsigned multiplication using MULU
  */
-static inline u32 mulu (u16 multiplicand, u16 multiplier)
+static inline u32 mulu(u16 multiplicand, u16 multiplier)
 {
 	u32 product = multiplier;
-	asm ("mulu.w %1, %0" : "+d"(product) : "d"(multiplicand) : "cc");
+	asm("mulu.w %1, %0" : "+d"(product) : "d"(multiplicand) : "cc");
 	return product;
 }
 
 /**
  * @brief Performs signed multiplication using MULS
  */
-static inline s32 muls (s16 multiplicand, s16 multiplier)
+static inline s32 muls(s16 multiplicand, s16 multiplier)
 {
 	s32 product = multiplier;
-	asm ("muls.w %1, %0" : "+d"(product) : "d"(multiplicand) : "cc");
+	asm("muls.w %1, %0" : "+d"(product) : "d"(multiplicand) : "cc");
 	return product;
 }
 
 /**
  * @brief Performs unsigned division using DIVU
  */
-static inline u16 divu (u32 dividend, u16 divisor)
+static inline u16 divu(u32 dividend, u16 divisor)
 {
 	u32 quotient = dividend;
-	asm ("divu.w %1, %0" : "+d"(quotient) : "d"(divisor) : "cc");
+	asm("divu.w %1, %0" : "+d"(quotient) : "d"(divisor) : "cc");
 	return quotient;
 }
 
 /**
  * @brief Performs signed division using DIVS
  */
-static inline s16 divs (s32 dividend, s16 divisor)
+static inline s16 divs(s32 dividend, s16 divisor)
 {
 	s32 quotient = dividend;
-	asm ("divs.w %1, %0" : "+d"(quotient) : "d"(divisor) : "cc");
+	asm("divs.w %1, %0" : "+d"(quotient) : "d"(divisor) : "cc");
 	return quotient;
 }
 
 /**
  * @brief Performs unsigned division using DIVU and returns the remainder
  */
-static inline u16 modu (u32 dividend, u16 divisor)
+static inline u16 modu(u32 dividend, u16 divisor)
 {
 	u32 modulus = dividend;
-	asm (
+	asm(
 		"\
 		divu.w %1, %0 \n\
 		swap %0 \n\
@@ -75,10 +74,10 @@ static inline u16 modu (u32 dividend, u16 divisor)
 /**
  * @brief Performs signed division using DIVS and returns the remainder
  */
-static inline s16 mods (s32 dividend, s16 divisor)
+static inline s16 mods(s32 dividend, s16 divisor)
 {
 	s32 modulus = dividend;
-	asm (
+	asm(
 		"\
 		divs.w %1, %0 \n\
 		swap %0 \n\
@@ -95,30 +94,10 @@ static inline s16 mods (s32 dividend, s16 divisor)
  *
  * @return u32: Quotient in lower word, remainder in upper word
  */
-static inline u32 divu_full (u32 dividend, u16 divisor)
+static inline u32 divu_full(u32 dividend, u16 divisor)
 {
 	u32 remainder_quotient = dividend;
-	asm ("divu.w %1, %0" : "+d"(remainder_quotient) : "d"(divisor) : "cc");
-	return remainder_quotient;
-}
-
-/**
- * @brief Performs signed division using DIVS and returns the result as a
- * 16.16 fixed point
- *
- * @return f32: Quotient in upper word, remainder in lower word
- */
-static inline f32 fix_divs (s32 dividend, s16 divisor)
-{
-	s32 remainder_quotient = dividend;
-	asm (
-		"\
-			divs.w %1, %0 \n\
-			swap %0 \n\
-		"
-		: "+d"(remainder_quotient)
-		: "d"(divisor)
-		: "cc");
+	asm("divu.w %1, %0" : "+d"(remainder_quotient) : "d"(divisor) : "cc");
 	return remainder_quotient;
 }
 
@@ -126,12 +105,12 @@ static inline f32 fix_divs (s32 dividend, s16 divisor)
  * @brief Performs unsigned division using DIVU and rounds the quotient based on
  * the remainder
  */
-static inline u16 divu_round (u32 dividend, u16 divisor)
+static inline u16 divu_round(u32 dividend, u16 divisor)
 {
 	u32 quotient = dividend;
 	u32 dummy1 = 0;
 	u32 dummy2 = 0;
-	asm (
+	asm(
 		"\
 		mov.l %1, %3 \n\
 		divu.w %1, %0 \n\
@@ -154,12 +133,12 @@ static inline u16 divu_round (u32 dividend, u16 divisor)
  * @brief Performs signed division using DIVS and rounds the quotient based on
  * the remainder
  */
-static inline s16 divs_round (s32 dividend, s16 divisor)
+static inline s16 divs_round(s32 dividend, s16 divisor)
 {
 	s32 quotient = dividend;
 	s32 dummy1 = 0;
 	s32 dummy2 = 0;
-	asm (
+	asm(
 		"\
 		mov.l %1, %3 \n\
 		divs.w %1, %0 \n\
@@ -178,10 +157,10 @@ static inline s16 divs_round (s32 dividend, s16 divisor)
 	return quotient;
 }
 
-static inline u16 bcd (u16 value)
+static inline u16 bcd(u16 value)
 {
 	u16 temp;
-	asm (
+	asm(
 		"\
 		ext.l	%0 \n\
 		divu.w #0xa, %0 \n\
@@ -195,6 +174,36 @@ static inline u16 bcd (u16 value)
 		: "d"(temp)
 		: "cc");
 	return value;
+}
+
+static inline s32 abs(s32 val)
+{
+	asm(
+		"\
+			tst.l %0 \n\
+			bpl 1f \n\
+			neg.l %0 \n\
+		1: \n\
+		"
+		: "+d"(val)
+		:
+		: "cc");
+	return val;
+}
+
+static inline s16 abs16(s16 val)
+{
+	asm(
+		"\
+			tst.w %0 \n\
+			bpl 1f \n\
+			neg.w %0 \n\
+		1: \n\
+		"
+		: "+d"(val)
+		:
+		: "cc");
+	return val;
 }
 
 #endif

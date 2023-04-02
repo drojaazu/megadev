@@ -144,7 +144,7 @@
  * @param PB Bits 15-13 (PB2 to PB0) of Plane B nametable address in VRAM
  *
  * @note The Plane B register address is effectively the full address (which
- * must be a multiple of $2000) divided by $2000
+ * must be a multiple of 0x2000) divided by 0x2000
  * @note PB3 is used with 128k VRAM only
  */
 #define _VDP_PLB_ADDR 0x8400
@@ -160,9 +160,9 @@
  * @param ST Bits 15-9 (ST6 to ST0) of sprite table address in VRAM
  *
  * @note The Sprite Table register address is effectively the full address
- *          (which must be a multiple of $200) divided by $200
+ *          (which must be a multiple of 0x200) divided by 0x200
  * @note ST0 is ignored in 40 cell mode, limiting the address to a multiple
- * of $400
+ * of 0x400
  * @note ST7 is used with 128k VRAM only
  */
 #define _VDP_SPR_ADDR 0x8500
@@ -283,7 +283,7 @@
  * @param HS Bits 15-10 (HS5 to HS0) of horizontal scroll data address in VRAM
  *
  * @note The Horiz Scroll Data register address is effectively the full address
- * (which must be a multiple of $400) divided by $400
+ * (which must be a multiple of 0x400) divided by 0x400
  * @note HS6 is used with 128k VRAM only
  *
  */
@@ -316,7 +316,7 @@
  * read/write to the data port
  *
  * @note 2 is most common value in this register and many VDP related functions
- * assume that is the value in this register.
+ * assume that is the value set in this register.
  */
 #define _VDP_AUTOINC 0x8F00
 
@@ -340,9 +340,18 @@
  * \n 11: 128 cells (1024 pixels)
  *
  * @note Height/width settings of 64x128 or 128x128 cells are invalid due to a
- * maximum plane size of $2000 bytes
+ * maximum plane size of 0x2000 bytes
  */
 #define _VDP_PL_SIZE 0x9000
+
+// these defines can be ORed with the above vdp register to set a size
+// e.g. _VDP_PL_SIZE | W32 | H64 for width of 32 tiles, height of 64 tiles
+#define W32 0x00
+#define W64 0x01
+#define W128 0x03
+#define H32 0x00
+#define H64 0x10
+#define H128 0x30
 
 /**
  * @def _VDP_WD_HPOS

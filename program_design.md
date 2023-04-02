@@ -71,7 +71,7 @@ The System Use area, beginning at 0xFFFD00, contains the jump table for the exce
 
 In reality, the jump table only takes up 180 bytes, leaving the space from 0xFFFDB4 and onward free for use (588 bytes). However, this free space is used by many of the Boot ROM library functions, so keep that in mind if you plan to use the built-in library. See the bootrom.md file for more info.
 
-The stack is allocated to 0xFFFD00 by default. This can, of course, be re-pointed to wherever you'd like, though with the default layout it's already in an optimal position. Recall that the stack fills upwards, so you'll want to allocate enough space for it when planning the space for your ROM/RAM partitions above it. Too little space and it will overflow up into your RAM, possible overwriting runtime memory or runtime memory corrupting the stack. Too much space and it becomes wasted memory. This is an area of your program that you will likely want to optimize, especially if you are primarilt coding in C. Lots of nested function calls with registers pushes and allocated local variables will quickly fill up the stack. Prefer using global values whenever possible to prevent too much stack usage.
+The stack is allocated to 0xFFFD00 by default. This can, of course, be re-pointed to wherever you'd like, though with the default layout it's already in an optimal position. Recall that the stack fills upwards, so you'll want to allocate enough space for it when planning the space for your ROM/RAM partitions above it. Too little space and it will overflow up into your RAM, possible overwriting runtime memory or runtime memory corrupting the stack. Too much space and it becomes wasted memory. This is an area of your program that you will likely want to optimize, especially if you are primarily coding in C. Lots of nested function calls with registers pushes and allocated local variables will quickly fill up the stack. Prefer using global values whenever possible to prevent too much stack usage.
 
 Let's map out a possible memory layout, apropos of nothing. As we said earlier, our goal is to define the boundaries of "ROM" (program code and resources) and "RAM" (runtime memory) for our program within the confines of usable space.
 
@@ -111,13 +111,3 @@ Word RAM is, officially, a buffer shared between the two CPUs. You can execute c
 Word RAM also has two modes. In one mode, all 2Mbits is "owned" by one of the CPUs and is inaccessible to the other. One of the main aspects of syncing the Main and Sub CPU is reconciling ownership of Word RAM in this mode. In the other mode, Word RAM is split into 1Mbit banks, of which each is owned by one CPU. The ownership can be readily switched, making this mode useful for streaming data (such as video) which is loaded from disc via the Sub CPU into one bank while the Main CPU copies the data from the other bank to VRAM, and then switching banks to continue the process.
 
 As Word RAM is highly transitory, there is less need to do any serious memory mapping. A module running from this space will still need "ROM" and "RAM" areas partitioned, but this is limited in scope to only that module and will disappear when it is unloaded anyway.
-
-# Memory Usage in C
-A couple more notes about memory usage in Megadev. We do not implement a malloc/free system for heap allocation, so, once again, use globals to declare memory usage at compile time.
-
-Also note that we do not currently have a loader for initialized memory. This means if you write a *global* variable like so:
-
-    int val = 5;
-
-The initial value will NOT be assigned automatically. This is due to how initialization works. Initialized values like this are mapped to the .data segment and are included as part of the ROM. For systems like PCs, a boot loader will copy that .data segment in ROM to its expected location in RAM, meaning all of the variables mapped to that segment will have their expected, initialized value already in memory. We plan to add that .data segment copy functionality, likely to the MMD loader, but be aware that it is not currently implemented and you will need to set variable values at runtime.
-

@@ -9,7 +9,7 @@
 #define MEGADEV__IO_H
 
 #include "main/io_def.h"
-#include "stdint.h"
+#include "types.h"
 
 /**
  * @sa _IO_DATA1
@@ -112,7 +112,7 @@ static inline u8 ext_rx_c()
  * @fn ext_rx_c
  * @brief Wrapper for @ref ext_rx
  */
-static inline void ext_tx_c (register u8 data)
+static inline void ext_tx_c(register u8 data)
 {
 	register u8 D0 asm("d0") = data;
 

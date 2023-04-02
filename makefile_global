@@ -64,7 +64,7 @@ MODULES:=$(basename $(notdir $(MODULE_DEFS)))
 #$(info MODULES: $(MODULES))
 
 MODULES_OUT:=$(addprefix $(DISC_PATH)/,$(MODULES))
-$(info MODULES_OUT: $(MODULES_OUT))
+#$(info MODULES_OUT: $(MODULES_OUT))
 
 # setup includes
 INC:=-I$(SRC_PATH) -I$(LIB_PATH) -I$(RES_PATH) -I$(BUILD_PATH) 

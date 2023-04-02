@@ -20,7 +20,7 @@ BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: AfterColon
 BinPackArguments: false
 BinPackParameters: false
-ColumnLimit: 80
+ColumnLimit: 120
 ContinuationIndentWidth: 2
 Cpp11BracedListStyle: true
 Language: Cpp
@@ -38,7 +38,7 @@ SpaceBeforeCpp11BracedList: true
 SpaceBeforeCtorInitializerColon: true
 SpaceBeforeInheritanceColon: true
 SpaceBeforeRangeBasedForLoopColon: true
-SpaceBeforeParens: NonEmptyParentheses
+SpaceBeforeParens: ControlStatements
 SpacesInAngles: false
 SpacesInCStyleCastParentheses: false
 SpacesInParentheses: false

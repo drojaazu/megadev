@@ -8,9 +8,9 @@
 #ifndef MEGADEV__SUB_BRAM_H
 #define MEGADEV__SUB_BRAM_H
 
-#include "stdlib.h"
 #include "sub/bram_def.h"
 #include "sub/memmap_def.h"
+#include "types.h"
 
 u8 bram_WRKRAM[0x640];
 u8 bram_string_ram[12];
@@ -33,10 +33,6 @@ typedef struct BrminitRes
 	enum BramStatus status;
 	char * strings;
 } BrminitRes;
-
-u8 bram_WRKRAM[0x640];
-
-u8 bram_string_buffer[12];
 
 BrminitRes init_info;
 
@@ -127,14 +123,14 @@ BrmserchRes brmserch_results;
  * @def bram_brmserch
  * @sa BRMSERCH
  */
-static inline BrmserchRes * bram_brmserch (char const * filename)
+static inline BrmserchRes * bram_brmserch(char const * filename)
 {
 	register u16 d0_fcode asm("d0") = BRMSERCH;
-	register u32 a0_filename asm("a0") = (u32) filename;
+	register void const * a0_filename asm("a0") = filename;
 
 	register u16 d0_filesize asm("d0");
 	register u16 d1_filemode asm("d1");
-	register u32 a0_dataptr asm("a0");
+	register void * a0_dataptr asm("a0");
 
 	// if the file is not found, we'll return null
 	// the user should check that the dataptr member of the struct
@@ -172,7 +168,7 @@ BrmreadRes brmread_results;
  * @def bram_brmread
  * @sa BRMREAD
  */
-static inline BrmreadRes * bram_brmread (char const * filename, u8 * buffer)
+static inline BrmreadRes * bram_brmread(char const * filename, u8 * buffer)
 {
 	register u16 d0_fcode asm("d0") = BRMREAD;
 	register u32 a0_filename asm("a0") = (u32) filename;
@@ -215,7 +211,7 @@ typedef struct BramFileInfo
 /**
  * @sa BRMWRITE
  */
-static inline bool bram_brmwrite (BramFileInfo const * params, u8 const * data)
+static inline bool bram_brmwrite(BramFileInfo const * params, u8 const * data)
 {
 	register u16 d0_fcode asm("d0") = BRMWRITE;
 	register u32 a0_params asm("a0") = (u32) params;
@@ -242,7 +238,7 @@ failed:
 /**
  * @sa BRMDEL
  */
-static inline bool bram_brmdel (char const (*filename)[11])
+static inline bool bram_brmdel(char const (*filename)[11])
 {
 	register u16 D0 asm("d0") = BRMDEL;
 	register u32 A0 asm("a0") = (u32) filename;
@@ -266,8 +262,7 @@ failed:
 /**
  * @sa BRMDIR
  */
-static inline bool bram_brmdir (
-	char const * filename, u8 * dirbuffer, u16 const fileskip, u16 const dirsize)
+static inline bool bram_brmdir(char const * filename, u8 * dirbuffer, u16 const fileskip, u16 const dirsize)
 {
 	register u16 d0_fcode asm("d0") = BRMDIR;
 	register u32 a0_filename asm("a0") = (u32) filename;
@@ -280,11 +275,7 @@ static inline bool bram_brmdir (
 			bcs %l[too_large] \n\
 		"
 		:
-		: "i"(_BURAM),
-		"d"(d0_fcode),
-		"d"(d1_params),
-		"a"(a0_filename),
-		"a"(a1_dirbuffer)
+		: "i"(_BURAM), "d"(d0_fcode), "d"(d1_params), "a"(a0_filename), "a"(a1_dirbuffer)
 		: "cc"
 		: too_large);
 
@@ -327,7 +318,7 @@ enum BrmverifyStatus
 /**
  * @sa BRMVERIFY
  */
-static inline enum BrmverifyStatus bram_brmverify (BramFileInfo const * params)
+static inline enum BrmverifyStatus bram_brmverify(BramFileInfo const * params)
 {
 	register u16 d0_fcode asm("d0") = BRMVERIFY;
 	register u32 A0 asm("a0") = (u32) params;

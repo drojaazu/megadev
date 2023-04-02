@@ -13,7 +13,7 @@
 #ifndef MEGADEV__MEMORY_H
 #define MEGADEV__MEMORY_H
 
-#include "stdint.h"
+#include "types.h"
 
 /**
  * @fn memset8

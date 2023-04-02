@@ -3,9 +3,6 @@
  *
  * @file memmap_def.h
  * @brief Sub CPU memory map & system vectors
- *
- * @note All bit definitions are byte relative and should be applied to the
- * registers cast to an 8 bit type.
  */
 
 #ifndef MEGADEV__SUB_MEMMAP_DEF_H
@@ -48,6 +45,8 @@
 #define _PRGRAM_1M_3 0x60000
 
 /**
+ * @brief Beginning of user-available space in PRGRAM
+ *
  * The Sub side program (SP) begins at 0x6000
  * Memory before this point is used by BIOS and should not be written
  * by the user
@@ -55,9 +54,13 @@
 #define _PRGRAM_USER 0x006000
 
 /**
- * Word RAM (2M)
+ * @brief Word RAM access (2M mode)
  */
 #define _WRDRAM_2M 0x080000 /*word RAM base in 2M bit mode*/
+
+/**
+ * @brief Word RAM access (1M mode)
+ */
 #define _WRDRAM_1M 0x0C0000 /*word RAM base in 1M bit mode*/
 
 #define _BOOTSTAT 0x005EA0

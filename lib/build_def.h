@@ -5,8 +5,9 @@
  * @brief Target hardware components definitions
  *
  * @details
- * These defines can be set within code with #defines
- * or from the command line with -DDEFINE=VALUE
+ * These can be referenced within code by setting globale definitions
+ * or during the make process via HW_CFG, e.g.:
+ * make HW_CFG="REGION=JP VIDEO=NTSC"
  */
 
 #ifndef MEGADEV__BUILD_DEF_H

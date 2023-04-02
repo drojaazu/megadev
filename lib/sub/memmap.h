@@ -8,8 +8,8 @@
 #ifndef MEGADEV__SUB_MEMMAP_H
 #define MEGADEV__SUB_MEMMAP_H
 
-#include "stdint.h"
 #include "sub/memmap_def.h"
+#include "types.h"
 
 #define DMAADDR_WORDRAM1M(addr) (((addr) &0x3FFF) >> 3)
 #define DMAADDR_WORDRAM2M(addr) (((addr) &0x7FFF) >> 3)
@@ -26,7 +26,7 @@
 #define PCM_CTRL ((volatile u8 *) _PCM_CTRL)
 #define PCM_CDISABLE ((volatile u8 *) _PCM_CDISABLE)
 
-#define SP_INT2 (*((void volatile *(*) ) (_USERCALL2 + 2)))
+#define SP_INT2 (*((void volatile *(*) )(_USERCALL2 + 2)))
 
 // TODO - Verify which registers get trashed
 static inline void bios_waitvsync()

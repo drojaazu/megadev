@@ -9,11 +9,9 @@ extern void sp_fatal();
 
 char const * const filenames[] = {"EX1.MMD;1", "EX2.MMD;1", "EX3.MMD;1"};
 
-void int2_exec() {}
-
 // It's a good idea to put SPX's main in .init to ensure it's at the very start
 // of the code, since we jump to where we expect it to be in memory
-__attribute__ ((section (".init"))) void main()
+__attribute__((section(".init"))) void main()
 {
 
 	register u16 cmd0, cmd1;
@@ -36,7 +34,7 @@ __attribute__ ((section (".init"))) void main()
 
 			// load MMD
 			case 1:
-				load_file (ACC_OP_LOAD_CDC, filenames[cmd1], (u8 *) _WRDRAM_2M);
+				load_file(ACC_OP_LOAD_CDC, filenames[cmd1], (u8 *) _WRDRAM_2M);
 				grant_2m();
 				if (access_op_result != RESULT_OK)
 				{
@@ -46,7 +44,7 @@ __attribute__ ((section (".init"))) void main()
 
 			// load IPX
 			case 0xfe:
-				load_file (ACC_OP_LOAD_CDC, "IPX.MMD;1", (u8 *) _WRDRAM_2M);
+				load_file(ACC_OP_LOAD_CDC, "IPX.MMD;1", (u8 *) _WRDRAM_2M);
 				grant_2m();
 				if (access_op_result != RESULT_OK)
 				{
@@ -56,7 +54,7 @@ __attribute__ ((section (".init"))) void main()
 		}
 
 		// not reaching here?
-		asm (".global test_label\ntest_label:");
+		asm(".global test_label\ntest_label:");
 		*GA_COMSTAT0 = *GA_COMCMD0;
 		do
 		{
