@@ -61,20 +61,19 @@ SP_WORKRAM: .long 0
 # =======================================================================================
 #  Game Header
 # =======================================================================================	
-.ascii HEADER_HARDWARE
-.ascii HEADER_COPYRIGHT
-.ascii HEADER_NAME_JP
-.ascii HEADER_NAME_INTL
-.ascii HEADER_SOFT_ID
-// TODO add calculated or user-defined values for other header settings (checksum, devices, etc)
-.ascii  "                "
-.ascii	"                "
-.ascii	"                "
-.ascii	"                "
-.ascii	"                "
-.ascii	"                "
-.ascii HEADER_REGION
-.ascii  "             "
+HardwareType: .ascii HEADER_HARDWARE
+Copyright:    .ascii HEADER_COPYRIGHT
+TitleDomestic:   .ascii HEADER_NAME_JP
+TitleIntl: .ascii HEADER_NAME_INTL
+DiscID:       .ascii HEADER_SOFT_ID
+IO:
+  .ascii "J               "
+  .ascii	"                "
+  .ascii	"                "
+  .ascii	"                "
+  .ascii	"                "
+  .ascii	"                "
+Region:       .ascii HEADER_REGION
 
 // if all the above text is correct, we should be at 0x200 anyway
 .org 0x200
