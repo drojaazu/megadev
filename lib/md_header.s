@@ -10,7 +10,7 @@
 
 #ifdef SYSTEM_TYPE
 HardwareType: .ascii HEADER_HARDWARE
-#elif REGION == "US"
+#elif REGION == US
 HardwareType: .ascii "SEGA GENESIS    "
 //                    ################
 #else

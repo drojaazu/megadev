@@ -5,9 +5,9 @@
  * @brief common Mega Drive init routines
  */
 
-#include "main/md_sys.def.h"
-#include "main/io.def.h"
-#include "main/vdp.def.h"
+#include "main/md_sys_def.h"
+#include "main/io_def.h"
+#include "main/vdp_def.h"
 
 .align 2
 init:

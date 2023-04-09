@@ -9,7 +9,7 @@
 #define MEGADEV__MAIN_MD_SYS_DEF_H
 
 /**
- * @def REG_VERSION
+ * @def _HW_VERSION
  * @brief Version register
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -23,8 +23,8 @@
  * @param RGN Hardware region: 0 - Domestic (Japan); 1 - International
  * (Europe or US)
  */
-#define REG_VERSION 0x0A1'0001
+#define _HW_VERSION 0x0A1'0001
 
-#define REG_TMSS , 0x0A1'4000
+#define _TMSS 0x0A1'4000
 
 #endif
