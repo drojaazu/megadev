@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file io_def.h
+ * @file io.def.h
  * @brief I/O register definitions
  */
 

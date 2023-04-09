@@ -15,7 +15,7 @@
 #include "main/vdp.macro.s"
 #include "main/gatearray.def.h"
 #include "main/vdp.def.h"
-#include "main/io_def.h"
+#include "main/io.def.h"
 
 ip_entry:
   // First, disable all interrupts while we get things set up

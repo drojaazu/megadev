@@ -1,7 +1,7 @@
 
 #include "ipx.h"
 #include "main/bootlib.h"
-#include "main/io_def.h"
+#include "main/io.def.h"
 #include "main/memmap.h"
 #include "main/vdp.h"
 #include "system.h"

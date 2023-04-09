@@ -2,7 +2,7 @@
 #include "fixed.h"
 #include "main/bootlib.h"
 #include "main/gatearray.h"
-#include "main/io_def.h"
+#include "main/io.def.h"
 #include "main/memmap.h"
 #include "main/mmd_exec.h"
 #include "main/vdp.h"
