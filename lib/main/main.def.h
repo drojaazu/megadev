@@ -9,7 +9,7 @@
 #define MEGADEV__MAIN_MAIN_DEF_H
 
 #include "gatearray.def.h"
-#include "main/io_def.h"
+#include "main/io.def.h"
 #include "main/vdp.def.h"
 #include "md_sys.def.h"
 #include "memmap.def.h"

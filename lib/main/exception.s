@@ -13,7 +13,7 @@
 #include "macros.s"
 #include "main/bootlib.def.h"
 #include "main/memmap.def.h"
-#include "main/io_def.h"
+#include "main/io.def.h"
 #include "main/vdp.def.h"
 
 .section .text
