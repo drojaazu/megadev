@@ -8,8 +8,8 @@
 #ifndef MEGADEV__SUB_BIOS_H
 #define MEGADEV__SUB_BIOS_H
 
-#include "sub/bios_def.h"
-#include "sub/memmap_def.h"
+#include "sub/bios.def.h"
+#include "sub/memmap.def.h"
 #include "types.h"
 
 /**
@@ -201,7 +201,7 @@ typedef struct DrvinitParams
  * Pauses for 2 seconds after reading the TOC. Waits for a DRVOPEN request if
  * there is no disk in the drive.
  */
-static inline void bios_drvinit (struct DrvinitParams const * drvinit_param)
+static inline void bios_drvinit(struct DrvinitParams const * drvinit_param)
 {
 	register u16 D0 asm("d0") = _BIOS_DRVINIT;
 	register u32 a0_drvinit_param asm("a0") = (u32) drvinit_param;
@@ -221,7 +221,7 @@ static inline void bios_drvinit (struct DrvinitParams const * drvinit_param)
  * @sa _BIOS_MSCPLAY
  * @ingroup bios_cdda
  */
-static inline void bios_mscplay (u16 const * track_number)
+static inline void bios_mscplay(u16 const * track_number)
 {
 	register u16 D0 asm("d0") = _BIOS_MSCPLAY;
 	register u32 A0 asm("a0") = (u32) track_number;
@@ -240,7 +240,7 @@ static inline void bios_mscplay (u16 const * track_number)
  * @sa _BIOS_MSCPLAY1
  * @ingroup bios_cdda
  */
-static inline void bios_mscplay1 (u16 const * track_number)
+static inline void bios_mscplay1(u16 const * track_number)
 {
 	register u16 D0 asm("d0") = _BIOS_MSCPLAY1;
 	register u32 A0 asm("a0") = (u32) track_number;
@@ -259,7 +259,7 @@ static inline void bios_mscplay1 (u16 const * track_number)
  * @sa _BIOS_MSCPLAYR
  * @ingroup bios_cdda
  */
-static inline void bios_mscplayr (u16 const * track_number)
+static inline void bios_mscplayr(u16 const * track_number)
 {
 	register u16 D0 asm("d0") = _BIOS_MSCPLAYR;
 	register u32 A0 asm("a0") = (u32) track_number;
@@ -278,7 +278,7 @@ static inline void bios_mscplayr (u16 const * track_number)
  * @sa _BIOS_MSCPLAYT
  * @ingroup bios_cdda
  */
-static inline void bios_mscplayt (u32 const * timecode)
+static inline void bios_mscplayt(u32 const * timecode)
 {
 	register u16 D0 asm("d0") = _BIOS_MSCPLAYT;
 	register u32 A0 asm("a0") = (u32) timecode;
@@ -297,7 +297,7 @@ static inline void bios_mscplayt (u32 const * timecode)
  * @sa _BIOS_MSCSEEK
  * @ingroup bios_cdda
  */
-static inline void bios_mscseek (u16 const * track_number)
+static inline void bios_mscseek(u16 const * track_number)
 {
 	register u16 D0 asm("d0") = _BIOS_MSCSEEK;
 	register u32 A0 asm("a0") = (u32) track_number;
@@ -316,7 +316,7 @@ static inline void bios_mscseek (u16 const * track_number)
  * @sa _BIOS_MSCSEEKT
  * @ingroup bios_cdda
  */
-static inline void bios_mscseekt (u32 const * timecode)
+static inline void bios_mscseekt(u32 const * timecode)
 {
 	register u16 D0 asm("d0") = _BIOS_MSCSEEKT;
 	register u32 A0 asm("a0") = (u32) timecode;
@@ -343,7 +343,7 @@ static inline void bios_mscseekt (u32 const * timecode)
  * ROMREAD actually pre-seeks by 2 sectors, but doesn't start passing data
  * to the CDC until the desired sector is reached.
  */
-static inline void bios_romread (u32 const * sector_number)
+static inline void bios_romread(u32 const * sector_number)
 {
 	register u16 D0 asm("d0") = _BIOS_ROMREAD;
 	register u32 A0 asm("a0") = (u32) sector_number;
@@ -362,7 +362,7 @@ static inline void bios_romread (u32 const * sector_number)
  * @sa _BIOS_ROMSEEK
  * @ingroup bios_cdrom
  */
-static inline void bios_romseek (u32 const * sector_number)
+static inline void bios_romseek(u32 const * sector_number)
 {
 	register u16 D0 asm("d0") = _BIOS_ROMSEEK;
 	register u32 A0 asm("a0") = (u32) sector_number;
@@ -382,7 +382,7 @@ static inline void bios_romseek (u32 const * sector_number)
  * @sa _BIOS_MSCSEEK1
  * @ingroup bios_cdda
  */
-static inline void bios_mscseek1 (u16 const * track_number)
+static inline void bios_mscseek1(u16 const * track_number)
 {
 	register u16 D0 asm("d0") = _BIOS_MSCSEEK1;
 	register u32 A0 asm("a0") = (u32) track_number;
@@ -409,7 +409,7 @@ struct RomreadParams
  *
 
  */
-static inline void bios_romreadn (struct RomreadParams const * param)
+static inline void bios_romreadn(struct RomreadParams const * param)
 {
 	register u16 D0 asm("d0") = _BIOS_ROMREADN;
 	register u32 A0 asm("a0") = (u32) param;
@@ -427,7 +427,7 @@ static inline void bios_romreadn (struct RomreadParams const * param)
  * @ingroup bios_cdrom
  * @brief Same as @ref bios_romread, but reads between two logical sectors
  */
-static inline void bios_romreade (struct RomreadParams const * param)
+static inline void bios_romreade(struct RomreadParams const * param)
 {
 	register u16 D0 asm("d0") = _BIOS_ROMREADE;
 	register u32 A0 asm("a0") = (u32) param;
@@ -503,7 +503,7 @@ static inline struct cdbstat const * bios_cdbstat()
  * @note There is a delay of up to 13ms before the volume begins to change
  * and another 23ms for the new volume level to take effect.
  */
-static inline void bios_fdrset (u16 const volume)
+static inline void bios_fdrset(u16 const volume)
 {
 	register u16 D0 asm("d0") = _BIOS_FDRSET;
 	register u16 const D1 asm("d1") = volume;
@@ -532,7 +532,7 @@ static inline void bios_fdrset (u16 const volume)
  *
  * @note There is a delay of up to 13ms before the volume begins to change.
  */
-static inline void bios_fdrchg (u32 const volume)
+static inline void bios_fdrchg(u32 const volume)
 {
 	register u16 D0 asm("d0") = _BIOS_FDRCHG;
 	register u32 D1 asm("d1") = volume;
@@ -614,7 +614,7 @@ sector_ready:
 /**
  * @sa _BIOS_CDCTRN
  */
-static inline void bios_cdctrn (u8 * sector_dest, u8 * header_dest)
+static inline void bios_cdctrn(u8 * sector_dest, u8 * header_dest)
 {
 	register u16 D0 asm("d0") = _BIOS_CDCTRN;
 	register u8 * a0_sector_dest asm("a0") = sector_dest;

@@ -8,7 +8,7 @@
 #ifndef MEGADEV__MAIN_VDP_H
 #define MEGADEV__MAIN_VDP_H
 
-#include "main/vdp_def.h"
+#include "main/vdp.def.h"
 #include "types.h"
 
 /**
@@ -102,10 +102,9 @@ typedef union SpriteEx
  * @def NMT_POS_PLANE
  * @brief Generates the address of a nametable tile at pos x/y
  */
-#define NMT_POS_PLANE(x, y, plane_addr) (NMT_POS (x, y) + plane_addr)
+#define NMT_POS_PLANE(x, y, plane_addr) (NMT_POS(x, y) + plane_addr)
 
-#define NMT_POS_PLANE2(x, y, width, plane_addr) \
-	(NMT_POS2 (x, y, width) + plane_addr)
+#define NMT_POS_PLANE2(x, y, width, plane_addr) (NMT_POS2(x, y, width) + plane_addr)
 
 /**
  * @def VRAM_AT
@@ -127,18 +126,16 @@ typedef union SpriteEx
  * possible
  */
 #define VDPPTR(addr) \
-	(__builtin_constant_p (addr) \
-			? (unsigned) ((((addr) &0x3FFF) << 16) + (((addr) &0xC000) >> 14)) \
-			: to_vdpptr (addr))
+	(__builtin_constant_p(addr) ? (unsigned) ((((addr) &0x3FFF) << 16) + (((addr) &0xC000) >> 14)) : to_vdpptr(addr))
 
 /**
  * @fn to_vdpptr
  * @brief Converts a 16 bit VRAM address into VDP format at runtime
  */
-static inline u32 to_vdpptr (u16 addr)
+static inline u32 to_vdpptr(u16 addr)
 {
 	u32 vdpptr = (u32) addr;
-	asm (
+	asm(
 		"\
 		lsl.l #2, %0 \n \
 		lsr.w #2, %0 \n \
@@ -155,11 +152,11 @@ static inline u32 to_vdpptr (u16 addr)
  * @fn vdpptr_to
  * @brief Converts a VDP format address to a 16 bit VRAM address at runtime
  */
-static inline u16 vdpptr_to (u32 vdpptr)
+static inline u16 vdpptr_to(u32 vdpptr)
 {
 	u32 out = vdpptr;
 
-	asm (
+	asm(
 		"\
 		#andi.l #0x3fff000c, %0 \
 		ror.w #2, %0 \

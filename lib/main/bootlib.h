@@ -27,7 +27,7 @@
 #define MEGADEV__MAIN_BOOTLIB_H
 
 #include "fixed.h"
-#include "main/bootlib_def.h"
+#include "main/bootlib.def.h"
 #include "main/vdp.h"
 #include "math.h"
 #include "types.h"

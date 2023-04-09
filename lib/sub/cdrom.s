@@ -9,11 +9,11 @@
  */
 
 #include "macros.s"
-#include "sub/cdrom_def.h"
-#include "sub/bios_def.h"
-#include "sub/gatearr_def.h"
+#include "sub/cdrom.def.h"
+#include "sub/bios.def.h"
+#include "sub/gatearray.def.h"
 
-#include "sub/macros.s"
+#include "sub/sub.macro.s"
 
 .section .text
 

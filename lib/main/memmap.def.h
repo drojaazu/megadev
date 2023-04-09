@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file memmap_def.h
+ * @file memmap.def.h
  * @brief Main CPU side hardware memory map & system vectors
  *
  * @note All bit definitions are byte relative and should be applied to the

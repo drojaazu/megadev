@@ -1,14 +1,14 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file gatearr.h
+ * @file gatearray.h
  * @brief C wrappers for Sub CPU side Gate Array registers
  */
 
 #ifndef MEGADEV__SUB_GATEARR_H
 #define MEGADEV__SUB_GATEARR_H
 
-#include "gatearr_def.h"
+#include "gatearray.def.h"
 
 /**
  * @def GA_RESET

@@ -42,4 +42,4 @@ OPT_FLAGS:=-O1 -fstack-usage -fconserve-stack
 # Z80 building is not currently supported... someday!
 #Z80_SRC_PATH:=z80_src
 
-include $(MEGADEV_PATH)/makefile_global
+include $(MEGADEV_PATH)/makefile.global

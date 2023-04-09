@@ -8,7 +8,7 @@
 #ifndef MEGADEV__SUB_CDROM_H
 #define MEGADEV__SUB_CDROM_H
 
-#include "sub/cdrom_def.h"
+#include "sub/cdrom.def.h"
 #include "sub/memmap.h"
 #include "types.h"
 
@@ -52,8 +52,7 @@ extern volatile u32 filesize;
  * @fn load_file
  * @brief
  */
-static inline u32 load_file (
-	u16 const access_operation, char const * load_filename, u8 * buffer)
+static inline u32 load_file(u16 const access_operation, char const * load_filename, u8 * buffer)
 {
 	access_op = access_operation;
 	if (access_op == 0)
@@ -81,7 +80,7 @@ typedef struct FileInfo
 } FileInfo;
 
 // TODO file info struct!
-static inline FileInfo * find_file_c (char const * filename)
+static inline FileInfo * find_file_c(char const * filename)
 {
 	register u32 a0_filename asm("a0") = (u32) filename;
 	register u32 a0_fileinfo asm("a0");

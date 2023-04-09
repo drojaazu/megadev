@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file memmap_def.h
+ * @file memmap.def.h
  * @brief Sub CPU memory map & system vectors
  */
 

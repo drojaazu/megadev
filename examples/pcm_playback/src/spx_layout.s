@@ -1,5 +1,5 @@
 #include "macros.s"
-#include "sub/memmap_def.h"
+#include "sub/memmap.def.h"
 
 GLOBAL MODULE_ROM_ORIGIN 0x10000
 

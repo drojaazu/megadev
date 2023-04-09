@@ -1,12 +1,12 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file gatearr_def.h
+ * @file gatearray.def.h
  * @brief Main CPU side Gate Array registers
  */
 
-#ifndef MEGADEV__GATEARR_DEF_H
-#define MEGADEV__GATEARR_DEF_H
+#ifndef MEGADEV__GATEARRAY_DEF_H
+#define MEGADEV__GATEARRAY_DEF_H
 
 /**
  * @defgroup main_ga_regs Main CPU / Gate Array Registers

@@ -1,7 +1,7 @@
-#include "sub/memmap_def.h"
-#include "sub/macros.s"
-#include "sub/cdrom_def.h"
-#include "sub/cdrom_macros.s"
+#include "sub/memmap.def.h"
+#include "sub/sub.macro.s"
+#include "sub/cdrom.def.h"
+#include "sub/cdrom.macro.s"
 #include "macros.s"
 
 .section .text

@@ -1,20 +1,20 @@
 
 #include "sub/cdrom.h"
-#include "sub/gatearr.h"
+#include "sub/gatearray.h"
 #include "sub/memmap.h"
 #include "sub/pcm.h"
 
 // void PCM_PLAYBACK_C(u8 * pcm_data, u32 pcm_data_size);
 
-static inline void PCM_PLAYBACK_C (u8 * pcm_data, u32 pcm_data_size)
+static inline void PCM_PLAYBACK_C(u8 * pcm_data, u32 pcm_data_size)
 {
-	register u32 a0_pcm_data asm ("a0") = (u32) pcm_data;
-	register u32 d0_data_size asm ("d0") = pcm_data_size;
+	register u32 a0_pcm_data asm("a0") = (u32) pcm_data;
+	register u32 d0_data_size asm("d0") = pcm_data_size;
 
-	asm volatile ("jsr PCM_PLAYBACK"
-								: "+d"(d0_data_size), "+a"(a0_pcm_data)
-								: "d"(d0_data_size), "a"(a0_pcm_data)
-								: "cc", "d6", "d7", "a1", "a2");
+	asm volatile("jsr PCM_PLAYBACK"
+							 : "+d"(d0_data_size), "+a"(a0_pcm_data)
+							 : "d"(d0_data_size), "a"(a0_pcm_data)
+							 : "cc", "d6", "d7", "a1", "a2");
 }
 
 const PcmChannelSettings pcmSettings = {0xff, 0xff, 0x6b, 0x5, 0, 0, 0};
@@ -23,7 +23,7 @@ void load_ipx();
 
 extern void sp_fatal();
 
-__attribute__ ((section (".init"))) void main()
+__attribute__((section(".init"))) void main()
 {
 
 	register u16 cmd0;
@@ -43,7 +43,7 @@ __attribute__ ((section (".init"))) void main()
 		{
 
 			case 2:
-				load_file (ACC_OP_LOAD_CDC, "AUDIO.PCM;1", (u8 *) _PRGRAM_1M_2);
+				load_file(ACC_OP_LOAD_CDC, "AUDIO.PCM;1", (u8 *) _PRGRAM_1M_2);
 				if (access_op_result != RESULT_OK)
 				{
 					sp_fatal();
@@ -53,7 +53,7 @@ __attribute__ ((section (".init"))) void main()
 			case 0x10:
 				pcm_clear_ram_c();
 
-				pcm_config_channel_c (CHANNEL (1), &pcmSettings);
+				pcm_config_channel_c(CHANNEL(1), &pcmSettings);
 
 				// we use the highest bit of the comflags to inform main that the
 				// audio is playing
@@ -64,7 +64,7 @@ __attribute__ ((section (".init"))) void main()
 				*GA_COMFLAGS_SUB |= 0x80;
 				// pcm_playback((u8 *)_PRGRAM_1M_2, 0x39bc1);
 				// pcm_playback((u8 *)_PRGRAM_1M_2, 0x40000);
-				PCM_PLAYBACK_C ((u8 *) _PRGRAM_1M_2, 0x40000);
+				PCM_PLAYBACK_C((u8 *) _PRGRAM_1M_2, 0x40000);
 				*((volatile u8 *) _PCM_CDISABLE) = 0xff;
 
 				*GA_COMFLAGS_SUB &= ~0x80;
@@ -72,7 +72,7 @@ __attribute__ ((section (".init"))) void main()
 
 			// load IPX
 			case 0xfe:
-				load_file (ACC_OP_LOAD_CDC, "IPX.MMD;1", (u8 *) _WRDRAM_2M);
+				load_file(ACC_OP_LOAD_CDC, "IPX.MMD;1", (u8 *) _WRDRAM_2M);
 				grant_2m();
 				if (access_op_result != RESULT_OK)
 				{
@@ -111,7 +111,7 @@ __attribute__ ((section (".init"))) void main()
  * oddly sized files and streaming from disc with some further
  * modification.)
  */
-void pcm_playback (u8 * pcm_data, u32 pcm_data_size)
+void pcm_playback(u8 * pcm_data, u32 pcm_data_size)
 {
 
 	bool pcmPutUpper = false;
@@ -160,16 +160,16 @@ void pcm_playback (u8 * pcm_data, u32 pcm_data_size)
 		{
 			while (*((volatile u8 *) _PCM_PLAY_CH1_H) <= 0x7f)
 			{
-				asm ("nop");
-				asm ("nop");
+				asm("nop");
+				asm("nop");
 			}
 		}
 		else
 		{
 			while (*((volatile u8 *) _PCM_PLAY_CH1_H) > 0x7f)
 			{
-				asm ("nop");
-				asm ("nop");
+				asm("nop");
+				asm("nop");
 			}
 		}
 		pcmPutUpper = ! pcmPutUpper;
@@ -180,16 +180,16 @@ void pcm_playback (u8 * pcm_data, u32 pcm_data_size)
 	{
 		while (*((volatile u8 *) _PCM_PLAY_CH1_H) <= 0x7f)
 		{
-			asm ("nop");
-			asm ("nop");
+			asm("nop");
+			asm("nop");
 		}
 	}
 	else
 	{
 		while (*((volatile u8 *) _PCM_PLAY_CH1_H) > 0x7f)
 		{
-			asm ("nop");
-			asm ("nop");
+			asm("nop");
+			asm("nop");
 		}
 	}
 }

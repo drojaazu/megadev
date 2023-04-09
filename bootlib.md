@@ -140,7 +140,7 @@ Note that this is slightly different from the Unknown grouping. Calls in the Unk
 
 ## Calling The Library In Your Code
 
-When coding in assembly, include the `bootlib_def.h` file. This contains definitions for the function entry points and addresses for variables.
+When coding in assembly, include the `bootlib.def.h` file. This contains definitions for the function entry points and addresses for variables.
 
 When coding in C, include `bootlib.h`.
 

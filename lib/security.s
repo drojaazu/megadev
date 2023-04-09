@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file sec_check.s
+ * @file security.s
  * @brief Mega CD security block inclusion
  *
  * @note
@@ -12,14 +12,14 @@
 
 #ifdef REGION
 #if REGION == JP
-.incbin	"sec_jp.bin"
+.incbin	"security_jp.bin"
 #endif
 
 #if REGION == US
-.incbin "sec_us.bin"
+.incbin "security_us.bin"
 #endif
 
 #if REGION == EU
-.incbin	"sec_eu.bin"
+.incbin	"security_eu.bin"
 #endif
 #endif

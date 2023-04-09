@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file vdp_def.h
+ * @file vdp.def.h
  * @brief VDP hardware definitions
  */
 

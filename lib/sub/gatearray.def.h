@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file gatearr_def.h
+ * @file gatearray.def.h
  * @brief Sub CPU side Gate Array registers
  */
 

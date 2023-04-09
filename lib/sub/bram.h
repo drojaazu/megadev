@@ -8,8 +8,8 @@
 #ifndef MEGADEV__SUB_BRAM_H
 #define MEGADEV__SUB_BRAM_H
 
-#include "sub/bram_def.h"
-#include "sub/memmap_def.h"
+#include "sub/bram.def.h"
+#include "sub/memmap.def.h"
 #include "types.h"
 
 u8 bram_WRKRAM[0x640];

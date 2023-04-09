@@ -1,14 +1,14 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file cdrom_macros.s
+ * @file cdrom.macro.s
  * @brief CD-ROM File Access Wrapper Macros
  */
 
 #ifndef MEGADEV__SUB_CDROM_MACROS_H
 #define MEGADEV__SUB_CDROM_MACROS_H
 
-#include "sub/cdrom_def.h"
+#include "sub/cdrom.def.h"
 
 /**
  * Kickstarts the load process by setting initial mode

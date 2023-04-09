@@ -1,6 +1,6 @@
 
 // Boot security block - This must be at the top of your IP!
-#include "sec_check.s"
+#include "security.s"
 
 // Good Luck!
 IP_ENTRY:

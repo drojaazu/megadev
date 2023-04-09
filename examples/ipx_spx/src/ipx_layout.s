@@ -1,5 +1,5 @@
 #include "macros.s"
-#include "main/memmap_def.h"
+#include "main/memmap.def.h"
 
 // ROM will begin at the start of Work RAM, overwriting the security code/IP
 GLOBAL MODULE_ROM_ORIGIN _WRKRAM
