@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file z80_def.h
+ * @file z80.def.h
  * @brief Z80 hardware definitions
  */
 

@@ -4,3 +4,4 @@ disc/
 docs/
 etc/
 *.code-workspace
+**/disc

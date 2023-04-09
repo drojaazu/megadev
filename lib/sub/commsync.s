@@ -14,7 +14,7 @@
 .section .text
 
 #include "macros.s"
-#include "memmap_def.h"
+#include "memmap.def.h"
 
 FUNC comm_sync
 	lea _GA_COMFLAGS+1, a0

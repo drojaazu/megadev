@@ -1,14 +1,14 @@
 
 // Boot security block - This must be at the top of your IP!
-#include "sec_check.s"
+#include "security.s"
 
 .section .text
 
-#include "main/main_def.h"
-#include "main/bootlib_def.h"
-#include "main/gatearr_macros.s"
-#include "main/gatearr_def.h"
-#include "main/vdp_def.h"
+#include "main/main.def.h"
+#include "main/bootlib.def.h"
+#include "main/gatearray.macro.s"
+#include "main/gatearray.def.h"
+#include "main/vdp.def.h"
 #include "macros.s"
 #include "mmd_layout.s"
 

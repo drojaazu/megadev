@@ -2,7 +2,7 @@
 #define MEGADEV__MAIN_Z80_S
 
 #include "macros.s"
-#include "z80_def.h"
+#include "z80.def.h"
 
 .section .text
 

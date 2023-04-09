@@ -3,8 +3,8 @@
  *
  */
  
-#include "sub/memmap_def.h"
-#include "sub/pcm_def.h"
+#include "sub/memmap.def.h"
+#include "sub/pcm.def.h"
 #include "macros.s"
 
 .section .text

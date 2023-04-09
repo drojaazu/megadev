@@ -77,7 +77,7 @@ AS_INC:=-Wa,-I$(SRC_PATH) -Wa,-I$(LIB_PATH) -Wa,-I$(RES_PATH) -Wa,-I$(BUILD_PATH
 # because it is useful for inline asm. However, "-Wa,--bitwise-or" will
 # cause issues with the GCC created asm, so we split that off and only use it
 # with asm source files
-CC_FLAGS:=-m68000 -imacros build_def.h $(OPT_FLAGS) $(addprefix -D, $(HW_CFG)) $(if $(DEBUG), -DDEBUG) -fno-builtin -fomit-frame-pointer -fno-gcse -Wall -Wextra -Wno-main -Wa,--register-prefix-optional
+CC_FLAGS:=-m68000 -imacros build.def.h $(OPT_FLAGS) $(addprefix -D, $(HW_CFG)) $(if $(DEBUG), -DDEBUG) -fno-builtin -fomit-frame-pointer -fno-gcse -Wall -Wextra -Wno-main -Wa,--register-prefix-optional
 AS_FLAGS:=-Wa,--bitwise-or
 LD_FLAGS:=-nostdlib
 

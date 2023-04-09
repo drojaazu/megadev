@@ -1,14 +1,14 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file cdboot_def.h
+ * @file cdboot.def.h
  * @brief Function codes for the _CDBOOT vector
  */
 
 #ifndef MEGADEV__SUB_CDBOOT_DEF_H
 #define MEGADEV__SUB_CDBOOT_DEF_H
 
-#include "sub/memmap_def.h"
+#include "sub/memmap.def.h"
 
 /**
  * @def CBTINIT

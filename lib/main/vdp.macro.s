@@ -1,5 +1,5 @@
 /**
- * @file
+ * @file vdp.macro.s
  * @brief Mega Drive Video Display Processor (VDP)
  */
 

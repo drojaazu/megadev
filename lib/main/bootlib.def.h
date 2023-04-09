@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file bootlib_def.h
+ * @file bootlib.def.h
  * @brief Boot ROM call vector & memory definitions
  */
 

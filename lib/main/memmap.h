@@ -8,7 +8,7 @@
 #ifndef MEGADEV__MAIN_MEMMAP_H
 #define MEGADEV__MAIN_MEMMAP_H
 
-#include "main/memmap_def.h"
+#include "main/memmap.def.h"
 
 /**
  * @sa _WRDRAM
@@ -29,10 +29,10 @@
  */
 
 // L6 interrupt = VINT
-#define MLEVEL6_VECTOR (*((void volatile *(*) ) (_MLEVEL6 + 2)))
+#define MLEVEL6_VECTOR (*((void volatile *(*) )(_MLEVEL6 + 2)))
 // L4 interrupt = HINT
-#define MLEVEL4_VECTOR (*((void volatile *(*) ) (_MLEVEL4 + 2)))
+#define MLEVEL4_VECTOR (*((void volatile *(*) )(_MLEVEL4 + 2)))
 // L2 interrupt = Ext. port
-#define MLEVEL2_VECTOR (*((void volatile *(*) ) (_MLEVEL2 + 2)))
+#define MLEVEL2_VECTOR (*((void volatile *(*) )(_MLEVEL2 + 2)))
 
 #endif

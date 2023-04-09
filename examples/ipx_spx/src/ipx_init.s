@@ -1,7 +1,7 @@
 
 #include "macros.s"
-#include "main/memmap_def.h"
-#include "main/macros.s"
+#include "main/memmap.def.h"
+#include "main/main.macro.s"
 
 // putting this code in .init ensures it will be at the start of the module
 .section .init

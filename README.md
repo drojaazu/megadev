@@ -49,7 +49,7 @@ GNU compiler (gcc): <https://gcc.gnu.org/onlinedocs/gcc/>
 
 ## Getting Started
 
-Clone the repo and place it in a location such as /opt/megadev. In the root of the directory is `makefile_global` (the global makefile) which will be used as a system-wide base for all projects. Edit it as necessary to match your build environment.
+Clone the repo and place it in a location such as /opt/megadev. In the root of the directory is `makefile.global` (the global makefile) which will be used as a system-wide base for all projects. Edit it as necessary to match your build environment.
 
 To start a new project copy the `new_project` directory from within the Megadev location to you project directory. It contains three files: a makefile,  `project.h` and `ip.s`. Modify the makefile as you'd like to specify subdirectories and compilation options. Modify `project.h` as you'd like to reflect your project information, being careful to maintain the required text lengths. `ip.s` is a minimal IP, your program entry. Afterwards, do `make init` in the project directory to create the directories, and move `project.h` and `ip.s` to the source directory. You are ready to begin development.
 
@@ -113,11 +113,11 @@ Built modules will be placed in the `disc` subdirectory (or whatever path you se
 
 Be sure to add `$(megadev_path)/lib` to the include path of your IDE or project configuration.
 
-Within the `lib` directory are the definitions, wrappers and source code for Megadev. In general, code is "assembly first" with C wrappers around asm calls. In order to facilitate the mixture of C/asm in projects, all memory addresses, registers, and other compile-time constants use C-style `#define` macros, including assembly source files which are passed through the C preprocessor. Any files in the lib directory ending in `_def` contains only such definitions and can be `#include`'ed in either C or asm source.
+Within the `lib` directory are the definitions, wrappers and source code for Megadev. In general, code is "assembly first" with C wrappers around asm calls. In order to facilitate the mixture of C/asm in projects, all memory addresses, registers, and other compile-time constants use C-style `#define` directive (including assembly source files which are passed through the C preprocessor). Any files in the lib directory ending in `.def.h` contain only such definitions and can be `#include`'ed in either C or asm source.
 
-For asm source, files ending in `_macros` contain macros, as the name suggests. Because these and `_def` files do not contain immediate code, they can be `#include`'ed anywhere in your source code without issues.
+For asm source, files ending in `.macro.s` contain macros, as the name suggests. Because these and `.def.h` files do not contain immediate code, they can be `#include`'ed anywhere in your source code without issues.
 
-For C source, header files without `_def` or `_macros` in the filename should be the files to include in your code. (The relevent `_def` file will already be included in the C header.)
+For C source, include the header files ending in `.h` without the `.def` subextension in your code. (The relevent `.def.h` file will already be included in the C header.)
 
 # Megadev Core Concepts & Functions
 

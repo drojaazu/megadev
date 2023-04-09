@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file md_sys_def.h
+ * @file md_sys.def.h
  * @brief Misc Mega Drive system registers
  */
 

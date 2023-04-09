@@ -52,4 +52,4 @@ OPT_FLAGS:=-O1 -fstack-usage -fconserve-stack
 #Z80_SRC_PATH:=z80_src
 
 # Don't change the line below!
-include $(MEGADEV_PATH)/makefile_global
+include $(MEGADEV_PATH)/makefile.global

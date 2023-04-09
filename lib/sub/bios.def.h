@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file bios_def.h
+ * @file bios.def.h
  * @brief Function codes for the _CDBIOS vector
  */
 

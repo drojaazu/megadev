@@ -1,5 +1,5 @@
 /**
- * @file bramcart_def.h
+ * @file bramcart.def.h
  * @brief Function codes for the _MBURAM vector
  */
 

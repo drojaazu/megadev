@@ -10,9 +10,9 @@
 #define MEGADEV__MAIN_MMD_EXEC_S
 
 #include "macros.s"
-#include "main/memmap_def.h"
-#include "main/gatearr_def.h"
-#include "main/gatearr_macros.s"
+#include "main/memmap.def.h"
+#include "main/gatearray.def.h"
+#include "main/gatearray.macro.s"
 
 /**
  * @brief Setup and run a loaded MMD formatted module

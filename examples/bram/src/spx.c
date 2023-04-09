@@ -1,6 +1,6 @@
 #include "sub/bram.h"
 #include "sub/cdrom.h"
-#include "sub/gatearr.h"
+#include "sub/gatearray.h"
 #include "sub/memmap.h"
 
 void load_ipx();
@@ -11,7 +11,7 @@ char const * filenames[3];
 
 BramFileInfo const file_info = {"BRMEX", 0, 1};
 
-__attribute__ ((section (".init"))) void main()
+__attribute__((section(".init"))) void main()
 {
 
 	register u16 cmd0, cmd1;
@@ -34,7 +34,7 @@ __attribute__ ((section (".init"))) void main()
 
 			// load MMD
 			case 1:
-				load_file (ACC_OP_LOAD_CDC, filenames[cmd1], (u8 *) _WRDRAM_2M);
+				load_file(ACC_OP_LOAD_CDC, filenames[cmd1], (u8 *) _WRDRAM_2M);
 				grant_2m();
 				if (access_op_result != RESULT_OK)
 				{
@@ -58,7 +58,7 @@ __attribute__ ((section (".init"))) void main()
 
 				// the filename must fill up 11 bytes followed by a 0 terminator
 				// for a total of 12 bytes
-				BrmserchRes * search = bram_brmserch (file_info.filename);
+				BrmserchRes * search = bram_brmserch(file_info.filename);
 				// null means file was not found
 				if (search == NULL)
 				{
@@ -78,8 +78,7 @@ __attribute__ ((section (".init"))) void main()
 
 				wait_2m();
 
-				BrmreadRes * read =
-					bram_brmread (file_info.filename, (u8 *) _WRDRAM_2M);
+				BrmreadRes * read = bram_brmread(file_info.filename, (u8 *) _WRDRAM_2M);
 
 				if (! read->success)
 				{
@@ -99,7 +98,7 @@ __attribute__ ((section (".init"))) void main()
 			case 5:
 				wait_2m();
 
-				if (! bram_brmwrite (&file_info, (u8 *) _WRDRAM_2M))
+				if (! bram_brmwrite(&file_info, (u8 *) _WRDRAM_2M))
 				{
 					*GA_COMSTAT1 = 0xFFFF;
 				}
@@ -117,7 +116,7 @@ __attribute__ ((section (".init"))) void main()
 			// brmdel
 			case 7:
 				asm("nop");
-				if (bram_brmdel (&file_info.filename))
+				if (bram_brmdel(&file_info.filename))
 					*GA_COMSTAT1 = 0;
 				else
 					*GA_COMSTAT1 = 0xffff;
@@ -129,7 +128,7 @@ __attribute__ ((section (".init"))) void main()
 
 				wait_2m();
 
-				if (! bram_brmdir ("*\0", (u8 *) _WRDRAM_2M, 0, 0x100))
+				if (! bram_brmdir("*\0", (u8 *) _WRDRAM_2M, 0, 0x100))
 					*GA_COMSTAT1 = 0xffff;
 				else
 					*GA_COMSTAT0 = 0;
@@ -139,7 +138,7 @@ __attribute__ ((section (".init"))) void main()
 
 			// load IPX
 			case 0xfe:
-				load_file (ACC_OP_LOAD_CDC, "IPX.MMD;1", (u8 *) _WRDRAM_2M);
+				load_file(ACC_OP_LOAD_CDC, "IPX.MMD;1", (u8 *) _WRDRAM_2M);
 				grant_2m();
 				if (access_op_result != RESULT_OK)
 				{

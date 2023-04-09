@@ -8,7 +8,7 @@
 #ifndef MEGADEV__MAIN_MACROS_S
 #define MEGADEV__MAIN_MACROS_S
 
-#include "main/z80_def.h"
+#include "main/z80.def.h"
 
 .altmacro
 .macro Z80_DO_BUSREQ

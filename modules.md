@@ -24,7 +24,7 @@ For example, if we want our module to run on the Main CPU from Word RAM in 2Mbit
     GLOBAL MODULE_RAM_ORIGIN 0x380000
     GLOBAL MODULE_RAM_LENGTH 0x80000
 
-(Note that we use GLOBAL, which is a Megadev macro that sets the symbol to global; this is in macros.s, so you will need to include that file. We also use _WRDRAM which is present in the main/memmap_def.h file, which should also be included if you wish to use such named memory locations. You can, of course, opt to not include these files and manually define the memory location and the global attribute.)
+(Note that we use GLOBAL, which is a Megadev macro that sets the symbol to global; this is in macros.s, so you will need to include that file. We also use _WRDRAM which is present in the main/memmap.def.h file, which should also be included if you wish to use such named memory locations. You can, of course, opt to not include these files and manually define the memory location and the global attribute.)
 
 (As another side note, there doesn't seem to be a way to manually define a symbol (i.e. a named memory address) in C. You will need to specify this in asm using .equ/.global. A good idea is to have a single asm definitions file and include it in your MMD def.)
 

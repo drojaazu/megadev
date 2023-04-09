@@ -1,7 +1,7 @@
-#include "sub/gatearr_def.h"
-#include "sub/macros.s"
-#include "sub/cdrom_macros.s"
-#include "sub/cdrom_def.h"
+#include "sub/gatearray.def.h"
+#include "sub/sub.macro.s"
+#include "sub/cdrom.macro.s"
+#include "sub/cdrom.def.h"
 #include "macros.s"
 
 .section .text

@@ -1,7 +1,14 @@
-#ifndef MEGADEV__MAIN_GATEARR_MACROS_S
-#define MEGADEV__MAIN_GATEARR_MACROS_S
+/**
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file gatearray.macro.s
+ * @brief Helper macros for use with the Gate Array on the Main CPU side
+ */
 
-#include "main/gatearr_def.h"
+#ifndef MEGADEV__MAIN_GATEARRAY_MACRO_S
+#define MEGADEV__MAIN_GATEARRAY_MACRO_S
+
+#include "main/gatearray.def.h"
 
 /**
  * CLEAR_COMM_REGS

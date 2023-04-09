@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file build_def.h
+ * @file build.def.h
  * @brief Target hardware components definitions
  *
  * @details

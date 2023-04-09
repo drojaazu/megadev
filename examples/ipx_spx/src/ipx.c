@@ -1,11 +1,12 @@
 
 #include "ipx.h"
 #include "main/bootlib.h"
-#include "main/gatearr.h"
+#include "main/gatearray.h"
 #include "main/memmap.h"
 #include "main/mmd_exec.h"
 #include "main/vdp.h"
 #include "system.h"
+#include "types.h"
 
 u8 global_mode;
 
@@ -13,15 +14,13 @@ Particle particles[16];
 
 InitSettings settings;
 
-void init_particle (u8 particle_idx)
+void init_particle(u8 particle_idx)
 {
 	particles[particle_idx].status = Falling;
-	particles[particle_idx].pos_x = blib_prng_mod (320) + 128;
-	particles[particle_idx].pos_y = blib_prng_mod (5) + 123;
-	particles[particle_idx].speed =
-		blib_prng_mod ((settings.max_speed - settings.min_speed) + 1) +
-		settings.min_speed;
-	particles[particle_idx].end_at = blib_prng_mod (11) + 320;
+	particles[particle_idx].pos_x = blib_prng_mod(320) + 128;
+	particles[particle_idx].pos_y = blib_prng_mod(5) + 123;
+	particles[particle_idx].speed = blib_prng_mod((settings.max_speed - settings.min_speed) + 1) + settings.min_speed;
+	particles[particle_idx].end_at = blib_prng_mod(11) + 320;
 	particles[particle_idx].timer = 0;
 
 	BLIB_SPRLIST[particle_idx].next = particle_idx + 1;
@@ -33,7 +32,7 @@ void init_particle (u8 particle_idx)
 	BLIB_SPRLIST[particle_idx].height = settings.main_height;
 }
 
-void init_particles (u16 main_tile,
+void init_particles(u16 main_tile,
 	u16 end_tile,
 	u8 main_width,
 	u8 main_height,
@@ -57,7 +56,7 @@ void init_particles (u16 main_tile,
 	settings.palette = palette;
 
 	for (u8 iter = 0; iter < 16; ++iter)
-		init_particle (iter);
+		init_particle(iter);
 }
 
 void process_particles()
@@ -67,7 +66,7 @@ void process_particles()
 
 		if (particles[iter].status == Null)
 		{
-			init_particle (iter);
+			init_particle(iter);
 			continue;
 		}
 
@@ -162,7 +161,7 @@ void main()
 		{
 			// the NOP is so GCC doesn't optimize the loop away
 			// though since comstat is marked volatile it should be fine...
-			asm ("nop");
+			asm("nop");
 		} while (*GA_COMSTAT0 == 0);
 
 		// reset the command to none (0) once we have the acknowledgment
@@ -171,7 +170,7 @@ void main()
 		// the Sub CPU side work will be complete when COMSTAT0 returns to 0
 		do
 		{
-			asm ("nop");
+			asm("nop");
 		} while (*GA_COMSTAT0 != 0);
 
 		// Sub CPU side work is complete and the MMD should now be in 2M Word RAM

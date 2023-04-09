@@ -6,7 +6,7 @@
 #ifndef MEGADEV__PROJECT_H
 #define MEGADEV__PROJECT_H
 
-#include "build_def.h"
+#include "build.def.h"
 
 /**
  * @def HEADER_VOL_ID

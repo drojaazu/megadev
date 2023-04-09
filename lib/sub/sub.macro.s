@@ -1,15 +1,15 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file macros.s
+ * @file sub.macro.s
  * Sub CPU Gate Array and misc. utilities for use with the Sub CPU
  */
 
 #ifndef MEGADEV__SUB_MACROS_S
 #define MEGADEV__SUB_MACROS_S
 
-#include "sub/memmap_def.h"
-#include "sub/gatearr_def.h"
+#include "sub/memmap.def.h"
+#include "sub/gatearray.def.h"
 
 /**
  * @macro BURAM

@@ -5,8 +5,8 @@
 */
 
 #include "macros.s"
-#include "sub/bios_def.h"
-#include "sub/macros.s"
+#include "sub/bios.def.h"
+#include "sub/sub.macro.s"
 
 .section .text
 

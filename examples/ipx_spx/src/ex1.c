@@ -5,7 +5,6 @@
 #include "main/memmap.h"
 #include "main/vdp.h"
 #include "system.h"
-#include "types.h"
 
 extern u8 global_mode;
 extern u8 res_rain_chr;
