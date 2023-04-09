@@ -1,0 +1,33 @@
+#
+# [ M E G A D E V ]   a Sega Mega CD devkit
+#
+
+# Mega CD Target Makefile & Build Settings
+
+include $(MEGADEV_PATH)/makefile.global
+
+vpath %.md.def $(SRC_PATH)
+vpath %.md $(DISC_PATH)
+
+# Begin collecting project module configurations
+MD_DEFS:=$(wildcard $(SRC_PATH)/*.md.def)
+ROM_DEFS:=$(strip $(MD_DEFS))
+
+ROMS:=$(basename $(notdir $(ROM_DEFS)))
+
+ROMS_OUT:=$(addprefix $(DISC_PATH)/,$(ROMS))
+
+
+$(DISC_PATH)/%.md: $(BUILD_PATH)/%.md.elf
+	$(call msg_info,Exporting ROM $(notdir $@))
+	@$(OBJCPY) -O binary $< $@
+
+$(BUILD_PATH)/%.md.elf: %.md.def
+	$(eval LIST:=$(addprefix $(BUILD_PATH)/,$(file <$<)))
+	$(eval REQ_LIST:=$(addsuffix .elf, $(filter-out %.c %.s, $(LIST))))
+	$(eval BUILD_LIST:=$(addsuffix .o, $(filter %.c %.s, $(LIST))))
+	@$(MAKE) -s $(REQ_LIST)
+	@$(MAKE) -s $(BUILD_LIST)
+	$(call msg_info,Linking ROM $(notdir $@))
+	@$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/md_cart.ld $(BUILD_LIST) $(foreach symref,$(REQ_LIST),-R $(symref)) -o $@
+	@$(NM) -n $@ > $(basename $@).sym

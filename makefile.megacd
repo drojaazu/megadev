@@ -2,105 +2,29 @@
 # [ M E G A D E V ]   a Sega Mega CD devkit
 #
 
-# Global Makefile & Build Settings
+# Mega CD Target Makefile & Build Settings
 
-# Toolchain Setup
-# we assume all commands appear somewhere in $PATH
-# if this is not the case, you will need to specify the full path in the
-# prefix
-M68K_PREFIX?=m68k-elf-
+include $(MEGADEV_PATH)/makefile.global
 
-CC:=$(M68K_PREFIX)gcc
-OBJCPY:=$(M68K_PREFIX)objcopy
-NM:=$(M68K_PREFIX)nm
-LD:=$(M68K_PREFIX)ld
-AS:=$(M68K_PREFIX)as
-
-# (Z80 building not yet supported)
-Z80_AS:=sjasmplus
-
-################################################################################
-# STOP!
-# You should not need to change anything below this line unless you really,
-# really know what you're doing.
-################################################################################
-
-# TODO test that setting this here won't overwrite an existing value
-# maybe need to use ?= like below?
-# MEGADEV_PATH:=/opt/megadev
-
-# fancy colors cause we're fancy
-CLEAR=\033[0m
-BOLD=\033[1m
-CYAN=\033[1;36m
-RED=\033[1;31m
-YELLOW=\033[1;33m
-GREEN=\033[1;32m
-
-define msg_info
-	@echo -e "${BOLD}${CYAN}$(1)${CLEAR}"
-endef
-
-define msg_warning
-	@echo -e "${BOLD}${RED}$(1)${CLEAR}"
-endef
-
-## PATHS
-# Megadev library code (ASM and C)
-LIB_PATH:=$(MEGADEV_PATH)/lib
-
-# build time tools
-TOOLS_PATH:=$(MEGADEV_PATH)/tools
-
-# linker scripts
-CFG_PATH:=$(MEGADEV_PATH)/cfg
+vpath %.mmd.def $(SRC_PATH)
+vpath %.smd.def $(SRC_PATH)
+vpath %.bin.def $(SRC_PATH)
+vpath %.mmd $(DISC_PATH)
+vpath %.smd $(DISC_PATH)
+vpath %.bin $(DISC_PATH)
 
 # Begin collecting project module configurations
 MMD_DEFS:=$(wildcard $(SRC_PATH)/*.mmd.def)
 SMD_DEFS:=$(wildcard $(SRC_PATH)/*.smd.def)
 BIN_DEFS:=$(wildcard $(SRC_PATH)/*.bin.def)
-MD_DEFS:=$(wildcard $(SRC_PATH)/*.md.def)
+
 MODULE_DEFS:=$(strip $(MMD_DEFS) $(SMD_DEFS) $(BIN_DEFS))
-ROM_DEFS:=$(strip $(MD_DEFS))
 
 MODULES:=$(basename $(notdir $(MODULE_DEFS)))
-ROMS:=$(basename $(notdir $(ROM_DEFS)))
 #$(info MODULES: $(MODULES))
 
 MODULES_OUT:=$(addprefix $(DISC_PATH)/,$(MODULES))
-ROMS_OUT:=$(addprefix $(DISC_PATH)/,$(ROMS))
 #$(info MODULES_OUT: $(MODULES_OUT))
-
-# setup includes
-INC:=-I$(SRC_PATH) -I$(LIB_PATH) -I$(RES_PATH) -I$(BUILD_PATH) 
-# We have to manually pass the includes to the assembler
-# Each entry here should match each entry in INC, with a prefix of "-Wa,"
-AS_INC:=-Wa,-I$(SRC_PATH) -Wa,-I$(LIB_PATH) -Wa,-I$(RES_PATH) -Wa,-I$(BUILD_PATH)
-
-# build flags
-# Note: we include "-Wa,--register-prefix-optional" as a default C option
-# because it is useful for inline asm. However, "-Wa,--bitwise-or" will
-# cause issues with the GCC created asm, so we split that off and only use it
-# with asm source files
-CC_FLAGS:=-m68000 -imacros build.h -DPROJECT_NAME=$(PROJECT_NAME) $(addprefix -D, $(HW_CFG)) $(if $(DEBUG), -DDEBUG) $(OPT_FLAGS) -fno-builtin -fomit-frame-pointer -fno-gcse -Wall -Wextra -Wno-main -Wa,--register-prefix-optional
-AS_FLAGS:=-Wa,--bitwise-or
-LD_FLAGS:=-nostdlib
-
-vpath %.c $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
-vpath %.h $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
-vpath %.s $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
-vpath %.elf $(BUILD_PATH)
-vpath %.c.o $(BUILD_PATH)
-vpath %.s.o $(BUILD_PATH)
-
-# need to specify paths here as they're called through a secondary make
-$(BUILD_PATH)/%.c.o: %.c
-	$(call msg_info,Compiling source $(notdir $<))
-	@$(CC) $(CC_FLAGS) $(INC) -c $^ -o $@
-
-$(BUILD_PATH)/%.s.o: %.s
-	$(call msg_info,Compiling source $(notdir $<))
-	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $^ -o $@
 
 # TODO merge the module exports since they're 99% identical
 $(DISC_PATH)/%.mmd: $(BUILD_PATH)/%.mmd.elf
@@ -113,10 +37,6 @@ $(DISC_PATH)/%.smd: $(BUILD_PATH)/%.smd.elf
 
 $(DISC_PATH)/%.bin: $(BUILD_PATH)/%.bin.elf
 	$(call msg_info,Exporting module $(notdir $@))
-	@$(OBJCPY) -O binary $< $@
-
-$(DISC_PATH)/%.md: $(BUILD_PATH)/%.md.elf
-	$(call msg_info,Exporting ROM $(notdir $@))
 	@$(OBJCPY) -O binary $< $@
 
 # TODO merge the module linking rules since they're 99% identical
@@ -151,16 +71,6 @@ $(BUILD_PATH)/%.bin.elf: %.bin.def
 	@$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_bin.ld $(BUILD_LIST) $(foreach symref,$(REQ_LIST),-R $(symref)) -o $@
 	@$(NM) -n $@ > $(basename $@).sym
 
-$(BUILD_PATH)/%.md.elf: %.md.def
-	$(eval LIST:=$(addprefix $(BUILD_PATH)/,$(file <$<)))
-	$(eval REQ_LIST:=$(addsuffix .elf, $(filter-out %.c %.s, $(LIST))))
-	$(eval BUILD_LIST:=$(addsuffix .o, $(filter %.c %.s, $(LIST))))
-	@$(MAKE) -s $(REQ_LIST)
-	@$(MAKE) -s $(BUILD_LIST)
-	$(call msg_info,Linking ROM $(notdir $@))
-	@$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/md_cart.ld $(BUILD_LIST) $(foreach symref,$(REQ_LIST),-R $(symref)) -o $@
-	@$(NM) -n $@ > $(basename $@).sym
-
 .PHONY: init boot_sector modules iso clean
 
 default: init boot_sector modules iso
@@ -186,7 +96,7 @@ iso: $(BUILD_PATH)/boot.bin
 		-o $(OUT_PATH)/$(PROJECT_NAME).iso $(DISC_PATH)
 
 init:
-	@mkdir -p $(BUILD_PATH) $(OUT_PATH) $(DISC_PATH) $(SRC_PATH)
+	@mkdir -p $(BUILD_PATH) $(DISC_PATH) $(SRC_PATH)
 
 # special rules for boot sector binaries
 $(BUILD_PATH)/ip.bin.elf: $(BUILD_PATH)/ip.s.o
