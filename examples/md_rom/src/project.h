@@ -6,7 +6,7 @@
 #ifndef MEGADEV__PROJECT_H
 #define MEGADEV__PROJECT_H
 
-#include "build_def.h"
+#include "build.def.h"
 
 /**
  * @def HEADER_VOL_ID
@@ -115,5 +115,7 @@
 // All regions, regardless of BIOS security code
 // #define HEADER_REGION "JUE             "
 //                    "################"
+
+#define MODE_OFFSET 0x400000
 
 #endif

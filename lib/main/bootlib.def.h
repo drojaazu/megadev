@@ -474,7 +474,7 @@
  * @sa blib_vint_handler
  * @ingroup blib_int
  */
-#define _BLIB_VINT_HANDLER 0x000290
+#define _BLIB_VINT_HANDLER (0x000290 + MODE_OFFSET)
 
 /*
  * There are two functions for setting the HINT vector. Both are almost

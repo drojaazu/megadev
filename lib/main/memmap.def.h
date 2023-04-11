@@ -22,24 +22,40 @@
  * @brief Base address of Word RAM in 2M mode
  *
  */
+#ifdef TARGET_MEGACD_MODE1
+#define _WRDRAM 0x600000
+#else
 #define _WRDRAM 0x200000
+#endif
 
 /**
  * @brief Base address of Word RAM in 1M mode
  *
  */
+#ifdef TARGET_MEGACD_MODE1
+#define _WRDRAM 0x600000
+#else
 #define _WRDRAM_1M_0 0x200000
+#endif
 
 /**
  * @brief Base address of VDP tiles in 1M mode
  *
  */
+#ifdef TARGET_MEGACD_MODE1
+#define _WRDRAM 0x62'00'00
+#else
 #define _WRDRAM_1M_1 0x220000
+#endif
 
 /**
  * @brief Bass address for Sub CPU PRG RAM 1M mapping
  */
+#ifdef TARGET_MEGACD_MODE1
+#define _PRGRAM 0x42'00'00
+#else
 #define _PRGRAM 0x20000
+#endif
 
 /**
  * Initial Program (IP) enntry

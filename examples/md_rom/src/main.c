@@ -1,4 +1,7 @@
+#include "main/bootlib.h"
 #include "main/io.h"
+#include "main/memmap.h"
+#include "system.h"
 #include "types.h"
 
 u8 p1_in;
@@ -11,7 +14,8 @@ void testing()
 
 __attribute__((noreturn)) void main()
 {
-
+	MLEVEL6_VECTOR = (void *(*) ) _BLIB_VINT_HANDLER;
+	enable_interrupts();
 	while (true)
 	{
 		p1_in = IO_DATA1;

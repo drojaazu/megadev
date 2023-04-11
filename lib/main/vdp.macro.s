@@ -6,6 +6,8 @@
 #ifndef MEGADEV__MAIN_VDP_MACROS_S
 #define MEGADEV__MAIN_VDP_MACROS_S
 
+#define VDPPTR(addr) ((((addr) & 0x3FFF) << 16) + (((addr) & 0xC000) >> 14))
+
 /**
  * @brief Convert 16 bit VRAM address to vdpptr format
  */

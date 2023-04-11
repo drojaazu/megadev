@@ -3,9 +3,6 @@
 # https://github.com/drojaazu/megadev
 ################################################################################
 
-# Path to the Megadev directory
-MEGADEV_PATH:=/opt/megadev
-
 # This will be used for filename output
 PROJECT_NAME=md_rom
 
@@ -38,8 +35,11 @@ DISC_PATH:=disc
 # Here you can add any additional compiler flags
 OPT_FLAGS:=-O1 -fstack-usage -fconserve-stack
 
+# Path to the Megadev directory
+MEGADEV_PATH:=/opt/megadev
+
 # Z80 CPU code path
 # Z80 building is not currently supported... someday!
 #Z80_SRC_PATH:=z80_src
 
-include $(MEGADEV_PATH)/makefile.global
+include $(MEGADEV_PATH)/makefile.megadrive

@@ -6,6 +6,8 @@
 
 include $(MEGADEV_PATH)/makefile.global
 
+CC_FLAGS:=$(CC_FLAGS) -DMODE_OFFSET=0
+
 vpath %.mmd.def $(SRC_PATH)
 vpath %.smd.def $(SRC_PATH)
 vpath %.bin.def $(SRC_PATH)
@@ -86,7 +88,6 @@ boot_sector: $(BUILD_PATH)/boot.bin
 
 modules: $(MODULES_OUT)
 
-md_rom: $(ROMS_OUT)
 
 # TODO make the ISO settings user configurable
 iso: $(BUILD_PATH)/boot.bin

@@ -6,6 +6,8 @@
 
 include $(MEGADEV_PATH)/makefile.global
 
+CC_FLAGS:=$(CC_FLAGS) -DMODE_OFFSET=0x400000
+
 vpath %.md.def $(SRC_PATH)
 vpath %.md $(DISC_PATH)
 
@@ -17,17 +19,29 @@ ROMS:=$(basename $(notdir $(ROM_DEFS)))
 
 ROMS_OUT:=$(addprefix $(DISC_PATH)/,$(ROMS))
 
-
 $(DISC_PATH)/%.md: $(BUILD_PATH)/%.md.elf
 	$(call msg_info,Exporting ROM $(notdir $@))
 	@$(OBJCPY) -O binary $< $@
 
 $(BUILD_PATH)/%.md.elf: %.md.def
 	$(eval LIST:=$(addprefix $(BUILD_PATH)/,$(file <$<)))
-	$(eval REQ_LIST:=$(addsuffix .elf, $(filter-out %.c %.s, $(LIST))))
 	$(eval BUILD_LIST:=$(addsuffix .o, $(filter %.c %.s, $(LIST))))
-	@$(MAKE) -s $(REQ_LIST)
 	@$(MAKE) -s $(BUILD_LIST)
 	$(call msg_info,Linking ROM $(notdir $@))
-	@$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/md_cart.ld $(BUILD_LIST) $(foreach symref,$(REQ_LIST),-R $(symref)) -o $@
+	@$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/md_cart.ld $(BUILD_LIST) -o $@
 	@$(NM) -n $@ > $(basename $@).sym
+
+.PHONY: init rom clean
+
+default: init md_rom
+
+.SECONDARY: 
+
+md_rom: $(ROMS_OUT)
+
+init:
+	@mkdir -p $(BUILD_PATH) $(SRC_PATH) $(DISC_PATH)
+
+clean:
+	$(call msg_warning,Removing build artifacts & ROM)
+	@rm -rf $(BUILD_PATH)/* $(ROMS_OUT)
