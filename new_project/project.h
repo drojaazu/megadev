@@ -1,6 +1,8 @@
 /**
- * @file
- * Project header and build configuration
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
+ * @file project.h
+ * @brief Project configuration
  */
 
 #ifndef MEGADEV__PROJECT_H
@@ -70,14 +72,19 @@
  */
 
 /**
- * @def HEADER_VOL_ID
- * @brief Disc volume ID
- * @details This will be the "name" of the disc, as displayed in a file manager
- * when mounted on a PC
- * @note 11 bytes
+ * @def HEADER_HARDWARE
+ * @brief Target hardware
+ * @details
+ * This line indicates the hardware on which the game is meant to
+ * run. This value will be automatically generated based on the
+ * region set above and, in general, should not be changed as it may
+ * be checked for the presence of "SEGA" at the start of the string.
+ * However, you can override it below if you know what you're doing.
+ *
+ * @note 16 bytes
  */
-#define HEADER_VOL_ID "HELLO_WORLD"
-//                    "###########"
+// #define HEADER_HARDWARE "SEGA MEGA DRIVE "
+//                      "################"
 
 /**
  * @def HEADER_HARDWARE
@@ -159,22 +166,14 @@
  * @def HEADER_REGION
  * @brief Valid usage regions
  *
- * @details Defines the region(s) in which the software is valid
+ * @details Defines the region(s) in which the software is valid. This value will
+ * be set automatically to match the region set above, but you can manually override
+ * it here to set multiple regions if you wish
  *
- * @note 16 bytes
+ * @note 3 bytes
  *
  */
-#if REGION == JP
-#define HEADER_REGION "J               "
-#endif
-#if REGION == US
-#define HEADER_REGION "U               "
-#endif
-#if REGION == EU
-#define HEADER_REGION "E               "
-#endif
-// All regions, regardless of BIOS security code
-// #define HEADER_REGION "JUE             "
-//                    "################"
+// #define HEADER_REGION "JUE"
+//                    "###"
 
 #endif

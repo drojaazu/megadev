@@ -3,17 +3,8 @@
 # https://github.com/drojaazu/megadev
 ################################################################################
 
-# Path to the Megadev directory
-MEGADEV_PATH:=/opt/megadev
-
 # This will be used for filename output
 PROJECT_NAME=ipx_spx
-
-# Default hardware configuration
-# (This can be changed on the command line to easily build for different hardware
-# targets)
-# See README.md for more info on this
-HW_CFG=REGION=US VIDEO=NTSC VRAM_SIZE=VRAM_64K
 
 # the path to your source code
 # (relative to the location of the makefile)
@@ -41,5 +32,8 @@ OPT_FLAGS:=-O1 -fstack-usage -fconserve-stack
 # Z80 CPU code path
 # Z80 building is not currently supported... someday!
 #Z80_SRC_PATH:=z80_src
+
+# Path to the Megadev directory
+MEGADEV_PATH:=/opt/megadev
 
 include $(MEGADEV_PATH)/makefile.global

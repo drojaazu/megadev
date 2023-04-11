@@ -46,34 +46,35 @@ SP_OFFSET:  .long 0x1000
 SP_SIZE:    .long _sp_end-_sp_begin
 SP_ENTRY:   .long 0
 SP_WORKRAM: .long 0
-	.ascii	"                "
-	.ascii	"                "
-	.ascii	"                "
-	.ascii	"                "
-	.ascii	"                "
-	.ascii	"                "
-	.ascii	"                "
-	.ascii	"                "
-	.ascii	"                "
-	.ascii	"                "
-	.ascii	"                "
+.ascii	"                "
+.ascii	"                "
+.ascii	"                "
+.ascii	"                "
+.ascii	"                "
+.ascii	"                "
+.ascii	"                "
+.ascii	"                "
+.ascii	"                "
+.ascii	"                "
+.ascii	"                "
 		
 # =======================================================================================
 #  Game Header
 # =======================================================================================	
-HardwareType: .ascii HEADER_HARDWARE
-Copyright:    .ascii HEADER_COPYRIGHT
-NativeName:   .ascii HEADER_NAME_JP
-OverseasName: .ascii HEADER_NAME_INTL
-DiscID:       .ascii HEADER_SOFT_ID
-IO:
-  .ascii "J               "
-  .ascii	"                "
-  .ascii	"                "
-  .ascii	"                "
-  .ascii	"                "
-  .ascii	"                "
-Region:       .ascii HEADER_REGION
+.ascii HEADER_HARDWARE
+.ascii HEADER_COPYRIGHT
+.ascii HEADER_NAME_JP
+.ascii HEADER_NAME_INTL
+.ascii HEADER_SOFT_ID
+// TODO add calculated or user-defined values for other header settings (checksum, devices, etc)
+.ascii  "                "
+.ascii	"                "
+.ascii	"                "
+.ascii	"                "
+.ascii	"                "
+.ascii	"                "
+.ascii HEADER_REGION
+.ascii  "             "
 
 // if all the above text is correct, we should be at 0x200 anyway
 .org 0x200

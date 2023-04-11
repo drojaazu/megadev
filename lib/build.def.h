@@ -5,13 +5,16 @@
  * @brief Target hardware components definitions
  *
  * @details
- * These can be referenced within code by setting globale definitions
- * or during the make process via HW_CFG, e.g.:
- * make HW_CFG="REGION=JP VIDEO=NTSC"
+
  */
 
 #ifndef MEGADEV__BUILD_DEF_H
 #define MEGADEV__BUILD_DEF_H
+
+// For use with the HW_TARGET definition
+#define MEGADRIVE 0
+#define MEGACD 1
+#define MEGACD_MODE1 2
 
 // For use with the REGION definition
 #define JP 0

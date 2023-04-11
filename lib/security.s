@@ -10,7 +10,10 @@
 
 .section .text
 
-#ifdef REGION
+#ifndef REGION
+#error Hardware region not defined, cannot choose security code!
+#endif
+
 #if REGION == JP
 .incbin	"security_jp.bin"
 #endif
@@ -21,5 +24,4 @@
 
 #if REGION == EU
 .incbin	"security_eu.bin"
-#endif
 #endif
