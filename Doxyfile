@@ -11,7 +11,10 @@ GENERATE_HTML			= YES
 RECURSIVE         = YES
 EXTRACT_STATIC		= YES
 MARKDOWN_SUPPORT	= YES
-
+ENABLE_PREPROCESSING = YES
+MACRO_EXPANSION      = YES
+EXPAND_ONLY_PREDEF   = YES
+PREDEFINED           = "HW_TARGET=MEGACD"
 INPUT							= README.md disc.md design.md cdrom.md bootrom.md modules.md ip_sp.md lib
 FILE_PATTERNS			= *.h *.s *.c *.md
 ALIASES += "clobber=@warning REGISTER CLOBBERS: " 

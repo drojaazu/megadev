@@ -6,8 +6,6 @@
 
 include $(MEGADEV_PATH)/makefile.global
 
-CC_FLAGS:=$(CC_FLAGS) -DMODE_OFFSET=0x400000
-
 vpath %.md.def $(SRC_PATH)
 vpath %.md $(DISC_PATH)
 

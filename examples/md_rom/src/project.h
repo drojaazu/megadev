@@ -8,6 +8,60 @@
 
 #include "build.def.h"
 
+/*
+ * Hardware target
+ * Valid values: MEGACD, MEGADRIVE, MEGACD_MODE1
+ */
+#define HW_TARGET MEGACD_MODE1
+
+/*
+ * Default hardware configuration
+ * These values can be changed when running make with the HW_CFG variable to easily
+ * build for different hardware, e.g.:
+ * make HW_CFG="REGION=JP VIDEO=NTSC"
+ * See README.md for more info on these settings
+ */
+// Valid values: US, EU, JP
+#ifndef REGION
+#define REGION US
+#endif
+
+// Valid values: NTSC, PAL
+#ifndef VIDEO
+#define VIDEO NTSC
+#endif
+
+// Valid values: VRAM_64K, VRAM_128K
+#ifndef VRAM_SIZE
+#define VRAM_SIZE VRAM_64K
+#endif
+
+/*
+ * Header settings
+ * The below settings will appear in the program header, located within the boot
+ * sector of the disc.
+ *******************************************************************************
+ * These are *size sensitive* and must occupy exactly the amount of space      *
+ * listed. You can use the sizing bar (######) below each entry to ensure your *
+ * text fits, and unused space should be filled with spaces.                   *
+ *******************************************************************************
+ */
+
+/**
+ * @def HEADER_HARDWARE
+ * @brief Target hardware
+ * @details
+ * This line indicates the hardware on which the game is meant to
+ * run. This value will be automatically generated based on the
+ * region set above and, in general, should not be changed as it may
+ * be checked for the presence of "SEGA" at the start of the string.
+ * However, you can override it below if you know what you're doing.
+ *
+ * @note 16 bytes
+ */
+// #define HEADER_HARDWARE "SEGA MEGA DRIVE "
+//                      "################"
+
 /**
  * @def HEADER_VOL_ID
  * @brief Disc volume ID
@@ -98,24 +152,14 @@
  * @def HEADER_REGION
  * @brief Valid usage regions
  *
- * @details Defines the region(s) in which the software is valid
+ * @details Defines the region(s) in which the software is valid. This value will
+ * be set automatically to match the region set above, but you can manually override
+ * it here to set multiple regions if you wish
  *
- * @note 16 bytes
+ * @note 3 bytes
  *
  */
-#if REGION == JP
-#define HEADER_REGION "J               "
-#endif
-#if REGION == US
-#define HEADER_REGION "U               "
-#endif
-#if REGION == EU
-#define HEADER_REGION "E               "
-#endif
-// All regions, regardless of BIOS security code
-// #define HEADER_REGION "JUE             "
-//                    "################"
-
-#define MODE_OFFSET 0x400000
+// #define HEADER_REGION "JUE"
+//                    "###"
 
 #endif

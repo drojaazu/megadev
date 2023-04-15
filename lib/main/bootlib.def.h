@@ -452,29 +452,49 @@
  * @sa blib_bios_entry
  * @ingroup blib_system
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_BIOS_ENTRY 0x400280
+#else
 #define _BLIB_BIOS_ENTRY 0x000280
+#endif
 
 /**
  * @sa blib_reset
  * @ingroup blib_system
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_RESET 0x400284
+#else
 #define _BLIB_RESET 0x000284
+#endif
 
 /**
  * @sa blib_init
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_INIT 0x400288
+#else
 #define _BLIB_INIT 0x000288
+#endif
 
 /**
  * @sa blib_init_sp
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_INIT_SP 0x40028C
+#else
 #define _BLIB_INIT_SP 0x00028C
+#endif
 
 /**
  * @sa blib_vint_handler
  * @ingroup blib_int
  */
-#define _BLIB_VINT_HANDLER (0x000290 + MODE_OFFSET)
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_VINT_HANDLER 0x400290
+#else
+#define _BLIB_VINT_HANDLER 0x000290
+#endif
 
 /*
  * There are two functions for setting the HINT vector. Both are almost
@@ -490,7 +510,11 @@
  * @clobber None
  * @ingroup blib_int
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_SET_HINT 0x400294
+#else
 #define _BLIB_SET_HINT 0x000294
+#endif
 
 /**
  * @sa blib_update_inputs
@@ -502,7 +526,11 @@
  * @clobber d6-d7/a5-a6
  * @ingroup blib_input
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_UPDATE_INPUTS 0x400298
+#else
 #define _BLIB_UPDATE_INPUTS 0x000298
+#endif
 
 /**
  * @sa blib_detect_controller
@@ -510,35 +538,55 @@
  * @param[out] d6.b Controller type
  * @ingroup blib_input
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_DETECT_CONTROLLER 0x40029C
+#else
 #define _BLIB_DETECT_CONTROLLER 0x00029C
+#endif
 
 /**
  * @sa blib_clear_vram
  * @clobber d0-d3/a6
  * @ingroup blib_vdp
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_CLEAR_VRAM 0x4002A0
+#else
 #define _BLIB_CLEAR_VRAM 0x0002A0
+#endif
 
 /**
  * @sa blib_clear_tables
  * @clobber d0-d3/a6
  * @ingroup blib_vdp
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_CLEAR_TABLES 0x4002A4
+#else
 #define _BLIB_CLEAR_TABLES 0x0002A4
+#endif
 
 /**
  * @sa blib_clear_vsram
  * @clobber d0-d2
  * @ingroup blib_vdp
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_CLEAR_VSRAM 0x4002A8
+#else
 #define _BLIB_CLEAR_VSRAM 0x0002A8
+#endif
 
 /**
  * @sa blib_load_vdpregs_default
  * @clobber d0-d1/a1-a2
  * @ingroup blib_vdp
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_LOAD_VDPREGS_DEFAULT 0x4002AC
+#else
 #define _BLIB_LOAD_VDPREGS_DEFAULT 0x0002AC
+#endif
 
 /**
  * @sa blib_load_vdpregs
@@ -546,7 +594,11 @@
  * @clobber d0-d1/a2
  * @ingroup blib_vdp
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_LOAD_VDPREGS 0x4002B0
+#else
 #define _BLIB_LOAD_VDPREGS 0x0002B0
+#endif
 
 /**
  * @sa blib_vdp_fill
@@ -556,7 +608,11 @@
  * @clobber d0-d2
  * @ingroup blib_vdp
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_VDP_FILL 0x4002B4
+#else
 #define _BLIB_VDP_FILL 0x0002B4
+#endif
 
 /**
  * @sa blib_vdp_fill_clear
@@ -566,7 +622,11 @@
  * @clobber d0-d2
  * @ingroup blib_vdp
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_VDP_FILL_CLEAR 0x4002B8
+#else
 #define _BLIB_VDP_FILL_CLEAR 0x0002B8
+#endif
 
 /**
  * @def _BLIB_DMA_FILL_CLEAR
@@ -576,7 +636,11 @@
  * @clobber d0-d3/a6
  * @ingroup blib_vdp
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_DMA_FILL_CLEAR 0x4002BC
+#else
 #define _BLIB_DMA_FILL_CLEAR 0x0002BC
+#endif
 
 /**
  * @def _BLIB_DMA_FILL
@@ -587,7 +651,11 @@
  * @clobber d0-d3/a6
  * @ingroup blib_vdp
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_DMA_FILL 0x4002C0
+#else
 #define _BLIB_DMA_FILL 0x0002C0
+#endif
 
 /**
  * @def _BLIB_LOAD_MAP
@@ -600,7 +668,11 @@
  * @clobber d0-d3/a1/a5
  * @ingroup blib_vdp
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_LOAD_MAP 0x4002C4
+#else
 #define _BLIB_LOAD_MAP 0x0002C4
+#endif
 
 /**
  * @fn _BLIB_LOAD_MAP_TEMPLATE
@@ -619,28 +691,44 @@
  * beforehand, the upper byte of the word can be set before calling, making it
  * a "template" that applies to each tile.
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_LOAD_MAP_TEMPLATE 0x4002C8
+#else
 #define _BLIB_LOAD_MAP_TEMPLATE 0x0002C8
+#endif
 
 /**
  * @sa blib_nmtbl_fill
  * @clobber d0-d3/d5/a5
  * @ingroup blib_vdp
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_NMTBL_FILL 0x4002CC
+#else
 #define _BLIB_NMTBL_FILL 0x0002CC
+#endif
 
 /**
  * @sa blib_dma_xfer
  * @clobber d0-d3/a6
  * @ingroup blib_vdp
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_DMA_XFER 0x4002D0
+#else
 #define _BLIB_DMA_XFER 0x0002D0
+#endif
 
 /**
  * @sa blib_dma_xfer_wrdram
  * @clobber d0-d3/a6
  * @ingroup blib_vdp
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_DMA_XFER_WRDRAM 0x4002D4
+#else
 #define _BLIB_DMA_XFER_WRDRAM 0x0002D4
+#endif
 
 /**
  * @fn _BLIB_VDP_DISP_ENABLE
@@ -649,7 +737,11 @@
  *
  * @details Sets bit 6 on VDP reg. #1. The VDP register buffer is updated.
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_VDP_DISP_ENABLE 0x4002D8
+#else
 #define _BLIB_VDP_DISP_ENABLE 0x0002D8
+#endif
 
 /**
  * @fn _BLIB_VDP_DISP_DISABLE
@@ -658,25 +750,41 @@
  *
  * @details Clears bit 6 on VDP reg. #1. The VDP register buffer is updated.
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_VDP_DISP_DISABLE 0x4002DC
+#else
 #define _BLIB_VDP_DISP_DISABLE 0x0002DC
+#endif
 
 /**
  * @sa blib_load_pal
  * @clobber d0
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_LOAD_PAL 0x4002E0
+#else
 #define _BLIB_LOAD_PAL 0x0002E0
+#endif
 
 /**
  * @sa blib_load_pal_update
  * @clobber d0
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_LOAD_PAL_UPDATE 0x4002E4
+#else
 #define _BLIB_LOAD_PAL_UPDATE 0x0002E4
+#endif
 
 /**
  * @sa blib_copy_pal
  * @clobber a4,d4
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_COPY_PAL 0x4002E8
+#else
 #define _BLIB_COPY_PAL 0x0002E8
+#endif
 
 /**
  * @fn _BLIB_GFX_DECOMP
@@ -687,7 +795,11 @@
  *
  * GROUP: Decompression, VDP
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_GFX_DECOMP 0x4002EC
+#else
 #define _BLIB_GFX_DECOMP 0x0002EC
+#endif
 
 /**
  * @fn _GFX_DECMP
@@ -697,19 +809,31 @@
  *
  * GROUP: Decompression
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_GFX_DECOMP_RAM 0x4002F0
+#else
 #define _BLIB_GFX_DECOMP_RAM 0x0002F0
+#endif
 
 /**
  * @sa blib_process_sprobjs
  * @clobber d0-d4/d6/a2
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_PROCESS_SPROBJS 0x4002F4
+#else
 #define _BLIB_PROCESS_SPROBJS 0x0002F4
+#endif
 
 /**
  * @sa blib_clear_ram
  * @clobber d6/a6
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_CLEAR_RAM 0x4002F8
+#else
 #define _BLIB_CLEAR_RAM 0x0002F8
+#endif
 
 /**
  * @fn _BLIB_UNKNOWN_1F
@@ -728,7 +852,11 @@
  *
  * GROUP: Unknown
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_UNKNOWN_1F 0x4002FC
+#else
 #define _BLIB_UNKNOWN_1F 0x0002FC
+#endif
 
 /**
  * @fn _BLIB_DISP_SPROBJ
@@ -737,25 +865,41 @@
  * @param[in] D6.b Initial value for "next" sprite
  * @clobber d0-d4/a1-a2
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_DISP_SPROBJ 0x400300
+#else
 #define _BLIB_DISP_SPROBJ 0x000300
+#endif
 
 /**
  * @sa blib_vint_wait
  * @clobber d0
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_VINT_HANDLER_WAIT 0x400304
+#else
 #define _BLIB_VINT_HANDLER_WAIT 0x00304
+#endif
 
 /**
  * @sa blib_vint_wait_default
  * @clobber d0
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_VINT_HANDLER_WAIT_DEFAULT 0x400308
+#else
 #define _BLIB_VINT_HANDLER_WAIT_DEFAULT 0x000308
+#endif
 
 /**
  * @sa blib_copy_sprlist
  * @clobber d4/a4
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_COPY_SPRLIST 0x40030C
+#else
 #define _BLIB_COPY_SPRLIST 0x00030C
+#endif
 
 /**
  * @fn _BLIB_UNKNOWN_24
@@ -778,7 +922,11 @@
  * BREAK:
  *  d1
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_UNKNOWN_24 0x400310
+#else
 #define _BLIB_UNKNOWN_24 0x000310
+#endif
 
 /**
  * @def _BLIB_SET_HINT_WORKRAM
@@ -787,18 +935,30 @@
  *
  *
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_SET_HINT_WORKRAM 0x400314
+#else
 #define _BLIB_SET_HINT_WORKRAM 0x000314
+#endif
 
 /**
  * @sa blib_disable_hint
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_DISABLE_HINT 0x400318
+#else
 #define _BLIB_DISABLE_HINT 0x000318
+#endif
 
 /**
  * @sa blib_print
  * @clobber d1-d2/a5
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_PRINT 0x40031C
+#else
 #define _BLIB_PRINT 0x00031C
+#endif
 
 /**
  * @fn _BLIB_LOAD_1BPP_TILES
@@ -817,7 +977,11 @@
  * For example, to have your 1bpp graphics use palette index 2 for the "main"
  * color and a blank background (index 0), then put 00022022 in d1.
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_LOAD_1BPP_TILES 0x400320
+#else
 #define _BLIB_LOAD_1BPP_TILES 0x000320
+#endif
 
 /**
  * @fn _BLIB_LOAD_FONT
@@ -832,19 +996,31 @@
  * The VRAM destination should place the font no earlier than tile index
  * 0x20 if you are planning to use this with the _PRINT_STRING function.
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_LOAD_FONT 0x400324
+#else
 #define _BLIB_LOAD_FONT 0x000324
+#endif
 
 /**
  * @sa blib_load_font_defaults
  * @clobber d0-d4/a1/a5
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_LOAD_FONT_DEFAULTS 0x400328
+#else
 #define _BLIB_LOAD_FONT_DEFAULTS 0x000328
+#endif
 
 /**
  * @sa blib_input_delay
  * @clobber d1/a1/a5
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_INPUT_DELAY 0x40032C
+#else
 #define _BLIB_INPUT_DELAY 0x00032C
+#endif
 
 /**
  * @fn _BLIB_MAP_DECOMP
@@ -854,7 +1030,11 @@
  * @param[in] A2.l Pointer to output buffer
  * @ingroup blib_cmp
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_MAP_DECOMP 0x400330
+#else
 #define _BLIB_MAP_DECOMP 0x000330
+#endif
 
 /**
  * @fn _BLIB_LOAD_MAP_VERT
@@ -866,32 +1046,52 @@
  * @clobber d4-d6/a5
  * @ingroup blib_vdp
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_LOAD_MAP_VERT 0x400334
+#else
 #define _BLIB_LOAD_MAP_VERT 0x000334
+#endif
 
 /**
  * @sa blib_prng_mod
  * @clobber d1
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_PRNG_MOD 0x400338
+#else
 #define _BLIB_PRNG_MOD 0x000338
+#endif
 
 /**
  * @sa blib_prng
  * @clobber d0
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_PRNG 0x40033C
+#else
 #define _BLIB_PRNG 0x00033C
+#endif
 
 /**
  * @sa blib_clear_comm
  * @clobber d0/a6
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_CLEAR_COMM 0x400340
+#else
 #define _BLIB_CLEAR_COMM 0x000340
+#endif
 
 /**
  * @fn _BLIB_COMM_SYNC
  * @brief Copies COMCMD cache to registers and COMSTAT registers to cache
  *
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_COMM_SYNC 0x400344
+#else
 #define _BLIB_COMM_SYNC 0x000344
+#endif
 
 /**
  * @fn _BLIB_UK_COMM_CDINFO
@@ -899,22 +1099,46 @@
  *
  * @details
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_UK_COMM_CDINFO 0x400348
+#else
 #define _BLIB_UK_COMM_CDINFO 0x000348
+#endif
 
 /**
  * @fn _BLIB_UK_COMMFLAGS_RELATED
  * @brief UNKNOWN
  *
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_UK_COMMFLAGS_RELATED 0x40034C
+#else
 #define _BLIB_UK_COMMFLAGS_RELATED 0x00034C
+#endif
 
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_UNKNOWN_35 0x400350
+#else
 #define _BLIB_UNKNOWN_35 0x000350
+#endif
 
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_UNKNOWN_36 0x400354
+#else
 #define _BLIB_UNKNOWN_36 0x000354
+#endif
 
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_UNKNOWN_37 0x400358
+#else
 #define _BLIB_UNKNOWN_37 0x000358
+#endif
 
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_UNKNOWN_38 0x40035C
+#else
 #define _BLIB_UNKNOWN_38 0x00035C
+#endif
 
 /**
  * @fn _BLIB_TRIGGER_IFL2
@@ -922,7 +1146,11 @@
  * @clobber a5
  * @ingroup blib_int
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_TRIGGER_IFL2 0x400360
+#else
 #define _BLIB_TRIGGER_IFL2 0x000360
+#endif
 
 /**
  * @fn _BLIB_SEGA_LOGO
@@ -932,7 +1160,11 @@
  * @note This should never need to be called from inside the game. It is
  * called automatically as part of the security code during startup.
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_SEGA_LOGO 0x400364
+#else
 #define _BLIB_SEGA_LOGO 0x000364
+#endif
 
 /**
  * @fn _BLIB_SET_VINT
@@ -944,7 +1176,11 @@
  * the adddress into _mlevel6+2. You may as well do the move yourself and skip
  * the stack push/extra cycles from the jsr.
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_SET_VINT 0x400368
+#else
 #define _BLIB_SET_VINT 0x000368
+#endif
 
 /**
  * @fn _BLIB_LOAD_MAP_HORIZ
@@ -956,7 +1192,11 @@
  * @clobber d4/a5
  * @ingroup blib_vdp
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_LOAD_MAP_HORIZ 0x40036C
+#else
 #define _BLIB_LOAD_MAP_HORIZ 0x00036C
+#endif
 
 /**
  * @fn _UKNOWN_3B
@@ -981,15 +1221,27 @@
  * BREAK:
  *  d4/a5
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_UNKNOWN_3B 0x400370
+#else
 #define _BLIB_UNKNOWN_3B 0x000370
+#endif
 
 /**
  * @sa blib_dma_copy
  * @clobber d3/a6
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_DMA_COPY 0x400374
+#else
 #define _BLIB_DMA_COPY 0x000374
+#endif
 
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_UNKNOWN_3D 0x400378
+#else
 #define _BLIB_UNKNOWN_3D 0x000378
+#endif
 
 /**
  * @fn _BLIB_TO_BCD_BYTE
@@ -998,7 +1250,11 @@
  * @param[out] D1.b BCD value
  * @ingroup blib_misc
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_TO_BCD_BYTE 0x40037C
+#else
 #define _BLIB_TO_BCD_BYTE 0x00037C
+#endif
 
 /**
  * @fn _BLIB_TO_BCD
@@ -1007,7 +1263,11 @@
  * @param[out] D1.w BCD value
  * @ingroup blib_misc
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_TO_BCD 0x400380
+#else
 #define _BLIB_TO_BCD 0x000380
+#endif
 
 /**
  * @fn _BLIB_BLANK_DISPLAY
@@ -1017,35 +1277,67 @@
  * @details This routine clears palette index 0 (black) and disables VDP output.
  * @note The VDP register cache will be updated
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_BLANK_DISPLAY 0x400384
+#else
 #define _BLIB_BLANK_DISPLAY 0x000384
+#endif
 
 /**
  * @sa blib_pal_fadeout
  * @ingroup blib_vdp
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_PAL_FADEOUT 0x400388
+#else
 #define _BLIB_PAL_FADEOUT 0x000388
+#endif
 
 /**
  * @sa blib_pal_fadein
  * @ingroup blib_vdp
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_PAL_FADEIN 0x40038C
+#else
 #define _BLIB_PAL_FADEIN 0x00038C
+#endif
 
 /**
  * @sa blib_set_fadein_pal
  * @ingroup blib_vdp
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_SET_FADEIN_PAL 0x400390
+#else
 #define _BLIB_SET_FADEIN_PAL 0x000390
+#endif
 
 /**
  * @sa blib_dma_queue
  */
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_DMA_QUEUE 0x400394
+#else
 #define _BLIB_DMA_QUEUE 0x000394
+#endif
 
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_UNKNOWN_44 0x400398
+#else
 #define _BLIB_UNKNOWN_44 0x000398
+#endif
 
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_UNKNOWN_45 0x40039C
+#else
 #define _BLIB_UNKNOWN_45 0x00039C
+#endif
 
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_UNKNOWN_46 0x4003A0
+#else
 #define _BLIB_UNKNOWN_46 0x0003A0
+#endif
 
 #endif

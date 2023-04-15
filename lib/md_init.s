@@ -12,35 +12,50 @@
 
 .align 2
 init:
-	ori     #0x700, sr
-1:move.w  (_VDP_CTRL), d0
-	btst    #1, d0
-	bne     1b
+        move    #0x2700,%sr
+        tst.l   0xa10008
+        bne.s   SkipJoyDetect
+
+        tst.w   0xa1000c
+
+SkipJoyDetect:
+        bne.s   SkipSetup
+
+        lea     Table,%a5
+        movem.w (%a5)+,%d5-%d7
+        movem.l (%a5)+,%a0-%a4
+// Check Version Number
+        move.b  -0x10ff(%a1),%d0
+        andi.b  #0x0f,%d0
+        beq.s   WrongVersion
+
+// Sega Security Code (SEGA)
+        move.l  #0x53454741,0x2f00(%a1)
+WrongVersion:
+// Read from the control port to cancel any pending read/write command
+        move.w  (%a4),%d0
+
+// Configure a USER_STACK_LENGTH bytes user stack at bottom, and system stack on top of it
+
+        move.w  %d7,(%a1)
+        move.w  %d7,(%a2)
+
+				move.l #0x3fff,d7
+				moveq #0, d0
+				lea 0xff0000, a0
+			0:move.l d0, (a0)+
+  			dbra d7, 0b
+
+* Jump to initialisation process now...
+SkipSetup:
+        jmp     main
 
 
-	tst.b    (_IO_CTRL1)
-	bne    2f
-	tst.b    (_IO_CTRL3)
-2:bne    user_main
-	move.b  (_MD_VERSION), d0
-	andi.b  #0x0f, d0
-	beq.s   user_main
-	move.l  #0x53454741, (_TMSS)
-	lea     _VDP_CTRL, a0
-	lea     _VDP_DATA, a1
-	move.w  (a0), d0
-	moveq   #0, d0
-	move.l  #(VDPPTR(0) | CRAM_W), (_VDP_CTRL)
-	move.w  #0x1f, d7
-3:move.l  d0, (a1)
-  dbf.w     d7, 3b
-	// TODO initial vdp regs here
-	// TODO z80 setup here
-	move    #0x2700, sr
+Table:
+        dc.w    0x8000,0x3fff,0x0100
+        dc.l    0xA00000,0xA11100,0xA11200,0xC00000,0xC00004
 
 
-user_main:
-	jmp main
 
 .align 2
 .global _EX_NULL
