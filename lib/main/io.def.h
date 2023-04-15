@@ -160,4 +160,11 @@
 #define PAD_ABC_MSK (PAD_A_MSK | PAD_B_MSK | PAD_C_MSK)
 #define PAD_START_MSK 1 << PAD_START_BIT
 
+/**
+ * @brief Address space enabled by cartridge /TIME pin
+ *
+ * Size: 0x100 bytes
+ */
+#define _TIME_MAPPING 0xA13000
+
 #endif

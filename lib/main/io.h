@@ -87,6 +87,11 @@
 #define IO_SCTRL3 (*((u8 volatile *) _IO_SCTRL3))
 
 /**
+ * @sa _TIME_MAPPING
+ */
+#define TIME_MAPPING (*((u8(*)[0x100]) _TIME_MAPPING))
+
+/**
  * @fn init_ext
  * @brief Initialize IO port for serial communication
  */
