@@ -47,9 +47,6 @@ TOOLS_PATH:=$(MEGADEV_PATH)/tools
 # linker scripts
 CFG_PATH:=$(MEGADEV_PATH)/cfg
 
-## build artifacts path
-BUILD_PATH:=$(OUT_PATH)/$(SRC_PATH)
-
 # Begin collecting project module configurations
 MMD_DEFS:=$(wildcard $(SRC_PATH)/*.mmd.def)
 SMD_DEFS:=$(wildcard $(SRC_PATH)/*.smd.def)
@@ -175,7 +172,7 @@ iso: $(BUILD_PATH)/boot.bin
 		-o $(OUT_PATH)/$(PROJECT_NAME).iso $(DISC_PATH)
 
 init:
-	@mkdir -p $(BUILD_PATH) $(DISC_PATH) $(SRC_PATH)
+	@mkdir -p $(BUILD_PATH) $(OUT_PATH) $(DISC_PATH) $(SRC_PATH)
 
 # special rules for boot sector binaries
 $(BUILD_PATH)/ip.bin.elf: $(BUILD_PATH)/ip.s.o

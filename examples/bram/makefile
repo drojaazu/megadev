@@ -10,18 +10,19 @@ PROJECT_NAME=bram
 # (relative to the location of the makefile)
 SRC_PATH:=src
 
-# Build project in debug mode
-DEBUG:=1
-
 # Resources path
 # This is where graphics, audio and any other non-code content should be
 # stored.
 RES_PATH:=res
 
 # Output path
-# This will be the location of the final output ISO, as well as the build
-# work directory
-OUT_PATH:=build
+# This will be the location of the final output Mega CD ISO and MD ROMs
+OUT_PATH:=out
+
+# Build path
+# This is where compile time build artifacts will be stored, including
+# symbol maps
+BUILD_PATH:=build
 
 # Disc path 
 # This will contain all the files to be included in the final ISO
