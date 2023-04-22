@@ -80,7 +80,7 @@ default: init boot_sector modules iso
 clean:
 	$(call msg_warning,Removing build artifacts & disc image)
 	@rm -rf $(BUILD_PATH)/* $(MODULES_OUT)
-	@rm -rf $(OUT_PATH)/$(PROJECT_NAME).iso
+	@rm -rf $(BUILD_PATH)/$(PROJECT_NAME).iso
 
 boot_sector: $(BUILD_PATH)/boot.bin
 
@@ -92,7 +92,7 @@ iso: $(BUILD_PATH)/boot.bin
 	$(call msg_info,Generating ISO image $(PROJECT_NAME).iso)
 	@mkisofs -quiet -iso-level 1 -G $< -pad -V "$(PROJECT_NAME)" \
 		-sysid "MEGA_CD" -appid "" -publisher "" -preparer "" \
-		-o $(OUT_PATH)/$(PROJECT_NAME).iso $(DISC_PATH)
+		-o $(BUILD_PATH)/$(PROJECT_NAME).iso $(DISC_PATH)
 
 init:
 	@mkdir -p $(BUILD_PATH) $(DISC_PATH) $(SRC_PATH)

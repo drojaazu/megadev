@@ -1,9 +1,13 @@
 #include "main/bootlib.h"
 #include "main/io.def.h"
+#include "main/io.h"
 #include "main/memmap.h"
 #include "main/vdp.h"
+#include "memory.h"
+#include "string.h"
 #include "system.h"
 
+extern u8 res_sysfont_1bpp_chr;
 extern u8 res_rain_chr;
 extern u16 res_rain_chr_sz;
 extern Palette res_rain_pal;
@@ -162,43 +166,182 @@ __attribute__((interrupt)) void _INT_VBLANK()
 	BLIB_VINT_FLAGS = 0;
 }
 
-void vint_ex()
+char rx_buffer[16];
+char * rx_buffer_at;
+
+u32 to_atoi(char * p_c)
 {
-	blib_copy_sprlist();
+	u32 out = 0;
+	while ((*p_c != '\n') && (*p_c != ' '))
+	{
+		char c = *p_c;
+		if (c > 0x60)
+			c -= 0x56;
+		else if (c > 0x40)
+			c -= 0x36;
+		else
+			c -= 0x30;
+		out <<= 4;
+		out |= c;
+		++p_c;
+	}
+	return out;
 }
+
+__attribute__((interrupt)) void _INT_EXT()
+{
+	blib_print("INT2 last cmd:\xff", (VDPPTR(NMT_POS_PLANE(1, 8, _BLIB_PLANEA_ADDR)) | VRAM_W));
+
+	char c = IO_RXDATA2;
+	if (rx_buffer_at >= rx_buffer + 16)
+	{
+		memset8(0, rx_buffer, 16);
+		rx_buffer_at = rx_buffer;
+	}
+	*rx_buffer_at++ = c;
+
+	if (c == '\n')
+	{
+
+		char cmd = *rx_buffer;
+		switch (cmd)
+		{
+			case 'g':
+				blib_print("get\xff", (VDPPTR(NMT_POS_PLANE(16, 8, _BLIB_PLANEA_ADDR)) | VRAM_W));
+				if (rx_buffer[1] != ' ')
+					break;
+				rx_buffer_at = rx_buffer + 2;
+
+				u32 addr = atoi(rx_buffer_at);
+				// check for a second space
+				u16 length;
+				while ((*rx_buffer_at != ' ') && (*rx_buffer_at != '\0'))
+					++rx_buffer_at;
+				if (*rx_buffer_at == '\0')
+				{
+					length = 1;
+				}
+				else
+				{
+					++rx_buffer_at;
+					length = atoi(rx_buffer_at);
+				}
+
+				while (length > 0)
+				{
+					do
+					{
+						asm("nop");
+					} while ((IO_SCTRL2 & SCTRL_TFUL_MSK) != 0);
+					IO_TXDATA2 = *((u8 *) addr++);
+					--length;
+				}
+				break;
+			case 's':
+				blib_print("set\xff", (VDPPTR(NMT_POS_PLANE(16, 8, _BLIB_PLANEA_ADDR)) | VRAM_W));
+				if (rx_buffer[1] != ' ')
+					break;
+				break;
+			case '\n':
+			default:
+				break;
+		}
+		rx_buffer_at = rx_buffer;
+		memset8(0, rx_buffer, 16);
+	}
+}
+
+char info[17];
 
 void main()
 {
 
 	disable_interrupts();
+
+	memset8(0, rx_buffer, 16);
+	rx_buffer_at = rx_buffer;
+
 	// repoint the VINT vector to the boot rom library version
 	// MLEVEL6_VECTOR = (void *(*) ) _BLIB_VINT_HANDLER;
 	//*BLIB_VINT_EX_PTR = vint_ex;
 
+	// note: seems to be important to set up vdpregs first, then clear vram
 	blib_load_vdpregs_default();
+	blib_clear_vram();
+
+	BLIB_FONT_TILE_BASE = 0;
+	// blib_load_1bpp_tiles(&res_sysfont_1bpp_chr, 0x60, VDPPTR(VRAM_AT(0x20)) | VRAM_W, 0x00011011);
+	blib_load_1bpp_tiles((void *) 0x40b000, 0x60, VDPPTR(VRAM_AT(0x20)) | VRAM_W, 0x00011011);
+
+	// initialize serial comm on port 2
+	// 4800bps, serial in/out mode, ext interrupt enable
+	IO_SCTRL2 = B4800_MSK | SCTRL_SIN_MSK | SCTRL_SOUT_MSK | SCTRL_RINT_MSK;
+	IO_CTRL2 = 0x7f;
+	BLIB_VDPREGS[0x0b] |= 0x08;
+	VDP_CTRL_16 = BLIB_VDPREGS[0x0b];
 
 	// The modules only show some text, so we'll prepare the font for them here
 	// so it doesn't need to happen in the module itself
-	blib_load_font_defaults();
+	// blib_load_font_defaults();
 
 	blib_dma_xfer(VDPPTR(VRAM_AT(0x80)) | VRAM_W, &res_rain_chr, res_rain_chr_sz >> 1);
-	blib_load_pal(&res_rain_pal);
 
 	// The font uses palette entry #1, so we'll manually set that to white
-	BLIB_PALETTE[1] = 0xe42;
-	BLIB_PALETTE[2] = 0xea8;
-	BLIB_PALETTE[16] = 0x000;
-	BLIB_PALETTE[17] = 0xEee;
-	BLIB_PALETTE[18] = 0xE0e;
-	BLIB_VDP_UPDATE_FLAGS |= PAL_UPDATE_MSK;
+	BLIB_PALETTE[0] = 0x000;
+	BLIB_PALETTE[1] = 0xeee;
 
-	// init_particles is defined in the ipx
-	init_particles(0x81, 0x82, 0, 0, 0, 0, 3, 3, 5, 0);
+	blib_load_pal(&res_rain_pal);
+
+	BLIB_VDP_UPDATE_FLAGS |= PAL_UPDATE_MSK;
+	blib_copy_pal();
+
+	init_particles(0x81, 0x82, 0, 0, 0, 0, 3, 3, 5, 1);
 
 	enable_interrupts();
 	blib_vdp_disp_enable();
 
-	blib_print("Rainin'\xff", (VDPPTR(NMT_POS_PLANE(2, 2, _BLIB_PLANEA_ADDR)) | VRAM_W));
+	memset8(0, info, 16);
+	info[16] = '\xff';
+
+	blib_print("Megadev Mode 1 testing\xff", (VDPPTR(NMT_POS_PLANE(1, 1, _BLIB_PLANEA_ADDR)) | VRAM_W));
+	blib_print("Mega CD rev: \xff", (VDPPTR(NMT_POS_PLANE(1, 3, _BLIB_PLANEA_ADDR)) | VRAM_W));
+
+	char * i = (char *) 0x400120;
+	for (int c = 0; c < 16; ++c)
+		info[c] = *i++;
+	// memcpy8((u8 *) 0x400120, (u8 *) info, 15);
+	blib_print(info, (VDPPTR(NMT_POS_PLANE(1, 4, _BLIB_PLANEA_ADDR)) | VRAM_W));
+	// memcpy8((char *) 0x400130, info, 15);
+	i = (char *) 0x400130;
+	for (int c = 0; c < 16; ++c)
+		info[c] = *i++;
+	blib_print(info, (VDPPTR(NMT_POS_PLANE(1, 5, _BLIB_PLANEA_ADDR)) | VRAM_W));
+	// memcpy8((char *) 0x400140, info, 15);
+	i = (char *) 0x400140;
+	for (int c = 0; c < 16; ++c)
+		info[c] = *i++;
+	blib_print(info, (VDPPTR(NMT_POS_PLANE(1, 6, _BLIB_PLANEA_ADDR)) | VRAM_W));
+
+	do
+	{
+		asm("nop");
+	} while ((IO_SCTRL2 & SCTRL_TFUL_MSK) != 0);
+	IO_TXDATA2 = 'o';
+	do
+	{
+		asm("nop");
+	} while ((IO_SCTRL2 & SCTRL_TFUL_MSK) != 0);
+	IO_TXDATA2 = 'k';
+	do
+	{
+		asm("nop");
+	} while ((IO_SCTRL2 & SCTRL_TFUL_MSK) != 0);
+	IO_TXDATA2 = '1';
+	do
+	{
+		asm("nop");
+	} while ((IO_SCTRL2 & SCTRL_TFUL_MSK) != 0);
+	IO_TXDATA2 = '3';
 
 	do
 	{

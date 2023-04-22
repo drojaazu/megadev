@@ -6,12 +6,6 @@
 # This will be used for filename output
 PROJECT_NAME=md_rom
 
-# Default hardware configuration
-# (This can be changed on the command line to easily build for different hardware
-# targets)
-# See README.md for more info on this
-HW_CFG=REGION=US VIDEO=NTSC VRAM_SIZE=VRAM_64K
-
 # the path to your source code
 # (relative to the location of the makefile)
 SRC_PATH:=src
@@ -24,7 +18,12 @@ RES_PATH:=res
 # Output path
 # This will be the location of the final output ISO, as well as the build
 # work directory
-OUT_PATH:=build
+OUT_PATH:=out
+
+# Build path
+# This is where compile time build artifacts will be stored, including
+# symbol maps
+BUILD_PATH:=build
 
 # Disc path 
 # This will contain all the files to be included in the final ISO
@@ -35,11 +34,11 @@ DISC_PATH:=disc
 # Here you can add any additional compiler flags
 OPT_FLAGS:=-O1 -fstack-usage -fconserve-stack
 
-# Path to the Megadev directory
-MEGADEV_PATH:=/opt/megadev
-
 # Z80 CPU code path
 # Z80 building is not currently supported... someday!
 #Z80_SRC_PATH:=z80_src
+
+# Path to the Megadev directory
+MEGADEV_PATH:=/opt/megadev
 
 include $(MEGADEV_PATH)/makefile.megadrive

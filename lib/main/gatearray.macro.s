@@ -47,9 +47,23 @@ loop:
 LOCAL loop
 
 loop:
-	bset #GA_DMNA_BIT, _GA_MEMMODE+1
-	btst #GA_DMNA_BIT, _GA_MEMMODE+1
+	bset #GA_DMNA_BIT,_GA_MEMMODE+1
+	btst #GA_DMNA_BIT,_GA_MEMMODE+1
 	beq loop
+.endm
+
+/**
+ * RESET_GA
+ * Pattern to reset gate array
+ * Taken from Wonder Libary
+ */
+.macro RESET_GA
+	move.w #0xFF00,_GA_MEMMODE
+	move.b #0x3,(_GA_RESET + 1)
+	nop
+	move.b #0x3,(_GA_RESET + 1)
+	move.b #0x2,(_GA_RESET + 1)
+	move.b #0x0,(_GA_RESET + 1)
 .endm
 
 #endif

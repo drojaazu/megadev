@@ -189,7 +189,7 @@ typedef struct Palette
  *
  * @ingroup blib_vdp
  */
-// #define BLIB_VDPREGS (*((u16 (*)[19]) _BLIB_VDPREGS))
+// #define BLIB_VDPREGS (*((volatile u16(*)[19]) _BLIB_VDPREGS))
 #define BLIB_VDPREGS ((volatile u16 *) _BLIB_VDPREGS)
 
 /**
@@ -1045,6 +1045,27 @@ static inline void blib_load_font_defaults()
 };
 
 /**
+ * @fn blib_load_1bpp_tiles
+ * @brief Load the 1bpp graphics into VDP
+ * @ingroup blib_misc
+ */
+static inline void blib_load_1bpp_tiles(void * chr_data, u16 tile_count, VDPPTR dest, u32 color_pattern)
+{
+	register u32 D0 asm("d0") = dest;
+	register u32 D1 asm("d1") = color_pattern;
+	register u16 D2 asm("d2") = tile_count;
+	register u32 A1 asm("a1") = (u32) chr_data;
+
+	asm volatile(
+		"\
+			jsr %p2 \n\
+		"
+		: "+d"(D2), "+a"(A1)
+		: "i"(_BLIB_LOAD_1BPP_TILES), "a"(A1), "d"(D0), "d"(D1), "d"(D2)
+		: "d3", "d4", "a5");
+};
+
+/**
  * @fn blib_input_delay
  * @brief Generates a brief delay after initially pressing the D-pad
  * @ingroup blib_input
@@ -1070,7 +1091,7 @@ static inline void blib_input_delay(u8 * input, bool use_2p)
 		"
 		:
 		: "i"(_BLIB_INPUT_DELAY), "a"(A1), "d"(D0)
-		: "d1", "a5");
+		: "cc", "d1", "a5");
 }
 
 /**

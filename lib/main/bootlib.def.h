@@ -962,7 +962,7 @@
 
 /**
  * @fn _BLIB_LOAD_1BPP_TILES
- * @brief Displays an ASCII string
+ * @brief Load 1bpp graphics into VDP
  * @param[in] A1.l Pointer to 1bpp graphics data
  * @param[in] D0.l VRAM destination (VDPPTR)
  * @param[in] D1.l Color bit map
@@ -1338,6 +1338,21 @@
 #define _BLIB_UNKNOWN_46 0x4003A0
 #else
 #define _BLIB_UNKNOWN_46 0x0003A0
+#endif
+
+/**
+ * @brief These define the location of the compressed Sub CPU bios stored within the Boot ROM.
+ * In order to use the Sub CPU BIOS in Mode 1, you will need to manually decompressed it to
+ * its proper location in PRG RAM
+ *
+ * Note that the location of the compressed BIOS is not constant across Mega CD revisions.
+ *
+ */
+// for all revisions EXCEPT US/EU Model 1 and LaserActive (Mega LD) hardware
+#if HW_TARGET == MEGACD_MODE1
+#define _BLIB_SUB_BIOS 0x416000
+#else
+#define _BLIB_SUB_BIOS 0x016000
 #endif
 
 #endif
