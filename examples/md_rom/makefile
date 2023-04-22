@@ -16,8 +16,7 @@ SRC_PATH:=src
 RES_PATH:=res
 
 # Output path
-# This will be the location of the final output ISO, as well as the build
-# work directory
+# This will be the location of the final output Mega CD ISO and MD ROMs
 OUT_PATH:=out
 
 # Build path
