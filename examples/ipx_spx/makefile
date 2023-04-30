@@ -6,12 +6,15 @@
 # This will be used for filename output
 PROJECT_NAME=ipx_spx
 
-# the path to your source code
-# (relative to the location of the makefile)
+## Directory paths are relative to the location of the makefile
+## (which should be the root of your project directory)
+
+# Source code path
+# (relative to the location of the project makefile)
 SRC_PATH:=src
 
 # Resources path
-# This is where graphics, audio and any other non-code content should be
+# This is where graphics, audio and any other non-executable content should be
 # stored.
 RES_PATH:=res
 

@@ -6,12 +6,15 @@
 # This will be used for filename output
 PROJECT_NAME=md_rom
 
-# the path to your source code
-# (relative to the location of the makefile)
+## Directory paths are relative to the location of the makefile
+## (which should be the root of your project directory)
+
+# Source code path
+# (relative to the location of the project makefile)
 SRC_PATH:=src
 
 # Resources path
-# This is where graphics, audio and any other non-code content should be
+# This is where graphics, audio and any other non-executable content should be
 # stored.
 RES_PATH:=res
 
@@ -19,19 +22,9 @@ RES_PATH:=res
 # This will be the location of the final output Mega CD ISO and MD ROMs
 OUT_PATH:=out
 
-# Build path
-# This is where compile time build artifacts will be stored, including
-# symbol maps
-BUILD_PATH:=build
-
-# Disc path 
-# This will contain all the files to be included in the final ISO
-# You can include any extra files you'd like here
-DISC_PATH:=disc
-
 # Optional compiler flags
 # Here you can add any additional compiler flags
-OPT_FLAGS:=-O1 -fstack-usage -fconserve-stack
+OPT_FLAGS:=-O1 -fconserve-stack
 
 # Z80 CPU code path
 # Z80 building is not currently supported... someday!
@@ -40,4 +33,5 @@ OPT_FLAGS:=-O1 -fstack-usage -fconserve-stack
 # Path to the Megadev directory
 MEGADEV_PATH:=/opt/megadev
 
-include $(MEGADEV_PATH)/makefile.megadrive
+# The include below is required! Do not remove it!
+include $(MEGADEV_PATH)/makefile.global

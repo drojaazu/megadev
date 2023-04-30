@@ -78,8 +78,11 @@ Region:       .ascii HEADER_REGION
 // if all the above text is correct, we should be at 0x200 anyway
 .org 0x200
 
+// the missing quote mark in the two .incbins below is *intentional*
+// (it's because defines are not substituted in strings)
+// DISC_PATH is set in makefile.global
 _ip_begin:
-	.incbin "ip.bin"
+	.incbin DISC_PATH.ip"
 _ip_end:
 
 /*
@@ -88,7 +91,7 @@ _ip_end:
 */
 .org	0x1000
 _sp_begin:
-	.incbin "sp.bin"
+	.incbin DISC_PATH.sp"
 _sp_end:
 
 // fill out the rest of the boot sector

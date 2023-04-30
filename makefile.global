@@ -45,6 +45,16 @@ define msg_warning
 	@echo -e "${BOLD}${RED}$(1)${CLEAR}"
 endef
 
+# the empty addprefix is to add spaces to each entry in the list
+define make_def
+	$(eval LIST:=$(addprefix ,$(file <$(1))))
+	$(info LIST: $(LIST))
+	$(eval REF_LIST:=$(addsuffix .elf, $(filter-out %.c %.s, $(LIST))))
+	$(eval BUILD_LIST:=$(addsuffix .o, $(filter %.c %.s, $(LIST))))
+	$(ifdef $(BUILD_LIST), \
+		@$(MAKE) -s $(REF_LIST) $(BUILD_LIST))
+endef
+
 ## PATHS
 # Megadev library code (ASM and C)
 LIB_PATH:=$(MEGADEV_PATH)/lib
@@ -89,16 +99,46 @@ LD_FLAGS:=-nostdlib
 vpath %.c $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
 vpath %.h $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
 vpath %.s $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
-vpath %.elf $(BUILD_PATH)
-vpath %.c.o $(BUILD_PATH)
-vpath %.s.o $(BUILD_PATH)
+vpath %.def $(SRC_PATH)
+vpath %.md $(OUT_PATH)
+vpath %.iso $(OUT_PATH)
+
+# Begin collecting build target configurations
+ISO_DEFS:=$(wildcard $(SRC_PATH)/*.iso.def)
+ISOS:=$(basename $(notdir $(strip $(ISO_DEFS))))
+ISOS_OUT:=$(addprefix $(OUT_PATH)/,$(ISOS))
+
+CART_DEFS:=$(wildcard $(SRC_PATH)/*.cart.def)
+CARTS:=$(basename $(notdir $(strip $(CART_DEFS))))
+CARTS_OUT:=$(addprefix $(OUT_PATH)/,$(CARTS))
+
+.PHONY: init all clean
+
+default: all
+
+init:
+	@mkdir -p $(OUT_PATH)
+
+iso: $(ISOS_OUT)
+
+cart: $(CARTS_OUT)
+
+all: init iso cart cleanup
+
+clean: cleanup
+	@rm -rf $(ISOS_OUT) $(CARTS_OUT)
+
+# the object files are not created as intermediate files due to how we process them
+# through def files; therefore, we have to manually clean them up after a build
+cleanup:
+	@rm -f *.o
 
 # need to specify paths here as they're called through a secondary make
-$(BUILD_PATH)/%.c.o: %.c
+%.c.o: %.c
 	$(call msg_info,Compiling source $(notdir $<))
 	@$(CC) $(CC_FLAGS) $(INC) -c $^ -o $@
 
-$(BUILD_PATH)/%.s.o: %.s
+%.s.o: %.s
 	$(call msg_info,Compiling source $(notdir $<))
 	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $^ -o $@
 
