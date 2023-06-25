@@ -170,4 +170,7 @@ static inline u16 vdpptr_to(u32 vdpptr)
 
 	return (u16) out;
 }
+
+static inline void dma_xfer(void * source, VDPPTR dest) {}
+
 #endif

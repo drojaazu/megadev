@@ -86,7 +86,7 @@ That's about 7KB of RAM, leaving us with just under 56KB of ROM. Our memory map 
             |                |
             |                |
             |                |
-	    |                |
+            |                |
     FFDF00  +----------------+
             | "RAM"          |
             |                |
@@ -102,6 +102,7 @@ The start address and length of the ROM and RAM sections would then be specified
 This example is not based on any real-world implementations, though you could use it as a generic layout to get things up and running. However, as we have said a couple times, once you bring the Boot ROM library into the picture, the space available for usage may change drastically. We'll continue with Work RAM mapping while using the library in bootrom.md.
 
 ### Memory Layout in Other Regions
+
 We have focused heavily on Work RAM because of its importance as the location of the kernel and its trickiness due to its small size. The other memory banks are, comparitively, easier to work with.
 
 PRG RAM has comparitively huge storage. Of the 4Mbit (512KB) of space available, only 24KB is reserved for the BIOS. Here is where the SP, the Sub CPU side kernel, will execute. You are free to allocate as much or as little of the available PRG RAM space for it as you'd like.

@@ -66,7 +66,7 @@ You should also read the included documentation, namely:
 
 We recommend looking at the example projects included with Megadev, located in the `examples` directory.
 
-As a note, we use such terms as "kilo" and "mega" when referring to base 2 values, meaning a kilobyte is 1,024 bytes and a megabit is 131,072 bytes. The author acknowledges the necessity and importance of the differentiation between decimal and binary base number identifiers in the engineering world but asserts that words like "kibibyte" and "mebibyte" sound ridiculous and, since this framework deals exclusively with retro hardware that existed before SI prefix standardization, chooses to use the old naming system. All SI prefixed numbers throughout the documentation are base 2.
+
 
 ## Building
 
@@ -163,5 +163,6 @@ Of course, by "support," we just mean there are currently no helper functions wi
 
 # Special Thanks
 
- - The IRC crew for occasional testing on different hardware versions
- - UCC Black coffee
+ - plutiedev, Chilly Willy, Nemesis and all the other Sega gurus whose research has been integral to Megadev and the homebrew scene as a whole.
+ - @instantSonic for being the impetus that started this project. Happy New Year!
+ - UCC Black can coffee, without which my productivity would be near zero.

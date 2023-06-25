@@ -51,8 +51,8 @@ define make_def
 	$(info LIST: $(LIST))
 	$(eval REF_LIST:=$(addsuffix .elf, $(filter-out %.c %.s, $(LIST))))
 	$(eval BUILD_LIST:=$(addsuffix .o, $(filter %.c %.s, $(LIST))))
-	$(ifdef $(BUILD_LIST), \
-		@$(MAKE) -s $(REF_LIST) $(BUILD_LIST))
+	$(info BUILD_LIST: $(BUILD_LIST))
+	@$(MAKE) -s $(REF_LIST) $(BUILD_LIST)
 endef
 
 ## PATHS
@@ -100,8 +100,6 @@ vpath %.c $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
 vpath %.h $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
 vpath %.s $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
 vpath %.def $(SRC_PATH)
-vpath %.md $(OUT_PATH)
-vpath %.iso $(OUT_PATH)
 
 # Begin collecting build target configurations
 ISO_DEFS:=$(wildcard $(SRC_PATH)/*.iso.def)
