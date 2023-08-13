@@ -19,7 +19,8 @@ SRC_PATH:=src
 RES_PATH:=res
 
 # Output path
-# This will be the location of the final output Mega CD ISO and MD ROMs
+# This will be the location of the final output CD ISOs and MD ROMs as well
+# as debugging output (namely, symbol lists)
 OUT_PATH:=out
 
 # Optional compiler flags
@@ -34,4 +35,4 @@ OPT_FLAGS:=-O1 -fconserve-stack
 MEGADEV_PATH:=/opt/megadev
 
 # The include below is required! Do not remove it!
-include $(MEGADEV_PATH)/makefile.global
+include $(MEGADEV_PATH)/megadev.make

@@ -10,8 +10,15 @@ PROJECT_NAME=gfx
 ## (which should be the root of your project directory)
 
 # Source code path
-# (relative to the location of the project makefile)
 SRC_PATH:=src
+
+# Disc staging path
+# This is the staging directory for fiels that will appear on the final iso for
+# each Mega CD disc. Inside this path will be a subdirectory matching the stem of
+# each .iso.def in your project. Any files in these subdirectories will be included
+# in the iso image.
+# (This option is ignored for cartridge ROM projects.)
+DISCS_PATH:=discs
 
 # Resources path
 # This is where graphics, audio and any other non-executable content should be

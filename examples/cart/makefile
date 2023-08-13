@@ -34,4 +34,4 @@ OPT_FLAGS:=-O1 -fconserve-stack
 MEGADEV_PATH:=/opt/megadev
 
 # The include below is required! Do not remove it!
-include $(MEGADEV_PATH)/makefile.global
+include $(MEGADEV_PATH)/megadev.make

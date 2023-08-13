@@ -34,7 +34,7 @@ The build system assumes the m68k cross compiler tools are in your path variable
 
 Clone the Megadev repo if you have not already done so into an appropriate location; `/opt/megadev` is a good choice. Ensure the permissions on the directory and its files are suitable for use by your user.
 
-In the root of this directory is `makefile.global`. Edit it as necessary to match your environment.
+In the root of this directory is `megadev.make`. Edit it as necessary to match your environment.
 
 ## Example Projects
 

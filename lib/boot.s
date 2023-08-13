@@ -80,9 +80,9 @@ Region:       .ascii HEADER_REGION
 
 // the missing quote mark in the two .incbins below is *intentional*
 // (it's because defines are not substituted in strings)
-// DISC_PATH is set in makefile.global
+// DISC_PATH is set in megadev.make
 _ip_begin:
-	.incbin DISC_PATH.ip"
+	.incbin IP_PATH
 _ip_end:
 
 /*
@@ -91,7 +91,7 @@ _ip_end:
 */
 .org	0x1000
 _sp_begin:
-	.incbin DISC_PATH.sp"
+	.incbin SP_PATH
 _sp_end:
 
 // fill out the rest of the boot sector
