@@ -49,6 +49,9 @@
  */
 #define GA_RESET ((u16 volatile *) _GA_RESET)
 
+#define GA_RESET_SRES (1 << 0)
+#define GA_RESET_SBRQ (1 << 1)
+
 /**
  * @def GA_MEMMODE
  * @brief Word RAM Memory Mode / Sub CPU RAM Write Protect

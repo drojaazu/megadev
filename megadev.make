@@ -25,9 +25,12 @@ Z80_AS:=sjasmplus
 # really know what you're doing.
 ################################################################################
 
-# TODO test that setting this here won't overwrite an existing value
-# maybe need to use ?= like below?
-# MEGADEV_PATH:=/opt/megadev
+# TODO check for required values and fail if not set:
+# MEGADEV_PATH
+# PROJECT_NAME
+# OUT_PATH
+# SRC_PATH
+# DISCS_PATH
 
 # fancy colors cause we're fancy
 CLEAR=\033[0m

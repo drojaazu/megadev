@@ -33,9 +33,17 @@
 .macro FILE path, label, align=2
   LOCAL file_end
   LOCAL file_start
-  GLABEL \label
+  GLABEL \label \align
   GLABEL \label\()_size
   .long file_end - file_start
+file_start:
+  .incbin \path
+file_end:
+.endm
+
+.macro FILE_NOSIZE path, label, align=2
+  GLABEL \label \align
+  GLABEL \label\()_size
 file_start:
   .incbin \path
 file_end:

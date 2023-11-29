@@ -96,15 +96,23 @@ typedef union SpriteEx
  */
 #define NMT_POS(x, y) ((y * (BLIB_PLANE_WIDTH)) + (x << 1))
 
-#define NMT_POS2(x, y, width) (y * width + (x << 1))
+#define NMT_POS_32(x, y) ((y) * Width32 + ((x) << 1))
+
+#define NMT_POS_64(x, y) ((y) * Width64 + ((x) << 1))
+
+#define NMT_POS_128(x, y) ((y) * Width128 + ((x) << 1))
 
 /**
  * @def NMT_POS_PLANE
  * @brief Generates the address of a nametable tile at pos x/y
  */
-#define NMT_POS_PLANE(x, y, plane_addr) (NMT_POS(x, y) + plane_addr)
+#define NMT_POS_PLANE(x, y, plane_addr) (NMT_POS(x, y) + (plane_addr))
 
-#define NMT_POS_PLANE2(x, y, width, plane_addr) (NMT_POS2(x, y, width) + plane_addr)
+#define NMT_POS_PLANE_32(x, y, plane_addr) (NMT_POS_32(x, y) + (plane_addr))
+
+#define NMT_POS_PLANE_64(x, y, plane_addr) (NMT_POS_64(x, y) + (plane_addr))
+
+#define NMT_POS_PLANE_128(x, y, plane_addr) (NMT_POS_128(x, y) + (plane_addr))
 
 /**
  * @def VRAM_AT
@@ -171,6 +179,6 @@ static inline u16 vdpptr_to(u32 vdpptr)
 	return (u16) out;
 }
 
-static inline void dma_xfer(void * source, VDPPTR dest) {}
+// static inline void dma_xfer(void * source, VDPPTR dest) {}
 
 #endif

@@ -21,7 +21,9 @@
 static inline void bios_mscstop()
 {
 	register u16 D0 __asm__("d0") = _BIOS_MSCSTOP;
+	register u16 D0 __asm__("d0") = _BIOS_MSCSTOP;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p1"
@@ -42,7 +44,9 @@ static inline void bios_mscstop()
 static inline void bios_mscpauseon()
 {
 	register u16 D0 __asm__("d0") = _BIOS_MSCPAUSEON;
+	register u16 D0 __asm__("d0") = _BIOS_MSCPAUSEON;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p1"
@@ -63,7 +67,9 @@ static inline void bios_mscpauseon()
 static inline void bios_mscpauseoff()
 {
 	register u16 D0 __asm__("d0") = _BIOS_MSCPAUSEOFF;
+	register u16 D0 __asm__("d0") = _BIOS_MSCPAUSEOFF;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p1"
@@ -81,7 +87,9 @@ static inline void bios_mscpauseoff()
 static inline void bios_mscscanff()
 {
 	register u16 D0 __asm__("d0") = _BIOS_MSCSCANFF;
+	register u16 D0 __asm__("d0") = _BIOS_MSCSCANFF;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p1"
@@ -99,7 +107,9 @@ static inline void bios_mscscanff()
 static inline void bios_mscscanfr()
 {
 	register u16 D0 __asm__("d0") = _BIOS_MSCSCANFR;
+	register u16 D0 __asm__("d0") = _BIOS_MSCSCANFR;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p1"
@@ -120,7 +130,9 @@ static inline void bios_mscscanfr()
 static inline void bios_mscscanoff()
 {
 	register u16 D0 __asm__("d0") = _BIOS_MSCSCANOFF;
+	register u16 D0 __asm__("d0") = _BIOS_MSCSCANOFF;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p1"
@@ -138,7 +150,9 @@ static inline void bios_mscscanoff()
 static inline void bios_rompauseon()
 {
 	register u16 D0 __asm__("d0") = _BIOS_ROMPAUSEON;
+	register u16 D0 __asm__("d0") = _BIOS_ROMPAUSEON;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p1"
@@ -156,7 +170,9 @@ static inline void bios_rompauseon()
 static inline void bios_rompauseoff()
 {
 	register u16 D0 __asm__("d0") = _BIOS_ROMPAUSEOFF;
+	register u16 D0 __asm__("d0") = _BIOS_ROMPAUSEOFF;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p1"
@@ -176,7 +192,9 @@ static inline void bios_rompauseoff()
 static inline void bios_drvopen()
 {
 	register u16 D0 __asm__("d0") = _BIOS_DRVOPEN;
+	register u16 D0 __asm__("d0") = _BIOS_DRVOPEN;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p1"
@@ -205,7 +223,10 @@ static inline void bios_drvinit(struct DrvinitParams const * drvinit_param)
 {
 	register u16 D0 __asm__("d0") = _BIOS_DRVINIT;
 	register u32 a0_drvinit_param __asm__("a0") = (u32) drvinit_param;
+	register u16 D0 __asm__("d0") = _BIOS_DRVINIT;
+	register u32 a0_drvinit_param __asm__("a0") = (u32) drvinit_param;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p2"
@@ -225,7 +246,10 @@ static inline void bios_mscplay(u16 const * track_number)
 {
 	register u16 D0 __asm__("d0") = _BIOS_MSCPLAY;
 	register u32 A0 __asm__("a0") = (u32) track_number;
+	register u16 D0 __asm__("d0") = _BIOS_MSCPLAY;
+	register u32 A0 __asm__("a0") = (u32) track_number;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p2"
@@ -244,7 +268,10 @@ static inline void bios_mscplay1(u16 const * track_number)
 {
 	register u16 D0 __asm__("d0") = _BIOS_MSCPLAY1;
 	register u32 A0 __asm__("a0") = (u32) track_number;
+	register u16 D0 __asm__("d0") = _BIOS_MSCPLAY1;
+	register u32 A0 __asm__("a0") = (u32) track_number;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p2"
@@ -263,7 +290,10 @@ static inline void bios_mscplayr(u16 const * track_number)
 {
 	register u16 D0 __asm__("d0") = _BIOS_MSCPLAYR;
 	register u32 A0 __asm__("a0") = (u32) track_number;
+	register u16 D0 __asm__("d0") = _BIOS_MSCPLAYR;
+	register u32 A0 __asm__("a0") = (u32) track_number;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p2"
@@ -282,7 +312,10 @@ static inline void bios_mscplayt(u32 const * timecode)
 {
 	register u16 D0 __asm__("d0") = _BIOS_MSCPLAYT;
 	register u32 A0 __asm__("a0") = (u32) timecode;
+	register u16 D0 __asm__("d0") = _BIOS_MSCPLAYT;
+	register u32 A0 __asm__("a0") = (u32) timecode;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p2"
@@ -301,7 +334,10 @@ static inline void bios_mscseek(u16 const * track_number)
 {
 	register u16 D0 __asm__("d0") = _BIOS_MSCSEEK;
 	register u32 A0 __asm__("a0") = (u32) track_number;
+	register u16 D0 __asm__("d0") = _BIOS_MSCSEEK;
+	register u32 A0 __asm__("a0") = (u32) track_number;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p2"
@@ -320,7 +356,10 @@ static inline void bios_mscseekt(u32 const * timecode)
 {
 	register u16 D0 __asm__("d0") = _BIOS_MSCSEEKT;
 	register u32 A0 __asm__("a0") = (u32) timecode;
+	register u16 D0 __asm__("d0") = _BIOS_MSCSEEKT;
+	register u32 A0 __asm__("a0") = (u32) timecode;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p2"
@@ -347,7 +386,10 @@ static inline void bios_romread(u32 const * sector_number)
 {
 	register u16 D0 __asm__("d0") = _BIOS_ROMREAD;
 	register u32 A0 __asm__("a0") = (u32) sector_number;
+	register u16 D0 __asm__("d0") = _BIOS_ROMREAD;
+	register u32 A0 __asm__("a0") = (u32) sector_number;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p2"
@@ -366,7 +408,10 @@ static inline void bios_romseek(u32 const * sector_number)
 {
 	register u16 D0 __asm__("d0") = _BIOS_ROMSEEK;
 	register u32 A0 __asm__("a0") = (u32) sector_number;
+	register u16 D0 __asm__("d0") = _BIOS_ROMSEEK;
+	register u32 A0 __asm__("a0") = (u32) sector_number;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p2"
@@ -386,7 +431,10 @@ static inline void bios_mscseek1(u16 const * track_number)
 {
 	register u16 D0 __asm__("d0") = _BIOS_MSCSEEK1;
 	register u32 A0 __asm__("a0") = (u32) track_number;
+	register u16 D0 __asm__("d0") = _BIOS_MSCSEEK1;
+	register u32 A0 __asm__("a0") = (u32) track_number;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p2"
@@ -413,7 +461,10 @@ static inline void bios_romreadn(struct RomreadParams const * param)
 {
 	register u16 D0 __asm__("d0") = _BIOS_ROMREADN;
 	register u32 A0 __asm__("a0") = (u32) param;
+	register u16 D0 __asm__("d0") = _BIOS_ROMREADN;
+	register u32 A0 __asm__("a0") = (u32) param;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p2"
@@ -431,7 +482,10 @@ static inline void bios_romreade(struct RomreadParams const * param)
 {
 	register u16 D0 __asm__("d0") = _BIOS_ROMREADE;
 	register u32 A0 __asm__("a0") = (u32) param;
+	register u16 D0 __asm__("d0") = _BIOS_ROMREADE;
+	register u32 A0 __asm__("a0") = (u32) param;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p2"
@@ -448,7 +502,9 @@ static inline void bios_romreade(struct RomreadParams const * param)
 static inline void bios_cdbchk()
 {
 	register u16 D0 __asm__("d0") = _BIOS_CDBCHK;
+	register u16 D0 __asm__("d0") = _BIOS_CDBCHK;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p1"
@@ -476,7 +532,10 @@ static inline struct cdbstat const * bios_cdbstat()
 {
 	register u16 D0 __asm__("d0") = _BIOS_CDBSTAT;
 	register u32 A0 __asm__("a0");
+	register u16 D0 __asm__("d0") = _BIOS_CDBSTAT;
+	register u32 A0 __asm__("a0");
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p2"
@@ -507,7 +566,10 @@ static inline void bios_fdrset(u16 const volume)
 {
 	register u16 D0 __asm__("d0") = _BIOS_FDRSET;
 	register u16 const D1 __asm__("d1") = volume;
+	register u16 D0 __asm__("d0") = _BIOS_FDRSET;
+	register u16 const D1 __asm__("d1") = volume;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p1"
@@ -536,7 +598,10 @@ static inline void bios_fdrchg(u32 const volume)
 {
 	register u16 D0 __asm__("d0") = _BIOS_FDRCHG;
 	register u32 D1 __asm__("d1") = volume;
+	register u16 D0 __asm__("d0") = _BIOS_FDRCHG;
+	register u32 D1 __asm__("d1") = volume;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p1"
@@ -551,7 +616,9 @@ static inline void bios_fdrchg(u32 const volume)
 static inline void bios_cdcstart()
 {
 	register u16 D0 __asm__("d0") = _BIOS_CDCSTART;
+	register u16 D0 __asm__("d0") = _BIOS_CDCSTART;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 		jsr %p1"
@@ -566,7 +633,9 @@ static inline void bios_cdcstart()
 static inline void bios_cdcstop()
 {
 	register u16 D0 __asm__("d0") = _BIOS_CDCSTOP;
+	register u16 D0 __asm__("d0") = _BIOS_CDCSTOP;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 jsr %p1"
@@ -582,7 +651,9 @@ jsr %p1"
 static inline void bios_cdcstat()
 {
 	register u16 D0 __asm__("d0") = _BIOS_CDCSTAT;
+	register u16 D0 __asm__("d0") = _BIOS_CDCSTAT;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 jsr %p1"
@@ -597,7 +668,7 @@ jsr %p1"
 // headaches with asm goto and output operands... we'll come back to this later.
 /*
 static inline bool bios_cdcread() {
-				register u16 D0 __asm__("d0") = _BIOS_CDCREAD;
+	register u16 D0 __asm__("d0") = _BIOS_CDCREAD;
 
 				asm goto(R"(jsr %p1)"
 																				 : "+d"(D0)
@@ -619,7 +690,11 @@ static inline void bios_cdctrn(u8 * sector_dest, u8 * header_dest)
 	register u16 D0 __asm__("d0") = _BIOS_CDCTRN;
 	register u8 * a0_sector_dest __asm__("a0") = sector_dest;
 	register u8 * a1_header_dest __asm__("a1") = header_dest;
+	register u16 D0 __asm__("d0") = _BIOS_CDCTRN;
+	register u8 * a0_sector_dest __asm__("a0") = sector_dest;
+	register u8 * a1_header_dest __asm__("a1") = header_dest;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 jsr %p3"
@@ -634,7 +709,9 @@ jsr %p3"
 static inline void bios_cdcack()
 {
 	register u16 D0 __asm__("d0") = _BIOS_CDCACK;
+	register u16 D0 __asm__("d0") = _BIOS_CDCACK;
 
+	__asm__ volatile(
 	__asm__ volatile(
 		"\
 jsr %p1"

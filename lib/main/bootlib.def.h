@@ -88,7 +88,7 @@
 
 /**
  * @sa BLIB_VDPREGS
- * @ingroup BLIB_PAL3
+ * @ingroup blib_vdp
  */
 #define _BLIB_VDPREGS 0xFFFDB4
 

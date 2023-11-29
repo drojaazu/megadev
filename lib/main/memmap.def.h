@@ -65,7 +65,7 @@
 /**
  * System Jump Table
  */
-#define _RESET 0xfffd00
+#define _RESET   0xfffd00
 #define _MLEVEL6 0xfffd06 /* VBLANK interrupt */
 #define _MLEVEL4 0xfffd0c /* HBLANK interrupt */
 #define _MLEVEL2 0xfffd12 /* External port interrupt */

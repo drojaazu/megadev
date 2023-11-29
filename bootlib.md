@@ -454,7 +454,11 @@ Here is the default VDP data loaded by the function, in the order in which it ap
 ### `_BLIB_LOAD_VDPREGS`
 Components: VDP Reg Cache
 
-Loads a list of VDP settings to the cache and to registers. This does NOT update `_BLIB_PLANE_WIDTH` when setting register 0x10.
+Loads a list of VDP settings to the cache and to registers.
+
+This list should be null terminated array of 16 bit values, with each value being the VDP control port register write format (i.e. the upper byte is the register index with the top bit set and the lower byte is the value to write).
+
+Note that this does NOT update the `_BLIB_PLANE_WIDTH` variable when setting register 0x10.
 
 ### `_BLIB_VDP_FILL` (Tiny)
 Loads the specified value to VRAM at the specified address for the given size (in words).

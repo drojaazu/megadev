@@ -4,7 +4,7 @@
  * @details Intended for the Main CPU
  *
  * @note printval.s is expected to be compiled into the final assembly in which
- * this is iused!
+ * this is used!
  */
 
 #ifndef MEGADEV__MAIN_EXCEPTION_S
@@ -16,15 +16,53 @@
 #include "main/io.def.h"
 #include "main/vdp.def.h"
 
+.section .rodata
+
+#define PLA_ADDR_DEBUG 0xc000
+#define PLB_ADDR_DEBUG 0xe000
+
+vdp_layout_debug:
+#if VIDEO == PAL
+#define VIDEO_SIGNAL_FLAG VR01_PAL_VIDEO
+#else
+#define VIDEO_SIGNAL_FLAG 0
+#endif
+.word _VDPREG00_MODE1 | VR00_HICOLOR_ENABLE
+.word _VDPREG01_MODE2 | VR01_MD_DISPLAY_ENABLE | VR01_DMA_ENABLE | VR01_VINT_ENABLE | VIDEO_SIGNAL_FLAG | VR01_DISPLAY_ENABLE
+.word _VDPREG02_PLA_ADDR | (PLA_ADDR_DEBUG / 0x400)
+.word _VDPREG03_WD_ADDR | (0xa00 / 0x400)
+.word _VDPREG04_PLB_ADDR | (PLB_ADDR_DEBUG / 0x2000)
+.word _VDPREG05_SPR_ADDR | (0xb800 / 0x200)
+.word _VDPREG06_SPR_ADDR2
+.word _VDPREG07_BGCOLOR
+.word _VDPREG0A_HINT_COUNT
+.word _VDPREG0B_MODE3 | VR0B_EXTINT_ENABLE
+.word _VDPREG0C_MODE4 | VR0C_WIDTH_40CELL
+.word _VDPREG0D_HS_ADDR | (0xbc00 / 0x400)
+.word _VDPREG0E_PL_ADDR2
+.word _VDPREG0F_AUTOINC | 2
+.word _VDPREG10_PL_SIZE | VR10_W64 | VR10_H64
+.word _VDPREG11_WD_HPOS
+.word _VDPREG12_WD_VPOS
+.word 0
+
 .section .text
 
-// TODO this is embarrasing, make this better
+FUNC set_vdp_layout_debug
+	move.l #0xC0020000, (_VDP_CTRL)
+	move.w #COLOR_WHITE, (_VDP_DATA)
+	move.w #COLOR_RED, (_VDP_DATA)
+	move.w #COLOR_GREEN, (_VDP_DATA)
+	move.w #COLOR_BLUE, (_VDP_DATA)
+	jsr _BLIB_CLEAR_VRAM
+	lea vdp_layout_debug, a1
+	jsr _BLIB_LOAD_VDPREGS
+	jsr _BLIB_LOAD_FONT_DEFAULTS
+	rts
+
+// TODO
 // - save stack frame
-// - reset vdp to a known state
-// - clear VRAM
-// - load font
 // - *precalculate the text positions*
-// - display text
 
 /**
  * @fn install_handlers
@@ -32,14 +70,14 @@
  * routines
  */
 FUNC install_handlers
-	move.l ex_addr_err, _MADRERR+2
-	move.l ex_zero_div, _MDIVERR+2
-	move.l ex_chk_inst, _MONKERR+2
-	move.l ex_trapv, _MTRPERR+2
-  move.l ex_priv_viol, _MSPVERR+2
-	move.l ex_trace, _MTRACE+2
-	move.l ex_line1010, _MNOCOD0+2
-	move.l ex_line1111, _MNOCOD1+2
+	move.l #ex_addr_err, _MADRERR+2
+	move.l #ex_zero_div, _MDIVERR+2
+	move.l #ex_chk_inst, _MONKERR+2
+	move.l #ex_trapv, _MTRPERR+2
+  move.l #ex_priv_viol, _MSPVERR+2
+	move.l #ex_trace, _MTRACE+2
+	move.l #ex_line1010, _MNOCOD0+2
+	move.l #ex_line1111, _MNOCOD1+2
   rts
 
 
@@ -116,14 +154,7 @@ ex_group1_stack_copy:
 
 FUNC handle_exception
 	ori #0x700,sr
-	// todo: should probably reset VDP first
-	jbsr _BLIB_CLEAR_TABLES
-	jbsr _BLIB_LOAD_FONT_DEFAULTS
-	move.w #0, (_BLIB_FONT_TILE_BASE)
-
-	// set color to white
-	move.l #0xC0020000, (_VDP_CTRL)
-	move.w #0x0eee, (_VDP_DATA)
+	jsr set_vdp_layout_debug
 	
 	// error titles
 	move.w #0x0205, d0
@@ -191,11 +222,8 @@ FUNC handle_exception
 	lea str_cache, a1
 	jbsr _BLIB_PRINT
 
-1:jbsr _BLIB_UPDATE_INPUTS
-  and.b #PAD_START_MSK, _BLIB_JOY1_PRESS
-	beq 1b
-
-	jmp _BLIB_RESET
+	// stop and enable all interrupts (for e.g. serial comm)
+	stop #2000
 
 FUNC nmtbl_xy_pos
 1:move.w (_BLIB_PLANE_WIDTH), d1  // d1 - tiles per row
@@ -225,25 +253,25 @@ FUNC nmtbl_xy_pos
 strBUSERR:  .ascii "BUS ERROR\xff"
 .align 2
 */
-strADDRERR: .ascii "ADDRESS ERROR\xff"
+strADDRERR: .ascii "ADDR ERROR\xff"
 .align 2
 /*
-strILLEGAL: .ascii "ILLEGAL INSTRUCTION\xff"
+strILLEGAL: .ascii "ILLEGAL INST\xff"
 .align 2
 */
 strZERODIV: .ascii "ZERO DIVIDE\xff"
 .align 2
-strCHKINST: .ascii "CHK INSTRUCTION\xff"
+strCHKINST: .ascii "CHK INST\xff"
 .align 2
 strTRAPV:   .ascii "TRAPV\xff"
 .align 2
-strPRIVV:   .ascii "PRIVELEGE VIOLATION\xff"
+strPRIVV:   .ascii "PRIV VIOLATION\xff"
 .align 2
 strTRACE:   .ascii "TRACE\xff"
 .align 2
-strL1010:   .ascii "LINE 1010 EMULATOR\xff"
+strL1010:   .ascii "LINE 1010\xff"
 .align 2
-strL1111:   .ascii "LINE 1111 EMULATOR\xff"
+strL1111:   .ascii "LINE 1111\xff"
 .align 2
 /*
 strSPUR:    .ascii "SPURIOUS\xff"
