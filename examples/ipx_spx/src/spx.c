@@ -13,9 +13,7 @@ char const * const filenames[] = {"EX1.MMD;1", "EX2.MMD;1", "EX3.MMD;1"};
 // of the code, since we jump to where we expect it to be in memory
 __attribute__((section(".init"))) void main()
 {
-
 	register u16 cmd0, cmd1;
-
 	do
 	{
 
@@ -54,7 +52,7 @@ __attribute__((section(".init"))) void main()
 		}
 
 		// not reaching here?
-		asm(".global test_label\ntest_label:");
+		__asm__(".global test_label\ntest_label:");
 		*GA_COMSTAT0 = *GA_COMCMD0;
 		do
 		{

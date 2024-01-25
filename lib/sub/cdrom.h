@@ -82,10 +82,10 @@ typedef struct FileInfo
 // TODO file info struct!
 static inline FileInfo * find_file_c(char const * filename)
 {
-	register u32 a0_filename asm("a0") = (u32) filename;
-	register u32 a0_fileinfo asm("a0");
+	register u32 a0_filename __asm__("a0") = (u32) filename;
+	register u32 a0_fileinfo __asm__("a0");
 
-	asm volatile(
+	__asm__ volatile(
 		"\
 			jsr find_file \n\
 			bcc 1f \n\

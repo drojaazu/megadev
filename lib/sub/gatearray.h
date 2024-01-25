@@ -727,7 +727,7 @@
  */
 static inline void wait_2m()
 {
-	asm(
+	__asm__(
 		"\
 		1:btst %0, %p1 \n\
 			beq 1b \n\
@@ -742,7 +742,7 @@ static inline void wait_2m()
  */
 static inline void grant_2m()
 {
-	asm(
+	__asm__(
 		"\
 		1:bset %0, %p1 \n\
 			btst %0, %p1 \n\
@@ -758,7 +758,7 @@ static inline void grant_2m()
  */
 static inline void set_1m()
 {
-	asm(
+	__asm__(
 		"\
 		1:bset %0, %p1 \n\
 			btst %0, %p1 \n\
@@ -774,7 +774,7 @@ static inline void set_1m()
  */
 static inline void set_2m()
 {
-	asm(
+	__asm__(
 		"\
 		1:bclr %0, %p1 \n\
 			btst %0, %p1 \n\
@@ -790,7 +790,7 @@ static inline void set_2m()
  */
 static inline void clear_comm_regs()
 {
-	asm(
+	__asm__(
 		"\
 		lea %p0, a0 \n\
 		moveq #0, d0 \n\

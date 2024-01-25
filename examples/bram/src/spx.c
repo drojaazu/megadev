@@ -44,7 +44,7 @@ __attribute__((section(".init"))) void main()
 
 			// BRMINIT
 			case 2:
-				asm("nop");
+				__asm__("nop");
 
 				BrminitRes * init = bram_brminit();
 				*GA_COMSTAT1 = init->bram_size;
@@ -54,7 +54,7 @@ __attribute__((section(".init"))) void main()
 
 			// BRMSERCH
 			case 3:
-				asm("nop");
+				__asm__("nop");
 
 				// the filename must fill up 11 bytes followed by a 0 terminator
 				// for a total of 12 bytes
@@ -107,7 +107,7 @@ __attribute__((section(".init"))) void main()
 
 			// bram stats
 			case 6:
-				asm("nop");
+				__asm__("nop");
 				BrmstatRes * stats = bram_brmstat();
 				*GA_COMSTAT1 = stats->filecount;
 				*GA_COMSTAT2 = stats->free;
@@ -115,7 +115,7 @@ __attribute__((section(".init"))) void main()
 
 			// brmdel
 			case 7:
-				asm("nop");
+				__asm__("nop");
 				if (bram_brmdel(&file_info.filename))
 					*GA_COMSTAT1 = 0;
 				else
@@ -124,7 +124,7 @@ __attribute__((section(".init"))) void main()
 
 			// brmdir
 			case 8:
-				asm("nop");
+				__asm__("nop");
 
 				wait_2m();
 

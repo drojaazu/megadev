@@ -103,8 +103,8 @@ extern void init_ext();
  */
 static inline u8 ext_rx_c()
 {
-	register u8 D0 asm("d0");
-	asm(
+	register u8 D0 __asm__("d0");
+	__asm__(
 		"\
 			jsr ext_rx \n\
 		"
@@ -119,9 +119,9 @@ static inline u8 ext_rx_c()
  */
 static inline void ext_tx_c(register u8 data)
 {
-	register u8 D0 asm("d0") = data;
+	register u8 D0 __asm__("d0") = data;
 
-	asm(
+	__asm__(
 		"\
 			jsr ext_tx \n\
 		"

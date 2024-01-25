@@ -161,7 +161,7 @@ void main()
 		{
 			// the NOP is so GCC doesn't optimize the loop away
 			// though since comstat is marked volatile it should be fine...
-			asm("nop");
+			__asm__("nop");
 		} while (*GA_COMSTAT0 == 0);
 
 		// reset the command to none (0) once we have the acknowledgment
@@ -170,7 +170,7 @@ void main()
 		// the Sub CPU side work will be complete when COMSTAT0 returns to 0
 		do
 		{
-			asm("nop");
+			__asm__("nop");
 		} while (*GA_COMSTAT0 != 0);
 
 		// Sub CPU side work is complete and the MMD should now be in 2M Word RAM

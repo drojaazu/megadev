@@ -3,6 +3,6 @@ out/
 build/
 disc/
 docs/
-etc/
+work/
 *.code-workspace
 **/disc

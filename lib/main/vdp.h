@@ -135,7 +135,7 @@ typedef union SpriteEx
 static inline u32 to_vdpptr(u16 addr)
 {
 	u32 vdpptr = (u32) addr;
-	asm(
+	__asm__(
 		"\
 		lsl.l #2, %0 \n \
 		lsr.w #2, %0 \n \
@@ -156,7 +156,7 @@ static inline u16 vdpptr_to(u32 vdpptr)
 {
 	u32 out = vdpptr;
 
-	asm(
+	__asm__(
 		"\
 		#andi.l #0x3fff000c, %0 \
 		ror.w #2, %0 \

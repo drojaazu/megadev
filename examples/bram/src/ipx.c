@@ -11,7 +11,7 @@
 #define SUB_WAIT \
 	do \
 	{ \
-		asm("nop"); \
+		__asm__("nop"); \
 	} while (*GA_COMSTAT0 == 0);
 
 #define SUB_ACK *GA_COMCMD0 = 0;

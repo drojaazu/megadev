@@ -1,0 +1,4 @@
+-Ilib
+-xc
+-std=c17
+-Wall

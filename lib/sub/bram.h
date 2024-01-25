@@ -48,14 +48,14 @@ BrminitRes init_info;
  */
 static inline BrminitRes * bram_brminit()
 {
-	register u32 a0_bram_WRKRAM asm("a0") = (u32) bram_WRKRAM;
-	register u32 a1_bram_string_ram asm("a1") = (u32) bram_string_ram;
-	register u16 d0_fcode asm("d0") = BRMINIT;
+	register u32 a0_bram_WRKRAM __asm__("a0") = (u32) bram_WRKRAM;
+	register u32 a1_bram_string_ram __asm__("a1") = (u32) bram_string_ram;
+	register u16 d0_fcode __asm__("d0") = BRMINIT;
 
-	register u16 d0_bram_size asm("d0");
-	register u16 d1_bram_status asm("d1");
+	register u16 d0_bram_size __asm__("d0");
+	register u16 d1_bram_status __asm__("d1");
 
-	asm(
+	__asm__(
 		"\
 			jsr %p2 \n\
 			bcs 2f \n\
@@ -91,13 +91,13 @@ BrmstatRes brmstat_results;
  */
 static inline BrmstatRes * bram_brmstat()
 {
-	register u16 d0_fcode asm("d0") = BRMSTAT;
-	register u32 a1_bram_string_ram asm("a1") = (u32) bram_string_ram;
+	register u16 d0_fcode __asm__("d0") = BRMSTAT;
+	register u32 a1_bram_string_ram __asm__("a1") = (u32) bram_string_ram;
 
-	register u16 d0_free asm("d0");
-	register u16 d1_filecount asm("d1");
+	register u16 d0_free __asm__("d0");
+	register u16 d1_filecount __asm__("d1");
 
-	asm(
+	__asm__(
 		"\
 		jsr %p2 \n\
 		"
@@ -125,17 +125,17 @@ BrmserchRes brmserch_results;
  */
 static inline BrmserchRes * bram_brmserch(char const * filename)
 {
-	register u16 d0_fcode asm("d0") = BRMSERCH;
-	register void const * a0_filename asm("a0") = filename;
+	register u16 d0_fcode __asm__("d0") = BRMSERCH;
+	register void const * a0_filename __asm__("a0") = filename;
 
-	register u16 d0_filesize asm("d0");
-	register u16 d1_filemode asm("d1");
-	register void * a0_dataptr asm("a0");
+	register u16 d0_filesize __asm__("d0");
+	register u16 d1_filemode __asm__("d1");
+	register void * a0_dataptr __asm__("a0");
 
 	// if the file is not found, we'll return null
 	// the user should check that the dataptr member of the struct
 	// is not null to determine the file was found
-	asm(
+	__asm__(
 		"\
 			jsr %p3 \n\
 			bcc 2f \n\
@@ -170,14 +170,14 @@ BrmreadRes brmread_results;
  */
 static inline BrmreadRes * bram_brmread(char const * filename, u8 * buffer)
 {
-	register u16 d0_fcode asm("d0") = BRMREAD;
-	register u32 a0_filename asm("a0") = (u32) filename;
-	register u32 a1_buffer asm("a1") = (u32) buffer;
+	register u16 d0_fcode __asm__("d0") = BRMREAD;
+	register u32 a0_filename __asm__("a0") = (u32) filename;
+	register u32 a1_buffer __asm__("a1") = (u32) buffer;
 
-	register u16 d0_size asm("d0");
-	register u8 d1_mode asm("d1");
+	register u16 d0_size __asm__("d0");
+	register u8 d1_mode __asm__("d1");
 
-	asm(
+	__asm__(
 		"\
 		jsr %p2 \n\
 		bcc 2f \n\
@@ -213,9 +213,9 @@ typedef struct BramFileInfo
  */
 static inline bool bram_brmwrite(BramFileInfo const * params, u8 const * data)
 {
-	register u16 d0_fcode asm("d0") = BRMWRITE;
-	register u32 a0_params asm("a0") = (u32) params;
-	register u32 a1_data asm("a1") = (u32) data;
+	register u16 d0_fcode __asm__("d0") = BRMWRITE;
+	register u32 a0_params __asm__("a0") = (u32) params;
+	register u32 a1_data __asm__("a1") = (u32) data;
 
 	asm goto(
 		"\
@@ -240,8 +240,8 @@ failed:
  */
 static inline bool bram_brmdel(char const (*filename)[11])
 {
-	register u16 D0 asm("d0") = BRMDEL;
-	register u32 A0 asm("a0") = (u32) filename;
+	register u16 D0 __asm__("d0") = BRMDEL;
+	register u32 A0 __asm__("a0") = (u32) filename;
 
 	asm goto(
 		"\
@@ -264,10 +264,10 @@ failed:
  */
 static inline bool bram_brmdir(char const * filename, u8 * dirbuffer, u16 const fileskip, u16 const dirsize)
 {
-	register u16 d0_fcode asm("d0") = BRMDIR;
-	register u32 a0_filename asm("a0") = (u32) filename;
-	register u32 a1_dirbuffer asm("a1") = (u32) dirbuffer;
-	register u32 d1_params asm("d1") = (u32) ((fileskip << 16) + dirsize);
+	register u16 d0_fcode __asm__("d0") = BRMDIR;
+	register u32 a0_filename __asm__("a0") = (u32) filename;
+	register u32 a1_dirbuffer __asm__("a1") = (u32) dirbuffer;
+	register u32 d1_params __asm__("d1") = (u32) ((fileskip << 16) + dirsize);
 
 	asm goto(
 		"\
@@ -290,7 +290,7 @@ too_large:
  */
 static inline bool bram_brmformat()
 {
-	register u16 D0 asm("d0") = BRMFORMAT;
+	register u16 D0 __asm__("d0") = BRMFORMAT;
 
 	asm goto(
 		"\
@@ -320,11 +320,11 @@ enum BrmverifyStatus
  */
 static inline enum BrmverifyStatus bram_brmverify(BramFileInfo const * params)
 {
-	register u16 d0_fcode asm("d0") = BRMVERIFY;
-	register u32 A0 asm("a0") = (u32) params;
-	register u16 d0_result asm("d0");
+	register u16 d0_fcode __asm__("d0") = BRMVERIFY;
+	register u32 A0 __asm__("a0") = (u32) params;
+	register u16 d0_result __asm__("d0");
 
-	asm(
+	__asm__(
 		"\
 			jsr %p0 \n\
 			bcs 1f \n\

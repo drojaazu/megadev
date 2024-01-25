@@ -8,13 +8,13 @@
 
 static inline void PCM_PLAYBACK_C(u8 * pcm_data, u32 pcm_data_size)
 {
-	register u32 a0_pcm_data asm("a0") = (u32) pcm_data;
-	register u32 d0_data_size asm("d0") = pcm_data_size;
+	register u32 a0_pcm_data __asm__("a0") = (u32) pcm_data;
+	register u32 d0_data_size __asm__("d0") = pcm_data_size;
 
-	asm volatile("jsr PCM_PLAYBACK"
-							 : "+d"(d0_data_size), "+a"(a0_pcm_data)
-							 : "d"(d0_data_size), "a"(a0_pcm_data)
-							 : "cc", "d6", "d7", "a1", "a2");
+	__asm__ volatile("jsr PCM_PLAYBACK"
+									 : "+d"(d0_data_size), "+a"(a0_pcm_data)
+									 : "d"(d0_data_size), "a"(a0_pcm_data)
+									 : "cc", "d6", "d7", "a1", "a2");
 }
 
 const PcmChannelSettings pcmSettings = {0xff, 0xff, 0x6b, 0x5, 0, 0, 0};
@@ -25,12 +25,9 @@ extern void sp_fatal();
 
 __attribute__((section(".init"))) void main()
 {
-
 	register u16 cmd0;
-
 	do
 	{
-
 		do
 		{
 			cmd0 = *GA_COMCMD0;
@@ -160,16 +157,16 @@ void pcm_playback(u8 * pcm_data, u32 pcm_data_size)
 		{
 			while (*((volatile u8 *) _PCM_PLAY_CH1_H) <= 0x7f)
 			{
-				asm("nop");
-				asm("nop");
+				__asm__("nop");
+				__asm__("nop");
 			}
 		}
 		else
 		{
 			while (*((volatile u8 *) _PCM_PLAY_CH1_H) > 0x7f)
 			{
-				asm("nop");
-				asm("nop");
+				__asm__("nop");
+				__asm__("nop");
 			}
 		}
 		pcmPutUpper = ! pcmPutUpper;
@@ -180,16 +177,16 @@ void pcm_playback(u8 * pcm_data, u32 pcm_data_size)
 	{
 		while (*((volatile u8 *) _PCM_PLAY_CH1_H) <= 0x7f)
 		{
-			asm("nop");
-			asm("nop");
+			__asm__("nop");
+			__asm__("nop");
 		}
 	}
 	else
 	{
 		while (*((volatile u8 *) _PCM_PLAY_CH1_H) > 0x7f)
 		{
-			asm("nop");
-			asm("nop");
+			__asm__("nop");
+			__asm__("nop");
 		}
 	}
 }

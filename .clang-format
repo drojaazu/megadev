@@ -23,7 +23,6 @@ BinPackParameters: false
 ColumnLimit: 120
 ContinuationIndentWidth: 2
 Cpp11BracedListStyle: true
-Language: Cpp
 MaxEmptyLinesToKeep: 1
 IndentCaseLabels: true
 PackConstructorInitializers: Never
@@ -43,6 +42,5 @@ SpacesInAngles: false
 SpacesInCStyleCastParentheses: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
-Standard: Cpp11
 TabWidth: 2
 UseTab: Always

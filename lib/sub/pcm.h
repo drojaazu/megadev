@@ -47,7 +47,7 @@ typedef struct PcmChannelSettings
  */
 static inline void pcm_clear_ram_c()
 {
-	asm volatile(
+	__asm__ volatile(
 		"\
 		move.l a6, -(sp) \n\
 		jsr pcm_clear_ram \n\
@@ -66,10 +66,10 @@ static inline void pcm_clear_ram_c()
  */
 static inline void pcm_config_channel_c(u8 const ctrlregChannel, PcmChannelSettings const * settings)
 {
-	register u8 d0_channel asm("d0") = ctrlregChannel;
-	register u32 a5_settings asm("a5") = (u32) settings;
+	register u8 d0_channel __asm__("d0") = ctrlregChannel;
+	register u32 a5_settings __asm__("a5") = (u32) settings;
 
-	asm volatile(
+	__asm__ volatile(
 		"\
 		move.l a6, -(sp) \n\
 		jsr pcm_config_channel \n\

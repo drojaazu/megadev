@@ -11,7 +11,7 @@
 
 static inline void mmd_exec()
 {
-	asm(
+	__asm__(
 		"\
 			jsr MMD_EXEC \n\
 		"
