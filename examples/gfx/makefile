@@ -3,7 +3,7 @@
 # https://github.com/drojaazu/megadev
 ################################################################################
 
-# This will be used for filename output
+# This will be used for the ISO volume name
 PROJECT_NAME=gfx
 
 # the path to your source code
@@ -15,29 +15,30 @@ SRC_PATH:=src
 # stored.
 RES_PATH:=res
 
-# Output path
-# This will be the location of the final output Mega CD ISO and MD ROMs
-OUT_PATH:=out
-
 # Build path
 # This is where compile time build artifacts will be stored, including
 # symbol maps
 BUILD_PATH:=build
-
-# Disc path 
-# This will contain all the files to be included in the final ISO
-# You can include any extra files you'd like here
-DISC_PATH:=disc
 
 # Optional compiler flags
 # Here you can add any additional compiler flags
 OPT_FLAGS:=-O1 -fstack-usage -fconserve-stack
 
 # Z80 CPU code path
-# Z80 building is not currently supported... someday!
+# (Z80 building is not currently supported... someday!)
 #Z80_SRC_PATH:=z80_src
 
 # Path to the Megadev directory
-MEGADEV_PATH:=/opt/megadev
+#MEGADEV_PATH:=/opt/megadev
+MEGADEV_PATH:=/mnt/aine/Projects/dev/megadev
 
-include $(MEGADEV_PATH)/makefile.global
+include $(MEGADEV_PATH)/megadev.make
+
+.PHONY: disc clean
+
+disc: disc/cyber.mmd disc.iso
+
+clean:
+	@rm disc.iso disc/*.mmd disc/*.smd build/*
+
+disc/cyber.mmd: mmd_layout.s cybercity.c cybercity.res.s

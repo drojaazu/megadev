@@ -3,25 +3,25 @@
 #include "macros.s"
 
 GLABEL res_cybercity_bldg_cmp_nem
-.incbin "../res/cybercity_bldg.chr.cmp_nem"
+.incbin "cybercity_bldg.chr.cmp_nem"
 
 GLABEL res_cybercity_farbg_cmp_nem
-.incbin "../res/cybercity_farbg.chr.cmp_nem"
+.incbin "cybercity_farbg.chr.cmp_nem"
 
 GLABEL res_cybercity_bldg_map
-.incbin "../res/cybercity_bldg.map"
+.incbin "cybercity_bldg.map"
 
 GLABEL res_cybercity_farbg_map
-.incbin "../res/cybercity_farbg.map"
+.incbin "cybercity_farbg.map"
 
 GLABEL res_cybercity_pal
-.incbin "../res/cybercity.pal"
+.incbin "cybercity.pal"
 
 GLABEL res_ship_pal
-.incbin "../res/ship.pal"
+.incbin "ship.pal"
 
 GLABEL res_ship_layout
-.incbin "../res/ship.spr"
+.incbin "ship.spr"
 
 GLABEL res_ship_chr
-.incbin "../res/ship.chr"
+.incbin "ship.chr"
