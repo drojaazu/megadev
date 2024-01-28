@@ -15,29 +15,26 @@ SRC_PATH:=src
 # stored.
 RES_PATH:=res
 
-# Output path
-# This will be the location of the final output Mega CD ISO and MD ROMs
-OUT_PATH:=out
-
 # Build path
 # This is where compile time build artifacts will be stored, including
 # symbol maps
 BUILD_PATH:=build
 
-# Disc path 
-# This will contain all the files to be included in the final ISO
-# You can include any extra files you'd like here
-DISC_PATH:=disc
+# Disc paths
+# A space-delimited list of subdiorectories representing the content for each
+# disc in your project
+# This is used by the `init` rule to create directories before building
+DISC_PATHS:=disc
 
 # Optional compiler flags
 # Here you can add any additional compiler flags
-OPT_FLAGS:=-O1 -fstack-usage -fconserve-stack
-
-# Z80 CPU code path
-# Z80 building is not currently supported... someday!
-#Z80_SRC_PATH:=z80_src
+OPT_FLAGS:=-O1 -fconserve-stack
 
 # Path to the Megadev directory
 MEGADEV_PATH:=/opt/megadev
 
-include $(MEGADEV_PATH)/makefile.global
+include $(MEGADEV_PATH)/megadev.make
+
+disc: \
+	init \
+	disc.iso

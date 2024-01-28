@@ -35,12 +35,8 @@ DISC_PATH:=disc
 # Here you can add any additional compiler flags
 OPT_FLAGS:=-O1 -fstack-usage -fconserve-stack
 
-# Z80 CPU code path
-# Z80 building is not currently supported... someday!
-#Z80_SRC_PATH:=z80_src
-
 # Path to the Megadev directory
 MEGADEV_PATH:=/opt/megadev
 
 # Don't change the line below!
-include $(MEGADEV_PATH)/makefile.global
+include $(MEGADEV_PATH)/megadev.make

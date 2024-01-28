@@ -73,39 +73,55 @@ endef
 vpath %.c $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
 vpath %.h $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
 vpath %.s $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
+vpath %.elf $(BUILD_PATH)
+vpath %.c.o $(BUILD_PATH)
+vpath %.s.o $(BUILD_PATH)
+
+.SECONDARY: $(BUILD_PATH)/*
 
 # need to specify paths here as they're called through a secondary make
-%.c.o: %.c
+$(BUILD_PATH)/%.c.o: %.c
 	$(call msg_info,Compiling source $(notdir $^))
-	$(CC) $(CC_FLAGS) $(INC) -c $^ -o $@
+	@$(CC) $(CC_FLAGS) $(INC) -c $^ -o $@
 
-%.s.o: %.s
+$(BUILD_PATH)/%.s.o: %.s
 	$(call msg_info,Compiling source $(notdir $^))
-	$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $^ -o $@
+	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $^ -o $@
 
-# TODO merge the module exports since they're 99% identical
-#$(DISC_PATH)/%.mmd: $(BUILD_PATH)/%.mmd.elf
+#%.mmd.elf: %.s %.c %.h
+#	@echo "mmd elf in: $^"
+#	@echo "mmd elf out: $@"
+#	echo "making mmd elf with: $^ $@"
+#	$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_mmd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(symref)) -o $@
+
 %.mmd:
-	$(eval BUILD_SRC:=$(addsuffix .o, $(filter %.c %.h %.s, $^)))
+	@echo "mmd in: $^"
+	@echo "mmd out: $@"
+	$(eval BUILD_SRC:=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o, $(filter %.c %.h %.s, $^)))))
 	$(eval BUILD_MOD:=$(filter %.mmd %.smd %.bin, $^))
+	@echo "build mod: $(BUILD_MOD)"
 	$(if $(BUILD_MOD), $(MAKE) -s $(BUILD_MOD))
 	$(if $(BUILD_SRC), $(MAKE) -s $(BUILD_SRC))
 	$(call msg_info,Linking module $(notdir $@))
-	$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_mmd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(symref)) -o $@
-	$(NM) -n $@ > $(basename $@).sym
-	@$(OBJCPY) -O binary $@
-	@rm $(BUILD_SRC)
+	$(eval OUT_MOD_ELF:=$(addprefix $(BUILD_PATH)/,$(addsuffix .elf,$(notdir $@))))
+	$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_mmd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(addsuffix .elf,$(addprefix $(BUILD_PATH)/,$(notdir $(symref))))) -o $(OUT_MOD_ELF)
+	@$(NM) -n $(OUT_MOD_ELF) > $(addsuffix .sym,$(OUT_MOD_ELF))
+	@$(OBJCPY) -O binary $(OUT_MOD_ELF) $@
+
 
 %.smd:
-	$(eval BUILD_SRC:=$(addsuffix .o, $(filter %.c %.h %.s, $^)))
+	@echo "smd in: $^"
+	@echo "smd out: $@"
+	$(eval BUILD_SRC:=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o, $(filter %.c %.h %.s, $^)))))
 	$(eval BUILD_MOD:=$(filter %.mmd %.smd %.bin, $^))
+	@echo "build mod: $(BUILD_MOD)"
 	$(if $(BUILD_MOD), $(MAKE) -s $(BUILD_MOD))
 	$(if $(BUILD_SRC), $(MAKE) -s $(BUILD_SRC))
 	$(call msg_info,Linking module $(notdir $@))
-	$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_smd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(symref)) -o $@
-	$(NM) -n $@ > $(SRC_PATH)/$(notdir $(basename $@).sym)
-	@$(OBJCPY) -O binary $@
-	@rm $(BUILD_SRC)
+	$(eval OUT_MOD_ELF:=$(addprefix $(BUILD_PATH)/,$(addsuffix .elf,$(notdir $@))))
+	$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_smd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(addsuffix .elf,$(addprefix $(BUILD_PATH)/,$(notdir $(symref))))) -o $(OUT_MOD_ELF)
+	@$(NM) -n $(OUT_MOD_ELF) > $(addsuffix .sym,$(OUT_MOD_ELF))
+	@$(OBJCPY) -O binary $(OUT_MOD_ELF) $@
 
 default: init boot
 
@@ -114,20 +130,22 @@ default: init boot
 boot: $(BUILD_PATH)/boot.bin
 
 init:
-	@mkdir -p $(BUILD_PATH)
+	@mkdir -p $(BUILD_PATH) $(DISC_PATHS)
 
 # special rules for boot sector binaries
-$(BUILD_PATH)/ip.bin: ip.s.o
-	@$(LD) $(LD_FLAGS) -T$(CFG_PATH)/ip.ld -o$@ $<
-	@$(NM) -n $@ > $(basename $@).sym
-	@$(OBJCPY) -O binary $@
-	rm $^
+$(BUILD_PATH)/ip.bin: $(BUILD_PATH)/ip.bin.elf
+	@$(OBJCPY) -O binary $< $@
 
-$(BUILD_PATH)/sp.bin: sp_header.s.o sp.s.o
+$(BUILD_PATH)/ip.bin.elf: $(BUILD_PATH)/ip.s.o
+	@$(LD) $(LD_FLAGS) -T$(CFG_PATH)/ip.ld -o$@ $<
+	@$(NM) -n $@ > $(addprefix $(BUILD_PATH)/,$(addsuffix .sym,$(notdir $@)))
+
+$(BUILD_PATH)/sp.bin: $(BUILD_PATH)/sp.bin.elf
+	@$(OBJCPY) -O binary $< $@
+
+$(BUILD_PATH)/sp.bin.elf: $(BUILD_PATH)/sp_header.s.o $(BUILD_PATH)/sp.s.o
 	@$(LD) $(LD_FLAGS) -T$(CFG_PATH)/sp.ld -o$@ $^
-	@$(NM) -n $@ > $(basename $@).sym
-	@$(OBJCPY) -O binary $@
-	rm $^
+	@$(NM) -n $@ > $(addprefix $(BUILD_PATH)/,$(addsuffix .sym,$(notdir $@)))
 
 $(BUILD_PATH)/boot.bin: $(BUILD_PATH)/ip.bin $(BUILD_PATH)/sp.bin
 	$(call msg_info,Generating boot sector...)
@@ -136,7 +154,7 @@ $(BUILD_PATH)/boot.bin: $(BUILD_PATH)/ip.bin $(BUILD_PATH)/sp.bin
 
 # TODO make the ISO settings user configurable
 %.iso: $(BUILD_PATH)/boot.bin
-	$(call msg_info,Generating ISO image $(PROJECT_NAME).iso)
-	mkisofs -quiet -iso-level 1 -G $< -pad -V "$(PROJECT_NAME)" \
+	$(call msg_info,Generating ISO image $(notdir $@))
+	@mkisofs -quiet -iso-level 1 -G $< -pad -V "$(PROJECT_NAME)" \
 		-sysid "MEGA_CD" -appid "" -publisher "" -preparer "" \
 		-o $@ $(notdir $(basename $@))

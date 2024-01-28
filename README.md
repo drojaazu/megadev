@@ -49,7 +49,7 @@ GNU compiler (gcc): <https://gcc.gnu.org/onlinedocs/gcc/>
 
 ## Getting Started
 
-Clone the repo and place it in a location such as /opt/megadev. In the root of the directory is `makefile.global` (the global makefile) which will be used as a system-wide base for all projects. Edit it as necessary to match your build environment.
+Clone the repo and place it in a location such as /opt/megadev. In the root of the directory is `megadev.make` which will be used as a system-wide base for all projects. Edit the settings in its top section as necessary to match your build environment.
 
 To start a new project copy the `new_project` directory from within the Megadev location to you project directory. It contains three files: a makefile,  `project.h` and `ip.s`. Modify the makefile as you'd like to specify subdirectories and compilation options. Modify `project.h` as you'd like to reflect your project information, being careful to maintain the required text lengths. `ip.s` is a minimal IP, your program entry. Afterwards, do `make init` in the project directory to create the directories, and move `project.h` and `ip.s` to the source directory. You are ready to begin development.
 

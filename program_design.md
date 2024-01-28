@@ -85,8 +85,8 @@ That's about 7KB of RAM, leaving us with just under 56KB of ROM. Our memory map 
             | "ROM"          |
             |                |
             |                |
-						|                |
-						|                |
+            |                |
+	    |                |
     FFDF00  +----------------+
             | "RAM"          |
             |                |

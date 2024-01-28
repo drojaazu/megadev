@@ -20,25 +20,33 @@ RES_PATH:=res
 # symbol maps
 BUILD_PATH:=build
 
+# Disc paths
+# A space-delimited list of subdiorectories representing the content for each
+# disc in your project
+# This is used by the `init` rule to create directories before building
+DISC_PATHS:=disc
+
 # Optional compiler flags
 # Here you can add any additional compiler flags
-OPT_FLAGS:=-O1 -fstack-usage -fconserve-stack
+OPT_FLAGS:=-O1 -fconserve-stack
 
-# Z80 CPU code path
 # (Z80 building is not currently supported... someday!)
-#Z80_SRC_PATH:=z80_src
-
 # Path to the Megadev directory
-#MEGADEV_PATH:=/opt/megadev
-MEGADEV_PATH:=/mnt/aine/Projects/dev/megadev
+MEGADEV_PATH:=/opt/megadev
 
 include $(MEGADEV_PATH)/megadev.make
 
 .PHONY: disc clean
 
-disc: disc/cyber.mmd disc.iso
+disc: \
+	init \
+	disc/cyber.mmd \
+	disc.iso
 
 clean:
-	@rm disc.iso disc/*.mmd disc/*.smd build/*
+	@rm -f disc.iso disc/*.mmd disc/*.smd build/*
 
-disc/cyber.mmd: mmd_layout.s cybercity.c cybercity.res.s
+disc/cyber.mmd: \
+	mmd_layout.s \
+	cybercity.c \
+	cybercity.res.s
