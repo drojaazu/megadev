@@ -482,7 +482,6 @@ typedef enum PlaneWidthTiles
 static inline void blib_bios_entry()
 {
 	__asm__(
-	__asm__(
 		"\
 			jsr %p0 \n\
 		"
@@ -507,7 +506,6 @@ static inline void blib_bios_entry()
 static inline void blib_reset()
 {
 	__asm__(
-	__asm__(
 		"\
 			jsr %p0 \n\
 		"
@@ -527,7 +525,6 @@ static inline void blib_reset()
 static inline void blib_init()
 {
 	__asm__(
-	__asm__(
 		"\
 			jsr %p0 \n\
 		"
@@ -545,7 +542,6 @@ static inline void blib_init()
  */
 static inline void blib_init_sp()
 {
-	__asm__(
 	__asm__(
 		"\
 			jsr %p0 \n\
@@ -565,7 +561,6 @@ static inline void blib_init_sp()
  */
 static inline void blib_vint_handler()
 {
-	__asm__(
 	__asm__(
 		"\
 			jsr %p0 \n\
@@ -589,8 +584,6 @@ static inline void blib_set_hint(void * hint_handler)
 {
 	register u32 A1 __asm__("a1") = (u32) hint_handler;
 	__asm__(
-	register u32 A1 __asm__("a1") = (u32) hint_handler;
-	__asm__(
 		"\
 			jsr %p0 \n\
 		"
@@ -606,7 +599,6 @@ static inline void blib_set_hint(void * hint_handler)
  */
 static inline void blib_update_inputs()
 {
-	__asm__(
 	__asm__(
 		"\
   		move.l a6, -(sp) \n\
@@ -640,9 +632,6 @@ static inline u8 blib_detect_controller(u8 * io_data_port)
 	register u32 A6 __asm__("a6") = (u32) io_data_port;
 	register u8 D6 __asm__("d6");
 	__asm__(
-	register u32 A6 __asm__("a6") = (u32) io_data_port;
-	register u8 D6 __asm__("d6");
-	__asm__(
 		"\
 			jsr %p0 \n\
 		"
@@ -666,7 +655,6 @@ static inline u8 blib_detect_controller(u8 * io_data_port)
 static inline void blib_clear_vram()
 {
 	__asm__(
-	__asm__(
 		"\
   		move.l a6, -(sp) \n\
 			jsr %p0 \n\
@@ -687,7 +675,6 @@ static inline void blib_clear_vram()
 static inline void blib_clear_tables()
 {
 	__asm__(
-	__asm__(
 		"\
   		move.l a6, -(sp) \n\
 			jsr %p0 \n\
@@ -706,7 +693,6 @@ static inline void blib_clear_tables()
 static inline void blib_clear_vsram()
 {
 	__asm__(
-	__asm__(
 		"\
 			jsr %p0 \n\
 		"
@@ -722,7 +708,6 @@ static inline void blib_clear_vsram()
  */
 static inline void blib_load_vdpregs_default()
 {
-	__asm__(
 	__asm__(
 		"\
 			jsr %p0 \n\
@@ -745,9 +730,7 @@ static inline void blib_load_vdpregs_default()
 static inline void blib_load_vdpregs(VDPREG const * vdp_reg_data)
 {
 	register u32 A1 __asm__("a1") = (u32) vdp_reg_data;
-	register u32 A1 __asm__("a1") = (u32) vdp_reg_data;
 
-	__asm__ volatile(
 	__asm__ volatile(
 		"\
 			jsr %p1 \n\
@@ -767,10 +750,6 @@ static inline void blib_load_vdpregs(VDPREG const * vdp_reg_data)
  */
 static inline void blib_vdp_fill(u32 vdpptr, u16 length, u16 value)
 {
-	register u32 D0 __asm__("d0") = vdpptr;
-	register u16 D1 __asm__("d1") = length;
-	register u16 D2 __asm__("d2") = value;
-	__asm__(
 	register u32 D0 __asm__("d0") = vdpptr;
 	register u16 D1 __asm__("d1") = length;
 	register u16 D2 __asm__("d2") = value;
@@ -795,9 +774,6 @@ static inline void blib_vdp_fill_clear(u32 vdpptr, u16 length)
 	register u32 D0 __asm__("d0") = vdpptr;
 	register u16 D1 __asm__("d1") = length;
 	__asm__(
-	register u32 D0 __asm__("d0") = vdpptr;
-	register u16 D1 __asm__("d1") = length;
-	__asm__(
 		"\
 			jsr %p0 \n\
 		"
@@ -814,9 +790,6 @@ static inline void blib_vdp_fill_clear(u32 vdpptr, u16 length)
  */
 static inline void blib_dma_fill_clear(u32 vdpptr, u16 length)
 {
-	register u32 D0 __asm__("d0") = vdpptr;
-	register u16 D1 __asm__("d1") = length;
-	__asm__(
 	register u32 D0 __asm__("d0") = vdpptr;
 	register u16 D1 __asm__("d1") = length;
 	__asm__(
@@ -842,10 +815,6 @@ static inline void blib_dma_fill(u32 vdpptr, u16 length, u16 value)
 	register u16 D1 __asm__("d1") = length;
 	register u16 D2 __asm__("d2") = value;
 	__asm__(
-	register u32 D0 __asm__("d0") = vdpptr;
-	register u16 D1 __asm__("d1") = length;
-	register u16 D2 __asm__("d2") = value;
-	__asm__(
 		"\
   		move.l a6, -(sp) \n\
 			jsr %p0 \n\
@@ -867,10 +836,6 @@ static inline void blib_dma_fill(u32 vdpptr, u16 length, u16 value)
  */
 static inline void blib_load_map(u32 const vdpptr, u16 const width, u16 const height, void const * map)
 {
-	register u32 D0 __asm__("d0") = vdpptr;
-	register u16 D1 __asm__("d1") = width;
-	register u16 D2 __asm__("d2") = height;
-	register u32 A1 __asm__("a1") = (u32) map;
 	register u32 D0 __asm__("d0") = vdpptr;
 	register u16 D1 __asm__("d1") = width;
 	register u16 D2 __asm__("d2") = height;
@@ -910,8 +875,6 @@ static inline void blib_set_hint_workram(void * hint_handler)
 {
 	register u32 A1 __asm__("a1") = (u32) hint_handler;
 	__asm__(
-	register u32 A1 __asm__("a1") = (u32) hint_handler;
-	__asm__(
 		"\
 			jsr %p0 \n\
 		"
@@ -930,7 +893,6 @@ static inline void blib_set_hint_workram(void * hint_handler)
 static inline void blib_disable_hint()
 {
 	__asm__(
-	__asm__(
 		"\
 			jsr %p0 \n\
 		"
@@ -947,8 +909,6 @@ static inline void blib_gfx_decomp(u8 const * data)
 {
 	register u32 a1_data __asm__("a1") = (u32) data;
 	__asm__(
-	register u32 a1_data __asm__("a1") = (u32) data;
-	__asm__(
 		"\
 			jsr %p0 \n\
 		"
@@ -963,7 +923,6 @@ static inline void blib_gfx_decomp(u8 const * data)
 static inline void blib_vdp_disp_enable()
 {
 	__asm__(
-	__asm__(
 		"\
 			jsr %p0 \n\
 		"
@@ -977,7 +936,6 @@ static inline void blib_vdp_disp_enable()
  */
 static inline void blib_vdp_disp_disable()
 {
-	__asm__(
 	__asm__(
 		"\
 			jsr %p0 \n\
@@ -1002,7 +960,6 @@ static inline void blib_vdp_disp_disable()
 static inline void blib_vint_wait_default()
 {
 	__asm__(
-	__asm__(
 		"\
 			jsr %p0 \n\
 		"
@@ -1023,8 +980,6 @@ static inline void blib_vint_wait_default()
  */
 static inline void blib_vint_wait(u8 flags)
 {
-	register u8 D0 __asm__("d0") = flags;
-	__asm__(
 	register u8 D0 __asm__("d0") = flags;
 	__asm__(
 		"\
@@ -1050,8 +1005,6 @@ static inline void blib_vint_wait(u8 flags)
  */
 static inline bool blib_pal_fadeout(u8 palette_index, u8 length)
 {
-	register u16 D0 __asm__("d0") = (u16) (palette_index << 1);
-	register u16 D1 __asm__("d1") = (u16) length;
 	register u16 D0 __asm__("d0") = (u16) (palette_index << 1);
 	register u16 D1 __asm__("d1") = (u16) length;
 
@@ -1082,7 +1035,6 @@ fade_complete:
  */
 static inline void blib_load_font_defaults()
 {
-	__asm__(
 	__asm__(
 		"\
 			jsr %p0 \n\
@@ -1132,10 +1084,7 @@ static inline void blib_input_delay(u8 * input, bool use_2p)
 {
 	register u32 A1 __asm__("a1") = (u32) input;
 	register u16 D0 __asm__("d0") = (u16) use_2p;
-	register u32 A1 __asm__("a1") = (u32) input;
-	register u16 D0 __asm__("d0") = (u16) use_2p;
 
-	__asm__(
 	__asm__(
 		"\
 			jsr %p0 \n\
@@ -1155,7 +1104,6 @@ static inline void blib_input_delay(u8 * input, bool use_2p)
  */
 static inline void blib_clear_comm()
 {
-	__asm__(
 	__asm__(
 		"\
 			jsr %p0 \n\
@@ -1184,7 +1132,7 @@ static inline void blib_print(char const * string, VDPPTR pos)
 	register u32 A1 __asm__("a1") = (u32) string;
 	register u32 D0 __asm__("d0") = pos;
 
-	__asm__ volatile (
+	__asm__ volatile(
 		"\
 			jsr %p1 \n\
 		"
@@ -1235,7 +1183,6 @@ static inline void blib_dma_xfer(VDPPTR dest, u8 const * source, u16 length)
 	register u16 D2 __asm__("d2") = length;
 
 	__asm__(
-	__asm__(
 		"\
   		move.l a6, -(sp) \n\
   		jsr %p0 \n\
@@ -1265,7 +1212,6 @@ static inline void blib_dma_xfer_wrdram(VDPPTR const dest, void const * source, 
 	register u16 D2 __asm__("d2") = length;
 
 	__asm__(
-	__asm__(
 		"\
 			move.l a6, -(sp) \n\
   		jsr %p0 \n\
@@ -1289,11 +1235,7 @@ static inline void blib_dma_copy(u32 vdpptr_dest, u16 source, u16 length)
 	register u32 D0 __asm__("d0") = vdpptr_dest;
 	register u16 D1 __asm__("d1") = source;
 	register u16 D2 __asm__("d2") = length;
-	register u32 D0 __asm__("d0") = vdpptr_dest;
-	register u16 D1 __asm__("d1") = source;
-	register u16 D2 __asm__("d2") = length;
 
-	__asm__(
 	__asm__(
 		"\
 	  	move.l a6, -(sp) \n\
@@ -1317,7 +1259,6 @@ static inline void blib_dma_copy(u32 vdpptr_dest, u16 source, u16 length)
 static inline void blib_copy_sprlist()
 {
 	__asm__(
-	__asm__(
 		"\
 			jsr %p0 \n\
 		"
@@ -1337,10 +1278,7 @@ static inline void blib_clear_ram(void * address, u32 long_count)
 {
 	register u32 A0 __asm__("a0") = (u32) address;
 	register u32 D7 __asm__("d7") = long_count;
-	register u32 A0 __asm__("a0") = (u32) address;
-	register u32 D7 __asm__("d7") = long_count;
 
-	__asm__(
 	__asm__(
 		"\
 			move.l a6, -(sp) \n\
@@ -1362,9 +1300,7 @@ static inline void blib_clear_ram(void * address, u32 long_count)
 static inline void blib_load_pal(Palette const * pal_data)
 {
 	register u32 A1 __asm__("a1") = (u32) pal_data;
-	register u32 A1 __asm__("a1") = (u32) pal_data;
 
-	__asm__(
 	__asm__(
 		"\
 			jsr %p0 \n\
@@ -1383,9 +1319,7 @@ static inline void blib_load_pal(Palette const * pal_data)
 static inline void blib_load_pal_update(Palette const * pal_data)
 {
 	register u32 A1 __asm__("a1") = (u32) pal_data;
-	register u32 A1 __asm__("a1") = (u32) pal_data;
 
-	__asm__(
 	__asm__(
 		"\
 			jsr %p0 \n\
@@ -1404,7 +1338,6 @@ static inline void blib_load_pal_update(Palette const * pal_data)
  */
 static inline void blib_copy_pal()
 {
-	__asm__(
 	__asm__(
 		"\
 			jsr %p0 \n\
@@ -1430,12 +1363,7 @@ static inline void blib_process_sprobjs(
 	register u32 A1 __asm__("a1") = (u32) sprtbl_cache;
 	register u16 D0 __asm__("d0") = (u16) obj_count;
 	register u16 D1 __asm__("d1") = (u16) obj_size;
-	register u32 A0 __asm__("a0") = (u32) obj_array;
-	register u32 A1 __asm__("a1") = (u32) sprtbl_cache;
-	register u16 D0 __asm__("d0") = (u16) obj_count;
-	register u16 D1 __asm__("d1") = (u16) obj_size;
 
-	__asm__(
 	__asm__(
 		"\
 			jsr %p0 \n\
@@ -1464,10 +1392,7 @@ static inline u16 blib_prng_mod(u16 const modulo)
 	// TODO can we use the same variable here for in/out?
 	register u16 d0_modulo __asm__("d0") = modulo;
 	register u16 d0_random __asm__("d0");
-	register u16 d0_modulo __asm__("d0") = modulo;
-	register u16 d0_random __asm__("d0");
 
-	__asm__(
 	__asm__(
 		"\
 			jsr %p1 \n\
@@ -1489,7 +1414,6 @@ static inline u16 blib_prng_mod(u16 const modulo)
 static inline void blib_prng()
 {
 	__asm__(
-	__asm__(
 		"\
 			jsr %p0 \n\
 		"
@@ -1508,8 +1432,6 @@ static inline void blib_prng()
  */
 static inline void blib_set_fadein_pal(Palette const * palette)
 {
-	register u32 a1_BLIB_PALETTE __asm__("a1") = (u32) palette;
-	register u32 a1_change __asm__("a1");
 	register u32 a1_BLIB_PALETTE __asm__("a1") = (u32) palette;
 	register u32 a1_change __asm__("a1");
 
@@ -1539,8 +1461,6 @@ static inline void blib_set_fadein_pal(Palette const * palette)
  */
 static inline void blib_pal_fadein()
 {
-
-	__asm__(
 	__asm__(
 		"\
   		jsr %p0 \n\
@@ -1574,8 +1494,6 @@ typedef struct DmaTransfer
  */
 static inline void blib_dma_queue(DmaTransfer const * queue)
 {
-	register u32 a1_queue __asm__("a1") = (u32) queue;
-	register u32 a1_change __asm__("a1");
 	register u32 a1_queue __asm__("a1") = (u32) queue;
 	register u32 a1_change __asm__("a1");
 

@@ -69,7 +69,7 @@ __attribute__((noreturn)) void main()
 	// The load VDP regs Boot ROM routines expect a zero terminated array of
 	// raw register values
 	// See the documentation on _BLIB_LOAD_VDPREGS for more
-	u16 vdp_planewidth_reg[] = {_VDP_PL_SIZE | W32 | H64, 0};
+	u16 vdp_planewidth_reg[] = {_VDPREG10_PL_SIZE | VR10_W32 | VR10_H64, 0};
 	blib_load_vdpregs(vdp_planewidth_reg);
 
 	// load the palettes

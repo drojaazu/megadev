@@ -40,7 +40,6 @@ DISC_PATHS:=disc
 # Here you can add any additional compiler flags
 OPT_FLAGS:=-O1 -fconserve-stack
 
-# (Z80 building is not currently supported... someday!)
 # Path to the Megadev directory
 MEGADEV_PATH:=/opt/megadev
 

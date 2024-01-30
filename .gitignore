@@ -1,7 +1,4 @@
 .vscode/
-build/
-disc/
 docs/
 work/
 *.code-workspace
-**/disc

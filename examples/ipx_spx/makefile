@@ -59,13 +59,31 @@ disc: \
 clean:
 	@rm -f disc.iso disc/*.mmd disc/*.smd build/*
 
-disc/ipx.mmd: ipx_layout.s ipx_init.s ipx.c $(BUILD_PATH)/ip.bin
+disc/ipx.mmd: \
+	ipx_layout.s \
+	ipx_init.s \
+	ipx.c \
+	$(BUILD_PATH)/ip.bin
 
-disc/ex1.mmd: ex1.c shared_mmd_layout.s ex1_res.s disc/ipx.mmd
+disc/ex1.mmd: \
+	ex1.c \
+	shared_mmd_layout.s \
+	ex1_res.s \
+	disc/ipx.mmd
 
-disc/ex2.mmd: ex2.c shared_mmd_layout.s ex2_res.s disc/ipx.mmd
+disc/ex2.mmd: \
+	ex2.c \
+	shared_mmd_layout.s \
+	ex2_res.s \
+	disc/ipx.mmd
 
-disc/ex3.mmd: ex3.c shared_mmd_layout.s ex3_res.s disc/ipx.mmd
+disc/ex3.mmd: \
+	ex3.c \
+	shared_mmd_layout.s \
+	ex3_res.s \
+	disc/ipx.mmd
 
-disc/spx.smd: spx_layout.s spx.c $(BUILD_PATH)/sp.bin
-
+disc/spx.smd: \
+	spx_layout.s \
+	spx.c \
+	$(BUILD_PATH)/sp.bin

@@ -45,6 +45,9 @@ MEGADEV_PATH:=/opt/megadev
 
 include $(MEGADEV_PATH)/megadev.make
 
+clean:
+	@rm -f disc.iso disc/*.mmd disc/*.smd build/*
+
 disc: \
 	init \
 	disc.iso

@@ -27,7 +27,7 @@ ip_entry:
   move.w #0x0000, (_VDP_DATA)
 
   // disable VDP display and maintain MD mode (mode 5)
-	move.w #(_VDP_MODE2 | 0x44), (_VDP_CTRL)
+	move.w #(_VDPREG01_MODE2 | 0x44), (_VDP_CTRL)
 
   // clear out VRAM
   // (note: this does not clear CRAM!)
