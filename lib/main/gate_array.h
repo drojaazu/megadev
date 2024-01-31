@@ -1,14 +1,14 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file gatearray.h
+ * @file gate_array.h
  * @brief C wrappers for Main CPU side Gate Array registers
  */
 
-#ifndef MEGADEV__MAIN_GATEARRAY_H
-#define MEGADEV__MAIN_GATEARRAY_H
+#ifndef MEGADEV__MAIN_GATE_ARRAY_H
+#define MEGADEV__MAIN_GATE_ARRAY_H
 
-#include "main/gatearray.def.h"
+#include "main/gate_array.def.h"
 
 /**
  * @sa _GA_COMFLAGS
@@ -265,7 +265,7 @@
  * @def GA_COMSTAT0
  * @brief Communication status (Sub -> Main)
  * @sa _GA_COMSTAT0
- * @ingroup main_gatearr
+ * @ingroup main_gatearray
  *
  * @details RW: 16 bit data
  */
@@ -275,7 +275,7 @@
  * @def GA_COMSTAT1
  * @brief Communication status (Sub -> Main)
  * @sa _GA_COMSTAT1
- * @ingroup main_gatearr
+ * @ingroup main_gatearray
  *
  * @details RW: 16 bit data
  */
@@ -285,7 +285,7 @@
  * @def GA_COMSTAT2
  * @brief Communication status (Sub -> Main)
  * @sa _GA_COMSTAT2
- * @ingroup main_gatearr
+ * @ingroup main_gatearray
  *
  * @details RW: 16 bit data
  */
@@ -295,7 +295,7 @@
  * @def GA_COMSTAT3
  * @brief Communication status (Sub -> Main)
  * @sa _GA_COMSTAT3
- * @ingroup main_gatearr
+ * @ingroup main_gatearray
  *
  * @details RW: 16 bit data
  */
@@ -305,7 +305,7 @@
  * @def GA_COMSTAT4
  * @brief Communication status (Sub -> Main)
  * @sa _GA_COMSTAT4
- * @ingroup main_gatearr
+ * @ingroup main_gatearray
  *
  * @details RW: 16 bit data
  */
@@ -315,7 +315,7 @@
  * @def GA_COMSTAT5
  * @brief Communication status (Sub -> Main)
  * @sa _GA_COMSTAT5
- * @ingroup main_gatearr
+ * @ingroup main_gatearray
  *
  * @details RW: 16 bit data
  */
@@ -325,7 +325,7 @@
  * @def GA_COMSTAT6
  * @brief Communication status (Sub -> Main)
  * @sa _GA_COMSTAT6
- * @ingroup main_gatearr
+ * @ingroup main_gatearray
  *
  * @details RW: 16 bit data
  */
@@ -335,7 +335,7 @@
  * @def GA_COMSTAT7
  * @brief Communication status (Sub -> Main)
  * @sa _GA_COMSTAT7
- * @ingroup main_gatearr
+ * @ingroup main_gatearray
  *
  * @details RW: 16 bit data
  */

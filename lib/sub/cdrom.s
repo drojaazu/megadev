@@ -11,7 +11,7 @@
 #include "macros.s"
 #include "sub/cdrom.def.h"
 #include "sub/bios.def.h"
-#include "sub/gatearray.def.h"
+#include "sub/gate_array.def.h"
 
 #include "sub/sub.macro.s"
 

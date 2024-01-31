@@ -6,8 +6,8 @@
 
 #include "main/main.def.h"
 #include "main/bootlib.def.h"
-#include "main/gatearray.macro.s"
-#include "main/gatearray.def.h"
+#include "main/gate_array.macro.s"
+#include "main/gate_array.def.h"
 #include "main/vdp.def.h"
 #include "macros.s"
 #include "mmd_layout.s"

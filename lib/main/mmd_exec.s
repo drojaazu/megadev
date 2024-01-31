@@ -11,8 +11,8 @@
 
 #include "macros.s"
 #include "main/memmap.def.h"
-#include "main/gatearray.def.h"
-#include "main/gatearray.macro.s"
+#include "main/gate_array.def.h"
+#include "main/gate_array.macro.s"
 
 /**
  * @brief Setup and run a loaded MMD formatted module

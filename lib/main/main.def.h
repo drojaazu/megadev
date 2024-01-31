@@ -8,7 +8,7 @@
 #ifndef MEGADEV__MAIN_MAIN_DEF_H
 #define MEGADEV__MAIN_MAIN_DEF_H
 
-#include "gatearray.def.h"
+#include "gate_array.def.h"
 #include "main/io.def.h"
 #include "main/vdp.def.h"
 #include "md_sys.def.h"

@@ -9,7 +9,7 @@
 #define MEGADEV__SUB_MACROS_S
 
 #include "sub/memmap.def.h"
-#include "sub/gatearray.def.h"
+#include "sub/gate_array.def.h"
 
 /**
  * @macro BURAM

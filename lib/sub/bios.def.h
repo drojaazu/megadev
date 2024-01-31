@@ -305,7 +305,6 @@
 
 /**
  * @def _BIOS_CDBTOCWRITE
- * @ingroup Misc
  * @brief Writes data to disc TOC stored in memory
  * @clobber d0-d1/a0-a1
  * @ingroup bios_cdb
@@ -322,7 +321,6 @@
 
 /**
  * @def _BIOS_CDBTOCREAD
- * @ingroup Misc
  * @brief Reads the TOC entry for a given track
  * @clobber d0-d1/a0-a1
  * @ingroup bios_cdb
@@ -337,7 +335,6 @@
 
 /**
  * @def _BIOS_CDBPAUSE
- * @ingroup Misc
  * @brief Sets the time that the drive spins down from pause to standby
  * @clobber d0-d1/a0-a1
  * @ingroup bios_cdb
@@ -610,7 +607,6 @@
 
 /**
  * @def _BIOS_WONDERCHK
- * @ingroup Misc
  * @brief No documentation; research needed. Presumably exclusive to the
  *   WonderMega hardware
  * @ingroup bios_unknown

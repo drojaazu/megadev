@@ -8,7 +8,7 @@
 #include "main/bootlib.def.h"
 #include "main/main.macro.s"
 #include "main/vdp.def.h"
-#include "main/gatearray.macro.s"
+#include "main/gate_array.macro.s"
 #include "ipx_layout.s"
 
 ip_entry:
@@ -27,7 +27,7 @@ ip_entry:
   move.w #0x0000, (_VDP_DATA)
 
   // disable VDP display and maintain MD mode (mode 5)
-	move.w #(_VDPREG01_MODE2 | 0x44), (_VDP_CTRL)
+	move.w #(_VDPREG_MODE2 | 0x44), (_VDP_CTRL)
 
   // clear out VRAM
   // (note: this does not clear CRAM!)

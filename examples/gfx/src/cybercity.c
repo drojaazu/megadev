@@ -128,7 +128,7 @@ __attribute__((noreturn)) void main()
 		VDP_DATA_16 = uf32_to_int(scroll_a);
 		VDP_DATA_16 = uf32_to_int(scroll_b);
 
-		if (BLIB_JOY1_HOLD & PAD_RIGHT_MSK)
+		if (BLIB_JOY1_HOLD & PAD_RIGHT)
 		{
 			// ship_parts.pos_x += frac_to_uf32(3);
 			sprobj_ship.display_flags = 0;
@@ -137,7 +137,7 @@ __attribute__((noreturn)) void main()
 				sprobj_ship.move_x = frac_to_f32(4);
 		}
 
-		if (BLIB_JOY1_HOLD & PAD_LEFT_MSK)
+		if (BLIB_JOY1_HOLD & PAD_LEFT)
 		{
 			// ship_parts.pos_x -= frac_to_f32(3);
 			sprobj_ship.display_flags = 0x80;
@@ -146,12 +146,12 @@ __attribute__((noreturn)) void main()
 				sprobj_ship.move_x = frac_to_f32(-4);
 		}
 
-		if (BLIB_JOY1_HOLD & PAD_UP_MSK)
+		if (BLIB_JOY1_HOLD & PAD_UP)
 		{
 			sprobj_ship.pos_y -= frac_to_uf32(3);
 		}
 
-		if (BLIB_JOY1_HOLD & PAD_DOWN_MSK)
+		if (BLIB_JOY1_HOLD & PAD_DOWN)
 		{
 			sprobj_ship.pos_y += frac_to_uf32(3);
 		}

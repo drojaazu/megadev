@@ -1,7 +1,7 @@
 #include "ipx.h"
 #include "fixed.h"
 #include "main/bootlib.h"
-#include "main/gatearray.h"
+#include "main/gate_array.h"
 #include "main/io.def.h"
 #include "main/memmap.h"
 #include "main/mmd_exec.h"
@@ -63,7 +63,7 @@ void main()
 	{
 		blib_vint_wait_default();
 
-		if ((BLIB_JOY1_PRESS & PAD_A_MSK))
+		if ((BLIB_JOY1_PRESS & PAD_A))
 		{
 			play_pcm();
 		}

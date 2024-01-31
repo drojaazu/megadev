@@ -1,5 +1,5 @@
 #include "main/bootlib.h"
-#include "main/gatearray.h"
+#include "main/gate_array.h"
 #include "main/io.def.h"
 #include "main/memmap.h"
 #include "main/mmd_exec.h"
@@ -153,27 +153,27 @@ static void brmwrite_test()
 		// of the value changing way too quickly
 		blib_input_delay(&delayed_input_val, false);
 
-		if (delayed_input_val & PAD_UP_MSK)
+		if (delayed_input_val & PAD_UP)
 		{
 			++writeval;
 		}
-		if (delayed_input_val & PAD_DOWN_MSK)
+		if (delayed_input_val & PAD_DOWN)
 		{
 			--writeval;
 		}
 
-		if (delayed_input_val & PAD_RIGHT_MSK)
+		if (delayed_input_val & PAD_RIGHT)
 		{
 			writeval += 0x100;
 		}
-		if (delayed_input_val & PAD_LEFT_MSK)
+		if (delayed_input_val & PAD_LEFT)
 		{
 			writeval -= 0x100;
 		}
 
 		printval_u16_c(writeval, val_buffer);
 		blib_print(val_buffer, print_xy(23, 2));
-	} while (! (BLIB_JOY1_PRESS & PAD_START_MSK));
+	} while (! (BLIB_JOY1_PRESS & PAD_START));
 
 	*(u16 *) WRDRAM = writeval;
 
@@ -329,7 +329,7 @@ void main()
 	do
 	{
 		blib_vint_wait_default();
-	} while (! (BLIB_JOY1_PRESS & PAD_START_MSK));
+	} while (! (BLIB_JOY1_PRESS & PAD_START));
 
 	menupos = 0;
 
@@ -357,7 +357,7 @@ void main()
 			VDP_CTRL_32 = (VDPPTR(NMT_POS_PLANE(1, (menupos + 3), _BLIB_PLANEA_ADDR)) | VRAM_W);
 			VDP_DATA_16 = '>';
 
-			if ((BLIB_JOY1_PRESS & PAD_DOWN_MSK))
+			if ((BLIB_JOY1_PRESS & PAD_DOWN))
 			{
 				++menupos;
 				if (menupos > 6)
@@ -365,14 +365,14 @@ void main()
 				continue;
 			}
 
-			if ((BLIB_JOY1_PRESS & PAD_UP_MSK))
+			if ((BLIB_JOY1_PRESS & PAD_UP))
 			{
 				--menupos;
 				if (menupos < 0)
 					menupos = 6;
 				continue;
 			}
-		} while (! (BLIB_JOY1_PRESS & PAD_START_MSK));
+		} while (! (BLIB_JOY1_PRESS & PAD_START));
 
 		switch (menupos)
 		{
@@ -402,7 +402,7 @@ void main()
 		do
 		{
 			blib_vint_wait_default();
-		} while (! (BLIB_JOY1_PRESS & PAD_START_MSK));
+		} while (! (BLIB_JOY1_PRESS & PAD_START));
 
 	} while (1);
 }

@@ -1,21 +1,24 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file gatearray.def.h
+ * @file gate_array.def.h
  * @brief Main CPU side Gate Array registers
  */
 
-#ifndef MEGADEV__GATEARRAY_DEF_H
-#define MEGADEV__GATEARRAY_DEF_H
+#ifndef MEGADEV__GATE_ARRAY_DEF_H
+#define MEGADEV__GATE_ARRAY_DEF_H
 
 /**
- * @defgroup main_ga_regs Main CPU / Gate Array Registers
+ * @defgroup main_gatearray Main CPU / Gate Array Registers
  */
 
 /**
  * @def _GA_RESET
  * @sa GA_RESET
- * @ingroup main_ga_regs
+ * @ingroup main_gatearray
+ * @note
+ * Width: W/B
+ * Bit access: Only BTST (BCLR and BSET disallowed)
  */
 #define _GA_RESET 0xA12000
 
@@ -47,7 +50,10 @@
 /**
  * @def _GA_MEMMODE
  * @sa GA_MEMMODE
- * @ingroup main_ga_regs
+ * @ingroup main_gatearray
+ * @note
+ * Width: W/B
+ * Bit access: Any
  */
 #define _GA_MEMMODE 0xA12002
 
@@ -82,147 +88,210 @@
 /**
  * @def _GA_CDCMODE
  * @sa GA_CDCMODE
- * @ingroup main_ga_regs
+ * @ingroup main_gatearray
+ * @note
+ * Width: W/B
+ * Bit access: Any
  */
 #define _GA_CDCMODE 0xA12004
 
 /**
  * @def _GA_HINTVECT
  * @sa GA_HINTVECT
- * @ingroup main_ga_regs
+ * @ingroup main_gatearray
+ * @note
+ * Width: W
+ * Bit access: None
  */
 #define _GA_HINTVECT 0xA12006
 
 /**
  * @def _GA_CDCHOSTDATA
  * @sa GA_CDCHOSTDATA
- * @ingroup main_ga_regs
+ * @ingroup main_gatearray
+ * @note
+ * Width: W
+ * Bit access: None
  */
 #define _GA_CDCHOSTDATA 0xA12008 /* 16-bit CDC host data */
 
 /**
  * @def _GA_STOPWATCH
  * @sa GA_STOPWATCH
- * @ingroup main_ga_regs
+ * @ingroup main_gatearray
+ * @note
+ * Width: W
+ * Bit access: None
  */
 #define _GA_STOPWATCH 0xA1200C
 
 /**
  * @def _GA_COMFLAGS
  * @sa GA_COMFLAGS
- * @ingroup main_ga_regs
+ * @ingroup main_gatearray
+ * @note
+ * Width: W/B
+ * Bit access: Any
  */
 #define _GA_COMFLAGS 0xA1200E
 
 /**
  * @def _GA_COMCMD0
  * @sa GA_COMCMD0
- * @ingroup main_ga_regs
+ * @ingroup main_gatearray
+ * @note
+ * Width: W/B
+ * Bit access: Any
  */
 #define _GA_COMCMD0 0xA12010
 
 /**
  * @def _GA_COMCMD1
  * @sa GA_COMCMD1
- * @ingroup main_ga_regs
+ * @ingroup main_gatearray
+ * @note
+ * Width: W/B
+ * Bit access: Any
  */
 #define _GA_COMCMD1 0xA12012
 
 /**
  * @def _GA_COMCMD2
  * @sa GA_COMCMD2
- * @ingroup main_ga_regs
+ * @ingroup main_gatearray
+ * @note
+ * Width: W/B
+ * Bit access: Any
  */
 #define _GA_COMCMD2 0xA12014
 
 /**
  * @def _GA_COMCMD3
  * @sa GA_COMCMD3
- * @ingroup main_ga_regs
+ * @ingroup main_gatearray
+ * @note
+ * Width: W/B
+ * Bit access: Any
  */
 #define _GA_COMCMD3 0xA12016
 
 /**
  * @def _GA_COMCMD4
  * @sa GA_COMCMD4
- * @ingroup main_ga_regs
+ * @ingroup main_gatearray
+ * @note
+ * Width: W/B
+ * Bit access: Any
  */
 #define _GA_COMCMD4 0xA12018
 
 /**
  * @def _GA_COMCMD5
  * @sa GA_COMCMD5
- * @ingroup main_ga_regs
+ * @ingroup main_gatearray
+ * @note
+ * Width: W/B
+ * Bit access: Any
  */
 #define _GA_COMCMD5 0xA1201A
 
 /**
  * @def _GA_COMCMD6
  * @sa GA_COMCMD6
- * @ingroup main_ga_regs
+ * @ingroup main_gatearray
+ * @note
+ * Width: W/B
+ * Bit access: Any
  */
 #define _GA_COMCMD6 0xA1201C
 
 /**
  * @def _GA_COMCMD7
  * @sa GA_COMCMD7
- * @ingroup main_ga_regs
+ * @ingroup main_gatearray
+ * @note
+ * Width: W/B
+ * Bit access: Any
  */
 #define _GA_COMCMD7 0xA1201E
 
 /**
  * @def _GA_COMSTAT0
  * @sa GA_COMSTAT0
- * @ingroup main_ga_regs
+ * @ingroup main_gatearray
+ * @note
+ * Width: W/B
+ * Bit access: Any
  */
 #define _GA_COMSTAT0 0xA12020
 
 /**
  * @def _GA_COMSTAT1
  * @sa GA_COMSTAT1
- * @ingroup main_ga_regs
+ * @ingroup main_gatearray
+ * @note
+ * Width: W/B
+ * Bit access: Any
  */
 #define _GA_COMSTAT1 0xA12022
 
 /**
  * @def _GA_COMSTAT2
  * @sa GA_COMSTAT2
- * @ingroup main_ga_regs
+ * @ingroup main_gatearray
+ * @note
+ * Width: W/B
+ * Bit access: Any
  */
 #define _GA_COMSTAT2 0xA12024
 
 /**
  * @def _GA_COMSTAT3
  * @sa GA_COMSTAT3
- * @ingroup main_ga_regs
+ * @ingroup main_gatearray
+ * @note
+ * Width: W/B
+ * Bit access: Any
  */
 #define _GA_COMSTAT3 0xA12026
 
 /**
  * @def _GA_COMSTAT4
  * @sa GA_COMSTAT4
- * @ingroup main_ga_regs
+ * @ingroup main_gatearray
+ * @note
+ * Width: W/B
+ * Bit access: Any
  */
 #define _GA_COMSTAT4 0xA12028
 
 /**
  * @def _GA_COMSTAT5
  * @sa GA_COMSTAT5
- * @ingroup main_ga_regs
+ * @ingroup main_gatearray
+ * @note
+ * Width: W/B
+ * Bit access: Any
  */
 #define _GA_COMSTAT5 0xA1202A
 
 /**
  * @def _GA_COMSTAT6
  * @sa GA_COMSTAT6
- * @ingroup main_ga_regs
+ * @ingroup main_gatearray
+ * @note
+ * Width: W/B
+ * Bit access: Any
  */
 #define _GA_COMSTAT6 0xA1202C
 
 /**
  * @def _GA_COMSTAT7
  * @sa GA_COMSTAT7
- * @ingroup main_ga_regs
+ * @ingroup main_gatearray
+ * @note
+ * Width: W/B
+ * Bit access: Any
  */
 #define _GA_COMSTAT7 0xA1202E
 

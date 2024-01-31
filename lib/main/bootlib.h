@@ -29,7 +29,6 @@
 #include "fixed.h"
 #include "main/bootlib.def.h"
 #include "main/vdp.h"
-#include "math.h"
 #include "types.h"
 
 struct SpriteMapping
@@ -69,7 +68,7 @@ struct SpriteObject
 	// uses the display flags defined above; the rest of the bits are user
 	// definable
 	u8 display_flags;
-	// this byte is not used by the boot lib, so presumably it can be used however
+	// this byte is not used by blib, so presumably it can be used however
 	// you'd like
 	u8 user;
 	struct SpriteLayout const * layout;
@@ -99,7 +98,7 @@ typedef struct Palette
 } Palette;
 
 /**
- * @var u8* BLIB_BUFFER
+ * @def* BLIB_BUFFER
  * @brief Work RAM for graphics decompression routines
  * @sa _BLIB_BUFFER
  * @ingroup blib_cmp
@@ -113,7 +112,7 @@ typedef struct Palette
 #define BLIB_BUFFER_SZ 0x200
 
 /**
- * @var Sprite* BLIB_SPRLIST
+ * @def Sprite* BLIB_SPRLIST
  * @brief Sprite list buffer
  * @ingroup blib_vdp
  * @sa _BLIB_SPRLIST
@@ -127,7 +126,7 @@ typedef struct Palette
 #define BLIB_SPRLIST_SZ 0x280
 
 /**
- * @var s16* BLIB_PALETTE
+ * @def s16* BLIB_PALETTE
  * @brief CRAM (palette) buffer
  * @ingroup blib_vdp
  * @sa _BLIB_PALETTE
@@ -169,17 +168,16 @@ typedef struct Palette
 #define BLIB_PAL3 (*((s16(*)[16]) _BLIB_PAL3))
 
 /**
- * @var void* BLIB_VINT_EX_PTR
+ * @def void* BLIB_VINT_EX_PTR
  * @brief Pointer to the VINT_EX routine used in the Boot ROM VINT handler.
  * @sa _BLIB_VINT_EX_PTR
  */
 #define BLIB_VINT_EX_PTR ((volatile void *(*) ) _BLIB_VINT_EX_PTR)
 
 /**
- * @var u16* BLIB_VDPREGS
+ * @def* BLIB_VDPREGS
  * @brief VDP registers buffer
  * @ingroup blib_vdp
- * @sa _BLIB_VDPREGS
  *
  * @details Buffer of all VDP registers (except DMA regs), making up 19
  * entries. You will need to keep these updated manually unless you use
@@ -187,48 +185,48 @@ typedef struct Palette
  *
  * Size: 16bit * 19 = 0x26 bytes
  *
- * @ingroup blib_vdp
+ * @sa _BLIB_VDPREGS
  */
 // #define BLIB_VDPREGS (*((volatile u16(*)[19]) _BLIB_VDPREGS))
 #define BLIB_VDPREGS ((volatile u16 *) _BLIB_VDPREGS)
 
 /**
- * @var u8 BLIB_COMFLAGS_MAIN
+ * @def BLIB_COMFLAGS_MAIN
  * @brief GA comm flags for Main CPU buffer
  * @sa _BLIB_COMFLAGS_MAIN
  */
 #define BLIB_COMFLAGS_MAIN ((volatile u8 *) _BLIB_COMFLAGS_MAIN)
 
 /**
- * @var u8 const BLIB_COMFLAGS_SUB
+ * @def const BLIB_COMFLAGS_SUB
  * @brief GA comm flags for Sub CPU buffer
  * @sa _BLIB_COMFLAGS_SUB
  */
 #define BLIB_COMFLAGS_SUB ((volatile u8 const *) _BLIB_COMFLAGS_SUB)
 
 /**
- * @var u16* BLIB_COMCMD
+ * @def* BLIB_COMCMD
  * @brief Array of cached GA COMCMD (Main -> Sub) registers
  * @sa _BLIB_COMCMD
  */
 #define BLIB_COMCMD (*((volatile u16(*)[8]) _BLIB_COMCMD))
 
 /**
- * @var u16 BLIB_COMSTAT
+ * @def BLIB_COMSTAT
  * @brief Array of cached GA COMSTAT (Main -> Sub) registers
  * @sa _BLIB_COMSTAT
  */
 #define BLIB_COMSTAT (*((volatile u16 const(*)[8]) _BLIB_COMSTAT))
 
 /**
- * @var u16 BLIB_JOY1_MOUSE_DATA
+ * @def BLIB_JOY1_MOUSE_DATA
  * @sa _BLIB_JOY1_MOUSE_DATA
  * @ingroup blib_input
  */
 #define BLIB_JOY1_MOUSE_DATA (*((u16 *) _BLIB_JOY1_MOUSE_DATA))
 
 /**
- * @var u16 BLIB_JOY1_MOUSE_DX
+ * @def BLIB_JOY1_MOUSE_DX
  * @brief Mouse delta X
  * @sa _BLIB_JOY1_MOUSE_DX
  * @ingroup blib_input
@@ -236,7 +234,7 @@ typedef struct Palette
 #define BLIB_JOY1_MOUSE_DX (*((u16 *) _BLIB_JOY1_MOUSE_DX))
 
 /**
- * @var u16 BLIB_JOY1_MOUSE_DY
+ * @def BLIB_JOY1_MOUSE_DY
  * @brief Mouse delta Y
  * @sa _BLIB_JOY1_MOUSE_DY
  * @ingroup blib_input
@@ -244,14 +242,14 @@ typedef struct Palette
 #define BLIB_JOY1_MOUSE_DY (*((u16 *) _BLIB_JOY1_MOUSE_DY))
 
 /**
- * @var u16 BLIB_JOY2_MOUSE_DATA
+ * @def BLIB_JOY2_MOUSE_DATA
  * @sa _BLIB_JOY2_MOUSE_DATA
  * @ingroup blib_input
  */
 #define BLIB_JOY2_MOUSE_DATA (*((u16 *) _BLIB_JOY2_MOUSE_DATA))
 
 /**
- * @var u16 BLIB_JOY2_MOUSE_DX
+ * @def BLIB_JOY2_MOUSE_DX
  * @brief Mouse delta X
  * @sa _BLIB_JOY2_MOUSE_DX
  * @ingroup blib_input
@@ -259,7 +257,7 @@ typedef struct Palette
 #define BLIB_JOY2_MOUSE_DX (*((u16 *) _BLIB_JOY2_MOUSE_DX))
 
 /**
- * @var u16 BLIB_JOY2_MOUSE_DY
+ * @def BLIB_JOY2_MOUSE_DY
  * @brief Mouse delta Y
  * @sa _BLIB_JOY2_MOUSE_DY
  * @ingroup blib_input
@@ -267,21 +265,21 @@ typedef struct Palette
 #define BLIB_JOY2_MOUSE_DY (*((u16 *) _BLIB_JOY2_MOUSE_DY))
 
 /**
- * @var u8 BLIB_JOY1_TYPE
+ * @def BLIB_JOY1_TYPE
  * @sa _BLIB_JOY1_TYPE
  * @ingroup blib_input
  */
 #define BLIB_JOY1_TYPE (*((u8 *) _BLIB_JOY1_TYPE))
 
 /**
- * @var u8 BLIB_JOY2_TYPE
+ * @def BLIB_JOY2_TYPE
  * @sa _BLIB_JOY2_TYPE
  * @ingroup blib_input
  */
 #define BLIB_JOY2_TYPE ((u8 *) _BLIB_JOY2_TYPE)
 
 /**
- * @var u8 BLIB_JOY1_HOLD
+ * @def BLIB_JOY1_HOLD
  * @brief Port 1 controller latched input
  * @sa _BLIB_JOY1_HOLD
  * @ingroup blib_input
@@ -289,7 +287,7 @@ typedef struct Palette
 #define BLIB_JOY1_HOLD (*((volatile u8 const *) _BLIB_JOY1_HOLD))
 
 /**
- * @var u8 BLIB_JOY1_PRESS
+ * @def BLIB_JOY1_PRESS
  * @brief Port 1 controller single press input
  * @sa _BLIB_JOY1_PRESS
  * @ingroup blib_input
@@ -297,7 +295,7 @@ typedef struct Palette
 #define BLIB_JOY1_PRESS (*((volatile u8 const *) _BLIB_JOY1_PRESS))
 
 /**
- * @var u8 BLIB_JOY2_HOLD
+ * @def BLIB_JOY2_HOLD
  * @brief Port 2 controller latched input
  * @sa _BLIB_JOY2_HOLD
  * @ingroup blib_input
@@ -305,7 +303,7 @@ typedef struct Palette
 #define BLIB_JOY2_HOLD (*((volatile u8 const *) _BLIB_JOY2_HOLD))
 
 /**
- * @var u8 BLIB_JOY2_PRESS
+ * @def BLIB_JOY2_PRESS
  * @brief Port 2 controller single press input
  * @sa _BLIB_JOY2_PRESS
  * @ingroup blib_input
@@ -313,7 +311,7 @@ typedef struct Palette
 #define BLIB_JOY2_PRESS (*((volatile u8 const *) _BLIB_JOY2_PRESS))
 
 /**
- * @var u8 BLIB_JOY1_DELAY
+ * @def BLIB_JOY1_DELAY
  * @sa _BLIB_JOY1_DELAY
  * @ingroup blib_input
  *
@@ -322,7 +320,7 @@ typedef struct Palette
 #define BLIB_JOY1_DELAY (*((volatile u8 *) _BLIB_JOY1_DELAY))
 
 /**
- * @var u8 BLIB_JOY2_DELAY
+ * @def BLIB_JOY2_DELAY
  * @sa _BLIB_JOY2_DELAY
  * @ingroup blib_input
  *
@@ -331,7 +329,7 @@ typedef struct Palette
 #define BLIB_JOY2_DELAY (*((volatile u8 *) _BLIB_JOY2_DELAY))
 
 /**
- * @var u8 BLIB_VINT_FLAGS
+ * @def BLIB_VINT_FLAGS
  * @sa _BLIB_VINT_FLAGS
  * @ingroup blib_int
  *
@@ -345,7 +343,7 @@ typedef struct Palette
 #define BLIB_VINT_FLAGS (*((u8 *) _BLIB_VINT_FLAGS))
 
 /**
- * @var u8 BLIB_VINT_COUNTER
+ * @def BLIB_VINT_COUNTER
  * @brief Incremented by 1 on each vertical blank (VINT)
  * @sa _BLIB_VINT_COUNTER
  * * @ingroup blib_int
@@ -353,7 +351,7 @@ typedef struct Palette
 #define BLIB_VINT_COUNTER (*((volatile u8 *) _BLIB_VINT_COUNTER))
 
 /**
- * @var u8 BLIB_VINT_SKIP_GFX
+ * @def BLIB_VINT_SKIP_GFX
  * @sa _BLIB_VINT_SKIP_GFX
  * * @ingroup blib_int
  *
@@ -365,14 +363,14 @@ typedef struct Palette
 #define BLIB_VINT_SKIP_GFX (*((u8 *) _BLIB_VINT_SKIP_GFX))
 
 /**
- * @var u8 BLIB_VDP_UPDATE_FLAGS
+ * @def BLIB_VDP_UPDATE_FLAGS
  * @sa _BLIB_VDP_UPDATE_FLAGS
  * * @ingroup blib_int
  */
 #define BLIB_VDP_UPDATE_FLAGS (*((u8 *) _BLIB_VDP_UPDATE_FLAGS))
 
 /**
- * @var u16 BLIB_RANDOM
+ * @def BLIB_RANDOM
  * @brief Contains a random 16 bit value
  * @sa _BLIB_RANDOM
  * @ingroup blib_misc
@@ -384,7 +382,7 @@ typedef struct Palette
 #define BLIB_RANDOM (*((u16 const *) _BLIB_RANDOM))
 
 /**
- * @var u16 BLIB_FONT_TILE_BASE
+ * @def BLIB_FONT_TILE_BASE
  * @sa _BLIB_FONT_TILE_BASE
  * @ingroup blib_misc
  *
@@ -407,7 +405,7 @@ typedef enum PlaneWidthTiles
 } PlaneWidthTiles;
 
 /**
- * @var u16 BLIB_PLANE_WIDTH
+ * @def BLIB_PLANE_WIDTH
  * @brief Cached value of the plane width as defined in VDP reg. 0x10.
  * @ingroup blib_vdp
  * @sa _BLIB_PLANE_WIDTH
@@ -425,14 +423,14 @@ typedef enum PlaneWidthTiles
 #define BLIB_PLANE_WIDTH (*((u16 *) _BLIB_PLANE_WIDTH))
 
 /**
- * @var u32 BLIB_SPRTBL_PTR
+ * @def BLIB_SPRTBL_PTR
  * @sa _BLIB_SPRTBL_PTR
  * @ingroup blib_vdp
  */
 #define BLIB_SPRTBL_PTR (*((u8 *) _BLIB_SPRTBL_PTR))
 
 /**
- * @var u32 BLIB_SPR_JMPTBL_PTR
+ * @def BLIB_SPR_JMPTBL_PTR
  * @brief Pointer to the jump table for entity processing
  * @sa _BLIB_SPR_JMPTBL_PTR
  * @ingroup blib_vdp
@@ -440,7 +438,7 @@ typedef enum PlaneWidthTiles
 #define BLIB_SPR_JMPTBL_PTR (*((void const **) _BLIB_SPR_JMPTBL_PTR))
 
 /**
- * @var u8 BLIB_FADEIN_PAL_INDEX
+ * @def BLIB_FADEIN_PAL_INDEX
  * @brief Palette offset on which the fade in palette should begin
  * @sa _BLIB_FADEIN_PAL_INDEX
  * @ingroup blib_vdp
@@ -448,7 +446,7 @@ typedef enum PlaneWidthTiles
 #define BLIB_FADEIN_PAL_INDEX (*((u8 *) _BLIB_FADEIN_PAL_INDEX))
 
 /**
- * @var u8 BLIB_FADEIN_PAL_LENGTH
+ * @def BLIB_FADEIN_PAL_LENGTH
  * @brief Number of entries in the fade in palette
  * @sa _BLIB_FADEIN_PAL_LENGTH
  * @ingroup blib_vdp
@@ -456,7 +454,7 @@ typedef enum PlaneWidthTiles
 #define BLIB_FADEIN_PAL_LENGTH (*((u8 *) _BLIB_FADEIN_PAL_LENGTH))
 
 /**
- * @var u16 BLIB_FADEIN_STEP
+ * @def BLIB_FADEIN_STEP
  * @brief Indicates if a fade in is still in progress
  * @sa _BLIB_FADEIN_STEP
  * @ingroup blib_vdp
@@ -464,7 +462,7 @@ typedef enum PlaneWidthTiles
 #define BLIB_FADEIN_STEP (*((volatile u16 *) _BLIB_FADEIN_STEP))
 
 /**
- * @var u32 _BLIB_FADEIN_TARGET_PAL_PTR
+ * @def _BLIB_FADEIN_TARGET_PAL_PTR
  * @brief Pointer to the target fade in palette
  * @sa _BLIB_FADEIN_TARGET_PAL_PTR
  * @ingroup blib_vdp
@@ -612,9 +610,9 @@ static inline void blib_update_inputs()
 
 typedef enum ControllerType
 {
-	Joypad = _JOYTYPE_JOYPAD,
-	MegaMouse = _JOYTYPE_MEGAMOUSE,
-	MultiTap = _JOYTYPE_MULTITAP
+	Joypad = CONTROLLER_JOYPAD,
+	MegaMouse = CONTROLLER_MEGAMOUSE,
+	MultiTap = CONTROLLER_MULTITAP
 } ControllerType;
 
 /**
@@ -1453,11 +1451,11 @@ static inline void blib_set_fadein_pal(Palette const * palette)
  * _BLIB_FADEIN_STEP should be checked. If it is > 0, the fade is not yet
  * complete.
  *
- * @note This may be a bug in the implementation. Using the Z flag *could*
- * work, as the code checks whether _BLIB_FADEIN_STEP is zero with a TST opcode.
- * However, this is followed by setting the VDP flags for a palette update,
- * which will set the Z flag if palette update flag was not already set.
- *
+ * This may be a bug in the implementation. Using the Z flag to check for
+ * completion *could* work, as the code checks whether _BLIB_FADEIN_STEP is
+ * zero with a TST opcode. However, this is followed by setting the VDP flags
+ * for a palette update, which will set the Z flag if palette update flag was
+ * not already set.
  */
 static inline void blib_pal_fadein()
 {

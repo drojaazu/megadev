@@ -13,7 +13,7 @@
 #include "main/memmap.def.h"
 #include "main/bootlib.def.h"
 #include "main/vdp.macro.s"
-#include "main/gatearray.def.h"
+#include "main/gate_array.def.h"
 #include "main/vdp.def.h"
 #include "main/io.def.h"
 
@@ -65,7 +65,7 @@ loop:
   jbsr _BLIB_VINT_HANDLER_WAIT_DEFAULT
   // Inputs are updated as part of the default vint wait subroutine
   // so we can assume the input value is current
-  and.b #PAD_START_MSK, _BLIB_JOY1_PRESS
+  and.b #PAD_START, _BLIB_JOY1_PRESS
 	beq loop
 	
   jmp _BLIB_RESET

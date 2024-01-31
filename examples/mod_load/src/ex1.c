@@ -14,7 +14,7 @@ void main()
 	do
 	{
 		blib_vint_wait_default();
-	} while (! (BLIB_JOY1_PRESS & PAD_START_MSK));
+	} while (! (BLIB_JOY1_PRESS & PAD_START));
 
 	global_mode = 1;
 	return;

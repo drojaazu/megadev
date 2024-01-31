@@ -232,7 +232,7 @@ __attribute__((interrupt)) void _INT_EXT()
 					do
 					{
 						asm("nop");
-					} while ((IO_SCTRL2 & SCTRL_TFUL_MSK) != 0);
+					} while ((IO_SCTRL2 & SCTRL_TX_FULL) != 0);
 					IO_TXDATA2 = *((u8 *) addr++);
 					--length;
 				}
@@ -275,7 +275,7 @@ void main()
 
 	// initialize serial comm on port 2
 	// 4800bps, serial in/out mode, ext interrupt enable
-	IO_SCTRL2 = B4800_MSK | SCTRL_SIN_MSK | SCTRL_SOUT_MSK | SCTRL_RINT_MSK;
+	IO_SCTRL2 = SCTRL_SERIAL_ENABLE | SCTRL_BAUD_4800 | SCTRL_RX_INT_ENABLE;
 	IO_CTRL2 = 0x7f;
 	BLIB_VDPREGS[0x0b] |= 0x08;
 	VDP_CTRL_16 = BLIB_VDPREGS[0x0b];
@@ -325,29 +325,29 @@ void main()
 	do
 	{
 		asm("nop");
-	} while ((IO_SCTRL2 & SCTRL_TFUL_MSK) != 0);
+	} while ((IO_SCTRL2 & SCTRL_TX_FULL) != 0);
 	IO_TXDATA2 = 'o';
 	do
 	{
 		asm("nop");
-	} while ((IO_SCTRL2 & SCTRL_TFUL_MSK) != 0);
+	} while ((IO_SCTRL2 & SCTRL_TX_FULL) != 0);
 	IO_TXDATA2 = 'k';
 	do
 	{
 		asm("nop");
-	} while ((IO_SCTRL2 & SCTRL_TFUL_MSK) != 0);
+	} while ((IO_SCTRL2 & SCTRL_TX_FULL) != 0);
 	IO_TXDATA2 = '1';
 	do
 	{
 		asm("nop");
-	} while ((IO_SCTRL2 & SCTRL_TFUL_MSK) != 0);
+	} while ((IO_SCTRL2 & SCTRL_TX_FULL) != 0);
 	IO_TXDATA2 = '3';
 
 	do
 	{
 		blib_vint_wait(0x81);
 		process_particles();
-	} while (! (BLIB_JOY1_PRESS & PAD_START_MSK));
+	} while (! (BLIB_JOY1_PRESS & PAD_START));
 
 	blib_print("BIG TEST\xff", (VDPPTR(NMT_POS_PLANE(2, 10, _BLIB_PLANEA_ADDR)) | VRAM_W));
 }

@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file build.s
+ * @file build.h
  * @brief Hardware configuration defaults and compile time sanity checking
  */
 

@@ -1,7 +1,7 @@
 
 #include "ipx.h"
 #include "main/bootlib.h"
-#include "main/gatearray.h"
+#include "main/gate_array.h"
 #include "main/memmap.h"
 #include "main/mmd_exec.h"
 #include "main/vdp.h"

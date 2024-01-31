@@ -15,6 +15,8 @@ ENABLE_PREPROCESSING = YES
 MACRO_EXPANSION      = YES
 EXPAND_ONLY_PREDEF   = YES
 PREDEFINED           = "HW_TARGET=MEGACD"
-INPUT							= README.md disc.md design.md cdrom.md bootrom.md modules.md ip_sp.md lib
+INPUT							= README.md bootlib.md cdrom.md dev_in_c.md disc.md modules.md ip_sp.md program_design.md start_here.md lib
 FILE_PATTERNS			= *.h *.s *.c *.md
-ALIASES += "clobber=@warning REGISTER CLOBBERS: " 
+ALIASES += clobber="\warning REGISTER CLOBBERS: "
+ALIASES += aliases="^^Aliases: \ref "
+ALIASES += aliasof="^^Alias of \ref "

@@ -39,308 +39,336 @@
 #define _WRKRAM_BLIB 0xFFF700
 
 /**
- * @sa BLIB_BUFFER
+ * @def _BLIB_BUFFER
  * @ingroup blib_cmp
+ * @sa BLIB_BUFFER
  */
 #define _BLIB_BUFFER 0xFFF700
 
 /**
- * @sa BLIB_SPRLIST
+ * @def _BLIB_SPRLIST
  * @ingroup blib_vdp
+ * @sa BLIB_SPRLIST
  */
 #define _BLIB_SPRLIST 0xFFF900
 
 /**
- * @sa BLIB_PALETTE
+ * @def _BLIB_PALETTE
  * @ingroup blib_vdp
+ * @sa BLIB_PALETTE
  */
 #define _BLIB_PALETTE 0xFFFB80
 
 /**
- * @sa BLIB_PAL0
+ * @def _BLIB_PAL0
  * @ingroup blib_vdp
+ * @sa BLIB_PAL0
  */
 #define _BLIB_PAL0 0xFFFB80
 
 /**
- * @sa BLIB_PAL1
+ * @def _BLIB_PAL1
  * @ingroup blib_vdp
+ * @sa BLIB_PAL1
  */
 #define _BLIB_PAL1 0xFFFBA0
 
 /**
- * @sa BLIB_PAL2
+ * @def _BLIB_PAL2
  * @ingroup blib_vdp
+ * @sa BLIB_PAL2
  */
 #define _BLIB_PAL2 0xFFFBC0
 
 /**
- * @sa BLIB_PAL3
+ * @def _BLIB_PAL3
  * @ingroup blib_vdp
+ * @sa BLIB_PAL3
  */
 #define _BLIB_PAL3 0xFFFBE0
 
 /**
- * @sa BLIB_VINT_EX_PTR
+ * @def _BLIB_VINT_EX_PTR
  * @ingroup blib_int
+ * @sa BLIB_VINT_EX_PTR
  */
 #define _BLIB_VINT_EX_PTR 0xFFFDAA
 
 /**
- * @sa BLIB_VDPREGS
+ * @def _BLIB_VDPREGS
  * @ingroup blib_vdp
+ * @sa BLIB_VDPREGS
  */
 #define _BLIB_VDPREGS 0xFFFDB4
 
 /**
- * @sa BLIB_COMFLAGS_MAIN
+ * @def _BLIB_COMFLAGS_MAIN
  * @ingroup blib_comm
+ * @sa BLIB_COMFLAGS_MAIN
  */
 #define _BLIB_COMFLAGS_MAIN 0xfffdde
 
 /**
- * @sa BLIB_COMFLAGS_SUB
+ * @def _BLIB_COMFLAGS_SUB
  * @ingroup blib_comm
+ * @sa BLIB_COMFLAGS_SUB
  */
 #define _BLIB_COMFLAGS_SUB 0xfffddf
 
 /**
- * @sa BLIB_COMCMD
+ * @def _BLIB_COMCMD
  * @ingroup blib_comm
  *
  * @note
  * Size: 16bit * 8 = 0x10 bytes
+ *
+ * @sa BLIB_COMCMD
  */
 #define _BLIB_COMCMD 0xfffde0
 
 /**
+ * @def _BLIB_COMCMD0
  * @brief GA COMCMD0 register cache
  * @ingroup blib_comm
  */
 #define _BLIB_COMCMD0 0xfffde0
 
 /**
- * @var u16 _BLIB_COMCMD1
- * @ingroup blib_comm
- *
+ * @def _BLIB_COMCMD1
  * @brief GA COMCMD1 register cache
+ * @ingroup blib_comm
  */
 #define _BLIB_COMCMD1 0xfffde2
 
 /**
- * @var u16 _BLIB_COMCMD2
- * @ingroup blib_comm
- *
+ * @def _BLIB_COMCMD2
  * @brief GA COMCMD2 register cache
+ * @ingroup blib_comm
  */
 #define _BLIB_COMCMD2 0xfffde4
 
 /**
- * @var u16 _BLIB_COMCMD3
- * @ingroup blib_comm
- *
+ * @def _BLIB_COMCMD3
  * @brief GA COMCMD3 register cache
+ * @ingroup blib_comm
  */
 #define _BLIB_COMCMD3 0xfffde6
 
 /**
- * @var u16 _BLIB_COMCMD4
- * @ingroup blib_comm
- *
+ * @def _BLIB_COMCMD4
  * @brief GA COMCMD4 register cache
+ * @ingroup blib_comm
  */
 #define _BLIB_COMCMD4 0xfffde8
 
 /**
- * @var u16 _BLIB_COMCMD5
- * @ingroup blib_comm
- *
+ * @def _BLIB_COMCMD5
  * @brief GA COMCMD5 register cache
+ * @ingroup blib_comm
  */
 #define _BLIB_COMCMD5 0xfffdea
 
 /**
- * @var u16 _BLIB_COMCMD6
- * @ingroup blib_comm
- *
+ * @def _BLIB_COMCMD6
  * @brief GA COMCMD6 register cache
+ * @ingroup blib_comm
  */
 #define _BLIB_COMCMD6 0xfffdec
 
 /**
- * @var u16 _BLIB_COMCMD7
- * @ingroup blib_comm
- *
+ * @def _BLIB_COMCMD7
  * @brief GA COMCMD7 register cache
+ * @ingroup blib_comm
  */
 #define _BLIB_COMCMD7 0xfffdee
 
 /**
+ * @def _BLIB_COMSTAT
  * @sa BLIB_COMSTAT
  * @ingroup blib_comm
  *
+ * @note
  * Size: 16bit * 8 = 0x10 bytes
  */
 #define _BLIB_COMSTAT 0xfffdf0
 
 /**
- * @var u16 _BLIB_COMSTAT0
- * @ingroup blib_comm
- *
+ * @def _BLIB_COMSTAT0
  * @brief GA COMSTAT0 register cache
+ * @ingroup blib_comm
  */
 #define _BLIB_COMSTAT0 0xfffdf0
 
 /**
- * @var u16 _BLIB_COMSTAT1
- * @ingroup blib_comm
- *
+ * @def _BLIB_COMSTAT1
  * @brief GA COMSTAT1 register cache
+ * @ingroup blib_comm
  */
 #define _BLIB_COMSTAT1 0xfffdf2
 
 /**
- * @var u16 _BLIB_COMSTAT2
- * @ingroup blib_comm
- *
+ * @def _BLIB_COMSTAT2
  * @brief GA COMSTAT2 register cache
+ * @ingroup blib_comm
  */
 #define _BLIB_COMSTAT2 0xfffdf4
 
 /**
- * @var u16 _BLIB_COMSTAT3
- * @ingroup blib_comm
- *
+ * @def _BLIB_COMSTAT3
  * @brief GA COMSTAT3 register cache
+ * @ingroup blib_comm
  */
 #define _BLIB_COMSTAT3 0xfffdf6
 
 /**
- * @var u16 _BLIB_COMSTAT4
- * @ingroup blib_comm
- *
+ * @def _BLIB_COMSTAT4
  * @brief GA COMSTAT4 register cache
+ * @ingroup blib_comm
  */
 #define _BLIB_COMSTAT4 0xfffdf8
 
 /**
- * @var u16 _BLIB_COMSTAT5
- * @ingroup blib_comm
- *
+ * @def _BLIB_COMSTAT5
  * @brief GA COMSTAT5 register cache
+ * @ingroup blib_comm
  */
 #define _BLIB_COMSTAT5 0xfffdfa
 
 /**
- * @var u16 _BLIB_COMSTAT6
- * @ingroup blib_comm
- *
+ * @def _BLIB_COMSTAT6
  * @brief GA COMSTAT6 register cache
+ * @ingroup blib_comm
  */
 #define _BLIB_COMSTAT6 0xfffdfc
 
 /**
- * @var u16 _BLIB_COMSTAT7
- * @ingroup blib_comm
- *
+ * @def _BLIB_COMSTAT7
  * @brief GA COMSTAT7 register cache
+ * @ingroup blib_comm
  */
 #define _BLIB_COMSTAT7 0xfffdfe
 
 /**
- * @sa BLIB_JOY1_MOUSE_DATA
+ * @def _BLIB_JOY1_MOUSE_DATA
  * @ingroup blib_input
+ *
+ * @sa BLIB_JOY1_MOUSE_DATA
  */
 #define _BLIB_JOY1_MOUSE_DATA 0xfffe00
 
 /**
- * @sa BLIB_JOY1_MOUSE_DX
+ * @def _BLIB_JOY1_MOUSE_DX
  * @ingroup blib_input
+ * @sa BLIB_JOY1_MOUSE_DX
  */
 #define _BLIB_JOY1_MOUSE_DX 0xfffe06
 
 /**
- * @sa BLIB_JOY1_MOUSE_DY
+ * @def _BLIB_JOY1_MOUSE_DY
  * @ingroup blib_input
+ * @sa BLIB_JOY1_MOUSE_DY
  */
 #define _BLIB_JOY1_MOUSE_DY 0xfffe08
 
 /**
- * @sa BLIB_JOY2_MOUSE_DATA
+ * @def _BLIB_JOY2_MOUSE_DATA
  * @ingroup blib_input
+ * @sa BLIB_JOY2_MOUSE_DATA
  */
 #define _BLIB_JOY2_MOUSE_DATA 0xfffe0c
 
 /**
- * @sa BLIB_JOY2_MOUSE_DX
+ * @def _BLIB_JOY2_MOUSE_DX
  * @ingroup blib_input
+ * @sa BLIB_JOY2_MOUSE_DX
  */
 #define _BLIB_JOY2_MOUSE_DX 0xfffe12
 
 /**
- * @sa BLIB_JOY2_MOUSE_DY
+ * @def _BLIB_JOY2_MOUSE_DY
  * @ingroup blib_input
+ * @sa BLIB_JOY2_MOUSE_DY
  */
 #define _BLIB_JOY2_MOUSE_DY 0xfffe14
 
 /**
- * @sa BLIB_JOY1_TYPE
+ * @def _BLIB_JOY1_TYPE
  * @ingroup blib_input
+ * @sa BLIB_JOY1_TYPE
  */
 #define _BLIB_JOY1_TYPE 0xfffe18
 
 /**
- * @sa BLIB_JOY2_TYPE
+ * @def _BLIB_JOY2_TYPE
  * @ingroup blib_input
+ * @sa BLIB_JOY2_TYPE
  */
 #define _BLIB_JOY2_TYPE 0xfffe19
 
 /**
- * Controller types
+ * @def CONTROLLER_JOYPAD
+ * @ingroup blib_input
  */
-#define _JOYTYPE_JOYPAD 0x0D
-#define _JOYTYPE_MEGAMOUSE 0x03
-#define _JOYTYPE_MULTITAP 0x07
+#define CONTROLLER_JOYPAD 0x0D
 
 /**
- * @sa BLIB_JOY1_HOLD
+ * @def CONTROLLER_MEGAMOUSE
  * @ingroup blib_input
+ */
+#define CONTROLLER_MEGAMOUSE 0x03
+
+/**
+ * @def CONTROLLER_MULTITAP
+ * @ingroup blib_input
+ */
+#define CONTROLLER_MULTITAP 0x07
+
+/**
+ * @def _BLIB_JOY1_HOLD
+ * @ingroup blib_input
+ * @sa BLIB_JOY1_HOLD
  */
 #define _BLIB_JOY1_HOLD 0xfffe20
 
 /**
- * @sa BLIB_JOY1_PRESS
+ * @def _BLIB_JOY1_PRESS
  * @ingroup blib_input
+ * @sa BLIB_JOY1_PRESS
  */
 #define _BLIB_JOY1_PRESS 0xfffe21
 
 /**
- * @sa BLIB_JOY2_HOLD
+ * @def _BLIB_JOY2_HOLD
  * @ingroup blib_input
+ * @sa BLIB_JOY2_HOLD
  */
 #define _BLIB_JOY2_HOLD 0xfffe22
 
 /**
- * @sa BLIB_JOY2_PRESS
+ * @def _BLIB_JOY2_PRESS
  * @ingroup blib_input
+ * @sa BLIB_JOY2_PRESS
  */
 #define _BLIB_JOY2_PRESS 0xfffe23
 
 /**
- * @sa BLIB_JOY1_DELAY
+ * @def _BLIB_JOY1_DELAY
  * @ingroup blib_input
+ * @sa BLIB_JOY1_DELAY
  */
 #define _BLIB_JOY1_DELAY 0xfffe24
 
 /**
- * @sa BLIB_JOY2_DELAY
+ * @def _BLIB_JOY2_DELAY
  * @ingroup blib_input
+ * @sa BLIB_JOY2_DELAY
  */
 #define _BLIB_JOY2_DELAY 0xfffe25
 
 /**
- * @sa BLIB_VINT_FLAGS
+ * @def _BLIB_VINT_FLAGS
  * @ingroup blib_int
+ * @sa BLIB_VINT_FLAGS
  */
 #define _BLIB_VINT_FLAGS 0xfffe26
 
@@ -358,79 +386,93 @@
 #define CALL_VINT_EX_MSK 1 << CALL_VINT_EX_BIT
 
 /**
- * @sa BLIB_VINT_COUNTER
+ * @def _BLIB_VINT_COUNTER
  * @ingroup blib_int
+ * @sa BLIB_VINT_COUNTER
  */
 #define _BLIB_VINT_COUNTER 0xfffe27
 
 /**
- * @sa BLIB_VINT_SKIP_GFX
+ * @def _BLIB_VINT_SKIP_GFX
  * @ingroup blib_int
+ * @sa BLIB_VINT_SKIP_GFX
  */
 #define _BLIB_VINT_SKIP_GFX 0xfffe28
 
 /**
- * @sa BLIB_VDP_UPDATE_FLAGS
+ * @def _BLIB_VDP_UPDATE_FLAGS
  * @ingroup blib_vdp
+ * @sa BLIB_VDP_UPDATE_FLAGS
  */
 #define _BLIB_VDP_UPDATE_FLAGS 0xfffe29
 
-/* _BLIB_VDP_UPDATE_FLAGS bits/masks */
-#define PAL_UPDATE_BIT 0
-
-#define PAL_UPDATE_MSK 1 << PAL_UPDATE_BIT
+/**
+ * @def VDPUPDATE_PAL
+ * @brief BLIB VDP Update Flags / Update Palette
+ * @ingroup blib_vdp
+ */
+#define VDPUPDATE_PAL (1 << 0)
 
 /**
- * @sa BLIB_RANDOM
+ * @def _BLIB_RANDOM
  * @ingroup blib_misc
+ * @sa BLIB_RANDOM
  */
 #define _BLIB_RANDOM 0xfffe2a
 
 /**
- * @sa BLIB_FONT_TILE_BASE
+ * @def _BLIB_FONT_TILE_BASE
  * @ingroup blib_misc
+ * @sa BLIB_FONT_TILE_BASE
  */
 #define _BLIB_FONT_TILE_BASE 0xfffe2c
 
 /**
- * @sa BLIB_PLANE_WIDTH
+ * @def _BLIB_PLANE_WIDTH
  * @ingroup blib_vdp
+ * @sa BLIB_PLANE_WIDTH
  */
 #define _BLIB_PLANE_WIDTH 0xFFFE2E
 
 /**
- * @sa BLIB_SPRTBL_PTR
+ * @def _BLIB_SPRTBL_PTR
  * @ingroup blib_vdp
+ * @sa BLIB_SPRTBL_PTR
  */
 #define _BLIB_SPRTBL_PTR 0xFFFE30
 
 /**
- * @sa BLIB_SPR_JMPTBL_PTR
+ * @def _BLIB_SPR_JMPTBL_PTR
  * @ingroup blib_vdp
+ * @sa BLIB_SPR_JMPTBL_PTR
  */
 #define _BLIB_SPR_JMPTBL_PTR 0xFFFE34
 
 /**
- * @sa BLIB_FADEIN_PAL_INDEX
+ * @def _BLIB_FADEIN_PAL_INDEX
  * @ingroup blib_vdp
+ * @sa BLIB_FADEIN_PAL_INDEX
  */
 #define _BLIB_FADEIN_PAL_INDEX 0xfffe46
 
 /**
- * @sa BLIB_FADEIN_PAL_LENGTH
+ * @def _BLIB_FADEIN_PAL_LENGTH
  * @ingroup blib_vdp
+ * @sa BLIB_FADEIN_PAL_LENGTH
  */
 #define _BLIB_FADEIN_PAL_LENGTH 0xfffe47
 
 /**
- * @sa BLIB_FADEIN_STEP
+ * @def _BLIB_FADEIN_STEP
  * @ingroup blib_vdp
+ * @sa BLIB_FADEIN_STEP
  */
 #define _BLIB_FADEIN_STEP 0xfffe48
 
 /**
- * @sa BLIB_FADEIN_TARGET_PAL_PTR
+ * @def _BLIB_FADEIN_TARGET_PAL_PTR
  * @ingroup blib_vdp
+ * @sa BLIB_FADEIN_TARGET_PAL_PTR
  */
 #define _BLIB_FADEIN_TARGET_PAL_PTR 0xfffe4a
 
@@ -517,14 +559,28 @@
 #endif
 
 /**
- * @sa blib_update_inputs
- *
- * @param[out] _BLIB_JOY1_PRESS
- * @param[out] _BLIB_JOY1_HOLD
- * @param[out] _BLIB_JOY2_PRESS
- * @param[out] _BLIB_JOY2_HOLD
- * @clobber d6-d7/a5-a6
+ * Joypad inputs from _BLIB_UPDATE_INPUTS
+ */
+#define PAD_UP (1 << 0)
+#define PAD_DOWN (1 << 1)
+#define PAD_LEFT (1 << 2)
+#define PAD_RIGHT (1 << 3)
+#define PAD_A (1 << 6)
+#define PAD_B (1 << 4)
+#define PAD_C (1 << 5)
+#define PAD_ABC (PAD_A | PAD_B | PAD_C)
+#define PAD_START (1 << 7)
+
+/**
+ * @def _BLIB_UPDATE_INPUTS
  * @ingroup blib_input
+ *
+ * @param[out] [@ref _BLIB_JOY1_PRESS]
+ * @param[out] [@ref _BLIB_JOY1_HOLD]
+ * @param[out] [@ref _BLIB_JOY2_PRESS]
+ * @param[out] [@ref _BLIB_JOY2_HOLD]
+ * @clobber d6-d7/a5-a6
+ * @sa blib_update_inputs
  */
 #if HW_TARGET == MEGACD_MODE1
 #define _BLIB_UPDATE_INPUTS 0x400298
@@ -533,6 +589,7 @@
 #endif
 
 /**
+ * @def _BLIB_DETECT_CONTROLLER
  * @sa blib_detect_controller
  * @param[in] a6.l Pointer to joypad data port
  * @param[out] d6.b Controller type
@@ -789,11 +846,11 @@
 /**
  * @fn _BLIB_GFX_DECOMP
  * @brief Decompress graphics data in the "Nemesis" format to VRAM
+ * @ingroup blib_vdp
  * @param[in] A1.l Pointer to compressed data
+ *
  * @warning You must set the destination on the VDP control port before calling
  * this routine!
- *
- * GROUP: Decompression, VDP
  */
 #if HW_TARGET == MEGACD_MODE1
 #define _BLIB_GFX_DECOMP 0x4002EC
@@ -802,7 +859,7 @@
 #endif
 
 /**
- * @fn _GFX_DECMP
+ * @fn _BLIB_GFX_DECOMP_RAM
  * @brief Decompress graphics data in the "Nemesis" format to RAM
  * @param[in] A1.l Pointer to compressed data
  * @param[in] A2.l Pointer to decompressed data buffer
@@ -1342,11 +1399,10 @@
 
 /**
  * @brief These define the location of the compressed Sub CPU bios stored within the Boot ROM.
- * In order to use the Sub CPU BIOS in Mode 1, you will need to manually decompressed it to
+ * In order to use the Sub CPU BIOS in Mode 1, you will need to manually decompress it to
  * its proper location in PRG RAM
  *
  * Note that the location of the compressed BIOS is not constant across Mega CD revisions.
- *
  */
 // for all revisions EXCEPT US/EU Model 1 and LaserActive (Mega LD) hardware
 #if HW_TARGET == MEGACD_MODE1

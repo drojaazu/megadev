@@ -29,12 +29,8 @@
 /*
 	External comm port speed
 	Sets the transfer speed of the external device port
-		3 - 300 bps
-		2 - 1200 bps
-		1 - 2400 bps
-		0 - 4800 bps
 */
-.equ EXT_BAUD, 0
+.equ EXT_BAUD, SCTRL_BAUD_4800
 
 .section .text
 
@@ -47,7 +43,7 @@ FUNC init_ext
 	Z80_DO_BUSREQ
 	
 	/* Set comm speed; Serial in/out mode; Enable Rx interrupt */
-	move.b	#((EXT_BAUD << 6) + 0b00111000), EXT_SCTRL
+	move.b	#(SCTRL_SERIAL_ENABLE | SCTRL_RX_INT_ENABLE | EXT_BAUD), EXT_SCTRL
 	move.b #0x7f, EXT_CTRL
 	
 	Z80_DO_BUSRELEASE
@@ -61,7 +57,7 @@ FUNC init_ext
  */
 /* TODO: How does RERR play into this? */
 FUNC ext_rx
-1:btst #SCTRL_RRDY_BIT, (EXT_SCTRL)	// check that we're ready to receive
+1:btst #SCTRL_RX_READY, (EXT_SCTRL)	// check that we're ready to receive
 	beq 1b
 	move.b (EXT_RXDATA), d0
 	rts
@@ -73,7 +69,7 @@ FUNC ext_rx
  */
 FUNC ext_tx
 2:move.b (EXT_SCTRL), d1
-	btst #SCTRL_TFUL_BIT, d1 // make sure transmit queue is not full
+	btst #SCTRL_TX_FULL, d1 // make sure transmit queue is not full
 	bne 2b
 	move.b d0, EXT_TXDATA
 	rts

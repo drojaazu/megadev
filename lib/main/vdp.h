@@ -12,6 +12,7 @@
 #include "types.h"
 
 /**
+ * @typedef VDPPTR
  * @brief Semantic typedef for a VRAM address and VDP operation, formatted for
  * use on the VDP Control port (32-bit)
  *
@@ -19,6 +20,7 @@
 typedef u32 VDPPTR;
 
 /**
+ * @typedef VDPREG
  * @brief Semantic typedef for a VDP register and its value, formatted for use
  * on the VDP Control port (16-bit)
  *
@@ -55,63 +57,133 @@ typedef union SpriteEx
 } SpriteEx;
 
 /**
- * @def VDP_CTRL_32
- * @brief VDP control port (32 bit)
- */
-#define VDP_CTRL_32 (*((u32 volatile *) _VDP_CTRL))
-
-/**
- * @def VDP_DATA_32
- * @brief VDP data port (32 bit)
- * @note A 32 bit write to this port is the equivalent to two consecutive
- * 16 bit writes
- */
-#define VDP_DATA_32 (*((u32 volatile *) _VDP_DATA))
-
-/**
  * @def VDP_CTRL_16
- * @brief VDP control port (16 bit)
+ * @brief VDP Control Port
+ * @ingroup vdp_port
+ * @param[read] Returns VDP status
+ * @param[write] Set VDP register value / Set partial VDP I/O address
+ *
+ * @sa _VDP_CTRL
  */
 #define VDP_CTRL_16 (*((u16 volatile *) _VDP_CTRL))
 
 /**
+ * @def VDP_CTRL_32
+ * @brief VDP Control Port (32 bit Write)
+ * @ingroup vdp_port
+ * @param[write] Set VDP register values / Set VDP I/O address
+ *
+ * @sa _VDP_CTRL
+ */
+#define VDP_CTRL_32 (*((u32 volatile *) _VDP_CTRL))
+
+/**
  * @def VDP_DATA_16
- * @brief VDP data port (16 bit)
+ * @brief VDP Data Port
+ * @ingroup vdp_port
+ * @param[read] Data read
+ * @param[write] Data write
+ *
+ * @sa _VDP_DATA
  */
 #define VDP_DATA_16 (*((u16 volatile *) _VDP_DATA))
 
-#define VDP_DATA_16 (*((u16 volatile *) _VDP_DATA))
+/**
+ * @def VDP_DATA_32
+ * @brief VDP Data Port (32 bit Write)
+ * @ingroup vdp_port
+ * @param[write] Data write
+ *
+ * @sa _VDP_DATA
+ */
+#define VDP_DATA_32 (*((u32 volatile *) _VDP_DATA))
 
-#define VDP_HVCOUNT (*((u16 volatile *) _VDP_HVCOUNT))
-
-#define VDP_HVCOUNT_V (*((u8 volatile *) _VDP_HVCOUNT))
-
-#define VDP_HVCOUNT_H (*((u8 volatile *) (_VDP_HVCOUNT + 1)))
+/**
+ * @def VDP_HVCOUNTER
+ * @brief Reports the current position of the electron beam on the screen
+ * @ingroup vdp
+ * @param[read]
+ * \n Upper byte: Vertical position
+ * \n Lower byte: Horizontal position
+ *
+ * @sa _VDP_HVCOUNTER
+ */
+#define VDP_HVCOUNTER (*((u16 volatile *) _VDP_HVCOUNTER))
 
 /**
  * @def NMT_POS
- * @brief Generates the nametable offset for a tile at pos x/y
+ * @brief Generates the nametable offset for a tile at pos x/y, determining
+ * the plane width dynamically (calculated at runtime)
  * @param x horizontal position in the tilemap
  * @param y vertical position in the tilemap
  */
 #define NMT_POS(x, y) ((y * (BLIB_PLANE_WIDTH)) + (x << 1))
 
-#define NMT_POS_32(x, y) ((y) * Width32 + ((x) << 1))
+/**
+ * @def NMT_POS_32
+ * @brief Generates the nametable offset for a tile at pos x/y for a plane set
+ * to width 32 (calculated at compile time)
+ * @param x horizontal position in the tilemap
+ * @param y vertical position in the tilemap
+ */
+#define NMT_POS_32(x, y) ((y) *Width32 + ((x) << 1))
 
-#define NMT_POS_64(x, y) ((y) * Width64 + ((x) << 1))
+/**
+ * @def NMT_POS_64
+ * @brief Generates the nametable offset for a tile at pos x/y for a plane set
+ * to width 64 (calculated at compile time)
+ * @param x horizontal position in the tilemap
+ * @param y vertical position in the tilemap
+ */
+#define NMT_POS_64(x, y) ((y) *Width64 + ((x) << 1))
 
-#define NMT_POS_128(x, y) ((y) * Width128 + ((x) << 1))
+/**
+ * @def NMT_POS_128
+ * @brief Generates the nametable offset for a tile at pos x/y for a plane set
+ * to width 128 (calculated at compile time)
+ * @param x horizontal position in the tilemap
+ * @param y vertical position in the tilemap
+ */
+#define NMT_POS_128(x, y) ((y) *Width128 + ((x) << 1))
 
 /**
  * @def NMT_POS_PLANE
- * @brief Generates the address of a nametable tile at pos x/y
+ * @brief Generates the address of a tile at pos x/y, determining
+ * the plane width dynamically (calculated at runtime)
+ * @param x horizontal position in the tilemap
+ * @param y vertical position in the tilemap
+ * @param plane_addr VRAM address of plane
  */
 #define NMT_POS_PLANE(x, y, plane_addr) (NMT_POS(x, y) + (plane_addr))
 
+/**
+ * @def NMT_POS_PLANE
+ * @brief Generates the address of a tile at pos x/y for a plane set
+ * to width 32 (calculated at compile time)
+ * @param x horizontal position in the tilemap
+ * @param y vertical position in the tilemap
+ * @param plane_addr VRAM address of plane
+ */
 #define NMT_POS_PLANE_32(x, y, plane_addr) (NMT_POS_32(x, y) + (plane_addr))
 
+/**
+ * @def NMT_POS_PLANE_64
+ * @brief Generates the address of a tile at pos x/y for a plane set
+ * to width 64 (calculated at compile time)
+ * @param x horizontal position in the tilemap
+ * @param y vertical position in the tilemap
+ * @param plane_addr VRAM address of plane
+ */
 #define NMT_POS_PLANE_64(x, y, plane_addr) (NMT_POS_64(x, y) + (plane_addr))
 
+/**
+ * @def NMT_POS_PLANE_128
+ * @brief Generates the address of a tile at pos x/y for a plane set
+ * to width 128 (calculated at compile time)
+ * @param x horizontal position in the tilemap
+ * @param y vertical position in the tilemap
+ * @param plane_addr VRAM address of plane
+ */
 #define NMT_POS_PLANE_128(x, y, plane_addr) (NMT_POS_128(x, y) + (plane_addr))
 
 /**

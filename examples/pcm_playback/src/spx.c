@@ -1,6 +1,6 @@
 
 #include "sub/cdrom.h"
-#include "sub/gatearray.h"
+#include "sub/gate_array.h"
 #include "sub/memmap.h"
 #include "sub/pcm.h"
 

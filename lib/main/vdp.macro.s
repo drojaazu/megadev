@@ -1,6 +1,8 @@
 /**
+ * [ M E G A D E V ]   a Sega Mega CD devkit
+ *
  * @file vdp.macro.s
- * @brief Mega Drive Video Display Processor (VDP)
+ * @brief VDP utility macros
  */
 
 #ifndef MEGADEV__MAIN_VDP_MACROS_S

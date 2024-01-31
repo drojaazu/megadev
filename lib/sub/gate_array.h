@@ -1,19 +1,19 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file gatearray.h
+ * @file gate_array.h
  * @brief C wrappers for Sub CPU side Gate Array registers
  */
 
 #ifndef MEGADEV__SUB_GATEARR_H
 #define MEGADEV__SUB_GATEARR_H
 
-#include "gatearray.def.h"
+#include "gate_array.def.h"
 
 /**
  * @def GA_RESET
  * @brief GA Reg 00 - Sub CPU Reset/ Bus Request
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  * @sa _GA_RESET
  *
  * @details
@@ -40,7 +40,7 @@
 /**
  * @def GA_MEMMODE
  * @brief GA Reg 01 - Word RAM Memory Mode / RAM Write Protect / Priority Mode
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  * @sa _GA_MEMMODE
  *
  * @details
@@ -62,7 +62,7 @@
 /**
  * @def GA_CDCMODE
  * @brief GA Reg 02 - CDC Mode / CDC Registers #1
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  * @sa _GA_CDCMODE
  *
  * @details
@@ -92,7 +92,7 @@
 /**
  * @def GA_CDCRS1
  * @brief GA Reg 03 - CDC Registers #2
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  * @sa _GA_CDCRS1
  *
  * @details
@@ -108,7 +108,7 @@
 /**
  * @def GA_CDCHOSTDATA
  * @brief GA Reg 04 - CDC Host Data
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  * @sa _GA_CDCHOSTDATA
  *
  * @details
@@ -125,7 +125,7 @@
 /**
  * @def GA_DMAADDR
  * @brief GA Reg 05 - CDC DMA Address
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  * @sa _GA_DMAADDR
  *
  * @details
@@ -147,7 +147,7 @@
 /**
  * @def GA_STOPWATCH
  * @brief GA Reg 06 - Stopwatch
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  * @sa _GA_STOPWATCH
  *
  * @details
@@ -165,7 +165,7 @@
 /**
  * @def GA_COMFLAGS
  * @brief GA Reg 07 - Main/Sub CPU communication flags
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  * @sa _GA_COMFLAGS
  *
  * @details
@@ -184,7 +184,7 @@
 /**
  * @def GA_COMCMD0
  * @brief GA Reg 08 - Comm. command 0 (Main -> Sub)
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  * @sa _GA_COMCMD0
  *
  * @details R: 16 bit data
@@ -194,7 +194,7 @@
 /**
  * @def GA_COMCMD1
  * @brief GA Reg 09 - Comm. command (Main -> Sub)
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  * @sa _GA_COMCMD1
  *
  * @details R: 16 bit data
@@ -204,7 +204,7 @@
 /**
  * @def GA_COMCMD2
  * @brief GA Reg 0A - Comm. command (Main -> Sub)
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  * @sa _GA_COMCMD2
  *
  * @details R: 16 bit data
@@ -214,7 +214,7 @@
 /**
  * @def GA_COMCMD3
  * @brief GA Reg 0B - Comm. command (Main -> Sub)
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  * @sa _GA_COMCMD3
  *
  * @details R: 16 bit data
@@ -224,7 +224,7 @@
 /**
  * @def GA_COMCMD4
  * @brief GA Reg 0C - Comm. command (Main -> Sub)
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  * @sa _GA_COMCMD4
  *
  * @details R: 16 bit data
@@ -234,7 +234,7 @@
 /**
  * @def GA_COMCMD5
  * @brief GA Reg 0D - Comm. command (Main -> Sub)
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  * @sa _GA_COMCMD5
  *
  * @details R: 16 bit data
@@ -244,7 +244,7 @@
 /**
  * @def GA_COMCMD6
  * @brief GA Reg 0E - Comm. command (Main -> Sub)
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  * @sa _GA_COMCMD6
  *
  * @details R: 16 bit data
@@ -254,7 +254,7 @@
 /**
  * @def GA_COMCMD7
  * @brief GA Reg 0F - Comm. command (Main -> Sub)
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  * @sa _GA_COMCMD7
  *
  * @details R: 16 bit data
@@ -264,7 +264,7 @@
 /**
  * @def GA_COMSTAT0
  * @brief GA Reg 10 - Comm. status (Sub -> Main)
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  * @sa _GA_COMSTAT0
  *
  * @details RW: 16 bit data
@@ -274,7 +274,7 @@
 /**
  * @def GA_COMSTAT1
  * @brief GA Reg 11 - Comm. status (Sub -> Main)
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  * @sa _GA_COMSTAT1
  *
  * @details RW: 16 bit data
@@ -284,7 +284,7 @@
 /**
  * @def GA_COMSTAT2
  * @brief GA Reg 12 - Comm. status (Sub -> Main)
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  * @sa _GA_COMSTAT2
  *
  * @details RW: 16 bit data
@@ -294,7 +294,7 @@
 /**
  * @def GA_COMSTAT3
  * @brief GA Reg 13 - Comm. status (Sub -> Main)
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  * @sa _GA_COMSTAT3
  *
  * @details RW: 16 bit data
@@ -304,7 +304,7 @@
 /**
  * @def GA_COMSTAT4
  * @brief GA Reg 14 - Comm. status (Sub -> Main)
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  * @sa _GA_COMSTAT4
  *
  * @details RW: 16 bit data
@@ -314,7 +314,7 @@
 /**
  * @def GA_COMSTAT5
  * @brief GA Reg 15 - Comm. status (Sub -> Main)
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  * @sa _GA_COMSTAT5
  *
  * @details RW: 16 bit data
@@ -324,7 +324,7 @@
 /**
  * @def GA_COMSTAT6
  * @brief GA Reg 16 - Comm. status (Sub -> Main)
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  * @sa _GA_COMSTAT6
  *
  * @details RW: 16 bit data
@@ -334,7 +334,7 @@
 /**
  * @def GA_COMSTAT7
  * @brief GA Reg 17 - Comm. status (Sub -> Main)
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  * @sa _GA_COMSTAT7
  *
  * @details RW: 16 bit data
@@ -345,7 +345,7 @@
  * @def GA_INT3TIMER
  * @brief GA Reg 18 - Timer with interrupt
  * @sa _GA_INT3TIMER
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -369,7 +369,7 @@
  * @def GA_INTMASK
  * @brief GA Reg 19 - Interrupt mask control
  * @sa _GA_INTMASK
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -394,7 +394,7 @@
  * @def GA_CDFADER
  * @brief GA Reg 1A - CD Audio Fader
  * @sa _GA_CDFADER
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -422,7 +422,7 @@
  * @def GA_CDDCTRL
  * @brief GA Reg 1B - CDD Control
  * @sa _GA_CDDCTRL
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -455,7 +455,7 @@
  * @def GA_CDDCOMM0
  * @brief GA Reg 1C - CDD Communication
  * @sa _GA_CDDCOMM0
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  *
  * @details See the documentation for more info
  *
@@ -469,7 +469,7 @@
  * @def GA_CDDCOMM1
  * @brief GA Reg 1D - CDD Communication
  * @sa _GA_CDDCOMM1
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  *
  * @details See the documentation for more info
  *
@@ -483,7 +483,7 @@
  * @def GA_CDDCOMM2
  * @brief GA Reg 1E - CDD Communication
  * @sa _GA_CDDCOMM2
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  *
  * @details See the documentation for more info
  *
@@ -497,7 +497,7 @@
  * @def GA_CDDCOMM3
  * @brief GA Reg 1F - CDD Communication
  * @sa _GA_CDDCOMM3
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  *
  * @details See the documentation for more info
  *
@@ -511,7 +511,7 @@
  * @def GA_CDDCOMM4
  * @brief GA Reg 20 - CDD Communication
  * @sa _GA_CDDCOMM4
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  *
  * @details See the documentation for more info
  *
@@ -525,7 +525,7 @@
  * @def GA_CDDCOMM5
  * @brief GA Reg 21 - CDD Communication
  * @sa _GA_CDDCOMM5
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  *
  * @details See the documentation for more info
  *
@@ -539,7 +539,7 @@
  * @def GA_CDDCOMM6
  * @brief GA Reg 22 - CDD Communication
  * @sa _GA_CDDCOMM6
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  *
  * @details See the documentation for more info
  *
@@ -553,7 +553,7 @@
  * @def GA_CDDCOMM7
  * @brief GA Reg 23 - CDD Communication
  * @sa _GA_CDDCOMM7
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  *
  * @details See the documentation for more info
  *
@@ -567,7 +567,7 @@
  * @def GA_CDDCOMM8
  * @brief GA Reg 24 - CDD Communication
  * @sa _GA_CDDCOMM8
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  *
  * @details See the documentation for more info
  *
@@ -581,7 +581,7 @@
  * @def GA_CDDCOMM9
  * @brief GA Reg 25 - CDD Communication
  * @sa _GA_CDDCOMM9
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  *
  * @details See the documentation for more info
  *
@@ -595,7 +595,7 @@
  * @def GA_FONTCOLOR
  * @brief GA Reg 26 - Font Color
  * @sa _GA_FONTCOLOR
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -614,7 +614,7 @@
  * @def GA_FONTBITS
  * @brief GA Reg 27 - 1bpp Font Data
  * @sa _GA_FONTBITS
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  */
 #define GA_FONTBITS ((u16 volatile *) _GA_FONTBITS)
 
@@ -622,7 +622,7 @@
  * @def GA_FONTDATA
  * @brief GA Reg 28 - 4bpp Font Data
  * @sa _GA_FONTDATA
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  *
  * @details
  * This register is a group of four 16-bit values which represent
@@ -634,7 +634,7 @@
  * @def GA_STAMPSIZE
  * @brief GA Reg 29
  * @sa _GA_STAMPSIZE
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  */
 #define GA_STAMPSIZE ((u16 volatile *) _GA_STAMPSIZE)
 
@@ -642,7 +642,7 @@
  * @def GA_STAMPMAPBASE
  * @brief GA Reg 2A
  * @sa _GA_STAMPMAPBASE
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  */
 #define GA_STAMPMAPBASE ((u16 volatile *) _GA_STAMPMAPBASE)
 
@@ -650,7 +650,7 @@
  * @def GA_IMGBUFVSIZE
  * @brief GA Reg 2B
  * @sa _GA_IMGBUFVSIZE
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  */
 #define GA_IMGBUFVSIZE ((u16 volatile *) _GA_IMGBUFVSIZE)
 
@@ -658,7 +658,7 @@
  * @def GA_IMGBUFSTART
  * @brief GA Reg 2C
  * @sa _GA_IMGBUFSTART
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  */
 #define GA_IMGBUFSTART ((u16 volatile *) _GA_IMGBUFSTART)
 
@@ -666,7 +666,7 @@
  * @def GA_IMGBUFOFFSET
  * @brief GA Reg 2D
  * @sa _GA_IMGBUFOFFSET
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  */
 #define GA_IMGBUFOFFSET ((u16 volatile *) _GA_IMGBUFOFFSET)
 
@@ -674,7 +674,7 @@
  * @def GA_IMGBUFHDOTSIZE
  * @brief GA Reg 2E
  * @sa _GA_IMGBUFHDOTSIZE
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  */
 #define GA_IMGBUFHDOTSIZE ((u16 volatile *) _GA_IMGBUFHDOTSIZE)
 
@@ -682,7 +682,7 @@
  * @def GA_IMGBUFVDOTSIZE
  * @brief GA Reg 2F
  * @sa _GA_IMGBUFVDOTSIZE
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  */
 #define GA_IMGBUFVDOTSIZE ((u16 volatile *) _GA_IMGBUFVDOTSIZE)
 
@@ -690,7 +690,7 @@
  * @def GA_TRACEVECTBASE
  * @brief GA Reg 30
  * @sa _GA_TRACEVECTBASE
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  */
 #define GA_TRACEVECTBASE ((u16 volatile *) _GA_TRACEVECTBASE)
 
@@ -698,7 +698,7 @@
  * @def GA_SUBCODEADDR
  * @brief GA Reg 31
  * @sa _GA_SUBCODEADDR
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  */
 #define GA_SUBCODEADDR ((u16 volatile *) _GA_SUBCODEADDR)
 
@@ -706,7 +706,7 @@
  * @def GA_SUBCODEBUF
  * @brief GA Reg 32 - Sub-code data buffer
  * @sa _GA_SUBCODEBUF
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  *
  * @details
  * Size: 64 x 16-bit words (128 bytes)
@@ -717,7 +717,7 @@
  * @def GA_SUBCODEBUFIMG
  * @brief GA Reg 33
  * @sa _GA_SUBCODEBUFIMG
- * @ingroup sub_ga_regs
+ * @ingroup sub_gatearray
  */
 #define GA_SUBCODEBUFIMG ((u16 volatile *) _GA_SUBCODEBUFIMG)
 
