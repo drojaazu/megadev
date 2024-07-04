@@ -8,6 +8,10 @@
 #ifndef MEGADEV__MAIN_Z80_DEF_H
 #define MEGADEV__MAIN_Z80_DEF_H
 
+/**
+ * @defgroup z80 Main CPU / Z80
+ */
+
 /* Z80 Control */
 #define _Z80_RAM 0xA00000
 #define _Z80_RAM_SIZE 0x2000
@@ -21,7 +25,18 @@
 
 #define _Z80_PSG 0xA07F11
 
+/**
+ * @def _Z80_BUSREQ
+ * @brief Z80 Bus Request
+ * @ingroup z80
+ */
 #define _Z80_BUSREQ 0xA11100
+
+/**
+ * @def _Z80_RESET
+ * @brief Z80 Reset
+ * @ingroup z80
+ */
 #define _Z80_RESET 0xA11200
 
 #endif
