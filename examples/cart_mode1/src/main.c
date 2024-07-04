@@ -292,7 +292,7 @@ void main()
 
 	blib_load_pal(&res_rain_pal);
 
-	BLIB_VDP_UPDATE_FLAGS |= PAL_UPDATE_MSK;
+	BLIB_VDP_UPDATE_FLAGS |= VDPUPDATE_PAL;
 	blib_copy_pal();
 
 	init_particles(0x81, 0x82, 0, 0, 0, 0, 3, 3, 5, 1);

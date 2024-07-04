@@ -39,7 +39,7 @@ GLABEL sp_init
 	bne			1b
   CLEAR_COMM_REGS
 	// Put Word RAM into 2M mode and assert control of it
-	andi.w	#~(MSK_GA_RET | MSK_GA_MODE), _GA_MEMMODE
+	andi.w	#~(GA_RET | GA_MODE), _GAREG_MEMMODE
 	// This sets up the CD-ROM access loop with initial settings. It only needs
 	// to be called once, here in sp_init
 	INIT_ACC_LOOP
@@ -77,12 +77,12 @@ GLABEL sp_main
 		monitoring COMCMD0/1
 	*/
 command_loop:
-  move.w	_GA_COMCMD0, d0
+  move.w	_GAREG_COMCMD0, d0
 	beq			command_loop
-	cmp.w		_GA_COMCMD0, d0
+	cmp.w		_GAREG_COMCMD0, d0
 	bne			command_loop
 	#move.w	d0, d1
-	move.w  _GA_COMCMD1, d1
+	move.w  _GAREG_COMCMD1, d1
 	add.w		d0, d0
 	move.w	command_tbl(pc,d0.w), d0
 	jsr			command_tbl(pc,d0.w)
@@ -94,12 +94,12 @@ command_loop:
 	Main CPU the work is done and get the comm registers back in "sync."
 */
 command_complete_sync:
-	move.w	_GA_COMCMD0, _GA_COMSTAT0
-1:move.w	_GA_COMCMD0, d0
+	move.w	_GAREG_COMCMD0, _GAREG_COMSTAT0
+1:move.w	_GAREG_COMCMD0, d0
 	bne			1b
-	move.w	_GA_COMCMD0, d0
+	move.w	_GAREG_COMCMD0, d0
 	bne			1b
-	move.w	#0, _GA_COMSTAT0
+	move.w	#0, _GAREG_COMSTAT0
 	rts
 
 /*

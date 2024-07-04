@@ -137,7 +137,7 @@ void main()
 
 	// The font uses palette entry #1, so we'll manually set that to white
 	BLIB_PALETTE[1] = 0xeee;
-	BLIB_VDP_UPDATE_FLAGS |= PAL_UPDATE_MSK;
+	BLIB_VDP_UPDATE_FLAGS |= VDPUPDATE_PAL;
 
 	do
 	{

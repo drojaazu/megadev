@@ -29,7 +29,7 @@ ip_entry:
   */
   move.l	#_BLIB_VINT_HANDLER, (_MLEVEL6 + 2)
 
-  move.b #0, (_GA_COMFLAGS)
+  move.b #0, (_GAREG_COMFLAGS)
 
   // We'll also use the Boot ROM VDP defaults
   // (these defaults include disabling the display)

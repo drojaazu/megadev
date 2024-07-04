@@ -28,7 +28,7 @@ IP_ENTRY:
   move.w #0x0000, (_VDP_DATA)
 
   // disable VDP display and maintain MD mode (mode 5)
-  move.w #(_VDPREG01_MODE2 | 0x44), (_VDP_CTRL)
+  move.w #(_VDPREG_MODE2 | 0x44), (_VDP_CTRL)
 
 	jbsr _BLIB_LOAD_VDPREGS_DEFAULT
 
@@ -56,11 +56,11 @@ IP_ENTRY:
 
   // make IPX file request to SP
 	GRANT_2M
-  move.w	#0xfe, _GA_COMCMD0	//send the load IPX command to sub
-0:tst.w		_GA_COMSTAT0				//wait for response on status reg #0
+  move.w	#0xfe, _GAREG_COMCMD0	//send the load IPX command to sub
+0:tst.w		_GAREG_COMSTAT0				//wait for response on status reg #0
 	beq			0b
-	move.w	#0, _GA_COMCMD0			//send ack
-1:tst.w		_GA_COMSTAT0				//wait for response (wait for 0 from Sub)
+	move.w	#0, _GAREG_COMCMD0			//send ack
+1:tst.w		_GAREG_COMSTAT0				//wait for response (wait for 0 from Sub)
 	bne			1b
 	WAIT_2M
 
@@ -83,7 +83,7 @@ IP_ENTRY:
 	// so we need this tiny li'l vint handler to make it happen and
 	// get the ipx loaded
   vint_temp:
-    bset.b #GA_RESET_IFL2_BIT, (_GA_RESET)
+    bset.b #GA_RAISE_INT2_BIT, (_GAREG_RESET)
     rte
 
 	.align 2

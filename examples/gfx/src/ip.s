@@ -52,12 +52,12 @@ prep_load:
 
   GRANT_2M  // give Word RAM to Sub
 
-  move.w	#1, _GA_COMCMD0	//send the command to sub
-	move.w  (global_mode), _GA_COMCMD1  // send the param to sub
-0:tst.w		_GA_COMSTAT0			//wait for response on status reg #0
+  move.w	#1, _GAREG_COMCMD0	//send the command to sub
+	move.w  (global_mode), _GAREG_COMCMD1  // send the param to sub
+0:tst.w		_GAREG_COMSTAT0			//wait for response on status reg #0
 	beq			0b
-	move.w	#0, _GA_COMCMD0	//send idle command
-1:tst.w		_GA_COMSTAT0			//wait for response (wait for 0 from Sub)
+	move.w	#0, _GAREG_COMCMD0	//send idle command
+1:tst.w		_GAREG_COMSTAT0			//wait for response (wait for 0 from Sub)
 	bne			1b
 
   jbsr MMD_EXEC  // launch the loaded module

@@ -43,7 +43,7 @@ OPT_FLAGS:=-O1 -fconserve-stack
 
 
 # Path to the Megadev directory
-MEGADEV_PATH:=/opt/megadev
+MEGADEV_PATH?=/opt/megadev
 
 include $(MEGADEV_PATH)/megadev.make
 

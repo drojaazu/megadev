@@ -50,7 +50,7 @@
  * BREAK: d0, a0
  */
 .macro CLEAR_COMM_REGS
-	lea _GA_COMSTAT0, a0
+	lea _GAREG_COMSTAT0, a0
 	moveq #0, d0
 	move.b d0, -0x11(a0) // lower byte of comm flags
 	move.l d0, (a0)+
@@ -68,7 +68,7 @@
 LOCAL loop
 
 loop:
-	btst #BIT_GA_DMNA, _GA_MEMMODE+1
+	btst #BIT_GAREG_DMNA, _GAREG_MEMMODE+1
 	beq loop
 .endm
 
@@ -81,8 +81,8 @@ loop:
 LOCAL loop
 
 loop:
-	bset #BIT_GA_RET, _GA_MEMMODE+1
-	btst #BIT_GA_RET, _GA_MEMMODE+1
+	bset #BIT_GAREG_RET, _GAREG_MEMMODE+1
+	btst #BIT_GAREG_RET, _GAREG_MEMMODE+1
 	beq loop
 .endm
 

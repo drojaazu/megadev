@@ -50,7 +50,7 @@ void main()
 	enable_interrupts();
 	blib_load_font_defaults();
 	BLIB_PALETTE[1] = 0xeee;
-	BLIB_VDP_UPDATE_FLAGS |= PAL_UPDATE_MSK;
+	BLIB_VDP_UPDATE_FLAGS |= VDPUPDATE_PAL;
 
 	blib_print("PCM Audio Playback\xff", (VDPPTR(NMT_POS_PLANE(1, 1, _BLIB_PLANEA_ADDR)) | VRAM_W));
 
