@@ -8,7 +8,7 @@
 # we assume all commands appear somewhere in $PATH
 # if this is not the case, you will need to specify the full path in the
 # prefix
-M68K_PREFIX?=m68k-elf-
+M68K_PREFIX?=m68k-linux-gnu-
 
 CC:=$(M68K_PREFIX)gcc
 OBJCPY:=$(M68K_PREFIX)objcopy
@@ -63,7 +63,7 @@ AS_INC:=-Wa,-I$(SRC_PATH) -Wa,-I$(LIB_PATH) -Wa,-I$(RES_PATH) -Wa,-I$(BUILD_PATH
 # with asm source files
 CC_FLAGS:=-m68000 -imacros build.h -DPROJECT_NAME=$(PROJECT_NAME) $(addprefix -D, $(HW_CFG)) $(if $(DEBUG), -DDEBUG) $(OPT_FLAGS) -fno-builtin -fomit-frame-pointer -fno-gcse -Wall -Wextra -Wno-main -Wa,--register-prefix-optional
 AS_FLAGS:=-Wa,--bitwise-or
-LD_FLAGS:=-nostdlib
+LD_FLAGS:=-nostdlib -z noexecstack
 
 define msg_info
 	@echo -e "${BOLD}${CYAN}$(1)${CLEAR}"

@@ -23,8 +23,8 @@ MEMORY
 {
 	/* Mega Drive RAM */
 	/* 0xFFF700 and up is used by the system - BIOS, stack, vectors, etc*/
-	MODULE_ROM (wx): ORIGIN = MODULE_ROM_ORIGIN, LENGTH = MODULE_ROM_LENGTH
-	MODULE_RAM (w): ORIGIN = MODULE_RAM_ORIGIN, LENGTH = MODULE_RAM_LENGTH
+	MODULE_ROM (rx): ORIGIN = MODULE_ROM_ORIGIN, LENGTH = MODULE_ROM_LENGTH
+	MODULE_RAM (rw): ORIGIN = MODULE_RAM_ORIGIN, LENGTH = MODULE_RAM_LENGTH
 }
 
 SECTIONS
@@ -34,7 +34,7 @@ SECTIONS
 	{
 		SHORT(DEFINED(MMD_FLAGS) ? MMD_FLAGS : 0)
 		LONG(MMD_DEST)
-		SHORT(_mod_rom_len >> 2)
+		SHORT(_MMD_ROM_LENGTH >> 2)
 		LONG(main)
 		LONG(DEFINED(hint) ? hint : 0)
 		LONG(DEFINED(vint) ? vint : 0)
@@ -43,35 +43,29 @@ SECTIONS
 
 	.text MODULE_ROM_ORIGIN : AT ( ADDR(.header) + SIZEOF(.header) )
   {
-    _mod_rom_org = .;
+    _MMD_ROM_ORIGIN = .;
 		*(.init)
-		_mod_text_org = .;
     *(.text*)
-		_mod_text_end = .;
-		_mod_text_len = ABSOLUTE(. - _mod_text_org);
     *(.rodata*)
 		/* Align to 4 since the MMD loader reads size in words */
 		. = ALIGN(4);
-		_mod_rom_end = .;
-		_mod_rom_len = ABSOLUTE(. - _mod_rom_org);
+		_MMD_ROM_LENGTH = ABSOLUTE(. - _MMD_ROM_ORIGIN);
   } > MODULE_ROM
 
   .data MODULE_RAM_ORIGIN : AT ( ADDR(.header) + SIZEOF(.header) + SIZEOF(.text) )
   {
-		_mod_ram_org = .;
-		_mod_data_org = .;
+		_MMD_RAM_ORIGIN = .;
+		_MMD_RAM_DATA_ORIGIN = .;
 		*(.data*)
-		_mod_data_end = .;
-		_mod_data_len = ABSOLUTE(. - _mod_data_org);
+		_MMD_RAM_DATA_LENGTH = ABSOLUTE(. - _MMD_RAM_DATA_ORIGIN);
   } > MODULE_RAM
 
 	.bss :
 	{
-		_mod_bss_org = .;
+		_MMD_RAM_BSS_ORIGIN = .;
 		*(.bss*)
-		_mod_bss_end = .;
-		_mod_bss_len = ABSOLUTE(. - _mod_bss_org);
+		_MMD_RAM_BSS_LENGTH = ABSOLUTE(. - _MMD_RAM_BSS_ORIGIN);
 	} > MODULE_RAM
-	_mod_ram_len = _mod_data_len + _mod_bss_len;
+	_MMD_RAM_LENGTH = _MMD_RAM_DATA_LENGTH + _MMD_RAM_BSS_LENGTH;
 	
 }

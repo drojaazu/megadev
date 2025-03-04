@@ -10,36 +10,33 @@ MEMORY
 
 		Default size is 0xE00, the full size allowed within the boot sector.
   */
-  IP (wx): ORIGIN = 0xFF0000, LENGTH = (DEFINED(IP_LENGTH) ? IP_LENGTH : 0xE00)
+  IP (rwx): ORIGIN = 0xFF0000, LENGTH = (DEFINED(IP_LENGTH) ? IP_LENGTH : 0xE00)
 }
 
 SECTIONS
 {
-  .text :
+  .text (READONLY) :
   {
-		_ip_org = .;
-    _ip_text_org = .;
+		_IP_ROM_ORIGIN = .;
     *(.text*)
     *(.rodata*)
-		_ip_text_end = .;
-    _ip_text_len = ABSOLUTE(. - _ip_text_org);
+    _IP_ROM_LENGTH = ABSOLUTE(. - _IP_ROM_ORIGIN);
   } > IP
 
-  .data  : AT ( ADDR(.text) + SIZEOF(.text) )
+  .data : AT ( ADDR(.text) + SIZEOF(.text) )
   {
-    _ip_data_org = .;
+    _IP_RAM_ORIGIN = .;
+    _IP_RAM_DATA_ORIGIN = .;
     *(.data*)
-		_ip_data_end = .;
-    _ip_data_len = ABSOLUTE(. - _ip_data_org);
+    _IP_RAM_DATA_LENGTH = ABSOLUTE(. - _IP_RAM_DATA_ORIGIN);
   } > IP
 
   .bss :
   {
-    _ip_bss_org = .;
+    _IP_RAM_BSS_ORIGIN = .;
     *(.bss*)
-		_ip_bss_end = .;
-    _ip_bss_len = ABSOLUTE(. - _ip_bss_org);
+    _IP_RAM_BSS_LENGTH = ABSOLUTE(. - _IP_RAM_BSS_ORIGIN);
   } > IP
-	_ip_end = .;
+  _IP_RAM_LENGTH = _IP_RAM_DATA_LENGTH + _IP_RAM_BSS_LENGTH;
 
 }

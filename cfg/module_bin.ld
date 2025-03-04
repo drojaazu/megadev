@@ -9,18 +9,17 @@ OUTPUT_ARCH(m68k)
 
 MEMORY
 {
-	MODULE_ROM (wx): ORIGIN = (DEFINED(MODULE_ROM_ORIGIN) ? MODULE_ROM_ORIGIN : 0), LENGTH = (DEFINED(MODULE_ROM_LENGTH) ? MODULE_ROM_LENGTH : 0xffffffff)
+	MODULE_ROM (rx): ORIGIN = (DEFINED(MODULE_ROM_ORIGIN) ? MODULE_ROM_ORIGIN : 0), LENGTH = (DEFINED(MODULE_ROM_LENGTH) ? MODULE_ROM_LENGTH : 0xffffffff)
 }
 
 SECTIONS
 {
   MODULE_ROM_ORIGIN : 
   {
-    _mod_rom_org = .;
+    _BIN_ROM_ORIGIN = .;
 		*(*)
 		. = ALIGN(4);
-		_mod_rom_end = .;
-		_mod_rom_len = ABSOLUTE(. - _mod_rom_org);
+		_BIN_ROM_LENGTH = ABSOLUTE(. - _BIN_ROM_ORIGIN);
   } > MODULE_ROM
 
 }

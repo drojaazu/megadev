@@ -6,8 +6,8 @@ OUTPUT_ARCH(m68k)
 
 MEMORY
 {
-	MODULE_ROM (wx): ORIGIN = MODULE_ROM_ORIGIN, LENGTH = MODULE_ROM_LENGTH
-	MODULE_RAM (w): ORIGIN = MODULE_RAM_ORIGIN, LENGTH = MODULE_RAM_LENGTH
+	MODULE_ROM (rx): ORIGIN = MODULE_ROM_ORIGIN, LENGTH = MODULE_ROM_LENGTH
+	MODULE_RAM (rw): ORIGIN = MODULE_RAM_ORIGIN, LENGTH = MODULE_RAM_LENGTH
 }
 
 SECTIONS
@@ -15,35 +15,29 @@ SECTIONS
 	ENTRY(main)
   .text MODULE_ROM_ORIGIN : 
   {
-    _mod_rom_org = .;
+    _SMD_ROM_ORIGIN = .;
 		*(.init)
-		_mod_text_org = .;
     *(.text*)
-		_mod_text_end = .;
-		_mod_text_len = ABSOLUTE(. - _mod_text_org);
     *(.rodata*)
 		/* Align to 4 since moving data by longs is more efficient */
 		. = ALIGN(4);
-		_mod_rom_end = .;
-		_mod_rom_len = ABSOLUTE(. - _mod_rom_org);
+		_SMD_ROM_LEN = ABSOLUTE(. - _SMD_ROM_ORIGIN);
   } > MODULE_ROM
 
   .data MODULE_RAM_ORIGIN : AT ( ADDR(.text) + SIZEOF(.text) )
   {
-		_mod_ram_org = .;
-		_mod_data_org = .;
+		_SMD_RAM_ORIGIN = .;
+		_SMD_RAM_DATA_ORIGIN = .;
 		*(.data*)
-		_mod_data_end = .;
-		_mod_data_len = ABSOLUTE(. - _mod_data_org);
+		_SMD_RAM_DATA_LENGTH = ABSOLUTE(. - _SMD_RAM_DATA_ORIGIN);
   } > MODULE_RAM
 
 	.bss :
 	{
-		_mod_bss_org = .;
+		_SMD_RAM_BSS_ORIGIN = .;
 		*(.bss*)
-		_mod_bss_end = .;
-		_mod_bss_len = ABSOLUTE(. - _mod_bss_org);
+		_SMD_RAM_BSS_LENGTH = ABSOLUTE(. - _SMD_RAM_BSS_ORIGIN);
 	} > MODULE_RAM
-	_mod_ram_len = _mod_data_len + _mod_bss_len;
+	_SMD_RAM_LENGTH = _SMD_RAM_DATA_LENGTH + _SMD_RAM_BSS_LENGTH;
 
 }
