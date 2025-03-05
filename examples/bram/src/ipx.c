@@ -1,12 +1,12 @@
-#include "main/bootlib.h"
-#include "main/gate_array.h"
-#include "main/io.def.h"
-#include "main/memmap.h"
-#include "main/mmd_exec.h"
-#include "main/printval.h"
-#include "main/vdp.h"
-#include "system.h"
-#include "types.h"
+#include <main/bootlib.h>
+#include <main/gate_array.h>
+#include <main/io.def.h>
+#include <main/memmap.h>
+#include <main/mmd_exec.h>
+#include <main/printval.h>
+#include <main/vdp.h>
+#include <system.h>
+#include <types.h>
 
 #define SUB_WAIT \
 	do \

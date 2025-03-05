@@ -6,7 +6,7 @@
 #ifndef MEGADEV__PROJECT_H
 #define MEGADEV__PROJECT_H
 
-#include "build.def.h"
+#include <build.def.h>
 
 /*
  * Hardware target

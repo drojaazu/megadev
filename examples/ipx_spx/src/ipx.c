@@ -1,12 +1,11 @@
-
+#include <main/bootlib.h>
+#include <main/gate_array.h>
+#include <main/memmap.h>
+#include <main/mmd_exec.h>
+#include <main/vdp.h>
+#include <system.h>
+#include <types.h>
 #include "ipx.h"
-#include "main/bootlib.h"
-#include "main/gate_array.h"
-#include "main/memmap.h"
-#include "main/mmd_exec.h"
-#include "main/vdp.h"
-#include "system.h"
-#include "types.h"
 
 u8 global_mode;
 

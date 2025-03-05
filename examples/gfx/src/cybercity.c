@@ -1,9 +1,9 @@
-#include "main/bootlib.h"
-#include "main/io.h"
-#include "main/memmap.h"
-#include "main/vdp.h"
-#include "math.h"
-#include "types.h"
+#include <main/bootlib.h>
+#include <main/io.h>
+#include <main/memmap.h>
+#include <main/vdp.h>
+#include <math.h>
+#include <types.h>
 
 // resource declarations
 extern u8 res_cybercity_bldg_cmp_nem[];

@@ -9,13 +9,13 @@
   We'll load the BIOS font and display some text
 */
 
-#include "macros.s"
-#include "main/memmap.def.h"
-#include "main/bootlib.def.h"
-#include "main/vdp.macro.s"
-#include "main/gate_array.def.h"
-#include "main/vdp.def.h"
-#include "main/io.def.h"
+#include <macros.s>
+#include <main/memmap.def.h>
+#include <main/bootlib.def.h>
+#include <main/vdp.macro.s>
+#include <main/gate_array.def.h>
+#include <main/vdp.def.h>
+#include <main/io.def.h>
 
 ip_entry:
   // First, disable all interrupts while we get things set up

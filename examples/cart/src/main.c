@@ -1,11 +1,11 @@
-#include "main/bootlib.h"
-#include "main/io.def.h"
-#include "main/io.h"
-#include "main/memmap.h"
-#include "main/vdp.h"
-#include "memory.h"
-#include "string.h"
-#include "system.h"
+#include <main/bootlib.h>
+#include <main/io.def.h>
+#include <main/io.h>
+#include <main/memmap.h>
+#include <main/vdp.h>
+#include <memory.h>
+#include <string.h>
+#include <system.h>
 
 extern u8 res_sysfont_1bpp_chr;
 extern u8 res_rain_chr;

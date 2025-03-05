@@ -1,7 +1,7 @@
 
-#include "macros.s"
-#include "main/memmap.def.h"
-#include "main/main.macro.s"
+#include <macros.s>
+#include <main/memmap.def.h>
+#include <main/main.macro.s>
 
 // putting this code in .init ensures it will be at the start of the module
 .section .init
@@ -10,9 +10,9 @@
 // be sure to re-enable them in main()!
 ori #0x700,sr
 
-#include "main/mmd_exec.s"
+#include <main/mmd_exec.s>
 
 .section .text
 
-#include "main/printval.s"
-#include "main/exception.s"
+#include <main/printval.s>
+#include <main/exception.s>

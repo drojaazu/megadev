@@ -5,7 +5,11 @@
  * @brief Hardware configuration defaults and compile time sanity checking
  */
 
+#ifndef MEGADEV__BUILD_H
+#define MEGADEV__BUILD_H
+
 #include "build.def.h"
+// project.h should be located in the project source tree
 #include "project.h"
 
 #ifndef HW_TARGET
@@ -42,4 +46,6 @@
 #if REGION == EU
 #define HEADER_REGION "E  "
 #endif
+#endif
+
 #endif

@@ -1,5 +1,5 @@
-#include "macros.s"
-#include "main/memmap.def.h"
+#include <macros.s>
+#include <main/memmap.def.h>
 
 GLOBAL MODULE_ROM_ORIGIN _WRKRAM
 

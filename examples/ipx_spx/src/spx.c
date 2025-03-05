@@ -1,7 +1,7 @@
 
-#include "sub/cdrom.h"
-#include "sub/gate_array.h"
-#include "sub/memmap.h"
+#include <sub/cdrom.h>
+#include <sub/gate_array.h>
+#include <sub/memmap.h>
 
 void load_ipx();
 

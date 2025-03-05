@@ -17,4 +17,4 @@ GLABEL res_rain_pal
 
 .align 	2
 GLABEL res_sysfont_1bpp_chr
-.incbin "sysfont.chr.1bpp"
+.incbin "sysfont.1bpp.chr"

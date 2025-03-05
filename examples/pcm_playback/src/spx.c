@@ -1,8 +1,8 @@
 
-#include "sub/cdrom.h"
-#include "sub/gate_array.h"
-#include "sub/memmap.h"
-#include "sub/pcm.h"
+#include <sub/cdrom.h>
+#include <sub/gate_array.h>
+#include <sub/memmap.h>
+#include <sub/pcm.h>
 
 // void PCM_PLAYBACK_C(u8 * pcm_data, u32 pcm_data_size);
 

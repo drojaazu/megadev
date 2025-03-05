@@ -1,9 +1,9 @@
 
-#include "main/bootlib.h"
-#include "main/io.def.h"
-#include "main/memmap.h"
-#include "main/vdp.h"
-#include "types.h"
+#include <main/bootlib.h>
+#include <main/io.def.h>
+#include <main/memmap.h>
+#include <main/vdp.h>
+#include <types.h>
 
 extern u16 global_mode;
 

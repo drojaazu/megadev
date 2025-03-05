@@ -66,11 +66,11 @@ AS_FLAGS:=-Wa,--bitwise-or
 LD_FLAGS:=-nostdlib -z noexecstack
 
 define msg_info
-	@echo -e "${BOLD}${CYAN}$(1)${CLEAR}"
+	@echo "${BOLD}${CYAN}$(1)${CLEAR}"
 endef
 
 define msg_warning
-	@echo -e "${BOLD}${RED}$(1)${CLEAR}"
+	@echo "${BOLD}${RED}$(1)${CLEAR}"
 endef
 
 vpath %.c $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
@@ -98,31 +98,31 @@ $(BUILD_PATH)/%.s.o: %.s
 #	$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_mmd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(symref)) -o $@
 
 %.mmd:
-	@echo "mmd in: $^"
-	@echo "mmd out: $@"
+# @echo "mmd in: $^"
+# @echo "mmd out: $@"
 	$(eval BUILD_SRC:=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o, $(filter %.c %.h %.s, $^)))))
 	$(eval BUILD_MOD:=$(filter %.mmd %.smd %.bin, $^))
-	@echo "build mod: $(BUILD_MOD)"
-	$(if $(BUILD_MOD), $(MAKE) -s $(BUILD_MOD))
-	$(if $(BUILD_SRC), $(MAKE) -s $(BUILD_SRC))
+# @echo "build mod: $(BUILD_MOD)"
+	@$(if $(BUILD_MOD), $(MAKE) -s $(BUILD_MOD))
+	@$(if $(BUILD_SRC), $(MAKE) -s $(BUILD_SRC))
 	$(call msg_info,Linking module $(notdir $@))
 	$(eval OUT_MOD_ELF:=$(addprefix $(BUILD_PATH)/,$(addsuffix .elf,$(notdir $@))))
-	$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_mmd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(addsuffix .elf,$(addprefix $(BUILD_PATH)/,$(notdir $(symref))))) -o $(OUT_MOD_ELF)
+	@$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_mmd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(addsuffix .elf,$(addprefix $(BUILD_PATH)/,$(notdir $(symref))))) -o $(OUT_MOD_ELF)
 	@$(NM) -n $(OUT_MOD_ELF) > $(addsuffix .sym,$(OUT_MOD_ELF))
 	@$(OBJCPY) -O binary $(OUT_MOD_ELF) $@
 
 
 %.smd:
-	@echo "smd in: $^"
-	@echo "smd out: $@"
+# @echo "smd in: $^"
+# @echo "smd out: $@"
 	$(eval BUILD_SRC:=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o, $(filter %.c %.h %.s, $^)))))
 	$(eval BUILD_MOD:=$(filter %.mmd %.smd %.bin, $^))
-	@echo "build mod: $(BUILD_MOD)"
-	$(if $(BUILD_MOD), $(MAKE) -s $(BUILD_MOD))
-	$(if $(BUILD_SRC), $(MAKE) -s $(BUILD_SRC))
+# @echo "build mod: $(BUILD_MOD)"
+	@$(if $(BUILD_MOD), $(MAKE) -s $(BUILD_MOD))
+	@$(if $(BUILD_SRC), $(MAKE) -s $(BUILD_SRC))
 	$(call msg_info,Linking module $(notdir $@))
 	$(eval OUT_MOD_ELF:=$(addprefix $(BUILD_PATH)/,$(addsuffix .elf,$(notdir $@))))
-	$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_smd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(addsuffix .elf,$(addprefix $(BUILD_PATH)/,$(notdir $(symref))))) -o $(OUT_MOD_ELF)
+	@$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_smd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(addsuffix .elf,$(addprefix $(BUILD_PATH)/,$(notdir $(symref))))) -o $(OUT_MOD_ELF)
 	@$(NM) -n $(OUT_MOD_ELF) > $(addsuffix .sym,$(OUT_MOD_ELF))
 	@$(OBJCPY) -O binary $(OUT_MOD_ELF) $@
 

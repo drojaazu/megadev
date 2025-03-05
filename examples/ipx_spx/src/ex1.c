@@ -1,10 +1,9 @@
-
+#include <main/bootlib.h>
+#include <main/io.def.h>
+#include <main/memmap.h>
+#include <main/vdp.h>
+#include <system.h>
 #include "ipx.h"
-#include "main/bootlib.h"
-#include "main/io.def.h"
-#include "main/memmap.h"
-#include "main/vdp.h"
-#include "system.h"
 
 extern u8 global_mode;
 extern u8 res_rain_chr;

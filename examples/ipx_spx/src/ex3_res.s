@@ -1,6 +1,6 @@
 
 .section .rodata
-#include "macros.s"
+#include <macros.s>
 
 GLABEL res_bubbles_chr
 .incbin "../res/bubbles.chr"
