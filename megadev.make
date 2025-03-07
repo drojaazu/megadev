@@ -126,6 +126,18 @@ $(BUILD_PATH)/%.s.o: %.s
 	@$(NM) -n $(OUT_MOD_ELF) > $(addsuffix .sym,$(OUT_MOD_ELF))
 	@$(OBJCPY) -O binary $(OUT_MOD_ELF) $@
 
+
+%.cart:
+	@echo "rom elf in: $^"
+	@echo "rom elf out: $@"
+	$(eval BUILD_SRC:=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o, $(filter %.c %.h %.s, $^)))))
+	@$(if $(BUILD_SRC), $(MAKE) -s $(BUILD_SRC))
+	$(call msg_info,Linking module $(notdir $@))
+	$(eval OUT_CART_ELF:=$(addprefix $(BUILD_PATH)/,$(addsuffix .elf,$(notdir $@))))
+	@$(LD) $(LD_FLAGS) -T $(CFG_PATH)/md_cart.ld $(BUILD_SRC) -o $(OUT_CART_ELF)
+	@$(NM) -n $(OUT_CART_ELF) > $(addprefix $(BUILD_PATH)/,$(addsuffix .sym,$(notdir $@)))
+	@$(OBJCPY) -O binary $(OUT_CART_ELF) $@
+
 default: init boot
 
 .PHONY: init boot

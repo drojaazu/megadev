@@ -66,6 +66,7 @@ typedef union SpriteEx
  * @sa _VDP_CTRL
  */
 #define VDP_CTRL_16 (*((u16 volatile *) _VDP_CTRL))
+#define VDP_CTRL VDP_CTRL_16
 
 /**
  * @def VDP_CTRL_32
@@ -87,6 +88,7 @@ typedef union SpriteEx
  * @sa _VDP_DATA
  */
 #define VDP_DATA_16 (*((u16 volatile *) _VDP_DATA))
+#define VDP_DATA VDP_DATA_16
 
 /**
  * @def VDP_DATA_32

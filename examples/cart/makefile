@@ -18,20 +18,36 @@ SRC_PATH:=src
 # stored.
 RES_PATH:=res
 
+# Build path
+# This is where compile time build artifacts will be stored, including
+# symbol maps
+BUILD_PATH:=build
+
 # Output path
 # This will be the location of the final output Mega CD ISO and MD ROMs
 OUT_PATH:=out
 
 # Optional compiler flags
 # Here you can add any additional compiler flags
-OPT_FLAGS:=-O1 -fconserve-stack
+OPT_FLAGS?=-O1 -fconserve-stack
 
 # Z80 CPU code path
 # Z80 building is not currently supported... someday!
 #Z80_SRC_PATH:=z80_src
 
 # Path to the Megadev directory
-MEGADEV_PATH:=/opt/megadev
+MEGADEV_PATH?=/opt/megadev
 
 # The include below is required! Do not remove it!
 include $(MEGADEV_PATH)/megadev.make
+
+.PHONY: rom clean
+
+rom: \
+	out.cart
+
+out.cart: \
+	init.s \
+	main.c \
+	res.s \
+	string.s \
