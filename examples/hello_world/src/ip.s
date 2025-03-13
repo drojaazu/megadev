@@ -70,7 +70,7 @@ loop:
 	
   jmp _BLIB_RESET
 
-FUNC nmtbl_xy_pos
+SUB nmtbl_xy_pos
 1:move.w (_BLIB_PLANE_WIDTH), d1  // d1 - tiles per row 
   move.w d0, d2  // d0 - x/y offset (upper/lower bytes of the word)
   lsr.w #8, d2  // d2 has x pos

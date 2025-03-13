@@ -8,6 +8,8 @@
 #ifndef MEGADEV__MAIN_BOOTLIB_DEF_H
 #define MEGADEV__MAIN_BOOTLIB_DEF_H
 
+#include "io.def.h"
+
 /**
  * @defgroup blib_vdp Main CPU / Boot Lib / VDP
  */
@@ -559,19 +561,6 @@
 #endif
 
 /**
- * Joypad inputs from _BLIB_UPDATE_INPUTS
- */
-#define PAD_UP (1 << 0)
-#define PAD_DOWN (1 << 1)
-#define PAD_LEFT (1 << 2)
-#define PAD_RIGHT (1 << 3)
-#define PAD_A (1 << 6)
-#define PAD_B (1 << 4)
-#define PAD_C (1 << 5)
-#define PAD_ABC (PAD_A | PAD_B | PAD_C)
-#define PAD_START (1 << 7)
-
-/**
  * @def _BLIB_UPDATE_INPUTS
  * @ingroup blib_input
  *
@@ -659,7 +648,7 @@
 
 /**
  * @sa blib_vdp_fill
- * @param[in] D0.l Address (vdpptr format)
+ * @param[in] D0.l Address (vdp_command format)
  * @param[in] D1.w Length (in words)
  * @param[in] D2.w Value
  * @clobber d0-d2
@@ -688,7 +677,7 @@
 /**
  * @def _BLIB_DMA_FILL_CLEAR
  * @sa blib_dma_fill_clear
- * @param[in] D0.l Address (vdpptr format)
+ * @param[in] D0.l Address (vdp_command format)
  * @param[in] D1.w Length (in words)
  * @clobber d0-d3/a6
  * @ingroup blib_vdp
@@ -702,7 +691,7 @@
 /**
  * @def _BLIB_DMA_FILL
  * @sa blib_dma_fill
- * @param[in] D0.l Address (vdpptr format)
+ * @param[in] D0.l Address (vdp_command format)
  * @param[in] D1.w Length (in words)
  * @param[in] D2.w Value
  * @clobber d0-d3/a6
@@ -718,7 +707,7 @@
  * @def _BLIB_LOAD_MAP
  * @sa blib_load_map
  *
- * @param[in] D0.l VRAM Address (vdpptr format)
+ * @param[in] D0.l VRAM Address (vdp_command format)
  * @param[in] D1.w Map width
  * @param[in] D2.w Map height
  * @param[in] A1.l Pointer to map data
@@ -734,7 +723,7 @@
 /**
  * @fn _BLIB_LOAD_MAP_TEMPLATE
  * @brief Fill a region of a nametable with map data
- * @param[in] D0.l VRAM address (vdpptr format)
+ * @param[in] D0.l VRAM address (vdp_command format)
  * @param[in] D1.w Map width
  * @param[in] D2.w Map height
  * @param[in] D3.w Template
@@ -1021,7 +1010,7 @@
  * @fn _BLIB_LOAD_1BPP_TILES
  * @brief Load 1bpp graphics into VDP
  * @param[in] A1.l Pointer to 1bpp graphics data
- * @param[in] D0.l VRAM destination (VDPPTR)
+ * @param[in] D0.l VRAM destination (VDP_COMMAND)
  * @param[in] D1.l Color bit map
  * @param[in] D2.l Tile count
  * @clobber d3-d4/a5
@@ -1043,7 +1032,7 @@
 /**
  * @fn _BLIB_LOAD_FONT
  * @brief Load the internal 1bpp ASCII font
- * @param[in] D0.l VRAM destination (VDPPTR)
+ * @param[in] D0.l VRAM destination (VDP_COMMAND)
  * @param[in] D1.l Color bit map
  * @clobber d2-d4/a1/a5
  * @ingroup blib_misc

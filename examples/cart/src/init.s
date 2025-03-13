@@ -3,4 +3,4 @@
 #include "md_header.s"
 #include "md_init.s"
 
-GLOBAL _ERR_BUS testing
+GLOBAL ERR_BUS testing

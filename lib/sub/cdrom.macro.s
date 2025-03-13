@@ -15,8 +15,8 @@
  * This should be called in sp_init before VINT has been enabled
  */
 .macro INIT_ACC_LOOP
-	move.l  #access_op_idle, acc_loop_jump
-	move.w  #ACC_OP_IDLE, access_op
+  move.l  #access_op_idle, acc_loop_jump
+  move.w  #ACC_OP_IDLE, access_op
 .endm
 
 /**
@@ -24,8 +24,8 @@
  * BREAK: a0
  */
 .macro PROCESS_ACC_LOOP
-	movea.l  acc_loop_jump, a0  /*load the jump ptr*/
-	jmp      (a0)                    /*and pick up where we left off*/
+  movea.l acc_loop_jump, a0   /*load the jump ptr*/
+  jmp     (a0)                /*and pick up where we left off*/
 .endm
 
 /**
@@ -39,9 +39,9 @@
 LOCAL loop
 
 loop:
-	jsr			 _WAITVSYNC
-	jbsr     check_acc_op
-	bcs			 loop
+  jsr     _WAITVSYNC
+  jbsr    check_acc_op
+  bcs     loop
 .endm
 
 #endif

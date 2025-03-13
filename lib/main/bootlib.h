@@ -393,18 +393,6 @@ typedef struct Palette
 #define BLIB_FONT_TILE_BASE (*((u16 *) _BLIB_FONT_TILE_BASE))
 
 /**
- * @enum PlaneWidthTiles
- * @brief Use with @ref BLIB_PLANE_WIDTH to represent the width in tiles
- * instead of bytes
- */
-typedef enum PlaneWidthTiles
-{
-	Width32 = 64,
-	Width64 = 128,
-	Width128 = 256
-} PlaneWidthTiles;
-
-/**
  * @def BLIB_PLANE_WIDTH
  * @brief Cached value of the plane width as defined in VDP reg. 0x10.
  * @ingroup blib_vdp
@@ -725,7 +713,7 @@ static inline void blib_load_vdpregs_default()
  * (e.g. 80, 81, etc) and the lower byte is
  * the value, with the list terminated by 0.
  */
-static inline void blib_load_vdpregs(VDPREG const * vdp_reg_data)
+static inline void blib_load_vdpregs(VDP_REGISTER const * vdp_reg_data)
 {
 	register u32 A1 __asm__("a1") = (u32) vdp_reg_data;
 
@@ -1047,7 +1035,7 @@ static inline void blib_load_font_defaults()
  * @brief Load the 1bpp graphics into VDP
  * @ingroup blib_misc
  */
-static inline void blib_load_1bpp_tiles(void * chr_data, u16 tile_count, VDPPTR dest, u32 color_pattern)
+static inline void blib_load_1bpp_tiles(void * chr_data, u16 tile_count, VDP_COMMAND dest, u32 color_pattern)
 {
 	register u32 D0 __asm__("d0") = dest;
 	register u32 D1 __asm__("d1") = color_pattern;
@@ -1125,7 +1113,7 @@ static inline void blib_clear_comm()
  * 0x20 at the earliest (where _BLIB_FONT_TILE_BASE is 0). Note that this can
  * only use palette line 0.
  */
-static inline void blib_print(char const * string, VDPPTR pos)
+static inline void blib_print(char const * string, VDP_COMMAND pos)
 {
 	register u32 A1 __asm__("a1") = (u32) string;
 	register u32 D0 __asm__("d0") = pos;
@@ -1148,7 +1136,7 @@ static inline void blib_print(char const * string, VDPPTR pos)
  * @param[in] D3.w Value
  * @ingroup blib_vdp
  */
-static inline void blib_nmtbl_fill(VDPPTR pos, u16 width, u16 height, u16 value)
+static inline void blib_nmtbl_fill(VDP_COMMAND pos, u16 width, u16 height, u16 value)
 {
 	register u32 D0 __asm__("d0") = pos;
 	register u32 D1 __asm__("d1") = width;
@@ -1174,7 +1162,7 @@ static inline void blib_nmtbl_fill(VDPPTR pos, u16 width, u16 height, u16 value)
  * @param[in] D2.w Length (in words)
  * @ingroup blib_vdp
  */
-static inline void blib_dma_xfer(VDPPTR dest, u8 const * source, u16 length)
+static inline void blib_dma_xfer(VDP_COMMAND dest, u8 const * source, u16 length)
 {
 	register u32 D0 __asm__("d0") = dest;
 	register u32 D1 __asm__("d1") = (u32) source;
@@ -1203,7 +1191,7 @@ static inline void blib_dma_xfer(VDPPTR dest, u8 const * source, u16 length)
  * Word RAM to VRAM which must be accounted for by writing the final word of
  * data to the data port. This subroutine takes care of that extra step.
  */
-static inline void blib_dma_xfer_wrdram(VDPPTR const dest, void const * source, u16 const length)
+static inline void blib_dma_xfer_wrdram(VDP_COMMAND const dest, void const * source, u16 const length)
 {
 	register u32 D0 __asm__("d0") = dest;
 	register u32 D1 __asm__("d1") = (u32) source;

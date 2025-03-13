@@ -14,5 +14,5 @@ ori #0x700,sr
 
 .section .text
 
-#include <main/printval.s>
+#include <printval.s>
 #include <main/exception.s>

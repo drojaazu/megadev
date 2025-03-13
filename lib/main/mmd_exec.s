@@ -19,7 +19,7 @@
  * @note This expects the module to be already loaded at the start of 2M
  * Word RAM
  */
-FUNC MMD_EXEC
+SUB MMD_EXEC
 	WAIT_2M
 	movea.l	_WRDRAM+8, a0	//get MMD entry point
 	move.l	_WRDRAM+2, d0	//get MMD data destination

@@ -12,7 +12,7 @@
  * Hardware target
  * Valid values: MEGACD, MEGADRIVE, MEGACD_MODE1
  */
-#define HW_TARGET MEGACD_MODE1
+#define HW_TARGET MEGADRIVE
 
 /*
  * Default hardware configuration

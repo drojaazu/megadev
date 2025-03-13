@@ -8,7 +8,7 @@
 #ifndef MACROS_S
 #define MACROS_S
 
-.macro FUNC name, align=2
+.macro SUB name, align=2
   //.section .text.asm.\name
   .global  \name
   .type   \name, @function
@@ -33,9 +33,9 @@
 .macro FILE path, label, align=2
   LOCAL file_end
   LOCAL file_start
-  GLABEL \label \align
   GLABEL \label\()_size
   .long file_end - file_start
+  GLABEL \label \align
 file_start:
   .incbin \path
 file_end:
@@ -49,13 +49,7 @@ file_start:
 file_end:
 .endm
 
-.macro INTERRUPT_DISABLE
-  ori #0x700, sr
-.endm
 
-.macro INTERRUPT_ENABLE
-  andi #0xF8FF, sr
-.endm
 
 /**
  * @brief Convert a value to binary coded decimal

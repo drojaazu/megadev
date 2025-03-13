@@ -156,7 +156,7 @@ void process_particles()
 	}
 }
 
-__attribute__((interrupt)) void _INT_VBLANK()
+__attribute__((interrupt)) void INT6_VBLANK()
 {
 	// blib_vint_handler();
 	blib_copy_pal();
@@ -188,7 +188,7 @@ u32 to_atoi(char * p_c)
 	return out;
 }
 
-__attribute__((interrupt)) void _INT_EXT()
+__attribute__((interrupt)) void INT2_EXT()
 {
 	blib_print("INT2 last cmd:\xff", (VDPPTR(NMT_POS_PLANE(1, 8, _BLIB_PLANEA_ADDR)) | VRAM_W));
 

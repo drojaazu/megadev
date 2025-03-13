@@ -33,5 +33,11 @@ OPT_FLAGS?=-O1 -fconserve-stack
 # Path to the Megadev directory
 MEGADEV_PATH?=/opt/megadev
 
-# Don't change the line below!
+# Don't change this line!
 include $(MEGADEV_PATH)/megadev.make
+
+# Add your own output files and dependencies below. See the examples directory for some... well, examples.
+
+disc: \
+	init \
+	disc.iso

@@ -3,7 +3,7 @@
 #include <main/io.def.h>
 #include <main/memmap.h>
 #include <main/mmd_exec.h>
-#include <main/printval.h>
+#include <printval.h>
 #include <main/vdp.h>
 #include <system.h>
 #include <types.h>

@@ -16,10 +16,10 @@ DiscType: .ascii "SEGADISCSYSTEM  "		/*Disc Type (must be one of the allowed val
 /**
  * Volume ID, 11 bytes + 0 terminator
  */
-VolumeName: .asciz HEADER_VOL_ID
-VolumeSystem:	.word 0x100, 0x1				/*System ID, Type*/
-SystemName:	.asciz "SEGASYSTEM "			/*System Name*/
-SystemVersion:	.word 0,0							/*System Version, Type*/
+VolumeName:     .asciz HEADER_VOL_ID
+VolumeSystem:   .word 0x100, 0x1				/*System ID, Type*/
+SystemName:     .asciz "SEGASYSTEM "			/*System Name*/
+SystemVersion:  .word 0,0							/*System Version, Type*/
 
 // The US/EU security bins are much larger
 // so we need to correct for this (as outlined in the Mega CD
@@ -38,14 +38,14 @@ SystemVersion:	.word 0,0							/*System Version, Type*/
  * > extend beyond the end of sector 1, but I haven't confirmed that yet."
 */
 
-IP_OFFSET:  .long 0x800
-IP_SIZE:    .long 0x800
-IP_ENTRY:   .long 0
-IP_WORKRAM: .long 0
-SP_OFFSET:  .long 0x1000
-SP_SIZE:    .long _sp_end-_sp_begin
-SP_ENTRY:   .long 0
-SP_WORKRAM: .long 0
+IP_OFFSET:   .long 0x800
+IP_SIZE:     .long 0x800
+IP_ENTRY:    .long 0
+IP_WORKRAM:  .long 0
+SP_OFFSET:   .long 0x1000
+SP_SIZE:     .long _sp_end-_sp_begin
+SP_ENTRY:    .long 0
+SP_WORKRAM:  .long 0
 .ascii	"                "
 .ascii	"                "
 .ascii	"                "
@@ -61,19 +61,18 @@ SP_WORKRAM: .long 0
 # =======================================================================================
 #  Game Header
 # =======================================================================================	
-HardwareType: .ascii HEADER_HARDWARE
-Copyright:    .ascii HEADER_COPYRIGHT
-TitleDomestic:   .ascii HEADER_NAME_JP
-TitleIntl: .ascii HEADER_NAME_INTL
-DiscID:       .ascii HEADER_SOFT_ID
-IO:
-  .ascii "J               "
-  .ascii	"                "
-  .ascii	"                "
-  .ascii	"                "
-  .ascii	"                "
-  .ascii	"                "
-Region:       .ascii HEADER_REGION
+HardwareType:  .ascii HEADER_HARDWARE
+Copyright:     .ascii HEADER_COPYRIGHT
+TitleDomestic: .ascii HEADER_NAME_JP
+TitleIntl:     .ascii HEADER_NAME_INTL
+DiscID:        .ascii HEADER_SOFT_ID
+IO:            .ascii "J               "
+               .ascii "                "
+               .ascii "                "
+               .ascii "                "
+               .ascii "                "
+               .ascii "                "
+Region:        .ascii HEADER_REGION
 
 // if all the above text is correct, we should be at 0x200 anyway
 .org 0x200

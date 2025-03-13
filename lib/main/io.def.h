@@ -21,6 +21,20 @@
  */
 
 /**
+ * Default bit mappings for joypad inputs when using the "standard" format of SACBRLDU.
+ * This format is used the Mega CD's Bootlib as well as the read_input_joypad function in Megadev.
+ */
+#define PAD_UP (1 << 0)
+#define PAD_DOWN (1 << 1)
+#define PAD_LEFT (1 << 2)
+#define PAD_RIGHT (1 << 3)
+#define PAD_A (1 << 6)
+#define PAD_B (1 << 4)
+#define PAD_C (1 << 5)
+#define PAD_ABC (PAD_A | PAD_B | PAD_C)
+#define PAD_START (1 << 7)
+
+/**
  * @def _IO_DATA1
  * @brief IO Data Port for Terminal 1
  * @ingroup ioports
@@ -66,49 +80,49 @@
 
 /**
  * @def CTRL_PC0
- * @brief IO Control Port / Pin 0 Mode
+ * @brief IO Control Port / Pin 0 Mode (Up)
  * @ingroup ioports_p
  */
 #define CTRL_PC0 (1 << 0)
 
 /**
  * @def CTRL_PC1
- * @brief IO Control Port / Pin 1 Mode
+ * @brief IO Control Port / Pin 1 Mode (Down)
  * @ingroup ioports_p
  */
 #define CTRL_PC1 (1 << 1)
 
 /**
  * @def CTRL_PC2
- * @brief IO Control Port / Pin 2 Mode
+ * @brief IO Control Port / Pin 2 Mode (Right)
  * @ingroup ioports_p
  */
 #define CTRL_PC2 (1 << 2)
 
 /**
  * @def CTRL_PC3
- * @brief IO Control Port / Pin 3 Mode
+ * @brief IO Control Port / Pin 3 Mode (Left)
  * @ingroup ioports_p
  */
 #define CTRL_PC3 (1 << 3)
 
 /**
  * @def CTRL_PC4
- * @brief IO Control Port / Pin 4 Mode
+ * @brief IO Control Port / Pin 4 Mode (B/A)
  * @ingroup ioports_p
  */
 #define CTRL_PC4 (1 << 4)
 
 /**
  * @def CTRL_PC5
- * @brief IO Control Port / Pin 5 Mode
+ * @brief IO Control Port / Pin 5 Mode (C/Start)
  * @ingroup ioports_p
  */
 #define CTRL_PC5 (1 << 5)
 
 /**
  * @def CTRL_PC6
- * @brief IO Control Port / Pin 6 Mode
+ * @brief IO Control Port / Pin 6 Mode (TH)
  * @ingroup ioports_p
  */
 #define CTRL_PC6 (1 << 6)

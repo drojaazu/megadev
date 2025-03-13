@@ -8,70 +8,46 @@
 #ifndef MEGADEV__MAIN_IO_S
 #define MEGADEV__MAIN_IO_S
 
-#include "macros.s"
-#include "main/io.def.h"
-
-/*
-	External comm port
-	The front controller ports and rear EXT port (only present on early model
-	Mega Drives) can be put into serial mode for communication with external
-	devices, e.g. with your PC as a debugging tool.
-	For each of the EQU entries below, modify the number in the definition to
-	change the port to be used for serial communication:
-		1 - Player 1 port
-		2 - Player 2 port
-		3 - Rear EXT port
-*/
-.equ EXT_CTRL, IO_CTRL3
-.equ EXT_SCTRL, IO_SCTRL3
-.equ EXT_RXDATA, IO_RXDATA3
-.equ EXT_TXDATA, IO_TXDATA3
-/*
-	External comm port speed
-	Sets the transfer speed of the external device port
-*/
-.equ EXT_BAUD, SCTRL_BAUD_4800
-
-.section .text
 
 /**
- * @fn init_ext
- * @brief Initialize IO port for serial communication
+ * @def init_joypads
+ * @brief Sets up Player 1 and 2 terminals for standard reads
+ * @desc Sets TH pin to write mode for Control port for each normally used terminal. Note that this does not
+ *       do any work on the third terminal on old MD models, normally used for serial comm.
+ * @clobber a0
  */
-FUNC init_ext
-	INTERRUPT_DISABLE
-	Z80_DO_BUSREQ
-	
-	/* Set comm speed; Serial in/out mode; Enable Rx interrupt */
-	move.b	#(SCTRL_SERIAL_ENABLE | SCTRL_RX_INT_ENABLE | EXT_BAUD), EXT_SCTRL
-	move.b #0x7f, EXT_CTRL
-	
-	Z80_DO_BUSRELEASE
-	INTERRUPT_ENABLE
-	rts
+SUB init_joypads
+  // set TH pin to enable write
+  move.b  #CTRL_PC6, (_IO_CTRL1)
+  move.b  #CTRL_PC6, (_IO_CTRL2)
+  rts
 
 /**
- * @fn ext_rx
- * @brief Read a byte from the external port
- * @param[out] D0.b 
+ * @def read_input_joypad
+ * @brief Reads controller input from a 3 button joypad
+ * @in A0 the Data Port for the desired controller terminal
+ * @out D0 byte with the state for each input, in the form: SACBRLDU
+ * @clobber d0-d1
  */
-/* TODO: How does RERR play into this? */
-FUNC ext_rx
-1:btst #SCTRL_RX_READY, (EXT_SCTRL)	// check that we're ready to receive
-	beq 1b
-	move.b (EXT_RXDATA), d0
-	rts
-
-/**
- * @fn ext_tx
- * @brief Transmit a byte to the external port
- * @param[in] D0.b Byte to transmit
- */
-FUNC ext_tx
-2:move.b (EXT_SCTRL), d1
-	btst #SCTRL_TX_FULL, d1 // make sure transmit queue is not full
-	bne 2b
-	move.b d0, EXT_TXDATA
-	rts
+SUB read_input_joypad
+  moveq   #CTRL_PC6, d0
+  // set TH pin to begin read sequence
+  move.b  #CTRL_PC6, (a0).l
+  nop
+  nop
+  move.b  (a0).l, d0
+  // d0 = 00CBRLDU
+  andi.b  #0x3F, d0
+  moveq   #0,d1
+  // clear TH pin for next read
+  move.b  #0, (a0).l
+  nop
+  nop
+  move.b  (a0).l,d1
+  // d1 = 00SA0000
+  andi.b  #0x30, d1
+  lsl.b   #2, d1
+  or.b    d1, d0
+  rts
 
 #endif

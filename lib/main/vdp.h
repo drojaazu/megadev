@@ -12,20 +12,28 @@
 #include "types.h"
 
 /**
- * @typedef VDPPTR
- * @brief Semantic typedef for a VRAM address and VDP operation, formatted for
- * use on the VDP Control port (32-bit)
+ * @typedef VDP_ADDR
+ * @brief Semantic typedef for a VRAM address *without* VDP operation, formatted for
+ * use on the VDP Control port (32-bit).
  *
  */
-typedef u32 VDPPTR;
+typedef u32 VDP_ADDR;
 
 /**
- * @typedef VDPREG
- * @brief Semantic typedef for a VDP register and its value, formatted for use
- * on the VDP Control port (16-bit)
+ * @typedef VDP_COMMAND
+ * @brief Semantic typedef for a VRAM address and VDP operation, formatted for
+ * use on the VDP Control port (32-bit).
  *
  */
-typedef u16 VDPREG;
+typedef u32 VDP_COMMAND;
+
+/**
+ * @typedef VDP_REGISTER
+ * @brief Semantic typedef for a VDP register and its value, formatted for use
+ * on the VDP Control port (16-bit).
+ *
+ */
+typedef u16 VDP_REGISTER;
 
 typedef struct Sprite
 {
@@ -113,6 +121,17 @@ typedef union SpriteEx
 #define VDP_HVCOUNTER (*((u16 volatile *) _VDP_HVCOUNTER))
 
 /**
+ * @enum PlaneWidthTiles
+ * @brief Helper for working with plane widths specified in tiles by specifying width in bytes
+ */
+typedef enum PlaneWidthTiles
+{
+	Width32 = 64,
+	Width64 = 128,
+	Width128 = 256
+} PlaneWidthTiles;
+
+/**
  * @def NMT_POS
  * @brief Generates the nametable offset for a tile at pos x/y, determining
  * the plane width dynamically (calculated at runtime)
@@ -166,8 +185,8 @@ typedef union SpriteEx
  * @param y vertical position in the tilemap
  * @param plane_addr VRAM address of plane
  */
-#define NMT_POS_PLANE_32(x, y, plane_addr) (NMT_POS_32(x, y) + (plane_addr))
 
+#define NMT_POS_PLANE_32(x, y, plane_addr) (NMT_POS_32(x, y) + (plane_addr))
 /**
  * @def NMT_POS_PLANE_64
  * @brief Generates the address of a tile at pos x/y for a plane set
@@ -203,7 +222,7 @@ typedef union SpriteEx
 #define TILE_AT(vram_addr) ((vram_addr) >> 5)
 
 /**
- * @def VDPPTR
+ * @def VDP_COMMAND
  * @brief Converts a 16 bit VRAM address into VDP format at compile time if
  * possible
  */
@@ -214,7 +233,7 @@ typedef union SpriteEx
  * @fn to_vdpptr
  * @brief Converts a 16 bit VRAM address into VDP format at runtime
  */
-static inline u32 to_vdpptr(u16 addr)
+static inline VDP_ADDR to_vdpptr(u16 addr)
 {
 	u32 vdpptr = (u32) addr;
 	__asm__(
@@ -234,9 +253,9 @@ static inline u32 to_vdpptr(u16 addr)
  * @fn vdpptr_to
  * @brief Converts a VDP format address to a 16 bit VRAM address at runtime
  */
-static inline u16 vdpptr_to(u32 vdpptr)
+static inline u16 vdpptr_to(VDP_ADDR vdp_addr)
 {
-	u32 out = vdpptr;
+	u32 out = vdp_addr;
 
 	__asm__(
 		"\
@@ -253,6 +272,45 @@ static inline u16 vdpptr_to(u32 vdpptr)
 	return (u16) out;
 }
 
-// static inline void dma_xfer(void * source, VDPPTR dest) {}
+
+static inline u8 vdp_dma_transfer(u8 const * source, VDP_COMMAND dest, u16 const length)
+{
+	register u32 D0 __asm__("d0") = (u32) dest;
+	register u32 D1 __asm__("d1") = (u32) source;
+	register u16 D2 __asm__("d2") = (u16) length;
+	
+	__asm__(
+		"\
+		lea      (%c0).l, A6 \n \
+		asr.l    #0x1, d1 \n \
+		move.l   #0x940000, d3 \n \
+		move.w   d2, d3 \n \
+		lsl.l    #0x8, d3 \n \
+		move.w   #0x9300, d3 \n \
+		move.b   d2, d3 \n \
+		move.l   d3,(A6) \n \
+		move.l   #0x960000, d3 \n \
+		move.w   d1, d3 \n \
+		lsl.l    #0x8, d3 \n \
+		move.w   #0x9500, d3 \n \
+		move.b   d1, d3 \n \
+		move.l   d3, (A6) \n \
+		swap     d1 \n \
+		move.w   #0x9700, d3 \n \
+		move.b   d1, d3 \n \
+		move.w   d3,(A6) \n \
+		ori.l    #0x40000080, d0 \n \
+		swap     d0 \n \
+		move.w   d0, (A6) \n \
+		swap     d0 \n \
+		move.w   d0, -(SP) \n \
+		move.w   (SP)+, (A6) \n \
+		"
+		: 
+		: "i"(_VDP_CTRL), "d"(D0), "d"(D1), "d"(D2)
+		: "a6");
+	
+	return D0;
+}
 
 #endif

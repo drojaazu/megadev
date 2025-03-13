@@ -16,7 +16,7 @@
 #include "macros.s"
 #include "memmap.def.h"
 
-FUNC comm_sync
+SUB comm_sync
 	lea _GAREG_COMFLAGS+1, a0
 	btst #0, _GAREG_COMFLAGS
 	beq 2f

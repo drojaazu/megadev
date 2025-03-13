@@ -18,8 +18,8 @@
  * @clobber d0
  */
 .macro BURAM fcode
-	move.w    \fcode, d0
-	jsr       _BURAM
+	move.w  \fcode, d0
+	jsr     _BURAM
 .endm
 
 /**
@@ -29,8 +29,8 @@
  * @clobber d0
  */
 .macro CDBIOS fcode
-	move.w    \fcode, d0
-	jsr       _CDBIOS
+	move.w  \fcode, d0
+	jsr     _CDBIOS
 .endm
 
 /**
@@ -40,8 +40,8 @@
  * @clobber d0
  */
 .macro CDBOOT fcode
-	move.w    \fcode, d0
-	jsr       _CDBOOT
+	move.w  \fcode, d0
+	jsr     _CDBOOT
 .endm
 
 /**
@@ -51,12 +51,12 @@
  */
 .macro CLEAR_COMM_REGS
 	lea _GAREG_COMSTAT0, a0
-	moveq #0, d0
-	move.b d0, -0x11(a0) // lower byte of comm flags
-	move.l d0, (a0)+
-	move.l d0, (a0)+
-	move.l d0, (a0)+
-	move.l d0, (a0)+
+	moveq   #0, d0
+	move.b  d0, -0x11(a0) // lower byte of comm flags
+	move.l  d0, (a0)+
+	move.l  d0, (a0)+
+	move.l  d0, (a0)+
+	move.l  d0, (a0)+
 .endm
 
 /**
@@ -81,9 +81,9 @@ loop:
 LOCAL loop
 
 loop:
-	bset #BIT_GAREG_RET, _GAREG_MEMMODE+1
-	btst #BIT_GAREG_RET, _GAREG_MEMMODE+1
-	beq loop
+	bset    #BIT_GAREG_RET, _GAREG_MEMMODE+1
+	btst    #BIT_GAREG_RET, _GAREG_MEMMODE+1
+	beq     loop
 .endm
 
 #endif

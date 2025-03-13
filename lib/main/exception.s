@@ -48,17 +48,17 @@ vdp_layout_debug:
 
 .section .text
 
-FUNC set_vdp_layout_debug
-	move.l #0xC0020000, (_VDP_CTRL)
-	move.w #COLOR_WHITE, (_VDP_DATA)
-	move.w #COLOR_RED, (_VDP_DATA)
-	move.w #COLOR_GREEN, (_VDP_DATA)
-	move.w #COLOR_BLUE, (_VDP_DATA)
-	jsr _BLIB_CLEAR_VRAM
-	lea vdp_layout_debug, a1
-	jsr _BLIB_LOAD_VDPREGS
-	jsr _BLIB_LOAD_FONT_DEFAULTS
-	rts
+SUB set_vdp_layout_debug
+  move.l  #0xC0020000, (_VDP_CTRL)
+  move.w  #COLOR_WHITE, (_VDP_DATA)
+  move.w  #COLOR_RED, (_VDP_DATA)
+  move.w  #COLOR_GREEN, (_VDP_DATA)
+  move.w  #COLOR_BLUE, (_VDP_DATA)
+  jsr     _BLIB_CLEAR_VRAM
+  lea     vdp_layout_debug, a1
+  jsr     _BLIB_LOAD_VDPREGS
+  jsr     _BLIB_LOAD_FONT_DEFAULTS
+  rts
 
 // TODO
 // - save stack frame
@@ -69,35 +69,35 @@ FUNC set_vdp_layout_debug
  * Repoints the exception vectors in the system jump table to our text display
  * routines
  */
-FUNC install_handlers
-	move.l #ex_addr_err, _MADRERR+2
-	move.l #ex_zero_div, _MDIVERR+2
-	move.l #ex_chk_inst, _MONKERR+2
-	move.l #ex_trapv, _MTRPERR+2
-  move.l #ex_priv_viol, _MSPVERR+2
-	move.l #ex_trace, _MTRACE+2
-	move.l #ex_line1010, _MNOCOD0+2
-	move.l #ex_line1111, _MNOCOD1+2
+SUB install_handlers
+  move.l  #ex_addr_err, _MADRERR+2
+  move.l  #ex_zero_div, _MDIVERR+2
+  move.l  #ex_chk_inst, _MONKERR+2
+  move.l  #ex_trapv, _MTRPERR+2
+  move.l  #ex_priv_viol, _MSPVERR+2
+  move.l  #ex_trace, _MTRACE+2
+  move.l  #ex_line1010, _MNOCOD0+2
+  move.l  #ex_line1111, _MNOCOD1+2
   rts
 
 
 // The Main CPU does not set a pointer into the jump table in the Bus Addr
 // vector. Instead it is hardcoded to reset the system.
 /*
-FUNC ex_bus_err
-	move.l #strBUSERR, (err_str_ptr)
-	jbra ex_group0_stack_copy
+SUB ex_bus_err
+  move.l  #strBUSERR, (err_str_ptr)
+  jbra    ex_group0_stack_copy
 */
 
-FUNC ex_addr_err
-	move.l #strADDRERR, (err_str_ptr)
+SUB ex_addr_err
+  move.l  #strADDRERR, (err_str_ptr)
 ex_group0_stack_copy:
-  adda.l #2, sp  // skip the first word (extrended info)
-	move.l (sp)+, (addr_val)
-	move.w (sp)+, (op_val)
-	move.w (sp)+, (sr_val)
-	move.l (sp)+, (pc_val)
-	jbra handle_exception
+  adda.l  #2, sp  // skip the first word (extrended info)
+  move.l  (sp)+, (addr_val)
+  move.w  (sp)+, (op_val)
+  move.w  (sp)+, (sr_val)
+  move.l  (sp)+, (pc_val)
+  jbra    handle_exception
 
 // Address Error and Illegal Instruction share the same user vector.
 // This poses a problem since the two are in different exception groups
@@ -105,147 +105,146 @@ ex_group0_stack_copy:
 // We're going to keep the address error code since we feel that is the
 // more common of the two.
 /*
-FUNC ex_ill_inst
-	move.l #strILLEGAL, (err_str_ptr)
-	jbra handle_exception
+SUB ex_ill_inst
+  move.l  #strILLEGAL, (err_str_ptr)
+  jbra    handle_exception
 */
 
-FUNC ex_zero_div
-	move.l #strZERODIV, (err_str_ptr)
-	jbra ex_group1_stack_copy
+SUB ex_zero_div
+  move.l  #strZERODIV, (err_str_ptr)
+  jbra    ex_group1_stack_copy
 
-FUNC ex_chk_inst
-	move.l #strCHKINST, (err_str_ptr)
-	jbra ex_group1_stack_copy
+SUB ex_chk_inst
+  move.l  #strCHKINST, (err_str_ptr)
+  jbra    ex_group1_stack_copy
 
-FUNC ex_trapv
-	move.l #strTRAPV, (err_str_ptr)
-	jbra ex_group1_stack_copy
+SUB ex_trapv
+  move.l  #strTRAPV, (err_str_ptr)
+  jbra    ex_group1_stack_copy
 
-FUNC ex_priv_viol
-	move.l #strPRIVV, (err_str_ptr)
-	jbra ex_group1_stack_copy
+SUB ex_priv_viol
+  move.l  #strPRIVV, (err_str_ptr)
+  jbra    ex_group1_stack_copy
 
-FUNC ex_trace
-	move.l #strTRACE, (err_str_ptr)
-	jbra ex_group1_stack_copy
+SUB ex_trace
+  move.l  #strTRACE, (err_str_ptr)
+  jbra    ex_group1_stack_copy
 
-FUNC ex_line1010
-	move.l #strL1010, (err_str_ptr)
-	jbra ex_group1_stack_copy
+SUB ex_line1010
+  move.l  #strL1010, (err_str_ptr)
+  jbra    ex_group1_stack_copy
 
-FUNC ex_line1111
-	move.l #strL1111, (err_str_ptr)
+SUB ex_line1111
+  move.l  #strL1111, (err_str_ptr)
 
 // Spurious, like Bus Addr, is hardcoded to restart the machine
 /*
-	jbra ex_group1_stack_copy
+  jbra    ex_group1_stack_copy
 
-FUNC ex_spurious
-	move.l #strSPUR, (err_str_ptr)
+SUB ex_spurious
+  move.l  #strSPUR, (err_str_ptr)
 */
 
 ex_group1_stack_copy:
-	move.l #0, (addr_val)
-	move.w #0, (op_val)
-	move.w (sp)+, (sr_val)
-	move.l (sp)+, (pc_val)
-//	jbra handle_exception
+  move.l  #0, (addr_val)
+  move.w  #0, (op_val)
+  move.w  (sp)+, (sr_val)
+  move.l  (sp)+, (pc_val)
+//	jbra  handle_exception
 
-FUNC handle_exception
-	ori #0x700,sr
-	jsr set_vdp_layout_debug
-	
-	// error titles
-	move.w #0x0205, d0
-	jbsr nmtbl_xy_pos
-	movea.l (err_str_ptr), a1
-	jbsr _BLIB_PRINT
+SUB handle_exception
+  ori     #0x700,sr
+  jsr     set_vdp_layout_debug
+  
+  // error titles
+  move.w  #0x0205, d0
+  jbsr    nmtbl_xy_pos
+  movea.l (err_str_ptr), a1
+  jbsr    _BLIB_PRINT
 
-	// PC=
-	move.w #0x0306, d0
-	jbsr nmtbl_xy_pos
-	lea str_pc, a1
-	jbsr _BLIB_PRINT
+  // PC=
+  move.w  #0x0306, d0
+  jbsr    nmtbl_xy_pos
+  lea     str_pc, a1
+  jbsr    _BLIB_PRINT
 
-	// pc val
-	move.l (pc_val), d0
-	lea str_cache, a0
-	jbsr printval_u32
-	move.w #0x0806, d0
-	jbsr nmtbl_xy_pos
-	lea str_cache, a1
-	jbsr _BLIB_PRINT
+  // pc val
+  move.l  (pc_val), d0
+  lea     str_cache, a0
+  jbsr    printval_u32
+  move.w  #0x0806, d0
+  jbsr    nmtbl_xy_pos
+  lea     str_cache, a1
+  jbsr    _BLIB_PRINT
 
-	// SR=
-	move.w #0x0307, d0
-	jbsr nmtbl_xy_pos
-	lea str_sr, a1
-	jbsr _BLIB_PRINT
+  // SR=
+  move.w  #0x0307, d0
+  jbsr    nmtbl_xy_pos
+  lea     str_sr, a1
+  jbsr    _BLIB_PRINT
 
   // sr val
-	move.w (sr_val), d0
-	lea str_cache, a0
-	jbsr printval_u16
-	move.w #0x0807, d0
-	jbsr nmtbl_xy_pos
-	lea str_cache, a1
-	jbsr _BLIB_PRINT
+  move.w  (sr_val), d0
+  lea     str_cache, a0
+  jbsr    printval_u16
+  move.w  #0x0807, d0
+  jbsr    nmtbl_xy_pos
+  lea     str_cache, a1
+  jbsr    _BLIB_PRINT
 
-	// OP=
-	move.w #0x0308, d0
-	jbsr nmtbl_xy_pos
-	lea str_op, a1
-	jbsr _BLIB_PRINT
+  // OP=
+  move.w  #0x0308, d0
+  jbsr    nmtbl_xy_pos
+  lea     str_op, a1
+  jbsr    _BLIB_PRINT
 
   // op val
-	move.w (op_val), d0
-	lea str_cache, a0
-	jbsr printval_u16
-	move.w #0x0808, d0
-	jbsr nmtbl_xy_pos
-	lea str_cache, a1
-	jbsr _BLIB_PRINT
+  move.w  (op_val), d0
+  lea     str_cache, a0
+  jbsr    printval_u16
+  move.w  #0x0808, d0
+  jbsr    nmtbl_xy_pos
+  lea     str_cache, a1
+  jbsr    _BLIB_PRINT
 
-	// ADDR=
-	move.w #0x0309, d0
-	jbsr nmtbl_xy_pos
-	lea str_addr, a1
-	jbsr _BLIB_PRINT
+  // ADDR=
+  move.w  #0x0309, d0
+  jbsr    nmtbl_xy_pos
+  lea     str_addr, a1
+  jbsr    _BLIB_PRINT
 
   // addr val
-	move.l (addr_val), d0
-	lea str_cache, a0
-	jbsr printval_u32
-	move.w #0x0809, d0
-	jbsr nmtbl_xy_pos
-	lea str_cache, a1
-	jbsr _BLIB_PRINT
+  move.l  (addr_val), d0
+  lea     str_cache, a0
+  jbsr    printval_u32
+  move.w  #0x0809, d0
+  jbsr    nmtbl_xy_pos
+  lea     str_cache, a1
+  jbsr    _BLIB_PRINT
 
-	// stop and enable all interrupts (for e.g. serial comm)
-	stop #2000
+  // stop and enable all interrupts (for e.g. serial comm)
+  stop    #2000
 
-FUNC nmtbl_xy_pos
-1:move.w (_BLIB_PLANE_WIDTH), d1  // d1 - tiles per row
-	move.w d0, d2  // d0 - x/y offsey (upper/lower bytes of the word)
-	lsr.w #8, d2  // d2 has x pos
-	and.w #0xff, d0  // filter d0 so it only has y pos
-	mulu d1, d0
-	# d0 is now y pos * tiles per row
-	# add x pos
-	add.b d2, d0
-	# multiply by 2 for tilemap entry size
-	lsl.l #1, d0
-	# TODO: make this dynamic
-	# or make sure we set the nmtbl base register
-	add.w #0xc000, d0
-
-	and.l #0xffff, d0
-	lsl.l #2, d0
-	lsr.w #2, d0
-	or.l #0x4000, d0
-	swap d0
-	rts
+SUB nmtbl_xy_pos
+1:move.w  (_BLIB_PLANE_WIDTH), d1  // d1 - tiles per row
+  move.w  d0, d2  // d0 - x/y offsey (upper/lower bytes of the word)
+  lsr.w   #8, d2  // d2 has x pos
+  and.w   #0xff, d0  // filter d0 so it only has y pos
+  mulu    d1, d0
+  # d0 is now y pos * tiles per row
+  # add x pos
+  add.b   d2, d0
+  # multiply by 2 for tilemap entry size
+  lsl.l   #1, d0
+  # TODO: make this dynamic
+  # or make sure we set the nmtbl base register
+  add.w   #0xc000, d0
+  and.l   #0xffff, d0
+  lsl.l   #2, d0
+  lsr.w   #2, d0
+  or.l    #0x4000, d0
+  swap    d0
+  rts
 
 .section .rodata
 

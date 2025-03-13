@@ -5,58 +5,55 @@
  * @brief common Mega Drive init routines
  */
 
+#include "system.s"
 #include "main/md_sys.def.h"
 #include "main/io.def.h"
 #include "main/vdp.def.h"
-#include "main/vdp.macro.s"
+#include "main/z80.s"
 
 .align 2
-init:
-        move    #0x2700,%sr
-        tst.l   0xa10008
-        bne.s   SkipJoyDetect
 
-        tst.w   0xa1000c
+z80_dummy_program:
+  dc.w 0xAF01, 0xD91F, 0x1127, 0x0021, 0x2600, 0xF977, 0xEDB0, 0xDDE1
+  dc.w 0xFDE1, 0xED47, 0xED4F, 0xD1E1, 0xF108, 0xD9C1, 0xD1E1, 0xF1F9
+  dc.w 0xF3ED, 0x5636, 0xE9E9
+z80_dummy_program_end:
 
-SkipJoyDetect:
-  bne.s   SkipSetup
+.align 2
+init_system:
+  disable_interrupts
+  tst.l   (_IO_CTRL1 - 1)
+  bne.s   0f
+  tst.w   (_IO_CTRL3 - 1)
+0:bne.s   skip_init
 
-  lea     Table,%a5
-  movem.w (%a5)+,%d5-%d7
-  movem.l (%a5)+,%a0-%a4
   // Check Version Number
-  move.b  -0x10ff(%a1),%d0
-  andi.b  #0x0f,%d0
-  beq.s   WrongVersion
+  move.b  (_HW_VERSION), d0
+  andi.b  #HW_REV, d0
+  beq.s   skip_tmss
+  move.l  #0x53454741, (_TMSS)
 
-  // Sega Security Code (SEGA)
-  move.l  #0x53454741,0x2f00(%a1)
+skip_tmss:
+  // Read from the VDP control port to cancel any pending read/write command
+  move.w  (_VDP_CTRL), d0
+  // TODO add VDP initialization (CRAM/VRAM clear)
 
-WrongVersion:
-  // Read from the control port to cancel any pending read/write command
-  move.w  (%a4),%d0
+  // clear work RAM
+  move.l  #0x3fff,d7
+  moveq   #0, d0
+  lea     0xff0000, a0
+1:move.l  d0, (a0)+
+  dbra    d7, 1b
 
-  // Configure a USER_STACK_LENGTH bytes user stack at bottom, and system stack on top of it
-
-  move.w  %d7,(%a1)
-  move.w  %d7,(%a2)
-
-  move.l #0x3fff,d7
-  moveq #0, d0
-  lea 0xff0000, a0
-0:move.l d0, (a0)+
-  dbra d7, 0b
-
-* Jump to initialisation process now...
-SkipSetup:
-  jmp     main
-
-
-Table:
-  dc.w    0x8000,0x3fff,0x0100
-  dc.l    0xA00000,0xA11100,0xA11200,0xC00000,0xC00004
+skip_init:
+  // initialize Z80 with a dummy program
+  lea     z80_dummy_program, a0
+  move.w  #(z80_dummy_program_end - z80_dummy_program - 1), d7
+  jbsr init_z80
+  enable_interrupts
+  jbra main
 
 .align 2
-.global _EX_NULL
-_EX_NULL:
-        rte
+.global EX_NULL
+EX_NULL:
+  rte

@@ -4,8 +4,6 @@
  * @file build.def.h
  * @brief Target hardware components definitions
  *
- * @details
-
  */
 
 #ifndef MEGADEV__BUILD_DEF_H

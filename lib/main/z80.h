@@ -2,7 +2,7 @@
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
  * @file z80.h
- * @brief C wrappers for Z80 hardware definitions
+ * @brief Z80 CPU Utilities
  */
 
 #ifndef MEGADEV__MAIN_Z80_H
@@ -12,8 +12,8 @@
 #include "z80.def.h"
 
 #define Z80_RAM ((volatile u8 *) _Z80_RAM)
-#define Z80_BUSREQ ((volatile u16 *) _Z80_BUSREQ)
-#define Z80_RESET ((volatile u16 *) _Z80_RESET)
+#define Z80_BUSREQ ((volatile u16 *) Z80_BUSREQ)
+#define Z80_RESET ((volatile u16 *) Z80_RESET)
 
 static inline void load_z80_program(u8 * data, u16 length)
 {

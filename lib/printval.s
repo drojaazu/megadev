@@ -16,7 +16,7 @@
  * param[in] d0.b value
  * param[in] a0.l ptr to store output values
  */
-FUNC printval_u8
+SUB printval_u8
 	rol.b #4, d0
 	jbsr hex_to_ascii
 	move.b d1, (a0)+
@@ -32,7 +32,7 @@ FUNC printval_u8
  * param[in] d0.w value
  * param[in] a0.l ptr to store output values
  */
-FUNC printval_u16
+SUB printval_u16
 	moveq #3, d7
 1:rol.w #4, d0
 	jbsr hex_to_ascii
@@ -47,7 +47,7 @@ FUNC printval_u16
  * param[in] d0.l value
  * param[in] a0.l ptr to store output values
  */
-FUNC printval_u32
+SUB printval_u32
 	moveq #7, d7
 1:rol.l #4, d0
 	jbsr hex_to_ascii

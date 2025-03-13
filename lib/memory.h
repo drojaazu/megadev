@@ -87,7 +87,7 @@ static inline void memcpy8(u8 * src, u8 * dest, u32 length)
  * @fn memset16
  * @brief Copy a range of 16bit memory values
  */
-static inline void memcpy16(u16 * src, u16 * dest, u32 length)
+static inline void memcpy16(u16 const * src, u16 * dest, u32 length)
 {
 	--length;
 	__asm__(
@@ -104,7 +104,7 @@ static inline void memcpy16(u16 * src, u16 * dest, u32 length)
  * @fn memset32
  * @brief Copy a range of 32bit memory values
  */
-static inline void memcpy32(u32 * src, u32 * dest, u32 length)
+static inline void memcpy32(u32 const * src, u32 * dest, u32 length)
 {
 	--length;
 	__asm__(

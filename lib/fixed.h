@@ -2,7 +2,7 @@
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
  * @file fixed.h
- * @brief Fixed-point numbers
+ * @brief Fixed-point fractional numbers
  */
 
 #ifndef MEGADEV__FIXED_H
