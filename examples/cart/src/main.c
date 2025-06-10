@@ -86,25 +86,30 @@ void clear_vram()
 #define PLANE_A_ADDR 0x2000
 #define PLANE_B_ADDR 0x4000
 
+#if VIDEO == PAL
+#define VIDEO_SIGNAL VDP_PAL_VIDEO
+#else
+#define VIDEO_SIGNAL 0
+#endif
+
 u16 const default_vdp_regs[] = {
-	0x8004, // mode register 1
-	0x8164, // Mode Register 2 (Display enable, VBLANK interrupt enable)
-	0x8208, // plane a table location - VRAM:$2000
-	0x8318, // window table location -  VRAM:$3000
-	0x8406, // plane b table location - VRAM:$4000
-	0x8500, // sprite table location (reg 5) 2*$200 = $400
-	0x8600, // sprite pattern generator base addr.
-	0x8700, // backgroud colour,  (reg 7)
-	0x8800, // 0
-	0x8900, // 0
-	0x8b00, // Mode register 3
-	0x8c00, // mode register 4
-	0x8d05, // HBL_scroll data location. ($1400)
-	0x8e00, // 0
-	0x8f02, // auto-increment value
-	0x9000, // plane size
-	0x9100, // window plane h-pos
-	0x9200, // window place v-pos
+_VDPREG_MODE1 | VDP_HICOLOR_ENABLE,
+_VDPREG_MODE2 | VDP_MD_DISPLAY_MODE | VDP_VINT_ENABLE | VIDEO_SIGNAL | VDP_DISPLAY_ENABLE,
+_VDPREG_PLA_ADDR | (PLANE_A_ADDR / 0x400),
+_VDPREG_WIN_ADDR | (0xa00 / 0x400),
+_VDPREG_PLB_ADDR | (PLANE_B_ADDR / 0x2000),
+_VDPREG_SPR_ADDR | (0xb800 / 0x200),
+_VDPREG_SPR_ADDR2,
+_VDPREG_BGCOLOR,
+_VDPREG_HINT_COUNT,
+_VDPREG_MODE3 | VDP_EXTINT_ENABLE,
+_VDPREG_MODE4 | VDP_WIDTH_40CELL,
+_VDPREG_HS_ADDR | (0xbc00 / 0x400),
+_VDPREG_PL_ADDR2,
+_VDPREG_AUTOINC | 2,
+_VDPREG_PL_SIZE | VDP_PL_32x32,
+_VDPREG_WIN_HPOS,
+_VDPREG_WIN_VPOS
 };
 
 #define plane_xy(x, y) (VDPPTR(NMT_POS_PLANE_32(x, y, PLANE_A_ADDR)) | VRAM_W)

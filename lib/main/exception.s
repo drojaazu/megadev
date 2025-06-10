@@ -23,10 +23,11 @@
 
 vdp_layout_debug:
 #if VIDEO == PAL
-#define VIDEO_SIGNA VDP_PAL_VIDEO
+#define VIDEO_SIGNAL VDP_PAL_VIDEO
 #else
 #define VIDEO_SIGNAL 0
 #endif
+
 .word _VDPREG_MODE1 | VDP_HICOLOR_ENABLE
 .word _VDPREG_MODE2 | VDP_MD_DISPLAY_MODE | VDP_DMA_ENABLE | VDP_VINT_ENABLE | VIDEO_SIGNAL | VDP_DISPLAY_ENABLE
 .word _VDPREG_PLA_ADDR | (PLA_ADDR_DEBUG / 0x400)
@@ -277,13 +278,13 @@ strSPUR:    .ascii "SPURIOUS\xff"
 .align 2
 */
 
-str_pc:   .ascii "  PC=\xff"
+str_pc:     .ascii "  PC=\xff"
 .align 2
-str_sr:   .ascii "  SR=\xff"
+str_sr:     .ascii "  SR=\xff"
 .align 2
-str_addr: .ascii "ADDR=\xff"
+str_addr:   .ascii "ADDR=\xff"
 .align 2
-str_op:  .ascii "  OP=\xff"
+str_op:     .ascii "  OP=\xff"
 .align 2
 
 .section .bss
