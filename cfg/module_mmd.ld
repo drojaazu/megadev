@@ -34,7 +34,7 @@ SECTIONS
 	{
 		SHORT(DEFINED(MMD_FLAGS) ? MMD_FLAGS : 0)
 		LONG(MMD_DEST)
-		SHORT(_MMD_ROM_LENGTH >> 2)
+		SHORT(_ROM_LENGTH >> 2)
 		LONG(main)
 		LONG(DEFINED(hint) ? hint : 0)
 		LONG(DEFINED(vint) ? vint : 0)
@@ -43,29 +43,35 @@ SECTIONS
 
 	.text MODULE_ROM_ORIGIN : AT ( ADDR(.header) + SIZEOF(.header) )
   {
-    _MMD_ROM_ORIGIN = .;
+    _ROM_ORIGIN = .;
+		_INIT_ORIGIN = .;
 		*(.init)
+		_INIT_LENGTH = ABSOLUTE(. - _INIT_ORIGIN);
+		_TEXT_ORIGIN = .;
     *(.text*)
+		_TEXT_LENGTH = ABSOLUTE(. - _TEXT_ORIGIN);
+		_RODATA_ORIGIN = .;
     *(.rodata*)
+		_RODATA_LENGTH = ABSOLUTE(. - _RODATA_ORIGIN);
 		/* Align to 4 since the MMD loader reads size in words */
 		. = ALIGN(4);
-		_MMD_ROM_LENGTH = ABSOLUTE(. - _MMD_ROM_ORIGIN);
+		_ROM_LENGTH = ABSOLUTE(. - _ROM_ORIGIN);
   } > MODULE_ROM
 
   .data MODULE_RAM_ORIGIN : AT ( ADDR(.header) + SIZEOF(.header) + SIZEOF(.text) )
   {
-		_MMD_RAM_ORIGIN = .;
-		_MMD_RAM_DATA_ORIGIN = .;
+		_RAM_ORIGIN = .;
+		_DATA_ORIGIN = .;
 		*(.data*)
-		_MMD_RAM_DATA_LENGTH = ABSOLUTE(. - _MMD_RAM_DATA_ORIGIN);
+		_DATA_LENGTH = ABSOLUTE(. - _DATA_ORIGIN);
   } > MODULE_RAM
 
 	.bss :
 	{
-		_MMD_RAM_BSS_ORIGIN = .;
+		_BSS_ORIGIN = .;
 		*(.bss*)
-		_MMD_RAM_BSS_LENGTH = ABSOLUTE(. - _MMD_RAM_BSS_ORIGIN);
+		_BSS_LENGTH = ABSOLUTE(. - _BSS_ORIGIN);
 	} > MODULE_RAM
-	_MMD_RAM_LENGTH = _MMD_RAM_DATA_LENGTH + _MMD_RAM_BSS_LENGTH;
+	_RAM_LENGTH = _DATA_LENGTH + _BSS_LENGTH;
 	
 }
