@@ -31,7 +31,7 @@ void vint_ex()
 
 void (*spr_funcs[2])();
 
-const VDPPTR vdpptr_scroll = VDPPTR((_BLIB_HSCROL_ADDR)) | VRAM_W;
+const VDP_COMMAND vdpptr_scroll = VDPPTR((_BLIB_HSCROL_ADDR)) | VRAM_W;
 
 /*
 	We mark this is as noreturn since this is an infinite loop that will
