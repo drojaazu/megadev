@@ -1,4 +1,5 @@
 
+
 // Boot security block - This must be at the top of your IP!
 #include "security.s"
 
@@ -21,15 +22,48 @@ ip_entry:
   // First, disable all interrupts while we get things set up
   ori #0x700,sr
 
-  /*
-    Something we need to do very early on is start informing the Sub CPU of 
-    vblank interrupts. The VINT handler built into the Boot ROM takes care of
-    this, so let's go ahead and point the VINT vector (interrupt level 6) to
-    the built in handler.
-  */
+  // clear Work RAM so there are no nasty surprises in memory (such as leftovers
+  // from the "Produced by or Under License From" screen)
+  // of course, since the IP was loaded to the start of Work RAM, we need to
+  // clear everything that follows it
+  moveq #0, d0
+  move.l #_RAM_LENGTH - 1, d7
+  lea _RAM_ORIGIN, a0
+0:move.b d0, (a0)+
+  dbra d7, 0b
+
+  // next we'll take care of some display housekeeping
+  // disable VDP display and set Mega Drive video mode
+  move.w #(_VDPREG_MODE2 | 0x44), (_VDP_CTRL)
+
+  // set palette entry 0 (background) to black
+  move.l #0xC0000000, (_VDP_CTRL)
+  move.w #0x0000, (_VDP_DATA)
+
+  // clear out VRAM
+  // (note: this does not clear CRAM!)
+	// This is a Boot ROM library call that makes use of the VDP register cache
+	// Even if you don't plan to use the Boot ROM library, this call is safe
+	// to use here as the memory for the register cache is not yet in use
+  jbsr _BLIB_CLEAR_VRAM
+
+  // One of the most, if not *the* most important event while the machine is
+  // running is the vertical blanking interval, during which time most of the
+  // game's logic is processed. The machine generates a vertical blank interrupt
+  // (VINT) when this occurs. Since we don't have anything special going on at
+  // this point, we can use the built-in handler for VINTs, which takes care of
+  // a number of steps for us, including (most importantly) notifying the Sub
+  // CPU that a VINT has occurred. The Level 6 interrupt is the VINT, so we
+  // set that vector to the handler in the Boot Library.
+  // (Note that we set it at _MLEVEL6 + 2; this is because we are actually
+  // modifying a jump table, and the first two bytes are the JMP opcode.)
   move.l	#_BLIB_VINT_HANDLER, (_MLEVEL6 + 2)
 
-  move.b #0, (_GAREG_COMFLAGS)
+  // we don't have any significant code on the Sub CPU side for this minimal
+  // demo, so we won't be using the Gate Array comm registers to communicate
+  // between the CPUs, but it's still good practice to have the registers
+  // initialized
+  jbsr _BLIB_CLEAR_COMM
 
   // We'll also use the Boot ROM VDP defaults
   // (these defaults include disabling the display)
@@ -55,7 +89,8 @@ ip_entry:
   lea str_hello, a1
   jbsr _BLIB_PRINT
 
-  // And finally enable the display
+  // we can finally turn the display output back on now that everything is
+  // prepared
   jbsr _BLIB_VDP_DISP_ENABLE
 
   // and restore interrupts

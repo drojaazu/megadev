@@ -2,7 +2,7 @@
 #include <main/gate_array.h>
 #include <main/io.def.h>
 #include <main/memmap.h>
-#include <main/mmd_exec.h>
+#include <main/init_mmd.h>
 #include <printval.h>
 #include <main/vdp.h>
 #include <system.h>
@@ -20,11 +20,7 @@
 
 char val_buffer[5];
 
-// we'll need this information when we go to load actual file data
-u16 filesize;
-u16 is_protected;
-
-static void braminit_test()
+static void bram_init()
 {
 	blib_print("Performing BRMINIT...\xff", print_xy(1, 1));
 
@@ -69,7 +65,7 @@ static void braminit_test()
 	}
 }
 
-static void brmstat_test()
+static void brmstat()
 {
 	blib_clear_tables();
 	blib_print("Performing BRMSTAT...\xff", print_xy(1, 1));
@@ -95,7 +91,7 @@ static void brmstat_test()
 	blib_print(val_buffer, print_xy(13, 4));
 }
 
-static bool brmserch_test()
+static bool brmserch()
 {
 	blib_print("Performing BRMSERCH...\xff", print_xy(1, 1));
 
@@ -104,8 +100,8 @@ static bool brmserch_test()
 	SUB_WAIT
 
 	u16 found = *GA_COMSTAT1;
-	filesize = *GA_COMSTAT2;
-	is_protected = *GA_COMSTAT3;
+	u16 filesize = *GA_COMSTAT2;
+	u16 is_protected = *GA_COMSTAT3;
 
 	SUB_ACK
 
@@ -129,7 +125,7 @@ static bool brmserch_test()
 	}
 }
 
-static void brmwrite_test()
+static void brmwrite()
 {
 	blib_clear_tables();
 
@@ -199,11 +195,11 @@ static void brmwrite_test()
 	}
 }
 
-static void brmread_test()
+static void brmread()
 {
 	blib_clear_tables();
 
-	if (! brmserch_test())
+	if (! brmserch())
 		return;
 
 	blib_print("Performing BRMREAD...\xff", print_xy(1, 6));
@@ -239,7 +235,7 @@ static void brmread_test()
 	blib_print(val_buffer, print_xy(12, 9));
 }
 
-void bram_brmdel_test()
+void brmdel()
 {
 	blib_clear_tables();
 
@@ -263,7 +259,7 @@ void bram_brmdel_test()
 	}
 }
 
-void bram_brmdir_test()
+void brmdir()
 {
 	blib_clear_tables();
 
@@ -306,24 +302,21 @@ void bram_brmdir_test()
 	}
 }
 
-s8 menupos;
 void main()
 {
-	// repoint the VINT vector to the boot rom library version
-	MLEVEL6_VECTOR = (void *(*) ) _BLIB_VINT_HANDLER;
-	// do not re-enable too quickly!!
-	enable_interrupts();
-
 	// setup boot rom library font
 	blib_load_font_defaults();
 	VDP_CTRL_32 = 0xC0020000;
 	VDP_DATA_16 = 0x0EEE;
 
-	// print strings end in 0xff, so let's fix up the value buffer so we don't
+	// print strings end in 0xff, so let's set up the value buffer so we don't
 	// have to mess with it later
 	val_buffer[4] = '\xff';
 
-	braminit_test();
+	// interrupts were disabled in the init section
+	enable_interrupts();
+
+	bram_init();
 	blib_print("Press Start to continue...\xff", print_xy(1, 10));
 
 	do
@@ -331,7 +324,7 @@ void main()
 		blib_vint_wait_default();
 	} while (! (BLIB_JOY1_PRESS & PAD_START));
 
-	menupos = 0;
+	s8 menupos = 0;
 
 	do
 	{
@@ -377,21 +370,21 @@ void main()
 		switch (menupos)
 		{
 			case 0:
-				brmstat_test();
+				brmstat();
 				break;
 			case 1:
-				bram_brmdir_test();
+				brmdir();
 				break;
 			case 2:
-				brmread_test();
+				brmread();
 				break;
 			case 3:
-				brmwrite_test();
+				brmwrite();
 				break;
 			case 4:
 				break;
 			case 5:
-				bram_brmdel_test();
+				brmdel();
 				break;
 			case 6:
 				break;

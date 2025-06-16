@@ -53,11 +53,11 @@ prep_load:
 1:tst.w		_GAREG_COMSTAT0			//wait for response (wait for 0 from Sub)
 	bne			1b
 
-  jbsr MMD_EXEC  // launch the loaded module
+  jbsr INIT_MMD  // launch the loaded module
   bra prep_load
 
 // Include the code for the MMD loader here
-#include "main/mmd_exec.s"
+#include "main/init_mmd.s"
 
 .section .bss
 .global global_mode

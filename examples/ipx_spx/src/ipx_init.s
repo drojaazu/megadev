@@ -7,15 +7,26 @@
 .section .init
 
 // disable interrupts while we get things copied
-// be sure to re-enable them in main()!
+// **be sure to re-enable them in main()!**
 ori #0x700,sr
 
-// we include the MMD loader here, which will copy the entire IPX to its final
-// destination in Work RAM
-#include <main/mmd_exec.s>
+// This is a little bit tricky, because INIT_MMD and INIT_DATA will be part
+// of the IPX as calls available to later loaded modules, which means we
+// need them to global symbols. When linking, those global symbols will
+// be positioned in the final destination within Work RAM... and we're
+// not in Work RAM yet, we're still running from Word RAM - we need to call
+// INIT_MMD to get things moved! So we create a couple local labels and
+// call to those instead.
+jbsr mmd_init
+jbsr data_init
 
-// After the MMD loader does it's thing, it will jump to a function called 
-// main. We define this in ipx.c and go from there.
+// The MMD loader returns a pointer to main() in A0
+jmp (a0)
+
+data_init:
+#include <init_data.s>
+mmd_init:
+#include <main/init_mmd.s>
 
 .section .text
 // we'll also go ahead and throw in the include of printval into .text

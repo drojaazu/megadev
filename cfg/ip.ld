@@ -28,15 +28,17 @@ SECTIONS
     _RAM_ORIGIN = .;
     _DATA_ORIGIN = .;
     *(.data*)
-    _DATA_LENGTH = ABSOLUTE(. - _DATA_ORIGIN);
+    . = ALIGN(4);
+    _DATA_LENGTH = ABSOLUTE(. - _DATA_ORIGIN) >> 2;
   } > IP
 
   .bss :
   {
     _BSS_ORIGIN = .;
     *(.bss*)
+    . = ALIGN(4);
     _BSS_LENGTH = ABSOLUTE(. - _BSS_ORIGIN);
   } > IP
-  _RAM_LENGTH = _DATA_LENGTH + _BSS_LENGTH;
+  _RAM_LENGTH = _DATA_LENGTH + _BSS_LENGTH >> 2;
 
 }

@@ -57,5 +57,6 @@ clean:
 
 disc/cyber.mmd: \
 	mmd_layout.s \
+	cybercity_init.s \
 	cybercity.c \
 	cybercity.res.s

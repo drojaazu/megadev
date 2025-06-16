@@ -3,7 +3,7 @@
 #include <main/gate_array.h>
 #include <main/io.def.h>
 #include <main/memmap.h>
-#include <main/mmd_exec.h>
+#include <main/init_mmd.h>
 #include <main/vdp.h>
 #include <system.h>
 #include <types.h>

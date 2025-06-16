@@ -9,7 +9,7 @@
 #include <main/main.macro.s>
 #include <main/vdp.def.h>
 #include <main/gate_array.macro.s>
-#include "ipx_layout.s"
+#include "bram_demo_layout.s"
 
 ip_entry:
   // First, disable all interrupts while we do some basic init
@@ -26,14 +26,14 @@ ip_entry:
   move.l #0xC0000000, (_VDP_CTRL)
   move.w #0x0000, (_VDP_DATA)
 
-  // disable VDP display and maintain MD mode (mode 5)
+  // disable VDP display and set Mega Drive video mode
 	move.w #(_VDPREG_MODE2 | 0x44), (_VDP_CTRL)
 
   // clear out VRAM
   // (note: this does not clear CRAM!)
 	// This is a Boot ROM library call that makes use of the VDP register cache
 	// Even if you don't plan to use the Boot ROM library, this call is safe
-	// to use here as the memory will not be preserved after we jump to the IPX
+	// to use here as the memory for the register cache is not yet in use
   jbsr _BLIB_CLEAR_VRAM
 
 	// our example IP here is super tiny, and while it should remain quite
@@ -46,7 +46,7 @@ ip_entry:
   // point VINT vector to the minimal, temporary handler
 	// (note that we use _MLEVEL6 *+ 2*, as the first two bytes are
 	// a jmp/bra opcode)
-	move.l #vint_temp, (_MLEVEL6 + 2)
+	move.l #_BLIB_VINT_HANDLER, (_MLEVEL6 + 2)
 
   // restore interrupts to allow the cdrom data to flow
 	andi #0xF8FF,sr
@@ -71,14 +71,5 @@ ip_entry:
 	// instead, we'll jump right into the IPX entry currently in Word RAM
 	// which will copy itself into Work RAM
 	jbra _WRDRAM + 0x100
-
-  // minimal VINT handler
-	// the sub cpu must receive level 2 interrupts in order to keep
-	// the cdrom subsystem moving
-	// so we need this tiny li'l vint handler to make it happen and
-	// get the ipx loaded
-  vint_temp:
-    bset.b #GA_RAISE_INT2_BIT, (_GAREG_RESET)
-    rte
 
 	.align 2

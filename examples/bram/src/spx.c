@@ -136,9 +136,9 @@ __attribute__((section(".init"))) void main()
 				grant_2m();
 				break;
 
-			// load IPX
+			// load demo
 			case 0xfe:
-				load_file(ACC_OP_LOAD_CDC, "IPX.MMD;1", (u8 *) _WRDRAM_2M);
+				load_file(ACC_OP_LOAD_CDC, "BRAMDEMO.MMD;1", (u8 *) _WRDRAM_2M);
 				grant_2m();
 				if (access_op_result != RESULT_OK)
 				{

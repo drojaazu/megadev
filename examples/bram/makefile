@@ -51,18 +51,17 @@ include $(MEGADEV_PATH)/megadev.make
 
 disc: \
 	init \
-	disc/ipx.mmd \
+	disc/bramdemo.mmd \
 	disc/spx.smd \
 	disc.iso
 
 clean:
 	@rm -f disc.iso disc/*.mmd disc/*.smd build/*
 
-disc/ipx.mmd: \
-	ipx_layout.s \
-	ipx_init.s \
-	ipx.c \
-	$(BUILD_PATH)/ip.bin
+disc/bramdemo.mmd: \
+	bram_demo_layout.s \
+	bram_demo_init.s \
+	bram_demo.c
 
 disc/spx.smd: \
 	spx_layout.s \

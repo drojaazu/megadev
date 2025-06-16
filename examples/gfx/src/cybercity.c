@@ -29,7 +29,7 @@ void vint_ex()
 	blib_copy_sprlist();
 }
 
-void (*spr_funcs[2])();
+void (*spr_funcs[2])() = { null_func, null_func };
 
 const VDP_COMMAND vdpptr_scroll = VDPPTR((_BLIB_HSCROL_ADDR)) | VRAM_W;
 
@@ -43,10 +43,6 @@ const VDP_COMMAND vdpptr_scroll = VDPPTR((_BLIB_HSCROL_ADDR)) | VRAM_W;
 */
 __attribute__((noreturn)) void main()
 {
-
-	spr_funcs[0] = null_func;
-	spr_funcs[1] = null_func;
-
 	BLIB_SPR_JMPTBL_PTR = spr_funcs;
 
 	sprobj_ship.enable = true;

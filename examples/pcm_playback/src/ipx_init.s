@@ -12,7 +12,7 @@ ori #0x700,sr
 
 // we include the MMD loader here, which will copy the entire IPX to its final
 // destination in Work RAM
-#include <main/mmd_exec.s>
+#include <main/init_mmd.s>
 
 // After the MMD loader does it's thing, it will jump to a function called 
 // main. We define this in ipx.c and go from there.

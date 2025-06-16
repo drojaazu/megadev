@@ -1,7 +1,7 @@
 #include <main/bootlib.h>
 #include <main/gate_array.h>
 #include <main/memmap.h>
-#include <main/mmd_exec.h>
+#include <main/init_mmd.h>
 #include <main/vdp.h>
 #include <system.h>
 #include <types.h>
@@ -112,14 +112,14 @@ void vint_ex()
 	blib_copy_sprlist();
 }
 
-// At this point, the full IPX binary has been copies to Work RAM and all
+// At this point, the full IPX binary has been copied to Work RAM and all
 // traces of the security code and tiny IP are gone. We can now get on with
 // actually useful game code
 void main()
 {
 
 	// repoint the VINT vector to the boot rom library version
-	MLEVEL6_VECTOR = (void *(*) ) _BLIB_VINT_HANDLER;
+	//MLEVEL6_VECTOR = (void *(*) ) _BLIB_VINT_HANDLER;
 	*BLIB_VINT_EX_PTR = vint_ex;
 
 	// don't forget, we disabled interrupts earlier in the IPX (ipx_init.s)
@@ -172,11 +172,15 @@ void main()
 			__asm__("nop");
 		} while (*GA_COMSTAT0 != 0);
 
-		// Sub CPU side work is complete and the MMD should now be in 2M Word RAM
-		// Run it!
-		mmd_exec();
+		wait_2m();
 
-		// module has exited and program_mode was updated
+		// Sub CPU side work is complete and the MMD should now be in 2M Word RAM
+		// init_mmd() sets things up based on the MMD header then returns a pointer
+		// to main() in the module, which we'll call as a function pointer
+		void const (*mmd_main)() = init_mmd();
+		mmd_main();
+
+		// module has exited and global_mode was updated
 		// Clear the tiles on the screen and prepare the next iteration
 		blib_clear_tables();
 

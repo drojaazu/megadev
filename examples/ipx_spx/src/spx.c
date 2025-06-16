@@ -13,6 +13,7 @@ char const * const filenames[] = {"EX1.MMD;1", "EX2.MMD;1", "EX3.MMD;1"};
 // of the code, since we jump to where we expect it to be in memory
 __attribute__((section(".init"))) void main()
 {
+	*GA_COMSTAT0 = 0;
 	register u16 cmd0, cmd1;
 	do
 	{
@@ -33,6 +34,7 @@ __attribute__((section(".init"))) void main()
 			// load MMD
 			case 1:
 				load_file(ACC_OP_LOAD_CDC, filenames[cmd1], (u8 *) _WRDRAM_2M);
+				__asm__(".global test_label2\ntest_label2:");
 				grant_2m();
 				if (access_op_result != RESULT_OK)
 				{
@@ -52,18 +54,21 @@ __attribute__((section(".init"))) void main()
 		}
 
 		// not reaching here?
-		__asm__(".global test_label\ntest_label:");
+		__asm__(".global test_label3\ntest_label3:");
 		*GA_COMSTAT0 = *GA_COMCMD0;
 		do
 		{
+			__asm__("nop");
 			cmd0 = *GA_COMCMD0;
 		} while (cmd0 != 0);
 
 		do
 		{
+			__asm__("nop");
 			cmd0 = *GA_COMCMD0;
 		} while (cmd0 != 0);
 
+		__asm__(".global test_label3\ntest_label4:");
 		*GA_COMSTAT0 = 0;
 
 	} while (1);

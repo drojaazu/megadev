@@ -7,10 +7,16 @@
 .section .init
 
 // disable interrupts while we get things copied
-// be sure to re-enable them in main()!
+// **be sure to re-enable them in main()!**
 ori #0x700,sr
 
-#include <main/mmd_exec.s>
+jbsr INIT_MMD
+jbsr INIT_DATA
+// jump to entry
+jmp (a0)
+
+#include <init_data.s>
+#include <main/init_mmd.s>
 
 .section .text
 

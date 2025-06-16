@@ -13,7 +13,7 @@
 #include "mmd_layout.s"
 
 ip_entry:
-  // First, disable all interrupts while we get things set up
+  // First, disable all interrupts while we do some basic init
   ori #0x700,sr
 
   // clear ram
@@ -23,35 +23,38 @@ ip_entry:
 0:move.l d0, (a0)+
   dbra d7, 0b
 
-  move.l	#_BLIB_VINT_HANDLER, (_MLEVEL6 + 2)
+  
+  // disable VDP display and set Mega Drive video mode
+  move.w #(_VDPREG_MODE2 | 0x44), (_VDP_CTRL)
 
-  jbsr _BLIB_LOAD_VDPREGS_DEFAULT
+  // set palette entry 0 (background) to black
+  move.l #0xC0000000, (_VDP_CTRL)
+  move.w #0x0000, (_VDP_DATA)
 
+  // clear out VRAM
+  // (note: this does not clear CRAM!)
+	// This is a Boot ROM library call that makes use of the VDP register cache
+	// Even if you don't plan to use the Boot ROM library, this call is safe
+	// to use here as the memory for the register cache is not yet in use
   jbsr _BLIB_CLEAR_VRAM
 
-  jbsr _BLIB_LOAD_FONT_DEFAULTS
-  
-  // The font uses palette entry #1, so we'll manually set that to white
-  move.l #0xC0020000, (_VDP_CTRL)
-  move.w #0x0EEE, (_VDP_DATA)
+  // point the VINT vector to the simple one within the Boot Library
+  move.l	#_BLIB_VINT_HANDLER, (_MLEVEL6 + 2)
 
   // And finally enable the display
   jbsr _BLIB_VDP_DISP_ENABLE
 
+	// our example IP here is super tiny, and while it should remain quite
+	// small, you could put a very simple message/graphic here to indicate
+	// the game is starting up
+
+  // clear the Gate Array communication registers
   jbsr _BLIB_CLEAR_COMM
 
-  // and restore interrupts
+  // restore interrupts to allow the cdrom data to flow
   andi #0xF8FF,sr
 
-  move.w #0, (global_mode)
-
-prep_load:
-  movea.l (0), sp  // Reset the stack since we're "starting fresh"
-
-  jbsr _BLIB_CLEAR_TABLES // clear the screen
-
   GRANT_2M  // give Word RAM to Sub
-
   move.w	#1, _GAREG_COMCMD0	//send the command to sub
 	move.w  (global_mode), _GAREG_COMCMD1  // send the param to sub
 0:tst.w		_GAREG_COMSTAT0			//wait for response on status reg #0
@@ -59,12 +62,18 @@ prep_load:
 	move.w	#0, _GAREG_COMCMD0	//send idle command
 1:tst.w		_GAREG_COMSTAT0			//wait for response (wait for 0 from Sub)
 	bne			1b
+  WAIT_2M
 
-  jbsr MMD_EXEC  // launch the loaded module
-  bra prep_load
+	// Reset the stack since we're starting fresh
+	movea.l (0), sp
 
-// Include the code for the MMD loader here
-#include "main/mmd_exec.s"
+	// the initial module is a special case, so we won't use the standard MMD loader
+	// (doing so would cause the mmd loader code to be overwritten as the
+	// ipx is copied into work ram (where we are now) and everything would
+	// fall apart)
+	// instead, we'll jump right into the IPX entry currently in Word RAM
+	// which will copy itself into Work RAM
+	jbra _WRDRAM + 0x100
 
 .section .bss
 .global global_mode
