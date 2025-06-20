@@ -69,6 +69,6 @@ disc/ipx.mmd: \
 disc/spx.smd: \
 	spx_layout.s \
 	spx.c \
-	spx_pcm.s \
+	sub/pcm.s \
 	pcmplay_v2.s \
 	$(BUILD_PATH)/sp.bin

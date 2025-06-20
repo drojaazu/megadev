@@ -2,7 +2,7 @@
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
  * @file cdrom.macro.s
- * @brief CD-ROM File Access Wrapper Macros
+ * @brief CD-ROM File Access Framework Macros
  */
 
 #ifndef MEGADEV__SUB_CDROM_MACROS_H

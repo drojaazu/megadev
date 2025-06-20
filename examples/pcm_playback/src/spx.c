@@ -111,14 +111,14 @@ __attribute__((section(".init"))) void main()
 void pcm_playback(u8 * pcm_data, u32 pcm_data_size)
 {
 
-	bool pcmPutUpper = false;
+	bool pcm_put_upper = false;
 	// 32kb blocks
 	u8 pcmram_blocks = pcm_data_size / 0x8000;
 
 	// wave bank select
 	// put initial block of data into lower bank
-	u8 wb_select = 0x80;
-	for (u8 copyIter = 0; copyIter < 8; ++copyIter)
+	u8 wb_select = WAVEBANK(0);
+	for (u8 copy_iter = 0; copy_iter < 8; ++copy_iter)
 	{
 		*PCM_CTRL = wb_select;
 		u8 * pcm_ram = (u8 *) (_PCM_RAM + 1);
@@ -129,7 +129,7 @@ void pcm_playback(u8 * pcm_data, u32 pcm_data_size)
 		}
 		++wb_select;
 	}
-	pcmPutUpper = true;
+	pcm_put_upper = true;
 
 	// begin playback on lower bank
 	*PCM_CDISABLE = 0b11111110;
@@ -138,10 +138,10 @@ void pcm_playback(u8 * pcm_data, u32 pcm_data_size)
 	// wave ram block
 	for (u16 block_iter = 0; block_iter < (pcmram_blocks - 1); ++block_iter)
 	{
-		if (! pcmPutUpper)
+		if (! pcm_put_upper)
 			wb_select = 0x80;
 
-		for (u8 copyIter = 0; copyIter < 8; ++copyIter)
+		for (u8 copy_iter = 0; copy_iter < 8; ++copy_iter)
 		{
 			*PCM_CTRL = wb_select;
 			u8 * pcm_ram = (u8 *) (_PCM_RAM + 1);
@@ -153,7 +153,7 @@ void pcm_playback(u8 * pcm_data, u32 pcm_data_size)
 			++wb_select;
 		}
 
-		if (pcmPutUpper)
+		if (pcm_put_upper)
 		{
 			while (*((volatile u8 *) _PCM_PLAY_CH1_H) <= 0x7f)
 			{
@@ -169,11 +169,11 @@ void pcm_playback(u8 * pcm_data, u32 pcm_data_size)
 				__asm__("nop");
 			}
 		}
-		pcmPutUpper = ! pcmPutUpper;
+		pcm_put_upper = ! pcm_put_upper;
 	}
 
 	// wait to finish playback before returning
-	if (pcmPutUpper)
+	if (pcm_put_upper)
 	{
 		while (*((volatile u8 *) _PCM_PLAY_CH1_H) <= 0x7f)
 		{
