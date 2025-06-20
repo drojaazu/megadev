@@ -17,7 +17,7 @@ When building your project, the ISO generator uses a directory that matches the 
 
 ## CD Audio
 
-CA audio (CD-DA) is 16 bit stereo PCM data sampled at 44.1khz. Your burning software may allow you to use a variety of audio formats, but ideally your source audio should be a 16 bit stereo 44.1khz WAV file. Lossy formats such as MP3 should be avoided if possible.
+CD audio (CD-DA) is 16 bit stereo PCM data sampled at 44.1khz. Your burning software may allow you to use a variety of audio formats, but ideally your source audio should be a 16 bit stereo 44.1khz WAV file. Lossy formats such as MP3 should be avoided if possible.
 
 You cannot simply add a .WAV or .MP3 file to the filesystem and expect to have CD audio. This is because CD-DA is a different format than CD-ROM. The burning software will deal with the conversion of the audio file to the correct CD-DA data, but we must specify the track layout on the disc and for that we need a CUE sheet.
 

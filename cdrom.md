@@ -1,7 +1,7 @@
 
 # CD-ROM Access Wrapper
 
-The CD-ROM access wrapper provides a simplified method of retrieving data from disc. At a high level, it runs a loop on the Sub CPU that is "pumped" by an update call during INT2. As the access operation runs, it will pause at certain points and returns from the interrupt. It saves this break point to a pointer and work resumes from that point at the next INT2. In this way, the Sub CPU is not blocked waiting for time-consuming IO operations.
+The CD-ROM access wrapper provides a simplified method of retrieving data from disc. At a high level, it runs a loop on the Sub CPU that is "pumped" by an update call during INT2. As the access operation runs, it will pause at certain points and return from the interrupt. It saves this break point as a pointer and work resumes from that point at the next INT2. In this way, the Sub CPU is not entirely blocked waiting for time-consuming IO operations.
 
 **Please have a look at the "mod_load" example (in particular, the `sp.s` file) for a file loading example.**
 
