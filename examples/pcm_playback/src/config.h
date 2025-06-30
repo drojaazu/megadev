@@ -1,12 +1,12 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file project.h
+ * @file config.h
  * @brief Project configuration
  */
 
-#ifndef MEGADEV__PROJECT_H
-#define MEGADEV__PROJECT_H
+#ifndef MEGADEV__CONFIG_H
+#define MEGADEV__CONFIG_H
 
 #include <build.def.h>
 
@@ -14,7 +14,7 @@
  * Hardware target
  * Valid values: MEGACD, MEGADRIVE, MEGACD_MODE1
  */
-#define HW_TARGET MEGACD
+#define TARGET MEGACD
 
 /*
  * Default hardware configuration
@@ -56,7 +56,7 @@
  * when mounted on a PC
  * @note 11 bytes
  */
-#define HEADER_VOL_ID "IPX_SPX    "
+#define HEADER_VOL_ID "PCM_PLAY   "
 //                    "###########"
 
 /**
@@ -83,6 +83,7 @@
  * along with the published code then the year and month, e.g.:
  *  (C)SEGA 1994.AUG\n
  *  (C)T-76 1994.FEB\n
+ *
  * @note 16 bytes
  * @todo autogenerate the date
  */
@@ -95,7 +96,7 @@
  * @details The name of the software, in plain ASCII encoding
  * @note 48 bytes
  */
-#define HEADER_NAME_INTL "IPX SPX EXAMPLE                                 "
+#define HEADER_NAME_INTL "PCM PLAYBACK EXAMPLE                            "
 //                       "################################################"
 
 /**
@@ -114,7 +115,7 @@
  * space. The spacing bar will not work for Japanese characters.
  *
  */
-#define HEADER_NAME_JP "IPX SPX EXAMPLE                                 "
+#define HEADER_NAME_JP "PCM PLAYBACK EXAMPLE                            "
 //                     "################################################"
 
 /**

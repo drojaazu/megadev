@@ -9,11 +9,11 @@
 #define MEGADEV__BUILD_H
 
 #include "build.def.h"
-// project.h should be located in the project source tree
-#include "project.h"
+// config.h should be located in the project source tree
+#include "config.h"
 
-#ifndef HW_TARGET
-#error HW_TARGET not defined!
+#ifndef TARGET
+#error TARGET not defined!
 #endif
 
 #ifndef REGION

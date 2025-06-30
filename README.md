@@ -42,7 +42,7 @@ The make scripts assume the m68k cross compiler tools are in your path variable.
 
 
 
-To start a new project copy the `new_project` directory from within the Megadev location to you project directory. It contains three files: a makefile,  `project.h` and `ip.s`. Modify the makefile as you'd like to specify subdirectories and compilation options. Modify `project.h` as you'd like to reflect your project information, being careful to maintain the required text lengths. `ip.s` is a minimal IP, your program entry. Afterwards, do `make init` in the project directory to create the directories, and move `project.h` and `ip.s` to the source directory. You are ready to begin development.
+To start a new project copy the `new_project` directory from within the Megadev location to you project directory. It contains three files: a makefile,  `config.h` and `ip.s`. Modify the makefile as you'd like to specify subdirectories and compilation options. Modify `config.h` as you'd like to reflect your project information, being careful to maintain the required text lengths. `ip.s` is a minimal IP, your program entry. Afterwards, do `make init` in the project directory to create the directories, and move `config.h` and `ip.s` to the source directory. You are ready to begin development.
 
 If you have not already done so, you'll need to familiarize yourself with the official Mega CD documentation which is readily available online.
 

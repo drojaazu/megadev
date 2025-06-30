@@ -9,7 +9,7 @@
 #ifndef MEGADEV__BUILD_DEF_H
 #define MEGADEV__BUILD_DEF_H
 
-// For use with the HW_TARGET definition
+// For use with the TARGET definition
 #define MEGADRIVE 0
 #define MEGACD 1
 #define MEGACD_MODE1 2

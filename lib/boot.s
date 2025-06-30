@@ -8,7 +8,7 @@
  * Do not change the order of the defines in this file!
  */
 
-#include "project.h"
+#include "config.h"
 
 DiscHeader:
 
@@ -71,7 +71,7 @@ HardwareType:  .ascii HEADER_HARDWARE
 Copyright:     .ascii HEADER_COPYRIGHT
 TitleDomestic: .ascii HEADER_NAME_JP
 TitleIntl:     .ascii HEADER_NAME_INTL
-DiscID:        .ascii HEADER_SOFT_ID
+SoftwareID:    .ascii HEADER_SOFT_ID
 IO:            .ascii "J               "
                .ascii "                "
                .ascii "                "

@@ -1,12 +1,12 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file project.h
+ * @file config.h
  * @brief Project configuration
  */
 
-#ifndef MEGADEV__PROJECT_H
-#define MEGADEV__PROJECT_H
+#ifndef MEGADEV__CONFIG_H
+#define MEGADEV__CONFIG_H
 
 #include <build.def.h>
 
@@ -14,7 +14,7 @@
  * Hardware target
  * Valid values: MEGACD, MEGADRIVE, MEGACD_MODE1
  */
-#define HW_TARGET MEGACD
+#define TARGET MEGACD
 
 /*
  * Default hardware configuration
