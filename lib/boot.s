@@ -11,6 +11,20 @@
 #include "project.h"
 
 DiscHeader:
+
+/* https://forums.sonicretro.org/threads/sega-cd.41344/ */
+
+/*
+https://www.retrodev.com/segacd.html
+"The BIOS expects to find one of the following 16byte identifiers at the very beginning of the CD:
+  'SEGADISC        '
+  'SEGABOOTDISC    '
+  'SEGADATADISC    '
+  'SEGADISCSYSTEM  '
+ The boot process is effected by which one is used, but I'm not exactly sure what the difference is at the moment.
+ I do know that it only performs the security check if SEGABOOTDISC or SEGADISCSYSTEM are used, and it would appear
+ that SEGADISC and SEGADATADISC are not bootable identifiers."
+*/
 DiscType: .ascii "SEGADISCSYSTEM  "		/*Disc Type (must be one of the allowed values)*/
 
 /**
@@ -46,18 +60,10 @@ SP_OFFSET:   .long 0x1000
 SP_SIZE:     .long _sp_end-_sp_begin
 SP_ENTRY:    .long 0
 SP_WORKRAM:  .long 0
-.ascii	"                "
-.ascii	"                "
-.ascii	"                "
-.ascii	"                "
-.ascii	"                "
-.ascii	"                "
-.ascii	"                "
-.ascii	"                "
-.ascii	"                "
-.ascii	"                "
-.ascii	"                "
-		
+.rept 11
+.ascii       "                "
+.endr
+
 # =======================================================================================
 #  Game Header
 # =======================================================================================	

@@ -1,7 +1,8 @@
 # [ M E G A D E V ]
+
 *AV INTELLIGENT TERMINAL WITH OPTICAL DISC DRIVE*
 
-Megadev is a Sega Mega CD devkit in C and 68k asm using a modern GNU build toolchain.
+Megadev is a Sega Mega Drive and Mega CD devkit in C and M68000 asm using modern GNU build tools.
 
 ## Warning - Beta Version
 
@@ -37,19 +38,9 @@ Be sure to include ```--target=m68k-elf``` when running the configure script for
 
 The make scripts assume the m68k cross compiler tools are in your path variable. If not, you will need to manually specify the paths of the tools in the global makefil.
 
-### Toolchain Manuals
-
-GNU assembler (as): <https://sourceware.org/binutils/docs/as/index.html>
-
-GNU linker (ld): <https://sourceware.org/binutils/docs/ld/index.html>
-
-GNU debugger (gdb): <https://sourceware.org/gdb/current/onlinedocs/gdb/>
-
-GNU compiler (gcc): <https://gcc.gnu.org/onlinedocs/gcc/>
-
 ## Getting Started
 
-Clone the repo and place it in a location such as /opt/megadev. In the root of the directory is `megadev.make` which will be used as a system-wide base for all projects. Edit the settings in its top section as necessary to match your build environment.
+
 
 To start a new project copy the `new_project` directory from within the Megadev location to you project directory. It contains three files: a makefile,  `project.h` and `ip.s`. Modify the makefile as you'd like to specify subdirectories and compilation options. Modify `project.h` as you'd like to reflect your project information, being careful to maintain the required text lengths. `ip.s` is a minimal IP, your program entry. Afterwards, do `make init` in the project directory to create the directories, and move `project.h` and `ip.s` to the source directory. You are ready to begin development.
 
