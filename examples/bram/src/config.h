@@ -24,19 +24,13 @@
  * See README.md for more info on these settings
  */
 // Valid values: US, EU, JP
-#ifndef REGION
 #define REGION US
-#endif
 
 // Valid values: NTSC, PAL
-#ifndef VIDEO
 #define VIDEO NTSC
-#endif
 
 // Valid values: VRAM_64K, VRAM_128K
-#ifndef VRAM_SIZE
 #define VRAM_SIZE VRAM_64K
-#endif
 
 /*
  * Header settings
@@ -56,23 +50,8 @@
  * when mounted on a PC
  * @note 11 bytes
  */
-#define HEADER_VOL_ID "MOD_LOAD   "
+#define HEADER_VOL_ID "BRAM       "
 //                    "###########"
-
-/**
- * @def HEADER_HARDWARE
- * @brief Target hardware
- * @details
- * This line indicates the hardware on which the game is meant to
- * run. This value will be automatically generated based on the
- * region set above and, in general, should not be changed as it may
- * be checked for the presence of "SEGA" at the start of the string.
- * However, you can override it below if you know what you're doing.
- *
- * @note 16 bytes
- */
-// #define HEADER_HARDWARE "SEGA MEGA DRIVE "
-//                      "################"
 
 /**
  * @def HEADER_COPYRIGHT
@@ -95,7 +74,7 @@
  * @details The name of the software, in plain ASCII encoding
  * @note 48 bytes
  */
-#define HEADER_NAME_INTL "MOD LOAD EXAMPLE                                "
+#define HEADER_NAME_INTL "BRAM USAGE EXAMPLE                              "
 //                       "################################################"
 
 /**
@@ -114,7 +93,7 @@
  * space. The spacing bar will not work for Japanese characters.
  *
  */
-#define HEADER_NAME_JP "MOD LOAD EXAMPLE                                "
+#define HEADER_NAME_JP "BRAM USAGE EXAMPLE                              "
 //                     "################################################"
 
 /**

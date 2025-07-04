@@ -32,4 +32,4 @@ mmd_init:
 // we'll also go ahead and throw in the include of printval into .text
 // here
 #include <printval.s>
-#include <main/exception.s>
+#include <main/cd_exception.s>

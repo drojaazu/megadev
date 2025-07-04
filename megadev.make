@@ -61,18 +61,17 @@ AS_INC:=-Wa,-I$(SRC_PATH) -Wa,-I$(LIB_PATH) -Wa,-I$(RES_PATH) -Wa,-I$(BUILD_PATH
 # because it is useful for inline asm. However, "-Wa,--bitwise-or" will
 # cause issues with the GCC created asm, so we split that off and only use it
 # with asm source files
-CC_FLAGS:= \
+CC_FLAGS+= \
 	-m68000 \
 	-imacros build.h \
 	-DPROJECT_NAME=$(PROJECT_NAME) \
 	$(addprefix -D, $(HW_CFG)) \
 	$(if $(DEBUG), -DDEBUG) \
-	$(OPT_FLAGS) \
 	-fno-builtin -fomit-frame-pointer -fno-gcse \
 	-Wall -Wextra -Wno-main -Wa,--register-prefix-optional
-AS_FLAGS:= \
+AS_FLAGS+= \
 	-Wa,--bitwise-or
-LD_FLAGS:= \
+LD_FLAGS+= \
 	-nostdlib -z noexecstack
 
 define msg_info
@@ -174,7 +173,7 @@ $(BUILD_PATH)/sp.bin.elf: $(BUILD_PATH)/sp_header.s.o $(BUILD_PATH)/sp.s.o
 
 $(BUILD_PATH)/boot.bin: $(BUILD_PATH)/ip.bin $(BUILD_PATH)/sp.bin
 	$(call msg_info,Generating boot sector...)
-	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $(LIB_PATH)/boot.s -o$@
+	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $(LIB_PATH)/cd_boot.s -o$@
 	@$(OBJCPY) -O binary $@
 
 # TODO make the ISO settings user configurable

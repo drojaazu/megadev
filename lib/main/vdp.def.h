@@ -1290,4 +1290,27 @@
 #define COLOR_GREEN 0b000011100000
 #define COLOR_RED 0b000000001110
 
+
+/**
+ * @def VRAM_AT
+ * @brief VRAM address for the given tile index
+ * (assuming tile data begins at 0 in VRAM)
+ */
+#define VRAM_AT(chridx) ((chridx) << 5)
+
+/**
+ * @def TILE_AT
+ * @brief Tile index of the specified VRAM address
+ * (assuming tile data begins at 0 in VRAM)
+ */
+#define TILE_AT(vram_addr) ((vram_addr) >> 5)
+
+/**
+ * @def VDP_COMMAND
+ * @brief Converts a 16 bit VRAM address into VDP format at compile time if
+ * possible
+ */
+#define VDPPTR(addr) \
+	(__builtin_constant_p(addr) ? (unsigned) ((((addr) &0x3FFF) << 16) + (((addr) &0xC000) >> 14)) : to_vdpptr(addr))
+	
 #endif

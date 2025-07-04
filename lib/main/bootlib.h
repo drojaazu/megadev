@@ -405,7 +405,7 @@ typedef struct Palette
  * @note
  * This needs to be manually updated each time the register is changed!!
  * @note
- * Use the @ref PlaneWidthTiles enum to make it semantically clear what
+ * Use the @ref PlaneWidth enum to make it semantically clear what
  * the width is in tiles
  */
 #define BLIB_PLANE_WIDTH (*((u16 *) _BLIB_PLANE_WIDTH))

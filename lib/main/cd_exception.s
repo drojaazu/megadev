@@ -1,6 +1,6 @@
 /**
- * @file
- * @brief Simple exception handler
+ * @file cd_exception.s
+ * @brief Simple exception handler for Mega CD games
  * @details Intended for the Main CPU
  *
  * @note printval.s is expected to be compiled into the final assembly in which

@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file boot.s
+ * @file cd_boot.s
  * @brief Mega CD boot sector (header and IP/SP)
  * 
  * @warning
@@ -67,18 +67,7 @@ SP_WORKRAM:  .long 0
 # =======================================================================================
 #  Game Header
 # =======================================================================================	
-HardwareType:  .ascii HEADER_HARDWARE
-Copyright:     .ascii HEADER_COPYRIGHT
-TitleDomestic: .ascii HEADER_NAME_JP
-TitleIntl:     .ascii HEADER_NAME_INTL
-SoftwareID:    .ascii HEADER_SOFT_ID
-IO:            .ascii "J               "
-               .ascii "                "
-               .ascii "                "
-               .ascii "                "
-               .ascii "                "
-               .ascii "                "
-Region:        .ascii HEADER_REGION
+#include "cd_header.s"
 
 // if all the above text is correct, we should be at 0x200 anyway
 .org 0x200

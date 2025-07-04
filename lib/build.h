@@ -13,7 +13,15 @@
 #include "config.h"
 
 #ifndef TARGET
-#error TARGET not defined!
+#error TARGET not defined! Check your config.h file.
+#endif
+
+#ifndef HEADER_NAME_INTL
+#error HEADER_NAME_INTL not defined! Check your config.h file.
+#endif
+
+#ifndef HEADER_NAME_JP
+#define HEADER_NAME_JP HEADER_NAME_INTL
 #endif
 
 #ifndef REGION
@@ -25,7 +33,7 @@
 #endif
 
 #ifndef VRAM_SIZE
-#define VRAM_64K
+#define VRAM_SIZE VRAM_64K
 #endif
 
 #ifndef HEADER_HARDWARE

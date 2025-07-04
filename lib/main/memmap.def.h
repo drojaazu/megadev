@@ -94,8 +94,8 @@
 #define _MNOCOD0 0xfffd90 // Line 1010
 #define _MNOCOD1 0xfffd96 // Line 1111
 #define _MSPVERR 0xfffd9c // Priv. Violation
-#define _MTRACE 0xfffda2	// Trace
+#define _MTRACE  0xfffda2	// Trace
 #define _VINT_EX 0xfffda8
-#define _MBURAM 0xfffdae
+#define _MBURAM  0xfffdae
 
 #endif

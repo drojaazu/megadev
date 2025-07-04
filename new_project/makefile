@@ -26,9 +26,6 @@ OUT_PATH:=out
 # Here you can add any additional compiler flags
 OPT_FLAGS?=-O1 -fconserve-stack
 
-# Z80 CPU code path
-# Z80 building is not currently supported... someday!
-#Z80_SRC_PATH:=z80_src
 
 # Path to the Megadev directory
 MEGADEV_PATH?=/opt/megadev

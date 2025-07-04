@@ -22,19 +22,13 @@
  * See README.md for more info on these settings
  */
 // Valid values: US, EU, JP
-#ifndef REGION
 #define REGION US
-#endif
 
 // Valid values: NTSC, PAL
-#ifndef VIDEO
 #define VIDEO NTSC
-#endif
 
 // Valid values: VRAM_64K, VRAM_128K
-#ifndef VRAM_SIZE
 #define VRAM_SIZE VRAM_64K
-#endif
 
 /*
  * Header settings
@@ -46,21 +40,6 @@
  * text fits, and unused space should be filled with spaces.                   *
  *******************************************************************************
  */
-
-/**
- * @def HEADER_HARDWARE
- * @brief Target hardware
- * @details
- * This line indicates the hardware on which the game is meant to
- * run. This value will be automatically generated based on the
- * region set above and, in general, should not be changed as it may
- * be checked for the presence of "SEGA" at the start of the string.
- * However, you can override it below if you know what you're doing.
- *
- * @note 16 bytes
- */
-// #define HEADER_HARDWARE "SEGA MEGA DRIVE "
-//                      "################"
 
 /**
  * @def HEADER_VOL_ID

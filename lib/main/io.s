@@ -2,52 +2,53 @@
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
  * @file io.s
- * @brief IO utilities
+ * @brief I/O utilities
  */
 
 #ifndef MEGADEV__MAIN_IO_S
 #define MEGADEV__MAIN_IO_S
 
+#include "main/io.def.h"
 
 /**
- * @def init_joypads
+ * @macro INIT_JOYPADS
  * @brief Sets up Player 1 and 2 terminals for standard reads
  * @desc Sets TH pin to write mode for Control port for each normally used terminal. Note that this does not
  *       do any work on the third terminal on old MD models, normally used for serial comm.
  * @clobber a0
  */
-SUB init_joypads
-  // set TH pin to enable write
+.macro INIT_JOYPADS
+  /* set TH pin to enable write */
   move.b  #CTRL_PC6, (_IO_CTRL1)
   move.b  #CTRL_PC6, (_IO_CTRL2)
-  rts
+.endm
 
 /**
- * @def read_input_joypad
+ * @macro READ_INPUT_JOYPAD
  * @brief Reads controller input from a 3 button joypad
  * @in A0 the Data Port for the desired controller terminal
  * @out D0 byte with the state for each input, in the form: SACBRLDU
  * @clobber d0-d1
  */
-SUB read_input_joypad
+.macro READ_INPUT_JOYPAD
   moveq   #CTRL_PC6, d0
-  // set TH pin to begin read sequence
-  move.b  #CTRL_PC6, (a0).l
+  /* set TH pin to begin read sequence */
+  move.b  #CTRL_PC6, (a0)
   nop
   nop
-  move.b  (a0).l, d0
-  // d0 = 00CBRLDU
+  move.b  (a0), d0
+  /* d0 = 00CBRLDU */
   andi.b  #0x3F, d0
   moveq   #0,d1
-  // clear TH pin for next read
-  move.b  #0, (a0).l
+  /* clear TH pin for next read */
+  move.b  #0, (a0)
   nop
   nop
-  move.b  (a0).l,d1
-  // d1 = 00SA0000
+  move.b  (a0),d1
+  /* d1 = 00SA0000 */
   andi.b  #0x30, d1
   lsl.b   #2, d1
   or.b    d1, d0
-  rts
+.endm
 
 #endif

@@ -317,6 +317,14 @@ There are some strategies we can employ to help mitigate the risk of an overflow
 
 # Megadev Concepts & Utilities
 
+## Filename Schema
+
+files in main/ for main CPU
+files in sub/ for sub CPU`
+.macros.s
+
+.def.h
+
 ## Project Structure
 discuss the makefile and using ips_spx as a skeleton
 

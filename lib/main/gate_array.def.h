@@ -111,10 +111,10 @@
  * \n 0: 2M
  * \n 1: 1M
  * @param DMNA Main CPU will not access Word RAM
- * \n \em In 2M mode:
+ * \n\em In 2M mode:
  * \n [write] 0: N/A / 1: Return Word RAM to Sub CPU
  * \n [read] 0: Return Word RAM in process / 1: Return Word RAM complete
- * \n \em In 1M mode:
+ * \n\em In 1M mode:
  * \n [write] 0: Bank swap in progress / 1: Bank swap complete
  * @param RET Give Word RAM control to Main CPU
  *

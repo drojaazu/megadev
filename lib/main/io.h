@@ -2,13 +2,13 @@
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
  * @file io.h
- * @brief C wrappers for I/O registers
+ * @brief I/O utilities
  */
 
-#ifndef MEGADEV__IO_H
-#define MEGADEV__IO_H
+#ifndef MEGADEV__MAIN_IO_H
+#define MEGADEV__MAIN_IO_H
 
-#include "main/io.def.h"
+#include <main/io.def.h>
 #include "types.h"
 
 typedef u8 volatile * IO_REGISTER;
@@ -101,13 +101,14 @@ static inline void init_joypads()
 	
 	__asm__(
 		"\
-		move.b  #%c0, (%c1) \n \
-		move.b  #%c0, (%c2) \n \
+		move.b  #%c0, (%c1) \n\
+		move.b  #%c0, (%c2) \n\
 		"
 		: 
 		: "i"(ctrl_pc6), "i"(io_ctrl1), "i"(io_ctrl2)
 		: );
 }
+
 
 static inline u8 read_input_joypad(IO_REGISTER data_port)
 {
@@ -117,20 +118,20 @@ static inline u8 read_input_joypad(IO_REGISTER data_port)
 	
 	__asm__(
 		"\
-		moveq	#%c2, d0 \n \
-		move.b	#%c2, (a0) \n \
-		nop \n \
-		nop \n \
-		move.b	(a0), d0 \n \
-		andi.b	#0x3F, d0 \n \
-		moveq	#0,d1 \n \
-		move.b	#0, (a0) \n \
-		nop \n \
-		nop \n \
-		move.b	(a0),d1 \n \
-		andi.b	#0x30, d1 \n \
-		lsl.b	#2, d1 \n \
-		or.b	d1, d0 \n \
+		moveq	#%c2, d0 \n\
+		move.b	#%c2, (a0) \n\
+		nop \n\
+		nop \n\
+		move.b	(a0), d0 \n\
+		andi.b	#0x3F, d0 \n\
+		moveq	#0,d1 \n\
+		move.b	#0, (a0) \n\
+		nop \n\
+		nop \n\
+		move.b	(a0),d1 \n\
+		andi.b	#0x30, d1 \n\
+		lsl.b	#2, d1 \n\
+		or.b	d1, d0 \n\
 		"
 		: "=d"(D0)
 		: "a"(A0), "i"(ctrl_pc6)
@@ -138,5 +139,6 @@ static inline u8 read_input_joypad(IO_REGISTER data_port)
 	
 	return D0;
 }
+
 
 #endif

@@ -60,29 +60,14 @@
 //                    "###########"
 
 /**
- * @def HEADER_HARDWARE
- * @brief Target hardware
- * @details
- * This line indicates the hardware on which the game is meant to
- * run. This value will be automatically generated based on the
- * region set above and, in general, should not be changed as it may
- * be checked for the presence of "SEGA" at the start of the string.
- * However, you can override it below if you know what you're doing.
- *
- * @note 16 bytes
- */
-// #define HEADER_HARDWARE "SEGA MEGA DRIVE "
-//                      "################"
-
-/**
  * @def HEADER_COPYRIGHT
  * @brief Publisher copyright & date
  * @details
  * This line indicates the publisher name or ID and the build date
  * In retail games from the time, it was commonly written with (C)
  * along with the published code then the year and month, e.g.:
- *  (C)SEGA 1994.AUG\n
- *  (C)T-76 1994.FEB\n
+ *  (C)SEGA 1994.AUG
+ *  (C)T-76 1994.FEB
  * @note 16 bytes
  * @todo autogenerate the date
  */

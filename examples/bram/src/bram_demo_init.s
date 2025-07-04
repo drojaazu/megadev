@@ -10,15 +10,25 @@
 // **be sure to re-enable them in main()!**
 ori #0x700,sr
 
-jbsr INIT_MMD
-jbsr INIT_DATA
-// jump to entry
+// This is a little bit tricky, because INIT_MMD and INIT_DATA will be part
+// of the IPX as calls available to later loaded modules, which means we
+// need them to global symbols. When linking, those global symbols will
+// be positioned in the final destination within Work RAM... but at this point, we're
+// not in Work RAM yet, we're still running from Word RAM - we need to call
+// INIT_MMD to get things moved! So we create a couple local labels and
+// call to those local labels instead.
+jbsr mmd_init
+jbsr data_init
+
+// The MMD loader returns a pointer to main() in A0
 jmp (a0)
 
+data_init:
 #include <init_data.s>
+mmd_init:
 #include <main/init_mmd.s>
 
 .section .text
-
+// we'll also go ahead and throw in a couple of utilities here
 #include <printval.s>
-#include <main/exception.s>
+#include <main/cd_exception.s>

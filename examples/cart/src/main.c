@@ -11,8 +11,8 @@ volatile u8 p2_hold, p2_single, p2_prev;
 
 void update_inputs()
 {
-	p1_hold = ~read_input_joypad(IO_DATA1);
-	p2_hold = ~read_input_joypad(IO_DATA2);
+	p1_hold = (read_input_joypad(IO_DATA1));
+	p2_hold = (read_input_joypad(IO_DATA2));
 	if (p1_hold == p1_prev)
 		p1_single = 0;
 	else
@@ -112,9 +112,9 @@ _VDPREG_WIN_HPOS,
 _VDPREG_WIN_VPOS
 };
 
-#define plane_xy(x, y) (VDPPTR(NMT_POS_PLANE_32(x, y, PLANE_A_ADDR)) | VRAM_W)
+#define plane_xy(x, y) (VDPPTR(NMT_POS(x, y, Width32) + PLANE_A_ADDR) | VRAM_W)
 
-void print(char const * string, VDP_ADDR pos)
+void print(char const * string, VDP_ADDRESS pos)
 {
 	VDP_CTRL_32 = pos;
 	while(*string != 0)
@@ -145,6 +145,7 @@ void main()
 	init_joypads();
 	vdp_regs[1] |= VDP_DMA_ENABLE;
 	VDP_CTRL = vdp_regs[1];
+	
 	vdp_dma_transfer(res_basic_font, VDPPTR(VRAM_AT(0x20)), (res_basic_font_size << 1));
 	vdp_regs[1] &= ~VDP_DMA_ENABLE;
 	VDP_CTRL = vdp_regs[1];

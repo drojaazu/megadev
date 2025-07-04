@@ -10,15 +10,8 @@ PROJECT_NAME=helloworld
 ## (which should be the root of your project directory)
 
 # Source code path
+# (relative to the location of the project makefile)
 SRC_PATH:=src
-
-# Disc staging path
-# This is the staging directory for fiels that will appear on the final iso for
-# each Mega CD disc. Inside this path will be a subdirectory matching the stem of
-# each .iso.def in your project. Any files in these subdirectories will be included
-# in the iso image.
-# (This option is ignored for cartridge ROM projects.)
-DISCS_PATH:=discs
 
 # Resources path
 # This is where graphics, audio and any other non-executable content should be
@@ -30,15 +23,19 @@ RES_PATH:=res
 # symbol maps
 BUILD_PATH:=build
 
-# Disc paths
-# A space-delimited list of subdiorectories representing the content for each
-# disc in your project
-# This is used by the `init` rule to create directories before building
-DISC_PATHS:=disc
+# Output path
+# This will be the location of the final output Mega CD ISO and MD ROMs
+OUT_PATH:=out
 
-# Optional compiler flags
-# Here you can add any additional compiler flags
-OPT_FLAGS?=-O1 -fconserve-stack
+# Additional C compiler flags
+CC_FLAGS:=-O1 -fconserve-stack
+
+# Additional assembler flags
+AS_FLAGS:=
+
+# Additional linker flags
+LD_FLAGS:=
+
 
 # Path to the Megadev directory
 MEGADEV_PATH?=/opt/megadev

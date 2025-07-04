@@ -10,12 +10,18 @@
 
 #include "main/io.def.h"
 #include "types.h"
+#include "system.h"
+#include <main/z80.h>
 
 /**
  * @fn init_ext
  * @brief Initialize IO port for serial communication
  */
-extern void init_ext();
+static inline void init_ext_port()
+{
+	disable_interrupts();
+	enable_interrupts();
+}
 
 /**
  * @fn ext_rx_c

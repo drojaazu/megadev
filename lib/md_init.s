@@ -49,7 +49,7 @@ skip_init:
   // initialize Z80 with a dummy program
   lea     z80_dummy_program, a0
   move.w  #(z80_dummy_program_end - z80_dummy_program - 1), d7
-  jbsr init_z80
+  Z80_INIT
   enable_interrupts
   jbra main
 

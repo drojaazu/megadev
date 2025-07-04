@@ -39,7 +39,7 @@
  * @fn init_ext
  * @brief Initialize IO port for serial communication
  */
-SUB init_ext
+.macro INIT_EXT_PORT
   disable_interrupts
   Z80_DO_BUSREQ
   
@@ -49,7 +49,7 @@ SUB init_ext
   
   Z80_DO_BUSRELEASE
   enable_interrupts
-  rts
+.endm
 
 /**
  * @fn ext_rx

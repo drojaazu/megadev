@@ -12,16 +12,16 @@
 #include "types.h"
 
 /**
- * @typedef VDP_ADDR
+ * @typedef VDP_ADDRESS
  * @brief Semantic typedef for a VRAM address *without* VDP operation, formatted for
  * use on the VDP Control port (32-bit).
  *
  */
-typedef u32 VDP_ADDR;
+typedef u32 VDP_ADDRESS;
 
 /**
  * @typedef VDP_COMMAND
- * @brief Semantic typedef for a VRAM address and VDP operation, formatted for
+ * @brief Semantic typedef for a VRAM address *with* VDP operation, formatted for
  * use on the VDP Control port (32-bit).
  *
  */
@@ -121,126 +121,38 @@ typedef union SpriteEx
 #define VDP_HVCOUNTER (*((u16 volatile *) _VDP_HVCOUNTER))
 
 /**
- * @enum PlaneWidthTiles
+ * @enum PlaneWidth
  * @brief Helper for working with plane widths specified in tiles by specifying width in bytes
+ * @note Use with NMT_POS helper below
  */
-typedef enum PlaneWidthTiles
+typedef enum PlaneWidth
 {
 	Width32 = 64,
 	Width64 = 128,
 	Width128 = 256
-} PlaneWidthTiles;
+} PlaneWidth;
 
 /**
  * @def NMT_POS
- * @brief Generates the nametable offset for a tile at pos x/y, determining
- * the plane width dynamically (calculated at runtime)
+ * @brief Generates the nametable offset for a tile at pos x/y for a given plane width
  * @param x horizontal position in the tilemap
  * @param y vertical position in the tilemap
+ * @param width width of the the plane (in bytes, so tile width * 2)
  */
-#define NMT_POS(x, y) ((y * (BLIB_PLANE_WIDTH)) + (x << 1))
-
-/**
- * @def NMT_POS_32
- * @brief Generates the nametable offset for a tile at pos x/y for a plane set
- * to width 32 (calculated at compile time)
- * @param x horizontal position in the tilemap
- * @param y vertical position in the tilemap
- */
-#define NMT_POS_32(x, y) ((y) *Width32 + ((x) << 1))
-
-/**
- * @def NMT_POS_64
- * @brief Generates the nametable offset for a tile at pos x/y for a plane set
- * to width 64 (calculated at compile time)
- * @param x horizontal position in the tilemap
- * @param y vertical position in the tilemap
- */
-#define NMT_POS_64(x, y) ((y) *Width64 + ((x) << 1))
-
-/**
- * @def NMT_POS_128
- * @brief Generates the nametable offset for a tile at pos x/y for a plane set
- * to width 128 (calculated at compile time)
- * @param x horizontal position in the tilemap
- * @param y vertical position in the tilemap
- */
-#define NMT_POS_128(x, y) ((y) *Width128 + ((x) << 1))
-
-/**
- * @def NMT_POS_PLANE
- * @brief Generates the address of a tile at pos x/y, determining
- * the plane width dynamically (calculated at runtime)
- * @param x horizontal position in the tilemap
- * @param y vertical position in the tilemap
- * @param plane_addr VRAM address of plane
- */
-#define NMT_POS_PLANE(x, y, plane_addr) (NMT_POS(x, y) + (plane_addr))
-
-/**
- * @def NMT_POS_PLANE
- * @brief Generates the address of a tile at pos x/y for a plane set
- * to width 32 (calculated at compile time)
- * @param x horizontal position in the tilemap
- * @param y vertical position in the tilemap
- * @param plane_addr VRAM address of plane
- */
-
-#define NMT_POS_PLANE_32(x, y, plane_addr) (NMT_POS_32(x, y) + (plane_addr))
-/**
- * @def NMT_POS_PLANE_64
- * @brief Generates the address of a tile at pos x/y for a plane set
- * to width 64 (calculated at compile time)
- * @param x horizontal position in the tilemap
- * @param y vertical position in the tilemap
- * @param plane_addr VRAM address of plane
- */
-#define NMT_POS_PLANE_64(x, y, plane_addr) (NMT_POS_64(x, y) + (plane_addr))
-
-/**
- * @def NMT_POS_PLANE_128
- * @brief Generates the address of a tile at pos x/y for a plane set
- * to width 128 (calculated at compile time)
- * @param x horizontal position in the tilemap
- * @param y vertical position in the tilemap
- * @param plane_addr VRAM address of plane
- */
-#define NMT_POS_PLANE_128(x, y, plane_addr) (NMT_POS_128(x, y) + (plane_addr))
-
-/**
- * @def VRAM_AT
- * @brief VRAM address for the given tile index
- * (assuming tile data begins at 0 in VRAM)
- */
-#define VRAM_AT(chridx) ((chridx) << 5)
-
-/**
- * @def TILE_AT
- * @brief Tile index of the specified VRAM address
- * (assuming tile data begins at 0 in VRAM)
- */
-#define TILE_AT(vram_addr) ((vram_addr) >> 5)
-
-/**
- * @def VDP_COMMAND
- * @brief Converts a 16 bit VRAM address into VDP format at compile time if
- * possible
- */
-#define VDPPTR(addr) \
-	(__builtin_constant_p(addr) ? (unsigned) ((((addr) &0x3FFF) << 16) + (((addr) &0xC000) >> 14)) : to_vdpptr(addr))
+#define NMT_POS(x, y, width) ((y * (width)) + (x << 1))
 
 /**
  * @fn to_vdpptr
  * @brief Converts a 16 bit VRAM address into VDP format at runtime
  */
-static inline VDP_ADDR to_vdpptr(u16 addr)
+static inline VDP_ADDRESS to_vdpptr(u16 addr)
 {
 	u32 vdpptr = (u32) addr;
 	__asm__(
 		"\
-		lsl.l #2, %0 \n \
-		lsr.w #2, %0 \n \
-		swap %0 \n \
+		lsl.l #2, %0 \n\
+		lsr.w #2, %0 \n\
+		swap %0 \n\
 		"
 		: "+d"(vdpptr)
 		:
@@ -253,7 +165,7 @@ static inline VDP_ADDR to_vdpptr(u16 addr)
  * @fn vdpptr_to
  * @brief Converts a VDP format address to a 16 bit VRAM address at runtime
  */
-static inline u16 vdpptr_to(VDP_ADDR vdp_addr)
+static inline u16 vdpptr_to(VDP_ADDRESS vdp_addr)
 {
 	u32 out = vdp_addr;
 
@@ -273,44 +185,87 @@ static inline u16 vdpptr_to(VDP_ADDR vdp_addr)
 }
 
 
-static inline u8 vdp_dma_transfer(u8 const * source, VDP_COMMAND dest, u16 const length)
+/**
+ * @def vdp_dma_transfer
+ * @ingroup vdp
+ * @warning Setting/clearing the DMA Enable bit on VDP Mode Register 2 is the responsibility of the user
+ */
+static inline void vdp_dma_transfer(u8 const * source, VDP_COMMAND dest, u16 const length)
 {
-	register u32 D0 __asm__("d0") = (u32) dest;
-	register u32 D1 __asm__("d1") = (u32) source;
-	register u16 D2 __asm__("d2") = (u16) length;
+	u32 scratch_d = 0, scratch_a = 0;
+
+	__asm__(
+		"\
+		lea      (%c0).l, %[scratch_a] \n\
+		asr.l    #0x1, %[source] \n\
+		move.l   #0x940000, %[scratch_d] \n\
+		move.w   %[length], %[scratch_d] \n\
+		lsl.l    #0x8, %[scratch_d] \n\
+		move.w   #0x9300, %[scratch_d] \n\
+		move.b   %[length], %[scratch_d] \n\
+		move.l   %[scratch_d], (%[scratch_a]) \n\
+		move.l   #0x960000, %[scratch_d] \n\
+		move.w   %[source], %[scratch_d] \n\
+		lsl.l    #0x8, %[scratch_d] \n\
+		move.w   #0x9500, %[scratch_d] \n\
+		move.b   %[source], %[scratch_d] \n\
+		move.l   %[scratch_d], (%[scratch_a]) \n\
+		swap     %[source] \n\
+		move.w   #0x9700, %[scratch_d] \n\
+		move.b   %[source], %[scratch_d] \n\
+		move.w   %[scratch_d], (%[scratch_a]) \n\
+		ori.l    #0x40000080, %[dest] \n\
+		swap     %[dest] \n\
+		move.w   %[dest], (%[scratch_a]) \n\
+		swap     %[dest] \n\
+		move.w   %[dest], -(SP) \n\
+		move.w   (SP)+, (%[scratch_a]) \n\
+		"
+		: 
+		:
+			"i"(_VDP_CTRL),
+			[dest] "d"(dest),
+			[source] "d"(source),
+			[length] "d"(length),
+			[scratch_d] "d"(scratch_d),
+			[scratch_a] "a"(scratch_a)
+			
+		:
+	);
+}
+
+static inline void vdp_dma_fill(VDP_COMMAND dest, u16 const count, u8 const value)
+{
+	u32 scratch_d = 0, scratch_a = 0;
 	
 	__asm__(
 		"\
-		lea      (%c0).l, A6 \n \
-		asr.l    #0x1, d1 \n \
-		move.l   #0x940000, d3 \n \
-		move.w   d2, d3 \n \
-		lsl.l    #0x8, d3 \n \
-		move.w   #0x9300, d3 \n \
-		move.b   d2, d3 \n \
-		move.l   d3,(A6) \n \
-		move.l   #0x960000, d3 \n \
-		move.w   d1, d3 \n \
-		lsl.l    #0x8, d3 \n \
-		move.w   #0x9500, d3 \n \
-		move.b   d1, d3 \n \
-		move.l   d3, (A6) \n \
-		swap     d1 \n \
-		move.w   #0x9700, d3 \n \
-		move.b   d1, d3 \n \
-		move.w   d3,(A6) \n \
-		ori.l    #0x40000080, d0 \n \
-		swap     d0 \n \
-		move.w   d0, (A6) \n \
-		swap     d0 \n \
-		move.w   d0, -(SP) \n \
-		move.w   (SP)+, (A6) \n \
+		lea      (%c0).l, %[scratch_a] \n\
+		move.l   #0x00940000, %[scratch_d] \n\
+		move.w   %[count].w, %[scratch_d].w \n\
+		lsl.l    #0x8, %[scratch_d] \n\
+		move.w   #0x9300, %[scratch_d].w \n\
+		move.b   %[count].b, %[scratch_d].b \n\
+		move.l   %[scratch_d], (%[scratch_a]) \n\
+		move.w   #0x9780, (%[scratch_a]) \n\
+		ori.l    #0x40000080, %[dest] \n\
+		move.l   %[dest], (%[scratch_a]) \n\
+		move.b   %[value].b, (-0x4,%[scratch_a]) \n\
+	0:move.w   (%[scratch_a]), %[scratch_d].w \n\
+		btst.l   0x1, %[scratch_d] \n\
+		bne.b    0b \n\
 		"
 		: 
-		: "i"(_VDP_CTRL), "d"(D0), "d"(D1), "d"(D2)
-		: "a6");
-	
-	return D0;
+		:
+			"i"(_VDP_CTRL),
+			[dest] "d"(dest),
+			[count] "d"(count),
+			[value] "d"(value),
+			[scratch_d] "d"(scratch_d),
+			[scratch_a] "a"(scratch_a)
+		:
+	);
 }
+
 
 #endif

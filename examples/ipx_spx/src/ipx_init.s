@@ -27,9 +27,10 @@ data_init:
 #include <init_data.s>
 mmd_init:
 #include <main/init_mmd.s>
+INIT_MMD
+rts
 
 .section .text
-// we'll also go ahead and throw in the include of printval into .text
-// here
+// we'll also go ahead and throw in a couple of utilities here
 #include <printval.s>
-#include <main/exception.s>
+#include <main/cd_exception.s>

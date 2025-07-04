@@ -19,7 +19,7 @@
  * @return a0 pointer to module entry point
  * @clobber d0, a0-a2
  */
-SUB INIT_MMD
+.macro INIT_MMD
   WAIT_2M
   movea.l  _WRDRAM+8, a0	//get MMD entry point
   move.l   _WRDRAM+2, d0	//get MMD data destination
@@ -38,6 +38,6 @@ SUB INIT_MMD
 3:btst     #6, _WRDRAM    // if bit 6 is set, return 2m to sub 
   beq      4f
   GRANT_2M
-4:rts
-
+4:
+.endm
 #endif
