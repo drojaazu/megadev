@@ -13,38 +13,43 @@
 
 static inline void const * init_mmd()
 {
-	register void const * A0 __asm__("a0");
+	register void const * mmd_entry;
 
-	__asm__(
+	wait_2m();
+
+	asm volatile(
 		"\
-		5:btst #%c4, %c6+1 \n\
-			beq 5b \n\
-			movea.l  %c1+8, a0 \n\
-			move.l   %c1+2, d0 \n\
-			beq      1f \n\
-			movea.l  d0, a2 \n\
-			lea      %c1+0x100, a1 \n\
-			move.w   %c1+6, d0 \n\
-		0:move.l   (a1)+, (a2)+ \n\
-			dbf      d0, 0b \n\
-		1:move.l   %c1+0xc, d0 \n\
-			beq      2f \n\
-			move.l   d0, %c2+2 \n\
-		2:move.l   %c1+0x10, d0 \n\
-			beq      3f \n\
-			move.l   d0, %c3+2 \n\
-		3:btst     #6, %c1 \n\
-			beq      4f \n\
-		6:bset #%c5,%c6+1 \n\
-			btst #%c5,%c6+1 \n\
-			beq 6b \n\
-		4: \n\
+  move.l   2(%[wrdram]), d0 \n\
+  beq      1f \n\
+  movea.l  d0, a2 \n\
+  lea      0x100(%[wrdram]), a1 \n\
+  move.w   6(%[wrdram]), d0 \n\
+0:move.l   (a1)+, (a2)+ \n\
+  dbf      d0, 0b \n\
+1:move.l   12(%[wrdram]), d0 \n\
+  beq      2f \n\
+  move.l   d0, _MLEVEL4+2 \n\
+2:move.l   16(%[wrdram]), d0 \n\
+  beq      3f \n\
+  move.l   d0, _MLEVEL6+2 \n\
+3:btst     #6, (%[wrdram]) \n\
+  beq      4f \n\
+  GRANT_2M \n\
+4: movea.l 8(%[wrdram]), a0 \n\
 		"
-		: "=a"(A0)
-		: "i"(_WRDRAM), "i"(_MLEVEL4), "i"(_MLEVEL6), "i"(GA_RET_BIT), "i"(GA_DMNA_BIT), "i"(_GAREG_MEMMODE)
-		: "d0", "a1", "a2");
+		:
+			[mmd_entry] "=a"(mmd_entry)
+		:
+			[wrdram] "a"(_WRDRAM),
+			"i"(_MLEVEL4),
+			"i"(_MLEVEL6),
+			"i"(GA_RET_BIT),
+			"i"(GA_DMNA_BIT),
+			"i"(_GAREG_MEMMODE)
+		:
+		"d0", "a1", "a2");
 	
-	return A0;
+	return mmd_entry;
 }
 
 #endif

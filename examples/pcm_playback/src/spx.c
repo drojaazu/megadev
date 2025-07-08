@@ -8,10 +8,10 @@
 
 static inline void PCM_PLAYBACK_C(u8 * pcm_data, u32 pcm_data_size)
 {
-	register u32 a0_pcm_data __asm__("a0") = (u32) pcm_data;
-	register u32 d0_data_size __asm__("d0") = pcm_data_size;
+	register u32 a0_pcm_data asm("a0") = (u32) pcm_data;
+	register u32 d0_data_size asm("d0") = pcm_data_size;
 
-	__asm__ volatile("jsr PCM_PLAYBACK"
+	asm volatile("jsr PCM_PLAYBACK"
 									 : "+d"(d0_data_size), "+a"(a0_pcm_data)
 									 : "d"(d0_data_size), "a"(a0_pcm_data)
 									 : "cc", "d6", "d7", "a1", "a2");
@@ -157,16 +157,16 @@ void pcm_playback(u8 * pcm_data, u32 pcm_data_size)
 		{
 			while (*((volatile u8 *) _PCM_PLAY_CH1_H) <= 0x7f)
 			{
-				__asm__("nop");
-				__asm__("nop");
+				asm("nop");
+				asm("nop");
 			}
 		}
 		else
 		{
 			while (*((volatile u8 *) _PCM_PLAY_CH1_H) > 0x7f)
 			{
-				__asm__("nop");
-				__asm__("nop");
+				asm("nop");
+				asm("nop");
 			}
 		}
 		pcm_put_upper = ! pcm_put_upper;
@@ -177,16 +177,16 @@ void pcm_playback(u8 * pcm_data, u32 pcm_data_size)
 	{
 		while (*((volatile u8 *) _PCM_PLAY_CH1_H) <= 0x7f)
 		{
-			__asm__("nop");
-			__asm__("nop");
+			asm("nop");
+			asm("nop");
 		}
 	}
 	else
 	{
 		while (*((volatile u8 *) _PCM_PLAY_CH1_H) > 0x7f)
 		{
-			__asm__("nop");
-			__asm__("nop");
+			asm("nop");
+			asm("nop");
 		}
 	}
 }

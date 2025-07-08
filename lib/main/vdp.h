@@ -148,7 +148,7 @@ typedef enum PlaneWidth
 static inline VDP_ADDRESS to_vdpptr(u16 addr)
 {
 	u32 vdpptr = (u32) addr;
-	__asm__(
+	asm(
 		"\
 		lsl.l #2, %0 \n\
 		lsr.w #2, %0 \n\
@@ -169,7 +169,7 @@ static inline u16 vdpptr_to(VDP_ADDRESS vdp_addr)
 {
 	u32 out = vdp_addr;
 
-	__asm__(
+	asm(
 		"\
 		#andi.l #0x3fff000c, %0 \
 		ror.w #2, %0 \
@@ -192,45 +192,43 @@ static inline u16 vdpptr_to(VDP_ADDRESS vdp_addr)
  */
 static inline void vdp_dma_transfer(u8 const * source, VDP_COMMAND dest, u16 const length)
 {
-	u32 scratch_d = 0, scratch_a = 0;
+	register u32 scratch_d, scratch_a;
 
-	__asm__(
+	asm volatile(
 		"\
-		lea      (%c0).l, %[scratch_a] \n\
-		asr.l    #0x1, %[source] \n\
-		move.l   #0x940000, %[scratch_d] \n\
-		move.w   %[length], %[scratch_d] \n\
-		lsl.l    #0x8, %[scratch_d] \n\
-		move.w   #0x9300, %[scratch_d] \n\
-		move.b   %[length], %[scratch_d] \n\
-		move.l   %[scratch_d], (%[scratch_a]) \n\
-		move.l   #0x960000, %[scratch_d] \n\
-		move.w   %[source], %[scratch_d] \n\
-		lsl.l    #0x8, %[scratch_d] \n\
-		move.w   #0x9500, %[scratch_d] \n\
-		move.b   %[source], %[scratch_d] \n\
-		move.l   %[scratch_d], (%[scratch_a]) \n\
-		swap     %[source] \n\
-		move.w   #0x9700, %[scratch_d] \n\
-		move.b   %[source], %[scratch_d] \n\
-		move.w   %[scratch_d], (%[scratch_a]) \n\
-		ori.l    #0x40000080, %[dest] \n\
-		swap     %[dest] \n\
-		move.w   %[dest], (%[scratch_a]) \n\
-		swap     %[dest] \n\
-		move.w   %[dest], -(SP) \n\
-		move.w   (SP)+, (%[scratch_a]) \n\
+  lea      (%c[vdp_ctrl]).l, %[scratch_a] \n\
+  asr.l    #0x1, %[source] \n\
+  move.l   #0x940000, %[scratch_d] \n\
+  move.w   %[length], %[scratch_d] \n\
+  lsl.l    #0x8, %[scratch_d] \n\
+  move.w   #0x9300, %[scratch_d] \n\
+  move.b   %[length], %[scratch_d] \n\
+  move.l   %[scratch_d], (%[scratch_a]) \n\
+  move.l   #0x960000, %[scratch_d] \n\
+  move.w   %[source], %[scratch_d] \n\
+  lsl.l    #0x8, %[scratch_d] \n\
+  move.w   #0x9500, %[scratch_d] \n\
+  move.b   %[source], %[scratch_d] \n\
+  move.l   %[scratch_d], (%[scratch_a]) \n\
+  swap     %[source] \n\
+  move.w   #0x9700, %[scratch_d] \n\
+  move.b   %[source], %[scratch_d] \n\
+  move.w   %[scratch_d], (%[scratch_a]) \n\
+  ori.l    #0x40000080, %[dest] \n\
+  swap     %[dest] \n\
+  move.w   %[dest], (%[scratch_a]) \n\
+  swap     %[dest] \n\
+  move.w   %[dest], -(SP) \n\
+  move.w   (SP)+, (%[scratch_a]) \n\
 		"
 		: 
+			[scratch_d] "=&d"(scratch_d),
+			[scratch_a] "=&a"(scratch_a)
 		:
-			"i"(_VDP_CTRL),
+			[vdp_ctrl] "i"(_VDP_CTRL),
 			[dest] "d"(dest),
 			[source] "d"(source),
-			[length] "d"(length),
-			[scratch_d] "d"(scratch_d),
-			[scratch_a] "a"(scratch_a)
-			
-		:
+			[length] "d"(length)
 	);
 }
 
@@ -238,7 +236,7 @@ static inline void vdp_dma_fill(VDP_COMMAND dest, u16 const count, u8 const valu
 {
 	u32 scratch_d = 0, scratch_a = 0;
 	
-	__asm__(
+	asm(
 		"\
 		lea      (%c0).l, %[scratch_a] \n\
 		move.l   #0x00940000, %[scratch_d] \n\

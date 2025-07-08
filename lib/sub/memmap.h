@@ -31,7 +31,7 @@
 // TODO - Verify which registers get trashed
 static inline void bios_waitvsync()
 {
-	__asm__(
+	asm(
 		"\
 		#move.l a6, -(sp) \n\
 		jsr %p0 \n\

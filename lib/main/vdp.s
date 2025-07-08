@@ -18,6 +18,9 @@
   swap     \dreg
 .endm
 
+/**
+ * @brief Converts a VDP format address to a 16 bit VRAM address at runtime
+ */
 .macro VDPPTR_TO dreg=d0
   andi.l  #0x3fff000c, \dreg
   ror.w    #2, \dreg

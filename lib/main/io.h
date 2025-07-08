@@ -95,49 +95,50 @@ typedef u8 volatile * IO_REGISTER;
 
 static inline void init_joypads()
 {
-	u8 ctrl_pc6 = CTRL_PC6;
-	u32 io_ctrl1 = (u32) _IO_CTRL1;
-	u32 io_ctrl2 = (u32) _IO_CTRL2;
-	
-	__asm__(
+	asm(
 		"\
-		move.b  #%c0, (%c1) \n\
-		move.b  #%c0, (%c2) \n\
+  move.b   #%c[ctrl_pc6], (%c[io_ctrl1]) \n\
+  move.b   #%c[ctrl_pc6], (%c[io_ctrl2]) \n\
 		"
 		: 
-		: "i"(ctrl_pc6), "i"(io_ctrl1), "i"(io_ctrl2)
-		: );
+		:
+			[ctrl_pc6] "i"(CTRL_PC6),
+			[io_ctrl1] "i"(_IO_CTRL1),
+			[io_ctrl2] "i"(_IO_CTRL2)
+		: 
+		);
 }
 
 
-static inline u8 read_input_joypad(IO_REGISTER data_port)
+static inline u8 read_input_joypad(IO_REGISTER io_port)
 {
-	register u32 A0 __asm__("a0") = (u32) data_port;
-	register u8 D0 __asm__("d0");
-	u8 ctrl_pc6 = CTRL_PC6;
+	register u32 scratch_d;
+	register u8 joypad_state;
 	
-	__asm__(
+	asm volatile(
 		"\
-		moveq	#%c2, d0 \n\
-		move.b	#%c2, (a0) \n\
-		nop \n\
-		nop \n\
-		move.b	(a0), d0 \n\
-		andi.b	#0x3F, d0 \n\
-		moveq	#0,d1 \n\
-		move.b	#0, (a0) \n\
-		nop \n\
-		nop \n\
-		move.b	(a0),d1 \n\
-		andi.b	#0x30, d1 \n\
-		lsl.b	#2, d1 \n\
-		or.b	d1, d0 \n\
+  move.b   #%c[ctrl_pc6], (%[io_port]) \n\
+  nop \n\
+  nop \n\
+  move.b   (%[io_port]), %[joypad_state] \n\
+  move.b   #0, (%[io_port]) \n\
+  nop \n\
+  nop \n\
+  move.b   (%[io_port]), %[scratch_d] \n\
+  andi.b   #0x3F, %[joypad_state] \n\
+  andi.b   #0x30, %[scratch_d] \n\
+  lsl.b    #2, %[scratch_d] \n\
+  or.b     d1, %[joypad_state] \n\
 		"
-		: "=d"(D0)
-		: "a"(A0), "i"(ctrl_pc6)
-		: "d1");
+		:
+			[joypad_state] "=d"(joypad_state),
+			[scratch_d] "=&d"(scratch_d)
+		:
+			[io_port] "a"(io_port),
+			[ctrl_pc6] "i"(CTRL_PC6)
+		);
 	
-	return D0;
+	return joypad_state;
 }
 
 

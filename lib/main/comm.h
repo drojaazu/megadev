@@ -29,8 +29,8 @@ static inline void init_ext_port()
  */
 static inline u8 ext_rx_c()
 {
-	register u8 D0 __asm__("d0");
-	__asm__(
+	register u8 D0 asm("d0");
+	asm(
 		"\
 			jsr ext_rx \n\
 		"
@@ -45,9 +45,9 @@ static inline u8 ext_rx_c()
  */
 static inline void ext_tx_c(register u8 data)
 {
-	register u8 D0 __asm__("d0") = data;
+	register u8 D0 asm("d0") = data;
 
-	__asm__(
+	asm(
 		"\
 			jsr ext_tx \n\
 		"

@@ -8,7 +8,7 @@
 #include <main/bootlib.def.h>
 #include <main/main.macro.s>
 #include <main/vdp.def.h>
-#include <main/gate_array.macro.s>
+#include <main/gate_array.s>
 #include "bram_demo_layout.s"
 
 ip_entry:

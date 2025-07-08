@@ -1,29 +1,14 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file gate_array.macro.s
+ * @file gate_array.s
  * @brief Helper macros for use with the Gate Array on the Main CPU side
  */
 
-#ifndef MEGADEV__MAIN_GATE_ARRAY_MACRO_S
-#define MEGADEV__MAIN_GATE_ARRAY_MACRO_S
+#ifndef MEGADEV__MAIN_GATE_ARRAY_S
+#define MEGADEV__MAIN_GATE_ARRAY_S
 
 #include "main/gate_array.def.h"
-
-/**
- * CLEAR_COMM_REGS
- * Clears the Main comm registers (COMCMD) and flags
- * BREAK: d0, a0
- */
-.macro CLEAR_COMM_REGS
-	lea _GAREG_COMCMD0, a0
-	moveq #0, d0
-	move.b d0, -2(a0) // upper byte of comm flags
-	move.l d0, (a0)+
-	move.l d0, (a0)+
-	move.l d0, (a0)+
-	move.l d0, (a0)+
-.endm
 
 /**
  * WAIT_2M
@@ -51,6 +36,25 @@ loop:
 	btst #GA_DMNA_BIT,_GAREG_MEMMODE+1
 	beq loop
 .endm
+
+
+
+/**
+ * CLEAR_COMM_REGS
+ * Clears the Main comm registers (COMCMD) and flags
+ * BREAK: d0, a0
+ */
+.macro CLEAR_COMM_REGS
+	lea _GAREG_COMCMD0, a0
+	moveq #0, d0
+	move.b d0, -2(a0) // upper byte of comm flags
+	move.l d0, (a0)+
+	move.l d0, (a0)+
+	move.l d0, (a0)+
+	move.l d0, (a0)+
+.endm
+
+
 
 /**
  * RESET_GA

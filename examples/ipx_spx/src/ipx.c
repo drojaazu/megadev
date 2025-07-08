@@ -160,7 +160,7 @@ void main()
 		{
 			// the NOP is so GCC doesn't optimize the loop away
 			// though since comstat is marked volatile it should be fine...
-			__asm__("nop");
+			asm("nop");
 		} while (*GA_COMSTAT0 == 0);
 
 		// reset the command to none (0) once we have the acknowledgment
@@ -169,7 +169,7 @@ void main()
 		// the Sub CPU side work will be complete when COMSTAT0 returns to 0
 		do
 		{
-			__asm__("nop");
+			asm("nop");
 		} while (*GA_COMSTAT0 != 0);
 
 		wait_2m();
@@ -178,6 +178,7 @@ void main()
 		// init_mmd() sets things up based on the MMD header then returns a pointer
 		// to main() in the module, which we'll call as a function pointer
 		void const (*mmd_main)() = init_mmd();
+		asm("call_mmd:");
 		mmd_main();
 
 		// module has exited and global_mode was updated

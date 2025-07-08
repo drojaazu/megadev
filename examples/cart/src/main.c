@@ -5,6 +5,7 @@
 #include <string.h>
 #include <system.h>
 #include "res.h"
+#include <printval.h>
 
 volatile u8 p1_hold, p1_single, p1_prev;
 volatile u8 p2_hold, p2_single, p2_prev;
@@ -145,7 +146,7 @@ void main()
 	init_joypads();
 	vdp_regs[1] |= VDP_DMA_ENABLE;
 	VDP_CTRL = vdp_regs[1];
-	
+asm("transfer:");
 	vdp_dma_transfer(res_basic_font, VDPPTR(VRAM_AT(0x20)), (res_basic_font_size << 1));
 	vdp_regs[1] &= ~VDP_DMA_ENABLE;
 	VDP_CTRL = vdp_regs[1];
@@ -155,7 +156,7 @@ void main()
 	counter = 0;
 	char const * test = "TESTING!";
 	print(test, plane_xy(1,1));
-	__asm__("main_loop:");
+	asm("main_loop:");
 	while(1)
 	{
 		while (!vblank_done)

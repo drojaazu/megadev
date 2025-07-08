@@ -53,6 +53,7 @@ SECTIONS
     *(.rodata*)
     _RODATA_LENGTH = ABSOLUTE(. - _RODATA_ORIGIN);
     /* Align to 4 since the MMD loader reads size in words */
+    /* TODO: should the size be - 1 for the dbf loop? */
     . = ALIGN(4);
     _ROM_LENGTH = ABSOLUTE(. - _INIT_ORIGIN) >> 2;
     _ROM_DATA = .;

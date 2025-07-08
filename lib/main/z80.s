@@ -35,9 +35,9 @@ loop:
 .endm
 
 /**
- * @sa init_z80
+ * @sa z80_init
  * @param[in] A0.l Pointer to Z80 program to load
- * @param[in] D7.l Length of program data (in bytes)
+ * @param[in] D7.l Length of program data (in bytes - 1)
  * @clobber a0-a1, d7
  * @ingroup z80
  * @warning Interrupts should be disabled before calling.
@@ -46,18 +46,18 @@ loop:
 .macro Z80_INIT
 LOCAL status_wait
 LOCAL copy
-  move.w  #_Z80_STOP_RESET, (_Z80_BUSREQ)
-  move.w  #_Z80_STOP_RESET, (_Z80_RESET)
+  move.w   #_Z80_REQUEST_BUS, (_Z80_BUSREQ)
+  move.w   #_Z80_RELEASE_RESET, (_Z80_RESET)
 status_wait:
-  btst    #_Z80_STATUS, (_Z80_BUSREQ)
-  bne.s	  status_wait
-  lea     (_Z80_RAM), a1
+  btst     #_Z80_STATUS_BIT, (_Z80_BUSREQ)
+  bne.s    status_wait
+  lea      (_Z80_RAM), a1
 copy:
   move.b  (a0)+,(a1)+
   dbf	    d7, copy
-  move.w  #0, (_Z80_RESET)
-  move.w  #0, (_Z80_BUSREQ)
-  move.w  #_Z80_STOP_RESET, (_Z80_RESET)
+  move.w   #_Z80_ASSERT_RESET, (_Z80_RESET)
+  move.w   #_Z80_RELEASE_BUS, (_Z80_BUSREQ)
+  move.w   #_Z80_RELEASE_RESET, (_Z80_RESET)
 .endm
 
 #endif

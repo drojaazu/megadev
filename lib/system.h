@@ -13,7 +13,7 @@
  */
 static inline void disable_interrupts()
 {
-	__asm__("or #0x700,sr");
+	asm("or #0x700,sr");
 }
 
 /**
@@ -21,7 +21,7 @@ static inline void disable_interrupts()
  */
 static inline void enable_interrupts()
 {
-	__asm__("and #0xF8FF,sr");
+	asm("and #0xF8FF,sr");
 }
 
 #endif

@@ -28,23 +28,21 @@
  * @brief Reads controller input from a 3 button joypad
  * @in A0 the Data Port for the desired controller terminal
  * @out D0 byte with the state for each input, in the form: SACBRLDU
- * @clobber d0-d1
+ * @clobber D1
  */
 .macro READ_INPUT_JOYPAD
-  moveq   #CTRL_PC6, d0
   /* set TH pin to begin read sequence */
   move.b  #CTRL_PC6, (a0)
   nop
   nop
   move.b  (a0), d0
-  /* d0 = 00CBRLDU */
-  andi.b  #0x3F, d0
-  moveq   #0,d1
   /* clear TH pin for next read */
   move.b  #0, (a0)
   nop
   nop
-  move.b  (a0),d1
+  move.b  (a0), d1
+  /* d0 = 00CBRLDU */
+  andi.b  #0x3F, d0
   /* d1 = 00SA0000 */
   andi.b  #0x30, d1
   lsl.b   #2, d1

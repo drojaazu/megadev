@@ -18,7 +18,7 @@ void main()
 	blib_dma_xfer_wrdram(VDPPTR(VRAM_AT(0x80)), &res_snow_chr, res_snow_chr_sz >> 1);
 	enable_interrupts();
 
-	blib_print("Module 2\xff", (VDPPTR(NMT_POS_PLANE(1, 1, _BLIB_PLANEA_ADDR)) | VRAM_W));
+	blib_print("Module 2\xff", (VDPPTR(NMT_POS(1, 1, Width64) + _BLIB_PLANEA_ADDR) | VRAM_W));
 
 	init_particles(0x81, 0x82, 0, 0, 0, 0, 45, 1, 2, 1);
 

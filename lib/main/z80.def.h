@@ -3,6 +3,8 @@
  *
  * @file z80.def.h
  * @brief Z80 hardware definitions
+ * @todo need more details here, including specifying different address for Main CPU and direct Z80 access, and defines
+ *       and macros for YM2612 register access
  */
 
 #ifndef MEGADEV__MAIN_Z80_DEF_H
@@ -13,11 +15,15 @@
  */
 
 #define _Z80_RAM 0xA00000
+
 #define _Z80_RAM_SIZE 0x2000
 
 #define _Z80_FM1_SEL 0xA04000
+
 #define _Z80_FM1_DATA 0xA04001
+
 #define _Z80_FM2_SEL 0xA04002
+
 #define _Z80_FM2_DATA 0xA04003
 
 #define _Z80_BANK 0xA06000
@@ -46,6 +52,34 @@ program to it's memory, the Z80 may be let go from reset by writing #$0100 to $A
 #define _Z80_BUSREQ 0xA11100
 
 /**
+ * @def _Z80_REQUEST_BUS
+ * @ingroup z80
+ * @brief Request Main CPU control of the Z80 data bus
+ * @details Use with @ref Z80_BUSREQ
+ */
+#define _Z80_REQUEST_BUS 0x0100
+
+/**
+ * @def _Z80_RELEASE_BUS
+ * @ingroup z80
+ * @brief Release control of the Z80 data bus
+ * @details Use with @ref Z80_BUSREQ
+ */
+#define _Z80_RELEASE_BUS 0x0000
+
+
+#define _Z80_STATUS_BIT 0
+
+/**
+ * @def _Z80_STATUS
+ * @ingroup z80
+ * @brief Z80 Bus Request / Z80 CPU Status
+ * @details Use with @ref Z80_BUSREQ.
+ * @return Bit set: Z80 CPU is operating / Bit clear: Z80 CPU is stopped
+ */
+#define _Z80_STATUS (1 << _Z80_STATUS_BIT)
+
+/**
  * @def _Z80_RESET
  * @brief Z80 Reset Vector
  * @ingroup z80
@@ -53,20 +87,19 @@ program to it's memory, the Z80 may be let go from reset by writing #$0100 to $A
 #define _Z80_RESET 0xA11200
 
 /**
- * @def _Z80_STATUS
+ * @def _Z80_ASSERT_RESET
  * @ingroup z80
- * @brief Z80 Bus Request / Z80 CPU Status
- * @details Used for reading from @ref Z80_BUSREQ
- * Bit set: Z80 CPU is operating / Bit clear: Z80 CPU is stopped
+ * @brief Assert reset of Z80 CPU
+ * @details Use with @ref Z80_RESET
  */
-#define _Z80_STATUS (1 << 0)
+#define _Z80_ASSERT_RESET 0x0000
 
 /**
- * @def Z80_STOP_RESET
+ * @def _Z80_RELEASE_RESET
  * @ingroup z80
- * @brief Stop or Reset Z80 CPU
- * @details Used for writing to @ref Z80_BUSREQ or @ref Z80_RESET
+ * @brief Release reset of Z80 CPU
+ * @details Use with @ref Z80_RESET
  */
-#define _Z80_STOP_RESET 0x100
+#define _Z80_RELEASE_RESET 0x0100
 
 #endif
