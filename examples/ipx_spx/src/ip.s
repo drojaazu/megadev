@@ -6,7 +6,7 @@
 
 #include <main/gate_array.s>
 #include <main/memmap.def.h>
-#include <main/bootlib.def.h>
+#include <main/bios.def.h>
 #include <main/main.macro.s>
 #include <main/vdp.def.h>
 #include <macros.s>
@@ -30,14 +30,14 @@ ip_entry:
   // disable VDP display and maintain MD mode (mode 5)
   move.w   #(_VDPREG_MODE2 | 0x44), (_VDP_CTRL)
 
-	jbsr     _BLIB_LOAD_VDPREGS_DEFAULT
+	jbsr     _BIOS_LOAD_VDPREGS_DEFAULT
 
   // clear out VRAM
   // (note: this does not clear CRAM!)
 	// This is a Boot ROM library call that makes use of the VDP register cache
 	// Even if you don't plan to use the Boot ROM library, this call is safe
 	// to use here as the memory will not be preserved after we jump to the IPX
-  jbsr     _BLIB_CLEAR_VRAM
+  jbsr     _BIOS_CLEAR_VRAM
 
 	// our example IP here is super tiny, and while it should remain quite
 	// small, you could put a very simple message/graphic here to indicate
@@ -49,7 +49,7 @@ ip_entry:
   // point VINT vector to the minimal, temporary handler
 	// (note that we use _MLEVEL6 *+ 2*, as the first two bytes are
 	// a jmp/bra opcode)
-  move.l	#_BLIB_VINT_HANDLER, (_MLEVEL6 + 2)
+  move.l	#_BIOS_VINT_HANDLER, (_MLEVEL6 + 2)
 
   // restore interrupts to allow the cdrom data to flow
 	andi     #0xF8FF,sr
@@ -64,7 +64,7 @@ ip_entry:
 	bne      1b
 	WAIT_2M
 
-	jbsr     _BLIB_VDP_DISP_ENABLE
+	jbsr     _BIOS_VDP_DISP_ENABLE
 
 	// Reset the stack since we're starting fresh
 	movea.l  (0), sp

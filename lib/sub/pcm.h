@@ -1,4 +1,4 @@
-/**
+	/**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
  * @file pcm.h
@@ -10,6 +10,16 @@
 
 #include "pcm.def.h"
 #include "types.h"
+
+#define PCM_ENV ((volatile u8 *) _PCM_ENV)
+#define PCM_PAN ((volatile u8 *) _PCM_PAN)
+#define PCM_FDL ((volatile u8 *) _PCM_FDL)
+#define PCM_FDH ((volatile u8 *) _PCM_FDH)
+#define PCM_LSL ((volatile u8 *) _PCM_LSL)
+#define PCM_LSH ((volatile u8 *) _PCM_LSH)
+#define PCM_ST ((u8 volatile *) _PCM_ST)
+#define PCM_CTRL ((volatile u8 *) _PCM_CTRL)
+#define PCM_CDISABLE ((volatile u8 *) _PCM_CDISABLE)
 
 /**
  * @def WAVEBANK

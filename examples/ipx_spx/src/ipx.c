@@ -1,4 +1,4 @@
-#include <main/bootlib.h>
+#include <main/bios.h>
 #include <main/gate_array.h>
 #include <main/memmap.h>
 #include <main/init_mmd.h>
@@ -16,19 +16,19 @@ InitSettings settings;
 void init_particle(u8 particle_idx)
 {
 	particles[particle_idx].status = Falling;
-	particles[particle_idx].pos_x = blib_prng_mod(320) + 128;
-	particles[particle_idx].pos_y = blib_prng_mod(5) + 123;
-	particles[particle_idx].speed = blib_prng_mod((settings.max_speed - settings.min_speed) + 1) + settings.min_speed;
-	particles[particle_idx].end_at = blib_prng_mod(11) + 320;
+	particles[particle_idx].pos_x = bios_prng_mod(320) + 128;
+	particles[particle_idx].pos_y = bios_prng_mod(5) + 123;
+	particles[particle_idx].speed = bios_prng_mod((settings.max_speed - settings.min_speed) + 1) + settings.min_speed;
+	particles[particle_idx].end_at = bios_prng_mod(11) + 320;
 	particles[particle_idx].timer = 0;
 
-	BLIB_SPRLIST[particle_idx].next = particle_idx + 1;
-	BLIB_SPRLIST[particle_idx].pos_y = 128;
-	BLIB_SPRLIST[particle_idx].pos_x = particles[particle_idx].pos_x;
-	BLIB_SPRLIST[particle_idx].tile = settings.main_tile;
-	BLIB_SPRLIST[particle_idx].palette = settings.palette;
-	BLIB_SPRLIST[particle_idx].width = settings.main_width;
-	BLIB_SPRLIST[particle_idx].height = settings.main_height;
+	BIOS_SPRLIST[particle_idx].next = particle_idx + 1;
+	BIOS_SPRLIST[particle_idx].pos_y = 128;
+	BIOS_SPRLIST[particle_idx].pos_x = particles[particle_idx].pos_x;
+	BIOS_SPRLIST[particle_idx].tile = settings.main_tile;
+	BIOS_SPRLIST[particle_idx].palette = settings.palette;
+	BIOS_SPRLIST[particle_idx].width = settings.main_width;
+	BIOS_SPRLIST[particle_idx].height = settings.main_height;
 }
 
 void init_particles(u16 main_tile,
@@ -83,9 +83,9 @@ void process_particles()
 				continue;
 			}
 
-			BLIB_SPRLIST[iter].tile = settings.end_tile;
-			BLIB_SPRLIST[iter].width = settings.main_width;
-			BLIB_SPRLIST[iter].height = settings.main_height;
+			BIOS_SPRLIST[iter].tile = settings.end_tile;
+			BIOS_SPRLIST[iter].width = settings.main_width;
+			BIOS_SPRLIST[iter].height = settings.main_height;
 			particles[iter].timer = settings.end_countdown;
 			goto update_sprites;
 		}
@@ -102,14 +102,14 @@ void process_particles()
 		}
 
 	update_sprites:
-		BLIB_SPRLIST[iter].pos_x = particles[iter].pos_x;
-		BLIB_SPRLIST[iter].pos_y = particles[iter].pos_y;
+		BIOS_SPRLIST[iter].pos_x = particles[iter].pos_x;
+		BIOS_SPRLIST[iter].pos_y = particles[iter].pos_y;
 	}
 }
 
 void vint_ex()
 {
-	blib_copy_sprlist();
+	bios_copy_sprlist();
 }
 
 // At this point, the full IPX binary has been copied to Work RAM and all
@@ -119,8 +119,8 @@ void main()
 {
 
 	// repoint the VINT vector to the boot rom library version
-	//MLEVEL6_VECTOR = (void *(*) ) _BLIB_VINT_HANDLER;
-	*BLIB_VINT_EX_PTR = vint_ex;
+	//MLEVEL6_VECTOR = (void *(*) ) _BIOS_VINT_HANDLER;
+	*BIOS_VINT_EX_PTR = vint_ex;
 
 	// don't forget, we disabled interrupts earlier in the IPX (ipx_init.s)
 	// but be sure we've re-pointed the the vblank handler vector
@@ -132,11 +132,11 @@ void main()
 
 	// The modules only show some text, so we'll prepare the font for them here
 	// so it doesn't need to happen in the module itself
-	blib_load_font_defaults();
+	bios_load_font_defaults();
 
 	// The font uses palette entry #1, so we'll manually set that to white
-	BLIB_PALETTE[1] = 0xeee;
-	BLIB_VDP_UPDATE_FLAGS |= VDPUPDATE_PAL;
+	BIOS_PALETTE[1] = 0xeee;
+	BIOS_VDP_UPDATE_FLAGS |= VDPUPDATE_PAL;
 
 	do
 	{
@@ -183,7 +183,7 @@ void main()
 
 		// module has exited and global_mode was updated
 		// Clear the tiles on the screen and prepare the next iteration
-		blib_clear_tables();
+		bios_clear_tables();
 
 	} while (1);
 }

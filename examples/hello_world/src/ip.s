@@ -12,7 +12,7 @@
 
 #include <macros.s>
 #include <main/memmap.def.h>
-#include <main/bootlib.def.h>
+#include <main/bios.def.h>
 #include <main/vdp.macro.s>
 #include <main/gate_array.def.h>
 #include <main/vdp.def.h>
@@ -45,7 +45,7 @@ ip_entry:
 	// This is a Boot ROM library call that makes use of the VDP register cache
 	// Even if you don't plan to use the Boot ROM library, this call is safe
 	// to use here as the memory for the register cache is not yet in use
-  jbsr _BLIB_CLEAR_VRAM
+  jbsr _BIOS_CLEAR_VRAM
 
   // One of the most, if not *the* most important event while the machine is
   // running is the vertical blanking interval, during which time most of the
@@ -57,26 +57,26 @@ ip_entry:
   // set that vector to the handler in the Boot Library.
   // (Note that we set it at _MLEVEL6 + 2; this is because we are actually
   // modifying a jump table, and the first two bytes are the JMP opcode.)
-  move.l	#_BLIB_VINT_HANDLER, (_MLEVEL6 + 2)
+  move.l	#_BIOS_VINT_HANDLER, (_MLEVEL6 + 2)
 
   // we don't have any significant code on the Sub CPU side for this minimal
   // demo, so we won't be using the Gate Array comm registers to communicate
   // between the CPUs, but it's still good practice to have the registers
   // initialized
-  jbsr _BLIB_CLEAR_COMM
+  jbsr _BIOS_CLEAR_COMM
 
   // We'll also use the Boot ROM VDP defaults
   // (these defaults include disabling the display)
-  jbsr _BLIB_LOAD_VDPREGS_DEFAULT
+  jbsr _BIOS_LOAD_VDPREGS_DEFAULT
   
   // Clear all of VRAM to give a fresh start
-  jbsr _BLIB_CLEAR_VRAM
+  jbsr _BIOS_CLEAR_VRAM
 
   /*
     Now we'll load the internal Boot ROM font into the VDP with the default
     settings
   */
-  jbsr _BLIB_LOAD_FONT_DEFAULTS
+  jbsr _BIOS_LOAD_FONT_DEFAULTS
   
   // The font uses palette entry #1, so we'll manually set that to white
   move.l #0xC0020000, (_VDP_CTRL)
@@ -87,26 +87,26 @@ ip_entry:
   jbsr nmtbl_xy_pos
 
   lea str_hello, a1
-  jbsr _BLIB_PRINT
+  jbsr _BIOS_PRINT
 
   // we can finally turn the display output back on now that everything is
   // prepared
-  jbsr _BLIB_VDP_DISP_ENABLE
+  jbsr _BIOS_VDP_DISP_ENABLE
 
   // and restore interrupts
   andi #0xF8FF,sr
 
 loop:
-  jbsr _BLIB_VINT_HANDLER_WAIT_DEFAULT
+  jbsr _BIOS_VINT_HANDLER_WAIT_DEFAULT
   // Inputs are updated as part of the default vint wait subroutine
   // so we can assume the input value is current
-  and.b #PAD_START, _BLIB_JOY1_PRESS
+  and.b #PAD_START, _BIOS_JOY1_PRESS
 	beq loop
 	
-  jmp _BLIB_RESET
+  jmp _BIOS_RESET
 
 SUB nmtbl_xy_pos
-1:move.w (_BLIB_PLANE_WIDTH), d1  // d1 - tiles per row 
+1:move.w (_BIOS_PLANE_WIDTH), d1  // d1 - tiles per row 
   move.w d0, d2  // d0 - x/y offset (upper/lower bytes of the word)
   lsr.w #8, d2  // d2 has x pos
   and.w #0xff, d0  // filter d0 so it only has y pos

@@ -5,7 +5,7 @@
 .section .text
 
 #include <main/main.def.h>
-#include <main/bootlib.def.h>
+#include <main/bios.def.h>
 #include <main/gate_array.s>
 #include <main/gate_array.def.h>
 #include <main/vdp.def.h>
@@ -36,20 +36,20 @@ ip_entry:
 	// This is a Boot ROM library call that makes use of the VDP register cache
 	// Even if you don't plan to use the Boot ROM library, this call is safe
 	// to use here as the memory for the register cache is not yet in use
-  jbsr _BLIB_CLEAR_VRAM
+  jbsr _BIOS_CLEAR_VRAM
 
   // point the VINT vector to the simple one within the Boot Library
-  move.l	#_BLIB_VINT_HANDLER, (_MLEVEL6 + 2)
+  move.l	#_BIOS_VINT_HANDLER, (_MLEVEL6 + 2)
 
   // And finally enable the display
-  jbsr _BLIB_VDP_DISP_ENABLE
+  jbsr _BIOS_VDP_DISP_ENABLE
 
 	// our example IP here is super tiny, and while it should remain quite
 	// small, you could put a very simple message/graphic here to indicate
 	// the game is starting up
 
   // clear the Gate Array communication registers
-  jbsr _BLIB_CLEAR_COMM
+  jbsr _BIOS_CLEAR_COMM
 
   // restore interrupts to allow the cdrom data to flow
   andi #0xF8FF,sr

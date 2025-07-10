@@ -49,7 +49,7 @@ Before jumping into making a new project, it would be beneficial to read through
  - modules.md - Introduces MMD modules and how to use them
  - ip_sp.md - Introduces the IP and SP and their peculiarities
  - cdrom.md - Introduces the Sub CPU side CDROM access API
- - bootlib.md - Main CPU Boot ROM library reference
+ - bios.md - Main CPU Boot ROM library reference
  - disc.md - Notes on creating discs
 
 You should also have a copy of the official Sega Mega Drive and Mega CD reference manuals or equivalent information available online. It is necessary to have a thorough understanding of the hardware in order to develop effective software, and this is especially true when dealing programming for the Mega CD where there are multiple CPUs to be managed.

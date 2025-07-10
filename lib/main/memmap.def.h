@@ -2,7 +2,7 @@
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
  * @file memmap.def.h
- * @brief Main CPU side hardware memory map & system vectors
+ * @brief Main CPU side memory map & system vectors
  *
  * @note All bit definitions are byte relative and should be applied to the
  * registers cast to an 8 bit type.
@@ -11,6 +11,10 @@
 #ifndef MEGADEV__MAIN_MEMMAP_DEF_H
 #define MEGADEV__MAIN_MEMMAP_DEF_H
 
+/**
+ * @note Officially marked as "not for general use" in the English language documentation, but this area is used
+ *       by the Main BIOS in a number of ways, including palette and comm register caches.
+ */
 #define SYSTEMUSE_BASE 0xfffd00
 
 /**

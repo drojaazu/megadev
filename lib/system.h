@@ -24,4 +24,14 @@ static inline void enable_interrupts()
 	asm("and #0xF8FF,sr");
 }
 
+static inline void cpu_reset()
+{
+	asm("reset");
+}
+
+static inline void cpu_stop()
+{
+	asm("stop #0x700");
+}
+
 #endif

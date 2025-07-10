@@ -5,7 +5,7 @@
 .section .text
 
 #include <main/memmap.def.h>
-#include <main/bootlib.def.h>
+#include <main/bios.def.h>
 #include <main/main.macro.s>
 #include <main/vdp.def.h>
 #include <main/gate_array.s>
@@ -34,7 +34,7 @@ ip_entry:
 	// This is a Boot ROM library call that makes use of the VDP register cache
 	// Even if you don't plan to use the Boot ROM library, this call is safe
 	// to use here as the memory for the register cache is not yet in use
-  jbsr _BLIB_CLEAR_VRAM
+  jbsr _BIOS_CLEAR_VRAM
 
 	// our example IP here is super tiny, and while it should remain quite
 	// small, you could put a very simple message/graphic here to indicate
@@ -46,7 +46,7 @@ ip_entry:
   // point VINT vector to the minimal, temporary handler
 	// (note that we use _MLEVEL6 *+ 2*, as the first two bytes are
 	// a jmp/bra opcode)
-	move.l #_BLIB_VINT_HANDLER, (_MLEVEL6 + 2)
+	move.l #_BIOS_VINT_HANDLER, (_MLEVEL6 + 2)
 
   // restore interrupts to allow the cdrom data to flow
 	andi #0xF8FF,sr

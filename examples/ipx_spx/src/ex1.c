@@ -1,4 +1,4 @@
-#include <main/bootlib.h>
+#include <main/bios.h>
 #include <main/io.def.h>
 #include <main/memmap.h>
 #include <main/vdp.h>
@@ -13,21 +13,21 @@ extern Palette res_rain_pal;
 void main()
 {
 	disable_interrupts();
-	blib_load_pal_update(&res_rain_pal);
-	blib_dma_xfer_wrdram(VDPPTR(VRAM_AT(0x80)), &res_rain_chr, res_rain_chr_sz >> 1);
+	bios_load_pal_update(&res_rain_pal);
+	bios_dma_xfer_wrdram(VDPPTR(VRAM_AT(0x80)), &res_rain_chr, res_rain_chr_sz >> 1);
 	enable_interrupts();
 
-	blib_print("Module 1\xff", (VDPPTR(NMT_POS(1, 1, Width64) + _BLIB_PLANEA_ADDR) | VRAM_W));
+	bios_print("Module 1\xff", (VDPPTR(NMT_POS(1, 1, Width64) + _BIOS_PLANEA_ADDR) | VRAM_W));
 
 	// init_particles is defined in the ipx
 	init_particles(0x81, 0x82, 0, 0, 0, 0, 3, 3, 5, 1);
 
 	do
 	{
-		blib_vint_wait_default();
+		bios_vint_wait_default();
 		// process_particles is defined in the ipx
 		process_particles();
-	} while (! (BLIB_JOY1_PRESS & PAD_START));
+	} while (! (BIOS_JOY1_PRESS & PAD_START));
 
 	global_mode = 1;
 	return;

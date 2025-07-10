@@ -11,7 +11,7 @@
 #define MEGADEV__MAIN_EXCEPTION_S
 
 #include "macros.s"
-#include "main/bootlib.def.h"
+#include "main/bios.def.h"
 #include "main/memmap.def.h"
 #include "main/io.def.h"
 #include "main/vdp.def.h"
@@ -55,10 +55,10 @@ SUB set_vdp_layout_debug
   move.w  #COLOR_RED, (_VDP_DATA)
   move.w  #COLOR_GREEN, (_VDP_DATA)
   move.w  #COLOR_BLUE, (_VDP_DATA)
-  jsr     _BLIB_CLEAR_VRAM
+  jsr     _BIOS_CLEAR_VRAM
   lea     vdp_layout_debug, a1
-  jsr     _BLIB_LOAD_VDPREGS
-  jsr     _BLIB_LOAD_FONT_DEFAULTS
+  jsr     _BIOS_LOAD_VDPREGS
+  jsr     _BIOS_LOAD_FONT_DEFAULTS
   rts
 
 // TODO
@@ -161,13 +161,13 @@ SUB handle_exception
   move.w  #0x0205, d0
   jbsr    nmtbl_xy_pos
   movea.l (err_str_ptr), a1
-  jbsr    _BLIB_PRINT
+  jbsr    _BIOS_PRINT
 
   // PC=
   move.w  #0x0306, d0
   jbsr    nmtbl_xy_pos
   lea     str_pc, a1
-  jbsr    _BLIB_PRINT
+  jbsr    _BIOS_PRINT
 
   // pc val
   move.l  (pc_val), d0
@@ -176,13 +176,13 @@ SUB handle_exception
   move.w  #0x0806, d0
   jbsr    nmtbl_xy_pos
   lea     str_cache, a1
-  jbsr    _BLIB_PRINT
+  jbsr    _BIOS_PRINT
 
   // SR=
   move.w  #0x0307, d0
   jbsr    nmtbl_xy_pos
   lea     str_sr, a1
-  jbsr    _BLIB_PRINT
+  jbsr    _BIOS_PRINT
 
   // sr val
   move.w  (sr_val), d0
@@ -191,13 +191,13 @@ SUB handle_exception
   move.w  #0x0807, d0
   jbsr    nmtbl_xy_pos
   lea     str_cache, a1
-  jbsr    _BLIB_PRINT
+  jbsr    _BIOS_PRINT
 
   // OP=
   move.w  #0x0308, d0
   jbsr    nmtbl_xy_pos
   lea     str_op, a1
-  jbsr    _BLIB_PRINT
+  jbsr    _BIOS_PRINT
 
   // op val
   move.w  (op_val), d0
@@ -206,13 +206,13 @@ SUB handle_exception
   move.w  #0x0808, d0
   jbsr    nmtbl_xy_pos
   lea     str_cache, a1
-  jbsr    _BLIB_PRINT
+  jbsr    _BIOS_PRINT
 
   // ADDR=
   move.w  #0x0309, d0
   jbsr    nmtbl_xy_pos
   lea     str_addr, a1
-  jbsr    _BLIB_PRINT
+  jbsr    _BIOS_PRINT
 
   // addr val
   move.l  (addr_val), d0
@@ -221,13 +221,13 @@ SUB handle_exception
   move.w  #0x0809, d0
   jbsr    nmtbl_xy_pos
   lea     str_cache, a1
-  jbsr    _BLIB_PRINT
+  jbsr    _BIOS_PRINT
 
   // stop and enable all interrupts (for e.g. serial comm)
   stop    #2000
 
 SUB nmtbl_xy_pos
-1:move.w  (_BLIB_PLANE_WIDTH), d1  // d1 - tiles per row
+1:move.w  (_BIOS_PLANE_WIDTH), d1  // d1 - tiles per row
   move.w  d0, d2  // d0 - x/y offsey (upper/lower bytes of the word)
   lsr.w   #8, d2  // d2 has x pos
   and.w   #0xff, d0  // filter d0 so it only has y pos

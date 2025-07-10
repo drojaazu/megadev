@@ -7,7 +7,7 @@
 
 #include "macros.s"
 
-GLABEL ATOI
+.macro ATOI
 	moveq #0, d0
 1:move.b (a0)+, d1
 	cmp.b #0x20, d1  //check for space
@@ -26,4 +26,5 @@ GLABEL ATOI
 4:lsl.l #4, d0
 	or.b d1, d0
 	bra 1b
-5:rts
+5:
+.endm

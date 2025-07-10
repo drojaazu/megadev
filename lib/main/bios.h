@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file bootlib.h
+ * @file bios.h
  * @brief C wrappers for Boot ROM calls
  *
  * @details
@@ -27,7 +27,7 @@
 #define MEGADEV__MAIN_BOOTLIB_H
 
 #include "fixed.h"
-#include "main/bootlib.def.h"
+#include "main/bios.def.h"
 #include "main/vdp.h"
 #include "types.h"
 
@@ -88,7 +88,7 @@ struct SpriteObject
  * cram_offset - address in CRAM to load palette - that is, the palette index
  * length - the number of colors in the palette to load MINUS ONE
  *
- * @ingroup blib_vdp
+ * @ingroup bios_vdp
  */
 typedef struct Palette
 {
@@ -98,240 +98,240 @@ typedef struct Palette
 } Palette;
 
 /**
- * @def* BLIB_BUFFER
+ * @def* BIOS_BUFFER
  * @brief Work RAM for graphics decompression routines
- * @sa _BLIB_BUFFER
- * @ingroup blib_cmp
+ * @sa _BIOS_BUFFER
+ * @ingroup bios_cmp
  */
-#define BLIB_BUFFER ((u8 *) _BLIB_BUFFER)
+#define BIOS_BUFFER ((u8 *) _BIOS_BUFFER)
 
 /**
- * @def BLIB_BUFFER_SZ
- * @brief Size of @ref BLIB_BUFFER
+ * @def BIOS_BUFFER_SZ
+ * @brief Size of @ref BIOS_BUFFER
  */
-#define BLIB_BUFFER_SZ 0x200
+#define BIOS_BUFFER_SZ 0x200
 
 /**
- * @def Sprite* BLIB_SPRLIST
+ * @def Sprite* BIOS_SPRLIST
  * @brief Sprite list buffer
- * @ingroup blib_vdp
- * @sa _BLIB_SPRLIST
+ * @ingroup bios_vdp
+ * @sa _BIOS_SPRLIST
  *
  * @details
  * Size: 0x280 bytes
  */
-#define BLIB_SPRLIST (*((Sprite(*)[80]) _BLIB_SPRLIST))
-// #define BLIB_SPRLIST ((Sprite *)_BLIB_SPRLIST)
+#define BIOS_SPRLIST (*((Sprite(*)[80]) _BIOS_SPRLIST))
+// #define BIOS_SPRLIST ((Sprite *)_BIOS_SPRLIST)
 
-#define BLIB_SPRLIST_SZ 0x280
+#define BIOS_SPRLIST_SZ 0x280
 
 /**
- * @def s16* BLIB_PALETTE
+ * @def s16* BIOS_PALETTE
  * @brief CRAM (palette) buffer
- * @ingroup blib_vdp
- * @sa _BLIB_PALETTE
+ * @ingroup bios_vdp
+ * @sa _BIOS_PALETTE
  */
-#define BLIB_PALETTE (*((s16(*)[64]) _BLIB_PALETTE))
+#define BIOS_PALETTE (*((s16(*)[64]) _BIOS_PALETTE))
 
-#define BLIB_PALETTE_SZ 0x80
+#define BIOS_PALETTE_SZ 0x80
 
 /**
- * @def BLIB_PAL0
+ * @def BIOS_PAL0
  * @brief Palette line #0 buffer
- * @ingroup blib_vdp
- * @sa _BLIB_PAL0
+ * @ingroup bios_vdp
+ * @sa _BIOS_PAL0
  */
-#define BLIB_PAL0 (*((s16(*)[16]) _BLIB_PAL0))
+#define BIOS_PAL0 (*((s16(*)[16]) _BIOS_PAL0))
 
 /**
- * @def BLIB_PAL1
+ * @def BIOS_PAL1
  * @brief Palette line #1 buffer
- * @ingroup blib_vdp
- * @sa _BLIB_PAL1
+ * @ingroup bios_vdp
+ * @sa _BIOS_PAL1
  */
-#define BLIB_PAL1 (*((s16(*)[16]) _BLIB_PAL1))
+#define BIOS_PAL1 (*((s16(*)[16]) _BIOS_PAL1))
 
 /**
- * @def BLIB_PAL2
+ * @def BIOS_PAL2
  * @brief Palette line #2 buffer
- * @ingroup blib_vdp
- * @sa _BLIB_PAL2
+ * @ingroup bios_vdp
+ * @sa _BIOS_PAL2
  */
-#define BLIB_PAL2 (*((s16(*)[16]) _BLIB_PAL2))
+#define BIOS_PAL2 (*((s16(*)[16]) _BIOS_PAL2))
 
 /**
- * @def BLIB_PAL3
+ * @def BIOS_PAL3
  * @brief Palette line #3 buffer
- * @ingroup blib_vdp
- * @sa _BLIB_PAL3
+ * @ingroup bios_vdp
+ * @sa _BIOS_PAL3
  */
-#define BLIB_PAL3 (*((s16(*)[16]) _BLIB_PAL3))
+#define BIOS_PAL3 (*((s16(*)[16]) _BIOS_PAL3))
 
 /**
- * @def void* BLIB_VINT_EX_PTR
+ * @def void* BIOS_VINT_EX_PTR
  * @brief Pointer to the VINT_EX routine used in the Boot ROM VINT handler.
- * @sa _BLIB_VINT_EX_PTR
+ * @sa _BIOS_VINT_EX_PTR
  */
-#define BLIB_VINT_EX_PTR ((volatile void *(*) ) _BLIB_VINT_EX_PTR)
+#define BIOS_VINT_EX_PTR ((volatile void *(*) ) _BIOS_VINT_EX_PTR)
 
 /**
- * @def* BLIB_VDPREGS
+ * @def* BIOS_VDPREGS
  * @brief VDP registers buffer
- * @ingroup blib_vdp
+ * @ingroup bios_vdp
  *
  * @details Buffer of all VDP registers (except DMA regs), making up 19
  * entries. You will need to keep these updated manually unless you use
- * _BLIB_LOAD_VDPREGS
+ * _BIOS_LOAD_VDPREGS
  *
  * Size: 16bit * 19 = 0x26 bytes
  *
- * @sa _BLIB_VDPREGS
+ * @sa _BIOS_VDPREGS
  */
-// #define BLIB_VDPREGS (*((volatile u16(*)[19]) _BLIB_VDPREGS))
-#define BLIB_VDPREGS ((volatile u16 *) _BLIB_VDPREGS)
+// #define BIOS_VDPREGS (*((volatile u16(*)[19]) _BIOS_VDPREGS))
+#define BIOS_VDPREGS ((volatile u16 *) _BIOS_VDPREGS)
 
 /**
- * @def BLIB_COMFLAGS_MAIN
+ * @def BIOS_COMFLAGS_MAIN
  * @brief GA comm flags for Main CPU buffer
- * @sa _BLIB_COMFLAGS_MAIN
+ * @sa _BIOS_COMFLAGS_MAIN
  */
-#define BLIB_COMFLAGS_MAIN ((volatile u8 *) _BLIB_COMFLAGS_MAIN)
+#define BIOS_COMFLAGS_MAIN ((volatile u8 *) _BIOS_COMFLAGS_MAIN)
 
 /**
- * @def const BLIB_COMFLAGS_SUB
+ * @def const BIOS_COMFLAGS_SUB
  * @brief GA comm flags for Sub CPU buffer
- * @sa _BLIB_COMFLAGS_SUB
+ * @sa _BIOS_COMFLAGS_SUB
  */
-#define BLIB_COMFLAGS_SUB ((volatile u8 const *) _BLIB_COMFLAGS_SUB)
+#define BIOS_COMFLAGS_SUB ((volatile u8 const *) _BIOS_COMFLAGS_SUB)
 
 /**
- * @def* BLIB_COMCMD
+ * @def* BIOS_COMCMD
  * @brief Array of cached GA COMCMD (Main -> Sub) registers
- * @sa _BLIB_COMCMD
+ * @sa _BIOS_COMCMD
  */
-#define BLIB_COMCMD (*((volatile u16(*)[8]) _BLIB_COMCMD))
+#define BIOS_COMCMD (*((volatile u16(*)[8]) _BIOS_COMCMD))
 
 /**
- * @def BLIB_COMSTAT
+ * @def BIOS_COMSTAT
  * @brief Array of cached GA COMSTAT (Main -> Sub) registers
- * @sa _BLIB_COMSTAT
+ * @sa _BIOS_COMSTAT
  */
-#define BLIB_COMSTAT (*((volatile u16 const(*)[8]) _BLIB_COMSTAT))
+#define BIOS_COMSTAT (*((volatile u16 const(*)[8]) _BIOS_COMSTAT))
 
 /**
- * @def BLIB_JOY1_MOUSE_DATA
- * @sa _BLIB_JOY1_MOUSE_DATA
- * @ingroup blib_input
+ * @def BIOS_JOY1_MOUSE_DATA
+ * @sa _BIOS_JOY1_MOUSE_DATA
+ * @ingroup bios_input
  */
-#define BLIB_JOY1_MOUSE_DATA (*((u16 *) _BLIB_JOY1_MOUSE_DATA))
+#define BIOS_JOY1_MOUSE_DATA (*((u16 *) _BIOS_JOY1_MOUSE_DATA))
 
 /**
- * @def BLIB_JOY1_MOUSE_DX
+ * @def BIOS_JOY1_MOUSE_DX
  * @brief Mouse delta X
- * @sa _BLIB_JOY1_MOUSE_DX
- * @ingroup blib_input
+ * @sa _BIOS_JOY1_MOUSE_DX
+ * @ingroup bios_input
  */
-#define BLIB_JOY1_MOUSE_DX (*((u16 *) _BLIB_JOY1_MOUSE_DX))
+#define BIOS_JOY1_MOUSE_DX (*((u16 *) _BIOS_JOY1_MOUSE_DX))
 
 /**
- * @def BLIB_JOY1_MOUSE_DY
+ * @def BIOS_JOY1_MOUSE_DY
  * @brief Mouse delta Y
- * @sa _BLIB_JOY1_MOUSE_DY
- * @ingroup blib_input
+ * @sa _BIOS_JOY1_MOUSE_DY
+ * @ingroup bios_input
  */
-#define BLIB_JOY1_MOUSE_DY (*((u16 *) _BLIB_JOY1_MOUSE_DY))
+#define BIOS_JOY1_MOUSE_DY (*((u16 *) _BIOS_JOY1_MOUSE_DY))
 
 /**
- * @def BLIB_JOY2_MOUSE_DATA
- * @sa _BLIB_JOY2_MOUSE_DATA
- * @ingroup blib_input
+ * @def BIOS_JOY2_MOUSE_DATA
+ * @sa _BIOS_JOY2_MOUSE_DATA
+ * @ingroup bios_input
  */
-#define BLIB_JOY2_MOUSE_DATA (*((u16 *) _BLIB_JOY2_MOUSE_DATA))
+#define BIOS_JOY2_MOUSE_DATA (*((u16 *) _BIOS_JOY2_MOUSE_DATA))
 
 /**
- * @def BLIB_JOY2_MOUSE_DX
+ * @def BIOS_JOY2_MOUSE_DX
  * @brief Mouse delta X
- * @sa _BLIB_JOY2_MOUSE_DX
- * @ingroup blib_input
+ * @sa _BIOS_JOY2_MOUSE_DX
+ * @ingroup bios_input
  */
-#define BLIB_JOY2_MOUSE_DX (*((u16 *) _BLIB_JOY2_MOUSE_DX))
+#define BIOS_JOY2_MOUSE_DX (*((u16 *) _BIOS_JOY2_MOUSE_DX))
 
 /**
- * @def BLIB_JOY2_MOUSE_DY
+ * @def BIOS_JOY2_MOUSE_DY
  * @brief Mouse delta Y
- * @sa _BLIB_JOY2_MOUSE_DY
- * @ingroup blib_input
+ * @sa _BIOS_JOY2_MOUSE_DY
+ * @ingroup bios_input
  */
-#define BLIB_JOY2_MOUSE_DY (*((u16 *) _BLIB_JOY2_MOUSE_DY))
+#define BIOS_JOY2_MOUSE_DY (*((u16 *) _BIOS_JOY2_MOUSE_DY))
 
 /**
- * @def BLIB_JOY1_TYPE
- * @sa _BLIB_JOY1_TYPE
- * @ingroup blib_input
+ * @def BIOS_JOY1_TYPE
+ * @sa _BIOS_JOY1_TYPE
+ * @ingroup bios_input
  */
-#define BLIB_JOY1_TYPE (*((u8 *) _BLIB_JOY1_TYPE))
+#define BIOS_JOY1_TYPE (*((u8 *) _BIOS_JOY1_TYPE))
 
 /**
- * @def BLIB_JOY2_TYPE
- * @sa _BLIB_JOY2_TYPE
- * @ingroup blib_input
+ * @def BIOS_JOY2_TYPE
+ * @sa _BIOS_JOY2_TYPE
+ * @ingroup bios_input
  */
-#define BLIB_JOY2_TYPE ((u8 *) _BLIB_JOY2_TYPE)
+#define BIOS_JOY2_TYPE ((u8 *) _BIOS_JOY2_TYPE)
 
 /**
- * @def BLIB_JOY1_HOLD
+ * @def BIOS_JOY1_HOLD
  * @brief Port 1 controller latched input
- * @sa _BLIB_JOY1_HOLD
- * @ingroup blib_input
+ * @sa _BIOS_JOY1_HOLD
+ * @ingroup bios_input
  */
-#define BLIB_JOY1_HOLD (*((volatile u8 const *) _BLIB_JOY1_HOLD))
+#define BIOS_JOY1_HOLD (*((volatile u8 const *) _BIOS_JOY1_HOLD))
 
 /**
- * @def BLIB_JOY1_PRESS
+ * @def BIOS_JOY1_PRESS
  * @brief Port 1 controller single press input
- * @sa _BLIB_JOY1_PRESS
- * @ingroup blib_input
+ * @sa _BIOS_JOY1_PRESS
+ * @ingroup bios_input
  */
-#define BLIB_JOY1_PRESS (*((volatile u8 const *) _BLIB_JOY1_PRESS))
+#define BIOS_JOY1_PRESS (*((volatile u8 const *) _BIOS_JOY1_PRESS))
 
 /**
- * @def BLIB_JOY2_HOLD
+ * @def BIOS_JOY2_HOLD
  * @brief Port 2 controller latched input
- * @sa _BLIB_JOY2_HOLD
- * @ingroup blib_input
+ * @sa _BIOS_JOY2_HOLD
+ * @ingroup bios_input
  */
-#define BLIB_JOY2_HOLD (*((volatile u8 const *) _BLIB_JOY2_HOLD))
+#define BIOS_JOY2_HOLD (*((volatile u8 const *) _BIOS_JOY2_HOLD))
 
 /**
- * @def BLIB_JOY2_PRESS
+ * @def BIOS_JOY2_PRESS
  * @brief Port 2 controller single press input
- * @sa _BLIB_JOY2_PRESS
- * @ingroup blib_input
+ * @sa _BIOS_JOY2_PRESS
+ * @ingroup bios_input
  */
-#define BLIB_JOY2_PRESS (*((volatile u8 const *) _BLIB_JOY2_PRESS))
+#define BIOS_JOY2_PRESS (*((volatile u8 const *) _BIOS_JOY2_PRESS))
 
 /**
- * @def BLIB_JOY1_DELAY
- * @sa _BLIB_JOY1_DELAY
- * @ingroup blib_input
+ * @def BIOS_JOY1_DELAY
+ * @sa _BIOS_JOY1_DELAY
+ * @ingroup bios_input
  *
- * @note For use with @ref BLIB_INPUT_DELAY
+ * @note For use with @ref BIOS_INPUT_DELAY
  */
-#define BLIB_JOY1_DELAY (*((volatile u8 *) _BLIB_JOY1_DELAY))
+#define BIOS_JOY1_DELAY (*((volatile u8 *) _BIOS_JOY1_DELAY))
 
 /**
- * @def BLIB_JOY2_DELAY
- * @sa _BLIB_JOY2_DELAY
- * @ingroup blib_input
+ * @def BIOS_JOY2_DELAY
+ * @sa _BIOS_JOY2_DELAY
+ * @ingroup bios_input
  *
- * @note For use with @ref BLIB_INPUT_DELAY
+ * @note For use with @ref BIOS_INPUT_DELAY
  */
-#define BLIB_JOY2_DELAY (*((volatile u8 *) _BLIB_JOY2_DELAY))
+#define BIOS_JOY2_DELAY (*((volatile u8 *) _BIOS_JOY2_DELAY))
 
 /**
- * @def BLIB_VINT_FLAGS
- * @sa _BLIB_VINT_FLAGS
- * @ingroup blib_int
+ * @def BIOS_VINT_FLAGS
+ * @sa _BIOS_VINT_FLAGS
+ * @ingroup bios_int
  *
  * @details
  * Used by the Boot ROM VINT/VINT_WAIT routines for graphics updates
@@ -340,63 +340,63 @@ typedef struct Palette
  * Bit 0 - Copy sprite list to VDP
  * Bit 1 - Call VINT_EX vector during vblank
  */
-#define BLIB_VINT_FLAGS (*((u8 *) _BLIB_VINT_FLAGS))
+#define BIOS_VINT_FLAGS (*((u8 *) _BIOS_VINT_FLAGS))
 
 /**
- * @def BLIB_VINT_COUNTER
+ * @def BIOS_VINT_COUNTER
  * @brief Incremented by 1 on each vertical blank (VINT)
- * @sa _BLIB_VINT_COUNTER
- * * @ingroup blib_int
+ * @sa _BIOS_VINT_COUNTER
+ * * @ingroup bios_int
  */
-#define BLIB_VINT_COUNTER (*((volatile u8 *) _BLIB_VINT_COUNTER))
+#define BIOS_VINT_COUNTER (*((volatile u8 *) _BIOS_VINT_COUNTER))
 
 /**
- * @def BLIB_VINT_SKIP_GFX
- * @sa _BLIB_VINT_SKIP_GFX
- * * @ingroup blib_int
+ * @def BIOS_VINT_SKIP_GFX
+ * @sa _BIOS_VINT_SKIP_GFX
+ * * @ingroup bios_int
  *
  * @details Skips these operations during vblank:
  * CRAM copy, sprite list copy, increment vblank counter
  *
  * Will still perform IO updates, though
  */
-#define BLIB_VINT_SKIP_GFX (*((u8 *) _BLIB_VINT_SKIP_GFX))
+#define BIOS_VINT_SKIP_GFX (*((u8 *) _BIOS_VINT_SKIP_GFX))
 
 /**
- * @def BLIB_VDP_UPDATE_FLAGS
- * @sa _BLIB_VDP_UPDATE_FLAGS
- * * @ingroup blib_int
+ * @def BIOS_VDP_UPDATE_FLAGS
+ * @sa _BIOS_VDP_UPDATE_FLAGS
+ * * @ingroup bios_int
  */
-#define BLIB_VDP_UPDATE_FLAGS (*((u8 *) _BLIB_VDP_UPDATE_FLAGS))
+#define BIOS_VDP_UPDATE_FLAGS (*((u8 *) _BIOS_VDP_UPDATE_FLAGS))
 
 /**
- * @def BLIB_RANDOM
+ * @def BIOS_RANDOM
  * @brief Contains a random 16 bit value
- * @sa _BLIB_RANDOM
- * @ingroup blib_misc
+ * @sa _BIOS_RANDOM
+ * @ingroup bios_misc
  *
  * @note
- * You must make a call to @ref BLIB_PRNG on each vblank in order to
+ * You must make a call to @ref BIOS_PRNG on each vblank in order to
  * use this!
  */
-#define BLIB_RANDOM (*((u16 const *) _BLIB_RANDOM))
+#define BIOS_RANDOM (*((u16 const *) _BIOS_RANDOM))
 
 /**
- * @def BLIB_FONT_TILE_BASE
- * @sa _BLIB_FONT_TILE_BASE
- * @ingroup blib_misc
+ * @def BIOS_FONT_TILE_BASE
+ * @sa _BIOS_FONT_TILE_BASE
+ * @ingroup bios_misc
  *
  * @details
  * The value added to each character byte when calling _PRINT_STRING.
  * The font can begin no earlier than tile index 0x20
  */
-#define BLIB_FONT_TILE_BASE (*((u16 *) _BLIB_FONT_TILE_BASE))
+#define BIOS_FONT_TILE_BASE (*((u16 *) _BIOS_FONT_TILE_BASE))
 
 /**
- * @def BLIB_PLANE_WIDTH
+ * @def BIOS_PLANE_WIDTH
  * @brief Cached value of the plane width as defined in VDP reg. 0x10.
- * @ingroup blib_vdp
- * @sa _BLIB_PLANE_WIDTH
+ * @ingroup bios_vdp
+ * @sa _BIOS_PLANE_WIDTH
  *
  * @note
  * This value is stored as BYTES, which is effectively the width in
@@ -408,77 +408,77 @@ typedef struct Palette
  * Use the @ref PlaneWidth enum to make it semantically clear what
  * the width is in tiles
  */
-#define BLIB_PLANE_WIDTH (*((u16 *) _BLIB_PLANE_WIDTH))
+#define BIOS_PLANE_WIDTH (*((u16 *) _BIOS_PLANE_WIDTH))
 
 /**
- * @def BLIB_SPRTBL_PTR
- * @sa _BLIB_SPRTBL_PTR
- * @ingroup blib_vdp
+ * @def BIOS_SPRTBL_PTR
+ * @sa _BIOS_SPRTBL_PTR
+ * @ingroup bios_vdp
  */
-#define BLIB_SPRTBL_PTR (*((u8 *) _BLIB_SPRTBL_PTR))
+#define BIOS_SPRTBL_PTR (*((u8 *) _BIOS_SPRTBL_PTR))
 
 /**
- * @def BLIB_SPR_JMPTBL_PTR
+ * @def BIOS_SPR_JMPTBL_PTR
  * @brief Pointer to the jump table for entity processing
- * @sa _BLIB_SPR_JMPTBL_PTR
- * @ingroup blib_vdp
+ * @sa _BIOS_SPR_JMPTBL_PTR
+ * @ingroup bios_vdp
  */
-#define BLIB_SPR_JMPTBL_PTR (*((void const **) _BLIB_SPR_JMPTBL_PTR))
+#define BIOS_SPR_JMPTBL_PTR (*((void const **) _BIOS_SPR_JMPTBL_PTR))
 
 /**
- * @def BLIB_FADEIN_PAL_INDEX
+ * @def BIOS_FADEIN_PAL_INDEX
  * @brief Palette offset on which the fade in palette should begin
- * @sa _BLIB_FADEIN_PAL_INDEX
- * @ingroup blib_vdp
+ * @sa _BIOS_FADEIN_PAL_INDEX
+ * @ingroup bios_vdp
  */
-#define BLIB_FADEIN_PAL_INDEX (*((u8 *) _BLIB_FADEIN_PAL_INDEX))
+#define BIOS_FADEIN_PAL_INDEX (*((u8 *) _BIOS_FADEIN_PAL_INDEX))
 
 /**
- * @def BLIB_FADEIN_PAL_LENGTH
+ * @def BIOS_FADEIN_PAL_LENGTH
  * @brief Number of entries in the fade in palette
- * @sa _BLIB_FADEIN_PAL_LENGTH
- * @ingroup blib_vdp
+ * @sa _BIOS_FADEIN_PAL_LENGTH
+ * @ingroup bios_vdp
  */
-#define BLIB_FADEIN_PAL_LENGTH (*((u8 *) _BLIB_FADEIN_PAL_LENGTH))
+#define BIOS_FADEIN_PAL_LENGTH (*((u8 *) _BIOS_FADEIN_PAL_LENGTH))
 
 /**
- * @def BLIB_FADEIN_STEP
+ * @def BIOS_FADEIN_STEP
  * @brief Indicates if a fade in is still in progress
- * @sa _BLIB_FADEIN_STEP
- * @ingroup blib_vdp
+ * @sa _BIOS_FADEIN_STEP
+ * @ingroup bios_vdp
  */
-#define BLIB_FADEIN_STEP (*((volatile u16 *) _BLIB_FADEIN_STEP))
+#define BIOS_FADEIN_STEP (*((volatile u16 *) _BIOS_FADEIN_STEP))
 
 /**
- * @def _BLIB_FADEIN_TARGET_PAL_PTR
+ * @def _BIOS_FADEIN_TARGET_PAL_PTR
  * @brief Pointer to the target fade in palette
- * @sa _BLIB_FADEIN_TARGET_PAL_PTR
- * @ingroup blib_vdp
+ * @sa _BIOS_FADEIN_TARGET_PAL_PTR
+ * @ingroup bios_vdp
  */
-#define BLIB_FADEIN_TARGET_PAL_PTR (*((u8 *) _BLIB_FADEIN_TARGET_PAL_PTR))
+#define BIOS_FADEIN_TARGET_PAL_PTR (*((u8 *) _BIOS_FADEIN_TARGET_PAL_PTR))
 
 /**
- * @fn blib_bios_entry
+ * @fn bios_bios_entry
  * @brief Jump to internal user BIOS
- * @ingroup blib_system
+ * @ingroup bios_system
  * @warning Register clobbers not yet documented!
  *
  * @details Leads to Mega CD title screen.
  */
-static inline void blib_bios_entry()
+static inline void bios_bios_entry()
 {
 	asm(
 		"\
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_BIOS_ENTRY));
+		: "i"(_BIOS_BIOS_ENTRY));
 }
 
 /**
- * @fn blib_reset
+ * @fn bios_reset
  * @brief Perform a system reset
- * @ingroup blib_system
+ * @ingroup bios_system
  * @warning Register clobbers not yet documented!
  *
  * @details On cold boot, checks for TMSS, clears RAM, writes
@@ -489,76 +489,76 @@ static inline void blib_bios_entry()
  * the reset vector. Leads to Mega CD title screen.
  *
  */
-static inline void blib_reset()
+static inline void bios_reset()
 {
 	asm(
 		"\
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_RESET));
+		: "i"(_BIOS_RESET));
 }
 
 /**
- * @fn blib_init
+ * @fn bios_init
  * @brief Initialize system
- * @ingroup blib_system
+ * @ingroup bios_system
  * @warning Register clobbers not yet documented!
  *
  * @details Sets default VDP regs, clears VRAM, sets default vectors, inits
  * controllers, loads Z80 data, transfers Sub CPU BIOS, loads CD player program
  */
-static inline void blib_init()
+static inline void bios_init()
 {
 	asm(
 		"\
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_INIT));
+		: "i"(_BIOS_INIT));
 }
 
 /**
- * @fn blib_init_sp
+ * @fn bios_init_sp
  * @brief System init with stack pointer set
- * @ingroup blib_system
+ * @ingroup bios_system
  * @warning Register clobbers not yet documented!
  *
- * @details Same as @ref blib_init but sets the stack pointer first
+ * @details Same as @ref bios_init but sets the stack pointer first
  */
-static inline void blib_init_sp()
+static inline void bios_init_sp()
 {
 	asm(
 		"\
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_INIT_SP));
+		: "i"(_BIOS_INIT_SP));
 }
 
 /**
- * @fn blib_vint_handler
+ * @fn bios_vint_handler
  * @brief Vertical Blank interrupt handler
- * @ingroup blib_int
+ * @ingroup bios_int
  *
  * @details Copies GA comm registers to the RAM
  * mirrors, sends INT2 (VINT ocurred) to Sub CPU, updates VDP palette from
  * RAM, calls VINT_EX, updates IO (controllers)
  */
-static inline void blib_vint_handler()
+static inline void bios_vint_handler()
 {
 	asm(
 		"\
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_VINT_HANDLER));
+		: "i"(_BIOS_VINT_HANDLER));
 }
 
 /**
- * @fn blib_set_hint
+ * @fn bios_set_hint
  * @brief Sets the HINT vector
- * @ingroup blib_int
+ * @ingroup bios_int
  *
  * @details Sets the HINT vector in the system jump table, and sets the Gate
  * Array HINT register to the system jump table entry, and enables the interrupt
@@ -566,7 +566,7 @@ static inline void blib_vint_handler()
  *
  * @note The VDP register cache will be updated
  */
-static inline void blib_set_hint(void * hint_handler)
+static inline void bios_set_hint(void * hint_handler)
 {
 	register u32 A1 asm("a1") = (u32) hint_handler;
 	asm(
@@ -574,16 +574,16 @@ static inline void blib_set_hint(void * hint_handler)
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_SET_HINT), "a"(A1)
+		: "i"(_BIOS_SET_HINT), "a"(A1)
 		: "cc");
 }
 
 /**
- * @fn blib_update_inputs
+ * @fn bios_update_inputs
  * @brief Update state of P1/P2 controllers
- * @ingroup blib_input
+ * @ingroup bios_input
  */
-static inline void blib_update_inputs()
+static inline void bios_update_inputs()
 {
 	asm(
 		"\
@@ -592,7 +592,7 @@ static inline void blib_update_inputs()
 			move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BLIB_UPDATE_INPUTS)
+		: "i"(_BIOS_UPDATE_INPUTS)
 		: "d6", "d7", "a5");
 }
 
@@ -604,16 +604,16 @@ typedef enum ControllerType
 } ControllerType;
 
 /**
- * @def blib_detect_controller
+ * @def bios_detect_controller
  * @brief Detect the type of controller plugged in
- * @ingroup blib_input
+ * @ingroup bios_input
  * @warning Register clobbers not yet documented!
  *
  * @note
  * This is called during normal system init and with the results stored
- * in @ref BLIB_JOY1_TYPE and @ref BLIB_JOY2_TYPE
+ * in @ref BIOS_JOY1_TYPE and @ref BIOS_JOY2_TYPE
  */
-static inline u8 blib_detect_controller(u8 * io_data_port)
+static inline u8 bios_detect_controller(u8 * io_data_port)
 {
 	register u32 A6 asm("a6") = (u32) io_data_port;
 	register u8 D6 asm("d6");
@@ -622,23 +622,23 @@ static inline u8 blib_detect_controller(u8 * io_data_port)
 			jsr %p0 \n\
 		"
 		: "=d"(D6)
-		: "i"(_BLIB_DETECT_CONTROLLER), "a"(A6)
+		: "i"(_BIOS_DETECT_CONTROLLER), "a"(A6)
 		: "cc");
 
 	return D6;
 }
 
 /**
- * @fn blib_clear_vram
+ * @fn bios_clear_vram
  * @brief Clear all of VRAM and VSRAM via DMA Fill
- * @ingroup blib_vdp
+ * @ingroup bios_vdp
  *
  * @note This does not clear CRAM.
  *
  * @todo this isn't clearing the sprite list for some reason...?
  *
  */
-static inline void blib_clear_vram()
+static inline void bios_clear_vram()
 {
 	asm(
 		"\
@@ -647,18 +647,18 @@ static inline void blib_clear_vram()
 			move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BLIB_CLEAR_VRAM)
+		: "i"(_BIOS_CLEAR_VRAM)
 		: "d0", "d1", "d2", "d3");
 }
 
 /**
- * @fn blib_clear_tables
+ * @fn bios_clear_tables
  * @brief Clear nametables and sprite list
- * @ingroup blib_vdp
+ * @ingroup bios_vdp
  *
  * @note This works only with the Boot ROM default VRAM layout
  */
-static inline void blib_clear_tables()
+static inline void bios_clear_tables()
 {
 	asm(
 		"\
@@ -667,53 +667,53 @@ static inline void blib_clear_tables()
 			move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BLIB_CLEAR_TABLES)
+		: "i"(_BIOS_CLEAR_TABLES)
 		: "d0", "d1", "d2", "d3");
 }
 
 /**
- * @fn blib_clear_vsram
+ * @fn bios_clear_vsram
  * @brief Clear VSRAM
- * @ingroup blib_vdp
+ * @ingroup bios_vdp
  */
-static inline void blib_clear_vsram()
+static inline void bios_clear_vsram()
 {
 	asm(
 		"\
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_CLEAR_VSRAM)
+		: "i"(_BIOS_CLEAR_VSRAM)
 		: "d0", "d1", "d2");
 }
 
 /**
- * @fn blib_load_vdpregs_default
+ * @fn bios_load_vdpregs_default
  * @brief Loads the Boot ROM default VDP register defaults
- * @ingroup blib_vdp
+ * @ingroup bios_vdp
  */
-static inline void blib_load_vdpregs_default()
+static inline void bios_load_vdpregs_default()
 {
 	asm(
 		"\
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_LOAD_VDPREGS_DEFAULT)
+		: "i"(_BIOS_LOAD_VDPREGS_DEFAULT)
 		: "d0", "d1", "a1", "a2");
 }
 
 /**
- * @fn blib_load_vdpregs
+ * @fn bios_load_vdpregs
  * @brief Load values into multiple VDP registers
- * @ingroup blib_vdp
+ * @ingroup bios_vdp
  *
  * @details Register data is an array of word sized values,
  * where the upper byte is the register ID
  * (e.g. 80, 81, etc) and the lower byte is
  * the value, with the list terminated by 0.
  */
-static inline void blib_load_vdpregs(VDP_REGISTER const * vdp_reg_data)
+static inline void bios_load_vdpregs(VDP_REGISTER const * vdp_reg_data)
 {
 	register u32 A1 asm("a1") = (u32) vdp_reg_data;
 
@@ -722,19 +722,19 @@ static inline void blib_load_vdpregs(VDP_REGISTER const * vdp_reg_data)
 			jsr %p1 \n\
 		"
 		: "+a"(A1)
-		: "i"(_BLIB_LOAD_VDPREGS), "a"(A1)
+		: "i"(_BIOS_LOAD_VDPREGS), "a"(A1)
 		: "cc", "d0", "d1", "a2");
 }
 
 /**
- * @fn blib_vdp_fill
+ * @fn bios_vdp_fill
  * @brief Fill a region of VDP memory with a value
- * @ingroup blib_vdp
+ * @ingroup bios_vdp
  *
  * @details This is a simple data transfer via the VDP data port rather than
  * DMA.
  */
-static inline void blib_vdp_fill(u32 vdpptr, u16 length, u16 value)
+static inline void bios_vdp_fill(u32 vdpptr, u16 length, u16 value)
 {
 	register u32 D0 asm("d0") = vdpptr;
 	register u16 D1 asm("d1") = length;
@@ -744,18 +744,18 @@ static inline void blib_vdp_fill(u32 vdpptr, u16 length, u16 value)
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_VDP_FILL), "d"(D0), "d"(D1), "d"(D2));
+		: "i"(_BIOS_VDP_FILL), "d"(D0), "d"(D1), "d"(D2));
 }
 
 /**
- * @fn blib_vdp_fill_clear
+ * @fn bios_vdp_fill_clear
  * @brief Fill a region of VDP memory with 0
- * @ingroup blib_vdp
+ * @ingroup bios_vdp
  *
  * @details This is a simple data transfer via the VDP data port rather than
  * DMA.
  */
-static inline void blib_vdp_fill_clear(u32 vdpptr, u16 length)
+static inline void bios_vdp_fill_clear(u32 vdpptr, u16 length)
 {
 	register u32 D0 asm("d0") = vdpptr;
 	register u16 D1 asm("d1") = length;
@@ -764,17 +764,17 @@ static inline void blib_vdp_fill_clear(u32 vdpptr, u16 length)
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_VDP_FILL_CLEAR), "d"(D0), "d"(D1)
+		: "i"(_BIOS_VDP_FILL_CLEAR), "d"(D0), "d"(D1)
 		: "d2");
 }
 
 /**
- * @fn blib_dma_fill_clear
+ * @fn bios_dma_fill_clear
  * @brief Fill a region of VDP memory with zero
- * @ingroup blib_vdp
- * @sa _BLIB_DMA_FILL_CLEAR
+ * @ingroup bios_vdp
+ * @sa _BIOS_DMA_FILL_CLEAR
  */
-static inline void blib_dma_fill_clear(u32 vdpptr, u16 length)
+static inline void bios_dma_fill_clear(u32 vdpptr, u16 length)
 {
 	register u32 D0 asm("d0") = vdpptr;
 	register u16 D1 asm("d1") = length;
@@ -785,17 +785,17 @@ static inline void blib_dma_fill_clear(u32 vdpptr, u16 length)
 			move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BLIB_DMA_FILL_CLEAR), "d"(D0), "d"(D1)
+		: "i"(_BIOS_DMA_FILL_CLEAR), "d"(D0), "d"(D1)
 		: "d2", "d3");
 }
 
 /**
- * @fn blib_dma_fill
+ * @fn bios_dma_fill
  * @brief Fill a region of VDP memory with a value
- * @sa _BLIB_DMA_FILL
- * @ingroup blib_vdp
+ * @sa _BIOS_DMA_FILL
+ * @ingroup bios_vdp
  */
-static inline void blib_dma_fill(u32 vdpptr, u16 length, u16 value)
+static inline void bios_dma_fill(u32 vdpptr, u16 length, u16 value)
 {
 	register u32 D0 asm("d0") = vdpptr;
 	register u16 D1 asm("d1") = length;
@@ -807,20 +807,20 @@ static inline void blib_dma_fill(u32 vdpptr, u16 length, u16 value)
 			move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BLIB_DMA_FILL), "d"(D0), "d"(D1), "d"(D2)
+		: "i"(_BIOS_DMA_FILL), "d"(D0), "d"(D1), "d"(D2)
 		: "d3");
 }
 
 /**
- * @fn blib_load_map
+ * @fn bios_load_map
  * @brief Fill a region of a nametable with map data
- * @sa _BLIB_LOAD_MAP
- * @ingroup blib_vdp
+ * @sa _BIOS_LOAD_MAP
+ * @ingroup bios_vdp
  *
  * @details The map data should be an array of word values in the standard
  * nametable entry format.
  */
-static inline void blib_load_map(u32 const vdpptr, u16 const width, u16 const height, void const * map)
+static inline void bios_load_map(u32 const vdpptr, u16 const width, u16 const height, void const * map)
 {
 	register u32 D0 asm("d0") = vdpptr;
 	register u16 D1 asm("d1") = width;
@@ -832,32 +832,32 @@ static inline void blib_load_map(u32 const vdpptr, u16 const width, u16 const he
 			jsr %p1 \n\
 		"
 		: "+d"(D2)
-		: "i"(_BLIB_LOAD_MAP), "d"(D0), "d"(D1), "d"(D2), "a"(A1)
+		: "i"(_BIOS_LOAD_MAP), "d"(D0), "d"(D1), "d"(D2), "a"(A1)
 		: "d3", "a5", "cc");
 }
 
 /**
- * @fn blib_set_hint_workram
+ * @fn bios_set_hint_workram
  * @brief Sets the HINT vector for a Work RAM destination
- * @sa _BLIB_SET_HINT_WORKRAM
- * @ingroup blib_int
+ * @sa _BIOS_SET_HINT_WORKRAM
+ * @ingroup bios_int
  *
  * @details
  * Sets the specified vector in the system jump table, and sets the
  * Gate Array HINT register to the specified vector, and enables the interrupt
  * on the VDP.
  *
- * This is functionally identical to @ref blib_set_hint, however this version
+ * This is functionally identical to @ref bios_set_hint, however this version
  * sets the GA HINT register directly to the specified vector. Since the GA
  * register is only 16 bits, it uses only the lower word of the address and
  * expects the routine to be locaed in Work RAM, i.e. 0xFFxxxx. This means if
  * the specified HINT routine is located elsewhere (such as Word RAM), you must
- * use @ref blib_set_hint instead.
+ * use @ref bios_set_hint instead.
  *
  * @details
- * The VDP register buffer (_BLIB_VDPREGS) is updated with this call.
+ * The VDP register buffer (_BIOS_VDPREGS) is updated with this call.
  */
-static inline void blib_set_hint_workram(void * hint_handler)
+static inline void bios_set_hint_workram(void * hint_handler)
 {
 	register u32 A1 asm("a1") = (u32) hint_handler;
 	asm(
@@ -865,33 +865,33 @@ static inline void blib_set_hint_workram(void * hint_handler)
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_SET_HINT_WORKRAM), "a"(A1)
+		: "i"(_BIOS_SET_HINT_WORKRAM), "a"(A1)
 		: "cc");
 }
 
 /**
- * @fn blib_disable_hint
+ * @fn bios_disable_hint
  * @brief Disables horizontal interrupts on the VDP
- * @ingroup blib_int
+ * @ingroup bios_int
  *
  * @details The VDP register buffer (VDP_REGS) is updated with this call.
  */
-static inline void blib_disable_hint()
+static inline void bios_disable_hint()
 {
 	asm(
 		"\
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_DISABLE_HINT)
+		: "i"(_BIOS_DISABLE_HINT)
 		: "cc");
 }
 
 /**
- * @sa _BLIB_GFX_DECOMP
- * @ingroup blib_cmp
+ * @sa _BIOS_GFX_DECOMP
+ * @ingroup bios_cmp
  */
-static inline void blib_gfx_decomp(u8 const * data)
+static inline void bios_gfx_decomp(u8 const * data)
 {
 	register u32 a1_data asm("a1") = (u32) data;
 	asm(
@@ -899,42 +899,42 @@ static inline void blib_gfx_decomp(u8 const * data)
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_GFX_DECOMP), "a"(a1_data));
+		: "i"(_BIOS_GFX_DECOMP), "a"(a1_data));
 }
 
 /**
- * @sa _BLIB_VDP_DISP_ENABLE
- * @ingroup blib_vdp
+ * @sa _BIOS_VDP_DISP_ENABLE
+ * @ingroup bios_vdp
  */
-static inline void blib_vdp_disp_enable()
+static inline void bios_vdp_disp_enable()
 {
 	asm(
 		"\
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_VDP_DISP_ENABLE));
+		: "i"(_BIOS_VDP_DISP_ENABLE));
 }
 
 /**
- * @sa _BLIB_VDP_DISP_DISABLE
- * @ingroup blib_vdp
+ * @sa _BIOS_VDP_DISP_DISABLE
+ * @ingroup bios_vdp
  */
-static inline void blib_vdp_disp_disable()
+static inline void bios_vdp_disp_disable()
 {
 	asm(
 		"\
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_VDP_DISP_DISABLE));
+		: "i"(_BIOS_VDP_DISP_DISABLE));
 }
 
 /**
- * @fn blib_vint_wait_default
+ * @fn bios_vint_wait_default
  * @brief Wait for vertical interrupt with default flags
- * @ingroup blib_int
- * @sa _BLIB_VINT_HANDLER_WAIT_DEFAULT
+ * @ingroup bios_int
+ * @sa _BIOS_VINT_HANDLER_WAIT_DEFAULT
  *
  * @details This will set the default VINT flags (copy sprite list & call
  * VINT_EX) before waiting for VINT
@@ -943,28 +943,28 @@ static inline void blib_vdp_disp_disable()
  *
  * @warning This will enable all interrupts before waiting for the VINT!
  */
-static inline void blib_vint_wait_default()
+static inline void bios_vint_wait_default()
 {
 	asm(
 		"\
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_VINT_HANDLER_WAIT_DEFAULT)
+		: "i"(_BIOS_VINT_HANDLER_WAIT_DEFAULT)
 		: "d0");
 }
 
 /**
- * @fn blib_vint_wait
+ * @fn bios_vint_wait
  * @brief Wait for vertical interrupt
- * @ingroup blib_int
- * @sa _BLIB_VINT_HANDLER_WAIT
+ * @ingroup bios_int
+ * @sa _BIOS_VINT_HANDLER_WAIT
  *
  * @note This will also make a call to _PRNG
  *
  * @warning This will enable all interrupts before waiting for the VINT!
  */
-static inline void blib_vint_wait(u8 flags)
+static inline void bios_vint_wait(u8 flags)
 {
 	register u8 D0 asm("d0") = flags;
 	asm(
@@ -972,13 +972,13 @@ static inline void blib_vint_wait(u8 flags)
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_VINT_HANDLER_WAIT), "d"(D0));
+		: "i"(_BIOS_VINT_HANDLER_WAIT), "d"(D0));
 }
 
 /**
- * @fn blib_pal_fadeout
+ * @fn bios_pal_fadeout
  * @brief Fade a range of the color palette to black
- * @ingroup blib_vdp
+ * @ingroup bios_vdp
  *
  * @param[in] D0.w Palette index (*byte* offset, not word!)
  * @param[in] D1.w Length (In *words*, not bytes!)
@@ -989,7 +989,7 @@ static inline void blib_vint_wait(u8 flags)
  *
  * @note Sets the palette update flag on _GFX_REFRESH
  */
-static inline bool blib_pal_fadeout(u8 palette_index, u8 length)
+static inline bool bios_pal_fadeout(u8 palette_index, u8 length)
 {
 	register u16 D0 asm("d0") = (u16) (palette_index << 1);
 	register u16 D1 asm("d1") = (u16) length;
@@ -1000,7 +1000,7 @@ static inline bool blib_pal_fadeout(u8 palette_index, u8 length)
 			beq %l[fade_complete] \n\
 		"
 		:
-		: "i"(_BLIB_PAL_FADEOUT), "d"(D0), "d"(D1)
+		: "i"(_BIOS_PAL_FADEOUT), "d"(D0), "d"(D1)
 		: "cc"
 		: fade_complete);
 
@@ -1011,31 +1011,31 @@ fade_complete:
 }
 
 /**
- * @fn blib_load_font_defaults
+ * @fn bios_load_font_defaults
  * @brief Load the internal 1bpp ASCII font with default settings
- * @ingroup blib_misc
+ * @ingroup bios_misc
  *
  * @details
  * This will place the tiles starting at index 0x20, making it compatible with
  * _PRINT_STRING, and sets the font color to index 1.
  */
-static inline void blib_load_font_defaults()
+static inline void bios_load_font_defaults()
 {
 	asm(
 		"\
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_LOAD_FONT_DEFAULTS)
+		: "i"(_BIOS_LOAD_FONT_DEFAULTS)
 		: "d0", "d1", "d2", "d3", "d4", "a1", "a5");
 };
 
 /**
- * @fn blib_load_1bpp_tiles
+ * @fn bios_load_1bpp_tiles
  * @brief Load the 1bpp graphics into VDP
- * @ingroup blib_misc
+ * @ingroup bios_misc
  */
-static inline void blib_load_1bpp_tiles(void * chr_data, u16 tile_count, VDP_COMMAND dest, u32 color_pattern)
+static inline void bios_load_1bpp_tiles(void * chr_data, u16 tile_count, VDP_COMMAND dest, u32 color_pattern)
 {
 	register u32 D0 asm("d0") = dest;
 	register u32 D1 asm("d1") = color_pattern;
@@ -1047,18 +1047,18 @@ static inline void blib_load_1bpp_tiles(void * chr_data, u16 tile_count, VDP_COM
 			jsr %p2 \n\
 		"
 		: "+d"(D2), "+a"(A1)
-		: "i"(_BLIB_LOAD_1BPP_TILES), "a"(A1), "d"(D0), "d"(D1), "d"(D2)
+		: "i"(_BIOS_LOAD_1BPP_TILES), "a"(A1), "d"(D0), "d"(D1), "d"(D2)
 		: "d3", "d4", "a5");
 };
 
 /**
- * @fn blib_input_delay
+ * @fn bios_input_delay
  * @brief Generates a brief delay after initially pressing the D-pad
- * @ingroup blib_input
+ * @ingroup bios_input
  *
  * @param[in] A1.l Pointer to byte which will hold the output D-pad value
  * @param[in] D0.w If 0, use P1 input; if non-zero, use P2 input
- * @ingroup blib_input
+ * @ingroup bios_input
  *
  * @details
  * This is useful for working with cursors on menus as it creates a brief
@@ -1066,7 +1066,7 @@ static inline void blib_load_1bpp_tiles(void * chr_data, u16 tile_count, VDP_COM
  * output variable (set in a1) rather than the standard input mirror in order
  * to use this correctly.
  */
-static inline void blib_input_delay(u8 * input, bool use_2p)
+static inline void bios_input_delay(u8 * input, bool use_2p)
 {
 	register u32 A1 asm("a1") = (u32) input;
 	register u16 D0 asm("d0") = (u16) use_2p;
@@ -1076,44 +1076,44 @@ static inline void blib_input_delay(u8 * input, bool use_2p)
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_INPUT_DELAY), "a"(A1), "d"(D0)
+		: "i"(_BIOS_INPUT_DELAY), "a"(A1), "d"(D0)
 		: "cc", "d1", "a5");
 }
 
 /**
- * @fn blib_clear_comm
+ * @fn bios_clear_comm
  * @brief Clears all Gate Array communication registers
- * @ingroup blib_comm
+ * @ingroup bios_comm
  *
  * @details This clears the COMFLAGS and COMCMD registers directly as well as
  * their RAM buffers
  */
-static inline void blib_clear_comm()
+static inline void bios_clear_comm()
 {
 	asm(
 		"\
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_CLEAR_COMM)
+		: "i"(_BIOS_CLEAR_COMM)
 		: "d0", "a6");
 }
 
 /**
- * @fn blib_print
+ * @fn bios_print
  * @brief Displays an ASCII string
- * @ingroup blib_misc
+ * @ingroup bios_misc
  *
  * @param[in] A1.l Pointer to string
  * @param[in] D0.l VRAM destination (vdpptr)
  *
  * @details Strings are terminated with 0xFF and use 0x00 for newline.
- * The value in _BLIB_FONT_TILE_BASE is added to each character byte, but no
+ * The value in _BIOS_FONT_TILE_BASE is added to each character byte, but no
  * other transformations are done. This means that the font must begin at index
- * 0x20 at the earliest (where _BLIB_FONT_TILE_BASE is 0). Note that this can
+ * 0x20 at the earliest (where _BIOS_FONT_TILE_BASE is 0). Note that this can
  * only use palette line 0.
  */
-static inline void blib_print(char const * string, VDP_COMMAND pos)
+static inline void bios_print(char const * string, VDP_COMMAND pos)
 {
 	register u32 A1 asm("a1") = (u32) string;
 	register u32 D0 asm("d0") = pos;
@@ -1123,20 +1123,20 @@ static inline void blib_print(char const * string, VDP_COMMAND pos)
 			jsr %p1 \n\
 		"
 		: "+a"(A1)
-		: "i"(_BLIB_PRINT), "a"(A1), "d"(D0)
+		: "i"(_BIOS_PRINT), "a"(A1), "d"(D0)
 		: "d1", "d2", "a5");
 };
 
 /**
- * @fn blib_nmtbl_fill
+ * @fn bios_nmtbl_fill
  * @brief Fill a region of a nametable with a value
  * @param[in] D0.l Address (vdpptr format)
  * @param[in] D1.w Width
  * @param[in] D2.w Height
  * @param[in] D3.w Value
- * @ingroup blib_vdp
+ * @ingroup bios_vdp
  */
-static inline void blib_nmtbl_fill(VDP_COMMAND pos, u16 width, u16 height, u16 value)
+static inline void bios_nmtbl_fill(VDP_COMMAND pos, u16 width, u16 height, u16 value)
 {
 	register u32 D0 asm("d0") = pos;
 	register u32 D1 asm("d1") = width;
@@ -1150,19 +1150,19 @@ static inline void blib_nmtbl_fill(VDP_COMMAND pos, u16 width, u16 height, u16 v
     	move.l (sp)+, a6 \n\
   	"
 		: "+d"(D2)
-		: "i"(_BLIB_NMTBL_FILL), "d"(D0), "d"(D1), "d"(D2), "d"(D3)
+		: "i"(_BIOS_NMTBL_FILL), "d"(D0), "d"(D1), "d"(D2), "d"(D3)
 		: "cc", "d5", "a5");
 };
 
 /**
- * @fn blib_dma_xfer
+ * @fn bios_dma_xfer
  * @brief Performs a data transfer to VRAM via DMA
  * @param[in] D0.l VRAM destination address (vdpptr format)
  * @param[in] D1.l Source address
  * @param[in] D2.w Length (in words)
- * @ingroup blib_vdp
+ * @ingroup bios_vdp
  */
-static inline void blib_dma_xfer(VDP_COMMAND dest, u8 const * source, u16 length)
+static inline void bios_dma_xfer(VDP_COMMAND dest, u8 const * source, u16 length)
 {
 	register u32 D0 asm("d0") = dest;
 	register u32 D1 asm("d1") = (u32) source;
@@ -1175,23 +1175,23 @@ static inline void blib_dma_xfer(VDP_COMMAND dest, u8 const * source, u16 length
   		move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BLIB_DMA_XFER), "d"(D0), "d"(D1), "d"(D2)
+		: "i"(_BIOS_DMA_XFER), "d"(D0), "d"(D1), "d"(D2)
 		: "d3");
 };
 
 /**
- * @fn blib_dma_xfer_wrdram
+ * @fn bios_dma_xfer_wrdram
  * @brief Performs a data transfer from Word RAM to VRAM via DMA
  * @param[in] D0.l VRAM destination (vdpptr format)
  * @param[in] D1.l Source address
  * @param[in] D2.w Length (in words)
- * @ingroup blib_vdp
+ * @ingroup bios_vdp
  *
  * @details There is a well-documented issue with performing a DMA transfer from
  * Word RAM to VRAM which must be accounted for by writing the final word of
  * data to the data port. This subroutine takes care of that extra step.
  */
-static inline void blib_dma_xfer_wrdram(VDP_COMMAND const dest, void const * source, u16 const length)
+static inline void bios_dma_xfer_wrdram(VDP_COMMAND const dest, void const * source, u16 const length)
 {
 	register u32 D0 asm("d0") = dest;
 	register u32 D1 asm("d1") = (u32) source;
@@ -1204,19 +1204,19 @@ static inline void blib_dma_xfer_wrdram(VDP_COMMAND const dest, void const * sou
 			move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BLIB_DMA_XFER_WRDRAM), "d"(D0), "d"(D1), "d"(D2)
+		: "i"(_BIOS_DMA_XFER_WRDRAM), "d"(D0), "d"(D1), "d"(D2)
 		: "d3");
 };
 
 /**
- * @fn blib_dma_copy
+ * @fn bios_dma_copy
  * @brief Copy data within VRAM via DMA
  * @param[in] D0.l Destination VRAM address (vdpptr)
  * @param[in] D1.w Source VRAM address
  * @param[in] D2.w Length
- * @ingroup blib_vdp
+ * @ingroup bios_vdp
  */
-static inline void blib_dma_copy(u32 vdpptr_dest, u16 source, u16 length)
+static inline void bios_dma_copy(u32 vdpptr_dest, u16 source, u16 length)
 {
 	register u32 D0 asm("d0") = vdpptr_dest;
 	register u16 D1 asm("d1") = source;
@@ -1229,38 +1229,38 @@ static inline void blib_dma_copy(u32 vdpptr_dest, u16 source, u16 length)
 	  	move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BLIB_DMA_COPY), "d"(D0), "d"(D1), "d"(D2)
+		: "i"(_BIOS_DMA_COPY), "d"(D0), "d"(D1), "d"(D2)
 		: "d3");
 };
 
 /**
- * @fn blib_copy_sprlist
+ * @fn bios_copy_sprlist
  * @brief Copies sprite list buffer to VDP via DMA
- * @ingroup blib_vdp
+ * @ingroup bios_vdp
  *
  * @details This uses the default Boot ROM VRAM layout (i.e. sprite list at
  * 0xB800) Will only perform the copy of bit 0 of VINT_FLAGS is set (so this is
  * likely intended to be called from VINT, probably VINT_EX)
  */
-static inline void blib_copy_sprlist()
+static inline void bios_copy_sprlist()
 {
 	asm(
 		"\
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_COPY_SPRLIST)
+		: "i"(_BIOS_COPY_SPRLIST)
 		: "d4", "a4");
 };
 
 /**
- * @fn blib_clear_ram
+ * @fn bios_clear_ram
  * @brief Clear a region of memory
  * @param[in] A0.l Pointer to memory region
  * @param[in] D7.l Size to clear (in longs) MINUS 1
- * @ingroup blib_misc
+ * @ingroup bios_misc
  */
-static inline void blib_clear_ram(void * address, u32 long_count)
+static inline void bios_clear_ram(void * address, u32 long_count)
 {
 	register u32 A0 asm("a0") = (u32) address;
 	register u32 D7 asm("d7") = long_count;
@@ -1272,18 +1272,18 @@ static inline void blib_clear_ram(void * address, u32 long_count)
 			move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BLIB_CLEAR_RAM), "d"(D7), "a"(A0));
+		: "i"(_BIOS_CLEAR_RAM), "d"(D7), "a"(A0));
 };
 
 /**
- * @fn blib_load_pal
+ * @fn bios_load_pal
  * @brief Load palette to RAM buffer
  * @param[in] A1.l Pointer to palette data structure
- * @ingroup blib_vdp
+ * @ingroup bios_vdp
  *
  * @details The color palette is loaded but the "Palette Update" flag is not set
  */
-static inline void blib_load_pal(Palette const * pal_data)
+static inline void bios_load_pal(Palette const * pal_data)
 {
 	register u32 A1 asm("a1") = (u32) pal_data;
 
@@ -1292,17 +1292,17 @@ static inline void blib_load_pal(Palette const * pal_data)
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_LOAD_PAL), "a"(A1)
+		: "i"(_BIOS_LOAD_PAL), "a"(A1)
 		: "d0");
 };
 
 /**
- * @fn blib_load_pal_update
+ * @fn bios_load_pal_update
  * @brief Load palette to RAM buffer and set Palette Update flag
  * @param[in] A1.l Pointer to palette data structure
- * @ingroup blib_vdp
+ * @ingroup bios_vdp
  */
-static inline void blib_load_pal_update(Palette const * pal_data)
+static inline void bios_load_pal_update(Palette const * pal_data)
 {
 	register u32 A1 asm("a1") = (u32) pal_data;
 
@@ -1311,38 +1311,38 @@ static inline void blib_load_pal_update(Palette const * pal_data)
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_LOAD_PAL_UPDATE), "a"(A1)
+		: "i"(_BIOS_LOAD_PAL_UPDATE), "a"(A1)
 		: "d0");
 };
 
 /**
- * @fn blib_copy_pal
+ * @fn bios_copy_pal
  * @brief Transfer palette cache to CRAM via DMA
- * @ingroup blib_vdp
+ * @ingroup bios_vdp
  *
- * @note Uses BLIB_VDP_UPDATE_FLAGS
+ * @note Uses BIOS_VDP_UPDATE_FLAGS
  */
-static inline void blib_copy_pal()
+static inline void bios_copy_pal()
 {
 	asm(
 		"\
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_COPY_PAL)
+		: "i"(_BIOS_COPY_PAL)
 		: "cc", "a4", "d4");
 };
 
 /**
- * @fn blib_process_sprobjs
+ * @fn bios_process_sprobjs
  * @brief Update/display sprite objects
  * @param[in] A0.l Pointer to object array
  * @param[in] A1.l Pointer to sprite list buffer
  * @param[in] D0.w Number of objects
  * @param[in] D1.w Object size
- * @ingroup blib_vdp
+ * @ingroup bios_vdp
  */
-static inline void blib_process_sprobjs(
+static inline void bios_process_sprobjs(
 	struct SpriteObject const * obj_array, Sprite const * sprtbl_cache, u16 const obj_count, u16 const obj_size)
 {
 	register u32 A0 asm("a0") = (u32) obj_array;
@@ -1355,16 +1355,16 @@ static inline void blib_process_sprobjs(
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_PROCESS_SPROBJS), "a"(A0), "a"(A1), "d"(D0), "d"(D1)
+		: "i"(_BIOS_PROCESS_SPROBJS), "a"(A0), "a"(A1), "d"(D0), "d"(D1)
 		: "d2", "d3", "d4", "d6", "a2");
 };
 
 /**
- * @fn blib_prng_mod
+ * @fn bios_prng_mod
  * @brief Generate a new random number limited with the given modulus
  * @param[in] D0.w Modulus
  * @param[out] D0.w Random number between 0 and modulus
- * @ingroup blib_misc
+ * @ingroup bios_misc
  *
  * @details The modulus can be used to specify an upper boundary of the random
  * number. To specify a minimum boundary, the modulus should be set like so:
@@ -1373,7 +1373,7 @@ static inline void blib_process_sprobjs(
  * Psuedo code:
  *   num = prng_mod((upper - lower) + 1) + lower
  */
-static inline u16 blib_prng_mod(u16 const modulo)
+static inline u16 bios_prng_mod(u16 const modulo)
 {
 	// TODO can we use the same variable here for in/out?
 	register u16 d0_modulo asm("d0") = modulo;
@@ -1384,41 +1384,41 @@ static inline u16 blib_prng_mod(u16 const modulo)
 			jsr %p1 \n\
 		"
 		: "+d"(d0_random)
-		: "i"(_BLIB_PRNG_MOD), "d"(d0_modulo)
+		: "i"(_BIOS_PRNG_MOD), "d"(d0_modulo)
 		: "d1");
 
 	return d0_random;
 };
 
 /**
- * @fn blib_prng
+ * @fn bios_prng
  * @brief Generate a new random number
- * @ingroup blib_misc
+ * @ingroup bios_misc
  *
- * @details The number will be stored in BLIB_RANDOM
+ * @details The number will be stored in BIOS_RANDOM
  */
-static inline void blib_prng()
+static inline void bios_prng()
 {
 	asm(
 		"\
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_PRNG)
+		: "i"(_BIOS_PRNG)
 		: "d0");
 };
 
 /**
- * @fn blib_set_fadein_pal
+ * @fn bios_set_fadein_pal
  * @brief Sets the target color palette for a fadein
  * @param[in] A1.l Pointer to target palette structure
- * @ingroup blib_vdp
+ * @ingroup bios_vdp
  *
- * @note This must be called before using blib_pal_fadein
+ * @note This must be called before using bios_pal_fadein
  */
-static inline void blib_set_fadein_pal(Palette const * palette)
+static inline void bios_set_fadein_pal(Palette const * palette)
 {
-	register u32 a1_BLIB_PALETTE asm("a1") = (u32) palette;
+	register u32 a1_BIOS_PALETTE asm("a1") = (u32) palette;
 	register u32 a1_change asm("a1");
 
 	asm volatile(
@@ -1426,37 +1426,37 @@ static inline void blib_set_fadein_pal(Palette const * palette)
 			jsr %p1 \n\
 		"
 		: "=a"(a1_change)
-		: "i"(_BLIB_SET_FADEIN_PAL), "a"(a1_BLIB_PALETTE));
+		: "i"(_BIOS_SET_FADEIN_PAL), "a"(a1_BIOS_PALETTE));
 };
 
 /**
- * @fn blib_pal_fadein
+ * @fn bios_pal_fadein
  * @brief Fade a range of the color palette from black
- * @ingroup blib_vdp
+ * @ingroup bios_vdp
  *
  * @details The fade-in routine works a little bit differently from the
  * fade-out counterpart. Instead of checking the Z flag, the value of
- * _BLIB_FADEIN_STEP should be checked. If it is > 0, the fade is not yet
+ * _BIOS_FADEIN_STEP should be checked. If it is > 0, the fade is not yet
  * complete.
  *
  * This may be a bug in the implementation. Using the Z flag to check for
- * completion *could* work, as the code checks whether _BLIB_FADEIN_STEP is
+ * completion *could* work, as the code checks whether _BIOS_FADEIN_STEP is
  * zero with a TST opcode. However, this is followed by setting the VDP flags
  * for a palette update, which will set the Z flag if palette update flag was
  * not already set.
  */
-static inline void blib_pal_fadein()
+static inline void bios_pal_fadein()
 {
 	asm(
 		"\
   		jsr %p0 \n\
 		"
 		:
-		: "i"(_BLIB_PAL_FADEIN));
+		: "i"(_BIOS_PAL_FADEIN));
 }
 
 /**
- * For use with blib_dma_queue
+ * For use with bios_dma_queue
  */
 typedef struct DmaTransfer
 {
@@ -1468,7 +1468,7 @@ typedef struct DmaTransfer
 /**
  * @brief Transfer queued VDP bound data via DMA
  * @param[in] A1.l Pointer to queue
- * @ingroup blib_vdp
+ * @ingroup bios_vdp
  *
  * @details The queue is an array of DMA transfer entries in this format:
  *     0.w Data length
@@ -1478,7 +1478,7 @@ typedef struct DmaTransfer
  * extremely basic and does not account for DMA bandwidth, etc. Moreover, no
  * array management is done and the list will need to be cleared by the user.
  */
-static inline void blib_dma_queue(DmaTransfer const * queue)
+static inline void bios_dma_queue(DmaTransfer const * queue)
 {
 	register u32 a1_queue asm("a1") = (u32) queue;
 	register u32 a1_change asm("a1");
@@ -1490,7 +1490,7 @@ static inline void blib_dma_queue(DmaTransfer const * queue)
 			move.l (sp)+, a6 \n\
 		"
 		: "=a"(a1_change)
-		: "i"(_BLIB_DMA_QUEUE), "a"(a1_queue)
+		: "i"(_BIOS_DMA_QUEUE), "a"(a1_queue)
 		: "d0", "d1", "d2", "d3");
 }
 
