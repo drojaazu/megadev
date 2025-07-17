@@ -20,7 +20,6 @@
  * @clobber d0, a0-a2
  */
 .macro INIT_MMD
-  WAIT_2M
   lea      _WRDRAM, a0	//get MMD entry point
   move.l   2(a0), d0	//get MMD data destination
   beq      1f             //if no destination, skip the copy
@@ -37,7 +36,6 @@
   move.l   d0, _MLEVEL6+2
 3:btst     #6, _WRDRAM    // if bit 6 is set, return 2m to sub 
   beq      4f
-  GRANT_2M
 4:movea.l  8(a0), a0
 .endm
 #endif
