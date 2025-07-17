@@ -10,7 +10,7 @@
 .section .text
 
 /**
- * @sa pcm_clear_ram_c
+ * @sa pcm_clear_ram
  * @clobber d0-d2/a6
  */
 GLABEL pcm_clear_ram
@@ -33,7 +33,7 @@ GLABEL pcm_clear_ram
   rts
 
 /**
- * @sa pcm_config_channel_c
+ * @sa pcm_config_channel
  * @param[in] D0.b Channel
  * @param[in] A5.l Pointer to array of channel settings
  * @clobber d0/a5-a6

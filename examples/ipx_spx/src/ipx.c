@@ -6,6 +6,7 @@
 #include <system.h>
 #include <types.h>
 #include "ipx.h"
+#include <main/io.h>
 
 u8 global_mode;
 

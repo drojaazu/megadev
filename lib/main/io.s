@@ -49,4 +49,6 @@
   or.b    d1, d0
 .endm
 
+GLOBAL ext_test EXT_CTRL
+
 #endif

@@ -497,9 +497,9 @@
  * @ingroup bios_system
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_BIOS_ENTRY 0x400280
+#define _BIOS_ENTRY 0x400280
 #else
-#define _BIOS_BIOS_ENTRY 0x000280
+#define _BIOS_ENTRY 0x000280
 #endif
 
 /**
@@ -924,7 +924,7 @@
 #if TARGET == MEGACD_MODE1
 #define _BIOS_VINT_HANDLER_WAIT 0x400304
 #else
-#define _BIOS_VINT_HANDLER_WAIT 0x00304
+#define _BIOS_VINT_HANDLER_WAIT 0x000304
 #endif
 
 /**

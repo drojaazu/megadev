@@ -400,13 +400,13 @@ load_data_maincpudest:
 load_data_dma:
   // we want to save the call site in order to properly return, since we'll
   // be messing with the stack by calling accloop_reentry
-  POP     return_ptr
-  move.w  #0, sectors_read_count
-  move.w  #0x1e, read_retry_count
+  POP      return_ptr
+  move.w   #0, sectors_read_count
+  move.w   #0x1e, read_retry_count
 
 load_data_dma_begin:
-  move.b  cdc_dev_dest, (_GAREG_CDCMODE)
-  lea     cdread_sector_start, a0  // point to sector struct for _BIOS_ROMREADN
+  move.b   cdc_dev_dest, (_GAREG_CDCMODE)
+  lea      cdread_sector_start, a0  // point to sector struct for _BIOS_ROMREADN
 
   /*
   	Next we want to partially convert the start sector to MM:SS:FF format and
@@ -414,71 +414,71 @@ load_data_dma_begin:
   	confirming that the CDC has read the frame (i.e. the sector) we were
   	expecting.
   */
-  move.l  (a0), d0  // retrieve the start sector
-  divu    #75, d0   // get the number of seconds (75 frames / second)
-  swap    d0        // put the modulus in the lower half
+  move.l   (a0), d0  // retrieve the start sector
+  divu     #75, d0   // get the number of seconds (75 frames / second)
+  swap     d0        // put the modulus in the lower half
   HEX2BCD           // convert the value to BCD (because the CDC returns the
                     // value MM:SS:FF format)
-  move.b  d0, cdc_frame_check  // cache for later error checking
+  move.b   d0, cdc_frame_check  // cache for later error checking
 
-  CDBIOS  #_BIOS_CDCSTOP     // stop any current CDC transfers
-  CDBIOS  #_BIOS_ROMREADN    // begin the data read
+  CDBIOS   #_BIOS_CDCSTOP     // stop any current CDC transfers
+  CDBIOS   #_BIOS_ROMREADN    // begin the data read
 
-  move.w  #0x258, read_timeout // set up for reading
-1:bsr     accloop_reentry    // take a break here and come back next VINT
-2:CDBIOS  #_BIOS_CDCSTAT               // check on the CDC on the status of our data
-  bcc     3f                // sector is ready! jump down
-  subq.w  #1, read_timeout  // not ready yet,count down read timeout
-  bge     1b                // and try again
-  subq.w  #1, read_retry_count  // decrement read retry
-  bge     load_data_dma_begin   // and try again
-  bra     load_data_dma_failure // failed after all attempts, return error
+  move.w   #0x258, read_timeout // set up for reading
+1:bsr      accloop_reentry    // take a break here and come back next VINT
+2:CDBIOS   #_BIOS_CDCSTAT               // check on the CDC on the status of our data
+  bcc      3f                // sector is ready! jump down
+  subq.w   #1, read_timeout  // not ready yet,count down read timeout
+  bge      1b                // and try again
+  subq.w   #1, read_retry_count  // decrement read retry
+  bge      load_data_dma_begin   // and try again
+  bra      load_data_dma_failure // failed after all attempts, return error
 
-3:CDBIOS  #_BIOS_CDCREAD     // read out the data from the CDC to the destination
-  bcs     4f      // data not ready, this really shouldn't happen since
+3:CDBIOS   #_BIOS_CDCREAD     // read out the data from the CDC to the destination
+  bcs      4f      // data not ready, this really shouldn't happen since
                   // _BIOS_CDCSTAT said we were good; jump down & try again
-  lsr     #8, d0  // the timecode for the loaded sector comes back in d0
+  lsr      #8, d0  // the timecode for the loaded sector comes back in d0
                   // shift it over to get the frame offset into the low byte
-  move.b  cdc_frame_check, d1   // bring back the expected frame offset...
-  cmp.b   d1, d0                // and compare the two to make sure they match
-  beq     6f                    // all good, let's keep going
-4:subq.w  #1, read_retry_count  // didn't match, decrement read retry...
-  bge     load_data_dma_begin   // and try again
-  bra     load_data_dma_failure // failed after all attempts, return error
+  move.b   cdc_frame_check, d1   // bring back the expected frame offset...
+  cmp.b    d1, d0                // and compare the two to make sure they match
+  beq      6f                    // all good, let's keep going
+4:subq.w   #1, read_retry_count  // didn't match, decrement read retry...
+  bge      load_data_dma_begin   // and try again
+  bra      load_data_dma_failure // failed after all attempts, return error
 
-6:move.w  #6, read_timeout  // next we want the signal from the CDC that 
+6:move.w   #6, read_timeout  // next we want the signal from the CDC that 
   													 // everything is done
-7:bsr     accloop_reentry   // give it some time...
-  btst    #BIT_CDCMODE_EDT-8, _GAREG_CDCMODE  // check that the EDT bit is set
-  beq     0f               // not set yet, retry
-  move.b  (cdc_frame_check), d0  // CDC is done, let's prepare for next frame
-  moveq   #1, d1                 // grab the error check value
-  abcd    d1, d0                 // and BCD add 1 to it, because we are going
+7:bsr      accloop_reentry   // give it some time...
+  btst     #BIT_CDCMODE_EDT-8, _GAREG_CDCMODE  // check that the EDT bit is set
+  beq      0f               // not set yet, retry
+  move.b   (cdc_frame_check), d0  // CDC is done, let's prepare for next frame
+  moveq    #1, d1                 // grab the error check value
+  abcd     d1, d0                 // and BCD add 1 to it, because we are going
                                  // to expect the next frame (sector)
-  cmp.b   #0x76, d0              // have we exceeded the 75th frame?
-  bne     8f                     // no, jump down
-  moveq   #0, d0                 // yes, reset expected frame to 0
-8:move.b  d0, (cdc_frame_check)  // cache our expected frame
-  bra     9f                     // and keep it moving!
+  cmp.b    #0x76, d0              // have we exceeded the 75th frame?
+  bne      8f                     // no, jump down
+  moveq    #0, d0                 // yes, reset expected frame to 0
+8:move.b   d0, (cdc_frame_check)  // cache our expected frame
+  bra      9f                     // and keep it moving!
 
-0:subq.w  #1, read_timeout
-  bge     7b
-  bra     load_data_dma_failure
+0:subq.w   #1, read_timeout
+  bge      7b
+  bra      load_data_dma_failure
 
-9:CDBIOS  #_BIOS_CDCACK          // send ack to CDC (required after every sector/frame)
-  move.w  #6, read_timeout          // reset error counters for next sector
-  move.w  #0x1e, read_retry_count
-  addq.w  #1, sectors_read_count    // add to the sectors loaded count
-  subq.l  #1, cdread_sector_count   // decrement remaining sector count
-  bgt     2b                 // loop back if there are still frames pending
-  move.w  #RESULT_OK, access_op_result  // all data loaded!
+9:CDBIOS   #_BIOS_CDCACK          // send ack to CDC (required after every sector/frame)
+  move.w   #6, read_timeout          // reset error counters for next sector
+  move.w   #0x1e, read_retry_count
+  addq.w   #1, sectors_read_count    // add to the sectors loaded count
+  subq.l   #1, cdread_sector_count   // decrement remaining sector count
+  bgt      2b                 // loop back if there are still frames pending
+  move.w   #RESULT_OK, access_op_result  // all data loaded!
 load_data_dma_return:
-  move.b  cdc_dev_dest, _GAREG_CDCMODE // write the dest. again to reset DMA
-  movea.l return_ptr, a0          // return to the original call site
-  jmp     (a0)
+  move.b   cdc_dev_dest, _GAREG_CDCMODE // write the dest. again to reset DMA
+  movea.l  return_ptr, a0          // return to the original call site
+  jmp      (a0)
 load_data_dma_failure:
-  move.w  #RESULT_LOAD_FAIL, access_op_result
-  bra     load_data_dma_return
+  move.w   #RESULT_LOAD_FAIL, access_op_result
+  bra      load_data_dma_return
 
 /*
   Pops the last address from the stack and stores
@@ -486,7 +486,7 @@ load_data_dma_failure:
   Should be called as subroutine rather than directly
 */
 accloop_reentry:
-  POP     acc_loop_jump
+  POP      acc_loop_jump
   rts
 
 .section .bss

@@ -9,7 +9,7 @@
 #ifndef MEGADEV__MAIN_INIT_MMD_H
 #define MEGADEV__MAIN_INIT_MMD_H
 
-#include "main/gate_array.def.h"
+#include "main/gate_array.h"
 
 static inline void const * init_mmd()
 {
@@ -28,24 +28,25 @@ static inline void const * init_mmd()
   dbf      d0, 0b \n\
 1:move.l   12(%[wrdram]), d0 \n\
   beq      2f \n\
-  move.l   d0, _MLEVEL4+2 \n\
+  move.l   d0, %c[mlevel4]+2 \n\
 2:move.l   16(%[wrdram]), d0 \n\
   beq      3f \n\
-  move.l   d0, _MLEVEL6+2 \n\
+  move.l   d0, %c[mlevel6]+2 \n\
 3:btst     #6, (%[wrdram]) \n\
   beq      4f \n\
-  GRANT_2M \n\
+6:bset     #%c[ga_dmna_bit], %c[gareg_memmode]+1 \n\
+  btst     #%c[ga_dmna_bit], %c[gareg_memmode]+1 \n\
+  beq 6b \n\
 4: movea.l 8(%[wrdram]), a0 \n\
 		"
 		:
 			[mmd_entry] "=a"(mmd_entry)
 		:
 			[wrdram] "a"(_WRDRAM),
-			"i"(_MLEVEL4),
-			"i"(_MLEVEL6),
-			"i"(GA_RET_BIT),
-			"i"(GA_DMNA_BIT),
-			"i"(_GAREG_MEMMODE)
+			[mlevel4] "i"(_MLEVEL4),
+			[mlevel6] "i"(_MLEVEL6),
+			[ga_dmna_bit] "i"(GA_DMNA_BIT),
+			[gareg_memmode] "i"(_GAREG_MEMMODE)
 		:
 		"d0", "a1", "a2");
 	

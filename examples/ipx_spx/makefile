@@ -60,6 +60,7 @@ disc/ipx.mmd: \
 	ipx_layout.s \
 	ipx_init.s \
 	ipx.c \
+	io.s \
 	$(BUILD_PATH)/ip.bin
 
 disc/ex1.mmd: \

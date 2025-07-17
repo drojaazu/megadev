@@ -105,8 +105,9 @@ static inline void init_joypads()
 			[ctrl_pc6] "i"(CTRL_PC6),
 			[io_ctrl1] "i"(_IO_CTRL1),
 			[io_ctrl2] "i"(_IO_CTRL2)
-		: 
-		);
+		:
+			"cc"
+	);
 }
 
 
@@ -136,7 +137,9 @@ static inline u8 read_input_joypad(IO_REGISTER io_port)
 		:
 			[io_port] "a"(io_port),
 			[ctrl_pc6] "i"(CTRL_PC6)
-		);
+		:
+			"cc"
+	);
 	
 	return joypad_state;
 }

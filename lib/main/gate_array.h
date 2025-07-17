@@ -164,13 +164,16 @@
  */
 static inline void wait_2m()
 {
-	asm(
+	asm volatile(
 		"\
-		1:btst %0, %p1 \n\
-			beq 1b \n\
+1:btst     #%c[ga_ret_bit], %c[gareg_memmmode] \n\
+  beq      1b \n\
 		"
 		:
-		: "i"(GA_RET_BIT), "i"(_GAREG_MEMMODE + 1));
+		:
+			[ga_ret_bit] "i"(GA_RET_BIT),
+			[gareg_memmmode] "i"(_GAREG_MEMMODE + 1)
+		);
 }
 
 /**
@@ -179,14 +182,16 @@ static inline void wait_2m()
  */
 static inline void grant_2m()
 {
-	asm(
+	asm volatile(
 		"\
-		1:bset %0, %p1 \n\
-			btst %0, %p1 \n\
-			beq 1b \n\
+1:bset     #%c[ga_dmna_bit], %c[gareg_memmmode] \n\
+  btst     #%c[ga_dmna_bit], %c[gareg_memmmode] \n\
+  beq      1b \n\
 		"
 		:
-		: "i"(GA_DMNA_BIT), "i"(_GAREG_MEMMODE + 1));
+		:
+			[ga_dmna_bit] "i"(GA_DMNA_BIT),
+			[gareg_memmmode] "i"(_GAREG_MEMMODE + 1));
 }
 
 /**
@@ -195,19 +200,46 @@ static inline void grant_2m()
  */
 static inline void clear_comm_regs()
 {
-	asm(
+	register u32 scratch_d, scratch_a;
+
+	asm volatile(
 		"\
-			lea %p0, a0 \n\
-			moveq #0, d0 \n\
-			move.b d0, -2(a0) /* upper byte of comm flags */ \n\
-			move.l d0, (a0)+ \n\
-			move.l d0, (a0)+ \n\
-			move.l d0, (a0)+ \n\
-			move.l d0, (a0)+ \n\
+  lea (%c[gareg_comcmd0]), %[scratch_a] \n\
+  moveq    #0, %[scratch_d] \n\
+  move.b   %[scratch_d], -2(%[scratch_a]) \n\
+  move.l   %[scratch_d], (%[scratch_a])+ \n\
+  move.l   %[scratch_d], (%[scratch_a])+ \n\
+  move.l   %[scratch_d], (%[scratch_a])+ \n\
+  move.l   %[scratch_d], (%[scratch_a])+ \n\
 		"
 		:
-		: "i"(_GAREG_COMCMD0)
-		: "d0", "a0");
+			[scratch_d] "=&d"(scratch_d),
+			[scratch_a] "=&a"(scratch_a)
+		:
+			[gareg_comcmd0] "i"(_GAREG_COMCMD0)
+		);
+}
+
+/**
+ * @fn clear_comm_regs
+ * Clears the Main comm registers (COMCMD) and flags
+ */
+static inline void reset_ga()
+{
+	asm volatile(
+		"\
+  move.w   #0xFF00, %c[gareg_memmode] \n\
+  move.b   #0x3, %c[gareg_reset] \n\
+  nop \n\
+  move.b   #0x3, %c[gareg_reset] \n\
+  move.b   #0x2, %c[gareg_reset] \n\
+  move.b   #0x0, %c[gareg_reset] \n\
+		"
+		:
+		: 
+			[gareg_memmode] "i"(_GAREG_MEMMODE),
+			[gareg_reset] "i"(_GAREG_RESET + 1)
+		: );
 }
 
 #endif

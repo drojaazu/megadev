@@ -150,13 +150,16 @@ static inline VDP_ADDRESS to_vdpptr(u16 addr)
 	u32 vdpptr = (u32) addr;
 	asm(
 		"\
-		lsl.l #2, %0 \n\
-		lsr.w #2, %0 \n\
-		swap %0 \n\
+  lsl.l    #2, %[vdpptr] \n\
+  lsr.w    #2, %[vdpptr] \n\
+  swap     %[vdpptr] \n\
 		"
-		: "+d"(vdpptr)
 		:
-		: "cc");
+			[vdpptr] "+d"(vdpptr)
+		:
+		:
+			"cc"
+	);
 
 	return vdpptr;
 }
@@ -167,21 +170,24 @@ static inline VDP_ADDRESS to_vdpptr(u16 addr)
  */
 static inline u16 vdpptr_to(VDP_ADDRESS vdp_addr)
 {
-	u32 out = vdp_addr;
+	u32 vramptr = vdp_addr;
 
 	asm(
 		"\
-		#andi.l #0x3fff000c, %0 \
-		ror.w #2, %0 \
-		lsr.l #8, %0 \
-		lsr.l #6, %0 \
-		ror.w #2, %0 \
+  #andi.l  #0x3fff000c, %[vramptr] \
+  ror.w    #2, %[vramptr] \
+  lsr.l    #8, %[vramptr] \
+  lsr.l    #6, %[vramptr] \
+  ror.w    #2, %[vramptr] \
 		"
-		: "+d"(out)
 		:
-		: "cc");
+			[vramptr] "+d"(vramptr)
+		:
+		:
+			"cc"
+	);
 
-	return (u16) out;
+	return (u16) vramptr;
 }
 
 
@@ -229,39 +235,42 @@ static inline void vdp_dma_transfer(u8 const * source, VDP_COMMAND dest, u16 con
 			[dest] "d"(dest),
 			[source] "d"(source),
 			[length] "d"(length)
+		:
+			"cc"
 	);
 }
 
 static inline void vdp_dma_fill(VDP_COMMAND dest, u16 const count, u8 const value)
 {
-	u32 scratch_d = 0, scratch_a = 0;
+	u32 scratch_d, scratch_a;
 	
-	asm(
+	asm volatile(
 		"\
-		lea      (%c0).l, %[scratch_a] \n\
-		move.l   #0x00940000, %[scratch_d] \n\
-		move.w   %[count].w, %[scratch_d].w \n\
-		lsl.l    #0x8, %[scratch_d] \n\
-		move.w   #0x9300, %[scratch_d].w \n\
-		move.b   %[count].b, %[scratch_d].b \n\
-		move.l   %[scratch_d], (%[scratch_a]) \n\
-		move.w   #0x9780, (%[scratch_a]) \n\
-		ori.l    #0x40000080, %[dest] \n\
-		move.l   %[dest], (%[scratch_a]) \n\
-		move.b   %[value].b, (-0x4,%[scratch_a]) \n\
-	0:move.w   (%[scratch_a]), %[scratch_d].w \n\
-		btst.l   0x1, %[scratch_d] \n\
-		bne.b    0b \n\
+  lea      (%c[vdp_ctrl]).l, %[scratch_a] \n\
+  move.l   #0x00940000, %[scratch_d] \n\
+  move.w   %[count].w, %[scratch_d].w \n\
+  lsl.l    #0x8, %[scratch_d] \n\
+  move.w   #0x9300, %[scratch_d].w \n\
+  move.b   %[count].b, %[scratch_d].b \n\
+  move.l   %[scratch_d], (%[scratch_a]) \n\
+  move.w   #0x9780, (%[scratch_a]) \n\
+  ori.l    #0x40000080, %[dest] \n\
+  move.l   %[dest], (%[scratch_a]) \n\
+  move.b   %[value].b, (-0x4,%[scratch_a]) \n\
+0:move.w   (%[scratch_a]), %[scratch_d].w \n\
+  btst.l   0x1, %[scratch_d] \n\
+  bne.b    0b \n\
 		"
-		: 
 		:
-			"i"(_VDP_CTRL),
+			[scratch_d] "=&d"(scratch_d),
+			[scratch_a] "=&a"(scratch_a)
+		:
+			[vdp_ctrl] "i"(_VDP_CTRL),
 			[dest] "d"(dest),
 			[count] "d"(count),
-			[value] "d"(value),
-			[scratch_d] "d"(scratch_d),
-			[scratch_a] "a"(scratch_a)
+			[value] "d"(value)
 		:
+			"cc"
 	);
 }
 

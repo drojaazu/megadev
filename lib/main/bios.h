@@ -458,21 +458,21 @@ typedef struct Palette
 #define BIOS_FADEIN_TARGET_PAL_PTR (*((u8 *) _BIOS_FADEIN_TARGET_PAL_PTR))
 
 /**
- * @fn bios_bios_entry
+ * @fn bios_entry
  * @brief Jump to internal user BIOS
  * @ingroup bios_system
  * @warning Register clobbers not yet documented!
  *
  * @details Leads to Mega CD title screen.
  */
-static inline void bios_bios_entry()
+static inline void bios_entry()
 {
 	asm(
 		"\
 			jsr %p0 \n\
 		"
 		:
-		: "i"(_BIOS_BIOS_ENTRY));
+		: "i"(_BIOS_ENTRY));
 }
 
 /**

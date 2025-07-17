@@ -23,12 +23,12 @@ ip_entry:
 0:move.l   d0, (a0)+
   dbra     d7, 0b
 
+  // disable VDP display and maintain MD mode (mode 5)
+  move.w   #(_VDPREG_MODE2 | 0x44), (_VDP_CTRL)
+
   // set palette entry 0 (background) to black
   move.l   #0xC0000000, (_VDP_CTRL)
   move.w   #0x0000, (_VDP_DATA)
-
-  // disable VDP display and maintain MD mode (mode 5)
-  move.w   #(_VDPREG_MODE2 | 0x44), (_VDP_CTRL)
 
 	jbsr     _BIOS_LOAD_VDPREGS_DEFAULT
 

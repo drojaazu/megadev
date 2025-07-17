@@ -10,28 +10,7 @@
 
 #include "macros.s"
 #include "main/io.def.h"
-
-/*
-  External comm port
-  The front controller ports and rear EXT port (only present on early model
-  Mega Drives) can be put into serial mode for communication with external
-  devices, e.g. with your PC as a debugging tool.
-  For each of the EQU entries below, modify the number in the definition to
-  change the port to be used for serial communication:
-  	1 - Player 1 port
-  	2 - Player 2 port
-  	3 - Rear EXT port
-*/
-.equ EXT_CTRL, IO_CTRL3
-.equ EXT_SCTRL, IO_SCTRL3
-.equ EXT_RXDATA, IO_RXDATA3
-.equ EXT_TXDATA, IO_TXDATA3
-
-/*
-  External comm port speed
-  Sets the transfer speed of the external device port
-*/
-.equ EXT_BAUD, SCTRL_BAUD_4800
+#include "main/comm.def.h"
 
 .section .text
 
@@ -57,11 +36,15 @@
  * @param[out] D0.b 
  */
 /* TODO: How does RERR play into this? */
-SUB ext_rx
-1:btst #SCTRL_RX_READY, (EXT_SCTRL)	// check that we're ready to receive
-  beq     1b
-  move.b  (EXT_RXDATA), d0
-  rts
+.altmacro
+.macro EXT_RX
+LOCAL loop
+
+loop:
+  btst     #SCTRL_RX_READY, (EXT_SCTRL)	// check that we're ready to receive
+  beq      loop
+  move.b   (EXT_RXDATA), d0
+.endm
 
 /**
  * @fn ext_tx
