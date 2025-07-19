@@ -9,6 +9,7 @@
 #define MEGADEV__MAIN_GATE_ARRAY_H
 
 #include "main/gate_array.def.h"
+#include <types.h>
 
 /**
  * @sa _GAREG_COMFLAGS
