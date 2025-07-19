@@ -120,6 +120,10 @@ typedef union SpriteEx
  */
 #define VDP_HVCOUNTER (*((u16 volatile *) _VDP_HVCOUNTER))
 
+#define VDP_HVCOUNTER_V (*((u8 volatile *) _VDP_HVCOUNTER))
+
+#define VDP_HVCOUNTER_H (*((u8 volatile *) (_VDP_HVCOUNTER + 1)))
+
 /**
  * @enum PlaneWidth
  * @brief Helper for working with plane widths specified in tiles by specifying width in bytes

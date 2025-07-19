@@ -9,7 +9,7 @@
 .equ sp_text_org, _sp_text_org
 
 // Here we include the CD-ROM file access code
-#include "sub/cdrom.s"
+#include <sub/cdrom.s>
 .section .text
 
 /*
