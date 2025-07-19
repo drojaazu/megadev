@@ -25,6 +25,7 @@ jmp (a0)
 
 data_init:
 #include <init_data.s>
+INIT_DATA
 mmd_init:
 #include <main/init_mmd.s>
 INIT_MMD

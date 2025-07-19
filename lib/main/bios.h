@@ -1191,6 +1191,7 @@ static inline void bios_dma_xfer(VDP_COMMAND dest, u8 const * source, u16 length
  * Word RAM to VRAM which must be accounted for by writing the final word of
  * data to the data port. This subroutine takes care of that extra step.
  */
+/*
 static inline void bios_dma_xfer_wrdram(VDP_COMMAND const dest, void const * source, u16 const length)
 {
 	register u32 D0 asm("d0") = dest;
@@ -1207,6 +1208,25 @@ static inline void bios_dma_xfer_wrdram(VDP_COMMAND const dest, void const * sou
 		: "i"(_BIOS_DMA_XFER_WRDRAM), "d"(D0), "d"(D1), "d"(D2)
 		: "d3");
 };
+*/
+
+static inline void bios_dma_xfer_wrdram(VDP_COMMAND const dest, void const * source, u16 const length)
+{
+	register u32 D0 asm("d0") = dest;
+	register u32 D1 asm("d1") = (u32) source;
+	register u16 D2 asm("d2") = length;
+
+	asm (
+		"\
+			move.l a6, -(sp) \n\
+  		jsr %p0 \n\
+			move.l (sp)+, a6 \n\
+		"
+		: "+d"(D0), "+d"(D1)
+		: "i"(_BIOS_DMA_XFER_WRDRAM), "d"(D2)
+		: "d3");
+};
+
 
 /**
  * @fn bios_dma_copy
