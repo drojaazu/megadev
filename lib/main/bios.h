@@ -1199,11 +1199,13 @@ static inline void bios_dma_xfer_wrdram(VDP_COMMAND const dest, void const * sou
 
 	asm volatile(
 		"\
+			move.l a6, -(sp) \n\
   		jsr %p0 \n\
+			move.l (sp)+, a6 \n\
 		"
 		: 
 		: "i"(_BIOS_DMA_XFER_WRDRAM), "d"(D0), "d"(D1), "d"(D2)
-		: "d3", "a6", "cc");
+		: "cc", "d3");
 };
 
 
