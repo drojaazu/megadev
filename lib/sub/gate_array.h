@@ -9,6 +9,7 @@
 #define MEGADEV__SUB_GATEARR_H
 
 #include "gate_array.def.h"
+#include <types.h>
 
 #define GA_RESET ((volatile u16 *) _GAREG_RESET)
 
