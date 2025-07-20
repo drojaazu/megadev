@@ -12,28 +12,28 @@
 #include "types.h"
 
 /**
- * @typedef VDP_ADDRESS
- * @brief Semantic typedef for a VRAM address *without* VDP operation, formatted for
- * use on the VDP Control port (32-bit).
+ * @typedef VDPPTR
+ * @brief Semantic typedef for a VRAM address, formatted for use on the VDP
+ *        Control port (32-bit).
  *
  */
-typedef u32 VDP_ADDRESS;
+typedef u32 VDPPTR;
 
 /**
- * @typedef VDP_COMMAND
- * @brief Semantic typedef for a VRAM address *with* VDP operation, formatted for
- * use on the VDP Control port (32-bit).
+ * @typedef VDPCMD
+ * @brief Semantic typedef for a VRAM address *with VDP operation*, formatted
+ *        for use on the VDP Control port (32-bit).
  *
  */
-typedef u32 VDP_COMMAND;
+typedef u32 VDPCMD;
 
 /**
- * @typedef VDP_REGISTER
- * @brief Semantic typedef for a VDP register and its value, formatted for use
- * on the VDP Control port (16-bit).
+ * @typedef VDPREG
+ * @brief Semantic typedef for a VDP register and its value, formatted for
+ *        use on the VDP Control port (16-bit).
  *
  */
-typedef u16 VDP_REGISTER;
+typedef u16 VDPREG;
 
 typedef struct Sprite
 {
@@ -149,7 +149,7 @@ typedef enum PlaneWidth
  * @fn to_vdpptr
  * @brief Converts a 16 bit VRAM address into VDP format at runtime
  */
-static inline VDP_ADDRESS to_vdpptr(u16 addr)
+static inline VDPPTR to_vdpptr(u16 addr)
 {
 	u32 vdpptr = (u32) addr;
 	asm(
@@ -172,7 +172,7 @@ static inline VDP_ADDRESS to_vdpptr(u16 addr)
  * @fn vdpptr_to
  * @brief Converts a VDP format address to a 16 bit VRAM address at runtime
  */
-static inline u16 vdpptr_to(VDP_ADDRESS vdp_addr)
+static inline u16 vdpptr_to(VDPPTR vdp_addr)
 {
 	u32 vramptr = vdp_addr;
 
@@ -200,7 +200,7 @@ static inline u16 vdpptr_to(VDP_ADDRESS vdp_addr)
  * @ingroup vdp
  * @warning Setting/clearing the DMA Enable bit on VDP Mode Register 2 is the responsibility of the user
  */
-static inline void vdp_dma_transfer(u8 const * source, VDP_COMMAND dest, u16 const length)
+static inline void vdp_dma_transfer(u8 const * source, VDPCMD dest, u16 const length)
 {
 	register u32 scratch_d, scratch_a;
 
@@ -244,7 +244,7 @@ static inline void vdp_dma_transfer(u8 const * source, VDP_COMMAND dest, u16 con
 	);
 }
 
-static inline void vdp_dma_fill(VDP_COMMAND dest, u16 const count, u8 const value)
+static inline void vdp_dma_fill(VDPCMD dest, u16 const count, u8 const value)
 {
 	u32 scratch_d, scratch_a;
 	

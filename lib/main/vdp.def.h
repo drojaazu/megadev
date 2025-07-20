@@ -36,52 +36,52 @@
 #define _VDP_CTRL 0xC00004
 
 /**
- * @def VRAM_R
+ * @def VDPOP_VRAM_R
  * @ingroup vdp_port
  * @brief VDP Control Port / Address Mode / VRAM Read
  * @sa _VDP_CTRL
  */
-#define VRAM_R 0x00000000
+#define VDPOP_VRAM_R 0x00000000
 
 /**
- * @def VRAM_W
+ * @def VDPOP_VRAM_W
  * @ingroup vdp_port
  * @brief VDP Control Port / Address Mode / VRAM Write
  * @sa _VDP_CTRL
  */
-#define VRAM_W 0x40000000
+#define VDPOP_VRAM_W 0x40000000
 
 /**
- * @def CRAM_R
+ * @def VDPOP_CRAM_R
  * @ingroup vdp_port
  * @brief VDP Control Port / Address Mode / CRAM Read
  * @sa _VDP_CTRL
  */
-#define CRAM_R 0x00000020
+#define VDPOP_CRAM_R 0x00000020
 
 /**
- * @def CRAM_W
+ * @def VDPOP_CRAM_W
  * @ingroup vdp_port
  * @brief VDP Control Port / Address Mode / CRAM Write
  * @sa _VDP_CTRL
  */
-#define CRAM_W 0xC0000000
+#define VDPOP_CRAM_W 0xC0000000
 
 /**
- * @def VSRAM_R
+ * @def VDPOP_VSRAM_R
  * @ingroup vdp_port
  * @brief VDP Control Port / Address Mode / VSRAM Read
  * @sa _VDP_CTRL
  */
-#define VSRAM_R 0x00000010
+#define VDPOP_VSRAM_R 0x00000010
 
 /**
- * @def VSRAM_W
+ * @def VDPOP_VSRAM_W
  * @ingroup vdp_port
  * @brief VDP Control Port / Address Mode / VSRAM Write
  * @sa _VDP_CTRL
  */
-#define VSRAM_W 0x40000010
+#define VDPOP_VSRAM_W 0x40000010
 
 /**
  * @def VDPSTAT_PAL_HARDWARE
@@ -1306,7 +1306,7 @@
 #define TILE_AT(vram_addr) ((vram_addr) >> 5)
 
 /**
- * @def VDP_COMMAND
+ * @def VDPCMD
  * @brief Converts a 16 bit VRAM address into VDP format at compile time if
  * possible
  */

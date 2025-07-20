@@ -713,7 +713,7 @@ static inline void bios_load_vdpregs_default()
  * (e.g. 80, 81, etc) and the lower byte is
  * the value, with the list terminated by 0.
  */
-static inline void bios_load_vdpregs(VDP_REGISTER const * vdp_reg_data)
+static inline void bios_load_vdpregs(VDPREG const * vdp_reg_data)
 {
 	register u32 A1 asm("a1") = (u32) vdp_reg_data;
 
@@ -1035,7 +1035,7 @@ static inline void bios_load_font_defaults()
  * @brief Load the 1bpp graphics into VDP
  * @ingroup bios_misc
  */
-static inline void bios_load_1bpp_tiles(void * chr_data, u16 tile_count, VDP_COMMAND dest, u32 color_pattern)
+static inline void bios_load_1bpp_tiles(void * chr_data, u16 tile_count, VDPCMD dest, u32 color_pattern)
 {
 	register u32 D0 asm("d0") = dest;
 	register u32 D1 asm("d1") = color_pattern;
@@ -1113,7 +1113,7 @@ static inline void bios_clear_comm()
  * 0x20 at the earliest (where _BIOS_FONT_TILE_BASE is 0). Note that this can
  * only use palette line 0.
  */
-static inline void bios_print(char const * string, VDP_COMMAND pos)
+static inline void bios_print(char const * string, VDPCMD pos)
 {
 	register u32 A1 asm("a1") = (u32) string;
 	register u32 D0 asm("d0") = pos;
@@ -1136,7 +1136,7 @@ static inline void bios_print(char const * string, VDP_COMMAND pos)
  * @param[in] D3.w Value
  * @ingroup bios_vdp
  */
-static inline void bios_nmtbl_fill(VDP_COMMAND pos, u16 width, u16 height, u16 value)
+static inline void bios_nmtbl_fill(VDPCMD pos, u16 width, u16 height, u16 value)
 {
 	register u32 D0 asm("d0") = pos;
 	register u32 D1 asm("d1") = width;
@@ -1162,7 +1162,7 @@ static inline void bios_nmtbl_fill(VDP_COMMAND pos, u16 width, u16 height, u16 v
  * @param[in] D2.w Length (in words)
  * @ingroup bios_vdp
  */
-static inline void bios_dma_xfer(VDP_COMMAND dest, u8 const * source, u16 length)
+static inline void bios_dma_xfer(VDPCMD dest, u8 const * source, u16 length)
 {
 	register u32 D0 asm("d0") = dest;
 	register u32 D1 asm("d1") = (u32) source;
@@ -1191,7 +1191,7 @@ static inline void bios_dma_xfer(VDP_COMMAND dest, u8 const * source, u16 length
  * Word RAM to VRAM which must be accounted for by writing the final word of
  * data to the data port. This subroutine takes care of that extra step.
  */
-static inline void bios_dma_xfer_wrdram(VDP_COMMAND const dest, void const * source, u16 const length)
+static inline void bios_dma_xfer_wrdram(VDPCMD const dest, void const * source, u16 const length)
 {
 	register u32 D0 asm("d0") = dest;
 	register u32 D1 asm("d1") = (u32) source;
@@ -1199,13 +1199,20 @@ static inline void bios_dma_xfer_wrdram(VDP_COMMAND const dest, void const * sou
 
 	asm volatile(
 		"\
-			move.l a6, -(sp) \n\
-  		jsr %p0 \n\
-			move.l (sp)+, a6 \n\
+  move.l a6, -(sp) \n\
+  jsr %p0 \n\
+  move.l (sp)+, a6 \n\
 		"
 		: 
-		: "i"(_BIOS_DMA_XFER_WRDRAM), "d"(D0), "d"(D1), "d"(D2)
-		: "cc", "d3");
+		:
+			"i"(_BIOS_DMA_XFER_WRDRAM),
+			"d"(D0),
+			"d"(D1),
+			"d"(D2)
+		:
+			"cc",
+			"d3"
+	);
 };
 
 
@@ -1223,15 +1230,20 @@ static inline void bios_dma_copy(u32 vdpptr_dest, u16 source, u16 length)
 	register u16 D1 asm("d1") = source;
 	register u16 D2 asm("d2") = length;
 
-	asm(
+	asm volatile(
 		"\
-	  	move.l a6, -(sp) \n\
-	  	jsr %p0 \n\
-	  	move.l (sp)+, a6 \n\
+  move.l a6, -(sp) \n\
+  jsr %p0 \n\
+  move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BIOS_DMA_COPY), "d"(D0), "d"(D1), "d"(D2)
-		: "d3");
+		:
+			"i"(_BIOS_DMA_COPY),
+			"d"(D0),
+			"d"(D1),
+			"d"(D2)
+		:
+			"d3");
 };
 
 /**

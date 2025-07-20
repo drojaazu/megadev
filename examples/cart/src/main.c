@@ -64,7 +64,7 @@ u16 cram[64];
 void update_cram_line(u8 pal_line)
 {
 	pal_line <<= 4;
-	VDP_CTRL_32 = VDPPTR(pal_line) | CRAM_W;
+	VDP_CTRL_32 = VDPPTR(pal_line) | VDPOP_CRAM_W;
 	u16 * ptr_pal_line = cram + pal_line;
 	for (u8 i =0; i < 16; ++ i)
 		VDP_DATA = * ptr_pal_line ++;
@@ -72,7 +72,7 @@ void update_cram_line(u8 pal_line)
 
 void update_cram()
 {
-	VDP_CTRL_32 = VDPPTR(0) | CRAM_W;
+	VDP_CTRL_32 = VDPPTR(0) | VDPOP_CRAM_W;
 	u16 * ptr_pal_line = cram;
 	for (u8 i = 0; i < 64; ++ i)
 		VDP_DATA = * ptr_pal_line ++;
@@ -115,7 +115,7 @@ _VDPREG_WIN_VPOS
 
 #define plane_xy(x, y) (VDPPTR(NMT_POS(x, y, Width32) + PLANE_A_ADDR) | VRAM_W)
 
-void print(char const * string, VDP_ADDRESS pos)
+void print(char const * string, VDPPTR pos)
 {
 	VDP_CTRL_32 = pos;
 	while(*string != 0)

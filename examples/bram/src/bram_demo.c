@@ -344,10 +344,10 @@ void main()
 			bios_vint_wait_default();
 			for (int clearloop = 3; clearloop < 10; ++clearloop)
 			{
-				VDP_CTRL_32 = (VDPPTR(NMT_POS_PLANE(1, clearloop, _BIOS_PLANEA_ADDR)) | VRAM_W);
+				VDP_CTRL_32 = (VDPPTR(NMT_POS_PLANE(1, clearloop, _BIOS_PLANEA_ADDR)) | VDPOP_VRAM_W);
 				VDP_DATA_16 = 0;
 			}
-			VDP_CTRL_32 = (VDPPTR(NMT_POS_PLANE(1, (menupos + 3), _BIOS_PLANEA_ADDR)) | VRAM_W);
+			VDP_CTRL_32 = (VDPPTR(NMT_POS_PLANE(1, (menupos + 3), _BIOS_PLANEA_ADDR)) | VDPOP_VRAM_W);
 			VDP_DATA_16 = '>';
 
 			if ((BIOS_JOY1_PRESS & PAD_DOWN))

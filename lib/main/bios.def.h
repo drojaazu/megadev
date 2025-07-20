@@ -1010,7 +1010,7 @@
  * @fn _BIOS_LOAD_1BPP_TILES
  * @brief Load 1bpp graphics into VDP
  * @param[in] A1.l Pointer to 1bpp graphics data
- * @param[in] D0.l VRAM destination (VDP_COMMAND)
+ * @param[in] D0.l VRAM destination (VDPCMD)
  * @param[in] D1.l Color bit map
  * @param[in] D2.l Tile count
  * @clobber d3-d4/a5
@@ -1032,7 +1032,7 @@
 /**
  * @fn _BIOS_LOAD_FONT
  * @brief Load the internal 1bpp ASCII font
- * @param[in] D0.l VRAM destination (VDP_COMMAND)
+ * @param[in] D0.l VRAM destination (VDPCMD)
  * @param[in] D1.l Color bit map
  * @clobber d2-d4/a1/a5
  * @ingroup bios_misc
