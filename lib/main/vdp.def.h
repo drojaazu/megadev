@@ -36,31 +36,31 @@
 #define _VDP_CTRL 0xC00004
 
 /**
- * @def VDPOP_VRAM_R
+ * @def VRAM_R
  * @ingroup vdp_port
  * @brief VDP Control Port / Address Mode / VRAM Read
  * @sa _VDP_CTRL
  */
-#define VDPOP_VRAM_R 0x00000000
+#define VRAM_R 0x00000000
 
 /**
- * @def VDPOP_VRAM_W
+ * @def VRAM_W
  * @ingroup vdp_port
  * @brief VDP Control Port / Address Mode / VRAM Write
  * @sa _VDP_CTRL
  */
-#define VDPOP_VRAM_W 0x40000000
+#define VRAM_W 0x40000000
 
 /**
- * @def VDPOP_CRAM_R
+ * @def CRAM_R
  * @ingroup vdp_port
  * @brief VDP Control Port / Address Mode / CRAM Read
  * @sa _VDP_CTRL
  */
-#define VDPOP_CRAM_R 0x00000020
+#define CRAM_R 0x00000020
 
 /**
- * @def VDPOP_CRAM_W
+ * @def CRAM_W
  * @ingroup vdp_port
  * @brief VDP Control Port / Address Mode / CRAM Write
  * @sa _VDP_CTRL
@@ -68,20 +68,20 @@
 #define VDPOP_CRAM_W 0xC0000000
 
 /**
- * @def VDPOP_VSRAM_R
+ * @def VSRAM_R
  * @ingroup vdp_port
  * @brief VDP Control Port / Address Mode / VSRAM Read
  * @sa _VDP_CTRL
  */
-#define VDPOP_VSRAM_R 0x00000010
+#define VSRAM_R 0x00000010
 
 /**
- * @def VDPOP_VSRAM_W
+ * @def VSRAM_W
  * @ingroup vdp_port
  * @brief VDP Control Port / Address Mode / VSRAM Write
  * @sa _VDP_CTRL
  */
-#define VDPOP_VSRAM_W 0x40000010
+#define VSRAM_W 0x40000010
 
 /**
  * @def VDPSTAT_PAL_HARDWARE

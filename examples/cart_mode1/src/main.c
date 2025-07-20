@@ -103,12 +103,12 @@ void process_particles()
 	for (u8 iter = 0; iter < 16; ++iter)
 	{
 		// u16 v = ((iter + 0x30) << 8) | 0x00ff;
-		//  bios_print((char *) &v, (VDPPTR(NMT_POS_PLANE(2, 10, _BIOS_PLANEA_ADDR)) | VDPOP_VRAM_W));
+		//  bios_print((char *) &v, (VDPPTR(NMT_POS_PLANE(2, 10, _BIOS_PLANEA_ADDR)) | VRAM_W));
 		//  bios_vint_wait(0x80);
 
 		if (particles[iter].status == Null)
 		{
-			// bios_print((char *) &v, (VDPPTR(NMT_POS_PLANE(2, 11, _BIOS_PLANEA_ADDR)) | VDPOP_VRAM_W));
+			// bios_print((char *) &v, (VDPPTR(NMT_POS_PLANE(2, 11, _BIOS_PLANEA_ADDR)) | VRAM_W));
 			// bios_vint_wait(0x80);
 			init_particle(iter);
 			continue;
@@ -117,7 +117,7 @@ void process_particles()
 		if (particles[iter].status == Ending)
 		{
 			// ending animation
-			// bios_print((char *) &v, (VDPPTR(NMT_POS_PLANE(2, 12, _BIOS_PLANEA_ADDR)) | VDPOP_VRAM_W));
+			// bios_print((char *) &v, (VDPPTR(NMT_POS_PLANE(2, 12, _BIOS_PLANEA_ADDR)) | VRAM_W));
 			// bios_vint_wait(0x80);
 			if (particles[iter].timer > 0)
 			{
@@ -139,7 +139,7 @@ void process_particles()
 
 		if (particles[iter].status == Falling)
 		{
-			// bios_print((char *) &v, (VDPPTR(NMT_POS_PLANE(2, 13, _BIOS_PLANEA_ADDR)) | VDPOP_VRAM_W));
+			// bios_print((char *) &v, (VDPPTR(NMT_POS_PLANE(2, 13, _BIOS_PLANEA_ADDR)) | VRAM_W));
 			// bios_vint_wait(0x80);
 			if (particles[iter].pos_y >= particles[iter].end_at)
 			{
@@ -190,7 +190,7 @@ u32 to_atoi(char * p_c)
 
 __attribute__((interrupt)) void INT2_EXT()
 {
-	bios_print("INT2 last cmd:\xff", (VDPPTR(NMT_POS_PLANE(1, 8, _BIOS_PLANEA_ADDR)) | VDPOP_VRAM_W));
+	bios_print("INT2 last cmd:\xff", (VDPPTR(NMT_POS_PLANE(1, 8, _BIOS_PLANEA_ADDR)) | VRAM_W));
 
 	char c = IO_RXDATA2;
 	if (rx_buffer_at >= rx_buffer + 16)
@@ -207,7 +207,7 @@ __attribute__((interrupt)) void INT2_EXT()
 		switch (cmd)
 		{
 			case 'g':
-				bios_print("get\xff", (VDPPTR(NMT_POS_PLANE(16, 8, _BIOS_PLANEA_ADDR)) | VDPOP_VRAM_W));
+				bios_print("get\xff", (VDPPTR(NMT_POS_PLANE(16, 8, _BIOS_PLANEA_ADDR)) | VRAM_W));
 				if (rx_buffer[1] != ' ')
 					break;
 				rx_buffer_at = rx_buffer + 2;
@@ -238,7 +238,7 @@ __attribute__((interrupt)) void INT2_EXT()
 				}
 				break;
 			case 's':
-				bios_print("set\xff", (VDPPTR(NMT_POS_PLANE(16, 8, _BIOS_PLANEA_ADDR)) | VDPOP_VRAM_W));
+				bios_print("set\xff", (VDPPTR(NMT_POS_PLANE(16, 8, _BIOS_PLANEA_ADDR)) | VRAM_W));
 				if (rx_buffer[1] != ' ')
 					break;
 				break;
@@ -270,8 +270,8 @@ void main()
 	bios_clear_vram();
 
 	BIOS_FONT_TILE_BASE = 0;
-	// bios_load_1bpp_tiles(&res_sysfont_1bpp_chr, 0x60, VDPPTR(VRAM_AT(0x20)) | VDPOP_VRAM_W, 0x00011011);
-	bios_load_1bpp_tiles((void *) 0x40b000, 0x60, VDPPTR(VRAM_AT(0x20)) | VDPOP_VRAM_W, 0x00011011);
+	// bios_load_1bpp_tiles(&res_sysfont_1bpp_chr, 0x60, VDPPTR(VRAM_AT(0x20)) | VRAM_W, 0x00011011);
+	bios_load_1bpp_tiles((void *) 0x40b000, 0x60, VDPPTR(VRAM_AT(0x20)) | VRAM_W, 0x00011011);
 
 	// initialize serial comm on port 2
 	// 4800bps, serial in/out mode, ext interrupt enable
@@ -284,7 +284,7 @@ void main()
 	// so it doesn't need to happen in the module itself
 	// bios_load_font_defaults();
 
-	bios_dma_xfer(VDPPTR(VRAM_AT(0x80)) | VDPOP_VRAM_W, &res_rain_chr, res_rain_chr_sz >> 1);
+	bios_dma_xfer(VDPPTR(VRAM_AT(0x80)) | VRAM_W, &res_rain_chr, res_rain_chr_sz >> 1);
 
 	// The font uses palette entry #1, so we'll manually set that to white
 	BIOS_PALETTE[0] = 0x000;
@@ -303,24 +303,24 @@ void main()
 	memset8(0, info, 16);
 	info[16] = '\xff';
 
-	bios_print("Megadev Mode 1 testing\xff", (VDPPTR(NMT_POS_PLANE(1, 1, _BIOS_PLANEA_ADDR)) | VDPOP_VRAM_W));
-	bios_print("Mega CD rev: \xff", (VDPPTR(NMT_POS_PLANE(1, 3, _BIOS_PLANEA_ADDR)) | VDPOP_VRAM_W));
+	bios_print("Megadev Mode 1 testing\xff", (VDPPTR(NMT_POS_PLANE(1, 1, _BIOS_PLANEA_ADDR)) | VRAM_W));
+	bios_print("Mega CD rev: \xff", (VDPPTR(NMT_POS_PLANE(1, 3, _BIOS_PLANEA_ADDR)) | VRAM_W));
 
 	char * i = (char *) 0x400120;
 	for (int c = 0; c < 16; ++c)
 		info[c] = *i++;
 	// memcpy8((u8 *) 0x400120, (u8 *) info, 15);
-	bios_print(info, (VDPPTR(NMT_POS_PLANE(1, 4, _BIOS_PLANEA_ADDR)) | VDPOP_VRAM_W));
+	bios_print(info, (VDPPTR(NMT_POS_PLANE(1, 4, _BIOS_PLANEA_ADDR)) | VRAM_W));
 	// memcpy8((char *) 0x400130, info, 15);
 	i = (char *) 0x400130;
 	for (int c = 0; c < 16; ++c)
 		info[c] = *i++;
-	bios_print(info, (VDPPTR(NMT_POS_PLANE(1, 5, _BIOS_PLANEA_ADDR)) | VDPOP_VRAM_W));
+	bios_print(info, (VDPPTR(NMT_POS_PLANE(1, 5, _BIOS_PLANEA_ADDR)) | VRAM_W));
 	// memcpy8((char *) 0x400140, info, 15);
 	i = (char *) 0x400140;
 	for (int c = 0; c < 16; ++c)
 		info[c] = *i++;
-	bios_print(info, (VDPPTR(NMT_POS_PLANE(1, 6, _BIOS_PLANEA_ADDR)) | VDPOP_VRAM_W));
+	bios_print(info, (VDPPTR(NMT_POS_PLANE(1, 6, _BIOS_PLANEA_ADDR)) | VRAM_W));
 
 	do
 	{
@@ -349,5 +349,5 @@ void main()
 		process_particles();
 	} while (! (BIOS_JOY1_PRESS & PAD_START));
 
-	bios_print("BIG TEST\xff", (VDPPTR(NMT_POS_PLANE(2, 10, _BIOS_PLANEA_ADDR)) | VDPOP_VRAM_W));
+	bios_print("BIG TEST\xff", (VDPPTR(NMT_POS_PLANE(2, 10, _BIOS_PLANEA_ADDR)) | VRAM_W));
 }
