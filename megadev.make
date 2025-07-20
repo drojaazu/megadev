@@ -67,7 +67,7 @@ CC_FLAGS+= \
 	-DPROJECT_NAME=$(PROJECT_NAME) \
 	$(addprefix -D, $(HW_CFG)) \
 	$(if $(DEBUG), -DDEBUG) \
-	-fno-builtin -fomit-frame-pointer -fno-gcse \
+	-fno-builtin \
 	-Wall -Wextra -Wno-main -Wa,--register-prefix-optional
 AS_FLAGS+= \
 	-Wa,--bitwise-or

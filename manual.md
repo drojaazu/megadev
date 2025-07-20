@@ -425,3 +425,21 @@ There is also the WAIT_FOR_ACC_OP macro which will check get_acc_op_result in a 
 Programming for the Mega Drive only is much simpler than programming for the Mega CD. Primarily, you do not have to worry about loading files from disc, transferring their data across buffers, and then cleaning up when that file's data is no longer needed. For a Mega Drive cartridge, all the data and code for the entire program is in a fixed location in memory, meaning less planning needs to be spent on architecting your program in terms of hardware.
 
 Therefore the following sections are commentary and suggestions for planning a Mega CD game in particular.
+
+
+
+# Currently Unsupported Features and Known Issues/Limitations
+
+## Lack of "naked" function support
+
+One of the most frustrating aspects of working with GCC is the lack of flexibility in some (admittedly esoteric) aspects. Chief among these has been GCC's insistence on creating function prologue/epilogues for overlays (modules).
+
+In summary, when a function is called, certain CPU registers may be modified as a side of that code. If those registers were in active use by the calling code, then upon returning things will be broken as the values were unexpectedly changed. To prevent this, values for in-use registers are saved to the stack for safekeeping and reloaded when the function has returned. This automatic saving and loading of registers (and possibly other function call utilities) is called the prologue and epilogue of a function.
+
+The automatically generated epilogue/prologue may be unnecessary if the function in question is an entry for a module. The register push takes up valuable stack space in our limited RAM. Moreover, the compiler may also LINK the A6 register, which essentially removes that register from use. This is especially problematic since a number of Main BIOS calls make use of A6.
+
+A function lacking an epilogue and prologue is called "naked," and unfortunately GCC does not provide a way to specifying a function as naked (at least not for the M68000 architecture). At this point, there doesn't seem to be a good solution for this. The stack can be manually reset by some inline ASM at the top of a function to recover the space used, but the (admitterly few) CPU cycles are still used for the push/pop. For BIOS calls using A6, we have wrapped these calls with a push/pop of A6, which keeps things stable but adds more CPU cycles...
+
+If you need to be particular about speed, we recommend checking any BIOS calls being made that may use A6 and perhaps write your own inline ASM caller to deal with tha LINKed A6 issue more efficiently. Of course, this issue only applies to C programming; if you are developing in pure ASM, this is not a problem.
+
+If anyone has any suggestions for how to solve for this, we greatly welcome your comments.

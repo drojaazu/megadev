@@ -28,7 +28,7 @@ BUILD_PATH:=build
 OUT_PATH:=out
 
 # Additional C compiler flags
-CC_FLAGS:=-O1 -fconserve-stack
+CC_FLAGS:=-O1 -fconserve-stack -fomit-frame-pointer -fno-gcse
 
 # Additional assembler flags
 AS_FLAGS:=
