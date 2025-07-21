@@ -19,51 +19,63 @@
  * @fn memset8
  * @brief Set a range of memory to an 8-bit value
  */
-static inline void memset8(u8 value, u8 * dest, u32 length)
+static inline void memset8(u8 value, void * dest, u32 length)
 {
 	--length;
 	asm(
 		"\
-		1:move.b %2,(%0)+ \n\
-			dbf %1,1b \n\
+1:move.b %2,(%0)+ \n\
+	dbf %1,1b \n\
 		"
-		: "+a"(dest), "+d"(length)
-		: "d"(value)
-		: "cc");
+		: 
+			"+a"(dest),
+			"+d"(length)
+		:
+			"d"(value)
+		:
+			"cc");
 }
 
 /**
  * @fn memset16
  * @brief Set a range of memory to a 16-bit value
  */
-static inline void memset16(u16 value, u8 * dest, u32 length)
+static inline void memset16(u16 value, void * dest, u32 length)
 {
 	--length;
 	asm(
 		"\
-	1:move.w %0,(%1)+ \n\
-		dbf %2,1b \n\
+1:move.w %0,(%1)+ \n\
+	dbf %2,1b \n\
 		"
+		: 
+			"+a"(dest),
+			"+d"(length)
 		:
-		: "d"(value), "a"(dest), "d"(length)
-		: "cc");
+			"d"(value)
+		:
+			"cc");
 }
 
 /**
  * @fn memset32
  * @brief Set a range of memory to a 32-bit value
  */
-static inline void memset32(u16 value, u8 * dest, u32 length)
+static inline void memset32(u32 value, void * dest, u32 length)
 {
 	--length;
 	asm(
 		"\
-	1:move.l %0,(%1)+ \n\
-		dbf %2,1b \n\
+1:move.l %0,(%1)+ \n\
+	dbf %2,1b \n\
 		"
+		: 
+			"+a"(dest),
+			"+d"(length)
 		:
-		: "d"(value), "a"(dest), "d"(length)
-		: "cc");
+			"d"(value)
+		:
+			"cc");
 }
 
 /**
