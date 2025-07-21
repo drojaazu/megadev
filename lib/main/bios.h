@@ -98,18 +98,18 @@ typedef struct Palette
 } Palette;
 
 /**
- * @def* BIOS_BUFFER
+ * @def* BIOS_WORK_BUFFER
  * @brief Work RAM for graphics decompression routines
- * @sa _BIOS_BUFFER
+ * @sa _BIOS_WORK_BUFFER
  * @ingroup bios_cmp
  */
-#define BIOS_BUFFER ((u8 *) _BIOS_BUFFER)
+#define BIOS_WORK_BUFFER ((u8 *) _BIOS_WORK_BUFFER)
 
 /**
- * @def BIOS_BUFFER_SZ
- * @brief Size of @ref BIOS_BUFFER
+ * @def BIOS_WORK_BUFFER_SZ
+ * @brief Size of @ref BIOS_WORK_BUFFER
  */
-#define BIOS_BUFFER_SZ 0x200
+#define BIOS_WORK_BUFFER_SZ 0x200
 
 /**
  * @def Sprite* BIOS_SPRLIST
@@ -467,12 +467,12 @@ typedef struct Palette
  */
 static inline void bios_entry()
 {
-	asm(
-		"\
-			jsr %p0 \n\
+	asm("\
+  jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_ENTRY));
+		:
+			"i"(_BIOS_ENTRY));
 }
 
 /**
@@ -491,12 +491,12 @@ static inline void bios_entry()
  */
 static inline void bios_reset()
 {
-	asm(
-		"\
-			jsr %p0 \n\
+	asm("\
+  jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_RESET));
+		:
+			"i"(_BIOS_RESET));
 }
 
 /**
@@ -510,12 +510,12 @@ static inline void bios_reset()
  */
 static inline void bios_init()
 {
-	asm(
-		"\
-			jsr %p0 \n\
+	asm("\
+			jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_INIT));
+		:
+			"i"(_BIOS_INIT));
 }
 
 /**
@@ -528,12 +528,12 @@ static inline void bios_init()
  */
 static inline void bios_init_sp()
 {
-	asm(
-		"\
-			jsr %p0 \n\
+	asm("\
+  jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_INIT_SP));
+		:
+			"i"(_BIOS_INIT_SP));
 }
 
 /**
@@ -547,12 +547,12 @@ static inline void bios_init_sp()
  */
 static inline void bios_vint_handler()
 {
-	asm(
-		"\
-			jsr %p0 \n\
+	asm("\
+  jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_VINT_HANDLER));
+		:
+			"i"(_BIOS_VINT_HANDLER));
 }
 
 /**
@@ -569,13 +569,16 @@ static inline void bios_vint_handler()
 static inline void bios_set_hint(void * hint_handler)
 {
 	register u32 A1 asm("a1") = (u32) hint_handler;
-	asm(
-		"\
-			jsr %p0 \n\
+	asm("\
+  jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_SET_HINT), "a"(A1)
-		: "cc");
+		:
+			"i"(_BIOS_SET_HINT),
+			"a"(A1)
+		:
+			"cc"
+		);
 }
 
 /**
@@ -585,15 +588,19 @@ static inline void bios_set_hint(void * hint_handler)
  */
 static inline void bios_update_inputs()
 {
-	asm(
-		"\
-  		move.l a6, -(sp) \n\
-			jsr %p0 \n\
-			move.l (sp)+, a6 \n\
+	asm("\
+  move.l a6, -(sp) \n\
+  jsr %c0 \n\
+  move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BIOS_UPDATE_INPUTS)
-		: "d6", "d7", "a5");
+		:
+			"i"(_BIOS_UPDATE_INPUTS)
+		:
+			"d6",
+			"d7",
+			"a5"
+		);
 }
 
 typedef enum ControllerType
@@ -617,13 +624,17 @@ static inline u8 bios_detect_controller(u8 * io_data_port)
 {
 	register u32 A6 asm("a6") = (u32) io_data_port;
 	register u8 D6 asm("d6");
-	asm(
-		"\
-			jsr %p0 \n\
+	asm("\
+  jsr %c0 \n\
 		"
-		: "=d"(D6)
-		: "i"(_BIOS_DETECT_CONTROLLER), "a"(A6)
-		: "cc");
+		:
+			"=d"(D6)
+		:
+			"i"(_BIOS_DETECT_CONTROLLER),
+			"a"(A6)
+		:
+			"cc"
+		);
 
 	return D6;
 }
@@ -640,15 +651,20 @@ static inline u8 bios_detect_controller(u8 * io_data_port)
  */
 static inline void bios_clear_vram()
 {
-	asm(
-		"\
-  		move.l a6, -(sp) \n\
-			jsr %p0 \n\
-			move.l (sp)+, a6 \n\
+	asm("\
+  move.l a6, -(sp) \n\
+  jsr %c0 \n\
+  move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BIOS_CLEAR_VRAM)
-		: "d0", "d1", "d2", "d3");
+		:
+			"i"(_BIOS_CLEAR_VRAM)
+		:
+			"d0",
+			"d1",
+			"d2",
+			"d3"
+		);
 }
 
 /**
@@ -660,15 +676,20 @@ static inline void bios_clear_vram()
  */
 static inline void bios_clear_tables()
 {
-	asm(
-		"\
-  		move.l a6, -(sp) \n\
-			jsr %p0 \n\
-			move.l (sp)+, a6 \n\
+	asm("\
+  move.l a6, -(sp) \n\
+  jsr %c0 \n\
+  move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BIOS_CLEAR_TABLES)
-		: "d0", "d1", "d2", "d3");
+		:
+			"i"(_BIOS_CLEAR_TABLES)
+		:
+			"d0",
+			"d1",
+			"d2",
+			"d3"
+		);
 }
 
 /**
@@ -678,13 +699,17 @@ static inline void bios_clear_tables()
  */
 static inline void bios_clear_vsram()
 {
-	asm(
-		"\
-			jsr %p0 \n\
+	asm("\
+  jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_CLEAR_VSRAM)
-		: "d0", "d1", "d2");
+		:
+			"i"(_BIOS_CLEAR_VSRAM)
+		:
+			"d0",
+			"d1",
+			"d2"
+		);
 }
 
 /**
@@ -694,13 +719,18 @@ static inline void bios_clear_vsram()
  */
 static inline void bios_load_vdpregs_default()
 {
-	asm(
-		"\
-			jsr %p0 \n\
+	asm("\
+  jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_LOAD_VDPREGS_DEFAULT)
-		: "d0", "d1", "a1", "a2");
+		:
+			"i"(_BIOS_LOAD_VDPREGS_DEFAULT)
+		:
+			"d0",
+			"d1",
+			"a1",
+			"a2"
+		);
 }
 
 /**
@@ -717,13 +747,19 @@ static inline void bios_load_vdpregs(VDPREG const * vdp_reg_data)
 {
 	register u32 A1 asm("a1") = (u32) vdp_reg_data;
 
-	asm volatile(
-		"\
-			jsr %p1 \n\
+	asm volatile("\
+  jsr %p1 \n\
 		"
-		: "+a"(A1)
-		: "i"(_BIOS_LOAD_VDPREGS), "a"(A1)
-		: "cc", "d0", "d1", "a2");
+		:
+			"+a"(A1)
+		:
+			"i"(_BIOS_LOAD_VDPREGS), "a"(A1)
+		:
+			"cc",
+			"d0",
+			"d1",
+			"a2"
+		);
 }
 
 /**
@@ -739,12 +775,16 @@ static inline void bios_vdp_fill(u32 vdpptr, u16 length, u16 value)
 	register u32 D0 asm("d0") = vdpptr;
 	register u16 D1 asm("d1") = length;
 	register u16 D2 asm("d2") = value;
-	asm(
-		"\
-			jsr %p0 \n\
+	asm("\
+  jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_VDP_FILL), "d"(D0), "d"(D1), "d"(D2));
+		:
+			"i"(_BIOS_VDP_FILL),
+			"d"(D0),
+			"d"(D1),
+			"d"(D2)
+		);
 }
 
 /**
@@ -759,13 +799,17 @@ static inline void bios_vdp_fill_clear(u32 vdpptr, u16 length)
 {
 	register u32 D0 asm("d0") = vdpptr;
 	register u16 D1 asm("d1") = length;
-	asm(
-		"\
-			jsr %p0 \n\
+	asm("\
+  jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_VDP_FILL_CLEAR), "d"(D0), "d"(D1)
-		: "d2");
+		:
+			"i"(_BIOS_VDP_FILL_CLEAR),
+			"d"(D0),
+			"d"(D1)
+		:
+			"d2"
+		);
 }
 
 /**
@@ -778,15 +822,20 @@ static inline void bios_dma_fill_clear(u32 vdpptr, u16 length)
 {
 	register u32 D0 asm("d0") = vdpptr;
 	register u16 D1 asm("d1") = length;
-	asm(
-		"\
-  		move.l a6, -(sp) \n\
-			jsr %p0 \n\
-			move.l (sp)+, a6 \n\
+	asm("\
+  move.l a6, -(sp) \n\
+  jsr %c0 \n\
+  move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BIOS_DMA_FILL_CLEAR), "d"(D0), "d"(D1)
-		: "d2", "d3");
+		:
+			"i"(_BIOS_DMA_FILL_CLEAR),
+			"d"(D0),
+			"d"(D1)
+		:
+			"d2",
+			"d3"
+	);
 }
 
 /**
@@ -800,15 +849,19 @@ static inline void bios_dma_fill(u32 vdpptr, u16 length, u16 value)
 	register u32 D0 asm("d0") = vdpptr;
 	register u16 D1 asm("d1") = length;
 	register u16 D2 asm("d2") = value;
-	asm(
-		"\
-  		move.l a6, -(sp) \n\
-			jsr %p0 \n\
-			move.l (sp)+, a6 \n\
+	asm("\
+  move.l a6, -(sp) \n\
+  jsr %c0 \n\
+  move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BIOS_DMA_FILL), "d"(D0), "d"(D1), "d"(D2)
-		: "d3");
+		:
+			"i"(_BIOS_DMA_FILL),
+			"d"(D0),
+			"d"(D1),
+			"d"(D2)
+		:
+			"d3");
 }
 
 /**
@@ -827,13 +880,22 @@ static inline void bios_load_map(u32 const vdpptr, u16 const width, u16 const he
 	register u16 D2 asm("d2") = height;
 	register u32 A1 asm("a1") = (u32) map;
 
-	asm volatile(
-		"\
-			jsr %p1 \n\
+	asm volatile("\
+  jsr %p1 \n\
 		"
-		: "+d"(D2)
-		: "i"(_BIOS_LOAD_MAP), "d"(D0), "d"(D1), "d"(D2), "a"(A1)
-		: "d3", "a5", "cc");
+		:
+			"+d"(D2)
+		:
+			"i"(_BIOS_LOAD_MAP),
+			"d"(D0),
+			"d"(D1),
+			"d"(D2),
+			"a"(A1)
+		:
+			"d3",
+			"a5",
+			"cc"
+		);
 }
 
 /**
@@ -860,13 +922,16 @@ static inline void bios_load_map(u32 const vdpptr, u16 const width, u16 const he
 static inline void bios_set_hint_workram(void * hint_handler)
 {
 	register u32 A1 asm("a1") = (u32) hint_handler;
-	asm(
-		"\
-			jsr %p0 \n\
+
+	asm("\
+			jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_SET_HINT_WORKRAM), "a"(A1)
-		: "cc");
+		:
+			"i"(_BIOS_SET_HINT_WORKRAM),
+			"a"(A1)
+		:
+			"cc");
 }
 
 /**
@@ -878,13 +943,15 @@ static inline void bios_set_hint_workram(void * hint_handler)
  */
 static inline void bios_disable_hint()
 {
-	asm(
-		"\
-			jsr %p0 \n\
+	asm("\
+  jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_DISABLE_HINT)
-		: "cc");
+		:
+			"i"(_BIOS_DISABLE_HINT)
+		:
+			"cc"
+		);
 }
 
 /**
@@ -896,7 +963,7 @@ static inline void bios_gfx_decomp(u8 const * data)
 	register u32 a1_data asm("a1") = (u32) data;
 	asm(
 		"\
-			jsr %p0 \n\
+			jsr %c0 \n\
 		"
 		:
 		: "i"(_BIOS_GFX_DECOMP), "a"(a1_data));
@@ -910,7 +977,7 @@ static inline void bios_vdp_disp_enable()
 {
 	asm(
 		"\
-			jsr %p0 \n\
+			jsr %c0 \n\
 		"
 		:
 		: "i"(_BIOS_VDP_DISP_ENABLE));
@@ -924,7 +991,7 @@ static inline void bios_vdp_disp_disable()
 {
 	asm(
 		"\
-			jsr %p0 \n\
+			jsr %c0 \n\
 		"
 		:
 		: "i"(_BIOS_VDP_DISP_DISABLE));
@@ -947,7 +1014,7 @@ static inline void bios_vint_wait_default()
 {
 	asm(
 		"\
-			jsr %p0 \n\
+			jsr %c0 \n\
 		"
 		:
 		: "i"(_BIOS_VINT_HANDLER_WAIT_DEFAULT)
@@ -969,7 +1036,7 @@ static inline void bios_vint_wait(u8 flags)
 	register u8 D0 asm("d0") = flags;
 	asm(
 		"\
-			jsr %p0 \n\
+			jsr %c0 \n\
 		"
 		:
 		: "i"(_BIOS_VINT_HANDLER_WAIT), "d"(D0));
@@ -996,7 +1063,7 @@ static inline bool bios_pal_fadeout(u8 palette_index, u8 length)
 
 	asm goto(
 		"\
-  		jsr %p0 \n\
+  		jsr %c0 \n\
 			beq %l[fade_complete] \n\
 		"
 		:
@@ -1023,7 +1090,7 @@ static inline void bios_load_font_defaults()
 {
 	asm(
 		"\
-			jsr %p0 \n\
+			jsr %c0 \n\
 		"
 		:
 		: "i"(_BIOS_LOAD_FONT_DEFAULTS)
@@ -1073,7 +1140,7 @@ static inline void bios_input_delay(u8 * input, bool use_2p)
 
 	asm(
 		"\
-			jsr %p0 \n\
+			jsr %c0 \n\
 		"
 		:
 		: "i"(_BIOS_INPUT_DELAY), "a"(A1), "d"(D0)
@@ -1092,7 +1159,7 @@ static inline void bios_clear_comm()
 {
 	asm(
 		"\
-			jsr %p0 \n\
+			jsr %c0 \n\
 		"
 		:
 		: "i"(_BIOS_CLEAR_COMM)
@@ -1171,7 +1238,7 @@ static inline void bios_dma_xfer(VDPCMD dest, u8 const * source, u16 length)
 	asm(
 		"\
   		move.l a6, -(sp) \n\
-  		jsr %p0 \n\
+  		jsr %c0 \n\
   		move.l (sp)+, a6 \n\
 		"
 		:
@@ -1200,7 +1267,7 @@ static inline void bios_dma_xfer_wrdram(VDPCMD const dest, void const * source, 
 	asm volatile(
 		"\
   move.l a6, -(sp) \n\
-  jsr %p0 \n\
+  jsr %c0 \n\
   move.l (sp)+, a6 \n\
 		"
 		: 
@@ -1233,7 +1300,7 @@ static inline void bios_dma_copy(u32 vdpptr_dest, u16 source, u16 length)
 	asm volatile(
 		"\
   move.l a6, -(sp) \n\
-  jsr %p0 \n\
+  jsr %c0 \n\
   move.l (sp)+, a6 \n\
 		"
 		:
@@ -1259,7 +1326,7 @@ static inline void bios_copy_sprlist()
 {
 	asm(
 		"\
-			jsr %p0 \n\
+			jsr %c0 \n\
 		"
 		:
 		: "i"(_BIOS_COPY_SPRLIST)
@@ -1281,7 +1348,7 @@ static inline void bios_clear_ram(void * address, u32 long_count)
 	asm(
 		"\
 			move.l a6, -(sp) \n\
-			jsr %p0 \n\
+			jsr %c0 \n\
 			move.l (sp)+, a6 \n\
 		"
 		:
@@ -1302,7 +1369,7 @@ static inline void bios_load_pal(Palette const * pal_data)
 
 	asm(
 		"\
-			jsr %p0 \n\
+			jsr %c0 \n\
 		"
 		:
 		: "i"(_BIOS_LOAD_PAL), "a"(A1)
@@ -1321,7 +1388,7 @@ static inline void bios_load_pal_update(Palette const * pal_data)
 
 	asm(
 		"\
-			jsr %p0 \n\
+			jsr %c0 \n\
 		"
 		:
 		: "i"(_BIOS_LOAD_PAL_UPDATE), "a"(A1)
@@ -1339,7 +1406,7 @@ static inline void bios_copy_pal()
 {
 	asm(
 		"\
-			jsr %p0 \n\
+			jsr %c0 \n\
 		"
 		:
 		: "i"(_BIOS_COPY_PAL)
@@ -1365,7 +1432,7 @@ static inline void bios_process_sprobjs(
 
 	asm(
 		"\
-			jsr %p0 \n\
+			jsr %c0 \n\
 		"
 		:
 		: "i"(_BIOS_PROCESS_SPROBJS), "a"(A0), "a"(A1), "d"(D0), "d"(D1)
@@ -1414,7 +1481,7 @@ static inline void bios_prng()
 {
 	asm(
 		"\
-			jsr %p0 \n\
+			jsr %c0 \n\
 		"
 		:
 		: "i"(_BIOS_PRNG)
@@ -1462,7 +1529,7 @@ static inline void bios_pal_fadein()
 {
 	asm(
 		"\
-  		jsr %p0 \n\
+  		jsr %c0 \n\
 		"
 		:
 		: "i"(_BIOS_PAL_FADEIN));

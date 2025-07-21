@@ -35,7 +35,7 @@ SECTIONS
     SHORT(DEFINED(MMD_FLAGS) ? MMD_FLAGS : 0)
     LONG(MMD_DEST)
     SHORT(_ROM_LENGTH)
-    LONG(main)
+    LONG(DEFINED(init) ? init : main)
     LONG(DEFINED(hint) ? hint : 0)
     LONG(DEFINED(vint) ? vint : 0)
     . = 0x100;

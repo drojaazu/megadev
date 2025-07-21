@@ -41,11 +41,11 @@
 #define _WRKRAM_BLIB 0xFFF700
 
 /**
- * @def _BIOS_BUFFER
+ * @def _BIOS_WORK_BUFFER
  * @ingroup bios_cmp
- * @sa BIOS_BUFFER
+ * @sa BIOS_WORK_BUFFER
  */
-#define _BIOS_BUFFER 0xFFF700
+#define _BIOS_WORK_BUFFER 0xFFF700
 
 /**
  * @def _BIOS_SPRLIST
