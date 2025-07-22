@@ -56,16 +56,16 @@ SECTIONS
     /* TODO: should the size be - 1 for the dbf loop? */
     . = ALIGN(4);
     _ROM_LENGTH = ABSOLUTE(. - _INIT_ORIGIN) >> 2;
-    _ROM_DATA = .;
+    _ROM_DATA_ORIGIN = .;
     . = ALIGN(4);
   } > MODULE_ROM
 
   .data MODULE_RAM_ORIGIN : AT ( ADDR(.header) + SIZEOF(.header) + SIZEOF(.text) )
   {
-    _DATA_ORIGIN = .;
+    _RAM_DATA_ORIGIN = .;
     *(.data*)
     . = ALIGN(4);
-    _DATA_LENGTH = ABSOLUTE(. - _DATA_ORIGIN) >> 2;
+    _RAM_DATA_LENGTH = ABSOLUTE(. - _RAM_DATA_ORIGIN) >> 2;
   } > MODULE_RAM
 
   .bss :
@@ -73,6 +73,6 @@ SECTIONS
     _BSS_ORIGIN = .;
     *(.bss*)
     . = ALIGN(4);
-    _BSS_LENGTH = ABSOLUTE(. - _BSS_ORIGIN);
+    _BSS_LENGTH = ABSOLUTE(. - _BSS_ORIGIN) >> 2;
   } > MODULE_RAM
 }

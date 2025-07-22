@@ -8,11 +8,11 @@
 #ifndef SYSTEM_S
 #define SYSTEM_S
 
-.macro disable_interrupts
+.macro DISABLE_INTERRUPTS
   ori #0x700, sr
 .endm
 
-.macro enable_interrupts
+.macro ENABLE_INTERRUPTS
   andi #0xF8FF, sr
 .endm
 

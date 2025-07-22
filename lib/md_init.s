@@ -5,7 +5,7 @@
  * @brief common Mega Drive init routines
  */
 
-#include "system.s"
+#include <system.s>
 #include "main/md_sys.def.h"
 #include "main/io.def.h"
 #include "main/vdp.def.h"
@@ -21,7 +21,7 @@ z80_dummy_program_end:
 
 .align 2
 init_system:
-  disable_interrupts
+  DISABLE_INTERRUPTS
   tst.l   (_IO_CTRL1 - 1)
   bne.s   0f
   tst.w   (_IO_CTRL3 - 1)
@@ -50,7 +50,7 @@ skip_init:
   lea     z80_dummy_program, a0
   move.w  #(z80_dummy_program_end - z80_dummy_program - 1), d7
   Z80_INIT
-  enable_interrupts
+  ENABLE_INTERRUPTS
   jbra main
 
 .align 2

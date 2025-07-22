@@ -19,7 +19,7 @@
  * @brief Initialize IO port for serial communication
  */
 .macro INIT_EXT_PORT
-  disable_interrupts
+  DISABLE_INTERRUPTS
   Z80_DO_BUSREQ
   
   /* Set comm speed; Serial in/out mode; Enable Rx interrupt */
@@ -27,7 +27,7 @@
   move.b  #0x7f, EXT_CTRL
   
   Z80_DO_BUSRELEASE
-  enable_interrupts
+  ENABLE_INTERRUPTS
 .endm
 
 /**

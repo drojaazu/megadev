@@ -26,23 +26,24 @@ SECTIONS
     _RODATA_LENGTH = ABSOLUTE(. - _RODATA_ORIGIN);
     /* Align to 4 since moving data by longs is more efficient */
     . = ALIGN(4);
-    _ROM_DATA = .;
+    _ROM_LENGTH = ABSOLUTE(. - _INIT_ORIGIN) >> 2;
+    _ROM_DATA_ORIGIN = .;
     . = ALIGN(4);
   } > MODULE_ROM
 
   .data MODULE_RAM_ORIGIN : AT ( ADDR(.text) + SIZEOF(.text) )
   {
-    _DATA_ORIGIN = .;
+    _RAM_DATA_ORIGIN = .;
     *(.data*)
     . = ALIGN(4);
-    _DATA_LENGTH = ABSOLUTE(. - _DATA_ORIGIN);
+    _RAM_DATA_LENGTH = ABSOLUTE(. - _RAM_DATA_ORIGIN) >> 2;
   } > MODULE_RAM
 
   .bss :
   {
     _BSS_ORIGIN = .;
     *(.bss*)
-    _BSS_LENGTH = ABSOLUTE(. - _BSS_ORIGIN);
+    _BSS_LENGTH = ABSOLUTE(. - _BSS_ORIGIN) >> 2;
   } > MODULE_RAM
 
 }
