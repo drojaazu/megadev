@@ -40,4 +40,5 @@
   GRANT_2M
 4:movea.l  8(a0), a0
 .endm
+
 #endif
