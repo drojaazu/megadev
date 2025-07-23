@@ -29,8 +29,16 @@ GLABEL init
 
 register_data:
 .long      0
+.if _BSS_LENGTH == 0
+.long      _BSS_LENGTH
+.else
 .long      _BSS_LENGTH - 1
+.endif
+.if _RAM_DATA_LENGTH == 0
+.long      _RAM_DATA_LENGTH
+.else
 .long      _RAM_DATA_LENGTH - 1
+.endif
 .long      _BSS_ORIGIN
 .long      _ROM_DATA_ORIGIN
 .long      _RAM_DATA_ORIGIN
