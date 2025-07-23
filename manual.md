@@ -88,7 +88,121 @@ Try `hello_world` first and then `ipx_spx` after that, as these are the simplest
 
 After that, feel free to try the remaining examples. In all cases, check the `README.md` file for details about each example.
 
+# Megadev Concepts & Utilities
 
+# Project Composition & Compilation
+
+project layout, ipx/spx as skeleton, makefile, the absolute minimum for a megadev project
+
+Megadev has aimed to be as flexible as possible for devs who want to micromanage their project, for devs who want to use a library of pre-written code extensively to make like simple, and for devs somewhere in between. [[the only requirment is the boot sector setup and makefile compliance]]
+
+## Filename Schema
+
+files in main/ for main CPU
+files in sub/ for sub CPU`
+.macros.s
+
+.def.h
+
+
+
+## Modules (MMD/SMD)
+
+## CD-ROM Access Framework
+
+Accessing data on the disc is done via commands provided by the BIOS on the Sub CPU side. The system in place is somewhat complex, as instead of using filenames, a start/end sector must be specified. Moreover, the transfer process is multi step, involving setting the destination in the CDC Mode register in the Gate Array and using the CDC BIOS calls to start the transfer and monitor its status.
+
+The access framework provided within Megadev simplifies this process by simply specifying a filename and an output buffer.
+
+
+---
+
+The CD-ROM access wrapper provides a simplified method of retrieving files from disc. At a high level, it runs a loop on the Sub CPU that is "pumped" by an update call during INT2. As the access operation runs, it will pause at certain points and return from the interrupt. It saves this break point as a pointer and work resumes from that point at the next INT2. In this way, the Sub CPU is not entirely blocked waiting for time-consuming IO operations.
+
+TODO: Most of this is asm focused, need to expand C coverage/documentation.
+
+### Example
+
+Please have a look at the `ipx_spx` sample project for an example of file loading using this system.
+
+### Setup
+
+CD-ROM access can only be done with the Sub CPU, so requests for files should be done via the communication registers within the gate array. The framework code should remain resident in memory, so we recommend including it within the SP that is loaded to the Sub CPU side during boot.
+
+Include `sub/cdrom.macro.s` and `sub/cdrom.s`in the SP code. In your SP init subroutine (called `_usercall0` in the BIOS Manual), prime the access loop by calling the `INIT_ACC_LOOP` macro.
+
+Somewhere in your INT2 subroutine (_usercall2), make a call to the `PROCESS_ACC_LOOP` macro to keep the access loop moving. You may want to put this at the end of the subroutine or push the registers before calling as it may clobber any number of registers.
+
+Finally, in the early part of SP main subroutine (_usercall1), you'll want to load and cache the file information by setting ACC_OP_LOAD_DIR as the access operation and waiting for it to complete. There is space allocated for 128 files by default, but this can be adjusted to match your project by changing the size of the `dir_cache` buffer in `sub/cdrom.s`.
+
+### Usage
+
+At this point, you are ready to load files. There are four steps involved:
+  - Set the pointer to the filename string in `filename`
+	- Set the destination buffer in either the GA DMA register or `file_dest_ptr` depending on transfer type
+	- Set the appropriate access operation
+  - Wait for the operation to complete
+
+You do not need to set the CDC device destination in the _GAREG_CDCMODE register. This will be done automatically depending on the access operation chosen.
+
+### Filenames
+
+The filename must conform to [ISO9660 Level 1 standards](https://wiki.osdev.org/ISO_9660#Filenames). Basically this means that filenames must contain:
+
+- only UPPERCASE alphanumeric (A-Z, 0-9) characters and underscore
+- a maximum of 8 characters with a 3 character extension
+- the version identifier
+
+Finally, the filename in memory must be a standard null termninated C string.
+
+Note that you can keep your filenames as lowercase on your local system. The ISO creation process will convert them as necessary. (Also note that if you mount the ISO on your local system, they may appear lowercase in your file manager. However, they are UPPERCASE in the filesystem on disc, which is how you will be accessing them on the Mega CD.) You must limit the filename size to 8.3, however, and use only valid characters (A to Z, 0 to 9, and _).
+
+You may not be familiar with the version identifier as is not shown in directory listings. It is a part of the ISO9660 standard, though, and is present within the filesystem table. In reality, it is not used by applications and foregoing a lot of unnecessary background information, it simply means your filenames will be appended with `;1` when referring to them within the filesystem.
+
+As a quick example, you may have `title.mmd` on your local system. This will be represented as `TITLE.MMD;1` within the ISO filesystem on disc, and that is how you should refer to it in your code.
+
+### Destination buffer
+
+Please refer to the CDC section of the Mega CD Software Development documentation before or alongside this section.
+
+The buffer where your data will be stored must be specified in one of two ways depending on the transfer type. If you plan to use DMA, you will need to set the destination address in the `GA_DMAADDR` register. If you plan to use non-DMA transfer via the CDC host data register, you will need to set the address in the `file_buff` pointer.
+
+### Access operation
+
+Finally, you will need to set the access operation on `access_op`. The operations for loading files are:
+
+  ACC_OP_LOAD_CDC
+  ACC_OP_LOAD_CDC_DMA
+  ACC_OP_LOAD_PRG_DMA
+  ACC_OP_LOAD_PCM_DMA
+
+(Note that we do not currently support the Main CPU read option, mostly because it is not well understood.)
+
+ACC_OP_LOAD_CDC will load the data to any memory address available to the Sub CPU, while the DMA options transfer data to a specific device given a relative address specified in the GA DMA register. ACC_OP_LOAD_CDC is the easiest to work with as you can simply specify an absolute address and be done. The DMA options likely provide greater transfer speed (limited by the optical drive, of course), though what sort of speed advantages or if any bus access issues may occur are unknown.
+
+### Wait for data
+
+After setting the access operation, you will need to wait for the data to completely load into your buffer. This is done by checking `access_op` in a loop (while calling the INT2 wait in the loop!) until the value has returned to ACC_OP_IDLE (i.e. 0). When that occurs, the transfer is either complete or failed. You should then check the `access_op_result` for the result code:
+
+  RESULT_OK
+	RESULT_LOAD_FAIL
+	RESULT_NOT_FOUND
+
+If the result is ok, your data should be ready in the buffer. The load fail result means there was a read failure of some sort (likely due to a damaged disc or old harware). Not found indicates the filename provided could not be found in the file system.
+
+## Convenience routines
+
+For simple file loads, you can use the `load_file_sub` convenience subroutine to package most of this up for you. Simply place the pointer to the filename in a0 and the pointer to the destination buffer in a1, call it, and check the result in d0.
+
+The `get_acc_op_result` routine will check if the access operation is still busy, with carry clear (cc) indicating the operation is complete and carry set (cs) indicating it is still in progress.
+
+There is also the WAIT_FOR_ACC_OP macro which will check get_acc_op_result in a loop until the operation is complete.
+
+# Development Considerations for Mega CD development
+
+Programming for the Mega Drive only is much simpler than programming for the Mega CD. Primarily, you do not have to worry about loading files from disc, transferring their data across buffers, and then cleaning up when that file's data is no longer needed. For a Mega Drive cartridge, all the data and code for the entire program is in a fixed location in memory, meaning less planning needs to be spent on architecting your program in terms of hardware.
+
+Therefore the following sections are commentary and suggestions for planning a Mega CD game in particular.
 
 # Understanding The Hardware
 
@@ -315,116 +429,7 @@ There are some strategies we can employ to help mitigate the risk of an overflow
 
 - Try to keep the number of chained function calls to a minimum. A function calling a function calling a function calling a function will generate a stack frame for each call, which includes space for any local variables. If possible, call a function to do work on an object passed by pointer, then return and call the next pointer, and so on. Similarly, avoid recursive functions.
 
-# Megadev Concepts & Utilities
 
-## Filename Schema
-
-files in main/ for main CPU
-files in sub/ for sub CPU`
-.macros.s
-
-.def.h
-
-## Project Structure
-discuss the makefile and using ips_spx as a skeleton
-
-## Modules (MMD/SMD)
-
-## CD-ROM Access Framework
-
-Accessing data on the disc is done via commands provided by the BIOS on the Sub CPU side. The system in place is somewhat complex, as instead of using filenames, a start/end sector must be specified. Moreover, the transfer process is multi step, involving setting the destination in the CDC Mode register in the Gate Array and using the CDC BIOS calls to start the transfer and monitor its status.
-
-The access framework provided within Megadev simplifies this process by simply specifying a filename and an output buffer.
-
-
----
-
-The CD-ROM access wrapper provides a simplified method of retrieving files from disc. At a high level, it runs a loop on the Sub CPU that is "pumped" by an update call during INT2. As the access operation runs, it will pause at certain points and return from the interrupt. It saves this break point as a pointer and work resumes from that point at the next INT2. In this way, the Sub CPU is not entirely blocked waiting for time-consuming IO operations.
-
-TODO: Most of this is asm focused, need to expand C coverage/documentation.
-
-### Example
-
-Please have a look at the `ipx_spx` sample project for an example of file loading using this system.
-
-### Setup
-
-CD-ROM access can only be done with the Sub CPU, so requests for files should be done via the communication registers within the gate array. The framework code should remain resident in memory, so we recommend including it within the SP that is loaded to the Sub CPU side during boot.
-
-Include `sub/cdrom.macro.s` and `sub/cdrom.s`in the SP code. In your SP init subroutine (called `_usercall0` in the BIOS Manual), prime the access loop by calling the `INIT_ACC_LOOP` macro.
-
-Somewhere in your INT2 subroutine (_usercall2), make a call to the `PROCESS_ACC_LOOP` macro to keep the access loop moving. You may want to put this at the end of the subroutine or push the registers before calling as it may clobber any number of registers.
-
-Finally, in the early part of SP main subroutine (_usercall1), you'll want to load and cache the file information by setting ACC_OP_LOAD_DIR as the access operation and waiting for it to complete. There is space allocated for 128 files by default, but this can be adjusted to match your project by changing the size of the `dir_cache` buffer in `sub/cdrom.s`.
-
-### Usage
-
-At this point, you are ready to load files. There are four steps involved:
-  - Set the pointer to the filename string in `filename`
-	- Set the destination buffer in either the GA DMA register or `file_dest_ptr` depending on transfer type
-	- Set the appropriate access operation
-  - Wait for the operation to complete
-
-You do not need to set the CDC device destination in the _GAREG_CDCMODE register. This will be done automatically depending on the access operation chosen.
-
-### Filenames
-
-The filename must conform to [ISO9660 Level 1 standards](https://wiki.osdev.org/ISO_9660#Filenames). Basically this means that filenames must contain:
-
-- only UPPERCASE alphanumeric (A-Z, 0-9) characters and underscore
-- a maximum of 8 characters with a 3 character extension
-- the version identifier
-
-Finally, the filename in memory must be a standard null termninated C string.
-
-Note that you can keep your filenames as lowercase on your local system. The ISO creation process will convert them as necessary. (Also note that if you mount the ISO on your local system, they may appear lowercase in your file manager. However, they are UPPERCASE in the filesystem on disc, which is how you will be accessing them on the Mega CD.) You must limit the filename size to 8.3, however, and use only valid characters (A to Z, 0 to 9, and _).
-
-You may not be familiar with the version identifier as is not shown in directory listings. It is a part of the ISO9660 standard, though, and is present within the filesystem table. In reality, it is not used by applications and foregoing a lot of unnecessary background information, it simply means your filenames will be appended with `;1` when referring to them within the filesystem.
-
-As a quick example, you may have `title.mmd` on your local system. This will be represented as `TITLE.MMD;1` within the ISO filesystem on disc, and that is how you should refer to it in your code.
-
-### Destination buffer
-
-Please refer to the CDC section of the Mega CD Software Development documentation before or alongside this section.
-
-The buffer where your data will be stored must be specified in one of two ways depending on the transfer type. If you plan to use DMA, you will need to set the destination address in the `GA_DMAADDR` register. If you plan to use non-DMA transfer via the CDC host data register, you will need to set the address in the `file_buff` pointer.
-
-### Access operation
-
-Finally, you will need to set the access operation on `access_op`. The operations for loading files are:
-
-  ACC_OP_LOAD_CDC
-  ACC_OP_LOAD_CDC_DMA
-  ACC_OP_LOAD_PRG_DMA
-  ACC_OP_LOAD_PCM_DMA
-
-(Note that we do not currently support the Main CPU read option, mostly because it is not well understood.)
-
-ACC_OP_LOAD_CDC will load the data to any memory address available to the Sub CPU, while the DMA options transfer data to a specific device given a relative address specified in the GA DMA register. ACC_OP_LOAD_CDC is the easiest to work with as you can simply specify an absolute address and be done. The DMA options likely provide greater transfer speed (limited by the optical drive, of course), though what sort of speed advantages or if any bus access issues may occur are unknown.
-
-### Wait for data
-
-After setting the access operation, you will need to wait for the data to completely load into your buffer. This is done by checking `access_op` in a loop (while calling the INT2 wait in the loop!) until the value has returned to ACC_OP_IDLE (i.e. 0). When that occurs, the transfer is either complete or failed. You should then check the `access_op_result` for the result code:
-
-  RESULT_OK
-	RESULT_LOAD_FAIL
-	RESULT_NOT_FOUND
-
-If the result is ok, your data should be ready in the buffer. The load fail result means there was a read failure of some sort (likely due to a damaged disc or old harware). Not found indicates the filename provided could not be found in the file system.
-
-## Convenience routines
-
-For simple file loads, you can use the `load_file_sub` convenience subroutine to package most of this up for you. Simply place the pointer to the filename in a0 and the pointer to the destination buffer in a1, call it, and check the result in d0.
-
-The `get_acc_op_result` routine will check if the access operation is still busy, with carry clear (cc) indicating the operation is complete and carry set (cs) indicating it is still in progress.
-
-There is also the WAIT_FOR_ACC_OP macro which will check get_acc_op_result in a loop until the operation is complete.
-
-# Development Considerations for Mega CD development
-
-Programming for the Mega Drive only is much simpler than programming for the Mega CD. Primarily, you do not have to worry about loading files from disc, transferring their data across buffers, and then cleaning up when that file's data is no longer needed. For a Mega Drive cartridge, all the data and code for the entire program is in a fixed location in memory, meaning less planning needs to be spent on architecting your program in terms of hardware.
-
-Therefore the following sections are commentary and suggestions for planning a Mega CD game in particular.
 
 
 

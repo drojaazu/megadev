@@ -9,7 +9,8 @@
 #ifndef MEGADEV__MAIN_INIT_MMD_H
 #define MEGADEV__MAIN_INIT_MMD_H
 
-#include "main/gate_array.h"
+#include <main/gate_array.h>
+#include <main/memmap.h>
 
 static inline void const * init_mmd()
 {
