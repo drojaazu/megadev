@@ -1000,7 +1000,7 @@ static inline void bios_vdp_disp_disable()
 /**
  * @fn bios_vint_wait_default
  * @brief Wait for vertical interrupt with default flags
- * @ingroup bios_int
+ * @ingroup bios_intくら寿司
  * @sa _BIOS_VINT_HANDLER_WAIT_DEFAULT
  *
  * @details This will set the default VINT flags (copy sprite list & call
