@@ -3,11 +3,10 @@
  *
  * @file std_init.s
  * @brief Standard initializor
- * @details Performs four main tasks:
+ * @details Performs three main tasks:
  *          - Disables interrupts
  *          - Clears .bss section RAM
  *          - Copies .data section into RAM
- *          - Reset stack pointer
  */
 
 #include <macros.s>
@@ -26,8 +25,6 @@ GLABEL init
   // copy .data section to RAM
 0:mov.l    (a1)+, (a2)+
   dbf      d2, 0b
-	// reset stack pointer
-  movea.l  (0), sp
   jmp      main
 
 register_data:
