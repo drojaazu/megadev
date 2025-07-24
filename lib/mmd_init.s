@@ -12,7 +12,6 @@
 
 .section .init
 
-GLABEL init
   DISABLE_INTERRUPTS
   BASIC_INIT
   INIT_MMD
