@@ -5,7 +5,6 @@
  * @brief Standard initialization for IPX (or any "self-copying" MMDs)
  */
 
-#include <macros.s>
 #include <system.s>
 #include <init.macros.s>
 #include <main/mmd.macros.s>
