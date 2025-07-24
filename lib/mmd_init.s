@@ -8,10 +8,12 @@
 #include <macros.s>
 #include <system.s>
 #include <init.macros.s>
+#include <main/init_mmd.s>
 
 .section .init
 
 GLABEL init
   DISABLE_INTERRUPTS
   BASIC_INIT
-  jmp      main
+  INIT_MMD
+  jmp      (a0)

@@ -73,8 +73,8 @@ __attribute__((noreturn)) void main()
 	// VDP compatible format. It is written so that constant values will be
 	// calculated at compile time, and variables will be calculated at runtime
 	// with the optimized conversion code
-	bios_dma_xfer_wrdram((VDPPTR(0) | CRAM_W), res_cybercity_pal, 32 >> 1);
-	bios_dma_xfer_wrdram((VDPPTR(32) | CRAM_W), res_ship_pal, 32 >> 1);
+	bios_dma_xfer_wrdram((VDPPTR(0) | VDPOP_CRAM_W), res_cybercity_pal, 32 >> 1);
+	bios_dma_xfer_wrdram((VDPPTR(32) | VDPOP_CRAM_W), res_ship_pal, 32 >> 1);
 
 	// bios_gfx_decomp requires that we set the VDP address first
 	VDP_CTRL_32 = VDPPTR(VRAM_AT(1)) | VRAM_W;

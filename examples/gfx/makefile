@@ -45,7 +45,7 @@ include $(MEGADEV_PATH)/megadev.make
 .PHONY: disc clean
 
 disc: \
-	init \
+	init_build \
 	disc/cyber.mmd \
 	disc.iso
 
@@ -54,6 +54,6 @@ clean:
 
 disc/cyber.mmd: \
 	mmd_layout.s \
-	cybercity_init.s \
+	std_init.s \
 	cybercity.c \
 	cybercity.res.s

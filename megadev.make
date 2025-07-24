@@ -153,7 +153,7 @@ default: init boot
 
 boot: $(BUILD_PATH)/boot.bin
 
-init:
+init_build:
 	@mkdir -p $(BUILD_PATH) $(DISC_PATHS)
 
 # special rules for boot sector binaries
