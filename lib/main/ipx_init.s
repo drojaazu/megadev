@@ -1,8 +1,8 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file std_init.s
- * @brief Standard initialization for modules
+ * @file ipx_init.s
+ * @brief Standard initialization for IPX (or any "self-copying" MMDs)
  */
 
 #include <macros.s>

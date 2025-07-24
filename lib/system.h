@@ -13,7 +13,7 @@
  */
 static inline void disable_interrupts()
 {
-	asm("or #0x700,sr");
+	asm("ori #0x700,sr");
 }
 
 /**
@@ -21,7 +21,7 @@ static inline void disable_interrupts()
  */
 static inline void enable_interrupts()
 {
-	asm("and #0xF8FF,sr");
+	asm("andi #0xF8FF,sr");
 }
 
 static inline void cpu_reset()

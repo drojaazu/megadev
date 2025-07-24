@@ -59,7 +59,7 @@ copy_res:
 
 disc/ipx.mmd: \
 	ipx_layout.s \
-	ipx_init.s \
+	main/ipx_init.s \
 	ipx.c
 
 disc/spx.smd: \

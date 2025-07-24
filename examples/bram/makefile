@@ -56,7 +56,7 @@ clean:
 
 disc/bramdemo.mmd: \
 	bram_demo_layout.s \
-	bram_demo_init.s \
+	main/ipx_init.s \
 	bram_demo.c
 
 disc/spx.smd: \

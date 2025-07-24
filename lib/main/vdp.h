@@ -127,7 +127,7 @@ typedef union SpriteEx
 /**
  * @enum PlaneWidth
  * @brief Helper for working with plane widths specified in tiles by specifying width in bytes
- * @note Use with NMT_POS helper below
+ * @note Use with PLANE_POS helper below
  */
 typedef enum PlaneWidth
 {
@@ -137,13 +137,13 @@ typedef enum PlaneWidth
 } PlaneWidth;
 
 /**
- * @def NMT_POS
+ * @def PLANE_POS
  * @brief Generates the nametable offset for a tile at pos x/y for a given plane width
  * @param x horizontal position in the tilemap
  * @param y vertical position in the tilemap
  * @param width width of the the plane (in bytes, so tile width * 2)
  */
-#define NMT_POS(x, y, width) ((y * (width)) + (x << 1))
+#define PLANE_POS(x, y, width) ((y * (width)) + (x << 1))
 
 /**
  * @fn to_vdpptr

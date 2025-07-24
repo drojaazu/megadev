@@ -113,7 +113,7 @@ _VDPREG_WIN_HPOS,
 _VDPREG_WIN_VPOS
 };
 
-#define plane_xy(x, y) (VDPPTR(NMT_POS(x, y, Width32) + PLANE_A_ADDR) | VRAM_W)
+#define plane_xy(x, y) (VDPPTR(PLANE_POS(x, y, Width32) + PLANE_A_ADDR) | VRAM_W)
 
 void print(char const * string, VDPPTR pos)
 {

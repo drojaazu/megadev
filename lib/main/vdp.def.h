@@ -65,7 +65,7 @@
  * @brief VDP Control Port / Address Mode / CRAM Write
  * @sa _VDP_CTRL
  */
-#define VDPOP_CRAM_W 0xC0000000
+#define CRAM_W 0xC0000000
 
 /**
  * @def VSRAM_R
