@@ -1,9 +1,9 @@
 #include <fixed.h>
 #include <main/bios.h>
-#include <main/gate_array.h>
+#include <main/gate_arr.h>
 #include <main/io.def.h>
 #include <main/memmap.h>
-#include <main/init_mmd.h>
+#include <main/mmd.h>
 #include <main/vdp.h>
 #include <system.h>
 #include <types.h>

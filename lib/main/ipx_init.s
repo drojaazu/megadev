@@ -8,7 +8,7 @@
 #include <macros.s>
 #include <system.s>
 #include <init.macros.s>
-#include <main/init_mmd.s>
+#include <main/mmd.macros.s>
 
 .section .init
 

@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file z80.s
+ * @file z80.macros.s
  * @brief Z80 CPU utilities
  */
 

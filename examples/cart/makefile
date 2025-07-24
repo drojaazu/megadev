@@ -50,7 +50,7 @@ rom: \
 
 out.cart: \
 	init.s \
-	io.s \
+	io.macros.s \
 	main.c \
 	res.s \
 	string.s \

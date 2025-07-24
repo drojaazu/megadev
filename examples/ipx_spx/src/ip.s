@@ -4,7 +4,7 @@
 
 .section .text
 
-#include <main/gate_array.s>
+#include <main/gate_arr.macros.s>
 #include <main/memmap.def.h>
 #include <main/bios.def.h>
 #include <main/main.macro.s>

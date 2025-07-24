@@ -6,8 +6,8 @@
 
 #include <main/main.def.h>
 #include <main/bios.def.h>
-#include <main/gate_array.s>
-#include <main/gate_array.def.h>
+#include <main/gate_arr.macros.s>
+#include <main/gate_arr.def.h>
 #include <main/vdp.def.h>
 #include <macros.s>
 #include <system.s>

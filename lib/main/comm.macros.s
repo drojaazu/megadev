@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file comm.s
+ * @file comm.macros.s
  * @brief Serial communications utilities
  */
 
@@ -51,11 +51,12 @@ loop:
  * @brief Transmit a byte to the external port
  * @param[in] D0.b Byte to transmit
  */
-SUB ext_tx
+.macro EXT_TX
 2:move.b  (EXT_SCTRL), d1
   btst    #SCTRL_TX_FULL, d1 // make sure transmit queue is not full
   bne     2b
   move.b  d0, EXT_TXDATA
   rts
+.endm
 
 #endif

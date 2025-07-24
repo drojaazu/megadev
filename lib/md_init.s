@@ -9,7 +9,7 @@
 #include "main/md_sys.def.h"
 #include "main/io.def.h"
 #include "main/vdp.def.h"
-#include "main/z80.s"
+#include "main/z80.macros.s"
 
 .align 2
 

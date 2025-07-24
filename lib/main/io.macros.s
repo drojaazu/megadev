@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file io.s
+ * @file io.macros.s
  * @brief I/O utilities
  */
 

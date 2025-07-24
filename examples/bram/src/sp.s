@@ -2,7 +2,7 @@
 #include <sub/sub.macro.s>
 #include <sub/cdrom.def.h>
 #include <sub/cdrom.macro.s>
-#include <sub/gate_array.def.h>
+#include <sub/gate_arr.def.h>
 #include <macros.s>
 
 .section .text

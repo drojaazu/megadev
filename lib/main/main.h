@@ -8,7 +8,7 @@
 #ifndef MEGADEV__MAIN_MAIN_H
 #define MEGADEV__MAIN_MAIN_H
 
-#include "gate_array.h"
+#include "gate_arr.h"
 #include "io.h"
 #include "main/vdp.h"
 #include "memmap.h"

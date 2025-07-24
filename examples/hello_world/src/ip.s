@@ -14,7 +14,7 @@
 #include <main/memmap.def.h>
 #include <main/bios.def.h>
 #include <main/vdp.macro.s>
-#include <main/gate_array.def.h>
+#include <main/gate_arr.def.h>
 #include <main/vdp.def.h>
 #include <main/io.def.h>
 

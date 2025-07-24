@@ -511,7 +511,7 @@ static inline void bios_reset()
 static inline void bios_init()
 {
 	asm("\
-			jsr %c0 \n\
+  jsr %c0 \n\
 		"
 		:
 		:
@@ -1432,11 +1432,22 @@ static inline void bios_process_sprobjs(
 
 	asm(
 		"\
-			jsr %c0 \n\
+  jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_PROCESS_SPROBJS), "a"(A0), "a"(A1), "d"(D0), "d"(D1)
-		: "d2", "d3", "d4", "d6", "a2");
+		:
+			"i"(_BIOS_PROCESS_SPROBJS),
+			"a"(A0),
+			"a"(A1),
+			"d"(D0),
+			"d"(D1)
+		:
+			"d2",
+			"d3",
+			"d4",
+			"d6",
+			"a2"
+		);
 };
 
 /**
@@ -1461,11 +1472,15 @@ static inline u16 bios_prng_mod(u16 const modulo)
 
 	asm(
 		"\
-			jsr %p1 \n\
+  jsr %p1 \n\
 		"
-		: "+d"(d0_random)
-		: "i"(_BIOS_PRNG_MOD), "d"(d0_modulo)
-		: "d1");
+		:
+			"+d"(d0_random)
+		:
+			"i"(_BIOS_PRNG_MOD),
+			"d"(d0_modulo)
+		:
+			"d1");
 
 	return d0_random;
 };
@@ -1481,11 +1496,14 @@ static inline void bios_prng()
 {
 	asm(
 		"\
-			jsr %c0 \n\
+  jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_PRNG)
-		: "d0");
+		:
+			"i"(_BIOS_PRNG)
+		:
+			"d0"
+		);
 };
 
 /**
@@ -1503,10 +1521,14 @@ static inline void bios_set_fadein_pal(Palette const * palette)
 
 	asm volatile(
 		"\
-			jsr %p1 \n\
+  jsr %p1 \n\
 		"
-		: "=a"(a1_change)
-		: "i"(_BIOS_SET_FADEIN_PAL), "a"(a1_BIOS_PALETTE));
+		:
+			"=a"(a1_change)
+		:
+			"i"(_BIOS_SET_FADEIN_PAL),
+			"a"(a1_BIOS_PALETTE)
+		);
 };
 
 /**
@@ -1529,10 +1551,12 @@ static inline void bios_pal_fadein()
 {
 	asm(
 		"\
-  		jsr %c0 \n\
+  jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_PAL_FADEIN));
+		:
+			"i"(_BIOS_PAL_FADEIN)
+		);
 }
 
 /**
@@ -1565,13 +1589,21 @@ static inline void bios_dma_queue(DmaTransfer const * queue)
 
 	asm volatile(
 		"\
-			move.l a6, -(sp) \n\
-  		jsr %p1 \n\
-			move.l (sp)+, a6 \n\
+  move.l a6, -(sp) \n\
+  jsr %p1 \n\
+  move.l (sp)+, a6 \n\
 		"
-		: "=a"(a1_change)
-		: "i"(_BIOS_DMA_QUEUE), "a"(a1_queue)
-		: "d0", "d1", "d2", "d3");
+		:
+			"=a"(a1_change)
+		:
+			"i"(_BIOS_DMA_QUEUE),
+			"a"(a1_queue)
+		:
+			"d0",
+			"d1",
+			"d2",
+			"d3"
+		);
 }
 
 #endif

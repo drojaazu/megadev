@@ -26,7 +26,7 @@ jmp (a0)
 data_init:
 #include <init_data.s>
 mmd_init:
-#include <main/init_mmd.s>
+#include <main/mmd.macros.s>
 
 .section .text
 // we'll also go ahead and throw in a couple of utilities here

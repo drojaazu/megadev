@@ -8,7 +8,7 @@
 #include <main/bios.def.h>
 #include <main/main.macro.s>
 #include <main/vdp.def.h>
-#include <main/gate_array.s>
+#include <main/gate_arr.macros.s>
 #include <macros.s>
 
 
@@ -57,7 +57,7 @@ prep_load:
   bra prep_load
 
 // Include the code for the MMD loader here
-#include "main/init_mmd.s"
+#include "main/mmd.macros.s"
 
 .section .bss
 .global global_mode

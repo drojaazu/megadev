@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file vdp.s
+ * @file vdp.macros.s
  * @brief VDP utility macros
  */
 
