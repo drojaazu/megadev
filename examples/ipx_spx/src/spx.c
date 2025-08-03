@@ -33,7 +33,7 @@ __attribute__((section(".init"))) void main()
 
 			// load MMD
 			case 1:
-				load_file(ACC_OP_LOAD_CDC, filenames[cmd1], (u8 *) _WRDRAM_2M);
+				load_file(ACC_OP_LOAD_CDC, filenames[cmd1], (u8 *) _WORD_RAM_2M);
 				asm(".global test_label2\ntest_label2:");
 				grant_2m();
 				if (access_op_result != RESULT_OK)
@@ -44,7 +44,7 @@ __attribute__((section(".init"))) void main()
 
 			// load IPX
 			case 0xfe:
-				load_file(ACC_OP_LOAD_CDC, "IPX.MMD;1", (u8 *) _WRDRAM_2M);
+				load_file(ACC_OP_LOAD_CDC, "IPX.MMD;1", (u8 *) _WORD_RAM_2M);
 				grant_2m();
 				if (access_op_result != RESULT_OK)
 				{

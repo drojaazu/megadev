@@ -58,26 +58,29 @@ clean:
 
 disc/ipx.mmd: \
 	ipx_layout.s \
-	ipx_init.s \
+	main/ipx_init.s \
 	ipx.c \
 	io.macros.s \
 	$(BUILD_PATH)/ip.bin
 
 disc/ex1.mmd: \
-	ex1.c \
 	shared_mmd_layout.s \
+	std_init.s \
+	ex1.c \
 	ex1_res.s \
 	disc/ipx.mmd
 
 disc/ex2.mmd: \
-	ex2.c \
 	shared_mmd_layout.s \
+	std_init.s \
+	ex2.c \
 	ex2_res.s \
 	disc/ipx.mmd
 
 disc/ex3.mmd: \
-	ex3.c \
 	shared_mmd_layout.s \
+	std_init.s \
+	ex3.c \
 	ex3_res.s \
 	disc/ipx.mmd
 

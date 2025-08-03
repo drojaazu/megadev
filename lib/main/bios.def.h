@@ -8,8 +8,6 @@
 #ifndef MEGADEV__MAIN_BOOTLIB_DEF_H
 #define MEGADEV__MAIN_BOOTLIB_DEF_H
 
-#include "io.def.h"
-
 /**
  * @defgroup bios_vdp Main CPU / Boot Lib / VDP
  */
@@ -37,8 +35,6 @@
 /**
  * @defgroup bios_misc Main CPU / Boot Lib / Misc
  */
-
-#define _WRKRAM_BLIB 0xFFF700
 
 /**
  * @def _BIOS_WORK_BUFFER
@@ -384,8 +380,8 @@
 /**
  * Bitmasks for @ref _BIOS_VINT_FLAGS
  */
-#define COPY_SPRLIST_MSK 1 << COPY_SPRLIST_BIT
-#define CALL_VINT_EX_MSK 1 << CALL_VINT_EX_BIT
+#define COPY_SPRLIST 1 << COPY_SPRLIST_BIT
+#define CALL_VINT_EX 1 << CALL_VINT_EX_BIT
 
 /**
  * @def _BIOS_VINT_COUNTER
@@ -478,19 +474,50 @@
  */
 #define _BIOS_FADEIN_TARGET_PAL_PTR 0xfffe4a
 
-/******************************************************************************/
-
 // This is the VRAM layout and commonly referenced settings
 // when using the default VDP registers
 
-#define _BIOS_WINDOW_ADDR 0xA000
-#define _BIOS_PLANEA_ADDR 0xC000
-#define _BIOS_PLANEB_ADDR 0xE000
-#define _BIOS_SPRTBL_ADDR 0xB800
-#define _BIOS_HSCROL_ADDR 0xBC00
-#define _BIOS_BIOS_PLANE_WIDTH 128
+/**
+ * @def _BIOS_VDP_DEFAULT_WINDOW_ADDR
+ * @ingroup bios_vdp
+ * @brief The default VRAM address for the Window
+ */
+#define _BIOS_VDP_DEFAULT_WINDOW_ADDR 0xA000
 
-/******************************************************************************/
+/**
+ * @def _BIOS_VDP_DEFAULT_PLANEA_ADDR
+ * @ingroup bios_vdp
+ * @brief The default VRAM address for Plane A
+ */
+#define _BIOS_VDP_DEFAULT_PLANEA_ADDR 0xC000
+
+/**
+ * @def _BIOS_VDP_DEFAULT_PLANEB_ADDR
+ * @ingroup bios_vdp
+ * @brief The default VRAM address for Plane B
+ */
+#define _BIOS_VDP_DEFAULT_PLANEB_ADDR 0xE000
+
+/**
+ * @def _BIOS_VDP_DEFAULT_SPRTBL_ADDR
+ * @ingroup bios_vdp
+ * @brief The default VRAM address for the Sprite Table
+ */
+#define _BIOS_VDP_DEFAULT_SPRTBL_ADDR 0xB800
+
+/**
+ * @def _BIOS_VDP_DEFAULT_HSCROLL_ADDR
+ * @ingroup bios_vdp
+ * @brief The default VRAM address for the Horizontal Scroll Table
+ */
+#define _BIOS_VDP_DEFAULT_HSCROLL_ADDR 0xBC00
+
+/**
+ * @def _BIOS_VDP_DEFAULT_PLANE_WIDTH
+ * @ingroup bios_vdp
+ * @brief The default Plane width
+ */
+#define _BIOS_VDP_DEFAULT_PLANE_WIDTH 128
 
 /**
  * @sa bios_bios_entry
@@ -624,9 +651,44 @@
 #endif
 
 /**
- * @sa bios_load_vdpregs_default
+ * @def _BIOS_LOAD_VDPREGS_DEFAULT
  * @clobber d0-d1/a1-a2
  * @ingroup bios_vdp
+ * @details
+		0x8004
+			- HINT disabled
+			- 9-bit (standard) color mode
+		0x8124
+			- Mega Drive graphics mode
+			- NTSC (is almost certainly set to PAL on such hardware)
+			- VINT enabled
+			- Disable display
+		0x9011
+			- Plane size: 512x512 cells
+		0x8B00
+			- Scroll mode: full screen
+		0x8C81
+			- 40 cell (320px) width
+		0x8328
+			- Window nametable: 0xA000
+		0x8230
+			- Plane A nametable: 0xC000
+		0x8407
+			- Plane B nametable: 0xE000
+		0x855C
+			- Sprite table: 0xB800
+		0x8D2F
+			- Horiz Scroll table: 0xBC00
+		0x8700
+			- Background color 0
+		0x8A00
+			- HINT scanline count: 0
+		0x8F02
+			- Auto-increment 2
+		0x9100
+			- Window plane X position: 0
+		0x9200
+			- Window plane Y position: 0
  */
 #if TARGET == MEGACD_MODE1
 #define _BIOS_LOAD_VDPREGS_DEFAULT 0x4002AC
@@ -721,7 +783,7 @@
 #endif
 
 /**
- * @fn _BIOS_LOAD_MAP_TEMPLATE
+ * @def _BIOS_LOAD_MAP_TEMPLATE
  * @brief Fill a region of a nametable with map data
  * @param[in] D0.l VRAM address (vdp_command format)
  * @param[in] D1.w Map width
@@ -766,18 +828,18 @@
 #endif
 
 /**
- * @sa bios_dma_xfer_wrdram
+ * @sa bios_dma_xfer_WORD_RAM
  * @clobber d0-d3/a6
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_DMA_XFER_WRDRAM 0x4002D4
+#define _BIOS_DMA_XFER_WORD_RAM 0x4002D4
 #else
-#define _BIOS_DMA_XFER_WRDRAM 0x0002D4
+#define _BIOS_DMA_XFER_WORD_RAM 0x0002D4
 #endif
 
 /**
- * @fn _BIOS_VDP_DISP_ENABLE
+ * @def _BIOS_VDP_DISP_ENABLE
  * @brief Enable VDP output
  * @ingroup bios_vdp
  *
@@ -790,7 +852,7 @@
 #endif
 
 /**
- * @fn _BIOS_VDP_DISP_DISABLE
+ * @def _BIOS_VDP_DISP_DISABLE
  * @brief Disable VDP output
  * @ingroup bios_vdp
  *
@@ -833,7 +895,7 @@
 #endif
 
 /**
- * @fn _BIOS_GFX_DECOMP
+ * @def _BIOS_GFX_DECOMP
  * @brief Decompress graphics data in the "Nemesis" format to VRAM
  * @ingroup bios_vdp
  * @param[in] A1.l Pointer to compressed data
@@ -848,7 +910,7 @@
 #endif
 
 /**
- * @fn _BIOS_GFX_DECOMP_RAM
+ * @def _BIOS_GFX_DECOMP_RAM
  * @brief Decompress graphics data in the "Nemesis" format to RAM
  * @param[in] A1.l Pointer to compressed data
  * @param[in] A2.l Pointer to decompressed data buffer
@@ -882,7 +944,7 @@
 #endif
 
 /**
- * @fn _BIOS_UNKNOWN_1F
+ * @def _BIOS_UNKNOWN_1F
  *
  * Calls _CLEAR_REGION in a loop with d5 as the counter, but this may be buggy
  * since d7 should be down to 0 after the first iteration. Not sure what is
@@ -905,7 +967,7 @@
 #endif
 
 /**
- * @fn _BIOS_DISP_SPROBJ
+ * @def _BIOS_DISP_SPROBJ
  * @brief Display a sprite structure
  * @param[in] A0.l Pointer to parent sprite object
  * @param[in] D6.b Initial value for "next" sprite
@@ -948,7 +1010,7 @@
 #endif
 
 /**
- * @fn _BIOS_UNKNOWN_24
+ * @def _BIOS_UNKNOWN_24
  *
  * A very small routine, but it's unclear what it would have been used for.
  *
@@ -1007,7 +1069,7 @@
 #endif
 
 /**
- * @fn _BIOS_LOAD_1BPP_TILES
+ * @def _BIOS_LOAD_1BPP_TILES
  * @brief Load 1bpp graphics into VDP
  * @param[in] A1.l Pointer to 1bpp graphics data
  * @param[in] D0.l VRAM destination (VDPCMD)
@@ -1030,7 +1092,7 @@
 #endif
 
 /**
- * @fn _BIOS_LOAD_FONT
+ * @def _BIOS_LOAD_FONT
  * @brief Load the internal 1bpp ASCII font
  * @param[in] D0.l VRAM destination (VDPCMD)
  * @param[in] D1.l Color bit map
@@ -1038,7 +1100,7 @@
  * @ingroup bios_misc
  *
  * @details
- * See the notes in _LOAD_1BPP_TILES for more info about the color bit map.
+ * See the notes in @ref _BIOS_LOAD_1BPP_TILES for more info about the color bit map.
  * The VRAM destination should place the font no earlier than tile index
  * 0x20 if you are planning to use this with the _PRINT_STRING function.
  */
@@ -1049,7 +1111,7 @@
 #endif
 
 /**
- * @sa bios_load_font_defaults
+ * @def _BIOS_LOAD_FONT_DEFAULTS
  * @clobber d0-d4/a1/a5
  */
 #if TARGET == MEGACD_MODE1
@@ -1059,7 +1121,7 @@
 #endif
 
 /**
- * @sa bios_input_delay
+ * @def _BIOS_INPUT_DELAY
  * @clobber d1/a1/a5
  */
 #if TARGET == MEGACD_MODE1
@@ -1069,7 +1131,7 @@
 #endif
 
 /**
- * @fn _BIOS_MAP_DECOMP
+ * @def _BIOS_MAP_DECOMP
  * @brief Decompress Enigma data
  * @param[in] D0.w Start tile index
  * @param[in] A1.l Pointer to Enigma compressed data
@@ -1083,7 +1145,7 @@
 #endif
 
 /**
- * @fn _BIOS_LOAD_MAP_VERT
+ * @def _BIOS_LOAD_MAP_VERT
  * @brief Load map for a vertically-oriented contiguous group of tiles
  * @param[in] D0.l Destination VRAM address (vdpptr)
  * @param[in] D1.w Map width
@@ -1099,7 +1161,7 @@
 #endif
 
 /**
- * @sa bios_prng_mod
+ * @def _BIOS_PRNG_MOD
  * @clobber d1
  */
 #if TARGET == MEGACD_MODE1
@@ -1109,7 +1171,7 @@
 #endif
 
 /**
- * @sa bios_prng
+ * @def _BIOS_PRNG
  * @clobber d0
  */
 #if TARGET == MEGACD_MODE1
@@ -1119,7 +1181,7 @@
 #endif
 
 /**
- * @sa bios_clear_comm
+ * @def _BIOS_CLEAR_COMM
  * @clobber d0/a6
  */
 #if TARGET == MEGACD_MODE1
@@ -1129,7 +1191,7 @@
 #endif
 
 /**
- * @fn _BIOS_COMM_SYNC
+ * @def _BIOS_COMM_SYNC
  * @brief Copies COMCMD cache to registers and COMSTAT registers to cache
  *
  */
@@ -1140,7 +1202,7 @@
 #endif
 
 /**
- * @fn _BIOS_UK_COMM_CDINFO
+ * @def _BIOS_UK_COMM_CDINFO
  * @brief UNKNOWN
  *
  * @details
@@ -1152,7 +1214,7 @@
 #endif
 
 /**
- * @fn _BIOS_UK_COMMFLAGS_RELATED
+ * @def _BIOS_UK_COMMFLAGS_RELATED
  * @brief UNKNOWN
  *
  */
@@ -1187,7 +1249,7 @@
 #endif
 
 /**
- * @fn _BIOS_TRIGGER_IFL2
+ * @def _BIOS_TRIGGER_IFL2
  * @brief Send INT 2 to Sub CPU
  * @clobber a5
  * @ingroup bios_int
@@ -1199,7 +1261,7 @@
 #endif
 
 /**
- * @fn _BIOS_SEGA_LOGO
+ * @def _BIOS_SEGA_LOGO
  * @brief Run the Sega logo startup code
  * @ingroup boot_system
  *
@@ -1213,7 +1275,7 @@
 #endif
 
 /**
- * @fn _BIOS_SET_VINT
+ * @def _BIOS_SET_VINT
  * @brief Set a new VINT subroutine
  * @param[in] A1.l Pointed to VINT subroutinte
  * @ingroup bios_int
@@ -1229,7 +1291,7 @@
 #endif
 
 /**
- * @fn _BIOS_LOAD_MAP_HORIZ
+ * @def _BIOS_LOAD_MAP_HORIZ
  * @brief Load map for a horizontally-oriented contiguous group of tiles
  * @param[in] D0.l Destination VRAM address (vdpptr)
  * @param[in] D1.w Map width
@@ -1245,7 +1307,7 @@
 #endif
 
 /**
- * @fn _UKNOWN_3B
+ * @def _UKNOWN_3B
  *
  * This is related to loading tilemaps to VRAM and is similar to
  * _LOAD_TILEMAP_SEQ, however it reads map data from a pointer and does some
@@ -1274,7 +1336,7 @@
 #endif
 
 /**
- * @sa bios_dma_copy
+ * @def _BIOS_DMA_COPY
  * @clobber d3/a6
  */
 #if TARGET == MEGACD_MODE1
@@ -1290,7 +1352,7 @@
 #endif
 
 /**
- * @fn _BIOS_TO_BCD_BYTE
+ * @def _BIOS_TO_BCD_BYTE
  * @brief Convert a byte value to BCD
  * @param[in] D1.b Hex value
  * @param[out] D1.b BCD value
@@ -1303,7 +1365,7 @@
 #endif
 
 /**
- * @fn _BIOS_TO_BCD
+ * @def _BIOS_TO_BCD
  * @brief Convert a word value to BCD
  * @param[in] D1.w Hex value
  * @param[out] D1.w BCD value
@@ -1316,7 +1378,7 @@
 #endif
 
 /**
- * @fn _BIOS_BLANK_DISPLAY
+ * @def _BIOS_BLANK_DISPLAY
  * @brief Blanks the display
  * @ingroup bios_vdp
 
@@ -1330,7 +1392,7 @@
 #endif
 
 /**
- * @sa bios_pal_fadeout
+ * @def _BIOS_PAL_FADEOUT
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
@@ -1340,7 +1402,7 @@
 #endif
 
 /**
- * @sa bios_pal_fadein
+ * @def _BIOS_PAL_FADEIN
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
@@ -1350,7 +1412,7 @@
 #endif
 
 /**
- * @sa bios_set_fadein_pal
+ * @def _BIOS_SET_FADEIN_PAL
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
@@ -1360,7 +1422,7 @@
 #endif
 
 /**
- * @sa bios_dma_queue
+ * @def _BIOS_DMA_QUEUE
  */
 #if TARGET == MEGACD_MODE1
 #define _BIOS_DMA_QUEUE 0x400394
@@ -1387,6 +1449,7 @@
 #endif
 
 /**
+ * @def _COMPRESSED_SUB_BIOS
  * @brief These define the location of the compressed Sub CPU bios stored within the Boot ROM.
  * In order to use the Sub CPU BIOS in Mode 1, you will need to manually decompress it to
  * its proper location in PRG RAM
@@ -1395,9 +1458,9 @@
  */
 // for all revisions EXCEPT US/EU Model 1 and LaserActive (Mega LD) hardware
 #if TARGET == MEGACD_MODE1
-#define _BIOS_SUB_BIOS 0x416000
+#define _COMPRESSED_SUB_BIOS 0x416000
 #else
-#define _BIOS_SUB_BIOS 0x016000
+#define _COMPRESSED_SUB_BIOS 0x016000
 #endif
 
 #endif

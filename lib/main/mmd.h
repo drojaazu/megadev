@@ -40,17 +40,14 @@ static inline void const * init_mmd()
   beq 6b \n\
 4: movea.l 8(%[wrdram]), a0 \n\
 		"
-		:
-			[mmd_entry] "=a"(mmd_entry)
-		:
-			[wrdram] "a"(_WRDRAM),
-			[mlevel4] "i"(_MLEVEL4),
-			[mlevel6] "i"(_MLEVEL6),
-			[ga_dmna_bit] "i"(GA_DMNA_BIT),
-			[gareg_memmode] "i"(_GAREG_MEMMODE)
-		:
-		"d0", "a1", "a2");
-	
+		: [mmd_entry] "=a"(mmd_entry)
+		: [wrdram] "a"(_WORD_RAM),
+		[mlevel4] "i"(_MLEVEL4),
+		[mlevel6] "i"(_MLEVEL6),
+		[ga_dmna_bit] "i"(GA_DMNA_BIT),
+		[gareg_memmode] "i"(_GAREG_MEMMODE)
+		: "d0", "a1", "a2");
+
 	return mmd_entry;
 }
 

@@ -9,7 +9,8 @@ extern u16 global_mode;
 
 void main()
 {
-	bios_print("Example file Number Two!\xff", (to_vdpptr(PLANE_POS_PLANE(9, 6, _BIOS_PLANEA_ADDR)) | VRAM_W));
+	bios_print(
+		"Example file Number Two!\xff", (to_vdpptr(PLANE_POS_PLANE(9, 6, _BIOS_VDP_DEFAULT_PLANEA_ADDR)) | VRAM_W));
 
 	do
 	{

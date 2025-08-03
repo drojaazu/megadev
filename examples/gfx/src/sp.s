@@ -124,7 +124,7 @@ cmd01_load_mmd:
 	move.w  mmd_file_tbl(pc,d1.w), d1
 	lea			mmd_file_tbl(pc,d1.w), a0
 	WAIT_2M
-	lea			_WRDRAM_2M, a1
+	lea			_WORD_RAM_2M, a1
 	// load_file_ is a convenience function to get a file loaded. The filename is
 	// A0 and the destination buffer is in A1
 	jbsr		load_file_sub

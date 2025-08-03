@@ -199,7 +199,7 @@ The cache is an array of 18 words (36 bytes), one for each of the first 18 regis
 
 The width and height of planes can be adjusted in VDP Register 0x10 to one of three values. It is important to know the current width when working with tilemaps, as the nametable data is linear. That is, to arrive at the next line in the same column, we move forward by the width of the plane in bytes in nametable memory. Thus, the plane width must be cached.
 
-All of the nametable (tilemap) related functions use the plane width cache, which is a byte value defined as `_BIOS_PLANE_WIDTH`. Note that this value is the width *in bytes* rather than tiles. At two bytes per entry, this means the value should simply be double the width in tiles. I.E.: 32 tiles = 64 byte width, 64 tiles = 128 byte width, 128 tiles = 256 byte width.
+All of the nametable (tilemap) related functions use the plane width cache, which is a byte value defined as `_BIOS_VDP_DEFAULT_PLANE_WIDTH`. Note that this value is the width *in bytes* rather than tiles. At two bytes per entry, this means the value should simply be double the width in tiles. I.E.: 32 tiles = 64 byte width, 64 tiles = 128 byte width, 128 tiles = 256 byte width.
 
 Also note that this value must be manually updated whenever changing the width setting in VDP Register 0x10! The only exception to this is when using `_BIOS_LOAD_VDPREGS_DEFAULT` which will update the plane width cache to match the default registers.
 
@@ -366,7 +366,7 @@ Components: DMA, VDP Register Cache
 
 Performs a DMA transfer to VRAM.
 
-### `_BIOS_DMA_XFER_WRDRAM`
+### `_BIOS_DMA_XFER_WORD_RAM`
 Components: DMA, VDP Register Cache
 
 Performs a DMA transfer to VRAM for source data in Word RAM.
@@ -397,7 +397,7 @@ Clears VSRAM.
 ### `_BIOS_LOAD_VDPREGS_DEFAULT`
 Components: Fixed VRAM Layout (All), VDP Register Cache, Plane Width Cache
 
-Loads the Boot ROM default VDP settings to the cache and to the registers. Also updates the `_BIOS_PLANE_WIDTH` cached value.
+Loads the Boot ROM default VDP settings to the cache and to the registers. Also updates the `_BIOS_VDP_DEFAULT_PLANE_WIDTH` cached value.
 
 Here is the default VDP data loaded by the function, in the order in which it appears in the data, with notes highlighting important settings on each register:
 
@@ -458,7 +458,7 @@ Loads a list of VDP settings to the cache and to registers.
 
 This list should be null terminated array of 16 bit values, with each value being the VDP control port register write format (i.e. the upper byte is the register index with the top bit set and the lower byte is the value to write).
 
-Note that this does NOT update the `_BIOS_PLANE_WIDTH` variable when setting register 0x10.
+Note that this does NOT update the `_BIOS_VDP_DEFAULT_PLANE_WIDTH` variable when setting register 0x10.
 
 ### `_BIOS_VDP_FILL` (Tiny)
 Loads the specified value to VRAM at the specified address for the given size (in words).

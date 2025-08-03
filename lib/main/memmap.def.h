@@ -20,16 +20,16 @@
 /**
  * Work RAM
  */
-#define _WRKRAM 0xff0000
+#define _WORKRAM 0xff0000
 
 /**
  * @brief Base address of Word RAM in 2M mode
  *
  */
 #if TARGET == MEGACD_MODE1
-#define _WRDRAM 0x600000
+#define _WORD_RAM 0x600000
 #else
-#define _WRDRAM 0x200000
+#define _WORD_RAM 0x200000
 #endif
 
 /**
@@ -37,9 +37,9 @@
  *
  */
 #if TARGET == MEGACD_MODE1
-#define _WRDRAM_1M_0 0x600000
+#define _WORD_RAM_1M_0 0x600000
 #else
-#define _WRDRAM_1M_0 0x200000
+#define _WORD_RAM_1M_0 0x200000
 #endif
 
 /**
@@ -47,9 +47,9 @@
  *
  */
 #if TARGET == MEGACD_MODE1
-#define _WRDRAM_1M_1 0x620000
+#define _WORD_RAM_1M_1 0x620000
 #else
-#define _WRDRAM_1M_1 0x220000
+#define _WORD_RAM_1M_1 0x220000
 #endif
 
 /**
@@ -69,7 +69,7 @@
 /**
  * System Jump Table
  */
-#define _RESET   0xfffd00
+#define _RESET 0xfffd00
 #define _MLEVEL6 0xfffd06 /* VBLANK interrupt */
 #define _MLEVEL4 0xfffd0c /* HBLANK interrupt */
 #define _MLEVEL2 0xfffd12 /* External port interrupt */
@@ -98,8 +98,8 @@
 #define _MNOCOD0 0xfffd90 // Line 1010
 #define _MNOCOD1 0xfffd96 // Line 1111
 #define _MSPVERR 0xfffd9c // Priv. Violation
-#define _MTRACE  0xfffda2	// Trace
+#define _MTRACE 0xfffda2	// Trace
 #define _VINT_EX 0xfffda8
-#define _MBURAM  0xfffdae
+#define _MBURAM 0xfffdae
 
 #endif

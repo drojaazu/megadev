@@ -285,11 +285,8 @@
  * @clobber d0
  * @ingroup bios_cdb
  *
- * @param[out] CC Command has been executed
+ * @param[out] CC Command complete
  * @param[out] CS BIOS is busy
- *
- * @note CC indicates the command has been executed, NOT necessarily
- * that it has completed.
  */
 #define _BIOS_CDBCHK 0x0080
 
@@ -300,6 +297,10 @@
  * @ingroup bios_cdb
  *
  * @param[out] A0.l Pointer to status info structure
+ *
+ * @note
+ * Documentation says A1 is clobbered as well, but we don't see any
+ * sign of that in the disassemblies checked so far
  */
 #define _BIOS_CDBSTAT 0x0081
 

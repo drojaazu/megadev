@@ -11,9 +11,9 @@
 #include "main/memmap.def.h"
 
 /**
- * @sa _WRDRAM
+ * @sa _WORD_RAM
  */
-#define WRDRAM ((volatile void *) _WRDRAM)
+#define WRDRAM ((volatile void *) _WORD_RAM)
 
 /**
  * @sa _PRGRAM

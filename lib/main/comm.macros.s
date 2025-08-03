@@ -5,8 +5,8 @@
  * @brief Serial communications utilities
  */
 
-#ifndef MEGADEV__COMM_S
-#define MEGADEV__COMM_S
+#ifndef MEGADEV___MACROS_COMM_S
+#define MEGADEV___MACROS_COMM_S
 
 #include "macros.s"
 #include "main/io.def.h"
@@ -15,17 +15,14 @@
 .section .text
 
 /**
- * @fn init_ext
+ * @fn INIT_EXT_PORT
  * @brief Initialize IO port for serial communication
  */
 .macro INIT_EXT_PORT
   DISABLE_INTERRUPTS
   Z80_DO_BUSREQ
-  
-  /* Set comm speed; Serial in/out mode; Enable Rx interrupt */
   move.b  #(SCTRL_SERIAL_ENABLE | SCTRL_RX_INT_ENABLE | EXT_BAUD), EXT_SCTRL
   move.b  #0x7f, EXT_CTRL
-  
   Z80_DO_BUSRELEASE
   ENABLE_INTERRUPTS
 .endm

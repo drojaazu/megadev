@@ -1,6 +1,8 @@
 
 // Boot security block - This must be at the top of your IP!
+// **** DO NOT MOVE OR REMOVE THIS! ****
 #include <security.s>
+// **** DO NOT MOVE OR REMOVE THIS! ****
 
 .section .text
 
@@ -13,77 +15,87 @@
 #include "ipx_layout.s"
 
 ip_entry:
+
   // First, disable all interrupts while we do some basic init
   ori      #0x700,sr
   
-	// clear ram
+  // Clear out RAM used by the IP
   moveq    #0, d0
-  move.l   #(MODULE_RAM_LENGTH / 4), d7
-  lea      MODULE_RAM_ORIGIN, a0
+  move.l   #_BSS_LENGTH, d1
+  lea      _BSS_ORIGIN, a0
+  bra 1f
 0:move.l   d0, (a0)+
-  dbra     d7, 0b
+1:dbra     d1, 0b
 
-  // disable VDP display and maintain MD mode (mode 5)
-  move.w   #(_VDPREG_MODE2 | 0x44), (_VDP_CTRL)
+  // Next, begin to initialiaze video output (the VDP)
+  // We will use the default VDP settings provided by the Main BIOS
+  // See the comments for _BIOS_LOAD_VDPREGS_DEFAULT for details on what those settings are.
+  jbsr     _BIOS_LOAD_VDPREGS_DEFAULT
 
-  // set palette entry 0 (background) to black
-  move.l   #0xC0000000, (_VDP_CTRL)
-  move.w   #0x0000, (_VDP_DATA)
-
-	jbsr     _BIOS_LOAD_VDPREGS_DEFAULT
-
-  // clear out VRAM
+  // Clear out VRAM in case there's any junk left over after the system startup graphics
   // (note: this does not clear CRAM!)
-	// This is a Boot ROM library call that makes use of the VDP register cache
-	// Even if you don't plan to use the Boot ROM library, this call is safe
-	// to use here as the memory will not be preserved after we jump to the IPX
+  // This is a BIOS call that makes use of the VDP register cache
+  // Even if you don't plan to use the Main BIOS library, this call is safe
+  // to use here as the memory will not be preserved after we jump to the IPX
   jbsr     _BIOS_CLEAR_VRAM
 
-	// our example IP here is super tiny, and while it should remain quite
-	// small, you could put a very simple message/graphic here to indicate
-	// the game is starting up
-
-  // clear the Gate Array communication registers
-  CLEAR_COMM_REGS
+  // Clear the Gate Array communication registers
+  // Again, we conveniently have a BIOS call to take of this
+  jbsr     _BIOS_CLEAR_COMM
 
   // point VINT vector to the minimal, temporary handler
-	// (note that we use _MLEVEL6 *+ 2*, as the first two bytes are
-	// a jmp/bra opcode)
-  move.l	#_BIOS_VINT_HANDLER, (_MLEVEL6 + 2)
+  // (note that we use _MLEVEL6 *+ 2*, as the first two bytes are
+  // a jmp/bra opcode)
+  // We need to set up the VBLANK interrupt (VINT) handler before we can turn interrupts back on.
+  // (Which needs to happen soon, as this keeps the Sub CPU on the Mega CD side in "sync" by alerting
+  // it when a VBLANK occurs.)
+  // Once again, the built-in BIOS has a handler that can help us. It uses a couple of bits in the
+  // _BIOS_VINT_FLAGS variable to call an user function and to update the sprite table (neither of which
+  // we need right now, so we should make sure that is cleared out.)
+  // We set the pointer to the handler in the system vector jump table. The +2 is because the first two
+  // bytes are the JMP opcode and we want to set the address to which it jumps.
+  move     #0, (_BIOS_VINT_FLAGS)
+  move.l   #_BIOS_VINT_HANDLER, (_MLEVEL6 + 2)
 
-  // restore interrupts to allow the cdrom data to flow
-	andi     #0xF8FF,sr
+  // Restore interrupts to allow VINTs to fire and ultimately allow CD-ROM data to flow
+  andi     #0xF8FF,sr
 
-  // make IPX file request to SP
-	GRANT_2M
+  // From here, we load our first "real" file from disc and jump to its code. You can modify this to change
+  // e.g. the value sent to COMCMD0, but it should ultimately accomplish the same task of loading the first file.
+
+  // This is the basic pattern for sending commands to the Sub CPU:
+  //   - Give Word RAM access to the Sub side so it can put data in there
+  //   - Set values in COMCMD registers (the Sub side is monitoring for values in these registers)
+  //   - Check COMSTAT in a tight loop for a non-zero value (the response from Sub side)
+  //   - Clear the COMCMD registers as the ACK to the Sub side
+  //   - Check COMSTAT in a tight loop again to confirm everything is done
+  //   - Wait for Word RAM ownership
+  //   - Enjoy your freshly transferred data
+  GRANT_2M
   move.w   #0xfe, _GAREG_COMCMD0	//send the load IPX command to sub
 0:tst.w    _GAREG_COMSTAT0				//wait for response on status reg #0
-	beq      0b
-	move.w   #0, _GAREG_COMCMD0			//send ack
+  beq      0b
+  move.w   #0, _GAREG_COMCMD0			//send ack
 1:tst.w    _GAREG_COMSTAT0				//wait for response (wait for 0 from Sub)
-	bne      1b
-	WAIT_2M
+  bne      1b
+  WAIT_2M
 
-	jbsr     _BIOS_VDP_DISP_ENABLE
+  // Everything is almost ready to go, so let's re-enable the display
+  jbsr     _BIOS_VDP_DISP_ENABLE
 
-	// Reset the stack since we're starting fresh
-	movea.l  (0), sp
+  // Reset the stack since we're starting fresh
+  movea.l  (0), sp
 
-	// the IPX is a special case, so we won't use the standard MMD loader
-	// (doing so would cause the mmd loader code to be overwritten as the
-	// ipx is copied into work ram (where we are now) and everything would
-	// fall apart)
-	// instead, we'll jump right into the IPX entry currently in Word RAM
-	// which will copy itself into Work RAM
-	jbra     _WRDRAM + 0x100
+  // The last step is a little tricky.
+  // The IPX is now present in Word RAM and since it's a module, we want to call the module loader to get it
+  // to where it is expecting to run in memory. The IPX is configured to run from Work RAM, which is where we
+  // in the IP are currently. Which means if we include the loader in the IP and run it from here... it will
+  // eventually be overwritten as it copies over itself! Which causes a system crash.
 
-  // minimal VINT handler
-	// the sub cpu must receive level 2 interrupts in order to keep
-	// the cdrom subsystem moving
-	// so we need this tiny li'l vint handler to make it happen and
-	// get the ipx loaded
-vint_temp:
-  bset.b   #GA_RAISE_INT2_BIT, (_GAREG_RESET)
-  rte
+  // The solution then is to include the loader in the IPX and have the code in its .init section call the
+  // loader on itself. We can guarantee the code in .init will be at the very start of the module, which is
+  // at offset 0x100 from the start of the file.
 
-  .align 2
+  // So... with the file in Word RAM, we jump directly to offset 0x100 and let it copy itself over and jump
+  // to its own main().
+  jbra     _WORD_RAM + 0x100

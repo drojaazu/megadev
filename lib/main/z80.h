@@ -62,7 +62,7 @@ static inline void z80_cpu_reset()
 	);
 }
 
-static inline void z80_init(u8 const * data, u16 const length)
+void z80_init(u8 const * data, u16 const length)
 {
 	asm(
 		"\

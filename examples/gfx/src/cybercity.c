@@ -29,9 +29,9 @@ void vint_ex()
 	bios_copy_sprlist();
 }
 
-void (*spr_funcs[2])() = { null_func, null_func };
+void (*spr_funcs[2])() = {null_func, null_func};
 
-const VDPCMD vdpptr_scroll = VDPPTR((_BIOS_HSCROL_ADDR)) | VRAM_W;
+const VDPCMD vdpptr_scroll = VDPPTR((_BIOS_VDP_DEFAULT_HSCROLL_ADDR)) | VRAM_W;
 
 /*
 	We mark this is as noreturn since this is an infinite loop that will
@@ -66,15 +66,15 @@ __attribute__((noreturn)) void main()
 	// raw register values
 	// See the documentation on _BIOS_LOAD_VDPREGS for more
 	u16 vdp_planewidth_reg[] = {_VDPREG_PL_SIZE | VDP_PL_32x64, 0};
-	bios_load_vdpregs(vdp_planewidth_reg);
+	bios_load_vdpregs(&vdp_planewidth_reg);
 
 	// load the palettes
 	// In general, use the VDPPTR macro for converting a VRAM address to the
 	// VDP compatible format. It is written so that constant values will be
 	// calculated at compile time, and variables will be calculated at runtime
 	// with the optimized conversion code
-	bios_dma_xfer_wrdram((VDPPTR(0) | CRAM_W), res_cybercity_pal, 32 >> 1);
-	bios_dma_xfer_wrdram((VDPPTR(32) | CRAM_W), res_ship_pal, 32 >> 1);
+	bios_dma_xfer_WORD_RAM((VDPPTR(0) | CRAM_W), res_cybercity_pal, 32 >> 1);
+	bios_dma_xfer_WORD_RAM((VDPPTR(32) | CRAM_W), res_ship_pal, 32 >> 1);
 
 	// bios_gfx_decomp requires that we set the VDP address first
 	VDP_CTRL_32 = VDPPTR(VRAM_AT(1)) | VRAM_W;
@@ -90,13 +90,13 @@ __attribute__((noreturn)) void main()
 
 	free_tile += ((*(u16 *) res_cybercity_farbg_cmp_nem) & 0x7fff);
 
-	bios_dma_xfer_wrdram(VDPPTR(VRAM_AT(free_tile)) | VRAM_W, res_ship_chr, 1920 >> 1);
+	bios_dma_xfer_WORD_RAM(VDPPTR(VRAM_AT(free_tile)) | VRAM_W, res_ship_chr, 1920 >> 1);
 
-	bios_load_map(VDPPTR(_BIOS_PLANEA_ADDR + PLANE_POS(0, 2, Width32)) | VRAM_W,
+	bios_load_map(VDPPTR(_BIOS_VDP_DEFAULT_PLANEA_ADDR + PLANE_POS(0, 2, Width32)) | VRAM_W,
 		res_cybercity_bldg_map[0] - 1,
 		res_cybercity_bldg_map[1] - 1,
 		res_cybercity_bldg_map + 2);
-	bios_load_map(VDPPTR(_BIOS_PLANEB_ADDR) | VRAM_W,
+	bios_load_map(VDPPTR(_BIOS_VDP_DEFAULT_PLANEB_ADDR) | VRAM_W,
 		res_cybercity_farbg_map[0] - 1,
 		res_cybercity_farbg_map[1] - 1,
 		res_cybercity_farbg_map + 2);
@@ -110,7 +110,7 @@ __attribute__((noreturn)) void main()
 
 	do
 	{
-		BIOS_VINT_FLAGS = COPY_SPRLIST_MSK;
+		BIOS_VINT_FLAGS = COPY_SPRLIST;
 		bios_vint_wait_default();
 
 		bios_process_sprobjs(&sprobj_ship, BIOS_SPRLIST, 0, 0x1a);

@@ -12,9 +12,9 @@ static inline void PCM_PLAYBACK_C(u8 * pcm_data, u32 pcm_data_size)
 	register u32 d0_data_size asm("d0") = pcm_data_size;
 
 	asm volatile("jsr PCM_PLAYBACK"
-									 : "+d"(d0_data_size), "+a"(a0_pcm_data)
-									 : "d"(d0_data_size), "a"(a0_pcm_data)
-									 : "cc", "d6", "d7", "a1", "a2");
+		: "+d"(d0_data_size), "+a"(a0_pcm_data)
+		: "d"(d0_data_size), "a"(a0_pcm_data)
+		: "cc", "d6", "d7", "a1", "a2");
 }
 
 const PcmChannelSettings pcmSettings = {0xff, 0xff, 0x6b, 0x5, 0, 0, 0};
@@ -69,7 +69,7 @@ __attribute__((section(".init"))) void main()
 
 			// load IPX
 			case 0xfe:
-				load_file(ACC_OP_LOAD_CDC, "IPX.MMD;1", (u8 *) _WRDRAM_2M);
+				load_file(ACC_OP_LOAD_CDC, "IPX.MMD;1", (u8 *) _WORD_RAM_2M);
 				grant_2m();
 				if (access_op_result != RESULT_OK)
 				{

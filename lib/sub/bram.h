@@ -12,7 +12,7 @@
 #include "sub/memmap.def.h"
 #include "types.h"
 
-u8 bram_WRKRAM[0x640];
+u8 bram_WORKRAM[0x640];
 u8 bram_string_ram[12];
 
 enum BramStatus
@@ -48,7 +48,7 @@ BrminitRes init_info;
  */
 static inline BrminitRes * bram_brminit()
 {
-	register u32 a0_bram_WRKRAM asm("a0") = (u32) bram_WRKRAM;
+	register u32 a0_bram_WORKRAM asm("a0") = (u32) bram_WORKRAM;
 	register u32 a1_bram_string_ram asm("a1") = (u32) bram_string_ram;
 	register u16 d0_fcode asm("d0") = BRMINIT;
 
@@ -63,7 +63,7 @@ static inline BrminitRes * bram_brminit()
 		2: \n\
 		"
 		: "=d"(d0_bram_size), "=d"(d1_bram_status)
-		: "i"(_BURAM), "d"(d0_fcode), "a"(a0_bram_WRKRAM), "a"(a1_bram_string_ram)
+		: "i"(_BURAM), "d"(d0_fcode), "a"(a0_bram_WORKRAM), "a"(a1_bram_string_ram)
 		: "cc");
 
 	init_info.bram_size = d0_bram_size;

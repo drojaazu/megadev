@@ -227,7 +227,7 @@ SUB handle_exception
   stop    #2000
 
 SUB nmtbl_xy_pos
-1:move.w  (_BIOS_PLANE_WIDTH), d1  // d1 - tiles per row
+1:move.w  (_BIOS_VDP_DEFAULT_PLANE_WIDTH), d1  // d1 - tiles per row
   move.w  d0, d2  // d0 - x/y offsey (upper/lower bytes of the word)
   lsr.w   #8, d2  // d2 has x pos
   and.w   #0xff, d0  // filter d0 so it only has y pos

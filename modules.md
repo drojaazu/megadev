@@ -1,6 +1,6 @@
 # Megadev Modules
 
-Modules are the most fundamental aspect of Megadev. A module is a compiled binary, similar to a small ROM. It contains both program code and resource data (graphics, stage data, etc.) and can represent one piece of the whole of your project. For example, the title screen may be a module, the options screen a module, a gameplay stage a module, and so on.
+Modules are a fundamental aspect of Megadev. A module is a compiled binary, similar to a small ROM. It contains both program code and resource data (graphics, stage data, etc.) and can represent one piece of the whole of your project. For example, the title screen may be a module, the options screen a module, a gameplay stage a module, and so on.
 
 Modules are generally meant to be ephemeral: they are loaded, executed and unloaded. Since they are likely to display graphics, read player inputs, etc, they usually run on the Main CPU, though the module system can certainly work on the Sub CPU side as well.
 
@@ -19,12 +19,12 @@ Basically, we need to tell the linker at what memory offset the ROM and RAM sect
 
 For example, if we want our module to run on the Main CPU from Word RAM in 2Mbit mode with 1.5 Mbits for program/data (ROM) and 0.5 Mbits for runtime memory (RAM), we would specify the values like so:
 
-    GLOBAL MODULE_ROM_ORIGIN _WRDRAM
+    GLOBAL MODULE_ROM_ORIGIN _WORD_RAM
     GLOBAL MODULE_ROM_LENGTH 0x180000
     GLOBAL MODULE_RAM_ORIGIN 0x380000
     GLOBAL MODULE_RAM_LENGTH 0x80000
 
-(Note that we use GLOBAL, which is a Megadev macro that sets the symbol to global; this is in macros.s, so you will need to include that file. We also use _WRDRAM which is present in the main/memmap.def.h file, which should also be included if you wish to use such named memory locations. You can, of course, opt to not include these files and manually define the memory location and the global attribute.)
+(Note that we use GLOBAL, which is a Megadev macro that sets the symbol to global; this is in macros.s, so you will need to include that file. We also use _WORD_RAM which is present in the main/memmap.def.h file, which should also be included if you wish to use such named memory locations. You can, of course, opt to not include these files and manually define the memory location and the global attribute.)
 
 (As another side note, there doesn't seem to be a way to manually define a symbol (i.e. a named memory address) in C. You will need to specify this in asm using .equ/.global. A good idea is to have a single asm definitions file and include it in your MMD def.)
 

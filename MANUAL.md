@@ -90,170 +90,98 @@ After that, feel free to try the remaining examples. In all cases, check the `RE
 
 # Megadev Concepts & Utilities
 
-# Project Composition & Compilation
+We have aimed to make Megadev as flexible and un-opinionated as possible: for devs who want to micromanage their project, for devs who want to make extensive use of a library of pre-written code to make life simple, and for devs somewhere in between. While there are recommended processes and tools, we have aimed to make them optional so you can write your code as you like it.
 
-project layout, ipx/spx as skeleton, makefile, the absolute minimum for a megadev project
+This section will go over the basics of a Megadev project, compiling that project, and using the library.
 
-Megadev has aimed to be as flexible as possible for devs who want to micromanage their project, for devs who want to use a library of pre-written code extensively to make like simple, and for devs somewhere in between. [[the only requirment is the boot sector setup and makefile compliance]]
-
-## Filename Schema
-
-files in main/ for main CPU
-files in sub/ for sub CPU`
-.macros.s
-
-.def.h
+[[the only requirment is the boot sector setup and makefile compliance]]
 
 
+## Project Composition & Compilation
+
+The project layout will depend on your target hardware (Mega Drive or Mega CD).
+
+In all Megadev projects, the bare minimum requirements are the `Makefile` and `config.h` files, both of which define a number of variables used when building the final assembly. Further details about the configuration settings is present as comments inside these files in any of the example projects.
+
+If you choose to make a new project from zero instead of using an example project as a skeleton, `Makefile` and `config.h` are the bare minimum requirements. (Note that Mega CD projects also require IP/SP code to make the boot sector; see below.)
+
+
+## MEGADEV Library
+
+Megadev brings with it a collection of headers and macros to provide common functionality on the hardware. 
+
+### Filename Schema
+
+#### Main/Sub Specific files
+
+Functionality specific to either side (Main/Sub) is kept within a subdirectory within the library. Intuitively, code for the Main CPU (or other Megadrive specific components) is in `main/` and for the Sub CPU (or other Mega CD specific components) in `sub/`.
+
+It is very important to prefix included files with this subdirectory as some files have the same filename.
+
+For example:
+
+```
+#include <main/memmap.h>
+#include <main/bios.h>
+#include <main/vdp.h>
+#include <types.h>
+```
+
+Here we include the memory layout specific to the Main side, the wrappers for the Main BIOS calls, and VDP utilities. All of these are prefixed with `main/` as they are specific to that side. Notice that `types.h` does not have a prefix as it can be used by both sides.
+
+If you are doing Megadrive only development, only the `main/` side files will be used.
+
+#### Macros
+
+Assembly files that have the `.macros.s` suffix contain only macros and can thus be included multiple times without worry of code or symbol duplication.
+
+The choice for what code was written as a macro and what was written as a subroutine is based on our judgement of how small the code is and how often it will be used. Code that initializes some hardware will probably be a subroutine as it will rarely be called; a short piece of code that sets up te VDP port for a transfer, for example, will be a macro.
+
+#### Definitions
+
+Files with the `.def.h` contain only C style `#define` directives. They contain bit positions, memory addresses and other constant values, usualy for interacting with hardware.
+
+They are used in both C and ASM development. Header guards are in place so they can be included multiple places.
+
+### Mega CD BIOS Calls
+
+The Mega CD has a number of system calls available to developers thanks to its internal ROM, for both the Main and Sub CPUs. The calls for the Sub CPU, which deal primarily with CD access, are well-documented in the official Sega documentation. The Main side calls, however, do not have any documentation and we only know of their presence by reverse engineering. (Interestingly, many Japanese games use these "undocumented" system calls, so it may have been a case of simply not providing some documentation in English. We do not have any official documentation in Japanese to confirm this.)
+
+Megadev provides C wrappers for these system calls on both CPUs, with comments. Please refer to the official Sega documentation for the Sub CPU system calls, and to main_bios.md for the Main CPU calls.
 
 ## Modules (MMD/SMD)
 
+(This applies to Mega CD development only.)
+
+There are many ways that the Mega CD could be used when it comes to loading code from disc and running it, but a common paradigm is to use modules. These are essentially self-contained programs, with all the code and graphics and other resources it needs.
+
+The basic concept is to have a small memory-resident kernel that manages the whole program at a very low level, including the loading and unloading of modules. A module can represent any one piece of your game: the title screen, one level of the game, the credits sequence, and so on.
+
+Megadev provides tools for creating and loading modules easily. Please see `modules.md` for more details.
+
+(Note also that modules are optional. You are free to come up with your own design for file loading.)
+
 ## CD-ROM Access Framework
+
+(This applies to Mega CD development only.)
 
 Accessing data on the disc is done via commands provided by the BIOS on the Sub CPU side. The system in place is somewhat complex, as instead of using filenames, a start/end sector must be specified. Moreover, the transfer process is multi step, involving setting the destination in the CDC Mode register in the Gate Array and using the CDC BIOS calls to start the transfer and monitor its status.
 
-The access framework provided within Megadev simplifies this process by simply specifying a filename and an output buffer.
+The access framework provided within Megadev simplifies this process by simply specifying a filename and an output buffer. Please see `cdrom.md` for more details about how to use it.
 
+(Note that this too is optional and you may write your own disc access system if you wish.)
 
----
+## Boot Sector Generation
 
-The CD-ROM access wrapper provides a simplified method of retrieving files from disc. At a high level, it runs a loop on the Sub CPU that is "pumped" by an update call during INT2. As the access operation runs, it will pause at certain points and return from the interrupt. It saves this break point as a pointer and work resumes from that point at the next INT2. In this way, the Sub CPU is not entirely blocked waiting for time-consuming IO operations.
-
-TODO: Most of this is asm focused, need to expand C coverage/documentation.
-
-### Example
-
-Please have a look at the `ipx_spx` sample project for an example of file loading using this system.
-
-### Setup
-
-CD-ROM access can only be done with the Sub CPU, so requests for files should be done via the communication registers within the gate array. The framework code should remain resident in memory, so we recommend including it within the SP that is loaded to the Sub CPU side during boot.
-
-Include `sub/cdrom.macro.s` and `sub/cdrom.s`in the SP code. In your SP init subroutine (called `_usercall0` in the BIOS Manual), prime the access loop by calling the `INIT_ACC_LOOP` macro.
-
-Somewhere in your INT2 subroutine (_usercall2), make a call to the `PROCESS_ACC_LOOP` macro to keep the access loop moving. You may want to put this at the end of the subroutine or push the registers before calling as it may clobber any number of registers.
-
-Finally, in the early part of SP main subroutine (_usercall1), you'll want to load and cache the file information by setting ACC_OP_LOAD_DIR as the access operation and waiting for it to complete. There is space allocated for 128 files by default, but this can be adjusted to match your project by changing the size of the `dir_cache` buffer in `sub/cdrom.s`.
-
-### Usage
-
-At this point, you are ready to load files. There are four steps involved:
-  - Set the pointer to the filename string in `filename`
-	- Set the destination buffer in either the GA DMA register or `file_dest_ptr` depending on transfer type
-	- Set the appropriate access operation
-  - Wait for the operation to complete
-
-You do not need to set the CDC device destination in the _GAREG_CDCMODE register. This will be done automatically depending on the access operation chosen.
-
-### Filenames
-
-The filename must conform to [ISO9660 Level 1 standards](https://wiki.osdev.org/ISO_9660#Filenames). Basically this means that filenames must contain:
-
-- only UPPERCASE alphanumeric (A-Z, 0-9) characters and underscore
-- a maximum of 8 characters with a 3 character extension
-- the version identifier
-
-Finally, the filename in memory must be a standard null termninated C string.
-
-Note that you can keep your filenames as lowercase on your local system. The ISO creation process will convert them as necessary. (Also note that if you mount the ISO on your local system, they may appear lowercase in your file manager. However, they are UPPERCASE in the filesystem on disc, which is how you will be accessing them on the Mega CD.) You must limit the filename size to 8.3, however, and use only valid characters (A to Z, 0 to 9, and _).
-
-You may not be familiar with the version identifier as is not shown in directory listings. It is a part of the ISO9660 standard, though, and is present within the filesystem table. In reality, it is not used by applications and foregoing a lot of unnecessary background information, it simply means your filenames will be appended with `;1` when referring to them within the filesystem.
-
-As a quick example, you may have `title.mmd` on your local system. This will be represented as `TITLE.MMD;1` within the ISO filesystem on disc, and that is how you should refer to it in your code.
-
-### Destination buffer
-
-Please refer to the CDC section of the Mega CD Software Development documentation before or alongside this section.
-
-The buffer where your data will be stored must be specified in one of two ways depending on the transfer type. If you plan to use DMA, you will need to set the destination address in the `GA_DMAADDR` register. If you plan to use non-DMA transfer via the CDC host data register, you will need to set the address in the `file_buff` pointer.
-
-### Access operation
-
-Finally, you will need to set the access operation on `access_op`. The operations for loading files are:
-
-  ACC_OP_LOAD_CDC
-  ACC_OP_LOAD_CDC_DMA
-  ACC_OP_LOAD_PRG_DMA
-  ACC_OP_LOAD_PCM_DMA
-
-(Note that we do not currently support the Main CPU read option, mostly because it is not well understood.)
-
-ACC_OP_LOAD_CDC will load the data to any memory address available to the Sub CPU, while the DMA options transfer data to a specific device given a relative address specified in the GA DMA register. ACC_OP_LOAD_CDC is the easiest to work with as you can simply specify an absolute address and be done. The DMA options likely provide greater transfer speed (limited by the optical drive, of course), though what sort of speed advantages or if any bus access issues may occur are unknown.
-
-### Wait for data
-
-After setting the access operation, you will need to wait for the data to completely load into your buffer. This is done by checking `access_op` in a loop (while calling the INT2 wait in the loop!) until the value has returned to ACC_OP_IDLE (i.e. 0). When that occurs, the transfer is either complete or failed. You should then check the `access_op_result` for the result code:
-
-  RESULT_OK
-	RESULT_LOAD_FAIL
-	RESULT_NOT_FOUND
-
-If the result is ok, your data should be ready in the buffer. The load fail result means there was a read failure of some sort (likely due to a damaged disc or old harware). Not found indicates the filename provided could not be found in the file system.
-
-## Convenience routines
-
-For simple file loads, you can use the `load_file_sub` convenience subroutine to package most of this up for you. Simply place the pointer to the filename in a0 and the pointer to the destination buffer in a1, call it, and check the result in d0.
-
-The `get_acc_op_result` routine will check if the access operation is still busy, with carry clear (cc) indicating the operation is complete and carry set (cs) indicating it is still in progress.
-
-There is also the WAIT_FOR_ACC_OP macro which will check get_acc_op_result in a loop until the operation is complete.
-
-# Development Considerations for Mega CD development
-
-Programming for the Mega Drive only is much simpler than programming for the Mega CD. Primarily, you do not have to worry about loading files from disc, transferring their data across buffers, and then cleaning up when that file's data is no longer needed. For a Mega Drive cartridge, all the data and code for the entire program is in a fixed location in memory, meaning less planning needs to be spent on architecting your program in terms of hardware.
-
-Therefore the following sections are commentary and suggestions for planning a Mega CD game in particular.
-
-# Understanding The Hardware
-
-> "If you wish you wish to make an apple pie from scratch, you must first invent the universe." - Carl Sagan
-
-Development for embedded hardware such as old video game consoles is markedly different from programming for a PC. There is no operating system, no standard library, no I/O abstraction layer, not even a simple `print` command to make text show up on the screen. The code you write is the sum of all the code that will run on the hardware.
-
-Writing a game for retro hardware is, in a way, writing an "operating system" from scratch, which can be both thrilling and a frustrating chore. Before you can really dig into the fun stuff, you have to plan how to manage your hardware resources (especially VRAM) and how to architect your program. The complexity of this planning/design phase escalates once we bring the Mega CD into the picture. You now have a second CPU, non-persistent memory regions and buffer ownership to manage as well.
-
-This is why, before anything else, you should familiarize yourself with retro hardware concepts, such as:
-
-  - CRT screens, scanlines, and the vertical blanking interval
-  - Indexed color (aka palette based) graphics
-  - Tiles and tilemaps
-  - System interrupts
-  - The difference between CD-ROM (ISO9660) and CD-DA
-
-There are a plethora of online tutorials that introduce development for the Mega Drive intended for absolute beginners. These should cover most of the items listed above in the context of the Mega Drive.
-
-There is, however, comparitively little coverage of development for the Mega CD, so you will also want a copy of the official Sega developer documentation for the Mega CD. These documents are readily available online and easily found with a simple search. Though they will primarily be used for reference, we still highly recommend reading through them to become familiar with the capabilities, expectations and overall deisgn of the hardware. We will introduce some important Mega CD concepts in the next section, and the included example projects are well-commented too, but the official documentation is necessary for development.
-
-Before starting a serious project, you should have a basic understanding of the following Mega Drive/Mega CD specific pieces and how they work together at a high level:
-
-  - VDP usage, including DMA transfers
-  - Reading from controllers
-  - Which components are managed by which CPU (i.e. VDP & VRAM -> Main CPU, CD Drive & Internal BRAM -> Sub CPU)
-  - Work RAM, Word RAM, PRG RAM
-  - The Gate Array (at a very high level, you don't need to focus too much on registers...)
-  - The Gate Array Comm Flags/Command/Status registers for CPU communication (...except for these)
-  - The IP/SP
-
-# Basic Mega CD Concepts
-
-Here we will highlight some important components of programming for the Mega CD.
-
-## Boot Process (IP/SP)
+(This applies to Mega CD development only.)
 
 The boot sector on the CD contains the software header, the IP (Initial Program), and the SP (System Program). These are the first pieces of code in your game for each CPU: the IP on the Main side and the SP on the Sub side.
 
-To make a game valid and bootable, there are two elements that must be in place: the header and the security code.
+A key piece of making your game bootable is the inclusion of the security code. This is a small chunk of code and data that *must* appear at the start of the IP. It is responsible for calling the "Produced By or Under License From..." screen displayed before the game loads. The BIOS stores a byte-for-byte copy of this code and it is checked before running the disc to ensure that it is valid Mega CD software.
 
-The header is a string of text that appears at the very beginning of the boot sector on the disc. It is very similar to the header found at the start of a Mega Drive game. The Mega CD version, however, has a disc identifier to indicate it is a bootable game.
+Megadev will automatically create the boot sector as long as you have `ip.s` and `sp.s` files in your project. This is the only requirement for a Megadev project aside from the `config.h`/`Makefile` mentioned above.
 
-The security code is a small chunk of code and data that *must* appear at the start of the IP. It is responsible for calling the "Produced By or Under License From..." screen displayed before the game loads. The BIOS stores a byte-for-byte copy of this code and it is checked before running the disc to ensure that it is valid Mega CD software.
-
-
-
-
-## Internal ROM (BIOS/Boot Library)
-
-The Mega CD includes an 1 megabit internal ROM that includes system calls and utilities to both the Main and Sub CPU, as well as the startup screen, the CD player and the memory manager. On startup, this ROM is loaded to the Main CPU side, which then decompresses and transfers the code for the Sub CPU side.
+Though it is technically possible to create the boot sector from C source, we highly recommend leaving them as ASM as they are very low level and must be fast and predictable. We highly recommend using an IP/SP from one of the example projects as a base and modify them as necessary.
 
 
 
@@ -261,9 +189,7 @@ The Mega CD includes an 1 megabit internal ROM that includes system calls and ut
 
 
 
-## Program Architecture
-
-
+---
 
 ### The Kernel
 

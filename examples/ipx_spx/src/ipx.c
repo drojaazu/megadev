@@ -1,12 +1,12 @@
+#include "ipx.h"
 #include <main/bios.h>
 #include <main/gate_arr.h>
+#include <main/io.h>
 #include <main/memmap.h>
 #include <main/mmd.h>
 #include <main/vdp.h>
 #include <system.h>
 #include <types.h>
-#include "ipx.h"
-#include <main/io.h>
 
 u8 global_mode;
 
@@ -120,7 +120,7 @@ void main()
 {
 
 	// repoint the VINT vector to the boot rom library version
-	//MLEVEL6_VECTOR = (void *(*) ) _BIOS_VINT_HANDLER;
+	// MLEVEL6_VECTOR = (void *(*) ) _BIOS_VINT_HANDLER;
 	*BIOS_VINT_EX_PTR = vint_ex;
 
 	// don't forget, we disabled interrupts earlier in the IPX (ipx_init.s)
@@ -178,7 +178,7 @@ void main()
 		// Sub CPU side work is complete and the MMD should now be in 2M Word RAM
 		// init_mmd() sets things up based on the MMD header then returns a pointer
 		// to main() in the module, which we'll call as a function pointer
-		void const (*mmd_main)() = init_mmd();
+		void (*mmd_main)() = init_mmd();
 		asm("call_mmd:");
 		mmd_main();
 

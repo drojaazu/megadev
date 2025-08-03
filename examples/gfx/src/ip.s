@@ -75,4 +75,4 @@ ip_entry:
   // fall apart)
   // instead, we'll jump right into the IPX entry currently in Word RAM
   // which will copy itself into Work RAM
-  jbra     _WRDRAM + 0x100
+  jbra     _WORD_RAM + 0x100
