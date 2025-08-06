@@ -62,13 +62,13 @@ void init_particle(u8 particle_idx)
 	// particles[particle_idx].end_at = 8 + 320;
 	particles[particle_idx].timer = 0;
 
-	BIOS_SPRLIST[particle_idx].next = particle_idx + 1;
-	BIOS_SPRLIST[particle_idx].pos_y = 128;
-	BIOS_SPRLIST[particle_idx].pos_x = particles[particle_idx].pos_x;
-	BIOS_SPRLIST[particle_idx].tile = settings.main_tile;
-	BIOS_SPRLIST[particle_idx].palette = settings.palette;
-	BIOS_SPRLIST[particle_idx].width = settings.main_width;
-	BIOS_SPRLIST[particle_idx].height = settings.main_height;
+	bios_sprlist[particle_idx].next = particle_idx + 1;
+	bios_sprlist[particle_idx].pos_y = 128;
+	bios_sprlist[particle_idx].pos_x = particles[particle_idx].pos_x;
+	bios_sprlist[particle_idx].tile = settings.main_tile;
+	bios_sprlist[particle_idx].palette = settings.palette;
+	bios_sprlist[particle_idx].width = settings.main_width;
+	bios_sprlist[particle_idx].height = settings.main_height;
 }
 
 void init_particles(u16 main_tile,
@@ -130,9 +130,9 @@ void process_particles()
 				continue;
 			}
 
-			BIOS_SPRLIST[iter].tile = settings.end_tile;
-			BIOS_SPRLIST[iter].width = settings.main_width;
-			BIOS_SPRLIST[iter].height = settings.main_height;
+			bios_sprlist[iter].tile = settings.end_tile;
+			bios_sprlist[iter].width = settings.main_width;
+			bios_sprlist[iter].height = settings.main_height;
 			particles[iter].timer = settings.end_countdown;
 			goto update_sprites;
 		}
@@ -151,8 +151,8 @@ void process_particles()
 		}
 
 	update_sprites:
-		BIOS_SPRLIST[iter].pos_x = particles[iter].pos_x;
-		BIOS_SPRLIST[iter].pos_y = particles[iter].pos_y;
+		bios_sprlist[iter].pos_x = particles[iter].pos_x;
+		bios_sprlist[iter].pos_y = particles[iter].pos_y;
 	}
 }
 
@@ -163,7 +163,7 @@ __attribute__((interrupt)) void INT6_VBLANK()
 	bios_copy_sprlist();
 	bios_prng();
 	bios_update_inputs();
-	BIOS_VINT_FLAGS = 0;
+	bios_vint_handler_flags = 0;
 }
 
 char rx_buffer[16];
@@ -263,13 +263,13 @@ void main()
 
 	// repoint the VINT vector to the boot rom library version
 	// MLEVEL6_VECTOR = (void *(*) ) _BIOS_VINT_HANDLER;
-	//*BIOS_VINT_EX_PTR = vint_ex;
+	//*bios_vint_user = vint_user;
 
 	// note: seems to be important to set up vdpregs first, then clear vram
 	bios_load_vdpregs_default();
 	bios_clear_vram();
 
-	BIOS_FONT_TILE_BASE = 0;
+	bios_font_tile_base = 0;
 	// bios_load_1bpp_tiles(&res_sysfont_1bpp_chr, 0x60, VDPPTR(VRAM_AT(0x20)) | VRAM_W, 0x00011011);
 	bios_load_1bpp_tiles((void *) 0x40b000, 0x60, VDPPTR(VRAM_AT(0x20)) | VRAM_W, 0x00011011);
 
@@ -277,8 +277,8 @@ void main()
 	// 4800bps, serial in/out mode, ext interrupt enable
 	IO_SCTRL2 = SCTRL_SERIAL_ENABLE | SCTRL_BAUD_4800 | SCTRL_RX_INT_ENABLE;
 	IO_CTRL2 = 0x7f;
-	BIOS_VDPREGS[0x0b] |= 0x08;
-	VDP_CTRL_16 = BIOS_VDPREGS[0x0b];
+	bios_vdp_regs[0x0b] |= 0x08;
+	VDP_CTRL_16 = bios_vdp_regs[0x0b];
 
 	// The modules only show some text, so we'll prepare the font for them here
 	// so it doesn't need to happen in the module itself
@@ -287,12 +287,12 @@ void main()
 	bios_dma_xfer(VDPPTR(VRAM_AT(0x80)) | VRAM_W, &res_rain_chr, res_rain_chr_sz >> 1);
 
 	// The font uses palette entry #1, so we'll manually set that to white
-	BIOS_PALETTE[0] = 0x000;
-	BIOS_PALETTE[1] = 0xeee;
+	bios_palette[0] = 0x000;
+	bios_palette[1] = 0xeee;
 
 	bios_load_pal(&res_rain_pal);
 
-	BIOS_VDP_UPDATE_FLAGS |= VDPUPDATE_PAL;
+	bios_vdp_update_flags |= VDPUPDATE_PAL;
 	bios_copy_pal();
 
 	init_particles(0x81, 0x82, 0, 0, 0, 0, 3, 3, 5, 1);
@@ -347,7 +347,7 @@ void main()
 	{
 		bios_vint_wait(0x81);
 		process_particles();
-	} while (! (BIOS_JOY1_PRESS & PAD_START));
+	} while (! (bios_joy1_hit & PAD_START));
 
 	bios_print("BIG TEST\xff", (VDPPTR(PLANE_POS_PLANE(2, 10, _BIOS_VDP_DEFAULT_PLANEA_ADDR)) | VRAM_W));
 }

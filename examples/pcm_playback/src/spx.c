@@ -40,8 +40,8 @@ __attribute__((section(".init"))) void main()
 		{
 
 			case 2:
-				load_file(ACC_OP_LOAD_CDC, "AUDIO.PCM;1", (u8 *) _PRGRAM_1M_2);
-				if (access_op_result != RESULT_OK)
+				load_file(CDROM_LOAD_CDC, "AUDIO.PCM;1", (u8 *) _PRGRAM_1M_2);
+				if (access_op_result != CDROM_RESULT_OK)
 				{
 					sp_fatal();
 				}
@@ -69,9 +69,9 @@ __attribute__((section(".init"))) void main()
 
 			// load IPX
 			case 0xfe:
-				load_file(ACC_OP_LOAD_CDC, "IPX.MMD;1", (u8 *) _WORD_RAM_2M);
+				load_file(CDROM_LOAD_CDC, "IPX.MMD;1", (u8 *) _WORD_RAM_2M);
 				grant_2m();
-				if (access_op_result != RESULT_OK)
+				if (access_op_result != CDROM_RESULT_OK)
 				{
 					sp_fatal();
 				}

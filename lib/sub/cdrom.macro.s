@@ -16,7 +16,7 @@
  */
 .macro INIT_ACC_LOOP
   move.l  #access_op_idle, acc_loop_jump
-  move.w  #ACC_OP_IDLE, access_op
+  move.w  #CDROM_IDLE, access_op
 .endm
 
 /**
@@ -40,7 +40,7 @@ LOCAL loop
 
 loop:
   jsr     _WAITVSYNC
-  jbsr    check_acc_op
+  jbsr    check_status
   bcs     loop
 .endm
 

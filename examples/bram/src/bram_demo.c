@@ -169,7 +169,7 @@ static void brmwrite()
 
 		printval_u16_c(writeval, val_buffer);
 		bios_print(val_buffer, print_xy(23, 2));
-	} while (! (BIOS_JOY1_PRESS & PAD_START));
+	} while (! (bios_joy1_hit & PAD_START));
 
 	*(u16 *) WRDRAM = writeval;
 
@@ -322,7 +322,7 @@ void main()
 	do
 	{
 		bios_vint_wait_default();
-	} while (! (BIOS_JOY1_PRESS & PAD_START));
+	} while (! (bios_joy1_hit & PAD_START));
 
 	s8 menupos = 0;
 
@@ -350,7 +350,7 @@ void main()
 			VDP_CTRL_32 = (VDPPTR(_BIOS_VDP_DEFAULT_PLANEA_ADDR + PLANE_POS(1, menupos + 3, Width64)) | VRAM_W);
 			VDP_DATA_16 = '>';
 
-			if ((BIOS_JOY1_PRESS & PAD_DOWN))
+			if ((bios_joy1_hit & PAD_DOWN))
 			{
 				++menupos;
 				if (menupos > 6)
@@ -358,14 +358,14 @@ void main()
 				continue;
 			}
 
-			if ((BIOS_JOY1_PRESS & PAD_UP))
+			if ((bios_joy1_hit & PAD_UP))
 			{
 				--menupos;
 				if (menupos < 0)
 					menupos = 6;
 				continue;
 			}
-		} while (! (BIOS_JOY1_PRESS & PAD_START));
+		} while (! (bios_joy1_hit & PAD_START));
 
 		switch (menupos)
 		{
@@ -395,7 +395,7 @@ void main()
 		do
 		{
 			bios_vint_wait_default();
-		} while (! (BIOS_JOY1_PRESS & PAD_START));
+		} while (! (bios_joy1_hit & PAD_START));
 
 	} while (1);
 }

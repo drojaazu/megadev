@@ -1,4 +1,5 @@
 
+#include "bridge.h"
 #include <sub/cdrom.h>
 #include <sub/gate_arr.h>
 #include <sub/memmap.h>
@@ -7,46 +8,34 @@ void load_ipx();
 
 extern void sp_fatal();
 
-char const * const filenames[] = {"EX1.MMD;1", "EX2.MMD;1", "EX3.MMD;1"};
+char const * const filenames[] = {"IPX.MMD;1", "EX1.MMD;1", "EX2.MMD;1", "EX3.MMD;1"};
 
 // It's a good idea to put SPX's main in .init to ensure it's at the very start
 // of the code, since we jump to where we expect it to be in memory
 __attribute__((section(".init"))) void main()
 {
-	*GA_COMSTAT0 = 0;
-	register u16 cmd0, cmd1;
+	register u16 command, param1;
 	do
 	{
 
 		do
 		{
-			cmd0 = *GA_COMCMD0;
-		} while (cmd0 == 0);
+			command = *GA_COMCMD0;
+		} while (command == 0);
 
-		if (cmd0 != *GA_COMCMD0)
+		if (command != *GA_COMCMD0)
 			continue;
 
-		cmd1 = *GA_COMCMD1;
+		param1 = *GA_COMCMD1;
 
-		switch (cmd0)
+		switch (command)
 		{
 
 			// load MMD
-			case 1:
-				load_file(ACC_OP_LOAD_CDC, filenames[cmd1], (u8 *) _WORD_RAM_2M);
-				asm(".global test_label2\ntest_label2:");
+			case CMD_LOAD_FILE:
+				load_file(CDROM_LOAD_CDC, filenames[param1], (u8 *) _WORD_RAM_2M);
 				grant_2m();
-				if (access_op_result != RESULT_OK)
-				{
-					sp_fatal();
-				}
-				break;
-
-			// load IPX
-			case 0xfe:
-				load_file(ACC_OP_LOAD_CDC, "IPX.MMD;1", (u8 *) _WORD_RAM_2M);
-				grant_2m();
-				if (access_op_result != RESULT_OK)
+				if (access_op_result != CDROM_RESULT_OK)
 				{
 					sp_fatal();
 				}
@@ -59,19 +48,16 @@ __attribute__((section(".init"))) void main()
 		do
 		{
 			asm("nop");
-			cmd0 = *GA_COMCMD0;
-		} while (cmd0 != 0);
+			command = *GA_COMCMD0;
+		} while (command != 0);
 
 		do
 		{
 			asm("nop");
-			cmd0 = *GA_COMCMD0;
-		} while (cmd0 != 0);
+			command = *GA_COMCMD0;
+		} while (command != 0);
 
-		asm(".global test_label3\ntest_label4:");
 		*GA_COMSTAT0 = 0;
 
 	} while (1);
 }
-
-void load_ipx() {}

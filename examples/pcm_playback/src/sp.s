@@ -58,16 +58,16 @@ GLABEL sp_main
   // when loading data instead of needing sector offsets
 	// We place the load dir command in the access_op variable and wait for the
 	// loop to finish
-	move.w  #ACC_OP_LOAD_DIR, access_op
+	move.w  #CDROM_LOAD_FILE_LIST, access_op
 	WAIT_FOR_ACC_OP
-	cmpi.w	#RESULT_OK, d0
+	cmpi.w	#CDROM_RESULT_OK, d0
 	bne			sp_fatal
 
 	// load spx
 	lea spx_filename, a0
 	lea 0x10000, a1
 	jbsr		load_file_sub
-	cmpi.w  #RESULT_OK, d0  // check final status
+	cmpi.w  #CDROM_RESULT_OK, d0  // check final status
   bne     sp_fatal  // had an error, drop everything and freak out
 
 	jbra 0x10000

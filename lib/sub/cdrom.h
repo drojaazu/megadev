@@ -56,7 +56,7 @@ static inline u32 load_file(u16 const access_operation, char const * load_filena
 {
 	access_op = access_operation;
 	if (access_op == 0)
-		return RESULT_OK;
+		return CDROM_RESULT_OK;
 
 	filename = load_filename;
 	filebuff = buffer;
@@ -64,9 +64,9 @@ static inline u32 load_file(u16 const access_operation, char const * load_filena
 	do
 	{
 		bios_waitvsync();
-	} while (access_op != ACC_OP_IDLE);
+	} while (access_op != CDROM_IDLE);
 
-	if (access_op_result == RESULT_OK)
+	if (access_op_result == CDROM_RESULT_OK)
 		return filesize;
 	else
 		return 0;

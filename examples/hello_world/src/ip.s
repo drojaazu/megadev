@@ -97,10 +97,10 @@ ip_entry:
   andi #0xF8FF,sr
 
 loop:
-  jbsr _BIOS_VINT_HANDLER_WAIT_DEFAULT
+  jbsr _BIOS_VINT_WAIT_DEFAULT
   // Inputs are updated as part of the default vint wait subroutine
   // so we can assume the input value is current
-  and.b #PAD_START, _BIOS_JOY1_PRESS
+  and.b #PAD_START, _BIOS_JOY1_HIT
 	beq loop
 	
   jmp _BIOS_RESET

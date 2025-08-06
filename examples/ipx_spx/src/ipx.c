@@ -1,4 +1,5 @@
 #include "ipx.h"
+#include "bridge.h"
 #include <main/bios.h>
 #include <main/gate_arr.h>
 #include <main/io.h>
@@ -8,7 +9,7 @@
 #include <system.h>
 #include <types.h>
 
-u8 global_mode;
+u8 next_module;
 
 Particle particles[16];
 
@@ -23,13 +24,13 @@ void init_particle(u8 particle_idx)
 	particles[particle_idx].end_at = bios_prng_mod(11) + 320;
 	particles[particle_idx].timer = 0;
 
-	BIOS_SPRLIST[particle_idx].next = particle_idx + 1;
-	BIOS_SPRLIST[particle_idx].pos_y = 128;
-	BIOS_SPRLIST[particle_idx].pos_x = particles[particle_idx].pos_x;
-	BIOS_SPRLIST[particle_idx].tile = settings.main_tile;
-	BIOS_SPRLIST[particle_idx].palette = settings.palette;
-	BIOS_SPRLIST[particle_idx].width = settings.main_width;
-	BIOS_SPRLIST[particle_idx].height = settings.main_height;
+	bios_sprlist[particle_idx].next = particle_idx + 1;
+	bios_sprlist[particle_idx].pos_y = 128;
+	bios_sprlist[particle_idx].pos_x = particles[particle_idx].pos_x;
+	bios_sprlist[particle_idx].tile = settings.main_tile;
+	bios_sprlist[particle_idx].palette = settings.palette;
+	bios_sprlist[particle_idx].width = settings.main_width;
+	bios_sprlist[particle_idx].height = settings.main_height;
 }
 
 void init_particles(u16 main_tile,
@@ -84,9 +85,9 @@ void process_particles()
 				continue;
 			}
 
-			BIOS_SPRLIST[iter].tile = settings.end_tile;
-			BIOS_SPRLIST[iter].width = settings.main_width;
-			BIOS_SPRLIST[iter].height = settings.main_height;
+			bios_sprlist[iter].tile = settings.end_tile;
+			bios_sprlist[iter].width = settings.main_width;
+			bios_sprlist[iter].height = settings.main_height;
 			particles[iter].timer = settings.end_countdown;
 			goto update_sprites;
 		}
@@ -103,12 +104,12 @@ void process_particles()
 		}
 
 	update_sprites:
-		BIOS_SPRLIST[iter].pos_x = particles[iter].pos_x;
-		BIOS_SPRLIST[iter].pos_y = particles[iter].pos_y;
+		bios_sprlist[iter].pos_x = particles[iter].pos_x;
+		bios_sprlist[iter].pos_y = particles[iter].pos_y;
 	}
 }
 
-void vint_ex()
+void vint_user()
 {
 	bios_copy_sprlist();
 }
@@ -119,25 +120,27 @@ void vint_ex()
 void main()
 {
 
-	// repoint the VINT vector to the boot rom library version
-	// MLEVEL6_VECTOR = (void *(*) ) _BIOS_VINT_HANDLER;
-	*BIOS_VINT_EX_PTR = vint_ex;
+	/*
+		The function pointer stored in bios_vint_user is called on every VBLANK interrupt
+		when using the built-in handler in BIOS (BIOS_VINT_HANDLER, which we set up in the IP).
+		This is intended for VBLANK interval operations specific to your program. Note that the
+		CALL_VINT_USER flag must be set on bios_vint_handler_flags
+	*/
+	*bios_vint_user = vint_user;
+
+	next_module = FILE_EX1_MMD;
 
 	// don't forget, we disabled interrupts earlier in the IPX (ipx_init.s)
 	// but be sure we've re-pointed the the vblank handler vector
 	enable_interrupts();
-
-	// this will hold the current "mode" of the entire program
-	// in this case it corresponds to the three modules on the disc
-	global_mode = 0;
 
 	// The modules only show some text, so we'll prepare the font for them here
 	// so it doesn't need to happen in the module itself
 	bios_load_font_defaults();
 
 	// The font uses palette entry #1, so we'll manually set that to white
-	BIOS_PALETTE[1] = 0xeee;
-	BIOS_VDP_UPDATE_FLAGS |= VDPUPDATE_PAL;
+	bios_palette[1] = 0xeee;
+	bios_vdp_update_flags |= VDPUPDATE_PAL;
 
 	do
 	{
@@ -150,10 +153,10 @@ void main()
 		// and the argument will be the ID for that file, which is defined in
 		// the SPX
 		// Set the argument first
-		*GA_COMCMD1 = global_mode;
+		*GA_COMCMD1 = next_module;
 
 		// then set the command
-		*GA_COMCMD0 = 1;
+		*GA_COMCMD0 = CMD_LOAD_FILE;
 
 		// wait for acknowledgment from the Sub CPU that the command was
 		// received and will be acted on
@@ -182,7 +185,7 @@ void main()
 		asm("call_mmd:");
 		mmd_main();
 
-		// module has exited and global_mode was updated
+		// module has exited and next_module was updated
 		// Clear the tiles on the screen and prepare the next iteration
 		bios_clear_tables();
 

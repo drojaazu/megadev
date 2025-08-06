@@ -15,7 +15,7 @@ Include `sub/cdrom.s` or `cd_sub_cdrom.c` in your code. In your SP init subrouti
 
 Somewhere in your INT2 subroutine (_usercall2), make a call to the `PROCESS_ACC_LOOP` macro to keep the access loop moving. You may want to put this at the end of the subroutine or push the registers before calling as it may clobber any number of registers.
 
-Finally, in the early part of SP main subroutine (_usercall1), you'll want to load and cache the file information by setting ACC_OP_LOAD_DIR as the access operation and waiting for it to complete. There is space allocated for 128 files by default, but this can be adjusted to match your project by changing the size of the `dir_cache` buffer in `sub/cdrom.s`.
+Finally, in the early part of SP main subroutine (_usercall1), you'll want to load and cache the file information by setting CDROM_LOAD_FILE_LIST as the access operation and waiting for it to complete. There is space allocated for 128 files by default, but this can be adjusted to match your project by changing the size of the `dir_cache` buffer in `sub/cdrom.s`.
 
 ## Usage
 
@@ -53,22 +53,22 @@ The buffer where your data will be stored must be specified in one of two ways d
 
 Finally, you will need to set the access operation on `access_op`. The operations for loading files are:
 
-  ACC_OP_LOAD_CDC
-  ACC_OP_LOAD_CDC_DMA
-  ACC_OP_LOAD_PRG_DMA
-  ACC_OP_LOAD_PCM_DMA
+  CDROM_LOAD_CDC
+  CDROM_LOAD_CDC_DMA
+  CDROM_LOAD_PRG_DMA
+  CDROM_LOAD_PCM_DMA
 
 (Note that we do not currently support the Main CPU read option, mostly because it is not well understood.)
 
-ACC_OP_LOAD_CDC will load the data to any memory address available to the Sub CPU, while the DMA options transfer data to a specific device given a relative address specified in the GA DMA register. ACC_OP_LOAD_CDC is the easiest to work with as you can simply specify an absolute address and be done. The DMA options likely provide greater transfer speed (limited by the optical drive, of course), though what sort of speed advantages or if any bus access issues may occur are unknown.
+CDROM_LOAD_CDC will load the data to any memory address available to the Sub CPU, while the DMA options transfer data to a specific device given a relative address specified in the GA DMA register. CDROM_LOAD_CDC is the easiest to work with as you can simply specify an absolute address and be done. The DMA options likely provide greater transfer speed (limited by the optical drive, of course), though what sort of speed advantages or if any bus access issues may occur are unknown.
 
 ### Wait for data
 
-After setting the access operation, you will need to wait for the data to completely load into your buffer. This is done by checking `access_op` in a loop (while calling the INT2 wait in the loop!) until the value has returned to ACC_OP_IDLE (i.e. 0). When that occurs, the transfer is complete. You should then check the `access_op_result` for the result code:
+After setting the access operation, you will need to wait for the data to completely load into your buffer. This is done by checking `access_op` in a loop (while calling the INT2 wait in the loop!) until the value has returned to CDROM_IDLE (i.e. 0). When that occurs, the transfer is complete. You should then check the `access_op_result` for the result code:
 
-  RESULT_OK
-	RESULT_LOAD_FAIL
-	RESULT_NOT_FOUND
+  CDROM_RESULT_OK
+	CDROM_RESULT_LOAD_FAIL
+	CDROM_RESULT_NOT_FOUND
 
 If the result is ok, your data should be ready in the buffer. The load fail result means there was a read failure of some sort (likely due to a damaged disc or old harware). Not found indicates the filename provided could not be found in the file system.
 

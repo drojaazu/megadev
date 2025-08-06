@@ -18,29 +18,30 @@ SECTIONS
 {
   .text (READONLY) :
   {
-		_SP_ROM_ORIGIN = .;
+		_TEXT_ORIGIN = .;
     *(.header*)
     *(.text*)
     *(.rodata*)
-    _SP_ROM_LENGTH = ABSOLUTE(. - _SP_ROM_ORIGIN);
+    _TEXT_LENGTH = ABSOLUTE(. - _TEXT_ORIGIN);
   } > SP
 
   .data : AT ( ADDR(.text) + SIZEOF(.text) )
   {
-    _SP_RAM_ORIGIN = .;
-    _SP_RAM_DATA_ORIGIN = .;
+    _RAM_ORIGIN = .;
+    _RAM_DATA_ORIGIN = .;
     *(.data*)
-		_sp_data_end = .;
-    _SP_RAM_DATA_LENGTH = ABSOLUTE(. - _SP_RAM_DATA_ORIGIN);
+		. = ALIGN(4);
+    _RAM_DATA_LENGTH = ABSOLUTE(. - _RAM_DATA_ORIGIN) >> 2;
   } > SP
 
   .bss :
   {
-    _SP_RAM_BSS_ORIGIN = .;
+    _BSS_ORIGIN = .;
     *(.bss*)
-    _SP_RAM_BSS_LENGTH = ABSOLUTE(. - _SP_RAM_BSS_ORIGIN);
+    . = ALIGN(4);
+    _BSS_LENGTH = ABSOLUTE(. - _BSS_ORIGIN);
   } > SP
-  _SP_RAM_LENGTH = _SP_RAM_DATA_LENGTH + _SP_RAM_BSS_LENGTH;
+  _RAM_LENGTH = _RAM_DATA_LENGTH + _BSS_LENGTH;
 
 
 }

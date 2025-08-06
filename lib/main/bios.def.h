@@ -39,77 +39,77 @@
 /**
  * @def _BIOS_WORK_BUFFER
  * @ingroup bios_cmp
- * @sa BIOS_WORK_BUFFER
+ * @sa bios_work_buffer
  */
 #define _BIOS_WORK_BUFFER 0xFFF700
 
 /**
  * @def _BIOS_SPRLIST
  * @ingroup bios_vdp
- * @sa BIOS_SPRLIST
+ * @sa bios_sprlist
  */
 #define _BIOS_SPRLIST 0xFFF900
 
 /**
  * @def _BIOS_PALETTE
  * @ingroup bios_vdp
- * @sa BIOS_PALETTE
+ * @sa bios_palette
  */
 #define _BIOS_PALETTE 0xFFFB80
 
 /**
- * @def _BIOS_PAL0
- * @ingroup bios_vdp
- * @sa BIOS_PAL0
- */
-#define _BIOS_PAL0 0xFFFB80
-
-/**
  * @def _BIOS_PAL1
  * @ingroup bios_vdp
- * @sa BIOS_PAL1
+ * @sa bios_pal1
  */
-#define _BIOS_PAL1 0xFFFBA0
+#define _BIOS_PAL1 0xFFFB80
 
 /**
  * @def _BIOS_PAL2
  * @ingroup bios_vdp
- * @sa BIOS_PAL2
+ * @sa bios_pal2
  */
-#define _BIOS_PAL2 0xFFFBC0
+#define _BIOS_PAL2 0xFFFBA0
 
 /**
  * @def _BIOS_PAL3
  * @ingroup bios_vdp
- * @sa BIOS_PAL3
+ * @sa bios_pal3
  */
-#define _BIOS_PAL3 0xFFFBE0
+#define _BIOS_PAL3 0xFFFBC0
 
 /**
- * @def _BIOS_VINT_EX_PTR
- * @ingroup bios_int
- * @sa BIOS_VINT_EX_PTR
- */
-#define _BIOS_VINT_EX_PTR 0xFFFDAA
-
-/**
- * @def _BIOS_VDPREGS
+ * @def _BIOS_PAL4
  * @ingroup bios_vdp
- * @sa BIOS_VDPREGS
+ * @sa bios_pal4
  */
-#define _BIOS_VDPREGS 0xFFFDB4
+#define _BIOS_PAL4 0xFFFBE0
+
+/**
+ * @def _BIOS_VINT_USER
+ * @ingroup bios_int
+ * @sa bios_vint_user
+ */
+#define _BIOS_VINT_USER 0xFFFDAA
+
+/**
+ * @def _BIOS_VDP_REGS
+ * @ingroup bios_vdp
+ * @sa bios_vdp_regs
+ */
+#define _BIOS_VDP_REGS 0xFFFDB4
 
 /**
  * @def _BIOS_COMFLAGS_MAIN
  * @ingroup bios_comm
- * @sa BIOS_COMFLAGS_MAIN
+ * @sa bios_comflags_main
  */
 #define _BIOS_COMFLAGS_MAIN 0xfffdde
 
 /**
  * @def _BIOS_COMFLAGS_SUB
  * @ingroup bios_comm
- * @sa BIOS_COMFLAGS_SUB
+ * @sa bios_comflags_sub
  */
 #define _BIOS_COMFLAGS_SUB 0xfffddf
 
@@ -120,7 +120,7 @@
  * @note
  * Size: 16bit * 8 = 0x10 bytes
  *
- * @sa BIOS_COMCMD
+ * @sa bios_comcmd
  */
 #define _BIOS_COMCMD 0xfffde0
 
@@ -182,7 +182,7 @@
 
 /**
  * @def _BIOS_COMSTAT
- * @sa BIOS_COMSTAT
+ * @sa bios_comstat
  * @ingroup bios_comm
  *
  * @note
@@ -250,56 +250,56 @@
  * @def _BIOS_JOY1_MOUSE_DATA
  * @ingroup bios_input
  *
- * @sa BIOS_JOY1_MOUSE_DATA
+ * @sa bios_joy1_mouse_data
  */
 #define _BIOS_JOY1_MOUSE_DATA 0xfffe00
 
 /**
  * @def _BIOS_JOY1_MOUSE_DX
  * @ingroup bios_input
- * @sa BIOS_JOY1_MOUSE_DX
+ * @sa bios_joy1_mouse_dx
  */
 #define _BIOS_JOY1_MOUSE_DX 0xfffe06
 
 /**
  * @def _BIOS_JOY1_MOUSE_DY
  * @ingroup bios_input
- * @sa BIOS_JOY1_MOUSE_DY
+ * @sa bios_joy1_mouse_dy
  */
 #define _BIOS_JOY1_MOUSE_DY 0xfffe08
 
 /**
  * @def _BIOS_JOY2_MOUSE_DATA
  * @ingroup bios_input
- * @sa BIOS_JOY2_MOUSE_DATA
+ * @sa bios_joy2_mouse_data
  */
 #define _BIOS_JOY2_MOUSE_DATA 0xfffe0c
 
 /**
  * @def _BIOS_JOY2_MOUSE_DX
  * @ingroup bios_input
- * @sa BIOS_JOY2_MOUSE_DX
+ * @sa bios_joy2_mouse_dx
  */
 #define _BIOS_JOY2_MOUSE_DX 0xfffe12
 
 /**
  * @def _BIOS_JOY2_MOUSE_DY
  * @ingroup bios_input
- * @sa BIOS_JOY2_MOUSE_DY
+ * @sa bios_joy2_mouse_dy
  */
 #define _BIOS_JOY2_MOUSE_DY 0xfffe14
 
 /**
  * @def _BIOS_JOY1_TYPE
  * @ingroup bios_input
- * @sa BIOS_JOY1_TYPE
+ * @sa bios_joy1_type
  */
 #define _BIOS_JOY1_TYPE 0xfffe18
 
 /**
  * @def _BIOS_JOY2_TYPE
  * @ingroup bios_input
- * @sa BIOS_JOY2_TYPE
+ * @sa bios_joy2_type
  */
 #define _BIOS_JOY2_TYPE 0xfffe19
 
@@ -324,37 +324,37 @@
 /**
  * @def _BIOS_JOY1_HOLD
  * @ingroup bios_input
- * @sa BIOS_JOY1_HOLD
+ * @sa bios_joy1_hold
  */
 #define _BIOS_JOY1_HOLD 0xfffe20
 
 /**
- * @def _BIOS_JOY1_PRESS
+ * @def _BIOS_JOY1_HIT
  * @ingroup bios_input
- * @sa BIOS_JOY1_PRESS
+ * @sa bios_joy1_hit
  */
-#define _BIOS_JOY1_PRESS 0xfffe21
+#define _BIOS_JOY1_HIT 0xfffe21
 
 /**
  * @def _BIOS_JOY2_HOLD
  * @ingroup bios_input
- * @sa BIOS_JOY2_HOLD
+ * @sa bios_joy2_hold
  */
 #define _BIOS_JOY2_HOLD 0xfffe22
 
 /**
- * @def _BIOS_JOY2_PRESS
+ * @def _BIOS_JOY2_HIT
  * @ingroup bios_input
- * @sa BIOS_JOY2_PRESS
+ * @sa bios_joy2_hit
  */
-#define _BIOS_JOY2_PRESS 0xfffe23
+#define _BIOS_JOY2_HIT 0xfffe23
 
 /**
- * @def _BIOS_JOY1_DELAY
+ * @def _BIOS_JOY1_REPEAT_DELAY
  * @ingroup bios_input
- * @sa BIOS_JOY1_DELAY
+ * @sa bios_joy1_repeat_delay
  */
-#define _BIOS_JOY1_DELAY 0xfffe24
+#define _BIOS_JOY1_REPEAT_DELAY 0xfffe24
 
 /**
  * @def _BIOS_JOY2_DELAY
@@ -364,43 +364,43 @@
 #define _BIOS_JOY2_DELAY 0xfffe25
 
 /**
- * @def _BIOS_VINT_FLAGS
+ * @def _BIOS_VINT_HANDLER_FLAGS
  * @ingroup bios_int
- * @sa BIOS_VINT_FLAGS
+ * @sa bios_vint_handler_flags
  */
-#define _BIOS_VINT_FLAGS 0xfffe26
+#define _BIOS_VINT_HANDLER_FLAGS 0xfffe26
 
 /**
- * Flags for @ref _BIOS_VINT_FLAGS
+ * Flags for @ref _BIOS_VINT_HANDLER_FLAGS
  * @ingroup bios_int
  */
 #define COPY_SPRLIST_BIT 0
-#define CALL_VINT_EX_BIT 1
+#define CALL_VINT_USER_BIT 1
 
 /**
- * Bitmasks for @ref _BIOS_VINT_FLAGS
+ * Bitmasks for @ref _BIOS_VINT_HANDLER_FLAGS
  */
 #define COPY_SPRLIST 1 << COPY_SPRLIST_BIT
-#define CALL_VINT_EX 1 << CALL_VINT_EX_BIT
+#define CALL_VINT_USER 1 << CALL_VINT_USER_BIT
 
 /**
  * @def _BIOS_VINT_COUNTER
  * @ingroup bios_int
- * @sa BIOS_VINT_COUNTER
+ * @sa bios_vint_counter
  */
 #define _BIOS_VINT_COUNTER 0xfffe27
 
 /**
  * @def _BIOS_VINT_SKIP_GFX
  * @ingroup bios_int
- * @sa BIOS_VINT_SKIP_GFX
+ * @sa bios_vint_skip_gfx
  */
 #define _BIOS_VINT_SKIP_GFX 0xfffe28
 
 /**
  * @def _BIOS_VDP_UPDATE_FLAGS
  * @ingroup bios_vdp
- * @sa BIOS_VDP_UPDATE_FLAGS
+ * @sa bios_vdp_update_flags
  */
 #define _BIOS_VDP_UPDATE_FLAGS 0xfffe29
 
@@ -414,65 +414,58 @@
 /**
  * @def _BIOS_RANDOM
  * @ingroup bios_misc
- * @sa BIOS_RANDOM
+ * @sa bios_random
  */
 #define _BIOS_RANDOM 0xfffe2a
 
 /**
  * @def _BIOS_FONT_TILE_BASE
  * @ingroup bios_misc
- * @sa BIOS_FONT_TILE_BASE
+ * @sa bios_font_tile_base
  */
 #define _BIOS_FONT_TILE_BASE 0xfffe2c
 
 /**
  * @def _BIOS_PLANE_WIDTH
  * @ingroup bios_vdp
- * @sa BIOS_PLANE_WIDTH
+ * @sa bios_plane_width
  */
 #define _BIOS_PLANE_WIDTH 0xFFFE2E
 
 /**
- * @def _BIOS_SPRTBL_PTR
+ * @def _BIOS_ENTITY_ROUTINES
  * @ingroup bios_vdp
- * @sa BIOS_SPRTBL_PTR
+ * @sa bios_entity_routines
  */
-#define _BIOS_SPRTBL_PTR 0xFFFE30
+#define _BIOS_ENTITY_ROUTINES 0xFFFE34
 
 /**
- * @def _BIOS_SPR_JMPTBL_PTR
+ * @def _BIOS_FADEIN_CRAM_INDEX
  * @ingroup bios_vdp
- * @sa BIOS_SPR_JMPTBL_PTR
+ * @sa bios_fadein_cram_index
  */
-#define _BIOS_SPR_JMPTBL_PTR 0xFFFE34
-
-/**
- * @def _BIOS_FADEIN_PAL_INDEX
- * @ingroup bios_vdp
- * @sa BIOS_FADEIN_PAL_INDEX
- */
-#define _BIOS_FADEIN_PAL_INDEX 0xfffe46
+#define _BIOS_FADEIN_CRAM_INDEX 0xfffe46
 
 /**
  * @def _BIOS_FADEIN_PAL_LENGTH
  * @ingroup bios_vdp
- * @sa BIOS_FADEIN_PAL_LENGTH
+ * @sa bios_fadein_pal_length
  */
 #define _BIOS_FADEIN_PAL_LENGTH 0xfffe47
 
 /**
  * @def _BIOS_FADEIN_STEP
  * @ingroup bios_vdp
- * @sa BIOS_FADEIN_STEP
+ * @sa bios_fadein_step
  */
 #define _BIOS_FADEIN_STEP 0xfffe48
 
 /**
- * @def _BIOS_FADEIN_TARGET_PAL_PTR
+ * @def _BIOS_FADEIN_TARGET_PAL
  * @ingroup bios_vdp
- * @sa BIOS_FADEIN_TARGET_PAL_PTR
+ * @sa bios_fadein_target_pal
  */
-#define _BIOS_FADEIN_TARGET_PAL_PTR 0xfffe4a
+#define _BIOS_FADEIN_TARGET_PAL 0xfffe4a
 
 // This is the VRAM layout and commonly referenced settings
 // when using the default VDP registers
@@ -591,9 +584,9 @@
  * @def _BIOS_UPDATE_INPUTS
  * @ingroup bios_input
  *
- * @param[out] [@ref _BIOS_JOY1_PRESS]
+ * @param[out] [@ref _BIOS_JOY1_HIT]
  * @param[out] [@ref _BIOS_JOY1_HOLD]
- * @param[out] [@ref _BIOS_JOY2_PRESS]
+ * @param[out] [@ref _BIOS_JOY2_HIT]
  * @param[out] [@ref _BIOS_JOY2_HOLD]
  * @clobber d6-d7/a5-a6
  * @sa bios_update_inputs
@@ -828,7 +821,7 @@
 #endif
 
 /**
- * @sa bios_dma_xfer_WORD_RAM
+ * @sa bios_dma_xfer_word_ram
  * @clobber d0-d3/a6
  * @ingroup bios_vdp
  */
@@ -924,13 +917,13 @@
 #endif
 
 /**
- * @sa bios_process_sprobjs
+ * @sa bios_process_entities
  * @clobber d0-d4/d6/a2
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_PROCESS_SPROBJS 0x4002F4
+#define _BIOS_PROCESS_ENTITIES 0x4002F4
 #else
-#define _BIOS_PROCESS_SPROBJS 0x0002F4
+#define _BIOS_PROCESS_ENTITIES 0x0002F4
 #endif
 
 /**
@@ -984,9 +977,9 @@
  * @clobber d0
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_VINT_HANDLER_WAIT 0x400304
+#define _BIOS_VINT_WAIT 0x400304
 #else
-#define _BIOS_VINT_HANDLER_WAIT 0x000304
+#define _BIOS_VINT_WAIT 0x000304
 #endif
 
 /**
@@ -994,9 +987,9 @@
  * @clobber d0
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_VINT_HANDLER_WAIT_DEFAULT 0x400308
+#define _BIOS_VINT_WAIT_DEFAULT 0x400308
 #else
-#define _BIOS_VINT_HANDLER_WAIT_DEFAULT 0x000308
+#define _BIOS_VINT_WAIT_DEFAULT 0x000308
 #endif
 
 /**
@@ -1121,13 +1114,13 @@
 #endif
 
 /**
- * @def _BIOS_INPUT_DELAY
+ * @def _BIOS_INPUT_REPEAT_DELAY
  * @clobber d1/a1/a5
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_INPUT_DELAY 0x40032C
+#define _BIOS_INPUT_REPEAT_DELAY 0x40032C
 #else
-#define _BIOS_INPUT_DELAY 0x00032C
+#define _BIOS_INPUT_REPEAT_DELAY 0x00032C
 #endif
 
 /**
@@ -1454,9 +1447,10 @@
  * In order to use the Sub CPU BIOS in Mode 1, you will need to manually decompress it to
  * its proper location in PRG RAM
  *
- * Note that the location of the compressed BIOS is not constant across Mega CD revisions.
+ * @warning Tech Bulletin #3 indicates that the compressed Sub BIOS is at 0x016000, but it looks
+ * like this is not consistent across Mega CD revisions!
  */
-// for all revisions EXCEPT US/EU Model 1 and LaserActive (Mega LD) hardware
+// below is the offset for all revisions EXCEPT US/EU Model 1 and LaserActive (Mega LD) hardware
 #if TARGET == MEGACD_MODE1
 #define _COMPRESSED_SUB_BIOS 0x416000
 #else

@@ -49,19 +49,19 @@ struct SpriteMapping
 struct SpriteLayout
 {
 	u8 mapping_count;
-	// this byte is a bit of a mystery: it is copied to 0x19 of the SpriteObject
+	// this byte is a bit of a mystery: it is copied to 0x19 of the Entity
 	// and if the h flip flag is set, it will add +1 to the value in the object.
 	// It does not have any effect on the object and its purpose is unknown
 	u8 unknown;
 	struct SpriteMapping mappings[];
 };
 
-// bootlib defined display flags for SpriteObject
-#define HFLIP 0x80;
-#define HIDE 0x02;
+// BIOS defined Entity display flags
+#define ENTITY_HFLIP 1 << 7
+#define ENTITY_HIDE 1 << 1
 
 // size: 26 bytes
-struct SpriteObject
+struct Entity
 {
 	u16 enable : 1;
 	u16 jmptbl_offset : 15;
@@ -98,21 +98,24 @@ typedef struct Palette
 } Palette;
 
 /**
- * @def* BIOS_WORK_BUFFER
+ * @def* bios_work_buffer
  * @brief Work RAM for graphics decompression routines
  * @sa _BIOS_WORK_BUFFER
  * @ingroup bios_cmp
  */
-#define BIOS_WORK_BUFFER ((u8 *) _BIOS_WORK_BUFFER)
+// TODO test this
+#define bios_work_buffer (*(u8[0x200]) _BIOS_WORK_BUFFER)
+// #define bios_work_buffer ((u8 *) _BIOS_WORK_BUFFER)
 
+// TODO check that the LEN/SZ's in this section can be replaced with sizeof()
 /**
- * @def BIOS_WORK_BUFFER_SZ
- * @brief Size of @ref BIOS_WORK_BUFFER
+ * @def BIOS_WORK_BUFFER_LEN
+ * @brief Size of @ref bios_work_buffer
  */
-#define BIOS_WORK_BUFFER_SZ 0x200
+// #define BIOS_WORK_BUFFER_LEN 0x200
 
 /**
- * @def Sprite* BIOS_SPRLIST
+ * @def Sprite* bios_sprlist
  * @brief Sprite list buffer
  * @ingroup bios_vdp
  * @sa _BIOS_SPRLIST
@@ -120,62 +123,62 @@ typedef struct Palette
  * @details
  * Size: 0x280 bytes
  */
-#define BIOS_SPRLIST (*((Sprite(*)[80]) _BIOS_SPRLIST))
-// #define BIOS_SPRLIST ((Sprite *)_BIOS_SPRLIST)
+#define bios_sprlist (*((Sprite(*)[80]) _BIOS_SPRLIST))
+// #define bios_sprlist ((Sprite *)_BIOS_SPRLIST)
 
-#define BIOS_SPRLIST_SZ 0x280
+// #define bios_sprlist_len 0x280
 
 /**
- * @def s16* BIOS_PALETTE
+ * @def s16* bios_palette
  * @brief CRAM (palette) buffer
  * @ingroup bios_vdp
  * @sa _BIOS_PALETTE
  */
-#define BIOS_PALETTE (*((s16(*)[64]) _BIOS_PALETTE))
+#define bios_palette (*((s16(*)[64]) _BIOS_PALETTE))
 
-#define BIOS_PALETTE_SZ 0x80
+// #define BIOS_PALETTE_SZ 0x80
 
 /**
- * @def BIOS_PAL0
+ * @def bios_pal1
  * @brief Palette line #0 buffer
  * @ingroup bios_vdplib/main
- * @sa _BIOS_PAL0
- */
-#define BIOS_PAL0 (*((s16(*)[16]) _BIOS_PAL0))
-
-/**
- * @def BIOS_PAL1
- * @brief Palette line #1 buffer
- * @ingroup bios_vdp
  * @sa _BIOS_PAL1
  */
-#define BIOS_PAL1 (*((s16(*)[16]) _BIOS_PAL1))
+#define bios_pal1 (*((s16(*)[16]) _BIOS_PAL1))
 
 /**
- * @def BIOS_PAL2
- * @brief Palette line #2 buffer
+ * @def bios_pal2
+ * @brief Palette line #1 buffer
  * @ingroup bios_vdp
  * @sa _BIOS_PAL2
  */
-#define BIOS_PAL2 (*((s16(*)[16]) _BIOS_PAL2))
+#define bios_pal2 (*((s16(*)[16]) _BIOS_PAL2))
 
 /**
- * @def BIOS_PAL3
- * @brief Palette line #3 buffer
+ * @def bios_pal3
+ * @brief Palette line #2 buffer
  * @ingroup bios_vdp
  * @sa _BIOS_PAL3
  */
-#define BIOS_PAL3 (*((s16(*)[16]) _BIOS_PAL3))
+#define bios_pal3 (*((s16(*)[16]) _BIOS_PAL3))
 
 /**
- * @def void* BIOS_VINT_EX_PTR
- * @brief Pointer to the VINT_EX routine used in the Boot ROM VINT handler.
- * @sa _BIOS_VINT_EX_PTR
+ * @def bios_pal4
+ * @brief Palette line #3 buffer
+ * @ingroup bios_vdp
+ * @sa _BIOS_PAL4
  */
-#define BIOS_VINT_EX_PTR ((volatile void *(*) ) _BIOS_VINT_EX_PTR)
+#define bios_pal4 (*((s16(*)[16]) _BIOS_PAL4))
 
 /**
- * @def* BIOS_VDPREGS
+ * @def void* bios_vint_user
+ * @brief Pointer to the VINT_USER routine used in the Boot ROM VINT handler.
+ * @sa _BIOS_VINT_USER
+ */
+#define bios_vint_user ((volatile void *(*) ) _BIOS_VINT_USER)
+
+/**
+ * @def* bios_vdp_regs
  * @brief VDP registers buffer
  * @ingroup bios_vdp
  *
@@ -185,152 +188,152 @@ typedef struct Palette
  *
  * Size: 16bit * 19 = 0x26 bytes
  *
- * @sa _BIOS_VDPREGS
+ * @sa _BIOS_VDP_REGS
  */
-// #define BIOS_VDPREGS (*((volatile u16(*)[19]) _BIOS_VDPREGS))
-#define BIOS_VDPREGS ((volatile u16 *) _BIOS_VDPREGS)
+// #define bios_vdp_regs (*((volatile u16(*)[19]) _BIOS_VDP_REGS))
+#define bios_vdp_regs ((volatile u16 *) _BIOS_VDP_REGS)
 
 /**
- * @def BIOS_COMFLAGS_MAIN
+ * @def bios_comflags_main
  * @brief GA comm flags for Main CPU buffer
  * @sa _BIOS_COMFLAGS_MAIN
  */
-#define BIOS_COMFLAGS_MAIN ((volatile u8 *) _BIOS_COMFLAGS_MAIN)
+#define bios_comflags_main ((volatile u8 *) _BIOS_COMFLAGS_MAIN)
 
 /**
- * @def const BIOS_COMFLAGS_SUB
+ * @def const bios_comflags_sub
  * @brief GA comm flags for Sub CPU buffer
  * @sa _BIOS_COMFLAGS_SUB
  */
-#define BIOS_COMFLAGS_SUB ((volatile u8 const *) _BIOS_COMFLAGS_SUB)
+#define bios_comflags_sub ((volatile u8 const *) _BIOS_COMFLAGS_SUB)
 
 /**
- * @def* BIOS_COMCMD
+ * @def* bios_comcmd
  * @brief Array of cached GA COMCMD (Main -> Sub) registers
  * @sa _BIOS_COMCMD
  */
-#define BIOS_COMCMD (*((volatile u16(*)[8]) _BIOS_COMCMD))
+#define bios_comcmd (*((volatile u16(*)[8]) _BIOS_COMCMD))
 
 /**
- * @def BIOS_COMSTAT
+ * @def bios_comstat
  * @brief Array of cached GA COMSTAT (Main -> Sub) registers
  * @sa _BIOS_COMSTAT
  */
-#define BIOS_COMSTAT (*((volatile u16 const(*)[8]) _BIOS_COMSTAT))
+#define bios_comstat (*((volatile u16 const(*)[8]) _BIOS_COMSTAT))
 
 /**
- * @def BIOS_JOY1_MOUSE_DATA
+ * @def bios_joy1_mouse_data
  * @sa _BIOS_JOY1_MOUSE_DATA
  * @ingroup bios_input
  */
-#define BIOS_JOY1_MOUSE_DATA (*((u16 *) _BIOS_JOY1_MOUSE_DATA))
+#define bios_joy1_mouse_data (*((u16 *) _BIOS_JOY1_MOUSE_DATA))
 
 /**
- * @def BIOS_JOY1_MOUSE_DX
+ * @def bios_joy1_mouse_dx
  * @brief Mouse delta X
  * @sa _BIOS_JOY1_MOUSE_DX
  * @ingroup bios_input
  */
-#define BIOS_JOY1_MOUSE_DX (*((u16 *) _BIOS_JOY1_MOUSE_DX))
+#define bios_joy1_mouse_dx (*((u16 *) _BIOS_JOY1_MOUSE_DX))
 
 /**
- * @def BIOS_JOY1_MOUSE_DY
+ * @def bios_joy1_mouse_dy
  * @brief Mouse delta Y
  * @sa _BIOS_JOY1_MOUSE_DY
  * @ingroup bios_input
  */
-#define BIOS_JOY1_MOUSE_DY (*((u16 *) _BIOS_JOY1_MOUSE_DY))
+#define bios_joy1_mouse_dy (*((u16 *) _BIOS_JOY1_MOUSE_DY))
 
 /**
- * @def BIOS_JOY2_MOUSE_DATA
+ * @def bios_joy2_mouse_data
  * @sa _BIOS_JOY2_MOUSE_DATA
  * @ingroup bios_input
  */
-#define BIOS_JOY2_MOUSE_DATA (*((u16 *) _BIOS_JOY2_MOUSE_DATA))
+#define bios_joy2_mouse_data (*((u16 *) _BIOS_JOY2_MOUSE_DATA))
 
 /**
- * @def BIOS_JOY2_MOUSE_DX
+ * @def bios_joy2_mouse_dx
  * @brief Mouse delta X
  * @sa _BIOS_JOY2_MOUSE_DX
  * @ingroup bios_input
  */
-#define BIOS_JOY2_MOUSE_DX (*((u16 *) _BIOS_JOY2_MOUSE_DX))
+#define bios_joy2_mouse_dx (*((u16 *) _BIOS_JOY2_MOUSE_DX))
 
 /**
- * @def BIOS_JOY2_MOUSE_DY
+ * @def bios_joy2_mouse_dy
  * @brief Mouse delta Y
  * @sa _BIOS_JOY2_MOUSE_DY
  * @ingroup bios_input
  */
-#define BIOS_JOY2_MOUSE_DY (*((u16 *) _BIOS_JOY2_MOUSE_DY))
+#define bios_joy2_mouse_dy (*((u16 *) _BIOS_JOY2_MOUSE_DY))
 
 /**
- * @def BIOS_JOY1_TYPE
+ * @def bios_joy1_type
  * @sa _BIOS_JOY1_TYPE
  * @ingroup bios_input
  */
-#define BIOS_JOY1_TYPE (*((u8 *) _BIOS_JOY1_TYPE))
+#define bios_joy1_type (*((u8 *) _BIOS_JOY1_TYPE))
 
 /**
- * @def BIOS_JOY2_TYPE
+ * @def bios_joy2_type
  * @sa _BIOS_JOY2_TYPE
  * @ingroup bios_input
  */
-#define BIOS_JOY2_TYPE ((u8 *) _BIOS_JOY2_TYPE)
+#define bios_joy2_type ((u8 *) _BIOS_JOY2_TYPE)
 
 /**
- * @def BIOS_JOY1_HOLD
- * @brief Port 1 controller latched input
+ * @def bios_joy1_hold
+ * @brief Port 1 controller input holds
  * @sa _BIOS_JOY1_HOLD
  * @ingroup bios_input
  */
-#define BIOS_JOY1_HOLD (*((volatile u8 const *) _BIOS_JOY1_HOLD))
+#define bios_joy1_hold (*((volatile u8 const *) _BIOS_JOY1_HOLD))
 
 /**
- * @def BIOS_JOY1_PRESS
- * @brief Port 1 controller single press input
- * @sa _BIOS_JOY1_PRESS
+ * @def bios_joy1_hit
+ * @brief Port 1 controller input hits (single-press)
+ * @sa _BIOS_JOY1_HIT
  * @ingroup bios_input
  */
-#define BIOS_JOY1_PRESS (*((volatile u8 const *) _BIOS_JOY1_PRESS))
+#define bios_joy1_hit (*((volatile u8 const *) _BIOS_JOY1_HIT))
 
 /**
- * @def BIOS_JOY2_HOLD
- * @brief Port 2 controller latched input
+ * @def bios_joy2_hold
+ * @brief Port 2 controller input holds
  * @sa _BIOS_JOY2_HOLD
  * @ingroup bios_input
  */
-#define BIOS_JOY2_HOLD (*((volatile u8 const *) _BIOS_JOY2_HOLD))
+#define bios_joy2_hold (*((volatile u8 const *) _BIOS_JOY2_HOLD))
 
 /**
- * @def BIOS_JOY2_PRESS
- * @brief Port 2 controller single press input
- * @sa _BIOS_JOY2_PRESS
+ * @def bios_joy2_hit
+ * @brief Port 2 controller input hits (single-press)
+ * @sa _BIOS_JOY2_HIT
  * @ingroup bios_input
  */
-#define BIOS_JOY2_PRESS (*((volatile u8 const *) _BIOS_JOY2_PRESS))
+#define bios_joy2_hit (*((volatile u8 const *) _BIOS_JOY2_HIT))
 
 /**
- * @def BIOS_JOY1_DELAY
- * @sa _BIOS_JOY1_DELAY
+ * @def bios_joy1_repeat_delay
+ * @sa _BIOS_JOY1_REPEAT_DELAY
  * @ingroup bios_input
  *
- * @note For use with @ref BIOS_INPUT_DELAY
+ * @note For use with @ref bios_input_repeat_delay
  */
-#define BIOS_JOY1_DELAY (*((volatile u8 *) _BIOS_JOY1_DELAY))
+#define bios_joy1_repeat_delay (*((volatile u8 *) _BIOS_JOY1_REPEAT_DELAY))
 
 /**
  * @def BIOS_JOY2_DELAY
  * @sa _BIOS_JOY2_DELAY
  * @ingroup bios_input
  *
- * @note For use with @ref BIOS_INPUT_DELAY
+ * @note For use with @ref bios_input_repeat_delay
  */
 #define BIOS_JOY2_DELAY (*((volatile u8 *) _BIOS_JOY2_DELAY))
 
 /**
- * @def BIOS_VINT_FLAGS
- * @sa _BIOS_VINT_FLAGS
+ * @def bios_vint_handler_flags
+ * @sa _BIOS_VINT_HANDLER_FLAGS
  * @ingroup bios_int
  *
  * @details
@@ -338,39 +341,39 @@ typedef struct Palette
  * during vblank.
  *
  * Bit 0 - Copy sprite list to VDP
- * Bit 1 - Call VINT_EX vector during vblank
+ * Bit 1 - Call VINT_USER vector during vblank
  */
-#define BIOS_VINT_FLAGS (*((u8 *) _BIOS_VINT_FLAGS))
+#define bios_vint_handler_flags (*((u8 *) _BIOS_VINT_HANDLER_FLAGS))
 
 /**
- * @def BIOS_VINT_COUNTER
+ * @def bios_vint_counter
  * @brief Incremented by 1 on each vertical blank (VINT)
  * @sa _BIOS_VINT_COUNTER
- * * @ingroup bios_int
+ * @ingroup bios_int
  */
-#define BIOS_VINT_COUNTER (*((volatile u8 *) _BIOS_VINT_COUNTER))
+#define bios_vint_counter (*((volatile u8 *) _BIOS_VINT_COUNTER))
 
 /**
- * @def BIOS_VINT_SKIP_GFX
+ * @def bios_vint_skip_gfx
  * @sa _BIOS_VINT_SKIP_GFX
- * * @ingroup bios_int
+ * @ingroup bios_int
  *
  * @details Skips these operations during vblank:
  * CRAM copy, sprite list copy, increment vblank counter
  *
  * Will still perform IO updates, though
  */
-#define BIOS_VINT_SKIP_GFX (*((u8 *) _BIOS_VINT_SKIP_GFX))
+#define bios_vint_skip_gfx (*((u8 *) _BIOS_VINT_SKIP_GFX))
 
 /**
- * @def BIOS_VDP_UPDATE_FLAGS
+ * @def bios_vdp_update_flags
  * @sa _BIOS_VDP_UPDATE_FLAGS
- * * @ingroup bios_int
+ * @ingroup bios_int
  */
-#define BIOS_VDP_UPDATE_FLAGS (*((u8 *) _BIOS_VDP_UPDATE_FLAGS))
+#define bios_vdp_update_flags (*((u8 *) _BIOS_VDP_UPDATE_FLAGS))
 
 /**
- * @def BIOS_RANDOM
+ * @def bios_random
  * @brief Contains a random 16 bit value
  * @sa _BIOS_RANDOM
  * @ingroup bios_misc
@@ -379,10 +382,10 @@ typedef struct Palette
  * You must make a call to @ref BIOS_PRNG on each vblank in order to
  * use this!
  */
-#define BIOS_RANDOM (*((u16 const *) _BIOS_RANDOM))
+#define bios_random (*((u16 const *) _BIOS_RANDOM))
 
 /**
- * @def BIOS_FONT_TILE_BASE
+ * @def bios_font_tile_base
  * @sa _BIOS_FONT_TILE_BASE
  * @ingroup bios_misc
  *
@@ -390,10 +393,10 @@ typedef struct Palette
  * The value added to each character byte when calling _PRINT_STRING.
  * The font can begin no earlier than tile index 0x20
  */
-#define BIOS_FONT_TILE_BASE (*((u16 *) _BIOS_FONT_TILE_BASE))
+#define bios_font_tile_base (*((u16 *) _BIOS_FONT_TILE_BASE))
 
 /**
- * @def BIOS_PLANE_WIDTH
+ * @def bios_plane_width
  * @brief Cached value of the plane width as defined in VDP reg. 0x10.
  * @ingroup bios_vdp
  * @sa _BIOS_VDP_DEFAULT_PLANE_WIDTH
@@ -408,54 +411,47 @@ typedef struct Palette
  * Use the @ref PlaneWidth enum to make it semantically clear what
  * the width is in tiles
  */
-#define BIOS_PLANE_WIDTH (*((u16 *) _BIOS_VDP_DEFAULT_PLANE_WIDTH))
+#define bios_plane_width (*((u16 *) _BIOS_VDP_DEFAULT_PLANE_WIDTH))
 
 /**
- * @def BIOS_SPRTBL_PTR
- * @sa _BIOS_SPRTBL_PTR
- * @ingroup bios_vdp
- */
-#define BIOS_SPRTBL_PTR (*((u8 *) _BIOS_SPRTBL_PTR))
-
-/**
- * @def BIOS_SPR_JMPTBL_PTR
+ * @def bios_entity_routines
  * @brief Pointer to the jump table for entity processing
- * @sa _BIOS_SPR_JMPTBL_PTR
+ * @sa _BIOS_ENTITY_ROUTINES
  * @ingroup bios_vdp
  */
-#define BIOS_SPR_JMPTBL_PTR (*((void const **) _BIOS_SPR_JMPTBL_PTR))
+#define bios_entity_routines (*((void const **) _BIOS_ENTITY_ROUTINES))
 
 /**
- * @def BIOS_FADEIN_PAL_INDEX
+ * @def bios_fadein_cram_index
  * @brief Palette offset on which the fade in palette should begin
- * @sa _BIOS_FADEIN_PAL_INDEX
+ * @sa _BIOS_FADEIN_CRAM_INDEX
  * @ingroup bios_vdp
  */
-#define BIOS_FADEIN_PAL_INDEX (*((u8 *) _BIOS_FADEIN_PAL_INDEX))
+#define bios_fadein_cram_index (*((u8 *) _BIOS_FADEIN_CRAM_INDEX))
 
 /**
- * @def BIOS_FADEIN_PAL_LENGTH
+ * @def bios_fadein_pal_length
  * @brief Number of entries in the fade in palette
  * @sa _BIOS_FADEIN_PAL_LENGTH
  * @ingroup bios_vdp
  */
-#define BIOS_FADEIN_PAL_LENGTH (*((u8 *) _BIOS_FADEIN_PAL_LENGTH))
+#define bios_fadein_pal_length (*((u8 *) _BIOS_FADEIN_PAL_LENGTH))
 
 /**
- * @def BIOS_FADEIN_STEP
+ * @def bios_fadein_step
  * @brief Indicates if a fade in is still in progress
  * @sa _BIOS_FADEIN_STEP
  * @ingroup bios_vdp
  */
-#define BIOS_FADEIN_STEP (*((volatile u16 *) _BIOS_FADEIN_STEP))
+#define bios_fadein_step (*((volatile u16 *) _BIOS_FADEIN_STEP))
 
 /**
- * @def _BIOS_FADEIN_TARGET_PAL_PTR
+ * @def _BIOS_FADEIN_TARGET_PAL
  * @brief Pointer to the target fade in palette
- * @sa _BIOS_FADEIN_TARGET_PAL_PTR
+ * @sa _BIOS_FADEIN_TARGET_PAL
  * @ingroup bios_vdp
  */
-#define BIOS_FADEIN_TARGET_PAL_PTR (*((u8 *) _BIOS_FADEIN_TARGET_PAL_PTR))
+#define bios_fadein_target_pal (*((u8 *) _BIOS_FADEIN_TARGET_PAL))
 
 /**
  * @fn bios_entry
@@ -543,7 +539,7 @@ static inline void bios_init_sp()
  *
  * @details Copies GA comm registers to the RAM
  * mirrors, sends INT2 (VINT ocurred) to Sub CPU, updates VDP palette from
- * RAM, calls VINT_EX, updates IO (controllers)
+ * RAM, calls VINT_USER, updates IO (controllers)
  */
 static inline void bios_vint_handler()
 {
@@ -611,7 +607,7 @@ typedef enum ControllerType
  *
  * @note
  * This is called during normal system init and with the results stored
- * in @ref BIOS_JOY1_TYPE and @ref BIOS_JOY2_TYPE
+ * in @ref bios_joy1_type and @ref bios_joy2_type
  */
 static inline u8 bios_detect_controller(u8 * io_data_port)
 {
@@ -890,7 +886,7 @@ static inline void bios_load_map(u32 const vdpptr, u16 const width, u16 const he
  * use @ref bios_set_hint instead.
  *
  * @details
- * The VDP register buffer (_BIOS_VDPREGS) is updated with this call.
+ * The VDP register buffer (_BIOS_VDP_REGS) is updated with this call.
  */
 static inline void bios_set_hint_workram(void * hint_handler)
 {
@@ -968,12 +964,12 @@ static inline void bios_vdp_disp_disable()
 
 /**
  * @fn bios_vint_wait_default
- * @brief Wait for vertical interrupt with default flags
+ * @brief Wait for VBLANK interrupt with default flags
  * @ingroup bios_int
- * @sa _BIOS_VINT_HANDLER_WAIT_DEFAULT
+ * @sa _BIOS_VINT_WAIT_DEFAULT
  *
  * @details This will set the default VINT flags (copy sprite list & call
- * VINT_EX) before waiting for VINT
+ * VINT_USER) before waiting for VINT
  *
  * @note This will also make a call to _PRNG
  *
@@ -986,15 +982,15 @@ static inline void bios_vint_wait_default()
 			jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_VINT_HANDLER_WAIT_DEFAULT)
+		: "i"(_BIOS_VINT_WAIT_DEFAULT)
 		: "d0");
 }
 
 /**
  * @fn bios_vint_wait
- * @brief Wait for vertical interrupt
+ * @brief Wait for VBLANK interrupt
  * @ingroup bios_int
- * @sa _BIOS_VINT_HANDLER_WAIT
+ * @sa _BIOS_VINT_WAIT
  *
  * @note This will also make a call to _PRNG
  *
@@ -1008,7 +1004,7 @@ static inline void bios_vint_wait(u8 flags)
 			jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_VINT_HANDLER_WAIT), "d"(D0));
+		: "i"(_BIOS_VINT_WAIT), "d"(D0));
 }
 
 /**
@@ -1102,7 +1098,7 @@ static inline void bios_load_1bpp_tiles(void * chr_data, u16 tile_count, VDPCMD 
  * output variable (set in a1) rather than the standard input mirror in order
  * to use this correctly.
  */
-static inline void bios_input_delay(u8 * input, bool use_2p)
+static inline void bios_input_repeat_delay(u8 * input, bool use_2p)
 {
 	register u32 A1 asm("a1") = (u32) input;
 	register u16 D0 asm("d0") = (u16) use_2p;
@@ -1112,7 +1108,7 @@ static inline void bios_input_delay(u8 * input, bool use_2p)
 			jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_INPUT_DELAY), "a"(A1), "d"(D0)
+		: "i"(_BIOS_INPUT_REPEAT_DELAY), "a"(A1), "d"(D0)
 		: "cc", "d1", "a5");
 }
 
@@ -1216,7 +1212,7 @@ static inline void bios_dma_xfer(VDPCMD dest, u8 const * source, u16 length)
 };
 
 /**
- * @fn bios_dma_xfer_WORD_RAM
+ * @fn bios_dma_xfer_word_ram
  * @brief Performs a data transfer from Word RAM to VRAM via DMA
  * @param[in] D0.l VRAM destination (vdpptr format)
  * @param[in] D1.l Source address
@@ -1227,7 +1223,7 @@ static inline void bios_dma_xfer(VDPCMD dest, u8 const * source, u16 length)
  * Word RAM to VRAM which must be accounted for by writing the final word of
  * data to the data port. This subroutine takes care of that extra step.
  */
-static inline void bios_dma_xfer_WORD_RAM(VDPCMD const dest, void const * source, u16 const length)
+static inline void bios_dma_xfer_word_ram(VDPCMD const dest, void const * source, u16 const length)
 {
 	register u32 D0 asm("d0") = dest;
 	register u32 D1 asm("d1") = (u32) source;
@@ -1276,7 +1272,7 @@ static inline void bios_dma_copy(u32 vdpptr_dest, u16 source, u16 length)
  *
  * @details This uses the default Boot ROM VRAM layout (i.e. sprite list at
  * 0xB800) Will only perform the copy of bit 0 of VINT_FLAGS is set (so this is
- * likely intended to be called from VINT, probably VINT_EX)
+ * likely intended to be called from VINT, probably VINT_USER)
  */
 static inline void bios_copy_sprlist()
 {
@@ -1356,7 +1352,7 @@ static inline void bios_load_pal_update(Palette const * pal_data)
  * @brief Transfer palette cache to CRAM via DMA
  * @ingroup bios_vdp
  *
- * @note Uses BIOS_VDP_UPDATE_FLAGS
+ * @note Uses bios_vdp_update_flags
  */
 static inline void bios_copy_pal()
 {
@@ -1370,7 +1366,7 @@ static inline void bios_copy_pal()
 };
 
 /**
- * @fn bios_process_sprobjs
+ * @fn bios_process_entities
  * @brief Update/display sprite objects
  * @param[in] A0.l Pointer to object array
  * @param[in] A1.l Pointer to sprite list buffer
@@ -1378,8 +1374,8 @@ static inline void bios_copy_pal()
  * @param[in] D1.w Object size
  * @ingroup bios_vdp
  */
-static inline void bios_process_sprobjs(
-	struct SpriteObject const * obj_array, Sprite const * sprtbl_cache, u16 const obj_count, u16 const obj_size)
+static inline void bios_process_entities(
+	struct Entity const * obj_array, Sprite const * sprtbl_cache, u16 const obj_count, u16 const obj_size)
 {
 	register u32 A0 asm("a0") = (u32) obj_array;
 	register u32 A1 asm("a1") = (u32) sprtbl_cache;
@@ -1391,7 +1387,7 @@ static inline void bios_process_sprobjs(
   jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_PROCESS_SPROBJS), "a"(A0), "a"(A1), "d"(D0), "d"(D1)
+		: "i"(_BIOS_PROCESS_ENTITIES), "a"(A0), "a"(A1), "d"(D0), "d"(D1)
 		: "d2", "d3", "d4", "d6", "a2");
 };
 
@@ -1431,7 +1427,7 @@ static inline u16 bios_prng_mod(u16 const modulo)
  * @brief Generate a new random number
  * @ingroup bios_misc
  *
- * @details The number will be stored in BIOS_RANDOM
+ * @details The number will be stored in bios_random
  */
 static inline void bios_prng()
 {

@@ -49,8 +49,8 @@ void main()
 	MLEVEL6_VECTOR = (void *(*) ) _BIOS_VINT_HANDLER;
 	enable_interrupts();
 	bios_load_font_defaults();
-	BIOS_PALETTE[1] = 0xeee;
-	BIOS_VDP_UPDATE_FLAGS |= VDPUPDATE_PAL;
+	bios_palette[1] = 0xeee;
+	bios_vdp_update_flags |= VDPUPDATE_PAL;
 
 	bios_print("PCM Audio Playback\xff", (VDPPTR(_BIOS_VDP_DEFAULT_PLANEA_ADDR + PLANE_POS(1, 1, Width64)) | VRAM_W));
 
@@ -63,7 +63,7 @@ void main()
 	{
 		bios_vint_wait_default();
 
-		if ((BIOS_JOY1_PRESS & PAD_A))
+		if ((bios_joy1_hit & PAD_A))
 		{
 			play_pcm();
 		}

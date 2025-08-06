@@ -13,6 +13,7 @@
 #include <main/vdp.def.h>
 #include <macros.s>
 #include "ipx_layout.s"
+#include "bridge.h"
 
 ip_entry:
 
@@ -50,11 +51,11 @@ ip_entry:
   // (Which needs to happen soon, as this keeps the Sub CPU on the Mega CD side in "sync" by alerting
   // it when a VBLANK occurs.)
   // Once again, the built-in BIOS has a handler that can help us. It uses a couple of bits in the
-  // _BIOS_VINT_FLAGS variable to call an user function and to update the sprite table (neither of which
+  // _BIOS_VINT_HANDLER_FLAGS variable to call an user function and to update the sprite table (neither of which
   // we need right now, so we should make sure that is cleared out.)
   // We set the pointer to the handler in the system vector jump table. The +2 is because the first two
   // bytes are the JMP opcode and we want to set the address to which it jumps.
-  move     #0, (_BIOS_VINT_FLAGS)
+  move     #0, (_BIOS_VINT_HANDLER_FLAGS)
   move.l   #_BIOS_VINT_HANDLER, (_MLEVEL6 + 2)
 
   // Restore interrupts to allow VINTs to fire and ultimately allow CD-ROM data to flow
@@ -72,7 +73,8 @@ ip_entry:
   //   - Wait for Word RAM ownership
   //   - Enjoy your freshly transferred data
   GRANT_2M
-  move.w   #0xfe, _GAREG_COMCMD0	//send the load IPX command to sub
+  move.w   #FILE_IPX_MMD, _GAREG_COMCMD1
+  move.w   #CMD_LOAD_FILE, _GAREG_COMCMD0	//send the load IPX command to sub
 0:tst.w    _GAREG_COMSTAT0				//wait for response on status reg #0
   beq      0b
   move.w   #0, _GAREG_COMCMD0			//send ack

@@ -99,7 +99,7 @@
 #define _MNOCOD1 0xfffd96 // Line 1111
 #define _MSPVERR 0xfffd9c // Priv. Violation
 #define _MTRACE 0xfffda2	// Trace
-#define _VINT_EX 0xfffda8
+#define _VINT_USER 0xfffda8
 #define _MBURAM 0xfffdae
 
 #endif

@@ -1,17 +1,115 @@
 Main BIOS
 ================
 
+1. [Introduction](#introduction)
+2. [Memory Usage](#memory-usage)
+3. [Taxonomy](#taxonomy)
+
 # Introduction
 
-The Boot ROM is the Main CPU half of the Mega CD internal program, including the UI for the built-in CD player and backup RAM manager. Importantly for us as developers, it also includes a library of useful functions. These include tools for reading controller input, random number generation, DMA transfer functions, data decompression and more. The tradeoff for using these functions is that they use a portion of the already limited Work RAM, reducing the amount available for your game.
+The Mega CD includes an internal ROM that contains the code and data for such things as the startup screen, the CD player and the memory manager. It also includes a library of system calls on both the Main CPU and Sub CPU side. System calls on the Sub side deal primarily with CD drive control, audio playback and data reads, as well as BRAM control. The Main side system library is quite varied, providing many useful functions for commonly used processes in games such as reading controller input, random number generation, DMA transfer, and data decompression.
 
-This document discusses the pros and cons of using the Boot ROM Library and provides a reference for all the functionality it provides.
+For the Sub CPU side, these calls are well-documented within the official Sega documentation (see MEGA CD BIOS MANUAL). The calls on the Main CPU side, however, are undocumented and are only understood from reverse engineering.
 
-# Official Documentation
+This document discusses the pros and cons of using the Main side system library (which we call the "Main BIOS" for simplicity's sake) and provides a detailed reference for all the functionality it provides.
 
-As stated in the main readme file:
+## Naming
 
-> The Main CPU side Boot ROM code, however, is not well documented. In fact, it is somewhat of a mystery. Within the Boot ROM is an array of functions that are linked at a jump table, indicating they are meant to be used across ROM revisions and thus intended for use by games. While it seems most games do not make use of these system calls, at least some do (such as Keio Yūgekitai, Switch, Alshark, Jangō World Cup, and Ishii Hisaichi no Daiseikai). This is solid evidence that the calls can be freely used by developers if they wish.
+To be pedantic, "Main BIOS" is somewhat of a misnomer here. A more accurate term may be "Boot ROM System Library", and indeed for a while in Megadev we prefixed these calls with "bootlib". However, we eventually decided to go with "bios" as it is shorter and there is a symmetry to having a bios on both the Main and Sub side. Moreover, the entire internal ROM is very often colloquially called "the BIOS" especially in terms of emulation.
+
+So while the term BIOS is not exactly accurate (even Sega's use of the term BIOS in regards to the Sub CPU side *system calls* isn't exactly correct), we have opted to use it to keep things simple and familiar.
+
+# Main BIOS Mysteries
+
+There is no official English documentation for the Main BIOS yet there are games that use it. This raises some questions.
+
+## How do we know it exists?
+
+On startup, the Main CPU bootstraps from the 1 megabit internal ROM, memory mapped to the range 0 to 0x20000. The "MEGA CD HARDWARE MANUAL" and "MEGA CD SOFTWARE DEVELOPMENT" documentation both describe this space as simply being for "CD-ROM boot". While the documentation never explicitly says this area cannot be used by games, there is also never any explanation as to what, if anything, is available or how to access it. Given the (lack of) information available, it follows that this space is purely internal and not meant to be used by games.
+
+Yet it was discovered that a number of games were making calls into this "CD-ROM boot" area (such as Keio Yūgekitai, Switch, Alshark, Jangō World Cup, and Ishii Hisaichi no Daiseikai). Looking into this, we find these calls reference a jump table beginning at 0x280, and further analysis shows that these functions perform a wide variety of common Mega Drive processes. Many of the routines are called by the CD Player, for example, but many are also unused.
+
+The wide range of functionality, the only-partial use by the internal utilities, the existence as a fixed-position jump table and the fact that a significant number of production games make calls via this table suggests that this was a library meant to be used by game developers to reduce some boilerplate code.
+
+## What is a jump table?
+
+A jump table is simply an array of JMP commands with their offset. In this case, it is a fixed-position jump table, meaning it appears at the same offset across all revisions and versions of the internal ROM. You can find this table at offset 0x280 in the Model 1 USA version ROM, in the Model 2 Japanese version, in the Wondermega and Mega LD, and so on.
+
+The idea here is that as long as the position and order of this table doesn't change, *you can make updates to the code that is called by this table.* This ensures that the very first Mega CD game will still work on the last hardware model, even though its internal ROM is a different version.
+
+There is a similar jump table configuration on the Sub CPU side, and this is what we use when making BIOS calls for CD audio playback, backup RAM access, and so on. We specify an operation code (which is the index of the entry in the table) and call a vector that redirects into the table.
+
+The fact that there is a "revision-proof" jump table within the Main side internal ROM strongly suggests that it was meant to be used by game developers.
+
+## Are we simply missing some English documentation?
+
+It seems unlikely that we are missing any English paperwork. For whatever lucky reason, we have not one, not two, but three different sources of the same documents (and some partial pages from a fourth set). While the quality of the scans varies, all have the same core documents and content. It seems improbable for an additional mystery document to be missing across all three (four) sets.
+
+## Is there at least any mention of the Main BIOS calls at all?
+
+While there is no printed, dedicated document to the topic, we do have some brief mentions of the Main BIOS located within "Sega CD Technical Bulletin #3." One section says this (emphasis added):
+
+> ### 3. The status after booting is completed.
+>
+> #### Main Side
+>
+> The loading occurs from the beginning of WORK RAM. The stack is  
+> $FFFD00. The RAM's usage status is as follows. Please refer to the  
+> RAM and PORT assignments in 'MEM_MAP.ASS'. Subsequent to $fffd00  
+> are jump table, etc., and therefore, should not be used. Those  
+> preceding $fffd00 could be freely used **provided that boot ROM  
+> sample routine is not used**. Also, when setting jump address in the  
+> jump table, jump address must be set to a value equal to the label  
+> value plus 2. The label value should not be rewritten. **Subroutine in  
+> the boot ROM may also be used (please see mainent.i, rom_util.doc).  
+> Use "works" defined by the using routine.** Enter SEGA-specified  
+> security program at the head of IP. Please note that Europe and the  
+> U.S. have different contents and sizes. **Outside of the system area,  
+> work RAM values could differ depending on the BOOT-ROM version;  
+> also keep in mind that the work RAM values are not guaranteed.**  
+
+Despite the less than optimial translation, this actually gives us some great information and a clue about the documentation. Firstly, it says quite plainly that "subroutine in the boot ROM may also be used," which tells us, yes, code within the Main side ROM is allowed to be used by games. Next, it refers us to `MAINENT.I` and `ROM_UTIL.DOC`. Unfortunately, we do not have either of these files, but given the name of the latter file, it's possible that in lieu of printed documentation, there was a text file for reference. Whether these files were actually made available to international developers is a different question.
+
+Following this in the tech bulletin is a badly faxed list of assembly language equates that define a number of places throughout Work RAM. This includes things like the CRAM and VDP register buffers, which line up with those that appear in the Main BIOS functions. This may very well be the contents of `MAINENT.I`, though it is not specifically identified with a filename. While this doesn't provide us with information about the Main BIOS calls themselves, it does provide information on the location of some data structures used by those calls.
+
+It also says "use 'works' defined by the using routine," which seems to mean "only use the routines marked as 'working'." We know for a fact that a handful of the calls are broken, and this seems to confirm that there were known issues. This may have played a factor in keeping them less publicized.
+
+Thanks to this tech bulletin, we have A) proof that these calls were allowed to be used by games and B) some concrete names and offsets within the memory map used by these calls.
+
+## Why do only Japanese games use these calls?
+
+Given what we know from Tech Bulletin #3, it doesn't appear there was a cabal of Japanese developers hoarding secrets.
+
+Perhaps the probable documentation (the mysterious `ROM_UTIL.DOC`) didn't make it to international developers in time. Perhaps it was just missed since it wasn't as obvious as printed documentation in a binder.
+
+Though the exact state of affairs is unclear and there is much "he said, she said," it does seem that Sega of Japan and Sega of America did not have the best relationship in the 1990s. I am cautious to not imply any malice, to imply Japanese devs were seeking an "edge" (as these calls don't activate hidden functionality, but simply reduce boilerplate code), but perhaps it was more of a case of an ocean separating the offices. I can imagine Japanese developers meeting with the engineers at Sega who designed and wrote the internal ROM, and having actual discussions about how to utilize the hardware. Meanwhile international developers would be at the mercy of translated documentation and intermediary interpreters.
+
+I do find this comment quite telling. It is from official sample code for the Super 32X, illustrating its use in conjunction with the Mega CD. The file `MAINCPU.INC` says this (emphasis added):
+
+> ;---------------------------------------------------------------------------  
+> ; the comment above says the memory area above $FFD000 is not for general use.  
+> ;  the jump table is considered system use.  Below you will see that we have  
+> ;  put our VDP slaves in the "not for general use area".  This came from a  
+> ;  code example contained in CD Tech Note #3.  That code used this same area  
+> ;  for VDP slaves.  **As of 5/25/93, SOJ has not provided an answer as to  
+> ;  whether this area is okay to use.**  For production games, I would advise not  
+> ;  using this area, since the manual says this area is not for general use.  
+> ;  
+> ; We do know that trying to use any memory after these slaves ($FFFDDD) will  
+> ;  cause the machine to lock up and die.  
+> ;----------------------------------------------------------------------------  
+
+We have a Sega of America engineer, writing official Sega of America code, who is citing the same Tech Bulletin we are as his primary source for information on using some otherwise "forbidden" areas of memory. He has apparently asked Sega of Japan for clarification, who did not respond, and suggests that developers not use these in production games.
+
+It is difficult to do anything more than speculate about what happened. It's also worth mentioning that we have not checked everything single non-Japanese game, so we may yet find one that uses the Main BIOS calls, adding another layer to the theories. But now, more than 30 years later, we have a good understanding of these calls and how to use them to make the games we write better.
+
+---
+
+
+
+
+
+> The Main CPU side Boot ROM code, however, is not well documented. In fact, it is somewhat of a mystery. Within the Boot ROM is an array of functions that are linked at a jump table, indicating they are meant to be used across ROM revisions and thus intended for use by games. While it seems most games do not make use of these system calls, at least some do . This is solid evidence that the calls can be freely used by developers if they wish.
 
 > We do not have any official documentation on the Boot ROM library. It is possible there never was such documentation to begin with, as we have three different source of Mega CD paperwork, most of which is wholly redundant, yet there is no sign of Boot ROM documentation. One of the later Technical Bulletins makes mention of these calls in passing and mentions they may be used by games, so it wasn't secret information. Its possible there was documentation that was never translated to English and was only available to Japanese developers.
 
@@ -95,7 +193,7 @@ Some Boot ROM library calls do not use any RAM at all (i.e. have no "cost") and 
 
 Such calls will be marked as "Free" in the reference section below.
 
-# Library Usage Concepts
+# Taxonomy
 
 ## Groups
 
@@ -154,11 +252,11 @@ The Boot ROM provides generic VINT wait and handling routines. The handler takes
 
 The VINT component is useful but requires a commitment to using the Boot ROM library in full due to how many other components it uses. You should familiarize yourself with the components it uses and design your program around them if you want to use the VINT routines. Or rather, if you decide to use most of the Boot ROM library functionality to begin with, the VINT handler help tie it all together.
 
-The VINT handler also calls VINT_EX which points to a user-defined function that performs your game-specific logic during the VBLANK interval.
+The VINT handler also calls VINT_USER which points to a user-defined function that performs your game-specific logic during the VBLANK interval.
 
-The VINT handler also uses a variable defined as `_BIOS_VINT_FLAGS` which acts as both the "VBLANK occured" indicator and as a set of update flags. Only two bits are used by the handler: bit 0, which will copy the sprite list cache to VRAM when set, and bit 1, which will call VINT_EX when set. The value is always reset to zero at the end of the handler code, so the wait routines check that this value is zero to indicate a VBLANK has completed. Note that, although it uses bit 0 of `_BIOS_VINT_FLAGS`, `_BIOS_COPY_SPRLIST` is not actually called in the VINT routine. You will need to include a call to that routine in your VINT_EX function.
+The VINT handler also uses a variable defined as `_BIOS_VINT_HANDLER_FLAGS` which acts as both the "VBLANK occured" indicator and as a set of update flags. Only two bits are used by the handler: bit 0, which will copy the sprite list cache to VRAM when set, and bit 1, which will call VINT_USER when set. The value is always reset to zero at the end of the handler code, so the wait routines check that this value is zero to indicate a VBLANK has completed. Note that, although it uses bit 0 of `_BIOS_VINT_HANDLER_FLAGS`, `_BIOS_COPY_SPRLIST` is not actually called in the VINT routine. You will need to include a call to that routine in your VINT_USER function.
 
-There are two VBLANK wait routines which are mostly identical. These calls enter a tight loop waiting for VINT_FLAGS to be reset to 0 (which will be set when VBLANK occurs), and will update the random number generator on each iteration. The only difference between the two is that `_BIOS_VINT_HANDLER_WAIT_DEFAULT` will set both VINT Update flags (copy sprite list and call VINT_EX), while `_BIOS_VINT_HANDLER_WAIT` will not set any flags beforehand.
+There are two VBLANK wait routines which are mostly identical. These calls enter a tight loop waiting for VINT_FLAGS to be reset to 0 (which will be set when VBLANK occurs), and will update the random number generator on each iteration. The only difference between the two is that `_BIOS_VINT_WAIT_DEFAULT` will set both VINT Update flags (copy sprite list and call VINT_USER), while `_BIOS_VINT_WAIT` will not set any flags beforehand.
 
 Please see the `gfx` example project which uses the VINT component.
 
@@ -193,7 +291,7 @@ This layout is set when using the default VDP register values in `_BIOS_LOAD_VDP
 
 Since the value of VDP registers cannot be read (except for the Status register), we must maintain a mirror of those values in RAM for reference in order to preserve settings when making bitwise changes. For example, when performing a DMA operation, we must first set bit #4 on Mode Register 2. Since we cannot do a bitwise operation and must set the whole register at once, we need to know the current value so we do not alter any other bit level settings.
 
-The cache is an array of 18 words (36 bytes), one for each of the first 18 registers. (The DMA register values are not maintained, as they need to be set on each DMA operation anyway.) It is defined as `_BIOS_VDPREGS` within Megadev.
+The cache is an array of 18 words (36 bytes), one for each of the first 18 registers. (The DMA register values are not maintained, as they need to be set on each DMA operation anyway.) It is defined as `_BIOS_VDP_REGS` within Megadev.
 
 ## Plane Width Cache Component
 
@@ -233,16 +331,14 @@ Only one bit is actually used by the library functions: bit 0, to indicate the p
 
 The rest of the bits are free for you to use as needed.
 
-## Sprite Objects Component
+## Entities Component
 
-A sprite object is any element appearing on screen as a VDP sprite with its own rendering state. Such objects may appear as a single sprite or multiple sprites positioned relatively to act as one unit.
+An entity is any element appearing on screen as composite of multiple sprites with its own rendering state. While the term "entity" is not official, we feel it sufficiently describes how the concept is most often used: to represent a discrete "object" on the screen larger than a single sprite, usually as some interactive element like a stage boss.
 
-(The term "sprite object" is not official and the concept is often simply referred to as an "object" but this term has different meanings in the context of software development. We feel sprite object (shortened to sprobj) is both succinct and unique.)
+In most games (including the Boot ROM library), entities have state related to their position, velocity and x/y flipping, etc. Moreover, they contain a pointer to a function which is run on each update.
 
-In most games (including the Boot ROM library), sprite objects have state related to their position, velocity and x/y flipping, etc. Moreover, they contain a pointer to a function which is run on each update.
-
-The SpriteObject represents the object and its state.
-TODO jmptble_offset is offset into _BIOS_SPR_JMPTBL_PTR
+The Entity struct represents the object and its state.
+TODO jmptble_offset is offset into _BIOS_ENTITY_ROUTINES
 ptr to SpriteList
 
 sprite list is:
@@ -315,9 +411,9 @@ A fresh look at this suggests that bit 0 SET indicates that the comm registers h
 ### `_BIOS_VINT_HANDLER`
 Components: VINT, GA Comm, Sprite Table Cache, Palette Cache, Input
 
-A generic VINT handler. Calls `_BIOS_COMM_SYNC`, `_BIOS_COPY_PAL` and `_BIOS_UPDATE_INPUTS` on each iteration. If bit 1 of `_BIOS_VINT_FLAGS` is set, `_BIOS_VINT_EX_PTR` will also be called. `_BIOS_VINT_EX_PTR` points to a user-defined routine with game-specific logic to be run during VBLANK. We recommend including a call to `_BIOS_COPY_SPRLIST` in your VINT_EX routine.
+A generic VINT handler. Calls `_BIOS_COMM_SYNC`, `_BIOS_COPY_PAL` and `_BIOS_UPDATE_INPUTS` on each iteration. If bit 1 of `_BIOS_VINT_HANDLER_FLAGS` is set, `_BIOS_VINT_USER` will also be called. `_BIOS_VINT_USER` points to a user-defined routine with game-specific logic to be run during VBLANK. We recommend including a call to `_BIOS_COPY_SPRLIST` in your VINT_USER routine.
 
-`_BIOS_VINT_HANDLER` updates the `_BIOS_VINT_COUNTER` variable by 1 on each iteration. It also uses the `_SKIP_GFX_UPDATES` variable. When this value is non-zero, it will skip the call to `_BIOS_COPY_PAL` and `_BIOS_VINT_EX_PTR` and skip the `_BIOS_VINT_COUNTER` increment.
+`_BIOS_VINT_HANDLER` increments the `_BIOS_VINT_COUNTER` variable by 1 on each iteration. It also uses the `_SKIP_GFX_UPDATES` variable. When this value is non-zero, it will skip the call to `_BIOS_COPY_PAL` and `_BIOS_VINT_USER` and skip the `_BIOS_VINT_COUNTER` increment.
 
 ### `_BIOS_SET_VINT`
 
@@ -325,13 +421,13 @@ A generic VINT handler. Calls `_BIOS_COMM_SYNC`, `_BIOS_COPY_PAL` and `_BIOS_UPD
 
 Sets the specified pointer as the VINT vector.
 
-### `_BIOS_VINT_HANDLER_WAIT`
+### `_BIOS_VINT_WAIT`
 
-Sets the specified value to `_BIOS_VINT_FLAGS` and waits for the next VBLANK occurance, which resets `_BIOS_VINT_FLAGS` to zero. This means `_BIOS_VINT_FLAGS` must be set to a non-zero value in order to actually wait for a VBLANK occurance. If you want to wait for VBLANK without triggering a sprite list or palette copy, simply set an unused bit.
+Sets the specified value to `_BIOS_VINT_HANDLER_FLAGS` and waits for the next VBLANK occurance, which resets `_BIOS_VINT_HANDLER_FLAGS` to zero. This means `_BIOS_VINT_HANDLER_FLAGS` must be set to a non-zero value in order to actually wait for a VBLANK occurance. If you want to wait for VBLANK without triggering a sprite list or palette copy, simply set an unused bit.
 
-### `_BIOS_VINT_HANDLER_WAIT_DEFAULT`
+### `_BIOS_VINT_WAIT_DEFAULT`
 
-A wrapper for `_BIOS_VINT_HANDLER_WAIT` that sets `_BIOS_VINT_FLAGS` to 3 (bit 0 and 1 set) before waiting. This would be useful if you do not implement any extra `_BIOS_VINT_FLAGS` and only use the two used by the library. In any other case, you should stick to `_BIOS_VINT_HANDLER_WAIT` as it allows you to specify flags.
+A wrapper for `_BIOS_VINT_WAIT` that sets `_BIOS_VINT_HANDLER_FLAGS` to 3 (bit 0 and 1 set) before waiting. This would be useful if you do not implement any extra `_BIOS_VINT_HANDLER_FLAGS` and only use the two used by the library. In any other case, you should stick to `_BIOS_VINT_WAIT` as it allows you to specify flags.
 
 ### `_BIOS_SET_HINT`
 
@@ -345,7 +441,7 @@ A wrapper for `_BIOS_VINT_HANDLER_WAIT` that sets `_BIOS_VINT_FLAGS` to 3 (bit 0
 
 ### `_BIOS_UPDATE_INPUTS`
 
-### `_BIOS_INPUT_DELAY`
+### `_BIOS_INPUT_REPEAT_DELAY`
 
 ### `_BIOS_DETECT_CONTROLLER`
 
@@ -506,11 +602,11 @@ Components: VDP Reg Cache, DMA, Palette Cache, VDP Update Flags
 
 Copies the palette cache to CRAM.
 
-### `_BIOS_PROCESS_SPROBJS`
-Update the state of an array of sprite objects. Please see the Sprite Objects section.
+### `_BIOS_PROCESS_ENTITIES`
+Update the state of an array of entitys. Please see the Entities section.
 
 ### `_BIOS_DISP_SPROBJ`
-Display an sprite object. Please see the Sprite Objects section.
+Display an entity. Please see the Entities section.
 
 ### `_BIOS_COPY_SPRLIST`
 Components: Sprite Cache, VDP Register Cache, VINT Flags

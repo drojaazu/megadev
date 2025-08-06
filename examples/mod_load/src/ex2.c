@@ -15,7 +15,7 @@ void main()
 	do
 	{
 		bios_vint_wait_default();
-	} while (! (BIOS_JOY1_PRESS & PAD_START));
+	} while (! (bios_joy1_hit & PAD_START));
 
 	global_mode = 2;
 	return;

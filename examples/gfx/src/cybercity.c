@@ -17,14 +17,14 @@ extern u16 const res_ship_pal[];
 
 extern struct SpriteLayout res_ship_layout;
 
-struct SpriteObject sprobj_ship;
+struct Entity sprobj_ship;
 
 void null_func()
 {
 	return;
 }
 
-void vint_ex()
+void vint_user()
 {
 	bios_copy_sprlist();
 }
@@ -43,7 +43,7 @@ const VDPCMD vdpptr_scroll = VDPPTR((_BIOS_VDP_DEFAULT_HSCROLL_ADDR)) | VRAM_W;
 */
 __attribute__((noreturn)) void main()
 {
-	BIOS_SPR_JMPTBL_PTR = spr_funcs;
+	bios_entity_routines = spr_funcs;
 
 	sprobj_ship.enable = true;
 	sprobj_ship.layout = &res_ship_layout;
@@ -59,8 +59,8 @@ __attribute__((noreturn)) void main()
 
 	// We use the PlaneWidthTiles enum to assign the value in *tiles*, which is
 	// more intuitive than the count in nametable entries, which is what it expects
-	// See the documentation on BIOS_PLANE_WIDTH for more
-	BIOS_PLANE_WIDTH = Width32;
+	// See the documentation on bios_plane_width for more
+	bios_plane_width = Width32;
 
 	// The load VDP regs Boot ROM routines expect a zero terminated array of
 	// raw register values
@@ -73,8 +73,8 @@ __attribute__((noreturn)) void main()
 	// VDP compatible format. It is written so that constant values will be
 	// calculated at compile time, and variables will be calculated at runtime
 	// with the optimized conversion code
-	bios_dma_xfer_WORD_RAM((VDPPTR(0) | CRAM_W), res_cybercity_pal, 32 >> 1);
-	bios_dma_xfer_WORD_RAM((VDPPTR(32) | CRAM_W), res_ship_pal, 32 >> 1);
+	bios_dma_xfer_word_ram((VDPPTR(0) | CRAM_W), res_cybercity_pal, 32 >> 1);
+	bios_dma_xfer_word_ram((VDPPTR(32) | CRAM_W), res_ship_pal, 32 >> 1);
 
 	// bios_gfx_decomp requires that we set the VDP address first
 	VDP_CTRL_32 = VDPPTR(VRAM_AT(1)) | VRAM_W;
@@ -90,7 +90,7 @@ __attribute__((noreturn)) void main()
 
 	free_tile += ((*(u16 *) res_cybercity_farbg_cmp_nem) & 0x7fff);
 
-	bios_dma_xfer_WORD_RAM(VDPPTR(VRAM_AT(free_tile)) | VRAM_W, res_ship_chr, 1920 >> 1);
+	bios_dma_xfer_word_ram(VDPPTR(VRAM_AT(free_tile)) | VRAM_W, res_ship_chr, 1920 >> 1);
 
 	bios_load_map(VDPPTR(_BIOS_VDP_DEFAULT_PLANEA_ADDR + PLANE_POS(0, 2, Width32)) | VRAM_W,
 		res_cybercity_bldg_map[0] - 1,
@@ -103,17 +103,17 @@ __attribute__((noreturn)) void main()
 
 	bios_vdp_disp_enable();
 
-	*BIOS_VINT_EX_PTR = vint_ex;
+	*bios_vint_user = vint_user;
 
 	uf32 scroll_a = 0.0;
 	uf32 scroll_b = 0.0;
 
 	do
 	{
-		BIOS_VINT_FLAGS = COPY_SPRLIST;
+		bios_vint_handler_flags = COPY_SPRLIST;
 		bios_vint_wait_default();
 
-		bios_process_sprobjs(&sprobj_ship, BIOS_SPRLIST, 0, 0x1a);
+		bios_process_entities(&sprobj_ship, bios_sprlist, 0, 0x1a);
 
 		// scroll the background layers
 		scroll_a -= frac_to_uf32(0.9);
@@ -124,7 +124,7 @@ __attribute__((noreturn)) void main()
 		VDP_DATA_16 = uf32_to_int(scroll_a);
 		VDP_DATA_16 = uf32_to_int(scroll_b);
 
-		if (BIOS_JOY1_HOLD & PAD_RIGHT)
+		if (bios_joy1_hold & PAD_RIGHT)
 		{
 			// ship_parts.pos_x += frac_to_uf32(3);
 			sprobj_ship.display_flags = 0;
@@ -133,7 +133,7 @@ __attribute__((noreturn)) void main()
 				sprobj_ship.move_x = frac_to_f32(4);
 		}
 
-		if (BIOS_JOY1_HOLD & PAD_LEFT)
+		if (bios_joy1_hold & PAD_LEFT)
 		{
 			// ship_parts.pos_x -= frac_to_f32(3);
 			sprobj_ship.display_flags = 0x80;
@@ -142,12 +142,12 @@ __attribute__((noreturn)) void main()
 				sprobj_ship.move_x = frac_to_f32(-4);
 		}
 
-		if (BIOS_JOY1_HOLD & PAD_UP)
+		if (bios_joy1_hold & PAD_UP)
 		{
 			sprobj_ship.pos_y -= frac_to_uf32(3);
 		}
 
-		if (BIOS_JOY1_HOLD & PAD_DOWN)
+		if (bios_joy1_hold & PAD_DOWN)
 		{
 			sprobj_ship.pos_y += frac_to_uf32(3);
 		}

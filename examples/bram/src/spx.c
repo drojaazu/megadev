@@ -34,9 +34,9 @@ __attribute__((section(".init"))) void main()
 
 			// load MMD
 			case 1:
-				load_file(ACC_OP_LOAD_CDC, filenames[cmd1], (u8 *) _WORD_RAM_2M);
+				load_file(CDROM_LOAD_CDC, filenames[cmd1], (u8 *) _WORD_RAM_2M);
 				grant_2m();
-				if (access_op_result != RESULT_OK)
+				if (access_op_result != CDROM_RESULT_OK)
 				{
 					sp_fatal();
 				}
@@ -138,9 +138,9 @@ __attribute__((section(".init"))) void main()
 
 			// load demo
 			case 0xfe:
-				load_file(ACC_OP_LOAD_CDC, "BRAMDEMO.MMD;1", (u8 *) _WORD_RAM_2M);
+				load_file(CDROM_LOAD_CDC, "BRAMDEMO.MMD;1", (u8 *) _WORD_RAM_2M);
 				grant_2m();
-				if (access_op_result != RESULT_OK)
+				if (access_op_result != CDROM_RESULT_OK)
 				{
 					sp_fatal();
 				}
