@@ -323,13 +323,13 @@ typedef struct Palette
 #define bios_joy1_repeat_delay (*((volatile u8 *) _BIOS_JOY1_REPEAT_DELAY))
 
 /**
- * @def BIOS_JOY2_DELAY
- * @sa _BIOS_JOY2_DELAY
+ * @def bios_joy2_repeat_delay
+ * @sa _BIOS_JOY2_REPEAT_DELAY
  * @ingroup bios_input
  *
  * @note For use with @ref bios_input_repeat_delay
  */
-#define BIOS_JOY2_DELAY (*((volatile u8 *) _BIOS_JOY2_DELAY))
+#define bios_joy2_repeat_delay (*((volatile u8 *) _BIOS_JOY2_REPEAT_DELAY))
 
 /**
  * @def bios_vint_handler_flags
