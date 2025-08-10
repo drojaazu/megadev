@@ -973,16 +973,16 @@
 #endif
 
 /**
- * @def _BIOS_SET_HINT_WORKRAM
+ * @def _BIOS_SET_HINT_WORK_RAM
  * @sa bios_set_hint_workram
  * @param[in] A1.l Pointer to HINT function
  *
  *
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_SET_HINT_WORKRAM 0x400314
+#define _BIOS_SET_HINT_WORK_RAM 0x400314
 #else
-#define _BIOS_SET_HINT_WORKRAM 0x000314
+#define _BIOS_SET_HINT_WORK_RAM 0x000314
 #endif
 
 /**

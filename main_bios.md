@@ -444,7 +444,7 @@ A wrapper for `_BIOS_VINT_WAIT` that sets `_BIOS_VINT_HANDLER_FLAGS` to 3 (bit 0
 
 ### `_BIOS_SET_HINT`
 
-### `_BIOS_SET_HINT_WORKRAM`
+### `_BIOS_SET_HINT_WORK_RAM`
 
 ### `_BIOS_DISABLE_HINT`
 

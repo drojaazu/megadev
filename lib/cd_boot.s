@@ -55,11 +55,11 @@ SystemVersion:  .word 0,0							/*System Version, Type*/
 IP_OFFSET:   .long 0x800
 IP_SIZE:     .long 0x800
 IP_ENTRY:    .long 0
-IP_WORKRAM:  .long 0
+IP_WORK_RAM:  .long 0
 SP_OFFSET:   .long 0x1000
 SP_SIZE:     .long _sp_end-_sp_begin
 SP_ENTRY:    .long 0
-SP_WORKRAM:  .long 0
+SP_WORK_RAM:  .long 0
 .rept 11
 .ascii       "                "
 .endr

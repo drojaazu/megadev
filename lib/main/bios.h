@@ -870,7 +870,7 @@ static inline void bios_load_map(u32 const vdpptr, u16 const width, u16 const he
 /**
  * @fn bios_set_hint_workram
  * @brief Sets the HINT vector for a Work RAM destination
- * @sa _BIOS_SET_HINT_WORKRAM
+ * @sa _BIOS_SET_HINT_WORK_RAM
  * @ingroup bios_int
  *
  * @details
@@ -897,7 +897,7 @@ static inline void bios_set_hint_workram(void * hint_handler)
 			jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_SET_HINT_WORKRAM), "a"(A1)
+		: "i"(_BIOS_SET_HINT_WORK_RAM), "a"(A1)
 		: "cc");
 }
 

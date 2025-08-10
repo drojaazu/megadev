@@ -12,8 +12,8 @@
 #include "sub/memmap.def.h"
 #include "types.h"
 
-u8 bram_WORKRAM[0x640];
-u8 bram_string_ram[12];
+u8 bram_work_buff[0x640];
+u8 bram_string_buff[12];
 
 enum BramStatus
 {
@@ -48,8 +48,8 @@ BrminitRes init_info;
  */
 static inline BrminitRes * bram_brminit()
 {
-	register u32 a0_bram_WORKRAM asm("a0") = (u32) bram_WORKRAM;
-	register u32 a1_bram_string_ram asm("a1") = (u32) bram_string_ram;
+	register u32 a0_bram_work_buff asm("a0") = (u32) bram_work_buff;
+	register u32 a1_bram_string_buff asm("a1") = (u32) bram_string_buff;
 	register u16 d0_fcode asm("d0") = BRMINIT;
 
 	register u16 d0_bram_size asm("d0");
@@ -63,12 +63,12 @@ static inline BrminitRes * bram_brminit()
 		2: \n\
 		"
 		: "=d"(d0_bram_size), "=d"(d1_bram_status)
-		: "i"(_BURAM), "d"(d0_fcode), "a"(a0_bram_WORKRAM), "a"(a1_bram_string_ram)
+		: "i"(_BURAM), "d"(d0_fcode), "a"(a0_bram_work_buff), "a"(a1_bram_string_buff)
 		: "cc");
 
 	init_info.bram_size = d0_bram_size;
 	init_info.status = (enum BramStatus) d1_bram_status;
-	init_info.strings = (char *) a1_bram_string_ram;
+	init_info.strings = (char *) a1_bram_string_buff;
 
 	return &init_info;
 }
@@ -92,7 +92,7 @@ BrmstatRes brmstat_results;
 static inline BrmstatRes * bram_brmstat()
 {
 	register u16 d0_fcode asm("d0") = BRMSTAT;
-	register u32 a1_bram_string_ram asm("a1") = (u32) bram_string_ram;
+	register u32 a1_bram_string_buff asm("a1") = (u32) bram_string_buff;
 
 	register u16 d0_free asm("d0");
 	register u16 d1_filecount asm("d1");
@@ -102,7 +102,7 @@ static inline BrmstatRes * bram_brmstat()
 		jsr %p2 \n\
 		"
 		: "=d"(d0_free), "=d"(d1_filecount)
-		: "i"(_BURAM), "d"(d0_fcode), "a"(a1_bram_string_ram));
+		: "i"(_BURAM), "d"(d0_fcode), "a"(a1_bram_string_buff));
 
 	brmstat_results.free = d0_free;
 	brmstat_results.filecount = d1_filecount;
