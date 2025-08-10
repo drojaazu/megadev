@@ -16,7 +16,7 @@
 
 #define SUB_ACK *GA_COMCMD0 = 0;
 
-#define print_xy(x, y) (VDPPTR(_BIOS_VDP_DEFAULT_PLANEA_ADDR + PLANE_POS(x, y, Width64)) | VRAM_W)
+#define print_xy(x, y) (VDPPTR(_BIOS_VDP_PLANEA_ADDR + PLANE_POS(x, y, Width64)) | VRAM_W)
 
 char val_buffer[5];
 
@@ -344,10 +344,10 @@ void main()
 			bios_vint_wait_default();
 			for (int clearloop = 3; clearloop < 10; ++clearloop)
 			{
-				VDP_CTRL_32 = (VDPPTR(_BIOS_VDP_DEFAULT_PLANEA_ADDR + PLANE_POS(1, clearloop, Width64)) | VRAM_W);
+				VDP_CTRL_32 = (VDPPTR(_BIOS_VDP_PLANEA_ADDR + PLANE_POS(1, clearloop, Width64)) | VRAM_W);
 				VDP_DATA_16 = 0;
 			}
-			VDP_CTRL_32 = (VDPPTR(_BIOS_VDP_DEFAULT_PLANEA_ADDR + PLANE_POS(1, menupos + 3, Width64)) | VRAM_W);
+			VDP_CTRL_32 = (VDPPTR(_BIOS_VDP_PLANEA_ADDR + PLANE_POS(1, menupos + 3, Width64)) | VRAM_W);
 			VDP_DATA_16 = '>';
 
 			if ((bios_joy1_hit & PAD_DOWN))

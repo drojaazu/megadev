@@ -396,46 +396,46 @@
 // when using the default VDP registers
 
 /**
- * @def _BIOS_VDP_DEFAULT_WINDOW_ADDR
+ * @def _BIOS_VDP_WINDOW_ADDR
  * @ingroup bios_vdp
  * @brief The default VRAM address for the Window
  */
-#define _BIOS_VDP_DEFAULT_WINDOW_ADDR 0xA000
+#define _BIOS_VDP_WINDOW_ADDR 0xA000
 
 /**
- * @def _BIOS_VDP_DEFAULT_PLANEA_ADDR
+ * @def _BIOS_VDP_PLANEA_ADDR
  * @ingroup bios_vdp
  * @brief The default VRAM address for Plane A
  */
-#define _BIOS_VDP_DEFAULT_PLANEA_ADDR 0xC000
+#define _BIOS_VDP_PLANEA_ADDR 0xC000
 
 /**
- * @def _BIOS_VDP_DEFAULT_PLANEB_ADDR
+ * @def _BIOS_VDP_PLANEB_ADDR
  * @ingroup bios_vdp
  * @brief The default VRAM address for Plane B
  */
-#define _BIOS_VDP_DEFAULT_PLANEB_ADDR 0xE000
+#define _BIOS_VDP_PLANEB_ADDR 0xE000
 
 /**
- * @def _BIOS_VDP_DEFAULT_SPRTBL_ADDR
+ * @def _BIOS_VDP_SPRTBL_ADDR
  * @ingroup bios_vdp
  * @brief The default VRAM address for the Sprite Table
  */
-#define _BIOS_VDP_DEFAULT_SPRTBL_ADDR 0xB800
+#define _BIOS_VDP_SPRTBL_ADDR 0xB800
 
 /**
- * @def _BIOS_VDP_DEFAULT_HSCROLL_ADDR
+ * @def _BIOS_VDP_HSCROLL_ADDR
  * @ingroup bios_vdp
  * @brief The default VRAM address for the Horizontal Scroll Table
  */
-#define _BIOS_VDP_DEFAULT_HSCROLL_ADDR 0xBC00
+#define _BIOS_VDP_HSCROLL_ADDR 0xBC00
 
 /**
- * @def _BIOS_VDP_DEFAULT_PLANE_WIDTH
+ * @def _BIOS_VDP_PLANE_WIDTH
  * @ingroup bios_vdp
  * @brief The default Plane width
  */
-#define _BIOS_VDP_DEFAULT_PLANE_WIDTH 128
+#define _BIOS_VDP_PLANE_WIDTH 128
 
 /**
  * @sa bios_bios_entry

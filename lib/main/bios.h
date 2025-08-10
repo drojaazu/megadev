@@ -222,52 +222,6 @@ typedef struct Palette
 #define bios_comstat (*((volatile u16 const(*)[8]) _BIOS_COMSTAT))
 
 /**
- * @def bios_joy1_mouse_data
- * @sa _BIOS_JOY1_MOUSE_DATA
- * @ingroup bios_input
- */
-#define bios_joy1_mouse_data (*((u16 *) _BIOS_JOY1_MOUSE_DATA))
-
-/**
- * @def bios_joy1_mouse_dx
- * @brief Mouse delta X
- * @sa _BIOS_JOY1_MOUSE_DX
- * @ingroup bios_input
- */
-#define bios_joy1_mouse_dx (*((u16 *) _BIOS_JOY1_MOUSE_DX))
-
-/**
- * @def bios_joy1_mouse_dy
- * @brief Mouse delta Y
- * @sa _BIOS_JOY1_MOUSE_DY
- * @ingroup bios_input
- */
-#define bios_joy1_mouse_dy (*((u16 *) _BIOS_JOY1_MOUSE_DY))
-
-/**
- * @def bios_joy2_mouse_data
- * @sa _BIOS_JOY2_MOUSE_DATA
- * @ingroup bios_input
- */
-#define bios_joy2_mouse_data (*((u16 *) _BIOS_JOY2_MOUSE_DATA))
-
-/**
- * @def bios_joy2_mouse_dx
- * @brief Mouse delta X
- * @sa _BIOS_JOY2_MOUSE_DX
- * @ingroup bios_input
- */
-#define bios_joy2_mouse_dx (*((u16 *) _BIOS_JOY2_MOUSE_DX))
-
-/**
- * @def bios_joy2_mouse_dy
- * @brief Mouse delta Y
- * @sa _BIOS_JOY2_MOUSE_DY
- * @ingroup bios_input
- */
-#define bios_joy2_mouse_dy (*((u16 *) _BIOS_JOY2_MOUSE_DY))
-
-/**
  * @def bios_joy1_type
  * @sa _BIOS_JOY1_TYPE
  * @ingroup bios_input
@@ -399,7 +353,7 @@ typedef struct Palette
  * @def bios_plane_width
  * @brief Cached value of the plane width as defined in VDP reg. 0x10.
  * @ingroup bios_vdp
- * @sa _BIOS_VDP_DEFAULT_PLANE_WIDTH
+ * @sa _BIOS_VDP_PLANE_WIDTH
  *
  * @note
  * This value is stored as BYTES, which is effectively the width in
@@ -411,7 +365,7 @@ typedef struct Palette
  * Use the @ref PlaneWidth enum to make it semantically clear what
  * the width is in tiles
  */
-#define bios_plane_width (*((u16 *) _BIOS_VDP_DEFAULT_PLANE_WIDTH))
+#define bios_plane_width (*((u16 *) _BIOS_VDP_PLANE_WIDTH))
 
 /**
  * @def bios_entity_routines

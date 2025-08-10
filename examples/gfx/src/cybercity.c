@@ -31,7 +31,7 @@ void vint_user()
 
 void (*spr_funcs[2])() = {null_func, null_func};
 
-const VDPCMD vdpptr_scroll = VDPPTR((_BIOS_VDP_DEFAULT_HSCROLL_ADDR)) | VRAM_W;
+const VDPCMD vdpptr_scroll = VDPPTR((_BIOS_VDP_HSCROLL_ADDR)) | VRAM_W;
 
 /*
 	We mark this is as noreturn since this is an infinite loop that will
@@ -92,11 +92,11 @@ __attribute__((noreturn)) void main()
 
 	bios_dma_xfer_word_ram(VDPPTR(VRAM_AT(free_tile)) | VRAM_W, res_ship_chr, 1920 >> 1);
 
-	bios_load_map(VDPPTR(_BIOS_VDP_DEFAULT_PLANEA_ADDR + PLANE_POS(0, 2, Width32)) | VRAM_W,
+	bios_load_map(VDPPTR(_BIOS_VDP_PLANEA_ADDR + PLANE_POS(0, 2, Width32)) | VRAM_W,
 		res_cybercity_bldg_map[0] - 1,
 		res_cybercity_bldg_map[1] - 1,
 		res_cybercity_bldg_map + 2);
-	bios_load_map(VDPPTR(_BIOS_VDP_DEFAULT_PLANEB_ADDR) | VRAM_W,
+	bios_load_map(VDPPTR(_BIOS_VDP_PLANEB_ADDR) | VRAM_W,
 		res_cybercity_farbg_map[0] - 1,
 		res_cybercity_farbg_map[1] - 1,
 		res_cybercity_farbg_map + 2);

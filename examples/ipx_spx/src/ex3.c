@@ -19,7 +19,7 @@ void main()
 	bios_dma_xfer_word_ram(VDPPTR(VRAM_AT(0x80)), &res_bubbles_chr, res_bubbles_chr_sz >> 1);
 	enable_interrupts();
 
-	bios_print("Module 3\xff", (VDPPTR(PLANE_POS(1, 1, Width64) + _BIOS_VDP_DEFAULT_PLANEA_ADDR) | VRAM_W));
+	bios_print("Module 3\xff", (VDPPTR(PLANE_POS(1, 1, Width64) + _BIOS_VDP_PLANEA_ADDR) | VRAM_W));
 
 	init_particles(0x81, 0x85, 1, 1, 1, 1, 3, 1, 3, 1);
 

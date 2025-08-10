@@ -19,7 +19,7 @@ void main()
 	bios_dma_xfer_word_ram(VDPPTR(VRAM_AT(0x80)), &res_snow_chr, res_snow_chr_sz >> 1);
 	enable_interrupts();
 
-	bios_print("Module 2\xff", (VDPPTR(PLANE_POS(1, 1, Width64) + _BIOS_VDP_DEFAULT_PLANEA_ADDR) | VRAM_W));
+	bios_print("Module 2\xff", (VDPPTR(PLANE_POS(1, 1, Width64) + _BIOS_VDP_PLANEA_ADDR) | VRAM_W));
 
 	init_particles(0x81, 0x82, 0, 0, 0, 0, 45, 1, 2, 1);
 
