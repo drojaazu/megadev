@@ -162,7 +162,7 @@ __attribute__((interrupt)) void INT6_VBLANK()
 	bios_copy_pal();
 	bios_copy_sprlist();
 	bios_prng();
-	bios_update_inputs();
+	bios_read_joypad();
 	bios_vint_handler_flags = 0;
 }
 

@@ -575,11 +575,11 @@ static inline void bios_set_hint(void * hint_handler)
 }
 
 /**
- * @fn bios_update_inputs
+ * @fn BIOS_READ_JOYPAD
  * @brief Update state of P1/P2 controllers
  * @ingroup bios_input
  */
-static inline void bios_update_inputs()
+static inline void bios_read_joypad()
 {
 	asm(
 		"\
@@ -588,7 +588,7 @@ static inline void bios_update_inputs()
   move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BIOS_UPDATE_INPUTS)
+		: "i"(_BIOS_READ_JOYPAD)
 		: "d6", "d7", "a5");
 }
 
@@ -1160,7 +1160,7 @@ static inline void bios_print(char const * string, VDPCMD pos)
 };
 
 /**
- * @fn bios_nmtbl_fill
+ * @fn BIOS_PLANE_FILL
  * @brief Fill a region of a nametable with a value
  * @param[in] D0.l Address (vdpptr format)
  * @param[in] D1.w Width
@@ -1168,7 +1168,7 @@ static inline void bios_print(char const * string, VDPCMD pos)
  * @param[in] D3.w Value
  * @ingroup bios_vdp
  */
-static inline void bios_nmtbl_fill(VDPCMD pos, u16 width, u16 height, u16 value)
+static inline void BIOS_PLANE_FILL(VDPCMD pos, u16 width, u16 height, u16 value)
 {
 	register u32 D0 asm("d0") = pos;
 	register u32 D1 asm("d1") = width;
@@ -1182,7 +1182,7 @@ static inline void bios_nmtbl_fill(VDPCMD pos, u16 width, u16 height, u16 value)
     	move.l (sp)+, a6 \n\
   	"
 		: "+d"(D2)
-		: "i"(_BIOS_NMTBL_FILL), "d"(D0), "d"(D1), "d"(D2), "d"(D3)
+		: "i"(_BIOS_PLANE_FILL), "d"(D0), "d"(D1), "d"(D2), "d"(D3)
 		: "cc", "d5", "a5");
 };
 

@@ -247,81 +247,6 @@
 #define _BIOS_COMSTAT7 0xfffdfe
 
 /**
- * @def _BIOS_JOY1_MOUSE_DATA
- * @ingroup bios_input
- *
- * @sa bios_joy1_mouse_data
- */
-#define _BIOS_JOY1_MOUSE_DATA 0xfffe00
-
-/**
- * @def _BIOS_JOY1_MOUSE_DX
- * @ingroup bios_input
- * @sa bios_joy1_mouse_dx
- */
-#define _BIOS_JOY1_MOUSE_DX 0xfffe06
-
-/**
- * @def _BIOS_JOY1_MOUSE_DY
- * @ingroup bios_input
- * @sa bios_joy1_mouse_dy
- */
-#define _BIOS_JOY1_MOUSE_DY 0xfffe08
-
-/**
- * @def _BIOS_JOY2_MOUSE_DATA
- * @ingroup bios_input
- * @sa bios_joy2_mouse_data
- */
-#define _BIOS_JOY2_MOUSE_DATA 0xfffe0c
-
-/**
- * @def _BIOS_JOY2_MOUSE_DX
- * @ingroup bios_input
- * @sa bios_joy2_mouse_dx
- */
-#define _BIOS_JOY2_MOUSE_DX 0xfffe12
-
-/**
- * @def _BIOS_JOY2_MOUSE_DY
- * @ingroup bios_input
- * @sa bios_joy2_mouse_dy
- */
-#define _BIOS_JOY2_MOUSE_DY 0xfffe14
-
-/**
- * @def _BIOS_JOY1_TYPE
- * @ingroup bios_input
- * @sa bios_joy1_type
- */
-#define _BIOS_JOY1_TYPE 0xfffe18
-
-/**
- * @def _BIOS_JOY2_TYPE
- * @ingroup bios_input
- * @sa bios_joy2_type
- */
-#define _BIOS_JOY2_TYPE 0xfffe19
-
-/**
- * @def CONTROLLER_JOYPAD
- * @ingroup bios_input
- */
-#define CONTROLLER_JOYPAD 0x0D
-
-/**
- * @def CONTROLLER_MEGAMOUSE
- * @ingroup bios_input
- */
-#define CONTROLLER_MEGAMOUSE 0x03
-
-/**
- * @def CONTROLLER_MULTITAP
- * @ingroup bios_input
- */
-#define CONTROLLER_MULTITAP 0x07
-
-/**
  * @def _BIOS_JOY1_HOLD
  * @ingroup bios_input
  * @sa bios_joy1_hold
@@ -581,7 +506,7 @@
 #endif
 
 /**
- * @def _BIOS_UPDATE_INPUTS
+ * @def _BIOS_READ_JOYPAD
  * @ingroup bios_input
  *
  * @param[out] [@ref _BIOS_JOY1_HIT]
@@ -589,19 +514,19 @@
  * @param[out] [@ref _BIOS_JOY2_HIT]
  * @param[out] [@ref _BIOS_JOY2_HOLD]
  * @clobber d6-d7/a5-a6
- * @sa bios_update_inputs
+ * @sa BIOS_READ_JOYPAD
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_UPDATE_INPUTS 0x400298
+#define _BIOS_READ_JOYPAD 0x400298
 #else
-#define _BIOS_UPDATE_INPUTS 0x000298
+#define _BIOS_READ_JOYPAD 0x000298
 #endif
 
 /**
  * @def _BIOS_DETECT_CONTROLLER
  * @sa bios_detect_controller
  * @param[in] a6.l Pointer to joypad data port
- * @param[out] d6.b Controller type
+ * @param[out] d7.b Controller type
  * @ingroup bios_input
  */
 #if TARGET == MEGACD_MODE1
@@ -609,6 +534,24 @@
 #else
 #define _BIOS_DETECT_CONTROLLER 0x00029C
 #endif
+
+/**
+ * @def CONTROLLER_JOYPAD
+ * @ingroup bios_input
+ */
+#define CONTROLLER_JOYPAD 0x0D
+
+/**
+ * @def CONTROLLER_MEGAMOUSE
+ * @ingroup bios_input
+ */
+#define CONTROLLER_MEGAMOUSE 0x03
+
+/**
+ * @def CONTROLLER_MULTITAP
+ * @ingroup bios_input
+ */
+#define CONTROLLER_MULTITAP 0x07
 
 /**
  * @sa bios_clear_vram
@@ -799,14 +742,14 @@
 #endif
 
 /**
- * @sa bios_nmtbl_fill
+ * @sa BIOS_PLANE_FILL
  * @clobber d0-d3/d5/a5
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_NMTBL_FILL 0x4002CC
+#define _BIOS_PLANE_FILL 0x4002CC
 #else
-#define _BIOS_NMTBL_FILL 0x0002CC
+#define _BIOS_PLANE_FILL 0x0002CC
 #endif
 
 /**
@@ -1138,7 +1081,7 @@
 #endif
 
 /**
- * @def _BIOS_LOAD_MAP_VERT
+ * @def _BIOS_LOAD_STAMP_MAP
  * @brief Load map for a vertically-oriented contiguous group of tiles
  * @param[in] D0.l Destination VRAM address (vdpptr)
  * @param[in] D1.w Map width
@@ -1148,9 +1091,9 @@
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_LOAD_MAP_VERT 0x400334
+#define _BIOS_LOAD_STAMP_MAP 0x400334
 #else
-#define _BIOS_LOAD_MAP_VERT 0x000334
+#define _BIOS_LOAD_STAMP_MAP 0x000334
 #endif
 
 /**
@@ -1300,16 +1243,9 @@
 #endif
 
 /**
- * @def _UKNOWN_3B
+ * @def _BIOD_LOAD_TILEMAP_PARTIAL
  *
- * This is related to loading tilemaps to VRAM and is similar to
- * _LOAD_TILEMAP_SEQ, however it reads map data from a pointer and does some
- * odd calculation on D3, subtracting the width twice and then subtracting 2.
- * The value in D3 is added to the A1 pointer at the end of each row.
- * It's not clear what sort of value D3 is meant to have to start with and
- * it's not clear what exactly this routine is meant to do.
- *
- * GROUP: Unknown
+ * GROUP: bios_vdp
  *
  * IN:
  *  d0.l - Destination vdpptr
@@ -1323,9 +1259,9 @@
  *  d4/a5
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_UNKNOWN_3B 0x400370
+#define _BIOD_LOAD_TILEMAP_PARTIAL 0x400370
 #else
-#define _BIOS_UNKNOWN_3B 0x000370
+#define _BIOD_LOAD_TILEMAP_PARTIAL 0x000370
 #endif
 
 /**
@@ -1430,9 +1366,9 @@
 #endif
 
 #if TARGET == MEGACD_MODE1
-#define _BIOS_UNKNOWN_45 0x40039C
+#define _BIOS_ADD_TIME_VALUES 0x40039C
 #else
-#define _BIOS_UNKNOWN_45 0x00039C
+#define _BIOS_ADD_TIME_VALUES 0x00039C
 #endif
 
 #if TARGET == MEGACD_MODE1

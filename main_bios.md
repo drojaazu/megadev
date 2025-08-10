@@ -17,29 +17,29 @@ This document discusses the pros and cons of using the Main side system library 
 
 To be pedantic, "Main BIOS" is somewhat of a misnomer here. A more accurate term may be "Boot ROM System Library", and indeed for a while in Megadev we prefixed these calls with "bootlib". However, we eventually decided to go with "bios" as it is shorter and there is a symmetry to having a bios on both the Main and Sub side. Moreover, the entire internal ROM is very often colloquially called "the BIOS" especially in terms of emulation.
 
-So while the term BIOS is not exactly accurate (even Sega's use of the term BIOS in regards to the Sub CPU side *system calls* isn't exactly correct), we have opted to use it to keep things simple and familiar.
+So while the term BIOS may not be accurate (even Sega's use of the term BIOS in regards to the Sub CPU side *system calls* isn't exactly correct), we have opted to use it to keep things simple and familiar.
 
 # Main BIOS Mysteries
 
 There is no official English documentation for the Main BIOS yet there are games that use it. This raises some questions.
 
-## How do we know it exists?
+Feel free to skip this section if you're only interested in practicalities.
 
-On startup, the Main CPU bootstraps from the 1 megabit internal ROM, memory mapped to the range 0 to 0x20000. The "MEGA CD HARDWARE MANUAL" and "MEGA CD SOFTWARE DEVELOPMENT" documentation both describe this space as simply being for "CD-ROM boot". While the documentation never explicitly says this area cannot be used by games, there is also never any explanation as to what, if anything, is available or how to access it. Given the (lack of) information available, it follows that this space is purely internal and not meant to be used by games.
+## With no documentation, how do we know it exists?
+
+On startup, the Main CPU bootstraps from the 1 megabit internal ROM, memory mapped to the range 0 to 0x20000. The "MEGA CD HARDWARE MANUAL" and "MEGA CD SOFTWARE DEVELOPMENT" documentation both describe this space as simply being for "CD-ROM boot". While the documentation never explicitly says this area cannot be used by games, there is also never any explanation as to what, if anything, is available there or how to access it. Given the (lack of) information available, it follows that this space is purely internal and not meant to be used by games.
 
 Yet it was discovered that a number of games were making calls into this "CD-ROM boot" area (such as Keio Yūgekitai, Switch, Alshark, Jangō World Cup, and Ishii Hisaichi no Daiseikai). Looking into this, we find these calls reference a jump table beginning at 0x280, and further analysis shows that these functions perform a wide variety of common Mega Drive processes. Many of the routines are called by the CD Player, for example, but many are also unused.
 
-The wide range of functionality, the only-partial use by the internal utilities, the existence as a fixed-position jump table and the fact that a significant number of production games make calls via this table suggests that this was a library meant to be used by game developers to reduce some boilerplate code.
+The wide range of functionality, the only-partial use by the internal utilities, the existence of a fixed-position jump table and the fact that a significant number of production games make calls via this table all suggest that this was a library meant to be used by game developers to reduce some boilerplate code.
 
 ## What is a jump table?
 
-A jump table is simply an array of JMP commands with their offset. In this case, it is a fixed-position jump table, meaning it appears at the same offset across all revisions and versions of the internal ROM. You can find this table at offset 0x280 in the Model 1 USA version ROM, in the Model 2 Japanese version, in the Wondermega and Mega LD, and so on.
+A jump table is simply an array of JMP opcodes (that is, commands to jump to an arbitrary piece of code without any register pushes or other wrapping; you might think of it as a redirect in the program). In the case of the Main BIOS, it is a fixed-position jump table, meaning it appears at the same memory offset across all revisions and versions of the internal ROM. You can find this table at offset 0x280 in the Model 1 USA version ROM, in the Model 2 Japanese version, in the Wondermega and Mega LD, and so on.
 
-The idea here is that as long as the position and order of this table doesn't change, *you can make updates to the code that is called by this table.* This ensures that the very first Mega CD game will still work on the last hardware model, even though its internal ROM is a different version.
+The idea here is that the position and order of this table will never change, but the addresses pointed *to* by the table can vary. This allows code to be updated for bugfixes or changed for a region without breaking games that use the routines pointed to by the table.  Think of it like the index in the back of a book: maybe different editions of the book have sections expanded or moved, which change the page number on which you can find the topic, but you can always determine that page number by checking the jump table (the index), which has a fixed position (the end of the book) and ordering (alphabetic order).
 
-There is a similar jump table configuration on the Sub CPU side, and this is what we use when making BIOS calls for CD audio playback, backup RAM access, and so on. We specify an operation code (which is the index of the entry in the table) and call a vector that redirects into the table.
-
-The fact that there is a "revision-proof" jump table within the Main side internal ROM strongly suggests that it was meant to be used by game developers.
+This ensures that the very first Mega CD game will still work on the last hardware model, even though its internal ROM is a later revision. The fact that there is a "revision-proof" jump table within the Main side internal ROM strongly suggests that it was meant to be used by game developers.
 
 ## Are we simply missing some English documentation?
 
@@ -78,13 +78,13 @@ Thanks to this tech bulletin, we have A) proof that these calls were allowed to 
 
 ## Why do only Japanese games use these calls?
 
-Given what we know from Tech Bulletin #3, it doesn't appear there was a cabal of Japanese developers hoarding secrets.
+Given that the Main BIOS was described in English to some extent in Tech Bulletin #3, it doesn't appear there was a cabal of Japanese developers hoarding secrets.
 
-Perhaps the probable documentation (the mysterious `ROM_UTIL.DOC`) didn't make it to international developers in time. Perhaps it was just missed since it wasn't as obvious as printed documentation in a binder.
+Perhaps the probable documentation (the mysterious `ROM_UTIL.DOC` file) didn't make it to international developers in time and the translator simply translated without knowing the larger context. Perhaps the whole Main BIOS concept was just missed by non-Japanese devs since it wasn't as obvious as printed documentation in a binder.
 
-Though the exact state of affairs is unclear and there is much "he said, she said," it does seem that Sega of Japan and Sega of America did not have the best relationship in the 1990s. I am cautious to not imply any malice, to imply Japanese devs were seeking an "edge" (as these calls don't activate hidden functionality, but simply reduce boilerplate code), but perhaps it was more of a case of an ocean separating the offices. I can imagine Japanese developers meeting with the engineers at Sega who designed and wrote the internal ROM, and having actual discussions about how to utilize the hardware. Meanwhile international developers would be at the mercy of translated documentation and intermediary interpreters.
+Though the exact state of affairs is unclear and there is much "he said, she said," it does seem that Sega of Japan and Sega of America did not have the best relationship in the 1990s. I am cautious to not imply any malice or to imply Japanese devs were seeking an "edge" (as these calls don't activate hidden functionality, but simply reduce boilerplate code), but perhaps it was more of a case of an ocean separating the offices. I can imagine Japanese developers meeting with the engineers at Sega who designed and wrote the internal ROM, and having actual discussions about how to best utilize the hardware, speaking in their native language. Meanwhile international developers would be at the mercy of translated documentation and intermediary interpreters and the time lag of communicating with busy teams on the other side of the planet.
 
-I do find this comment quite telling. It is from official sample code for the Super 32X, illustrating its use in conjunction with the Mega CD. The file `MAINCPU.INC` says this (emphasis added):
+I do find the following comment quite telling. It is from official sample code for the Super 32X, illustrating its use in conjunction with the Mega CD. The file `MAINCPU.INC` says this (emphasis added):
 
 > ;---------------------------------------------------------------------------  
 > ; the comment above says the memory area above $FFD000 is not for general use.  
@@ -99,21 +99,29 @@ I do find this comment quite telling. It is from official sample code for the Su
 > ;  cause the machine to lock up and die.  
 > ;----------------------------------------------------------------------------  
 
-We have a Sega of America engineer, writing official Sega of America code, who is citing the same Tech Bulletin we are as his primary source for information on using some otherwise "forbidden" areas of memory. He has apparently asked Sega of Japan for clarification, who did not respond, and suggests that developers not use these in production games.
+We have a Sega of America engineer, writing official Sega of America code, who is citing the same Tech Bulletin we are as his primary source for information on using some otherwise "forbidden" areas of memory. He has apparently asked Sega of Japan for clarification, who did not respond, and suggests that developers not use this space in production games.
 
-It is difficult to do anything more than speculate about what happened. It's also worth mentioning that we have not checked everything single non-Japanese game, so we may yet find one that uses the Main BIOS calls, adding another layer to the theories. But now, more than 30 years later, we have a good understanding of these calls and how to use them to make the games we write better.
+It is difficult to do anything more than speculate about what happened here. It's also worth mentioning that we have not checked every single non-Japanese game, so we may yet find one that uses the Main BIOS calls. But now, more than 30 years later and thanks to detailed reverse engineering, we have a good understanding of these calls and how to use them to make the games we write better.
 
----
+# Incorporating Main BIOS Calls
 
+Using the Main BIOS calls in your code is as simple as including `main/bios.h` in yoru C code or `main/bios.def.h` in your ASM code. However, there are some major considerations that must be taken when using some of these calls.
 
+## Memory Usage
 
+Perhaps the biggest deciding factor for using the Main BIOS or not is its use of Work RAM. Work RAM is the smallest of the memory buffers available, yet it is arguably the most important. Of the 64KB of space available in Work RAM, 768 bytes are reserved for the system vector jump table beginning at 0xFFFD00. Below that is the runtime stack, which varies in size as the program runs but generally has 256 bytes reserved.
 
+This leaves 63KB of space available to the programmer. However, some Main BIOS calls use additional memory, which can take at most another 1.25KB of space, leaving you with a total of 61.75KB to use.
 
-> The Main CPU side Boot ROM code, however, is not well documented. In fact, it is somewhat of a mystery. Within the Boot ROM is an array of functions that are linked at a jump table, indicating they are meant to be used across ROM revisions and thus intended for use by games. While it seems most games do not make use of these system calls, at least some do . This is solid evidence that the calls can be freely used by developers if they wish.
+That is still the majority of the buffer left free, admittedly, but consider that Work RAM space will likely hold your game kernel, shared/global resources, runtime RAM and the stack. It can fill up quickly, and that 1.25KB of space claimed by the Main BIOS may be valuable.
 
-> We do not have any official documentation on the Boot ROM library. It is possible there never was such documentation to begin with, as we have three different source of Mega CD paperwork, most of which is wholly redundant, yet there is no sign of Boot ROM documentation. One of the later Technical Bulletins makes mention of these calls in passing and mentions they may be used by games, so it wasn't secret information. Its possible there was documentation that was never translated to English and was only available to Japanese developers.
+On the other hand, the space used by the Main BIOS library is for utilities that would be similarly allocated by your own code, namely, a decompression buffer for compressed graphics, a sprite list cache, and a palette cache. So the end result may be zero sum.
 
-The Tech Bulletin in question here is MEGA CD TECHNICAL BULLETIN #3. It is our only direct reference to the otherwise undocumented code. First it provides a memory map of the Main CPU side when the Boot ROM functions are in use:
+We recommend reading through this reference and deciding early on if you wish to use any BIOS calls, then plan your memory layout around the calls you intend to use.
+
+### Memory Map
+
+Here is the memory map for Work RAM when using the Main BIOS (from Tech Bulletin #3):
 
     FF0000  +----------------+
             | IP/AP use      |
@@ -128,34 +136,35 @@ The Tech Bulletin in question here is MEGA CD TECHNICAL BULLETIN #3. It is our o
             | Stack          |
     FFFD00  +----------------+
             | System / Boot  |
-            |       ROM Use  |
+            |        ROM Use |
     FFFFFF  +----------------+
 
-The area from 0xFFF700 to 0xFFFC00 is marked as reserved for Boot ROM use. We discuss this area in more detail in the Memory Usage section below.
+In this layout, we have 61.75KB of memory to work with freely, from 0xFF0000 to 0xFFF700. Below that we have an area marked for "Boot ROM Use" (that is, for Main BIOS functions to use), the runtime stack, and another section marked "System / Boot ROM Use".
 
-Further on in the tech bulletin, it describes the boot process in a little more detail, then describes the state ofthe Main CPU side after bootup (important parts highlighted):
+Let's revisit a key line from the aforementioned tech bulletin:
 
-> The loading occurs from the beginning of WORK RAM. The stack is $FFFDOO. The RAM's usage status is as follows. Please refer to the RAM and PORT assignments in 'MEM_MAP.ASS'. Subsequent to $fffd00 are jump table, etc., and therefore should not be used. **Those preceding $fffd00 could be freely used provided that boot ROM sample routine is not used.** Also, when setting jump address in the jump table, jump address must be set to a value equal to the label value plus 2. The label value should not be rewritten. **Subroutine in the boot ROM may also be used (please see mainent.i,rom_util.doc). Use "works" defined by the using routine.** Enter SEGA-specified security program at the head of IP. Please note that Europe and the U.S. have different contents and sizes. **Outside of the system area work RAM values could differ depending on the BOOT-ROM version; also keep in mind that the work RAM values are not guaranteed.**
+> Subsequent to $fffd00 are jump table, etc., and therefore should not be used. Those preceding $fffd00 could be freely used provided that boot ROM sample routine is not used.
 
-The translation is a bit stilted, but we can get the sense that using the code in the Boot ROM was an acceptable option for developers and that there was further information in at least two official Sega files (mainent.i and rom_util.doc). Unfortunately, we do not have copies of the "official SDK" for the Mega CD. We do have some official code from later 32X dev kits which have examples for working with the Mega CD, but the files mentioned above in particular are not included.
 
-After this, the tech bulletin provides a listing of several memory locations used by the library, things such as the decompression buffer and the sprite cache, within the Boot ROM Use block. It also lists the vector jump table within the System Use area, beginning at 0xFFFD00. Interestingly, the VDP register cache is included in the System Use area.
+The translation is a bit stilted, but it tells us that the space from 0xFFFD00 on should not be used as it contains the system vector jump table (that is, the vectors for exceptions and interrupts - very important!). This is true whether the Main BIOS calls are used or not. (We'll discuss this section more deeply soon.)
 
-The document warns us that RAM locations in the Boot ROM block are not guaranteed across revisions. Though I haven't thoroughly checked every single dump of the internal ROM, it looks like they are, indeed, the same across versions. Until we check everything single one, though, we can't say that with 100% certainty. This document also implies that RAM locations within the System Use area are fixed across versions, which hints that the VDP register cache within will never move. There are some other memory locations not listed in this document but which were determined through reverse engineering that are also in the System Use area. The implication, we can gather, is that these are also safe across versions.
 
-That is the sum of our official documentation on the Boot ROM library code. However, we know that a significant number of retail games used this code, and that tells us it is safe to use in our own games and on real hardware.
 
-# Memory Usage
+### Stack Setup
 
-Perhaps the biggest deciding factor for using the Boot ROM or not is its use of Work RAM. As we have discussed in design.md, Work RAM is the smallest of the runtime buffers available yet is the most important. Of the 63.25KB of space available in Work RAM, another 1.25KB could be lost if you choose to use the Boot ROM library.
+But the vector jump table only occupies up to 0xFFFDB3. The remaining 589 bytes are use by the Main BIOS
 
-That isn't a huge amount of space, admittedly, but consider that that 63.25KB of space will hold the kernel, global resources, runtime RAM and the stack. It can fill up quickly, and 1.25KB of space may be valuable.
 
-On the other hand, the space taken by the Boot ROM library would probably be similarly allocated by your own code, namely, a decompression buffer (for compressed graphics), a sprite list cache and a palette cache.
+but we can get the sense that using the code in the Main BIOS was an acceptable option for developers and that there was further information in at least two official Sega files (mainent.i and rom_util.doc). Unfortunately, we do not have copies of the "official SDK" for the Mega CD. We do have some official code from later 32X dev kits which have examples for working with the Mega CD, but the files mentioned above in particular are not included.
 
-You can pick and choose which components from the Library to use in your project. By examining the memory usage of only the parts you choose to use, you are free to use the rest of the Boot ROM Use block for yourself.
+After this, the tech bulletin provides a listing of several memory locations used by the library, things such as the decompression buffer and the sprite cache, within the Main BIOS Use block. It also lists the vector jump table within the System Use area, beginning at 0xFFFD00. Interestingly, the VDP register cache is included in the System Use area.
 
-## Boot ROM Use Block
+The document warns us that RAM locations in the Main BIOS block are not guaranteed across revisions. Though I haven't thoroughly checked every single dump of the internal ROM, it looks like they are, indeed, the same across versions. Until we check everything single one, though, we can't say that with 100% certainty. This document also implies that RAM locations within the System Use area are fixed across versions, which hints that the VDP register cache within will never move. There are some other memory locations not listed in this document but which were determined through reverse engineering that are also in the System Use area. The implication, we can gather, is that these are also safe across versions.
+
+That is the sum of our official documentation on the Main BIOS library code. However, we know that a significant number of retail games used this code, and that tells us it is safe to use in our own games and on real hardware.
+
+
+## Main BIOS Use Block
 
 Let's take a closer look at that block of memory. It exists in Work RAM from 0xFFF700 and is 1,280 bytes (1.25kb) in size:
 
@@ -175,7 +184,7 @@ We classify these sub blocks as components. See the Components section below for
 
 ## Stack Usage
 
-One very important thing to keep in mind is the stack. By default, the stack is set to 0xFFFD00. With the Boot ROM Use block ending at 0xFFFC00, this means there is only 256 bytes for the stack. This is generally enough for most cases, but C code may not optimize well and could create many nested calls or large stack frames. Be mindful of this when developing in C.
+One very important thing to keep in mind is the stack. By default, the stack is set to 0xFFFD00. With the Main BIOS Use block ending at 0xFFFC00, this means there is only 256 bytes for the stack. This is generally enough for most cases, but C code may not optimize well and could create many nested calls or large stack frames. Be mindful of this when developing in C.
 
 Alternatively, the stack can be moved to a lower location and allocated more space if you feel that is necessary. This would free up the 0xFFFC00 to 0xFFFD00 range for your own use as well.
 
@@ -183,26 +192,29 @@ Alternatively, the stack can be moved to a lower location and allocated more spa
 
 We've already examined the System Use Block closely in the design.md file. To summarize, it is a 768 byte block at 0xFFFD00, extending to the end of addressable memory. It is generally regarded as off-limits within official documentation, though only half of it is actually used in normal operation, meaning the rest of the space can be used freely.
 
-However, it must be noted that the Boot ROM library uses part of that free space within the System Use block for a number of variables. Keep this in mind if you plan to use the Boot ROM Library.
+However, it must be noted that the Main BIOS library uses part of that free space within the System Use block for a number of variables. Keep this in mind if you plan to use the Main BIOS Library.
 
 To keep things simple, do not use the System Use area for your own storage at all in your project.
 
 ## "Free" Functions
 
-Some Boot ROM library calls do not use any RAM at all (i.e. have no "cost") and can be called no matter what your memory constraints are. This means if you are not planning to use the Boot ROM Library at all to save RAM space, you can still make use of these calls without worry.
+Some Main BIOS library calls do not use any RAM at all (i.e. have no "cost") and can be called no matter what your memory constraints are. This means if you are not planning to use the Main BIOS Library at all to save RAM space, you can still make use of these calls without worry.
 
 Such calls will be marked as "Free" in the reference section below.
+
+
+The Tech Bulletin in question here is MEGA CD TECHNICAL BULLETIN #3. It is our only direct reference to the otherwise undocumented code. First it provides 
 
 # Taxonomy
 
 ## Groups
 
-The routines and their associated variables within the Boot ROM library can be roughly divided into these groups: System, Interrupts, Input, VDP, Decompression, Gate Array Communication, Misc, and Unknown.
+The routines and their associated variables within the Main BIOS library can be roughly divided into these groups: System, Interrupts, Input, VDP, Decompression, Gate Array Communication, Misc, and Unknown.
 
 - System: Subroutines for system boot; these are generally unnecessary during runtime
 - Interrupts: Subroutines related to interrupts and interrupt handlers
 - Input: Subroutines related to controller input
-- VDP: Subroutines related to VDP usage and graphics display
+- VDP: Subroutines related to VDP usage (graphics)
 - Decompression: Subroutines to decompress data
 - Gate Array Communication: Subroutines related to the Gate Array comm registers
 - Unknown: Subroutines that are not yet fully understood
@@ -230,7 +242,7 @@ Such calls will be marked as "Tiny" in the reference below.
 
 ## Unclear Functions
 
-As discussed above, the Boot ROM library functions do not have any official documentation. While most have been fully reverse engineered, there are some that have aspects that are not well understood
+As discussed above, the Main BIOS library functions do not have any official documentation. While most have been fully reverse engineered, there are some that have aspects that are not well understood
 
 Such calls will be marked as "Unclear" along with notes about them. They should be closely evaluated before deciding whether to use them or not.
 
@@ -238,9 +250,9 @@ Note that this is slightly different from the Unknown grouping. Calls in the Unk
 
 ## Calling The Library In Your Code
 
-When coding in assembly, include the `bios.def.h` file. This contains definitions for the function entry points and addresses for variables.
+When coding in assembly, include the `main/bios.def.h` file. This contains definitions for the function entry points and addresses for variables.
 
-When coding in C, include `bios.h`.
+When coding in C, include `main/bios.h`.
 
 # Component Reference
 
@@ -248,9 +260,9 @@ When coding in C, include `bios.h`.
 
 The vertical blanking interrupt is very important to developing on the Mega Drive (and any CRT based retro game system). This is the period in which the electron beam inside the CRT is returning to the upper left position after reaching the end of displaying all the rows of a single frame. It is during this time when much of the game logic and data I/O is processed.
 
-The Boot ROM provides generic VINT wait and handling routines. The handler takes care of a number of common tasks: sync GA comm registers to/from cache, copy the palette cache to CRAM, and update controller inputs. The wait routine takes care of random number generation.
+The Main BIOS provides generic VINT wait and handling routines. The handler takes care of a number of common tasks: sync GA comm registers to/from cache, copy the palette cache to CRAM, and update controller inputs. The wait routine takes care of random number generation.
 
-The VINT component is useful but requires a commitment to using the Boot ROM library in full due to how many other components it uses. You should familiarize yourself with the components it uses and design your program around them if you want to use the VINT routines. Or rather, if you decide to use most of the Boot ROM library functionality to begin with, the VINT handler help tie it all together.
+The VINT component is useful but requires a commitment to using the Main BIOS library in full due to how many other components it uses. You should familiarize yourself with the components it uses and design your program around them if you want to use the VINT routines. Or rather, if you decide to use most of the Main BIOS library functionality to begin with, the VINT handler help tie it all together.
 
 The VINT handler also calls VINT_USER which points to a user-defined function that performs your game-specific logic during the VBLANK interval.
 
@@ -264,7 +276,7 @@ Please see the `gfx` example project which uses the VINT component.
 
 The 64kb of VRAM is shared by tile graphics, name tables (tilemaps), the sprite table and the horizontal scroll table. How much space is allocated for each section can be varied, giving flexibility to the developer on how they choose to use the VDP.
 
-However, a number of Boot ROM library routines expect the VRAM to have a specific layout. This layout is defined like so:
+However, a number of Main BIOS library routines expect the VRAM to have a specific layout. This layout is defined like so:
 
     0000  +----------------+
           | Tile Graphics  |
@@ -303,7 +315,7 @@ Also note that this value must be manually updated whenever changing the width s
 
 ## DMA Component
 
-DMA transfers to VRAM are a central piece of Mega Drive games, but there are quirks when doing them with Mega CD hardware. The Boot ROM library has functions for all the DMA operations as well as a simple queue system.
+DMA transfers to VRAM are a central piece of Mega Drive games, but there are quirks when doing them with Mega CD hardware. The Main BIOS library has functions for all the DMA operations as well as a simple queue system.
 
 The VDP Register Cache component is required as Mode Register 2 is updated with each operation.
 
@@ -311,7 +323,7 @@ The VDP Register Cache component is required as Mode Register 2 is updated with 
 
 Rather than making multiple updates to CRAM via the VDP ports, the color palette is mirrored in RAM and dumped to CRAM all at once during a blanking interval.
 
-The cache is an array of 64 words (128 bytes), a 1:1 copy of CRAM. Within Megadev, it is defined as `_BIOS_PALETTE` with each of the subpalettes defined as `_BIOS_PALETTE0`, `_BIOS_PALETTE1`, `_BIOS_PALETTE2` and `_BIOS_PALETTE3`. It resides in Work RAM from 0xFFFB80 to 0xFFFC00 (see the Boot ROM Use Block section above).
+The cache is an array of 64 words (128 bytes), a 1:1 copy of CRAM. Within Megadev, it is defined as `_BIOS_PALETTE` with each of the subpalettes defined as `_BIOS_PALETTE0`, `_BIOS_PALETTE1`, `_BIOS_PALETTE2` and `_BIOS_PALETTE3`. It resides in Work RAM from 0xFFFB80 to 0xFFFC00 (see the Main BIOS Use Block section above).
 
 The palette-related functions take a pointer to color data with a two byte header. The first byte is the offset into CRAM at which the colors should be loaded. This offset is in BYTES rather than entries. Each entry is 2 bytes so e.g. the second color of the second subpalette would be offset 34. The second byte is the number of colors to load, which is counted in ENTRIES rather than bytes. The color data follows immediately.
 
@@ -335,7 +347,7 @@ The rest of the bits are free for you to use as needed.
 
 An entity is any element appearing on screen as composite of multiple sprites with its own rendering state. While the term "entity" is not official, we feel it sufficiently describes how the concept is most often used: to represent a discrete "object" on the screen larger than a single sprite, usually as some interactive element like a stage boss.
 
-In most games (including the Boot ROM library), entities have state related to their position, velocity and x/y flipping, etc. Moreover, they contain a pointer to a function which is run on each update.
+In most games (including the Main BIOS library), entities have state related to their position, velocity and x/y flipping, etc. Moreover, they contain a pointer to a function which is run on each update.
 
 The Entity struct represents the object and its state.
 TODO jmptble_offset is offset into _BIOS_ENTITY_ROUTINES
@@ -367,13 +379,13 @@ The sprobjs calls are used by the BIOS CD player and Wondermega Collection.
 
 ## Random Number Generator Component
 
-There is a simple multiply-with-carry psuedo random number generator available within the Boot ROM library. A random number can be obtained by reading the word value from `_BIOS_RANDOM`. However, the `_BIOS_PRNG` must be called on each VBLANK iteration in order to maintain a constantly random value. `_BIOS_PRNG_MOD` can be used to get a value with a maximum range.
+There is a simple multiply-with-carry psuedo random number generator available within the Main BIOS library. A random number can be obtained by reading the word value from `_BIOS_RANDOM`. However, the `_BIOS_PRNG` must be called on each VBLANK iteration in order to maintain a constantly random value. `_BIOS_PRNG_MOD` can be used to get a value with a maximum range.
 
 ## Font & Print Component
 
 There is only one print routine, which take a pointer to the text and a pointer to a VRAM nametable address where it should be displayed. Unlike C strings, text must be terminated by 0xFF, while 0x00 marks a newline.
 
-There is a standard ASCII font in the Boot ROM data which can be used if you don't need/want your own. The functions `_BIOS_LOAD_FONT` and `_BIOS_LOAD_FONT_DEFAULTS` will load this font into VRAM for use with the print function. `_BIOS_LOAD_FONT` takes a VDP pointer to the location in VRAM where the font should be loaded as well as a 1bpp color definition (see `_BIOS_LOAD_1BPP_TILES`).
+There is a standard ASCII font in the Main BIOS data which can be used if you don't need/want your own. The functions `_BIOS_LOAD_FONT` and `_BIOS_LOAD_FONT_DEFAULTS` will load this font into VRAM for use with the print function. `_BIOS_LOAD_FONT` takes a VDP pointer to the location in VRAM where the font should be loaded as well as a 1bpp color definition (see `_BIOS_LOAD_1BPP_TILES`).
 
 You must also set the `_BIOS_FONT_TILE_BASE` variable to the tile index of the first tile of the font within VRAM *minus 32*. The reason for this is because ASCII codes begin at 32, and the print function simply matches an ASCII character to a tile index. Since `_BIOS_FONT_TILE_BASE` cannot be negative, this implies the font must be loaded at tile index 32 or later, but cannot be placed before index 32. When placed at index 32, `_BIOS_FONT_TILE_BASE` will be 0. This is the configuration the BIOS works with and you can observe this by viewing the VRAM tiles while the "Produced by or under license..." screen is being displayed.
 
@@ -383,7 +395,7 @@ The other font load function, `_FONT_LOAD_FONT_DEFAULTS` simplifies things by lo
 
 The GA_COMFLAGS register is intended to keep the two CPUs in sync by informing each other about their status. It is a 16 bit register, split into two bytes: the upper byte for the Main CPU and the lower byte for the Sub CPU. The flags do not have an any inherent semantic meaning and the developer is free to use any or none of the flags in their program.
 
-There are a few Boot ROM library functions that use these flags, however, which inherently assigns meaning to those bits. The problem here is that we don't know what those meanings are due to a lack of documentation. We can only guess based on the context in which they appear as we reverse engineer the code. This includes understanding not just the library calls that use these bits, but what must be done on the Sub CPU side to correctly read, set and clear bits in response. Thankfully, the built in software (namely the CD player) uses these calls, meaning we have usage examples on the Sub CPU side to look at. Moreover, of the retail games identified so far that use the Boot ROM library, most of them make use of these calls and exhibit a similarity in their implementation (to the point of being nearly identical) that suggests they were built from example code.
+There are a few Main BIOS library functions that use these flags, however, which inherently assigns meaning to those bits. The problem here is that we don't know what those meanings are due to a lack of documentation. We can only guess based on the context in which they appear as we reverse engineer the code. This includes understanding not just the library calls that use these bits, but what must be done on the Sub CPU side to correctly read, set and clear bits in response. Thankfully, the built in software (namely the CD player) uses these calls, meaning we have usage examples on the Sub CPU side to look at. Moreover, of the retail games identified so far that use the Main BIOS library, most of them make use of these calls and exhibit a similarity in their implementation (to the point of being nearly identical) that suggests they were built from example code.
 
 At this point, we are still investigating and have only a rough idea of what the flags represent. Therefore, we do not recommend using the functions marked as using the Predefined Comm Flag Semantics component. However, **if you plan to use the built-in vblank handler (_BIOS_VINT_HANDLER), keep in mind that it includes a call to one of these subroutines. Please see the notes for _BIOS_COMM_SYNC.**
 
@@ -409,9 +421,10 @@ A fresh look at this suggests that bit 0 SET indicates that the comm registers h
 ## Interrupts Group
 
 ### `_BIOS_VINT_HANDLER`
+
 Components: VINT, GA Comm, Sprite Table Cache, Palette Cache, Input
 
-A generic VINT handler. Calls `_BIOS_COMM_SYNC`, `_BIOS_COPY_PAL` and `_BIOS_UPDATE_INPUTS` on each iteration. If bit 1 of `_BIOS_VINT_HANDLER_FLAGS` is set, `_BIOS_VINT_USER` will also be called. `_BIOS_VINT_USER` points to a user-defined routine with game-specific logic to be run during VBLANK. We recommend including a call to `_BIOS_COPY_SPRLIST` in your VINT_USER routine.
+A generic VINT handler. Calls `_BIOS_COMM_SYNC`, `_BIOS_COPY_PAL` and `_BIOS_READ_JOYPAD` on each iteration. If bit 1 of `_BIOS_VINT_HANDLER_FLAGS` is set, `_BIOS_VINT_USER` will also be called. `_BIOS_VINT_USER` points to a user-defined routine with game-specific logic to be run during VBLANK. We recommend including a call to `_BIOS_COPY_SPRLIST` in your VINT_USER routine.
 
 `_BIOS_VINT_HANDLER` increments the `_BIOS_VINT_COUNTER` variable by 1 on each iteration. It also uses the `_SKIP_GFX_UPDATES` variable. When this value is non-zero, it will skip the call to `_BIOS_COPY_PAL` and `_BIOS_VINT_USER` and skip the `_BIOS_VINT_COUNTER` increment.
 
@@ -439,11 +452,13 @@ A wrapper for `_BIOS_VINT_WAIT` that sets `_BIOS_VINT_HANDLER_FLAGS` to 3 (bit 0
 
 ## Input Group
 
-### `_BIOS_UPDATE_INPUTS`
+### `_BIOS_READ_JOYPAD`
 
 ### `_BIOS_INPUT_REPEAT_DELAY`
 
 ### `_BIOS_DETECT_CONTROLLER`
+
+
 
 ## VDP/Graphics Group
 
@@ -493,7 +508,7 @@ Clears VSRAM.
 ### `_BIOS_LOAD_VDPREGS_DEFAULT`
 Components: Fixed VRAM Layout (All), VDP Register Cache, Plane Width Cache
 
-Loads the Boot ROM default VDP settings to the cache and to the registers. Also updates the `_BIOS_VDP_DEFAULT_PLANE_WIDTH` cached value.
+Loads the Main BIOS default VDP settings to the cache and to the registers. Also updates the `_BIOS_VDP_DEFAULT_PLANE_WIDTH` cached value.
 
 Here is the default VDP data loaded by the function, in the order in which it appears in the data, with notes highlighting important settings on each register:
 
@@ -548,6 +563,7 @@ Here is the default VDP data loaded by the function, in the order in which it ap
   - 0
 
 ### `_BIOS_LOAD_VDPREGS`
+
 Components: VDP Reg Cache
 
 Loads a list of VDP settings to the cache and to registers.
@@ -556,64 +572,79 @@ This list should be null terminated array of 16 bit values, with each value bein
 
 Note that this does NOT update the `_BIOS_VDP_DEFAULT_PLANE_WIDTH` variable when setting register 0x10.
 
+
 ### `_BIOS_VDP_FILL` (Tiny)
+
 Loads the specified value to VRAM at the specified address for the given size (in words).
 
 ### `_BIOS_VDP_FILL_CLEAR` (Tiny)
+
 Clears VRAM at the specified address for the given size (in words).
 
 ### `_BIOS_LOAD_MAP`
+
 Components: Plane Width Cache
 
 Loads a tilemap to VRAM.
 
 ### `_BIOS_LOAD_MAP_TEMPLATE`
+
 Components: Plane Width Cache
 
 Loads a tilemap to VRAM with a template value applied to each map entry.
 
-### `_BIOS_NMTBL_FILL`
+### `_BIOS_PLANE_FILL`
+
 Components: Plane Width Cache
 
 Writes a given tilemap entry to VRAM with the given dimensions.
 
 ### `_BIOS_VDP_DISP_ENABLE`
+
 Components: VDP Register Cache
 
 Enables VDP display (bit 6 on VDP register 1).
 
 ### `_BIOS_VDP_DISP_DISABLE`
+
 Components: VDP Register Cache
 
 Disables VDP display (bit 6 on VDP register 1).
 
 ### `_BIOS_LOAD_PAL`
+
 Components: Palette Cache
 
 Loads an array of colors to the palette cache. Does not update CRAM directly.
 
 ### `_BIOS_LOAD_PAL_UPDATE`
+
 Components: Palette Cache, VDP Update Flags
 
 Loads an array of colors to the palette cache and sets the CRAM update flag. Does not update CRAM directly.
 
 ### `_BIOS_COPY_PAL`
+
 Components: VDP Reg Cache, DMA, Palette Cache, VDP Update Flags
 
 Copies the palette cache to CRAM.
 
 ### `_BIOS_PROCESS_ENTITIES`
+
 Update the state of an array of entitys. Please see the Entities section.
 
 ### `_BIOS_DISP_SPROBJ`
+
 Display an entity. Please see the Entities section.
 
 ### `_BIOS_COPY_SPRLIST`
+
 Components: Sprite Cache, VDP Register Cache, VINT Flags
 
 Copies the sprite cache to the sprite table in VRAM.
 
 ### `_BIOS_LOAD_1BPP_TILES`
+
 Converts 1bpp formatted graphics data to 4bpp VDP format and copies to VRAM.
 
 It is a form of compression as, logically, 1bpp graphics only use 1/4 of the space of 4bpp graphics. It would be most often used for simple fonts which only need to use one color. In fact, the Boot ROM's internal font is 1bpp and uses this routine to convert it to standard Mega Drive format when loading. The size of a font is likely not a concern for games using only the standard western alphabet, but when you consider east Asian languages like Japanese, Chinese and Korean and their multitudes of glyphs, having a way to quickly load and convert a large set of characters is helpful.
@@ -631,12 +662,14 @@ Where X is the palette index of the color to be used. So, for example, if you wa
 That should be enough information to implement in your code, but if you you want to understand why this value is necessary and formatted like it is, here is the algorithm in summary. Since the native VDP tile format is 4bpp, that means there are four bytes per tile row (8 pixels * 4 bits = 32 bits = 4 bytes). For 1bpp data, there is one byte per tile row (8 pixels * 1 bit = 8 bits = 1 byte). For every byte of 1bpp data, it rotates the value by 2 bits and masks those off. That 2 bit value is then used as a byte offset relative to the MSB of the 32 bit color definition, which contains an equivalent 4bpp 2 pixel representation of that value. For example, if 2 bits of 1bpp data are binary 10 (decimal 2), then it uses the value that is two bytes from the MSB of the color definition. That value is X0, which is appended to the output 4bpp data. Basically, for each possible pair of two bits, there is a corresponding pair of nibbles (4 bits) that matches it within the color definition.
 
 
-### `_BIOS_LOAD_MAP_VERT`
+### `_BIOS_LOAD_STAMP_MAP`
+
 Components: Plane Width Cache
 
 Loads a tilemap to VRAM based on sequential tiles which are vertically oriented.
 
 ### `_BIOS_LOAD_MAP_HORIZ`
+
 Properties: Plane Width Cache
 
 Loads a tilemap to VRAM based on sequential tiles which are horizontally oriented.
@@ -644,21 +677,25 @@ Loads a tilemap to VRAM based on sequential tiles which are horizontally oriente
 
 
 ### `_BIOS_BLANK_DISPLAY`
+
 Properties: VDP Reg Cache
 
 Sets the background color to black and disables the display.
 
 ### `_BIOS_PAL_FADEOUT`
+
 Properties: VDP Update Flags, Palette Cache
 
 Fades a palette range to black.
 
 ### `_BIOS_PAL_FADEIN`
+
 Properties: VDP Update Flags, Palette Cache, Other Memory
 
 Fades a palette to a target palette.
 
 ### `_BIOS_SET_FADEIN_PAL`
+
 Properties: Other Memory
 
 Sets the target palette for fade in.
@@ -680,9 +717,11 @@ Functions related to inter-CPU communication via the Gate Array comm registers.
 ## GA CPU Communication - Functions
 
 ### `_BIOS_CLEAR_COMM`
+
 Clears all Gate Array COMCMD and COMFLAGS registers and the COMCMD and COMFLAGS cache.
 
 ### `_BIOS_COMM_SYNC`
+
 Components: Predefined Comm Flag Semantics
 
 Triggers INT2 on the Sub CPU via the IFL2 bit (for this reason, it should be called during VBLANK). Also syncs the COMCMD cache values to the GA registers and the COMSTAT values from registers to the cache.
@@ -694,6 +733,7 @@ As mentioned in the Predefined Comm Flag Semantics component description, we rec
 Note that if you are using `_BIOS_VINT_HANDLER` for your vblank handler, `_BIOS_COMM_SYNC` is called as part of that subroutine, which is important as it takes care of the IFL2 bit. The best way to keep things flowing smoothly is to ensure bit 0 is always unset on the Sub side COMFLAGS. This will ensure that the COMCMD/COMSTAT sync is skipped and that a stuck loop is avoided.
 
 ### `_BIOS_UK_COMM_CDINFO`
+
 Components: Predefined Comm Flag Semantics
 
 Copies various CD read status values sent from the Sub CPU via COMSTAT registers, including disc read absolute and relative timecodes. One use for getting this information in real time is to time the playback of CD audio with actions on the screen. Code that implements this call suggests it is mean to be used in conjunction with `_BIOS_COMM_SYNC`, with the latter called at the start of VBLANK and `_BIOS_UK_COMM_CDINFO` called at the end.
@@ -701,6 +741,7 @@ Copies various CD read status values sent from the Sub CPU via COMSTAT registers
 As mentioned in the Predefined Comm Flag Semantics component description, we recommend not using this function until we have a better understanding of the flags system on both CPUs.
 
 ### `_BIOS_UK_COMMFLAGS_RELATED`
+
 Components: Predefined Comm Flag Semantics
 
 Waits for bit 6 on Sub side COMFLAGS to set, then clears Main side COMFLAGS bit 2.
@@ -708,26 +749,31 @@ Waits for bit 6 on Sub side COMFLAGS to set, then clears Main side COMFLAGS bit 
 As mentioned in the Predefined Comm Flag Semantics component description, we recommend not using this function until we have a better understanding of the flags system on both CPUs.
 
 ### `_BIOS_SET_COMCMD0_1_CACHE`
+
 Copies the word value in D0 and D1 into COMCMD0 and COMCMD1 cache, respectively.
 
 Although this does not use the Predefined Comm Flag Semantics component directly, it is likely meant to be part of its system. Therefore we recommend reviewing its code closely to make sure it does exactly what you expect before using it.
 
 ### `_BIOS_SET_COMCMD2_3_CACHE`
+
 Copies the word value in D0 and D1 into COMCMD2 and COMCMD3 cache, respectively. In addition, if the value in D0 is 1, it also sets bit 2 on Main side COMFLAGS.
 
 Although this does not use the Predefined Comm Flag Semantics component directly, it is likely meant to be part of its system. Therefore we recommend reviewing its code closely to make sure it does exactly what you expect before using it.
 
 ### `_BIOS_SET_COMCMD4_5_CACHE`
+
 Copies the word value in D0 and D1 into COMCMD4 and COMCMD5 cache, respectively.
 
 Although this does not use the Predefined Comm Flag Semantics component directly, it is likely meant to be part of its system. Therefore we recommend reviewing its code closely to make sure it does exactly what you expect before using it.
 
 ### `_BIOS_SET_COMCMD6_7_CACHE`
+
 Copies the word value in D0 and D1 into COMCMD6 and COMCMD7 cache, respectively.
 
 Although this does not use the Predefined Comm Flag Semantics component directly, it is likely meant to be part of its system. Therefore we recommend reviewing its code closely to make sure it does exactly what you expect before using it.
 
 ### `_BIOS_SET_IFL2`
+
 Sets the IFL2 bit on GA_MEMMODE to trigger INT2 on the Sub side. Should be called during VBLANK only.
 
 ## Misc - Components
@@ -736,37 +782,45 @@ Sets the IFL2 bit on GA_MEMMODE to trigger INT2 on the Sub side. Should be calle
 ## Misc - Functions
 
 ### `_BIOS_PRNG`
+
 Components: Random Number Generator
 
 Generates a new 16bit random number, stored in `_BIOS_RANDOM`.
 
 ### `_BIOS_PRNG_MOD`
+
 Components: Random Number Generator
 
 Generates a random number with a specificed maximum value, stored in a return register.
 
 ### `_BIOS_CLEAR_RAM`
+
 Clears a region of RAM in 32bit iterations.
 
 ### `_BIOS_LOAD_FONT`
+
 Components: Font & Print Component
 
-Load the internal Boot ROM font to VRAM.
+Load the internal Main BIOS font to VRAM.
 
 ### `_BIOS_LOAD_FONT_DEFAULTS`
+
 Components: Font & Print Component
 
-Load the internal Boot ROM font to VRAM with default settings.
+Load the internal Main BIOS font to VRAM with default settings.
 
 ### `_BIOS_PRINT`
+
 Components: Font & Print Component, Plane Width Cache
 
 Prints a string of ASCII text. The position of the text on screen is determined by the passed VDP address.
 
 ### `_BIOS_TO_BCD`
+
 Converts a specified native value to binary coded decimal (BCD).
 
 ### `_BIOS_TO_BCD_BYTE`
+
 Converts the specified 8bit value to binary coded decimal (BCD).
 
 ## Unknown Functions
@@ -783,7 +837,7 @@ Converts the specified 8bit value to binary coded decimal (BCD).
 
 ### `_BIOS_UNKNOWN_38`
 
-### `_BIOS_UNKNOWN_3B`
+### `_BIOD_LOAD_TILEMAP_PARTIAL`
 
 d0.l - VDP ptr
 d1.w - width
@@ -794,6 +848,6 @@ a1.l - ptr to pattern data
 
 ### `_BIOS_UNKNOWN_44`
 
-### `_BIOS_UNKNOWN_45`
+### `_BIOS_ADD_TIME_VALUES`
 
 ### `_BIOS_UNKNOWN_46`
