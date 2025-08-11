@@ -365,7 +365,7 @@ typedef struct Palette
  * Use the @ref PlaneWidth enum to make it semantically clear what
  * the width is in tiles
  */
-#define bios_plane_width (*((u16 *) _BIOS_VDP_PLANE_WIDTH))
+#define bios_plane_width (*((u16 *) _BIOS_PLANE_WIDTH))
 
 /**
  * @def bios_entity_routines
