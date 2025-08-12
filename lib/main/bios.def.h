@@ -742,7 +742,7 @@
 #endif
 
 /**
- * @sa BIOS_PLANE_FILL
+ * @sa bios_plane_fill
  * @clobber d0-d3/d5/a5
  * @ingroup bios_vdp
  */

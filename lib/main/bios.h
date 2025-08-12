@@ -1114,7 +1114,7 @@ static inline void bios_print(char const * string, VDPCMD pos)
 };
 
 /**
- * @fn BIOS_PLANE_FILL
+ * @fn bios_plane_fill
  * @brief Fill a region of a nametable with a value
  * @param[in] D0.l Address (vdpptr format)
  * @param[in] D1.w Width
@@ -1122,7 +1122,7 @@ static inline void bios_print(char const * string, VDPCMD pos)
  * @param[in] D3.w Value
  * @ingroup bios_vdp
  */
-static inline void BIOS_PLANE_FILL(VDPCMD pos, u16 width, u16 height, u16 value)
+static inline void bios_plane_fill(VDPCMD pos, u16 width, u16 height, u16 value)
 {
 	register u32 D0 asm("d0") = pos;
 	register u32 D1 asm("d1") = width;
