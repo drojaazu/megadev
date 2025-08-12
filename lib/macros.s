@@ -43,10 +43,7 @@ file_end:
 
 .macro FILE_NOSIZE path, label, align=2
   GLABEL \label \align
-  GLABEL \label\()_size
-file_start:
   .incbin \path
-file_end:
 .endm
 
 
