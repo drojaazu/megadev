@@ -1338,7 +1338,7 @@ static inline void bios_process_entities(
 
 	asm volatile(
 		"\
-  jsr %c0 \n\
+  jsr %c2 \n\
 		"
 		: "+a"(A0), "+a"(A1)
 		: "i"(_BIOS_PROCESS_ENTITIES), "a"(A0), "a"(A1), "d"(D0), "d"(D1)
