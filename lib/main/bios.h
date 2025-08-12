@@ -417,7 +417,7 @@ typedef struct Palette
  */
 static inline void bios_entry()
 {
-	asm(
+	asm volatile(
 		"\
   jsr %c0 \n\
 		"
@@ -441,7 +441,7 @@ static inline void bios_entry()
  */
 static inline void bios_reset()
 {
-	asm(
+	asm volatile(
 		"\
   jsr %c0 \n\
 		"
@@ -460,7 +460,7 @@ static inline void bios_reset()
  */
 static inline void bios_init()
 {
-	asm(
+	asm volatile(
 		"\
   jsr %c0 \n\
 		"
@@ -478,7 +478,7 @@ static inline void bios_init()
  */
 static inline void bios_init_sp()
 {
-	asm(
+	asm volatile(
 		"\
   jsr %c0 \n\
 		"
@@ -497,7 +497,7 @@ static inline void bios_init_sp()
  */
 static inline void bios_vint_handler()
 {
-	asm(
+	asm volatile(
 		"\
   jsr %c0 \n\
 		"
@@ -519,7 +519,7 @@ static inline void bios_vint_handler()
 static inline void bios_set_hint(void * hint_handler)
 {
 	register u32 A1 asm("a1") = (u32) hint_handler;
-	asm(
+	asm volatile(
 		"\
   jsr %c0 \n\
 		"
@@ -535,7 +535,7 @@ static inline void bios_set_hint(void * hint_handler)
  */
 static inline void bios_read_joypad()
 {
-	asm(
+	asm volatile(
 		"\
   move.l a6, -(sp) \n\
   jsr %c0 \n\
@@ -567,7 +567,7 @@ static inline u8 bios_detect_controller(u8 * io_data_port)
 {
 	register u32 A6 asm("a6") = (u32) io_data_port;
 	register u8 D6 asm("d6");
-	asm(
+	asm volatile(
 		"\
   jsr %c0 \n\
 		"
@@ -590,7 +590,7 @@ static inline u8 bios_detect_controller(u8 * io_data_port)
  */
 static inline void bios_clear_vram()
 {
-	asm(
+	asm volatile(
 		"\
   move.l a6, -(sp) \n\
   jsr %c0 \n\
@@ -610,7 +610,7 @@ static inline void bios_clear_vram()
  */
 static inline void bios_clear_tables()
 {
-	asm(
+	asm volatile(
 		"\
   move.l a6, -(sp) \n\
   jsr %c0 \n\
@@ -628,7 +628,7 @@ static inline void bios_clear_tables()
  */
 static inline void bios_clear_vsram()
 {
-	asm(
+	asm volatile(
 		"\
   jsr %c0 \n\
 		"
@@ -679,7 +679,7 @@ static inline void bios_clear_vsram()
  */
 static inline void bios_load_vdpregs_default()
 {
-	asm(
+	asm volatile(
 		"\
   jsr %c0 \n\
 		"
@@ -724,7 +724,7 @@ static inline void bios_vdp_fill(u32 vdpptr, u16 length, u16 value)
 	register u32 D0 asm("d0") = vdpptr;
 	register u16 D1 asm("d1") = length;
 	register u16 D2 asm("d2") = value;
-	asm(
+	asm volatile(
 		"\
   jsr %c0 \n\
 		"
@@ -744,7 +744,7 @@ static inline void bios_vdp_fill_clear(u32 vdpptr, u16 length)
 {
 	register u32 D0 asm("d0") = vdpptr;
 	register u16 D1 asm("d1") = length;
-	asm(
+	asm volatile(
 		"\
   jsr %c0 \n\
 		"
@@ -763,7 +763,7 @@ static inline void bios_dma_fill_clear(u32 vdpptr, u16 length)
 {
 	register u32 D0 asm("d0") = vdpptr;
 	register u16 D1 asm("d1") = length;
-	asm(
+	asm volatile(
 		"\
   move.l a6, -(sp) \n\
   jsr %c0 \n\
@@ -785,7 +785,7 @@ static inline void bios_dma_fill(u32 vdpptr, u16 length, u16 value)
 	register u32 D0 asm("d0") = vdpptr;
 	register u16 D1 asm("d1") = length;
 	register u16 D2 asm("d2") = value;
-	asm(
+	asm volatile(
 		"\
   move.l a6, -(sp) \n\
   jsr %c0 \n\
@@ -846,7 +846,7 @@ static inline void bios_set_hint_workram(void * hint_handler)
 {
 	register u32 A1 asm("a1") = (u32) hint_handler;
 
-	asm(
+	asm volatile(
 		"\
 			jsr %c0 \n\
 		"
@@ -864,7 +864,7 @@ static inline void bios_set_hint_workram(void * hint_handler)
  */
 static inline void bios_disable_hint()
 {
-	asm(
+	asm volatile(
 		"\
   jsr %c0 \n\
 		"
@@ -880,7 +880,7 @@ static inline void bios_disable_hint()
 static inline void bios_gfx_decomp(u8 const * data)
 {
 	register u32 a1_data asm("a1") = (u32) data;
-	asm(
+	asm volatile(
 		"\
 			jsr %c0 \n\
 		"
@@ -894,7 +894,7 @@ static inline void bios_gfx_decomp(u8 const * data)
  */
 static inline void bios_vdp_disp_enable()
 {
-	asm(
+	asm volatile(
 		"\
 			jsr %c0 \n\
 		"
@@ -908,7 +908,7 @@ static inline void bios_vdp_disp_enable()
  */
 static inline void bios_vdp_disp_disable()
 {
-	asm(
+	asm volatile(
 		"\
 			jsr %c0 \n\
 		"
@@ -931,7 +931,7 @@ static inline void bios_vdp_disp_disable()
  */
 static inline void bios_vint_wait_default()
 {
-	asm(
+	asm volatile(
 		"\
 			jsr %c0 \n\
 		"
@@ -953,7 +953,7 @@ static inline void bios_vint_wait_default()
 static inline void bios_vint_wait(u8 flags)
 {
 	register u8 D0 asm("d0") = flags;
-	asm(
+	asm volatile(
 		"\
 			jsr %c0 \n\
 		"
@@ -1007,7 +1007,7 @@ fade_complete:
  */
 static inline void bios_load_font_defaults()
 {
-	asm(
+	asm volatile(
 		"\
 			jsr %c0 \n\
 		"
@@ -1057,7 +1057,7 @@ static inline void bios_input_repeat_delay(u8 * input, bool use_2p)
 	register u32 A1 asm("a1") = (u32) input;
 	register u16 D0 asm("d0") = (u16) use_2p;
 
-	asm(
+	asm volatile(
 		"\
 			jsr %c0 \n\
 		"
@@ -1076,7 +1076,7 @@ static inline void bios_input_repeat_delay(u8 * input, bool use_2p)
  */
 static inline void bios_clear_comm()
 {
-	asm(
+	asm volatile(
 		"\
 			jsr %c0 \n\
 		"
@@ -1154,7 +1154,7 @@ static inline void bios_dma_xfer(VDPCMD dest, u8 const * source, u16 length)
 	register u32 D1 asm("d1") = (u32) source;
 	register u16 D2 asm("d2") = length;
 
-	asm(
+	asm volatile(
 		"\
   		move.l a6, -(sp) \n\
   		jsr %c0 \n\
@@ -1230,7 +1230,7 @@ static inline void bios_dma_copy(u32 vdpptr_dest, u16 source, u16 length)
  */
 static inline void bios_copy_sprlist()
 {
-	asm(
+	asm volatile(
 		"\
 			jsr %c0 \n\
 		"
@@ -1251,7 +1251,7 @@ static inline void bios_clear_ram(void * address, u32 long_count)
 	register u32 A0 asm("a0") = (u32) address;
 	register u32 D7 asm("d7") = long_count;
 
-	asm(
+	asm volatile(
 		"\
 			move.l a6, -(sp) \n\
 			jsr %c0 \n\
@@ -1273,7 +1273,7 @@ static inline void bios_load_pal(Palette const * pal_data)
 {
 	register u32 A1 asm("a1") = (u32) pal_data;
 
-	asm(
+	asm volatile(
 		"\
 			jsr %c0 \n\
 		"
@@ -1292,7 +1292,7 @@ static inline void bios_load_pal_update(Palette const * pal_data)
 {
 	register u32 A1 asm("a1") = (u32) pal_data;
 
-	asm(
+	asm volatile(
 		"\
 			jsr %c0 \n\
 		"
@@ -1310,7 +1310,7 @@ static inline void bios_load_pal_update(Palette const * pal_data)
  */
 static inline void bios_copy_pal()
 {
-	asm(
+	asm volatile(
 		"\
 			jsr %c0 \n\
 		"
@@ -1336,11 +1336,11 @@ static inline void bios_process_entities(
 	register u16 D0 asm("d0") = (u16) obj_count;
 	register u16 D1 asm("d1") = (u16) obj_size;
 
-	asm(
+	asm volatile(
 		"\
   jsr %c0 \n\
 		"
-		:
+		: "+a"(A0), "+a"(A1)
 		: "i"(_BIOS_PROCESS_ENTITIES), "a"(A0), "a"(A1), "d"(D0), "d"(D1)
 		: "d2", "d3", "d4", "d6", "a2");
 };
@@ -1365,7 +1365,7 @@ static inline u16 bios_prng_mod(u16 const modulo)
 	register u16 d0_modulo asm("d0") = modulo;
 	register u16 d0_random asm("d0");
 
-	asm(
+	asm volatile(
 		"\
   jsr %p1 \n\
 		"
@@ -1385,7 +1385,7 @@ static inline u16 bios_prng_mod(u16 const modulo)
  */
 static inline void bios_prng()
 {
-	asm(
+	asm volatile(
 		"\
   jsr %c0 \n\
 		"
@@ -1433,7 +1433,7 @@ static inline void bios_set_fadein_pal(Palette const * palette)
  */
 static inline void bios_pal_fadein()
 {
-	asm(
+	asm volatile(
 		"\
   jsr %c0 \n\
 		"
