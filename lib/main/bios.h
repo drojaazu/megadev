@@ -1322,9 +1322,9 @@ static inline void bios_copy_pal()
 /**
  * @fn bios_process_entities
  * @brief Update/display sprite objects
- * @param[in] A0.l Pointer to object array
+ * @param[in] A0.l Pointer to object arrayq
  * @param[in] A1.l Pointer to sprite list buffer
- * @param[in] D0.w Number of objects
+ * @param[in] D0.w Number of objects (minus 1)
  * @param[in] D1.w Object size
  * @ingroup bios_vdp
  */

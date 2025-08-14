@@ -12,6 +12,16 @@
 #include "sub/memmap.def.h"
 #include "types.h"
 
+static inline void bios_waitvsync()
+{
+	asm volatile(
+		"\
+		jsr %p0"
+		:
+		: "i"(_WAITVSYNC)
+		: "cc");
+}
+
 /**
  * @fn bios_mscstop
  * @brief Stops playing CD audio if it is playing
@@ -444,17 +454,27 @@ static inline void bios_romreade(struct RomreadParams const * param)
  * @def bios_cdbchk
  * @brief Query the BIOS on the status of the last command
  * @sa _BIOS_CDBCHK
+ *
+ * @param[out] CC On clear, command is complete
  */
-static inline void bios_cdbchk()
+static inline bool bios_cdbchk()
 {
 	register u16 D0 asm("d0") = _BIOS_CDBCHK;
 
-	asm volatile(
+	asm goto(
 		"\
-		jsr %p1"
-		: "+d"(D0)
+		jsr %p0 \n\
+		bcc %l[cmd_complete] \n\
+		"
+		:
 		: "i"(_CDBIOS), "d"(D0)
-		: "cc");
+		: "cc"
+		: cmd_complete);
+
+	return false;
+
+cmd_complete:
+	return true;
 };
 
 struct cdbstat
