@@ -18,51 +18,43 @@
 static inline void z80_bus_request()
 {
 	asm(
-	"\
+		"\
   move.w   #%c1, (%c0) \n\
 0:btst     #%c2, %c0 \n\
   bne.s    0b \n\
 	"
-	:
-	:
-		"i"(_Z80_BUSREQ),
-		"i"(_Z80_REQUEST_BUS),
-		"i"(_Z80_STATUS_BIT)
-	:
-	);
+		:
+		: "i"(_Z80_BUSREQ), "i"(_Z80_REQUEST_BUS), "i"(_Z80_STATUS_BIT)
+		:);
 }
 
 static inline void z80_bus_release()
 {
 	asm(
-	"\
+		"\
   move.w   #%c1, %c0 \n\
 	"
-	:
-	:
-		"i"(_Z80_BUSREQ),
-		"i"(_Z80_RELEASE_BUS)
-	:
-	);
+		:
+		: "i"(_Z80_BUSREQ), "i"(_Z80_RELEASE_BUS)
+		:);
 }
 
 static inline void z80_cpu_reset()
 {
 	asm(
-	"\
+		"\
   move.w   #%c1, (%c0) \n\
   .rept 8 \n\
   nop \n\
   .endr \n\
   move.w   #%c2, (%c0) \n\
 	"
-	:
-	: "i"(_Z80_RESET), "i"(_Z80_ASSERT_RESET), "i"(_Z80_RELEASE_RESET)
-	:
-	);
+		:
+		: "i"(_Z80_RESET), "i"(_Z80_ASSERT_RESET), "i"(_Z80_RELEASE_RESET)
+		:);
 }
 
-void z80_init(u8 const * data, u16 const length)
+void z80_init()
 {
 	asm(
 		"\
@@ -78,18 +70,15 @@ void z80_init(u8 const * data, u16 const length)
   move.w   #%c3, (%c0) \n\
 	"
 		:
-		:
-			"i"(_Z80_RESET),
-			"i"(_Z80_BUSREQ),
-			"i"(_Z80_ASSERT_RESET),
-			"i"(_Z80_RELEASE_RESET),
-			"i"(_Z80_REQUEST_BUS),
-			"i"(_Z80_RELEASE_BUS),
-			"i"(_Z80_STATUS_BIT),
-			"i"(_Z80_RAM)
-		:
-			"cc"
-	);
+		: "i"(_Z80_RESET),
+		"i"(_Z80_BUSREQ),
+		"i"(_Z80_ASSERT_RESET),
+		"i"(_Z80_RELEASE_RESET),
+		"i"(_Z80_REQUEST_BUS),
+		"i"(_Z80_RELEASE_BUS),
+		"i"(_Z80_STATUS_BIT),
+		"i"(_Z80_RAM)
+		: "cc");
 };
 
 #endif

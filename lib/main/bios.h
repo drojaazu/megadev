@@ -651,7 +651,7 @@ static inline void bios_clear_vsram()
 			- VINT enabled
 			- Disable display
 		0x9011
-			- Plane size: 512x512 cells
+			- Plane size: 64x64 cells (512x512 pixels)
 		0x8B00
 			- Scroll mode: full screen
 		0x8C81
