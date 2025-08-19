@@ -393,7 +393,7 @@ The other font load function, `_FONT_LOAD_FONT_DEFAULTS` simplifies things by lo
 
 ## Predefined Comm Flag Semantics
 
-The GA_COMFLAGS register is intended to keep the two CPUs in sync by informing each other about their status. It is a 16 bit register, split into two bytes: the upper byte for the Main CPU and the lower byte for the Sub CPU. The flags do not have an any inherent semantic meaning and the developer is free to use any or none of the flags in their program.
+The ga_comflags register is intended to keep the two CPUs in sync by informing each other about their status. It is a 16 bit register, split into two bytes: the upper byte for the Main CPU and the lower byte for the Sub CPU. The flags do not have an any inherent semantic meaning and the developer is free to use any or none of the flags in their program.
 
 There are a few Main BIOS library functions that use these flags, however, which inherently assigns meaning to those bits. The problem here is that we don't know what those meanings are due to a lack of documentation. We can only guess based on the context in which they appear as we reverse engineer the code. This includes understanding not just the library calls that use these bits, but what must be done on the Sub CPU side to correctly read, set and clear bits in response. Thankfully, the built in software (namely the CD player) uses these calls, meaning we have usage examples on the Sub CPU side to look at. Moreover, of the retail games identified so far that use the Main BIOS library, most of them make use of these calls and exhibit a similarity in their implementation (to the point of being nearly identical) that suggests they were built from example code.
 
@@ -774,7 +774,7 @@ Although this does not use the Predefined Comm Flag Semantics component directly
 
 ### `_BIOS_SET_IFL2`
 
-Sets the IFL2 bit on GA_MEMMODE to trigger INT2 on the Sub side. Should be called during VBLANK only.
+Sets the IFL2 bit on ga_memmode to trigger INT2 on the Sub side. Should be called during VBLANK only.
 
 ## Misc - Components
 

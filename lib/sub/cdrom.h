@@ -8,6 +8,7 @@
 #ifndef MEGADEV__SUB_CDROM_H
 #define MEGADEV__SUB_CDROM_H
 
+#include "sub/bios.h"
 #include "sub/cdrom.def.h"
 #include "sub/memmap.h"
 #include "types.h"
@@ -19,7 +20,7 @@
  * For the DMA operations, use the GA_DMAADDR register to specify a
  * destination buffer.
  */
-extern u8 * filebuff;
+extern u8 *					filebuff;
 
 /**
  * @var filename
@@ -52,7 +53,10 @@ extern volatile u32 filesize;
  * @fn load_file
  * @brief
  */
-static inline u32 load_file(u16 const access_operation, char const * load_filename, u8 * buffer)
+static inline u32		load_file(
+		u16 const		 access_operation,
+		char const * load_filename,
+		u8 *				 buffer)
 {
 	access_op = access_operation;
 	if (access_op == 0)
@@ -75,8 +79,8 @@ static inline u32 load_file(u16 const access_operation, char const * load_filena
 typedef struct FileInfo
 {
 	char const filename[14]; // FILENAME.EXT;1
-	u32 offset;							 // in SECTORS
-	u32 size;								 // in BYTES
+	u32				 offset;			 // in SECTORS
+	u32				 size;				 // in BYTES
 } FileInfo;
 
 // TODO file info struct!

@@ -67,14 +67,14 @@
 #define CBTCHKDISC 0x0004
 
 #define DISC_NOTREADY 0xFF
-#define DISC_NODISC 0x00
-#define DISC_MUSIC 0x01
-#define DISC_CDROM 0x02
-#define DISC_MIXED 0x03
-#define DISC_SYSTEM 0x04
-#define DISC_DATA 0x05
-#define DISC_BOOT 0x06
-#define DISC_GAME 0x07
+#define DISC_NODISC		0x00
+#define DISC_MUSIC		0x01
+#define DISC_CDROM		0x02
+#define DISC_MIXED		0x03
+#define DISC_SYSTEM		0x04
+#define DISC_DATA			0x05
+#define DISC_BOOT			0x06
+#define DISC_GAME			0x07
 
 /**
  * @def CBTCHKSTAT

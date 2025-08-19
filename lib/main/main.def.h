@@ -8,11 +8,11 @@
 #ifndef MEGADEV__MAIN_MAIN_DEF_H
 #define MEGADEV__MAIN_MAIN_DEF_H
 
-#include "gate_arr.def.h"
-#include "main/io.def.h"
-#include "main/vdp.def.h"
-#include "md_sys.def.h"
-#include "memmap.def.h"
-#include "z80.def.h"
+#include <gate_arr.def.h>
+#include <main/io.def.h>
+#include <main/vdp.def.h>
+#include <md_sys.def.h>
+#include <memmap.def.h>
+#include <z80.def.h>
 
 #endif

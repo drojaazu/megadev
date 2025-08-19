@@ -43,11 +43,11 @@ typedef struct Sprite
 	u8 width : 2;
 	u8 height : 2;
 	u8 : 1;
-	u8 next : 7;
-	u8 priority : 1;
-	u8 palette : 2;
-	u8 v_flip : 1;
-	u8 h_flip : 1;
+	u8	next : 7;
+	u8	priority : 1;
+	u8	palette : 2;
+	u8	v_flip : 1;
+	u8	h_flip : 1;
 	u16 tile : 11;
 	u8 : 7;
 	u16 pos_x : 9;
@@ -55,12 +55,12 @@ typedef struct Sprite
 
 typedef union SpriteEx
 {
-	u32 as_u32[2];
-	u16 as_u16[4];
-	u8 as_u8[8];
-	s32 as_s32[2];
-	s16 as_s16[4];
-	s8 as_s8[8];
+	u32		 as_u32[2];
+	u16		 as_u16[4];
+	u8		 as_u8[8];
+	s32		 as_s32[2];
+	s16		 as_s16[4];
+	s8		 as_s8[8];
 	Sprite as_struct;
 } SpriteEx;
 
@@ -152,6 +152,8 @@ typedef enum PlaneWidth
 static inline VDPPTR to_vdpptr(u16 addr)
 {
 	u32 vdpptr = (u32) addr;
+
+	// clang-format off
 	asm(
 		"\
   lsl.l    #2, %[vdpptr] \n\
@@ -164,6 +166,7 @@ static inline VDPPTR to_vdpptr(u16 addr)
 		:
 			"cc"
 	);
+	// clang-format on
 
 	return vdpptr;
 }
@@ -176,6 +179,7 @@ static inline u16 vdpptr_to(VDPPTR vdp_addr)
 {
 	u32 vramptr = vdp_addr;
 
+	// clang-format off
 	asm(
 		"\
   #andi.l  #0x3fff000c, %[vramptr] \
@@ -190,20 +194,24 @@ static inline u16 vdpptr_to(VDPPTR vdp_addr)
 		:
 			"cc"
 	);
+	// clang-format on
 
 	return (u16) vramptr;
 }
-
 
 /**
  * @def vdp_dma_transfer
  * @ingroup vdp
  * @warning Setting/clearing the DMA Enable bit on VDP Mode Register 2 is the responsibility of the user
  */
-static inline void vdp_dma_transfer(u8 const * source, VDPCMD dest, u16 const length)
+static inline void vdp_dma_transfer(
+	u8 const * source,
+	VDPCMD		 dest,
+	u16 const	 length)
 {
 	register u32 scratch_d, scratch_a;
 
+	// clang-format off
 	asm volatile(
 		"\
   lea      (%c[vdp_ctrl]).l, %[scratch_a] \n\
@@ -231,7 +239,7 @@ static inline void vdp_dma_transfer(u8 const * source, VDPCMD dest, u16 const le
   move.w   %[dest], -(SP) \n\
   move.w   (SP)+, (%[scratch_a]) \n\
 		"
-		: 
+		:
 			[scratch_d] "=&d"(scratch_d),
 			[scratch_a] "=&a"(scratch_a)
 		:
@@ -242,12 +250,17 @@ static inline void vdp_dma_transfer(u8 const * source, VDPCMD dest, u16 const le
 		:
 			"cc"
 	);
+	// clang-format on
 }
 
-static inline void vdp_dma_fill(VDPCMD dest, u16 const count, u8 const value)
+static inline void vdp_dma_fill(
+	VDPCMD		dest,
+	u16 const count,
+	u8 const	value)
 {
 	u32 scratch_d, scratch_a;
-	
+
+	// clang-format off
 	asm volatile(
 		"\
   lea      (%c[vdp_ctrl]).l, %[scratch_a] \n\
@@ -276,7 +289,7 @@ static inline void vdp_dma_fill(VDPCMD dest, u16 const count, u8 const value)
 		:
 			"cc"
 	);
+	// clang-format on
 }
-
 
 #endif

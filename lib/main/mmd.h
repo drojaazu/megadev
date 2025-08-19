@@ -15,38 +15,47 @@
 static inline void const * init_mmd()
 {
 	register void const * mmd_entry;
+	register u32					scratch_d0, scratch_a0, scratch_a1;
 
 	wait_2m();
 
+	// clang-format off
 	asm volatile(
 		"\
-  move.l   2(%[wrdram]), d0 \n\
+  move.l   2(%[wrdram]), %[scratch_d0] \n\
   beq      1f \n\
-  movea.l  d0, a2 \n\
-  lea      0x100(%[wrdram]), a1 \n\
-  move.w   6(%[wrdram]), d0 \n\
-0:move.l   (a1)+, (a2)+ \n\
-  dbf      d0, 0b \n\
-1:move.l   12(%[wrdram]), d0 \n\
+  movea.l  %[scratch_d0], %[scratch_a0] \n\
+  lea      0x100(%[wrdram]), %[scratch_a1] \n\
+  move.w   6(%[wrdram]), %[scratch_d0] \n\
+0:move.l   (%[scratch_a1])+, (%[scratch_a0])+ \n\
+  dbf      %[scratch_d0], 0b \n\
+1:move.l   12(%[wrdram]), %[scratch_d0] \n\
   beq      2f \n\
-  move.l   d0, %c[mlevel4]+2 \n\
-2:move.l   16(%[wrdram]), d0 \n\
+  move.l   %[scratch_d0], %c[mlevel4]+2 \n\
+2:move.l   16(%[wrdram]), %[scratch_d0] \n\
   beq      3f \n\
-  move.l   d0, %c[mlevel6]+2 \n\
+  move.l   %[scratch_d0], %c[mlevel6]+2 \n\
 3:btst     #6, (%[wrdram]) \n\
   beq      4f \n\
 6:bset     #%c[ga_dmna_bit], %c[gareg_memmode]+1 \n\
   btst     #%c[ga_dmna_bit], %c[gareg_memmode]+1 \n\
-  beq 6b \n\
-4: movea.l 8(%[wrdram]), a0 \n\
-		"
-		: [mmd_entry] "=a"(mmd_entry)
-		: [wrdram] "a"(_WORD_RAM),
-		[mlevel4] "i"(_MLEVEL4),
-		[mlevel6] "i"(_MLEVEL6),
-		[ga_dmna_bit] "i"(GA_DMNA_BIT),
-		[gareg_memmode] "i"(_GAREG_MEMMODE)
-		: "d0", "a1", "a2");
+  beq      6b \n\
+4: movea.l 8(%[wrdram]), %[mmd_entry] \n\
+	"
+		:
+			[mmd_entry] "=a"(mmd_entry),
+			[scratch_d0] "=d"(scratch_d0),
+			[scratch_a0] "=a"(scratch_a0),
+			[scratch_a1] "=a"(scratch_a1)
+		:
+			[wrdram] "a"(_WORD_RAM),
+			[mlevel4] "i"(_MLEVEL4),
+			[mlevel6] "i"(_MLEVEL6),
+			[ga_dmna_bit] "i"(GA_DMNA_BIT),
+			[gareg_memmode] "i"(_GAREG_MEMMODE)
+		:
+			"cc");
+	// clang-format on
 
 	return mmd_entry;
 }

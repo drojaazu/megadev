@@ -488,7 +488,7 @@
 /*
  * There are two functions for setting the HINT vector. Both are almost
  * identical but for one minor difference: HINT2 will set the address in A1
- * to both the Main CPU vector and the Gate Array vector (GA_HINTVECT), while
+ * to both the Main CPU vector and the Gate Array vector (ga_hintvect), while
  * HINT1 sets A1 to the Main vector but sets the GA vector to the address of
  * the Main vector, i.e. 0xFFFD0C. It's unclear what this difference entails.
  */

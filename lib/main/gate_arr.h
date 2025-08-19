@@ -22,7 +22,7 @@
  * @copydoc _GAREG_RESET
  *
  */
-#define GA_RESET ((u16 volatile *) _GAREG_RESET)
+#define ga_reset ((u16 volatile *) _GAREG_RESET)
 
 #define GA_RESET_SRES (1 << 0)
 #define GA_RESET_SBRQ (1 << 1)
@@ -31,37 +31,37 @@
  * @copydoc _GAREG_MEMMODE
  *
  */
-#define GA_MEMMODE ((u16 volatile *) _GAREG_MEMMODE)
+#define ga_memmode ((u16 volatile *) _GAREG_MEMMODE)
 
 /**
  * @copydoc _GAREG_CDCMODE
  *
  */
-#define GA_CDCMODE ((u16 volatile *) _GAREG_CDCMODE)
+#define ga_cdcmode ((u16 volatile *) _GAREG_CDCMODE)
 
 /**
  * @copydoc _GAREG_HINTVECT
  *
  */
-#define GA_HINTVECT ((u16 volatile *) _GAREG_HINTVECT)
+#define ga_hintvect ((u16 volatile *) _GAREG_HINTVECT)
 
 /**
  * @copydoc _GAREG_CDCHOSTDATA
  *
  */
-#define GA_CDCHOSTDATA ((u16 volatile *) _GAREG_CDCHOSTDATA)
+#define ga_cdchostdata ((u16 volatile *) _GAREG_CDCHOSTDATA)
 
 /**
  * @copydoc _GAREG_STOPWATCH
  *
  */
-#define GA_STOPWATCH ((u16 volatile *) _GAREG_STOPWATCH)
+#define ga_stopwatch ((u16 volatile *) _GAREG_STOPWATCH)
 
 /**
  * @copydoc _GAREG_COMFLAGS
  *
  */
-#define GA_COMFLAGS ((u16 volatile *) _GAREG_COMFLAGS)
+#define ga_comflags ((u16 volatile *) _GAREG_COMFLAGS)
 
 /**
  * @copydoc _GAREG_GAREG_COMCMD0
@@ -171,10 +171,7 @@ static inline void wait_2m()
   beq      1b \n\
 		"
 		:
-		:
-			[ga_ret_bit] "i"(GA_RET_BIT),
-			[gareg_memmmode] "i"(_GAREG_MEMMODE + 1)
-		);
+		: [ga_ret_bit] "i"(GA_RET_BIT), [gareg_memmmode] "i"(_GAREG_MEMMODE + 1));
 }
 
 /**
@@ -190,9 +187,7 @@ static inline void grant_2m()
   beq      1b \n\
 		"
 		:
-		:
-			[ga_dmna_bit] "i"(GA_DMNA_BIT),
-			[gareg_memmmode] "i"(_GAREG_MEMMODE + 1));
+		: [ga_dmna_bit] "i"(GA_DMNA_BIT), [gareg_memmmode] "i"(_GAREG_MEMMODE + 1));
 }
 
 /**
@@ -213,12 +208,8 @@ static inline void clear_comm_regs()
   move.l   %[scratch_d], (%[scratch_a])+ \n\
   move.l   %[scratch_d], (%[scratch_a])+ \n\
 		"
-		:
-			[scratch_d] "=&d"(scratch_d),
-			[scratch_a] "=&a"(scratch_a)
-		:
-			[gareg_comcmd0] "i"(_GAREG_COMCMD0)
-		);
+		: [scratch_d] "=&d"(scratch_d), [scratch_a] "=&a"(scratch_a)
+		: [gareg_comcmd0] "i"(_GAREG_COMCMD0));
 }
 
 /**
@@ -237,10 +228,8 @@ static inline void reset_ga()
   move.b   #0x0, %c[gareg_reset] \n\
 		"
 		:
-		: 
-			[gareg_memmode] "i"(_GAREG_MEMMODE),
-			[gareg_reset] "i"(_GAREG_RESET + 1)
-		: );
+		: [gareg_memmode] "i"(_GAREG_MEMMODE), [gareg_reset] "i"(_GAREG_RESET + 1)
+		:);
 }
 
 #endif

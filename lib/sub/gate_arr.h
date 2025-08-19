@@ -11,21 +11,21 @@
 #include "gate_arr.def.h"
 #include <types.h>
 
-#define GA_RESET ((volatile u16 *) _GAREG_RESET)
+#define ga_reset ((volatile u16 *) _GAREG_RESET)
 
-#define GA_MEMMODE ((volatile u16 *) _GAREG_MEMMODE)
+#define ga_memmode ((volatile u16 *) _GAREG_MEMMODE)
 
-#define GA_CDCMODE ((volatile u16 *) _GAREG_CDCMODE)
+#define ga_cdcmode ((volatile u16 *) _GAREG_CDCMODE)
 
 #define GA_CDCRS1 ((volatile u16 *) _GAREG_CDCRS1)
 
-#define GA_CDCHOSTDATA ((volatile u16 *) _GAREG_CDCHOSTDATA)
+#define ga_cdchostdata ((volatile u16 *) _GAREG_CDCHOSTDATA)
 
 #define GA_DMAADDR ((volatile u16 *) _GAREG_DMAADDR)
 
-#define GA_STOPWATCH ((volatile u16 *) _GAREG_STOPWATCH)
+#define ga_stopwatch ((volatile u16 *) _GAREG_STOPWATCH)
 
-#define GA_COMFLAGS ((volatile const u16 *) _GAREG_COMFLAGS)
+#define ga_comflags ((volatile const u16 *) _GAREG_COMFLAGS)
 
 #define GA_COMFLAGS_MAIN ((volatile const u8 *) _GAREG_COMFLAGS)
 #define GA_COMFLAGS_SUB ((volatile u8 *) _GAREG_COMFLAGS + 1)

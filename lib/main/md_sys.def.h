@@ -31,9 +31,24 @@
 #define HW_REGION (1 << 7)
 
 /**
- * @def _TMSS
- * @brief TMSS register
+ * @def _TMSS_VDP_UNLOCK
+ * @brief Part of the TMSS security system. The characters S E G A must be written to the port on startup and before
+ *        any access to the VDP data port.
  */
-#define _TMSS 0x0A14000
+#define _TMSS_VDP_UNLOCK 0x0A14000
+
+/**
+ * @def _TMSS
+ * @brief Alias for @ref _TMSS_VDP_UNLOCK
+ * @sa _TMSS_VDP_UNLOCK
+ */
+#define _TMSS _TMSS_VDP_UNLOCK
+
+/**
+ * @def _TMSS_BANK_SWITCH
+ * @brief Used by the internal TMSS ROM to enable the cartridge
+ * @note This should never be needed in standard development as is only present for reference
+ */
+#define _TMSS_BANK_SWITCH 0x0A14001
 
 #endif

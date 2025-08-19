@@ -45,7 +45,7 @@
 /**
  * @def GA_LED_R
  * @brief Red LED Control
- * @sa GA_RESET
+ * @sa ga_reset
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_subctrl
  */
@@ -54,7 +54,7 @@
 /**
  * @def GA_LED_G
  * @brief Green LED Control
- * @sa GA_RESET
+ * @sa ga_reset
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_subctrl
  */
@@ -63,7 +63,7 @@
 /**
  * @def GA_VERSION
  * @brief ROM Version
- * @sa GA_RESET
+ * @sa ga_reset
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_subctrl
  */
@@ -111,7 +111,7 @@
 /**
  * @def MSK_GAREG_DMNA
  * @brief GA Reg 01 - Main CPU no Word RAM access flag bitmask
- * @sa GA_MEMMODE
+ * @sa ga_memmode
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_memmode
  */
@@ -120,7 +120,7 @@
 /**
  * @def GA_MODE
  * @brief GA Reg 01 - Word RAM layout bitmask
- * @sa GA_MEMMODE
+ * @sa ga_memmode
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_memmode
  */
@@ -596,7 +596,7 @@
 #define _GAREG_SUBCODEBUFIMG 0xFF8180
 
 /**
- * GA_CDCMODE bit/mask settings
+ * ga_cdcmode bit/mask settings
  */
 #define BIT_CDCMODE_DD0 5
 #define BIT_CDCMODE_DSR 6

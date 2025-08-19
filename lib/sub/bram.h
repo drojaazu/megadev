@@ -29,12 +29,12 @@ enum BramStatus
  */
 typedef struct BrminitRes
 {
-	u16 bram_size;
+	u16							bram_size;
 	enum BramStatus status;
-	char * strings;
+	char *					strings;
 } BrminitRes;
 
-BrminitRes init_info;
+BrminitRes								 init_info;
 
 /**
  * @def bram_brminit
@@ -83,7 +83,7 @@ typedef struct BrmstatRes
 	u16 filecount;
 } BrmstatRes;
 
-BrmstatRes brmstat_results;
+BrmstatRes								 brmstat_results;
 
 /**
  * @def bram_brmstat
@@ -112,12 +112,12 @@ static inline BrmstatRes * bram_brmstat()
 
 typedef struct BrmserchRes
 {
-	u16 filesize;
-	u16 mode;
+	u16	 filesize;
+	u16	 mode;
 	u8 * dataptr;
 } BrmserchRes;
 
-BrmserchRes brmserch_results;
+BrmserchRes									brmserch_results;
 
 /**
  * @def bram_brmserch
@@ -125,12 +125,12 @@ BrmserchRes brmserch_results;
  */
 static inline BrmserchRes * bram_brmserch(char const * filename)
 {
-	register u16 d0_fcode asm("d0") = BRMSERCH;
+	register u16					d0_fcode asm("d0") = BRMSERCH;
 	register void const * a0_filename asm("a0") = filename;
 
-	register u16 d0_filesize asm("d0");
-	register u16 d1_filemode asm("d1");
-	register void * a0_dataptr asm("a0");
+	register u16					d0_filesize asm("d0");
+	register u16					d1_filemode asm("d1");
+	register void *				a0_dataptr asm("a0");
 
 	// if the file is not found, we'll return null
 	// the user should check that the dataptr member of the struct
@@ -158,24 +158,26 @@ static inline BrmserchRes * bram_brmserch(char const * filename)
 typedef struct BrmreadRes
 {
 	bool success;
-	u16 filesize;
-	u8 mode;
+	u16	 filesize;
+	u8	 mode;
 } BrmreadRes;
 
-BrmreadRes brmread_results;
+BrmreadRes								 brmread_results;
 
 /**
  * @def bram_brmread
  * @sa BRMREAD
  */
-static inline BrmreadRes * bram_brmread(char const * filename, u8 * buffer)
+static inline BrmreadRes * bram_brmread(
+	char const * filename,
+	u8 *				 buffer)
 {
 	register u16 d0_fcode asm("d0") = BRMREAD;
 	register u32 a0_filename asm("a0") = (u32) filename;
 	register u32 a1_buffer asm("a1") = (u32) buffer;
 
 	register u16 d0_size asm("d0");
-	register u8 d1_mode asm("d1");
+	register u8	 d1_mode asm("d1");
 
 	asm(
 		"\
@@ -204,14 +206,16 @@ static inline BrmreadRes * bram_brmread(char const * filename, u8 * buffer)
 typedef struct BramFileInfo
 {
 	char const filename[11];
-	u8 mode;
-	u16 blocksize;
+	u8				 mode;
+	u16				 blocksize;
 } BramFileInfo;
 
 /**
  * @sa BRMWRITE
  */
-static inline bool bram_brmwrite(BramFileInfo const * params, u8 const * data)
+static inline bool bram_brmwrite(
+	BramFileInfo const * params,
+	u8 const *					 data)
 {
 	register u16 d0_fcode asm("d0") = BRMWRITE;
 	register u32 a0_params asm("a0") = (u32) params;
@@ -262,7 +266,11 @@ failed:
 /**
  * @sa BRMDIR
  */
-static inline bool bram_brmdir(char const * filename, u8 * dirbuffer, u16 const fileskip, u16 const dirsize)
+static inline bool bram_brmdir(
+	char const * filename,
+	u8 *				 dirbuffer,
+	u16 const		 fileskip,
+	u16 const		 dirsize)
 {
 	register u16 d0_fcode asm("d0") = BRMDIR;
 	register u32 a0_filename asm("a0") = (u32) filename;

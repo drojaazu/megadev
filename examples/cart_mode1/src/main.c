@@ -7,12 +7,12 @@
 #include "string.h"
 #include "system.h"
 
-extern u8 res_sysfont_1bpp_chr;
-extern u8 res_rain_chr;
-extern u16 res_rain_chr_sz;
+extern u8			 res_sysfont_1bpp_chr;
+extern u8			 res_rain_chr;
+extern u16		 res_rain_chr_sz;
 extern Palette res_rain_pal;
 
-u16 test1;
+u16						 test1;
 
 enum Status
 {
@@ -23,8 +23,8 @@ enum Status
 
 typedef struct Particle
 {
-	u8 status;
-	u8 speed;
+	u8	status;
+	u8	speed;
 	s16 pos_x;
 	s16 pos_y;
 	s16 end_at;
@@ -36,20 +36,20 @@ typedef struct InitSettings
 	u16 main_tile;
 	u16 end_tile;
 	u16 end_countdown;
-	u8 main_width;
-	u8 main_height;
-	u8 end_width;
-	u8 end_height;
-	u8 min_speed;
-	u8 max_speed;
-	u8 palette;
+	u8	main_width;
+	u8	main_height;
+	u8	end_width;
+	u8	end_height;
+	u8	min_speed;
+	u8	max_speed;
+	u8	palette;
 } InitSettings;
 
-Particle particles[16];
+Particle		 particles[16];
 
 InitSettings settings;
 
-void init_particle(u8 particle_idx)
+void				 init_particle(u8 particle_idx)
 {
 	particles[particle_idx].status = Falling;
 	particles[particle_idx].pos_x = bios_prng_mod(320) + 128;
@@ -71,16 +71,17 @@ void init_particle(u8 particle_idx)
 	bios_sprlist[particle_idx].height = settings.main_height;
 }
 
-void init_particles(u16 main_tile,
+void init_particles(
+	u16 main_tile,
 	u16 end_tile,
-	u8 main_width,
-	u8 main_height,
-	u8 end_width,
-	u8 end_height,
+	u8	main_width,
+	u8	main_height,
+	u8	end_width,
+	u8	end_height,
 	u16 end_countdown,
-	u8 min_speed,
-	u8 max_speed,
-	u8 palette)
+	u8	min_speed,
+	u8	max_speed,
+	u8	palette)
 {
 
 	settings.main_tile = main_tile;
@@ -166,10 +167,10 @@ __attribute__((interrupt)) void INT6_VBLANK()
 	bios_vint_handler_flags = 0;
 }
 
-char rx_buffer[16];
+char	 rx_buffer[16];
 char * rx_buffer_at;
 
-u32 to_atoi(char * p_c)
+u32		 to_atoi(char * p_c)
 {
 	u32 out = 0;
 	while ((*p_c != '\n') && (*p_c != ' '))
@@ -192,7 +193,7 @@ __attribute__((interrupt)) void INT2_EXT()
 {
 	bios_print("INT2 last cmd:\xff", (VDPPTR(PLANE_POS_PLANE(1, 8, _BIOS_VDP_PLANEA_ADDR)) | VRAM_W));
 
-	char c = IO_RXDATA2;
+	char c = io_rxdata2;
 	if (rx_buffer_at >= rx_buffer + 16)
 	{
 		memset8(0, rx_buffer, 16);
@@ -232,8 +233,8 @@ __attribute__((interrupt)) void INT2_EXT()
 					do
 					{
 						asm("nop");
-					} while ((IO_SCTRL2 & SCTRL_TX_FULL) != 0);
-					IO_TXDATA2 = *((u8 *) addr++);
+					} while ((io_sctrl2 & SCTRL_TX_FULL) != 0);
+					io_txdata2 = *((u8 *) addr++);
 					--length;
 				}
 				break;
@@ -275,8 +276,8 @@ void main()
 
 	// initialize serial comm on port 2
 	// 4800bps, serial in/out mode, ext interrupt enable
-	IO_SCTRL2 = SCTRL_SERIAL_ENABLE | SCTRL_BAUD_4800 | SCTRL_RX_INT_ENABLE;
-	IO_CTRL2 = 0x7f;
+	io_sctrl2 = SCTRL_SERIAL_ENABLE | SCTRL_BAUD_4800 | SCTRL_RX_INT_ENABLE;
+	io_ctrl2 = 0x7f;
 	bios_vdp_regs[0x0b] |= 0x08;
 	VDP_CTRL_16 = bios_vdp_regs[0x0b];
 
@@ -325,23 +326,23 @@ void main()
 	do
 	{
 		asm("nop");
-	} while ((IO_SCTRL2 & SCTRL_TX_FULL) != 0);
-	IO_TXDATA2 = 'o';
+	} while ((io_sctrl2 & SCTRL_TX_FULL) != 0);
+	io_txdata2 = 'o';
 	do
 	{
 		asm("nop");
-	} while ((IO_SCTRL2 & SCTRL_TX_FULL) != 0);
-	IO_TXDATA2 = 'k';
+	} while ((io_sctrl2 & SCTRL_TX_FULL) != 0);
+	io_txdata2 = 'k';
 	do
 	{
 		asm("nop");
-	} while ((IO_SCTRL2 & SCTRL_TX_FULL) != 0);
-	IO_TXDATA2 = '1';
+	} while ((io_sctrl2 & SCTRL_TX_FULL) != 0);
+	io_txdata2 = '1';
 	do
 	{
 		asm("nop");
-	} while ((IO_SCTRL2 & SCTRL_TX_FULL) != 0);
-	IO_TXDATA2 = '3';
+	} while ((io_sctrl2 & SCTRL_TX_FULL) != 0);
+	io_txdata2 = '3';
 
 	do
 	{

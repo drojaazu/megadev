@@ -1,13 +1,17 @@
 Language: Cpp
+Standard: c++17
 BasedOnStyle: LLVM
 
-AlignAfterOpenBracket: DontAlign
-AlignEscapedNewlines: DontAlign
+AlignAfterOpenBracket: AlwaysBreak
+AlignEscapedNewlines: LeftWithLastLine
+AlignConsecutiveDeclarations: AcrossEmptyLinesAndComments
+AlignConsecutiveMacros: Consecutive
 AlignOperands: Align
 AlignTrailingComments: true
 AllowAllArgumentsOnNextLine: true
 AllowAllConstructorInitializersOnNextLine: true
 AlignArrayOfStructures: None
+AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortBlocksOnASingleLine: false
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: Empty
@@ -19,7 +23,7 @@ BreakBeforeBraces: Allman
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: AfterColon
 BinPackArguments: false
-BinPackParameters: false
+BinPackParameters: AlwaysOnePerLine
 ColumnLimit: 120
 ContinuationIndentWidth: 2
 Cpp11BracedListStyle: true
