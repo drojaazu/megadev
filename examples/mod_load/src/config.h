@@ -75,16 +75,16 @@
 //                       "################"
 
 /**
- * @def HEADER_NAME_INTL
+ * @def PROJECT_NAME
  * @brief International title
  * @details The name of the software, in plain ASCII encoding
  * @note 48 bytes
  */
-#define HEADER_NAME_INTL "MOD LOAD EXAMPLE                                "
+#define PROJECT_NAME "MOD LOAD EXAMPLE                                "
 //                       "################################################"
 
 /**
- * @def HEADER_NAME_JP
+ * @def PROJECT_NAME_JP
  * @brief Domestic (Japanese) title
  *
  * @details The name of the software, in Shift-JIS encoding
@@ -99,7 +99,7 @@
  * space. The spacing bar will not work for Japanese characters.
  *
  */
-#define HEADER_NAME_JP "MOD LOAD EXAMPLE                                "
+#define PROJECT_NAME_JP "MOD LOAD EXAMPLE                                "
 //                     "################################################"
 
 /**

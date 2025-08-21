@@ -1,7 +1,7 @@
 
 // Boot security block - This must be at the top of your IP!
 // **** DO NOT MOVE OR REMOVE THIS! ****
-#include <security.s>
+//#include <security.s>
 // **** DO NOT MOVE OR REMOVE THIS! ****
 
 .section .text

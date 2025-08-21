@@ -4,7 +4,7 @@
 ################################################################################`
 
 # This will be used for filename output
-PROJECT_NAME=helloworld
+PROJECT_ID=helloworld
 
 ## Directory paths are relative to the location of the makefile
 ## (which should be the root of your project directory)

@@ -4,7 +4,7 @@
 ################################################################################
 
 # This will be used for filename output
-PROJECT_NAME=md_rom
+PROJECT_ID=md_rom
 
 ## Directory paths are relative to the location of the makefile
 ## (which should be the root of your project directory)

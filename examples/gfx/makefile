@@ -4,7 +4,7 @@
 ################################################################################
 
 # This will be used for the ISO volume name
-PROJECT_NAME?=gfx
+PROJECT_ID?=gfx
 
 ## Directory paths are relative to the location of the makefile
 ## (which should be the root of your project directory)

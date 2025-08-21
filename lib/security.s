@@ -8,20 +8,22 @@
  * This file should be included at the top of you IP asm source!
  */
 
-.section .text
+.section .security
+
+#error test!
 
 #ifndef REGION
 #error Hardware region not defined, cannot choose security code!
 #endif
 
 #if REGION == JP
-.incbin	"security_jp.bin"
+#error JP
 #endif
 
 #if REGION == US
-.incbin "security_us.bin"
+#error US
 #endif
 
 #if REGION == EU
-.incbin	"security_eu.bin"
+#error EU
 #endif

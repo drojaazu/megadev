@@ -1,6 +1,6 @@
 # Doxyfile 1.8.13
 DOXYFILE_ENCODING	= UTF-8
-PROJECT_NAME			= megadev
+PROJECT_ID			= megadev
 PROJECT_NUMBER		= 1
 PROJECT_BRIEF			= "A Sega Mega CD development framework"
 OUTPUT_DIRECTORY	= docs

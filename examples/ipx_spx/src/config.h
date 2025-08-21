@@ -14,7 +14,7 @@
  * Hardware target
  * Valid values: MEGACD, MEGADRIVE, MEGACD_MODE1
  */
-#define TARGET MEGACD
+// #define TARGET MEGACD
 
 /*
  * Default hardware configuration
@@ -24,14 +24,14 @@
  * See README.md for more info on these settings
  */
 // Valid values: US, EU, JP
-#ifndef REGION
-#define REGION US
-#endif
+// #ifndef REGION
+// #define REGION US
+// #endif
 
 // Valid values: NTSC, PAL
-#ifndef VIDEO
-#define VIDEO NTSC
-#endif
+// #ifndef VIDEO
+// #define VIDEO NTSC
+// #endif
 
 // Valid values: VRAM_64K, VRAM_128K
 #ifndef VRAM_SIZE
@@ -71,20 +71,20 @@
  * @note 16 bytes
  * @todo autogenerate the date
  */
-#define HEADER_COPYRIGHT "(C)     2022.NOV"
+#define HEADER_COPYRIGHT (C) 2022.NOV
 //                       "################"
 
 /**
- * @def HEADER_NAME_INTL
+ * @def PROJECT_NAME
  * @brief International title
  * @details The name of the software, in plain ASCII encoding
  * @note 48 bytes
  */
-#define HEADER_NAME_INTL "IPX SPX EXAMPLE                                 "
-//                       "################################################"
+// #define PROJECT_NAME "IPX SPX EXAMPLE"
+//                        "################################################"
 
 /**
- * @def HEADER_NAME_JP
+ * @def PROJECT_NAME_JP
  * @brief Domestic (Japanese) title
  *
  * @details The name of the software, in Shift-JIS encoding
@@ -99,8 +99,8 @@
  * space. The spacing bar will not work for Japanese characters.
  *
  */
-#define HEADER_NAME_JP "IPX SPX EXAMPLE                                 "
-//                     "################################################"
+// #define PROJECT_NAME_JP "IPX SPX EXAMPLE"
+//                      "################################################"
 
 /**
  * @def HEADER_SOFT_ID

@@ -32,9 +32,9 @@ The simplest way to set up such a build environment is to use the included Docke
 
 ### Docker
 
-The included Dockerfile can be used to set up a [dev container](https://containers.dev/) in a supported IDE such as [VS Code](https://code.visualstudio.com/). This is the modern, preferred method for development as it should work on all platforms (Windows, MacOS, Linux).
+The included Dockerfile can be used to set up a [dev container](https://containers.dev/) in a supported IDE such as [VS Code](https://code.visualstudio.com/). This is the modern, preferred method for development as it should work on any host platform (Windows, Linux, MacOS).
 
-It uses a minimal Debian installation and installs all necessary build tools. The Megadev project is installed to `/opt/megadev` within the countainer. From there youc an copy the skeletone project or one of the examples into the workspace and begin development.
+It uses a minimal Debian installation and installs all necessary build tools. The Megadev project is installed to `/opt/megadev` within the container. From there you can copy the skeleton project or one of the examples into the workspace and begin development.
 
 ### Manual Installation - By Distro
 
@@ -88,6 +88,65 @@ Try `hello_world` first and then `ipx_spx` after that, as these are the simplest
 
 After that, feel free to try the remaining examples. In all cases, check the `README.md` file for details about each example.
 
+# Project Composition & Compilation
+
+Megadev uses GNU `make` for its build system. At the bare minimum, a Megadev project must contain a Makefile with *configuration variables* (discussed below) and which *includes the Megadev parent Makefile*. You are free to lay out your project tree as you like so long as the `SRC_PATH`, `RES_PATH`, and `BUILD_PATH` variables are defined. There are a couple other settings that must be set for the build process to complete; refer to the next section for those.
+
+We recommend modifying an existing Makefile from one of the example project to start.
+
+## Makefile Configuration
+
+Configuration settings must appear at the top of the Makefile, before including the `megadev.make` parent. Some configuration settings are required, some are recommended, and some are optional. **Please pay careful attention with these settings, as some have limits on character length or other restrictions.**
+
+All settings can be changed at compile time by including them in the make command. For example:
+
+```
+make REGION=EU VIDEO=PAL disc
+```
+
+### Required Settings
+
+`MEGADEV_PATH` - The path to your Megadev installation (NOT your project).
+
+`PROJECT_ID` - This is the "short" name for your project. It should contain no spaces and be a **maximum of 11 characters**. It will also be used as the filename for the final output disc/cartridge file.
+
+`TARGET` - Determines the target hardware for which the project should be built. Valid values are: `MEGADRIVE` and `MEGACD`.
+
+`SRC_PATH` - The path to your source code. This can be relative to where the makefile is run (which should be yoru project root).
+
+`RES_PATH` - The path to non-code resources. This can be relative to where the makefile is run (which should be yoru project root).
+
+`BUILD_PATH` - The path to the where compile time build artifacts will be stored, including symbol lists. This can be relative to where the makefile is run (which should be yoru project root).
+
+### Recommended Settings
+
+`REGION` - Defaults to `US`.
+
+`VIDEO` - Defaults to `NTSC`.
+
+`PROJECT_NAME` - Defaults to the value of `PROJECT_ID`.
+
+`HEADER_SOFT_ID` - Defaults to `GM 00-0000-00`.
+
+### Optional Settings
+
+`PROJECT_NAME_JP`
+
+`HEADER_COPYRIGHT`
+
+`VRAM_SIZE`
+
+`HEADER_REGION`
+
+### Restricted Settings
+
+We do *not* recommend changing the following settings as it may make your game non-compliant/non-booting! They are provided for experimental purposes.
+
+`HARDWARE_ID` - The hardware name appearing in the software header. This will normally be set automatically based on the `REGION` setting. **Security checks are performed against this string!**
+
+`DISC_TYPE` - The disc type appearing in the disc header. This is normally set automatically. **The wrong setting can make your disc unbootable!**
+
+
 # Megadev Concepts & Utilities
 
 We have aimed to make Megadev as flexible and un-opinionated as possible: for devs who want to micromanage their project, for devs who want to make extensive use of a library of pre-written code to make life simple, and for devs somewhere in between. While there are recommended processes and tools, we have aimed to make them optional so you can write your code as you like it.
@@ -95,15 +154,6 @@ We have aimed to make Megadev as flexible and un-opinionated as possible: for de
 This section will go over the basics of a Megadev project, compiling that project, and using the library.
 
 [[the only requirment is the boot sector setup and makefile compliance]]
-
-
-## Project Composition & Compilation
-
-The project layout will depend on your target hardware (Mega Drive or Mega CD).
-
-In all Megadev projects, the bare minimum requirements are the `Makefile` and `config.h` files, both of which define a number of variables used when building the final assembly. Further details about the configuration settings is present as comments inside these files in any of the example projects.
-
-If you choose to make a new project from zero instead of using an example project as a skeleton, `Makefile` and `config.h` are the bare minimum requirements. (Note that Mega CD projects also require IP/SP code to make the boot sector; see below.)
 
 
 ## MEGADEV Library

@@ -76,16 +76,16 @@
 //                       "################"
 
 /**
- * @def HEADER_NAME_INTL
+ * @def PROJECT_NAME
  * @brief International title
  * @details The name of the software, in plain ASCII encoding
  * @note 48 bytes
  */
-#define HEADER_NAME_INTL "PCM PLAYBACK EXAMPLE                            "
+#define PROJECT_NAME "PCM PLAYBACK EXAMPLE                            "
 //                       "################################################"
 
 /**
- * @def HEADER_NAME_JP
+ * @def PROJECT_NAME_JP
  * @brief Domestic (Japanese) title
  *
  * @details The name of the software, in Shift-JIS encoding
@@ -100,7 +100,7 @@
  * space. The spacing bar will not work for Japanese characters.
  *
  */
-#define HEADER_NAME_JP "PCM PLAYBACK EXAMPLE                            "
+#define PROJECT_NAME_JP "PCM PLAYBACK EXAMPLE                            "
 //                     "################################################"
 
 /**

@@ -4,7 +4,7 @@
 ################################################################################
 
 # This will be used for filename output
-PROJECT_NAME=mod_load
+PROJECT_ID=mod_load
 
 ## Directory paths are relative to the location of the makefile
 ## (which should be the root of your project directory)

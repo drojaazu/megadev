@@ -8,7 +8,8 @@
  * Do not change the order of the defines in this file!
  */
 
-#include "config.h"
+#define STR(x) XSTR(x)
+#define XSTR(x) #x
 
 DiscHeader:
 
@@ -25,14 +26,19 @@ https://www.retrodev.com/segacd.html
  I do know that it only performs the security check if SEGABOOTDISC or SEGADISCSYSTEM are used, and it would appear
  that SEGADISC and SEGADATADISC are not bootable identifiers."
 */
+.org 0
 DiscType: .ascii "SEGADISCSYSTEM  "		/*Disc Type (must be one of the allowed values)*/
 
 /**
  * Volume ID, 11 bytes + 0 terminator
  */
-VolumeName:     .asciz HEADER_VOL_ID
+.org 0x10
+VolumeName:     .asciz STR(HEADER_VOL_ID)
+.org 0x1c
 VolumeSystem:   .word 0x100, 0x1				/*System ID, Type*/
-SystemName:     .asciz "SEGASYSTEM "			/*System Name*/
+.org 0x20
+SystemName:     .asciz STR(DISC_TYPE)			/*System Name*/
+.org 0x2c
 SystemVersion:  .word 0,0							/*System Version, Type*/
 
 // The US/EU security bins are much larger
@@ -52,6 +58,7 @@ SystemVersion:  .word 0,0							/*System Version, Type*/
  * > extend beyond the end of sector 1, but I haven't confirmed that yet."
 */
 
+.org 0x30
 IP_OFFSET:   .long 0x800
 IP_SIZE:     .long 0x800
 IP_ENTRY:    .long 0
@@ -67,7 +74,25 @@ SP_WORK_RAM:  .long 0
 # =======================================================================================
 #  Game Header
 # =======================================================================================	
-#include "cd_header.s"
+.org 0x100, 0x20
+.ascii STR(HARDWARE_ID)
+.org 0x110, 0x20
+.ascii STR(HEADER_COPYRIGHT)
+.org 0x120, 0x20
+.ascii STR(PROJECT_NAME_JP)
+.org 0x150, 0x20
+.ascii STR(PROJECT_NAME)
+.org 0x180, 0x20
+.ascii STR(HEADER_SOFT_ID)
+.org 0x190, 0x20
+.ascii "J               "
+.ascii "                "
+.ascii "                "
+.ascii "                "
+.ascii "                "
+.ascii "                "
+.org 0x1F0, 0x20
+.ascii STR(HEADER_REGION)
 
 // if all the above text is correct, we should be at 0x200 anyway
 .org 0x200

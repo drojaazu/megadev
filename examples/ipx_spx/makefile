@@ -4,7 +4,15 @@
 ################################################################################
 
 # This will be used for filename output
-PROJECT_NAME=ipx_spx
+PROJECT_ID=ipx_spx
+
+TARGET=MEGACD
+
+PROJECT_NAME="IPX SPX EXAMPLE"
+
+REGION=US
+
+VIDEO=NTSC
 
 ## Directory paths are relative to the location of the makefile
 ## (which should be the root of your project directory)
@@ -35,7 +43,6 @@ AS_FLAGS:=
 
 # Additional linker flags
 LD_FLAGS:=
-
 
 # Path to the Megadev directory
 MEGADEV_PATH?=/opt/megadev

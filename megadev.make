@@ -27,10 +27,48 @@ Z80_AS:=sjasmplus
 
 # TODO check for required values and fail if not set:
 # MEGADEV_PATH
-# PROJECT_NAME
+# PROJECT_ID
 # OUT_PATH
 # SRC_PATH
 # DISCS_PATH
+
+## Project Defaults
+
+ifndef PROJECT_ID
+	$(error PROJECT_ID not set! Please set this variable in your makefile.)
+endif
+
+ifndef TARGET
+	$(error TARGET not set! Please set this variable in your makefile.)
+endif
+
+ifndef SRC_PATH
+	$(error SRC_PATH not set! Please set this variable in your makefile.)
+endif
+
+ifndef RES_PATH
+	$(error RES_PATH not set! Please set this variable in your makefile.)
+endif
+
+ifndef BUILD_PATH
+	$(error BUILD_PATH not set! Please set this variable in your makefile.)
+endif
+
+REGION?="US"
+VIDEO?="NTSC"
+VRAM_SIZE?="VRAM_64K"
+PROJECT_NAME?=$(PROJECT_ID)
+PROJECT_NAME_JP?=$(PROJECT_NAME)
+ifeq ($(REGION),"US")
+	HARDWARE_ID?="SEGA GENESIS"
+else
+	HARDWARE_ID?="SEGA MEGA DRIVE"
+endif
+HEADER_VOL_ID?=$(shell printf $(PROJECT_ID) |tr '[:lower:]' '[:upper:]')
+HEADER_COPYRIGHT?="(C)\ \ \ \ \ $(shell LC_TIME="C" date +"%Y.%b" |tr '[:lower:]' '[:upper:]')"
+HEADER_SOFT_ID?="GM 00-0000-00"
+HEADER_REGION?="JUE"
+DISC_TYPE?="SEGADISCSYSTEM"
 
 # fancy colors cause we're fancy
 CLEAR=\033[0m
@@ -64,8 +102,19 @@ AS_INC:=-Wa,-I$(SRC_PATH) -Wa,-I$(LIB_PATH) -Wa,-I$(RES_PATH) -Wa,-I$(BUILD_PATH
 CC_FLAGS+= \
 	-m68000 \
 	-imacros build.h \
+	-DPROJECT_ID=$(PROJECT_ID) \
+	-DTARGET=$(TARGET) \
+	-DHARDWARE_ID=$(HARDWARE_ID) \
+	-DREGION=$(REGION) \
+	-DVIDEO=$(VIDEO) \
+	-DVRAM_SIZE=$(VRAM_SIZE) \
 	-DPROJECT_NAME=$(PROJECT_NAME) \
-	$(addprefix -D, $(HW_CFG)) \
+	-DPROJECT_NAME_JP=$(PROJECT_NAME_JP) \
+	-DHEADER_COPYRIGHT=$(HEADER_COPYRIGHT) \
+	-DHEADER_VOL_ID=$(HEADER_VOL_ID) \
+	-DHEADER_SOFT_ID=$(HEADER_SOFT_ID) \
+	-DHEADER_REGION=$(HEADER_REGION) \
+	-DDISC_TYPE=$(DISC_TYPE) \
 	$(if $(DEBUG), -DDEBUG) \
 	-fno-builtin \
 	-Wall -Wextra -Wno-main -Wa,--register-prefix-optional
@@ -81,6 +130,11 @@ endef
 define msg_warning
 	@echo "${BOLD}${RED}$(1)${CLEAR}"
 endef
+
+$(info Beginning build of "$(PROJECT_ID)")
+$(info Target: $(TARGET))
+$(info Region: $(REGION))
+$(info Video: $(VIDEO))
 
 vpath %.c $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
 vpath %.h $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
@@ -119,7 +173,6 @@ $(BUILD_PATH)/%.s.o: %.s
 	@$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_mmd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(addsuffix .elf,$(addprefix $(BUILD_PATH)/,$(notdir $(symref))))) -o $(OUT_MOD_ELF)
 	@$(NM) -n $(OUT_MOD_ELF) > $(addsuffix .sym,$(OUT_MOD_ELF))
 	@$(OBJCPY) -O binary $(OUT_MOD_ELF) $@
-
 
 %.smd:
 # @echo "smd in: $^"
@@ -160,8 +213,13 @@ init_build:
 $(BUILD_PATH)/ip.bin: $(BUILD_PATH)/ip.bin.elf
 	@$(OBJCPY) -O binary $< $@
 
-$(BUILD_PATH)/ip.bin.elf: $(BUILD_PATH)/ip.s.o
-	@$(LD) $(LD_FLAGS) -T$(CFG_PATH)/ip.ld -o$@ $<
+#@$(CC) $(CC_FLAGS) -I$(MEGADEV_PATH)/lib -c $< -o $@
+$(BUILD_PATH)/security.s.o: $(MEGADEV_PATH)/lib/security.c
+	$(call msg_info,Creating security block)
+	$(CC) $(CC_FLAGS) $(INC) -c $< -o $@
+
+$(BUILD_PATH)/ip.bin.elf: $(BUILD_PATH)/security.s.o $(BUILD_PATH)/ip.s.o
+	@$(LD) $(LD_FLAGS) -T$(CFG_PATH)/ip.ld -o$@ $^
 	@$(NM) -n $@ > $(addprefix $(BUILD_PATH)/,$(addsuffix .sym,$(notdir $@)))
 
 $(BUILD_PATH)/sp.bin: $(BUILD_PATH)/sp.bin.elf
@@ -179,6 +237,6 @@ $(BUILD_PATH)/boot.bin: $(BUILD_PATH)/ip.bin $(BUILD_PATH)/sp.bin
 # TODO make the ISO settings user configurable
 %.iso: $(BUILD_PATH)/boot.bin
 	$(call msg_info,Generating ISO image $(notdir $@))
-	@mkisofs -quiet -iso-level 1 -G $< -pad -V "$(PROJECT_NAME)" \
+	@mkisofs -quiet -iso-level 1 -G $< -pad -V "$(PROJECT_ID)" \
 		-sysid "MEGA_CD" -appid "" -publisher "" -preparer "" \
 		-o $@ $(notdir $(basename $@))

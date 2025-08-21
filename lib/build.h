@@ -9,23 +9,21 @@
 #define MEGADEV__BUILD_H
 
 #include "build.def.h"
-// config.h should be located in the project source tree
-#include "config.h"
 
 #ifndef TARGET
-#error TARGET not defined! Check your config.h file.
+#error TARGET not defined!
 #endif
 
-#ifndef HEADER_NAME_INTL
-#error HEADER_NAME_INTL not defined! Check your config.h file.
+#ifndef PROJECT_NAME
+#error PROJECT_NAME not defined!
 #endif
 
-#ifndef HEADER_NAME_JP
-#define HEADER_NAME_JP HEADER_NAME_INTL
+#ifndef PROJECT_NAME_JP
+#define PROJECT_NAME_JP PROJECT_NAME
 #endif
 
 #ifndef REGION
-#define REGION JP
+#error REGION not defined!
 #endif
 
 #ifndef VIDEO
@@ -36,11 +34,11 @@
 #define VRAM_SIZE VRAM_64K
 #endif
 
-#ifndef HEADER_HARDWARE
+#ifndef HARDWARE_ID
 #if REGION == US
-#define HEADER_HARDWARE "SEGA GENESIS    "
+#define HARDWARE_ID "SEGA GENESIS    "
 #else
-#define HEADER_HARDWARE "SEGA MEGA DRIVE "
+#define HARDWARE_ID "SEGA MEGA DRIVE "
 #endif
 #endif
 

@@ -18,6 +18,7 @@ SECTIONS
   .text (READONLY) :
   {
 		_TEXT_ORIGIN = .;
+    *(.security*)
     *(.text*)
     *(.rodata*)
     _TEXT_LENGTH = ABSOLUTE(. - _TEXT_ORIGIN);

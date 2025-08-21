@@ -58,7 +58,7 @@
 //                    "###########"
 
 /**
- * @def HEADER_HARDWARE
+ * @def HARDWARE_ID
  * @brief Target hardware
  * @details
  * This line indicates the hardware on which the game is meant to run. Despite
@@ -69,7 +69,7 @@
  * @note 16 bytes
  * @todo autogenerate this based on hardware settings in the project makefile
  */
-#define HEADER_HARDWARE "SEGA MEGA DRIVE "
+#define HARDWARE_ID "SEGA MEGA DRIVE "
 //                      "################"
 
 /**
@@ -88,16 +88,16 @@
 //                       "################"
 
 /**
- * @def HEADER_NAME_INTL
+ * @def PROJECT_NAME
  * @brief International title
  * @details The name of the software, in plain ASCII encoding
  * @note 48 bytes
  */
-#define HEADER_NAME_INTL "MD ROM EXAMPLE                                  "
+#define PROJECT_NAME "MD ROM EXAMPLE                                  "
 //                       "################################################"
 
 /**
- * @def HEADER_NAME_JP
+ * @def PROJECT_NAME_JP
  * @brief Domestic (Japanese) title
  *
  * @details The name of the software, in Shift-JIS encoding
@@ -112,7 +112,7 @@
  * space. The spacing bar will not work for Japanese characters.
  *
  */
-#define HEADER_NAME_JP "MD ROM EXAMPLE                                  "
+#define PROJECT_NAME_JP "MD ROM EXAMPLE                                  "
 //                     "################################################"
 
 /**

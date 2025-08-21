@@ -8,15 +8,14 @@
  * Do not change the order of the defines in this file!
  */
 
-HardwareType:  .ascii HEADER_HARDWARE
-Copyright:     .ascii HEADER_COPYRIGHT
-TitleDomestic: .ascii HEADER_NAME_JP
-TitleIntl:     .ascii HEADER_NAME_INTL
-SoftwareID:    .ascii HEADER_SOFT_ID
-IO:            .ascii "J               "
-               .ascii "                "
-               .ascii "                "
-               .ascii "                "
-               .ascii "                "
-               .ascii "                "
-Region:        .ascii HEADER_REGION
+#define STRINGIFY(x) #x
+
+#define STR(x) XSTR(x)
+#define XSTR(x) #x
+
+
+#ifndef PROJECT_NAME_JP
+#error PROJECT_NAME_JP not defined!
+#endif
+
+
