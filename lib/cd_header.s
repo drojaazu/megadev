@@ -14,8 +14,8 @@
 #define XSTR(x) #x
 
 
-#ifndef PROJECT_NAME_JP
-#error PROJECT_NAME_JP not defined!
+#ifndef PROJECT_NAME_DOMESTIC
+#error PROJECT_NAME_DOMESTIC not defined!
 #endif
 
 

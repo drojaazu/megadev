@@ -85,7 +85,7 @@
 //                       "################################################"
 
 /**
- * @def PROJECT_NAME_JP
+ * @def PROJECT_NAME_DOMESTIC
  * @brief Domestic (Japanese) title
  *
  * @details The name of the software, in Shift-JIS encoding
@@ -100,7 +100,7 @@
  * space. The spacing bar will not work for Japanese characters.
  *
  */
-#define PROJECT_NAME_JP "GFX ROUTINES EXAMPLE                            "
+#define PROJECT_NAME_DOMESTIC "GFX ROUTINES EXAMPLE                            "
 //                     "################################################"
 
 /**

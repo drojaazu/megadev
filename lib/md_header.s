@@ -11,7 +11,7 @@
 
 HardwareType:  .ascii HARDWARE_ID
 Copyright:     .ascii HEADER_COPYRIGHT
-TitleDomestic: .ascii PROJECT_NAME_JP
+TitleDomestic: .ascii PROJECT_NAME_DOMESTIC
 TitleIntl:     .ascii PROJECT_NAME
 SoftwareID:    .ascii HEADER_SOFT_ID
 Checksum:      .word  0

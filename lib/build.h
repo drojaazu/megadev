@@ -18,8 +18,8 @@
 #error PROJECT_NAME not defined!
 #endif
 
-#ifndef PROJECT_NAME_JP
-#define PROJECT_NAME_JP PROJECT_NAME
+#ifndef PROJECT_NAME_DOMESTIC
+#define PROJECT_NAME_DOMESTIC PROJECT_NAME
 #endif
 
 #ifndef REGION

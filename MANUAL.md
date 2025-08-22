@@ -106,45 +106,131 @@ make REGION=EU VIDEO=PAL disc
 
 ### Required Settings
 
-`MEGADEV_PATH` - The path to your Megadev installation (NOT your project).
+#### `MEGADEV_PATH`
 
-`PROJECT_ID` - This is the "short" name for your project. It should contain no spaces and be a **maximum of 11 characters**. It will also be used as the filename for the final output disc/cartridge file.
+The path to your Megadev installation (NOT your project).
 
-`TARGET` - Determines the target hardware for which the project should be built. Valid values are: `MEGADRIVE` and `MEGACD`.
+#### `PROJECT_ID`
 
-`SRC_PATH` - The path to your source code. This can be relative to where the makefile is run (which should be yoru project root).
+This is the "short" name for your project. It should contain no spaces and be a **maximum of 11 characters**. It will also be used as the filename for the final output disc/cartridge file.
 
-`RES_PATH` - The path to non-code resources. This can be relative to where the makefile is run (which should be yoru project root).
+#### `TARGET`
 
-`BUILD_PATH` - The path to the where compile time build artifacts will be stored, including symbol lists. This can be relative to where the makefile is run (which should be yoru project root).
+Determines the target hardware for which the project should be built. Valid values are: `MEGADRIVE` and `MEGACD`.
+
+#### `SRC_PATH`
+
+The path to your source code. This can be relative to where the makefile is run (which should be yoru project root).
+
+#### `RES_PATH`
+
+The path to non-code resources. This can be relative to where the makefile is run (which should be yoru project root).
+
+#### `BUILD_PATH`
+
+The path to the where compile time build artifacts will be stored, including symbol lists. This can be relative to where the makefile is run (which should be yoru project root).
 
 ### Recommended Settings
 
-`REGION` - Defaults to `US`.
+#### `REGION`
 
-`VIDEO` - Defaults to `NTSC`.
+Specifies the hardware region.
 
-`PROJECT_NAME` - Defaults to the value of `PROJECT_ID`.
+This is *very* important for Mega CD builds as there is security code that must match what the internal BIOS is expecting for its region, but less important for Mega Drive builds as the hardware does not do a region check.
 
-`HEADER_SOFT_ID` - Defaults to `GM 00-0000-00`.
+Valid values: `JP`, `US`, `EU`.
+
+If unspecified, defaults to `US`.
+
+#### `VIDEO`
+
+Specifies the video output mode.
+
+This is not directly used by Megadev, but can be used as a preprocessor directive in your code to determine the VDP configuration for your build target.
+
+Valid values: `PAL`, `NTSC`.
+
+If unspecified, defaults to `NTSC`.
 
 ### Optional Settings
 
-`PROJECT_NAME_JP`
+These settings are mostly related to the ROM header, occupying the space between 0x100 and 0x200 within a Mega Drive ROM or the IP of a Mega CD game. The header is, for the most part, not used by the hardware and existed only as a requirement by Sega. Therefore, you can make these fields say whatever you would like. However, we recommend that you generally follow the expected content and rules expected of the header as some tools use the metadata here to identify/classify the game.
 
-`HEADER_COPYRIGHT`
+Unless otherwise specified, all text values should be standard ASCII. Please refer to the official Mega Drive documentation (or the many websites that cover the topic) for more information about the ROM header fields.
 
-`VRAM_SIZE`
+#### `PROJECT_NAME`
 
-`HEADER_REGION`
+This is the full name of your project.
+
+**Maximum of 48 characters.**
+
+If unspecified, uses the value of `PROJECT_ID`.
+
+#### `PROJECT_NAME_DOMESTIC`
+
+This is similar to `PROJECT_NAME`, but it is intended as the title of the game in its native language.
+
+Its primary use was for Japanese game titles using Japanese characters. Officially, only ASCII and Shift-JIS encoded Japanese text can be used here, but you can use any encoding you'd like. Most games simply used the same value for `PROJECT_NAME` and `PROJECT_NAME_DOMESTIC`
+
+**Maximum of 48 bytes.**
+ 
+Be very careful when using non-ASCII encoding (such as Shift-JIS) as these may be multi-byte per character. Which means a single character may consume two (or more) bytes. Ensure that your text *data* fits within 48 bytes, and do not rely on character count only.
+
+If unspecified, uses the value of `PROJECT_NAME`.
+
+#### `HEADER_SOFT_ID`
+
+This is the "software code" that uniquely identifies your game.
+
+Officially, this uses specific codes and a number designated by Sega. Refer to the Mega Drive documentation for what this should officially look like if you want to emulate the "look and feel" of a proper header.
+
+**Maximum of 14 characters.**
+
+If unspecified, it defaults to `GM 00-0000-00`.
+
+#### `HEADER_COPYRIGHT`
+
+This contains the text (C) following by a four letter company name or code, then the month and year of the game's production.
+
+Officially, the company name/code must be assigned by Sega, but since this string is not used by hardware, you can create your own value or leave it blank. For that matter, you can make the entire string freeform, though we recommend leaving it as a version/date identifier in some form.
+
+**Maximum of 16 characters.**
+
+If unspecified, defaults to a blank company name and the current month/year, e.g. "(C)      AUG.2025"
+
+#### `HEADER_REGION`
+
+Specifies the hardware region.
+
+This is different from the `REGION` setting above in that this appears only within the header and is not actually used by the hardware. Officially, only the letters J, U and E are valid, representing Japan, US, and European regions. Multiple regions can be specified.
+
+**Maximum of 16 characters.**
+
+If unspecified, defaults to "JUE".
+
+#### `VRAM_SIZE`
+
+Specifies the VRAM size in the hardware.
+
+You will not need to change this unless you are developing specifically for the Sega Teradrive or a Mega Drive modded with extra VRAM.
+
+This is not directly used by Megadev, but can be used as a preprocessor directive in your code to determine the VDP configuration for your build target.
+
+Valid values are `VRAM_64K`, `VRAM_128K`. 
+
+If unspecified, defaults to `VRAM_64K`.
 
 ### Restricted Settings
 
-We do *not* recommend changing the following settings as it may make your game non-compliant/non-booting! They are provided for experimental purposes.
+The following are set automatically by Megadev and do not need to be modified. They are checked (in part) by hardware and changing them may make your game non-compliant/unbootable! They are provided for experimental purposes, and we do *not* recommend changing them! 
 
-`HARDWARE_ID` - The hardware name appearing in the software header. This will normally be set automatically based on the `REGION` setting. **Security checks are performed against this string!**
+#### `HARDWARE_ID`
 
-`DISC_TYPE` - The disc type appearing in the disc header. This is normally set automatically. **The wrong setting can make your disc unbootable!**
+The hardware name appearing in the software header. This will normally be set automatically based on the `REGION` setting. **Security checks are performed against this string!**
+
+#### `DISC_TYPE`
+
+Applies to Mega CD only. The disc type appearing in the disc header. **The wrong setting can make your disc unbootable!**
 
 
 # Megadev Concepts & Utilities

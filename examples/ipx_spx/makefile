@@ -3,32 +3,48 @@
 # https://github.com/drojaazu/megadev
 ################################################################################
 
-# This will be used for filename output
+## Project ID
+# ASCII text only; maximum of 11 characters
+# *** REQUIRED!***
 PROJECT_ID=ipx_spx
 
+## Build Target
+# Determines for which hardware this project is intended
+# Valid values: MEGADRIVE, MEGACD
+# *** REQUIRED!***
 TARGET=MEGACD
 
+## Project Name
+# ASCII text only; maximum of 48 characters
 PROJECT_NAME="IPX SPX EXAMPLE"
 
+## Hardware Region
+# This is *very important* for Mega CD builds as it determines which security code to use. It can be changed at compile
+# time by setting the variable when running make.
 REGION=US
 
+## Video Output
+# Specifies the default video output for this game. It can be changed at compile time by setting the variable when
+# running make.
+# Valid values: NTSC, PAL
 VIDEO=NTSC
 
-## Directory paths are relative to the location of the makefile
-## (which should be the root of your project directory)
+## The following directory paths are relative to the location of this makefile
+## (which should ideally be in the root of your project directory)
 
-# Source code path
-# (relative to the location of the project makefile)
+## Source code path
+# This is the path to all code that will be referenced or directly copmiled.
+# *** REQUIRED!***
 SRC_PATH:=src
 
 # Resources path
-# This is where graphics, audio and any other non-executable content should be
-# stored.
+# This is where graphics, audio and any other non-executable content should be stored.
+# *** REQUIRED!***
 RES_PATH:=res
 
 # Build path
-# This is where compile time build artifacts will be stored, including
-# symbol maps
+# This is where compile time build artifacts will be stored, including symbol maps
+# *** REQUIRED!***
 BUILD_PATH:=build
 
 # Output path
@@ -45,6 +61,7 @@ AS_FLAGS:=
 LD_FLAGS:=
 
 # Path to the Megadev directory
+# *** REQUIRED!***
 MEGADEV_PATH?=/opt/megadev
 
 include $(MEGADEV_PATH)/megadev.make

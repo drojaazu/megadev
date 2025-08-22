@@ -79,7 +79,7 @@ SP_WORK_RAM:  .long 0
 .org 0x110, 0x20
 .ascii STR(HEADER_COPYRIGHT)
 .org 0x120, 0x20
-.ascii STR(PROJECT_NAME_JP)
+.ascii STR(PROJECT_NAME_DOMESTIC)
 .org 0x150, 0x20
 .ascii STR(PROJECT_NAME)
 .org 0x180, 0x20
