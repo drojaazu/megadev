@@ -6,20 +6,20 @@
 #include <types.h>
 
 // resource declarations
-extern u8 res_cybercity_bldg_cmp_nem[];
-extern u8 res_cybercity_farbg_cmp_nem[];
-extern u16 const res_cybercity_pal[];
+extern u8									 res_cybercity_bldg_cmp_nem[];
+extern u8									 res_cybercity_farbg_cmp_nem[];
+extern u16 const					 res_cybercity_pal[];
 
-extern u16 res_cybercity_bldg_map[];
-extern u16 res_cybercity_farbg_map[];
-extern u8 res_ship_chr[];
-extern u16 const res_ship_pal[];
+extern u16								 res_cybercity_bldg_map[];
+extern u16								 res_cybercity_farbg_map[];
+extern u8									 res_ship_chr[];
+extern u16 const					 res_ship_pal[];
 
 extern struct SpriteLayout res_ship_layout;
 
-struct Entity sprobj_ship;
+struct Entity							 sprobj_ship;
 
-void null_func()
+void											 null_func()
 {
 	return;
 }
@@ -29,9 +29,11 @@ void vint_user()
 	bios_copy_sprlist();
 }
 
-void (*spr_funcs[2])() = {null_func, null_func};
+void (*spr_funcs[2])() = {
+	null_func,
+	null_func};
 
-const VDPCMD vdpptr_scroll = VDPPTR((_BIOS_VDP_HSCROLL_ADDR)) | VRAM_W;
+const VDPCMD									 vdpptr_scroll = VDPPTR((_BIOS_VDP_HSCROLL_ADDR)) | VRAM_W;
 
 /*
 	We mark this is as noreturn since this is an infinite loop that will
@@ -65,8 +67,8 @@ __attribute__((noreturn)) void main()
 	// The load VDP regs Boot ROM routines expect a zero terminated array of
 	// raw register values
 	// See the documentation on _BIOS_LOAD_VDPREGS for more
-	u16 vdp_planewidth_reg[] = {_VDPREG_PL_SIZE | VDP_PL_32x64, 0};
-	bios_load_vdpregs(&vdp_planewidth_reg);
+	VDPREG const vdp_planewidth_reg[] = {_VDPREG_PL_SIZE | VDP_PL_32x64, 0};
+	bios_load_vdpregs(vdp_planewidth_reg);
 
 	// load the palettes
 	// In general, use the VDPPTR macro for converting a VRAM address to the
@@ -92,11 +94,13 @@ __attribute__((noreturn)) void main()
 
 	bios_dma_xfer_word_ram(VDPPTR(VRAM_AT(free_tile)) | VRAM_W, res_ship_chr, 1920 >> 1);
 
-	bios_load_map(VDPPTR(_BIOS_VDP_PLANEA_ADDR + PLANE_POS(0, 2, Width32)) | VRAM_W,
+	bios_load_map(
+		VDPPTR(_BIOS_VDP_PLANEA_ADDR + PLANE_POS(0, 2, Width32)) | VRAM_W,
 		res_cybercity_bldg_map[0] - 1,
 		res_cybercity_bldg_map[1] - 1,
 		res_cybercity_bldg_map + 2);
-	bios_load_map(VDPPTR(_BIOS_VDP_PLANEB_ADDR) | VRAM_W,
+	bios_load_map(
+		VDPPTR(_BIOS_VDP_PLANEB_ADDR) | VRAM_W,
 		res_cybercity_farbg_map[0] - 1,
 		res_cybercity_farbg_map[1] - 1,
 		res_cybercity_farbg_map + 2);

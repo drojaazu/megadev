@@ -6,7 +6,7 @@
 ## Project ID
 # ASCII text only; maximum of 11 characters
 # *** REQUIRED!***
-PROJECT_ID=pcm
+PROJECT_ID=pcm_play
 
 ## Build Target
 # Determines for which hardware this project is intended

@@ -9,7 +9,7 @@
  */
 
 #ifndef REGION
-#error Hardware region not defined!
+#error Hardware region not set!
 #endif
 
 #if REGION == JP

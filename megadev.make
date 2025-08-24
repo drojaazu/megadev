@@ -25,14 +25,7 @@ Z80_AS:=sjasmplus
 # really know what you're doing.
 ################################################################################
 
-# TODO check for required values and fail if not set:
-# MEGADEV_PATH
-# PROJECT_ID
-# OUT_PATH
-# SRC_PATH
-# DISCS_PATH
-
-## Project Defaults
+#### Project Sanity Check & Defaults
 
 ifndef PROJECT_ID
 	$(error PROJECT_ID not set! Please set this variable in your makefile.)
@@ -54,23 +47,24 @@ ifndef BUILD_PATH
 	$(error BUILD_PATH not set! Please set this variable in your makefile.)
 endif
 
-REGION?="US"
-VIDEO?="NTSC"
-VRAM_SIZE?="VRAM_64K"
+REGION?=US
+VIDEO?=NTSC
+VRAM_SIZE?=VRAM_64K
 PROJECT_NAME?=$(PROJECT_ID)
-PROJECT_NAME_DOMESTIC?=$(PROJECT_NAME)
-ifeq ($(REGION),"US")
-	HARDWARE_ID?="SEGA GENESIS"
+PROJECT_NAME_JP?=$(PROJECT_NAME)
+ifeq ($(REGION),US)
+	HEADER_HARDWARE_ID?="SEGA GENESIS"
 else
-	HARDWARE_ID?="SEGA MEGA DRIVE"
+	HEADER_HARDWARE_ID?="SEGA MEGA DRIVE"
 endif
 HEADER_VOL_ID?=$(shell printf $(PROJECT_ID) |tr '[:lower:]' '[:upper:]')
 HEADER_COPYRIGHT?="(C)\ \ \ \ \ $(shell LC_TIME="C" date +"%Y.%b" |tr '[:lower:]' '[:upper:]')"
-HEADER_SOFT_ID?="GM 00-0000-00"
+HEADER_SOFTWARE_ID?="GM 00-0000-00"
 HEADER_REGION?="JUE"
-DISC_TYPE?="SEGADISCSYSTEM"
+HEADER_DISC_ID?="SEGADISCSYSTEM"
+HEADER_SYS_ID?=$(shell printf $(PROJECT_ID) |tr '[:lower:]' '[:upper:]')
 
-# fancy colors cause we're fancy
+# Fancy colors cause we're fancy
 CLEAR=\033[0m
 BOLD=\033[1m
 CYAN=\033[1;36m
@@ -78,7 +72,8 @@ RED=\033[1;31m
 YELLOW=\033[1;33m
 GREEN=\033[1;32m
 
-## PATHS
+##### Build Tool Paths
+
 # Megadev library code (ASM and C)
 LIB_PATH:=$(MEGADEV_PATH)/lib
 
@@ -101,20 +96,21 @@ AS_INC:=-Wa,-I$(SRC_PATH) -Wa,-I$(LIB_PATH) -Wa,-I$(RES_PATH) -Wa,-I$(BUILD_PATH
 # with asm source files
 CC_FLAGS+= \
 	-m68000 \
-	-imacros build.h \
+	-imacros build.def.h \
 	-DPROJECT_ID=$(PROJECT_ID) \
 	-DTARGET=$(TARGET) \
-	-DHARDWARE_ID=$(HARDWARE_ID) \
+	-DHEADER_HARDWARE_ID=$(HEADER_HARDWARE_ID) \
 	-DREGION=$(REGION) \
 	-DVIDEO=$(VIDEO) \
 	-DVRAM_SIZE=$(VRAM_SIZE) \
 	-DPROJECT_NAME=$(PROJECT_NAME) \
-	-DPROJECT_NAME_DOMESTIC=$(PROJECT_NAME_DOMESTIC) \
+	-DPROJECT_NAME_JP=$(PROJECT_NAME_JP) \
 	-DHEADER_COPYRIGHT=$(HEADER_COPYRIGHT) \
 	-DHEADER_VOL_ID=$(HEADER_VOL_ID) \
-	-DHEADER_SOFT_ID=$(HEADER_SOFT_ID) \
+	-DHEADER_SYS_ID=$(HEADER_SYS_ID) \
+	-DHEADER_SOFTWARE_ID=$(HEADER_SOFTWARE_ID) \
 	-DHEADER_REGION=$(HEADER_REGION) \
-	-DDISC_TYPE=$(DISC_TYPE) \
+	-DHEADER_DISC_ID=$(HEADER_DISC_ID) \
 	$(if $(DEBUG), -DDEBUG) \
 	-fno-builtin \
 	-Wall -Wextra -Wno-main -Wa,--register-prefix-optional
@@ -130,11 +126,6 @@ endef
 define msg_warning
 	@echo "${BOLD}${RED}$(1)${CLEAR}"
 endef
-
-$(info Beginning build of "$(PROJECT_ID)")
-$(info Target: $(TARGET))
-$(info Region: $(REGION))
-$(info Video: $(VIDEO))
 
 vpath %.c $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
 vpath %.h $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
@@ -234,9 +225,16 @@ $(BUILD_PATH)/boot.bin: $(BUILD_PATH)/ip.bin $(BUILD_PATH)/sp.bin
 	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $(LIB_PATH)/cd_boot.s -o$@
 	@$(OBJCPY) -O binary $@
 
+# this is used to trigger an ISO rebuild if there are any file changes in the disc dir
+DISC_DIR_UPDATES = $(shell find $(DISC_PATH)/ -type d)
+DISC_FILES_UPDATES = $(shell find $(DISC_PATH)/ -type f -name '*')
+
 # TODO make the ISO settings user configurable
-%.iso: $(BUILD_PATH)/boot.bin
+%.iso: $(BUILD_PATH)/boot.bin $(DISC_FILES_UPDATES) $(DISC_DIR_UPDATES)
 	$(call msg_info,Generating ISO image $(notdir $@))
 	@mkisofs -quiet -iso-level 1 -G $< -pad -V "$(PROJECT_ID)" \
 		-sysid "MEGA_CD" -appid "" -publisher "" -preparer "" \
-		-o $@ $(notdir $(basename $@))
+		-o $@ $(DISC_PATH)
+	$(info Target: $(TARGET))
+	$(info Region: $(REGION))
+	$(info Video: $(VIDEO))

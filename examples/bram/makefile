@@ -16,7 +16,9 @@ TARGET=MEGACD
 
 ## Project Name
 # ASCII text only; maximum of 48 characters
-PROJECT_NAME="IPX SPX EXAMPLE"
+PROJECT_NAME="BRAM USAGE EXAMPLE"
+
+HEADER_SOFTWARE_ID="MEGADEV DEMO #3"
 
 ## Hardware Region
 # This is *very important* for Mega CD builds as it determines which security code to use. It can be changed at compile
@@ -80,6 +82,7 @@ clean:
 disc/bramdemo.mmd: \
 	bram_demo_layout.s \
 	main/ipx_init.s \
+	printval.s \
 	bram_demo.c
 
 disc/spx.smd: \

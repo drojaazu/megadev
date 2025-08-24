@@ -178,7 +178,23 @@ Be very careful when using non-ASCII encoding (such as Shift-JIS) as these may b
 
 If unspecified, uses the value of `PROJECT_NAME`.
 
-#### `HEADER_SOFT_ID`
+#### `HEADER_VOL_ID`
+
+The is the name of the volume (the file system). This is different from the volume identifier within the ISO9660 Primary Volume Descriptor, but it would 
+
+**Masimum of 11 characters.**
+
+If unspecified, uses the value of `PROJECT_ID`.
+
+#### `HEADER_SYS_ID`
+
+This is the name of the "developers operating system filename" (per official documentation). This does not need to refer to an actual filename, and many games simply use this as a "short name" for the game.
+
+**Masimum of 11 characters.**
+
+If unspecified, uses the value of `PROJECT_ID`.
+
+#### `HEADER_SOFTWARE_ID`
 
 This is the "software code" that uniquely identifies your game.
 
@@ -224,11 +240,11 @@ If unspecified, defaults to `VRAM_64K`.
 
 The following are set automatically by Megadev and do not need to be modified. They are checked (in part) by hardware and changing them may make your game non-compliant/unbootable! They are provided for experimental purposes, and we do *not* recommend changing them! 
 
-#### `HARDWARE_ID`
+#### `HEADER_HARDWARE_ID`
 
 The hardware name appearing in the software header. This will normally be set automatically based on the `REGION` setting. **Security checks are performed against this string!**
 
-#### `DISC_TYPE`
+#### `HEADER_DISC_ID`
 
 Applies to Mega CD only. The disc type appearing in the disc header. **The wrong setting can make your disc unbootable!**
 

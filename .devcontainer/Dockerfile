@@ -10,6 +10,7 @@ RUN \
 		cpp-m68k-linux-gnu \
 		gcc-m68k-linux-gnu \
 		genisoimage \
+		xxd \
 		&& \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/*

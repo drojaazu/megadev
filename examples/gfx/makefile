@@ -16,7 +16,7 @@ TARGET=MEGACD
 
 ## Project Name
 # ASCII text only; maximum of 48 characters
-PROJECT_NAME="GFX EXAMPLE"
+PROJECT_NAME="GFX ROUTINES EXAMPLE"
 
 ## Hardware Region
 # This is *very important* for Mega CD builds as it determines which security code to use. It can be changed at compile

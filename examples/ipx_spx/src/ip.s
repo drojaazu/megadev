@@ -1,24 +1,19 @@
 
-// Boot security block - This must be at the top of your IP!
-// **** DO NOT MOVE OR REMOVE THIS! ****
-//#include <security.s>
-// **** DO NOT MOVE OR REMOVE THIS! ****
-
 .section .text
 
+#include <main/main.def.h>
 #include <main/gate_arr.macros.s>
-#include <main/memmap.def.h>
 #include <main/bios.def.h>
 #include <main/main.macro.s>
-#include <main/vdp.def.h>
 #include <macros.s>
+#include <system.macros.s>
 #include "ipx_layout.s"
 #include "bridge.h"
 
 ip_entry:
 
   // First, disable all interrupts while we do some basic init
-  ori      #0x700,sr
+  DISABLE_INTERRUPTS
   
   // Clear out RAM used by the IP
   moveq    #0, d0
@@ -59,7 +54,7 @@ ip_entry:
   move.l   #_BIOS_VINT_HANDLER, (_MLEVEL6 + 2)
 
   // Restore interrupts to allow VINTs to fire and ultimately allow CD-ROM data to flow
-  andi     #0xF8FF,sr
+  ENABLE_INTERRUPTS
 
   // From here, we load our first "real" file from disc and jump to its code. You can modify this to change
   // e.g. the value sent to COMCMD0, but it should ultimately accomplish the same task of loading the first file.

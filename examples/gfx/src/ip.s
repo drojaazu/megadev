@@ -1,7 +1,4 @@
 
-// Boot security block - This must be at the top of your IP!
-#include "security.s"
-
 .section .text
 
 #include <main/main.def.h>
@@ -10,7 +7,7 @@
 #include <main/gate_arr.def.h>
 #include <main/vdp.def.h>
 #include <macros.s>
-#include <system.s>
+#include <system.macros.s>
 #include "mmd_layout.s"
 #include "bridge.h"
 
@@ -26,45 +23,51 @@ ip_entry:
 0:move.l   d0, (a0)+
 1:dbra     d1, 0b
 
-  // disable VDP display and set Mega Drive video mode
-  move.w   #(_VDPREG_MODE2 | 0x44), (_VDP_CTRL)
+  // Next, begin to initialiaze video output (the VDP)
+  // We will use the default VDP settings provided by the Main BIOS
+  // See the comments for _BIOS_LOAD_VDPREGS_DEFAULT for details on what those settings are.
+  jbsr     _BIOS_LOAD_VDPREGS_DEFAULT
 
-  // clear out VRAM
+  // Clear out VRAM in case there's any junk left over after the system startup graphics
   // (note: this does not clear CRAM!)
-  // This is a Boot ROM library call that makes use of the VDP register cache
-  // Even if you don't plan to use the Boot ROM library, this call is safe
-  // to use here as the memory for the register cache is not yet in use
+  // This is a BIOS call that makes use of the VDP register cache
+  // Even if you don't plan to use the Main BIOS library, this call is safe
+  // to use here as the memory will not be preserved after we jump to the IPX
   jbsr     _BIOS_CLEAR_VRAM
 
-  // set palette entry 0 (background) to black
-  move.l   #0xC0000000, (_VDP_CTRL)
-  move.w   #0x0000, (_VDP_DATA)
+  // Clear the Gate Array communication registers
+  // Again, we conveniently have a BIOS call to take of this
+  jbsr     _BIOS_CLEAR_COMM
 
-  // clear the Gate Array communication registers
-  CLEAR_COMM_REGS
-
-  // point the VINT vector to the simple one within the Boot Library
+  // point VINT vector to the minimal, temporary handler
+  // (note that we use _MLEVEL6 *+ 2*, as the first two bytes are
+  // a jmp/bra opcode)
+  // We need to set up the VBLANK interrupt (VINT) handler before we can turn interrupts back on.
+  // (Which needs to happen soon, as this keeps the Sub CPU on the Mega CD side in "sync" by alerting
+  // it when a VBLANK occurs.)
+  // Once again, the built-in BIOS has a handler that can help us. It uses a couple of bits in the
+  // _BIOS_VINT_HANDLER_FLAGS variable to call an user function and to update the sprite table (neither of which
+  // we need right now, so we should make sure that is cleared out.)
+  // We set the pointer to the handler in the system vector jump table. The +2 is because the first two
+  // bytes are the JMP opcode and we want to set the address to which it jumps.
+  move     #0, (_BIOS_VINT_HANDLER_FLAGS)
   move.l   #_BIOS_VINT_HANDLER, (_MLEVEL6 + 2)
 
-  // And finally enable the display
-  jbsr     _BIOS_VDP_DISP_ENABLE
-
-  // our example IP here is super tiny, and while it should remain quite
-  // small, you could put a very simple message/graphic here to indicate
-  // the game is starting up
-
-  // restore interrupts to allow the cdrom data to flow
+  // Restore interrupts to allow VINTs to fire and ultimately allow CD-ROM data to flow
   ENABLE_INTERRUPTS
 
   GRANT_2M  // give Word RAM to Sub
-  move.w   #CMD_LOAD_FILE, _GAREG_COMCMD0	//send the command to sub
   move.w   #FILE_CYBERCITY, _GAREG_COMCMD1  // send the param to sub
+  move.w   #CMD_LOAD_FILE, _GAREG_COMCMD0	//send the command to sub
 0:tst.w    _GAREG_COMSTAT0			//wait for response on status reg #0
   beq      0b
   move.w   #0, _GAREG_COMCMD0	//send idle command
 1:tst.w    _GAREG_COMSTAT0			//wait for response (wait for 0 from Sub)
   bne      1b
   WAIT_2M
+
+  // Everything is almost ready to go, so let's re-enable the display
+  jbsr     _BIOS_VDP_DISP_ENABLE
 
   // Reset the stack since we're starting fresh
   movea.l  (0), sp

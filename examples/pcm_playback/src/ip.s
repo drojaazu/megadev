@@ -1,16 +1,12 @@
 
-// Boot security block - This must be at the top of your IP!
-#include "security.s"
-
 .section .text
 
 #include <main/main.def.h>
 #include <main/bios.def.h>
 #include <main/gate_arr.macros.s>
-#include <main/gate_arr.def.h>
-#include <main/vdp.def.h>
+#include <main/main.macro.s>
 #include <macros.s>
-#include <system.s>
+#include <system.macros.s>
 
 ip_entry:
   // First, disable all interrupts while we do some basic init
@@ -62,6 +58,9 @@ ip_entry:
 1:tst.w		_GAREG_COMSTAT0				//wait for response (wait for 0 from Sub)
 	bne			1b
   WAIT_2M
+
+  // Everything is almost ready to go, so let's re-enable the display
+  jbsr     _BIOS_VDP_DISP_ENABLE
 
   // Reset the stack since we're starting fresh
   movea.l  (0), sp

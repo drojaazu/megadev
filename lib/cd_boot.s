@@ -11,11 +11,10 @@
 #define STR(x) XSTR(x)
 #define XSTR(x) #x
 
-DiscHeader:
-
-/* https://forums.sonicretro.org/threads/sega-cd.41344/ */
+/** System Header **/
 
 /*
+https://forums.sonicretro.org/threads/sega-cd.41344/
 https://www.retrodev.com/segacd.html
 "The BIOS expects to find one of the following 16byte identifiers at the very beginning of the CD:
   'SEGADISC        '
@@ -26,36 +25,28 @@ https://www.retrodev.com/segacd.html
  I do know that it only performs the security check if SEGABOOTDISC or SEGADISCSYSTEM are used, and it would appear
  that SEGADISC and SEGADATADISC are not bootable identifiers."
 */
+
 .org 0
-DiscType: .ascii "SEGADISCSYSTEM  "		/*Disc Type (must be one of the allowed values)*/
-
-/**
- * Volume ID, 11 bytes + 0 terminator
- */
-.org 0x10
-VolumeName:     .asciz STR(HEADER_VOL_ID)
-.org 0x1c
-VolumeSystem:   .word 0x100, 0x1				/*System ID, Type*/
+.ascii STR(HEADER_DISC_ID)   // Disc Type (must be one of the allowed values!)
+.org 0x10, 0x20
+.asciz STR(HEADER_VOL_ID)    // Volume Name
+.org 0x1c, 0x20
+.word 0x0100                 // Volume Version (BCD)
+.word 0x0001                 // Type ()
 .org 0x20
-SystemName:     .asciz STR(DISC_TYPE)			/*System Name*/
-.org 0x2c
-SystemVersion:  .word 0,0							/*System Version, Type*/
-
-// The US/EU security bins are much larger
-// so we need to correct for this (as outlined in the Mega CD
-// technial bulletins)
-//IP_Addr:	.long _ip_begin-DiscHeader		/*IP Start Address*/
-//IP_Size:	.long _ip_end-_ip_begin					/*IP End Address*/
+.asciz STR(HEADER_SYS_ID)    // System Name
+.org 0x2c, 0x20
+.word 0x0100                 // System Version (BCD)
+.word 0                      // Always zero
 
 /*
- * @note
- * > "The original BIOS seems to have been hard wired for an IP that stayed within
- * > sector 0, so you have to kind of lie to it when IP gets bigger than that.
- * > According to SOJ, the value in the IP Start field should point to the beginning
- * > of the first byte in IP after the first $600 bytes. This would mean that you'd
- * > always use $800 (since anything smaller would fit in sector 0 and you wouldn't
- * > have to mess with any of this in the first place). It also implies that IP can't
- * > extend beyond the end of sector 1, but I haven't confirmed that yet."
+ * "The original BIOS seems to have been hard wired for an IP that stayed within
+ * sector 0, so you have to kind of lie to it when IP gets bigger than that.
+ * According to SOJ, the value in the IP Start field should point to the beginning
+ * of the first byte in IP after the first $600 bytes. This would mean that you'd
+ * always use $800 (since anything smaller would fit in sector 0 and you wouldn't
+ * have to mess with any of this in the first place). It also implies that IP can't
+ * extend beyond the end of sector 1, but I haven't confirmed that yet."
 */
 
 .org 0x30
@@ -71,11 +62,10 @@ SP_WORK_RAM:  .long 0
 .ascii       "                "
 .endr
 
-# =======================================================================================
-#  Game Header
-# =======================================================================================	
-.org 0x100, 0x20
-.ascii STR(HARDWARE_ID)
+/** Disc Header **/
+
+.org 0x100
+.ascii STR(HEADER_HARDWARE_ID)  // Hardware Type (must be one of the allowed values!)
 .org 0x110, 0x20
 .ascii STR(HEADER_COPYRIGHT)
 .org 0x120, 0x20
@@ -83,7 +73,7 @@ SP_WORK_RAM:  .long 0
 .org 0x150, 0x20
 .ascii STR(PROJECT_NAME)
 .org 0x180, 0x20
-.ascii STR(HEADER_SOFT_ID)
+.ascii STR(HEADER_SOFTWARE_ID)
 .org 0x190, 0x20
 .ascii "J               "
 .ascii "                "
@@ -95,7 +85,7 @@ SP_WORK_RAM:  .long 0
 .ascii STR(HEADER_REGION)
 
 // if all the above text is correct, we should be at 0x200 anyway
-.org 0x200
+.org 0x200, 0x20
 
 _ip_begin:
 	.incbin "ip.bin"

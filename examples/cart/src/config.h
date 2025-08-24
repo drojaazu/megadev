@@ -110,7 +110,7 @@
 //                     "################################################"
 
 /**
- * @def HEADER_SOFT_ID
+ * @def HEADER_SOFTWARE_ID
  * @brief Software ID
  *
  * @details This is a catalogging code that was assigned by Sega when the
@@ -124,7 +124,7 @@
  * More information is available here:
  * https://plutiedev.com/rom-header#serial
  */
-#define HEADER_SOFT_ID "GM 00-0000-00   "
+#define HEADER_SOFTWARE_ID "GM 00-0000-00   "
 //                     "################"
 
 /**

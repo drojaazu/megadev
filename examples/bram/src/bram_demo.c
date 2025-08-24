@@ -8,17 +8,17 @@
 #include <system.h>
 #include <types.h>
 
-#define SUB_WAIT \
-	do \
-	{ \
-		asm("nop"); \
+#define SUB_WAIT               \
+	do                           \
+	{                            \
+		asm("nop");                \
 	} while (*GA_COMSTAT0 == 0);
 
 #define SUB_ACK *GA_COMCMD0 = 0;
 
 #define print_xy(x, y) (VDPPTR(_BIOS_VDP_PLANEA_ADDR + PLANE_POS(x, y, Width64)) | VRAM_W)
 
-char val_buffer[5];
+char				val_buffer[5];
 
 static void bram_init()
 {
@@ -147,7 +147,7 @@ static void brmwrite()
 
 		// now we get a nice, smooth value change when holding up or down instead
 		// of the value changing way too quickly
-		bios_input_delay(&delayed_input_val, false);
+		bios_input_repeat_delay(&delayed_input_val, false);
 
 		if (delayed_input_val & PAD_UP)
 		{
@@ -285,8 +285,8 @@ void brmdir()
 
 	bios_print("Filename       Blocks\xff", print_xy(1, 3));
 
-	u16 file_idx = 0;
-	u16 curr_y = 4;
+	u16		 file_idx = 0;
+	u16		 curr_y = 4;
 	char * filename;
 	while (1)
 	{
@@ -344,10 +344,10 @@ void main()
 			bios_vint_wait_default();
 			for (int clearloop = 3; clearloop < 10; ++clearloop)
 			{
-				VDP_CTRL_32 = (VDPPTR(_BIOS_VDP_PLANEA_ADDR + PLANE_POS(1, clearloop, Width64)) | VRAM_W);
+				VDP_CTRL_32 = print_xy(1, clearloop);
 				VDP_DATA_16 = 0;
 			}
-			VDP_CTRL_32 = (VDPPTR(_BIOS_VDP_PLANEA_ADDR + PLANE_POS(1, menupos + 3, Width64)) | VRAM_W);
+			VDP_CTRL_32 = print_xy(1, menupos + 3);
 			VDP_DATA_16 = '>';
 
 			if ((bios_joy1_hit & PAD_DOWN))

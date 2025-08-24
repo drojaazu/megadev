@@ -72,7 +72,7 @@
  */
 
 /**
- * @def HARDWARE_ID
+ * @def HEADER_HARDWARE_ID
  * @brief Target hardware
  * @details
  * This line indicates the hardware on which the game is meant to
@@ -83,11 +83,11 @@
  *
  * @note 16 bytes
  */
-// #define HARDWARE_ID "SEGA MEGA DRIVE "
+// #define HEADER_HARDWARE_ID "SEGA MEGA DRIVE "
 //                      "################"
 
 /**
- * @def HARDWARE_ID
+ * @def HEADER_HARDWARE_ID
  * @brief Target hardware
  * @details
  * This line indicates the hardware on which the game is meant to run. Despite
@@ -98,7 +98,7 @@
  * @note 16 bytes
  * @todo autogenerate this based on hardware settings in the project makefile
  */
-#define HARDWARE_ID "SEGA MEGA DRIVE "
+#define HEADER_HARDWARE_ID "SEGA MEGA DRIVE "
 //                      "################"
 
 /**
@@ -145,7 +145,7 @@
 //                     "################################################"
 
 /**
- * @def HEADER_SOFT_ID
+ * @def HEADER_SOFTWARE_ID
  * @brief Software ID
  *
  * @details This is a catalogging code that was assigned by Sega when the
@@ -159,7 +159,7 @@
  * More information is available here:
  * https://plutiedev.com/rom-header#serial
  */
-#define HEADER_SOFT_ID "GM 00-0000-00   "
+#define HEADER_SOFTWARE_ID "GM 00-0000-00   "
 //                     "################"
 
 /**

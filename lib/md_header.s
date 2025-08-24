@@ -9,11 +9,11 @@
  */
 
 
-HardwareType:  .ascii HARDWARE_ID
+HardwareType:  .ascii HEADER_HARDWARE_ID
 Copyright:     .ascii HEADER_COPYRIGHT
 TitleDomestic: .ascii PROJECT_NAME_DOMESTIC
 TitleIntl:     .ascii PROJECT_NAME
-SoftwareID:    .ascii HEADER_SOFT_ID
+SoftwareID:    .ascii HEADER_SOFTWARE_ID
 Checksum:      .word  0
 Devices:       .ascii "J               "
 //                     ################

@@ -6,7 +6,7 @@
  */
 
 #include <macros.s>
-#include <system.s>
+#include <system.macros.s>
 #include <init.macros.s>
 
 .section .init
