@@ -1,120 +1,120 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file bios.def.h
- * @brief Boot ROM call vector & memory definitions
+ * @file main/bios.def.h
+ * @brief Main CPU side system library vectors & memory definitions
  */
 
-#ifndef MEGADEV__MAIN_BOOTLIB_DEF_H
-#define MEGADEV__MAIN_BOOTLIB_DEF_H
+#ifndef MEGADEV__MAINBIOS_DEF_H
+#define MEGADEV__MAINBIOS_DEF_H
 
 /**
- * @defgroup bios_vdp Main CPU / Boot Lib / VDP
- */
-
-/**
- * @defgroup bios_input Main CPU / Boot Lib / User input
+ * @defgroup bios_vdp Main CPU / BIOS / VDP
  */
 
 /**
- * @defgroup bios_int Main CPU / Boot Lib / Interrupts
+ * @defgroup bios_input Main CPU / BIOS / User input
  */
 
 /**
- * @defgroup bios_cmp Main CPU / Boot Lib / Compression
+ * @defgroup bios_int Main CPU / BIOS / Interrupts
  */
 
 /**
- * @defgroup bios_comm Main CPU / Boot Lib / CPU Comm
+ * @defgroup bios_cmp Main CPU / BIOS / Compression
  */
 
 /**
- * @defgroup bios_system Main CPU / Boot Lib / System calls
+ * @defgroup bios_comm Main CPU / BIOS / CPU Comm
  */
 
 /**
- * @defgroup bios_misc Main CPU / Boot Lib / Misc
+ * @defgroup bios_system Main CPU / BIOS / System calls
  */
 
 /**
- * @def _BIOS_WORK_BUFFER
+ * @defgroup bios_misc Main CPU / BIOS / Misc
+ */
+
+/**
+ * @def BIOS_WORK_BUFFER
  * @ingroup bios_cmp
  * @sa bios_work_buffer
  */
-#define _BIOS_WORK_BUFFER 0xFFF700
+#define BIOS_WORK_BUFFER 0xFFF700
 
 /**
- * @def _BIOS_SPRLIST
+ * @def BIOS_SPRITE_CACHE
  * @ingroup bios_vdp
  * @sa bios_sprlist
  */
-#define _BIOS_SPRLIST 0xFFF900
+#define BIOS_SPRITE_CACHE 0xFFF900
 
 /**
- * @def _BIOS_PALETTE
+ * @def BIOS_PALETTE_CACHE
  * @ingroup bios_vdp
  * @sa bios_palette
  */
-#define _BIOS_PALETTE 0xFFFB80
+#define BIOS_PALETTE_CACHE 0xFFFB80
 
 /**
- * @def _BIOS_PAL1
+ * @def BIOS_PAL1
  * @ingroup bios_vdp
  * @sa bios_pal1
  */
-#define _BIOS_PAL1 0xFFFB80
+#define BIOS_PAL1 0xFFFB80
 
 /**
- * @def _BIOS_PAL2
+ * @def BIOS_PAL2
  * @ingroup bios_vdp
  * @sa bios_pal2
  */
-#define _BIOS_PAL2 0xFFFBA0
+#define BIOS_PAL2 0xFFFBA0
 
 /**
- * @def _BIOS_PAL3
+ * @def BIOS_PAL3
  * @ingroup bios_vdp
  * @sa bios_pal3
  */
-#define _BIOS_PAL3 0xFFFBC0
+#define BIOS_PAL3 0xFFFBC0
 
 /**
- * @def _BIOS_PAL4
+ * @def BIOS_PAL4
  * @ingroup bios_vdp
  * @sa bios_pal4
  */
-#define _BIOS_PAL4 0xFFFBE0
+#define BIOS_PAL4 0xFFFBE0
 
 /**
- * @def _BIOS_VINT_USER
+ * @def BIOS_VINT_USER
  * @ingroup bios_int
  * @sa bios_vint_user
  */
-#define _BIOS_VINT_USER 0xFFFDAA
+#define BIOS_VINT_USER 0xFFFDAA
 
 /**
- * @def _BIOS_VDP_REGS
+ * @def BIOS_VDPREG_CACHE
  * @ingroup bios_vdp
  * @sa bios_vdp_regs
  */
-#define _BIOS_VDP_REGS 0xFFFDB4
+#define BIOS_VDPREG_CACHE 0xFFFDB4
 
 /**
- * @def _BIOS_COMFLAGS_MAIN
+ * @def BIOS_COMMFLAGS_MAIN_CACHE
  * @ingroup bios_comm
  * @sa bios_comflags_main
  */
-#define _BIOS_COMFLAGS_MAIN 0xfffdde
+#define BIOS_COMMFLAGS_MAIN_CACHE 0xfffdde
 
 /**
- * @def _BIOS_COMFLAGS_SUB
+ * @def BIOS_COMMFLAGS_SUB_CACHE
  * @ingroup bios_comm
  * @sa bios_comflags_sub
  */
-#define _BIOS_COMFLAGS_SUB 0xfffddf
+#define BIOS_COMMFLAGS_SUB_CACHE 0xfffddf
 
 /**
- * @def _BIOS_COMCMD
+ * @def BIOS_COMCMD
  * @ingroup bios_comm
  *
  * @note
@@ -122,329 +122,335 @@
  *
  * @sa bios_comcmd
  */
-#define _BIOS_COMCMD 0xfffde0
+#define BIOS_COMCMD 0xfffde0
 
 /**
- * @def _BIOS_COMCMD0
+ * @def BIOS_COMCMD0
  * @brief GA COMCMD0 register cache
  * @ingroup bios_comm
  */
-#define _BIOS_COMCMD0 0xfffde0
+#define BIOS_COMCMD0 0xfffde0
 
 /**
- * @def _BIOS_COMCMD1
+ * @def BIOS_COMCMD1
  * @brief GA COMCMD1 register cache
  * @ingroup bios_comm
  */
-#define _BIOS_COMCMD1 0xfffde2
+#define BIOS_COMCMD1 0xfffde2
 
 /**
- * @def _BIOS_COMCMD2
+ * @def BIOS_COMCMD2
  * @brief GA COMCMD2 register cache
  * @ingroup bios_comm
  */
-#define _BIOS_COMCMD2 0xfffde4
+#define BIOS_COMCMD2 0xfffde4
 
 /**
- * @def _BIOS_COMCMD3
+ * @def BIOS_COMCMD3
  * @brief GA COMCMD3 register cache
  * @ingroup bios_comm
  */
-#define _BIOS_COMCMD3 0xfffde6
+#define BIOS_COMCMD3 0xfffde6
 
 /**
- * @def _BIOS_COMCMD4
+ * @def BIOS_COMCMD4
  * @brief GA COMCMD4 register cache
  * @ingroup bios_comm
  */
-#define _BIOS_COMCMD4 0xfffde8
+#define BIOS_COMCMD4 0xfffde8
 
 /**
- * @def _BIOS_COMCMD5
+ * @def BIOS_COMCMD5
  * @brief GA COMCMD5 register cache
  * @ingroup bios_comm
  */
-#define _BIOS_COMCMD5 0xfffdea
+#define BIOS_COMCMD5 0xfffdea
 
 /**
- * @def _BIOS_COMCMD6
+ * @def BIOS_COMCMD6
  * @brief GA COMCMD6 register cache
  * @ingroup bios_comm
  */
-#define _BIOS_COMCMD6 0xfffdec
+#define BIOS_COMCMD6 0xfffdec
 
 /**
- * @def _BIOS_COMCMD7
+ * @def BIOS_COMCMD7
  * @brief GA COMCMD7 register cache
  * @ingroup bios_comm
  */
-#define _BIOS_COMCMD7 0xfffdee
+#define BIOS_COMCMD7 0xfffdee
 
 /**
- * @def _BIOS_COMSTAT
+ * @def BIOS_COMSTAT
  * @sa bios_comstat
  * @ingroup bios_comm
  *
  * @note
  * Size: 16bit * 8 = 0x10 bytes
  */
-#define _BIOS_COMSTAT 0xfffdf0
+#define BIOS_COMSTAT 0xfffdf0
 
 /**
- * @def _BIOS_COMSTAT0
+ * @def BIOS_COMSTAT0
  * @brief GA COMSTAT0 register cache
  * @ingroup bios_comm
  */
-#define _BIOS_COMSTAT0 0xfffdf0
+#define BIOS_COMSTAT0 0xfffdf0
 
 /**
- * @def _BIOS_COMSTAT1
+ * @def BIOS_COMSTAT1
  * @brief GA COMSTAT1 register cache
  * @ingroup bios_comm
  */
-#define _BIOS_COMSTAT1 0xfffdf2
+#define BIOS_COMSTAT1 0xfffdf2
 
 /**
- * @def _BIOS_COMSTAT2
+ * @def BIOS_COMSTAT2
  * @brief GA COMSTAT2 register cache
  * @ingroup bios_comm
  */
-#define _BIOS_COMSTAT2 0xfffdf4
+#define BIOS_COMSTAT2 0xfffdf4
 
 /**
- * @def _BIOS_COMSTAT3
+ * @def BIOS_COMSTAT3
  * @brief GA COMSTAT3 register cache
  * @ingroup bios_comm
  */
-#define _BIOS_COMSTAT3 0xfffdf6
+#define BIOS_COMSTAT3 0xfffdf6
 
 /**
- * @def _BIOS_COMSTAT4
+ * @def BIOS_COMSTAT4
  * @brief GA COMSTAT4 register cache
  * @ingroup bios_comm
  */
-#define _BIOS_COMSTAT4 0xfffdf8
+#define BIOS_COMSTAT4 0xfffdf8
 
 /**
- * @def _BIOS_COMSTAT5
+ * @def BIOS_COMSTAT5
  * @brief GA COMSTAT5 register cache
  * @ingroup bios_comm
  */
-#define _BIOS_COMSTAT5 0xfffdfa
+#define BIOS_COMSTAT5 0xfffdfa
 
 /**
- * @def _BIOS_COMSTAT6
+ * @def BIOS_COMSTAT6
  * @brief GA COMSTAT6 register cache
  * @ingroup bios_comm
  */
-#define _BIOS_COMSTAT6 0xfffdfc
+#define BIOS_COMSTAT6 0xfffdfc
 
 /**
- * @def _BIOS_COMSTAT7
+ * @def BIOS_COMSTAT7
  * @brief GA COMSTAT7 register cache
  * @ingroup bios_comm
  */
-#define _BIOS_COMSTAT7 0xfffdfe
+#define BIOS_COMSTAT7 0xfffdfe
 
 /**
- * @def _BIOS_JOY1_HOLD
+ * @def BIOS_JOY1_HOLD
  * @ingroup bios_input
  * @sa bios_joy1_hold
  */
-#define _BIOS_JOY1_HOLD 0xfffe20
+#define BIOS_JOY1_HOLD 0xfffe20
 
 /**
- * @def _BIOS_JOY1_HIT
+ * @def BIOS_JOY1_HIT
  * @ingroup bios_input
  * @sa bios_joy1_hit
  */
-#define _BIOS_JOY1_HIT 0xfffe21
+#define BIOS_JOY1_HIT 0xfffe21
 
 /**
- * @def _BIOS_JOY2_HOLD
+ * @def BIOS_JOY2_HOLD
  * @ingroup bios_input
  * @sa bios_joy2_hold
  */
-#define _BIOS_JOY2_HOLD 0xfffe22
+#define BIOS_JOY2_HOLD 0xfffe22
 
 /**
- * @def _BIOS_JOY2_HIT
+ * @def BIOS_JOY2_HIT
  * @ingroup bios_input
  * @sa bios_joy2_hit
  */
-#define _BIOS_JOY2_HIT 0xfffe23
+#define BIOS_JOY2_HIT 0xfffe23
 
 /**
- * @def _BIOS_JOY1_REPEAT_DELAY
+ * @def BIOS_JOY1_REPEAT_DELAY
  * @ingroup bios_input
  * @sa bios_joy1_repeat_delay
  */
-#define _BIOS_JOY1_REPEAT_DELAY 0xfffe24
+#define BIOS_JOY1_REPEAT_DELAY 0xfffe24
 
 /**
- * @def _BIOS_JOY2_DELAY
+ * @def BIOS_JOY2_REPEAT_DELAY
  * @ingroup bios_input
- * @sa BIOS_JOY2_DELAY
+ * @sa BIOS_JOY2_REPEAT_DELAY
  */
-#define _BIOS_JOY2_DELAY 0xfffe25
+#define BIOS_JOY2_REPEAT_DELAY 0xfffe25
 
 /**
- * @def _BIOS_VINT_HANDLER_FLAGS
+ * @def BIOS_VINT_HANDLER_FLAGS
  * @ingroup bios_int
  * @sa bios_vint_handler_flags
  */
-#define _BIOS_VINT_HANDLER_FLAGS 0xfffe26
+#define BIOS_VINT_HANDLER_FLAGS 0xfffe26
+
+#define BIOS_VINT_COPY_SPRLIST_BIT 0
+#define BIOS_VINT_USERCALL_BIT		 1
 
 /**
- * Flags for @ref _BIOS_VINT_HANDLER_FLAGS
- * @ingroup bios_int
+ * @def BIOS_VINT_COPY_SPRLIST_FLAG
+ * @brief
+ * @note For use with @ref BIOS_VINT_HANDLER_FLAGS
  */
-#define COPY_SPRLIST_BIT 0
-#define CALL_VINT_USER_BIT 1
+#define BIOS_VINT_COPY_SPRLIST_FLAG (1 << BIOS_VINT_COPY_SPRLIST_BIT)
 
 /**
- * Bitmasks for @ref _BIOS_VINT_HANDLER_FLAGS
+ * @def BIOS_VINT_USERCALL_FLAG
+ * @brief
+ * @note For use with @ref BIOS_VINT_HANDLER_FLAGS
  */
-#define COPY_SPRLIST 1 << COPY_SPRLIST_BIT
-#define CALL_VINT_USER 1 << CALL_VINT_USER_BIT
+#define BIOS_VINT_USERCALL_FLAG (1 << BIOS_VINT_USERCALL_BIT)
 
 /**
- * @def _BIOS_VINT_COUNTER
+ * @def BIOS_VINT_COUNTER
  * @ingroup bios_int
  * @sa bios_vint_counter
  */
-#define _BIOS_VINT_COUNTER 0xfffe27
+#define BIOS_VINT_COUNTER 0xfffe27
 
 /**
- * @def _BIOS_VINT_SKIP_GFX
+ * @def BIOS_VINT_FAST_FLAG
+ * @brief When set to non-zero, the BIOS VINT handler will skip the color
+ * palette copy and the user call
  * @ingroup bios_int
- * @sa bios_vint_skip_gfx
  */
-#define _BIOS_VINT_SKIP_GFX 0xfffe28
+#define BIOS_VINT_FAST_FLAG 0xfffe28
 
 /**
- * @def _BIOS_VDP_UPDATE_FLAGS
- * @ingroup bios_vdp
- * @sa bios_vdp_update_flags
- */
-#define _BIOS_VDP_UPDATE_FLAGS 0xfffe29
-
-/**
- * @def VDPUPDATE_PAL
- * @brief BLIB VDP Update Flags / Update Palette
+ * @def BIOS_VDP_UPDATE_FLAGS
  * @ingroup bios_vdp
  */
-#define VDPUPDATE_PAL (1 << 0)
+#define BIOS_VDP_UPDATE_FLAGS 0xfffe29
+
+#define BIOS_VDPUPDATE_COPY_PALETTE_BIT 0
 
 /**
- * @def _BIOS_RANDOM
+ * @def BIOS_VDPUPDATE_COPY_PALETTE_FLAG
+ * @brief VDP Update Flags / Update Palette
+ * @ingroup bios_vdp
+ */
+#define BIOS_VDPUPDATE_COPY_PALETTE_FLAG (1 << BIOS_VDPUPDATE_COPY_PALETTE_BIT)
+
+/**
+ * @def BIOS_RANDOM
  * @ingroup bios_misc
  * @sa bios_random
  */
-#define _BIOS_RANDOM 0xfffe2a
+#define BIOS_RANDOM 0xfffe2a
 
 /**
- * @def _BIOS_FONT_TILE_BASE
+ * @def BIOS_FONT_TILE_BASE
  * @ingroup bios_misc
  * @sa bios_font_tile_base
  */
-#define _BIOS_FONT_TILE_BASE 0xfffe2c
+#define BIOS_FONT_TILE_BASE 0xfffe2c
 
 /**
- * @def _BIOS_PLANE_WIDTH
+ * @def BIOS_PLANE_WIDTH_CACHE
  * @ingroup bios_vdp
  * @sa bios_plane_width
  */
-#define _BIOS_PLANE_WIDTH 0xFFFE2E
+#define BIOS_PLANE_WIDTH_CACHE 0xFFFE2E
 
 /**
- * @def _BIOS_ENTITY_ROUTINES
+ * @def BIOS_ENTITY_ROUTINES
  * @ingroup bios_vdp
  * @sa bios_entity_routines
  */
-#define _BIOS_ENTITY_ROUTINES 0xFFFE34
+#define BIOS_ENTITY_ROUTINES 0xFFFE34
 
 /**
- * @def _BIOS_FADEIN_CRAM_INDEX
+ * @def BIOS_FADEIN_PAL_INDEX
  * @ingroup bios_vdp
  * @sa bios_fadein_cram_index
  */
-#define _BIOS_FADEIN_CRAM_INDEX 0xfffe46
+#define BIOS_FADEIN_PAL_INDEX 0xfffe46
 
 /**
- * @def _BIOS_FADEIN_PAL_LENGTH
+ * @def BIOS_FADEIN_PAL_LENGTH
  * @ingroup bios_vdp
  * @sa bios_fadein_pal_length
  */
-#define _BIOS_FADEIN_PAL_LENGTH 0xfffe47
+#define BIOS_FADEIN_PAL_LENGTH 0xfffe47
 
 /**
- * @def _BIOS_FADEIN_STEP
+ * @def BIOS_FADEIN_STEP
  * @ingroup bios_vdp
  * @sa bios_fadein_step
  */
-#define _BIOS_FADEIN_STEP 0xfffe48
+#define BIOS_FADEIN_STEP 0xfffe48
 
 /**
- * @def _BIOS_FADEIN_TARGET_PAL
+ * @def BIOS_FADEIN_TARGET_PAL
  * @ingroup bios_vdp
  * @sa bios_fadein_target_pal
  */
-#define _BIOS_FADEIN_TARGET_PAL 0xfffe4a
+#define BIOS_FADEIN_TARGET_PAL 0xfffe4a
 
 // This is the VRAM layout and commonly referenced settings
 // when using the default VDP registers
 
 /**
- * @def _BIOS_VDP_WINDOW_ADDR
+ * @def BIOS_VDP_DEFAULT_WINDOW
  * @ingroup bios_vdp
  * @brief The default VRAM address for the Window
  */
-#define _BIOS_VDP_WINDOW_ADDR 0xA000
+#define BIOS_VDP_DEFAULT_WINDOW 0xA000
 
 /**
- * @def _BIOS_VDP_PLANEA_ADDR
+ * @def BIOS_VDP_DEFAULT_PLANEA
  * @ingroup bios_vdp
  * @brief The default VRAM address for Plane A
  */
-#define _BIOS_VDP_PLANEA_ADDR 0xC000
+#define BIOS_VDP_DEFAULT_PLANEA 0xC000
 
 /**
- * @def _BIOS_VDP_PLANEB_ADDR
+ * @def BIOS_VDP_DEFAULT_PLANEB
  * @ingroup bios_vdp
  * @brief The default VRAM address for Plane B
  */
-#define _BIOS_VDP_PLANEB_ADDR 0xE000
+#define BIOS_VDP_DEFAULT_PLANEB 0xE000
 
 /**
- * @def _BIOS_VDP_SPRTBL_ADDR
+ * @def BIOS_VDP_DEFAULT_SPRLIST
  * @ingroup bios_vdp
  * @brief The default VRAM address for the Sprite Table
  */
-#define _BIOS_VDP_SPRTBL_ADDR 0xB800
+#define BIOS_VDP_DEFAULT_SPRLIST 0xB800
 
 /**
- * @def _BIOS_VDP_HSCROLL_ADDR
+ * @def BIOS_VDP_DEFAULT_HSCROLL
  * @ingroup bios_vdp
  * @brief The default VRAM address for the Horizontal Scroll Table
  */
-#define _BIOS_VDP_HSCROLL_ADDR 0xBC00
+#define BIOS_VDP_DEFAULT_HSCROLL 0xBC00
 
 /**
- * @def _BIOS_VDP_PLANE_WIDTH
+ * @def BIOS_VDP_DEFAULT_PLANE_WIDTH
  * @ingroup bios_vdp
  * @brief The default Plane width
  */
-#define _BIOS_VDP_PLANE_WIDTH 128
+#define BIOS_VDP_DEFAULT_PLANE_WIDTH 128
 
 /**
  * @sa bios_bios_entry
  * @ingroup bios_system
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_ENTRY 0x400280
+#define BIOS_ENTRY 0x400280
 #else
-#define _BIOS_ENTRY 0x000280
+#define BIOS_ENTRY 0x000280
 #endif
 
 /**
@@ -452,27 +458,27 @@
  * @ingroup bios_system
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_RESET 0x400284
+#define BIOS_RESET 0x400284
 #else
-#define _BIOS_RESET 0x000284
+#define BIOS_RESET 0x000284
 #endif
 
 /**
  * @sa bios_init
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_INIT 0x400288
+#define BIOS_INIT 0x400288
 #else
-#define _BIOS_INIT 0x000288
+#define BIOS_INIT 0x000288
 #endif
 
 /**
  * @sa bios_init_sp
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_INIT_SP 0x40028C
+#define BIOS_INIT_SP 0x40028C
 #else
-#define _BIOS_INIT_SP 0x00028C
+#define BIOS_INIT_SP 0x00028C
 #endif
 
 /**
@@ -480,9 +486,9 @@
  * @ingroup bios_int
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_VINT_HANDLER 0x400290
+#define BIOS_VINT_HANDLER 0x400290
 #else
-#define _BIOS_VINT_HANDLER 0x000290
+#define BIOS_VINT_HANDLER 0x000290
 #endif
 
 /*
@@ -500,39 +506,39 @@
  * @ingroup bios_int
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_SET_HINT 0x400294
+#define BIOS_SET_HINT 0x400294
 #else
-#define _BIOS_SET_HINT 0x000294
+#define BIOS_SET_HINT 0x000294
 #endif
 
 /**
- * @def _BIOS_READ_JOYPAD
+ * @def BIOS_READ_JOYPAD
  * @ingroup bios_input
  *
- * @param[out] [@ref _BIOS_JOY1_HIT]
- * @param[out] [@ref _BIOS_JOY1_HOLD]
- * @param[out] [@ref _BIOS_JOY2_HIT]
- * @param[out] [@ref _BIOS_JOY2_HOLD]
+ * @param[out] [@ref BIOS_JOY1_HIT]
+ * @param[out] [@ref BIOS_JOY1_HOLD]
+ * @param[out] [@ref BIOS_JOY2_HIT]
+ * @param[out] [@ref BIOS_JOY2_HOLD]
  * @clobber d6-d7/a5-a6
  * @sa BIOS_READ_JOYPAD
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_READ_JOYPAD 0x400298
+#define BIOS_READ_JOYPAD 0x400298
 #else
-#define _BIOS_READ_JOYPAD 0x000298
+#define BIOS_READ_JOYPAD 0x000298
 #endif
 
 /**
- * @def _BIOS_DETECT_CONTROLLER
+ * @def BIOS_DETECT_CONTROLLER
  * @sa bios_detect_controller
  * @param[in] a6.l Pointer to joypad data port
  * @param[out] d7.b Controller type
  * @ingroup bios_input
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_DETECT_CONTROLLER 0x40029C
+#define BIOS_DETECT_CONTROLLER 0x40029C
 #else
-#define _BIOS_DETECT_CONTROLLER 0x00029C
+#define BIOS_DETECT_CONTROLLER 0x00029C
 #endif
 
 /**
@@ -559,9 +565,9 @@
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_CLEAR_VRAM 0x4002A0
+#define BIOS_CLEAR_VRAM 0x4002A0
 #else
-#define _BIOS_CLEAR_VRAM 0x0002A0
+#define BIOS_CLEAR_VRAM 0x0002A0
 #endif
 
 /**
@@ -570,9 +576,9 @@
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_CLEAR_TABLES 0x4002A4
+#define BIOS_CLEAR_TABLES 0x4002A4
 #else
-#define _BIOS_CLEAR_TABLES 0x0002A4
+#define BIOS_CLEAR_TABLES 0x0002A4
 #endif
 
 /**
@@ -581,13 +587,13 @@
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_CLEAR_VSRAM 0x4002A8
+#define BIOS_CLEAR_VSRAM 0x4002A8
 #else
-#define _BIOS_CLEAR_VSRAM 0x0002A8
+#define BIOS_CLEAR_VSRAM 0x0002A8
 #endif
 
 /**
- * @def _BIOS_LOAD_VDPREGS_DEFAULT
+ * @def BIOS_LOAD_DEFAULT_VDPREGS
  * @clobber d0-d1/a1-a2
  * @ingroup bios_vdp
  * @details
@@ -627,9 +633,9 @@
 			- Window plane Y position: 0
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_LOAD_VDPREGS_DEFAULT 0x4002AC
+#define BIOS_LOAD_DEFAULT_VDPREGS 0x4002AC
 #else
-#define _BIOS_LOAD_VDPREGS_DEFAULT 0x0002AC
+#define BIOS_LOAD_DEFAULT_VDPREGS 0x0002AC
 #endif
 
 /**
@@ -639,9 +645,9 @@
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_LOAD_VDPREGS 0x4002B0
+#define BIOS_LOAD_VDPREGS 0x4002B0
 #else
-#define _BIOS_LOAD_VDPREGS 0x0002B0
+#define BIOS_LOAD_VDPREGS 0x0002B0
 #endif
 
 /**
@@ -653,9 +659,9 @@
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_VDP_FILL 0x4002B4
+#define BIOS_VDP_FILL 0x4002B4
 #else
-#define _BIOS_VDP_FILL 0x0002B4
+#define BIOS_VDP_FILL 0x0002B4
 #endif
 
 /**
@@ -667,13 +673,13 @@
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_VDP_FILL_CLEAR 0x4002B8
+#define BIOS_VDP_FILL_CLEAR 0x4002B8
 #else
-#define _BIOS_VDP_FILL_CLEAR 0x0002B8
+#define BIOS_VDP_FILL_CLEAR 0x0002B8
 #endif
 
 /**
- * @def _BIOS_DMA_FILL_CLEAR
+ * @def BIOS_DMA_FILL_CLEAR
  * @sa bios_dma_fill_clear
  * @param[in] D0.l Address (vdp_command format)
  * @param[in] D1.w Length (in words)
@@ -681,13 +687,13 @@
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_DMA_FILL_CLEAR 0x4002BC
+#define BIOS_DMA_FILL_CLEAR 0x4002BC
 #else
-#define _BIOS_DMA_FILL_CLEAR 0x0002BC
+#define BIOS_DMA_FILL_CLEAR 0x0002BC
 #endif
 
 /**
- * @def _BIOS_DMA_FILL
+ * @def BIOS_DMA_FILL
  * @sa bios_dma_fill
  * @param[in] D0.l Address (vdp_command format)
  * @param[in] D1.w Length (in words)
@@ -696,13 +702,13 @@
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_DMA_FILL 0x4002C0
+#define BIOS_DMA_FILL 0x4002C0
 #else
-#define _BIOS_DMA_FILL 0x0002C0
+#define BIOS_DMA_FILL 0x0002C0
 #endif
 
 /**
- * @def _BIOS_LOAD_MAP
+ * @def BIOS_LOAD_MAP
  * @sa bios_load_map
  *
  * @param[in] D0.l VRAM Address (vdp_command format)
@@ -713,13 +719,13 @@
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_LOAD_MAP 0x4002C4
+#define BIOS_LOAD_MAP 0x4002C4
 #else
-#define _BIOS_LOAD_MAP 0x0002C4
+#define BIOS_LOAD_MAP 0x0002C4
 #endif
 
 /**
- * @def _BIOS_LOAD_MAP_TEMPLATE
+ * @def BIOS_LOAD_MAP_TEMPLATE
  * @brief Fill a region of a nametable with map data
  * @param[in] D0.l VRAM address (vdp_command format)
  * @param[in] D1.w Map width
@@ -736,9 +742,9 @@
  * a "template" that applies to each tile.
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_LOAD_MAP_TEMPLATE 0x4002C8
+#define BIOS_LOAD_MAP_TEMPLATE 0x4002C8
 #else
-#define _BIOS_LOAD_MAP_TEMPLATE 0x0002C8
+#define BIOS_LOAD_MAP_TEMPLATE 0x0002C8
 #endif
 
 /**
@@ -747,9 +753,9 @@
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_PLANE_FILL 0x4002CC
+#define BIOS_PLANE_FILL 0x4002CC
 #else
-#define _BIOS_PLANE_FILL 0x0002CC
+#define BIOS_PLANE_FILL 0x0002CC
 #endif
 
 /**
@@ -758,9 +764,9 @@
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_DMA_XFER 0x4002D0
+#define BIOS_DMA_XFER 0x4002D0
 #else
-#define _BIOS_DMA_XFER 0x0002D0
+#define BIOS_DMA_XFER 0x0002D0
 #endif
 
 /**
@@ -769,35 +775,35 @@
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_DMA_XFER_WORD_RAM 0x4002D4
+#define BIOS_DMA_XFER_WORD_RAM 0x4002D4
 #else
-#define _BIOS_DMA_XFER_WORD_RAM 0x0002D4
+#define BIOS_DMA_XFER_WORD_RAM 0x0002D4
 #endif
 
 /**
- * @def _BIOS_VDP_DISP_ENABLE
+ * @def BIOS_VDP_DISP_ENABLE
  * @brief Enable VDP output
  * @ingroup bios_vdp
  *
  * @details Sets bit 6 on VDP reg. #1. The VDP register buffer is updated.
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_VDP_DISP_ENABLE 0x4002D8
+#define BIOS_VDP_DISP_ENABLE 0x4002D8
 #else
-#define _BIOS_VDP_DISP_ENABLE 0x0002D8
+#define BIOS_VDP_DISP_ENABLE 0x0002D8
 #endif
 
 /**
- * @def _BIOS_VDP_DISP_DISABLE
+ * @def BIOS_VDP_DISP_DISABLE
  * @brief Disable VDP output
  * @ingroup bios_vdp
  *
  * @details Clears bit 6 on VDP reg. #1. The VDP register buffer is updated.
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_VDP_DISP_DISABLE 0x4002DC
+#define BIOS_VDP_DISP_DISABLE 0x4002DC
 #else
-#define _BIOS_VDP_DISP_DISABLE 0x0002DC
+#define BIOS_VDP_DISP_DISABLE 0x0002DC
 #endif
 
 /**
@@ -805,9 +811,9 @@
  * @clobber d0
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_LOAD_PAL 0x4002E0
+#define BIOS_LOAD_PAL 0x4002E0
 #else
-#define _BIOS_LOAD_PAL 0x0002E0
+#define BIOS_LOAD_PAL 0x0002E0
 #endif
 
 /**
@@ -815,9 +821,9 @@
  * @clobber d0
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_LOAD_PAL_UPDATE 0x4002E4
+#define BIOS_LOAD_PAL_UPDATE 0x4002E4
 #else
-#define _BIOS_LOAD_PAL_UPDATE 0x0002E4
+#define BIOS_LOAD_PAL_UPDATE 0x0002E4
 #endif
 
 /**
@@ -825,13 +831,13 @@
  * @clobber a4,d4
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_COPY_PAL 0x4002E8
+#define BIOS_COPY_PAL 0x4002E8
 #else
-#define _BIOS_COPY_PAL 0x0002E8
+#define BIOS_COPY_PAL 0x0002E8
 #endif
 
 /**
- * @def _BIOS_GFX_DECOMP
+ * @def BIOS_GFX_DECOMP
  * @brief Decompress graphics data in the "Nemesis" format to VRAM
  * @ingroup bios_vdp
  * @param[in] A1.l Pointer to compressed data
@@ -840,13 +846,13 @@
  * this routine!
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_GFX_DECOMP 0x4002EC
+#define BIOS_GFX_DECOMP 0x4002EC
 #else
-#define _BIOS_GFX_DECOMP 0x0002EC
+#define BIOS_GFX_DECOMP 0x0002EC
 #endif
 
 /**
- * @def _BIOS_GFX_DECOMP_RAM
+ * @def BIOS_GFX_DECOMP_RAM
  * @brief Decompress graphics data in the "Nemesis" format to RAM
  * @param[in] A1.l Pointer to compressed data
  * @param[in] A2.l Pointer to decompressed data buffer
@@ -854,9 +860,9 @@
  * GROUP: Decompression
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_GFX_DECOMP_RAM 0x4002F0
+#define BIOS_GFX_DECOMP_RAM 0x4002F0
 #else
-#define _BIOS_GFX_DECOMP_RAM 0x0002F0
+#define BIOS_GFX_DECOMP_RAM 0x0002F0
 #endif
 
 /**
@@ -864,9 +870,9 @@
  * @clobber d0-d4/d6/a2
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_PROCESS_ENTITIES 0x4002F4
+#define BIOS_PROCESS_ENTITIES 0x4002F4
 #else
-#define _BIOS_PROCESS_ENTITIES 0x0002F4
+#define BIOS_PROCESS_ENTITIES 0x0002F4
 #endif
 
 /**
@@ -874,13 +880,13 @@
  * @clobber d6/a6
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_CLEAR_RAM 0x4002F8
+#define BIOS_CLEAR_RAM 0x4002F8
 #else
-#define _BIOS_CLEAR_RAM 0x0002F8
+#define BIOS_CLEAR_RAM 0x0002F8
 #endif
 
 /**
- * @def _BIOS_UNKNOWN_1F
+ * @def BIOS_UNKNOWN_1F
  *
  * Calls _CLEAR_REGION in a loop with d5 as the counter, but this may be buggy
  * since d7 should be down to 0 after the first iteration. Not sure what is
@@ -897,22 +903,22 @@
  * GROUP: Unknown
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_UNKNOWN_1F 0x4002FC
+#define BIOS_UNKNOWN_1F 0x4002FC
 #else
-#define _BIOS_UNKNOWN_1F 0x0002FC
+#define BIOS_UNKNOWN_1F 0x0002FC
 #endif
 
 /**
- * @def _BIOS_DISP_SPROBJ
+ * @def BIOS_DISP_SPROBJ
  * @brief Display a sprite structure
  * @param[in] A0.l Pointer to parent sprite object
  * @param[in] D6.b Initial value for "next" sprite
  * @clobber d0-d4/a1-a2
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_DISP_SPROBJ 0x400300
+#define BIOS_DISP_SPROBJ 0x400300
 #else
-#define _BIOS_DISP_SPROBJ 0x000300
+#define BIOS_DISP_SPROBJ 0x000300
 #endif
 
 /**
@@ -920,9 +926,9 @@
  * @clobber d0
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_VINT_WAIT 0x400304
+#define BIOS_VINT_WAIT 0x400304
 #else
-#define _BIOS_VINT_WAIT 0x000304
+#define BIOS_VINT_WAIT 0x000304
 #endif
 
 /**
@@ -930,9 +936,9 @@
  * @clobber d0
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_VINT_WAIT_DEFAULT 0x400308
+#define BIOS_VINT_WAIT_DEFAULT 0x400308
 #else
-#define _BIOS_VINT_WAIT_DEFAULT 0x000308
+#define BIOS_VINT_WAIT_DEFAULT 0x000308
 #endif
 
 /**
@@ -940,13 +946,13 @@
  * @clobber d4/a4
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_COPY_SPRLIST 0x40030C
+#define BIOS_COPY_SPRLIST 0x40030C
 #else
-#define _BIOS_COPY_SPRLIST 0x00030C
+#define BIOS_COPY_SPRLIST 0x00030C
 #endif
 
 /**
- * @def _BIOS_UNKNOWN_24
+ * @def BIOS_UNKNOWN_24
  *
  * A very small routine, but it's unclear what it would have been used for.
  *
@@ -967,31 +973,31 @@
  *  d1
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_UNKNOWN_24 0x400310
+#define BIOS_UNKNOWN_24 0x400310
 #else
-#define _BIOS_UNKNOWN_24 0x000310
+#define BIOS_UNKNOWN_24 0x000310
 #endif
 
 /**
- * @def _BIOS_SET_HINT_WORK_RAM
+ * @def BIOS_SET_HINT_WORK_RAM
  * @sa bios_set_hint_workram
  * @param[in] A1.l Pointer to HINT function
  *
  *
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_SET_HINT_WORK_RAM 0x400314
+#define BIOS_SET_HINT_WORK_RAM 0x400314
 #else
-#define _BIOS_SET_HINT_WORK_RAM 0x000314
+#define BIOS_SET_HINT_WORK_RAM 0x000314
 #endif
 
 /**
  * @sa bios_disable_hint
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_DISABLE_HINT 0x400318
+#define BIOS_DISABLE_HINT 0x400318
 #else
-#define _BIOS_DISABLE_HINT 0x000318
+#define BIOS_DISABLE_HINT 0x000318
 #endif
 
 /**
@@ -999,16 +1005,16 @@
  * @clobber d1-d2/a5
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_PRINT 0x40031C
+#define BIOS_PRINT 0x40031C
 #else
-#define _BIOS_PRINT 0x00031C
+#define BIOS_PRINT 0x00031C
 #endif
 
 /**
- * @def _BIOS_LOAD_1BPP_TILES
+ * @def BIOS_LOAD_1BPP_TILES
  * @brief Load 1bpp graphics into VDP
  * @param[in] A1.l Pointer to 1bpp graphics data
- * @param[in] D0.l VRAM destination (VDPCMD)
+ * @param[in] D0.l VRAM destination (vdpcmd)
  * @param[in] D1.l Color bit map
  * @param[in] D2.l Tile count
  * @clobber d3-d4/a5
@@ -1022,52 +1028,52 @@
  * color and a blank background (index 0), then put 00022022 in d1.
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_LOAD_1BPP_TILES 0x400320
+#define BIOS_LOAD_1BPP_TILES 0x400320
 #else
-#define _BIOS_LOAD_1BPP_TILES 0x000320
+#define BIOS_LOAD_1BPP_TILES 0x000320
 #endif
 
 /**
- * @def _BIOS_LOAD_FONT
+ * @def BIOS_LOAD_FONT
  * @brief Load the internal 1bpp ASCII font
- * @param[in] D0.l VRAM destination (VDPCMD)
+ * @param[in] D0.l VRAM destination (vdpcmd)
  * @param[in] D1.l Color bit map
  * @clobber d2-d4/a1/a5
  * @ingroup bios_misc
  *
  * @details
- * See the notes in @ref _BIOS_LOAD_1BPP_TILES for more info about the color bit map.
- * The VRAM destination should place the font no earlier than tile index
+ * See the notes in @ref BIOS_LOAD_1BPP_TILES for more info about the color bit
+ * map. The VRAM destination should place the font no earlier than tile index
  * 0x20 if you are planning to use this with the _PRINT_STRING function.
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_LOAD_FONT 0x400324
+#define BIOS_LOAD_FONT 0x400324
 #else
-#define _BIOS_LOAD_FONT 0x000324
+#define BIOS_LOAD_FONT 0x000324
 #endif
 
 /**
- * @def _BIOS_LOAD_FONT_DEFAULTS
+ * @def BIOS_LOAD_FONT_DEFAULTS
  * @clobber d0-d4/a1/a5
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_LOAD_FONT_DEFAULTS 0x400328
+#define BIOS_LOAD_FONT_DEFAULTS 0x400328
 #else
-#define _BIOS_LOAD_FONT_DEFAULTS 0x000328
+#define BIOS_LOAD_FONT_DEFAULTS 0x000328
 #endif
 
 /**
- * @def _BIOS_INPUT_REPEAT_DELAY
+ * @def BIOS_INPUT_REPEAT_DELAY
  * @clobber d1/a1/a5
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_INPUT_REPEAT_DELAY 0x40032C
+#define BIOS_INPUT_REPEAT_DELAY 0x40032C
 #else
-#define _BIOS_INPUT_REPEAT_DELAY 0x00032C
+#define BIOS_INPUT_REPEAT_DELAY 0x00032C
 #endif
 
 /**
- * @def _BIOS_MAP_DECOMP
+ * @def BIOS_MAP_DECOMP
  * @brief Decompress Enigma data
  * @param[in] D0.w Start tile index
  * @param[in] A1.l Pointer to Enigma compressed data
@@ -1075,13 +1081,13 @@
  * @ingroup bios_cmp
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_MAP_DECOMP 0x400330
+#define BIOS_MAP_DECOMP 0x400330
 #else
-#define _BIOS_MAP_DECOMP 0x000330
+#define BIOS_MAP_DECOMP 0x000330
 #endif
 
 /**
- * @def _BIOS_LOAD_STAMP_MAP
+ * @def BIOS_LOAD_STAMP_MAP
  * @brief Load map for a vertically-oriented contiguous group of tiles
  * @param[in] D0.l Destination VRAM address (vdpptr)
  * @param[in] D1.w Map width
@@ -1091,113 +1097,113 @@
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_LOAD_STAMP_MAP 0x400334
+#define BIOS_LOAD_STAMP_MAP 0x400334
 #else
-#define _BIOS_LOAD_STAMP_MAP 0x000334
+#define BIOS_LOAD_STAMP_MAP 0x000334
 #endif
 
 /**
- * @def _BIOS_PRNG_MOD
+ * @def BIOS_PRNG_MOD
  * @clobber d1
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_PRNG_MOD 0x400338
+#define BIOS_PRNG_MOD 0x400338
 #else
-#define _BIOS_PRNG_MOD 0x000338
+#define BIOS_PRNG_MOD 0x000338
 #endif
 
 /**
- * @def _BIOS_PRNG
+ * @def BIOS_PRNG
  * @clobber d0
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_PRNG 0x40033C
+#define BIOS_PRNG 0x40033C
 #else
-#define _BIOS_PRNG 0x00033C
+#define BIOS_PRNG 0x00033C
 #endif
 
 /**
- * @def _BIOS_CLEAR_COMM
+ * @def BIOS_CLEAR_COMM
  * @clobber d0/a6
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_CLEAR_COMM 0x400340
+#define BIOS_CLEAR_COMM 0x400340
 #else
-#define _BIOS_CLEAR_COMM 0x000340
+#define BIOS_CLEAR_COMM 0x000340
 #endif
 
 /**
- * @def _BIOS_COMM_SYNC
+ * @def BIOS_COMM_SYNC
  * @brief Copies COMCMD cache to registers and COMSTAT registers to cache
  *
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_COMM_SYNC 0x400344
+#define BIOS_COMM_SYNC 0x400344
 #else
-#define _BIOS_COMM_SYNC 0x000344
+#define BIOS_COMM_SYNC 0x000344
 #endif
 
 /**
- * @def _BIOS_UK_COMM_CDINFO
+ * @def BIOS_UK_COMM_CDINFO
  * @brief UNKNOWN
  *
  * @details
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_UK_COMM_CDINFO 0x400348
+#define BIOS_UK_COMM_CDINFO 0x400348
 #else
-#define _BIOS_UK_COMM_CDINFO 0x000348
+#define BIOS_UK_COMM_CDINFO 0x000348
 #endif
 
 /**
- * @def _BIOS_UK_COMMFLAGS_RELATED
+ * @def BIOS_UK_COMMFLAGS_RELATED
  * @brief UNKNOWN
  *
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_UK_COMMFLAGS_RELATED 0x40034C
+#define BIOS_UK_COMMFLAGS_RELATED 0x40034C
 #else
-#define _BIOS_UK_COMMFLAGS_RELATED 0x00034C
+#define BIOS_UK_COMMFLAGS_RELATED 0x00034C
 #endif
 
 #if TARGET == MEGACD_MODE1
-#define _BIOS_UNKNOWN_35 0x400350
+#define BIOS_UNKNOWN_35 0x400350
 #else
-#define _BIOS_UNKNOWN_35 0x000350
+#define BIOS_UNKNOWN_35 0x000350
 #endif
 
 #if TARGET == MEGACD_MODE1
-#define _BIOS_UNKNOWN_36 0x400354
+#define BIOS_UNKNOWN_36 0x400354
 #else
-#define _BIOS_UNKNOWN_36 0x000354
+#define BIOS_UNKNOWN_36 0x000354
 #endif
 
 #if TARGET == MEGACD_MODE1
-#define _BIOS_UNKNOWN_37 0x400358
+#define BIOS_UNKNOWN_37 0x400358
 #else
-#define _BIOS_UNKNOWN_37 0x000358
+#define BIOS_UNKNOWN_37 0x000358
 #endif
 
 #if TARGET == MEGACD_MODE1
-#define _BIOS_UNKNOWN_38 0x40035C
+#define BIOS_UNKNOWN_38 0x40035C
 #else
-#define _BIOS_UNKNOWN_38 0x00035C
+#define BIOS_UNKNOWN_38 0x00035C
 #endif
 
 /**
- * @def _BIOS_TRIGGER_IFL2
+ * @def BIOS_TRIGGER_IFL2
  * @brief Send INT 2 to Sub CPU
  * @clobber a5
  * @ingroup bios_int
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_TRIGGER_IFL2 0x400360
+#define BIOS_TRIGGER_IFL2 0x400360
 #else
-#define _BIOS_TRIGGER_IFL2 0x000360
+#define BIOS_TRIGGER_IFL2 0x000360
 #endif
 
 /**
- * @def _BIOS_SEGA_LOGO
+ * @def BIOS_SEGA_LOGO
  * @brief Run the Sega logo startup code
  * @ingroup boot_system
  *
@@ -1205,13 +1211,13 @@
  * called automatically as part of the security code during startup.
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_SEGA_LOGO 0x400364
+#define BIOS_SEGA_LOGO 0x400364
 #else
-#define _BIOS_SEGA_LOGO 0x000364
+#define BIOS_SEGA_LOGO 0x000364
 #endif
 
 /**
- * @def _BIOS_SET_VINT
+ * @def BIOS_SET_VINT
  * @brief Set a new VINT subroutine
  * @param[in] A1.l Pointed to VINT subroutinte
  * @ingroup bios_int
@@ -1221,13 +1227,13 @@
  * the stack push/extra cycles from the jsr.
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_SET_VINT 0x400368
+#define BIOS_SET_VINT 0x400368
 #else
-#define _BIOS_SET_VINT 0x000368
+#define BIOS_SET_VINT 0x000368
 #endif
 
 /**
- * @def _BIOS_LOAD_MAP_HORIZ
+ * @def BIOS_LOAD_MAP_HORIZ
  * @brief Load map for a horizontally-oriented contiguous group of tiles
  * @param[in] D0.l Destination VRAM address (vdpptr)
  * @param[in] D1.w Map width
@@ -1237,9 +1243,9 @@
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_LOAD_MAP_HORIZ 0x40036C
+#define BIOS_LOAD_MAP_HORIZ 0x40036C
 #else
-#define _BIOS_LOAD_MAP_HORIZ 0x00036C
+#define BIOS_LOAD_MAP_HORIZ 0x00036C
 #endif
 
 /**
@@ -1265,49 +1271,49 @@
 #endif
 
 /**
- * @def _BIOS_DMA_COPY
+ * @def BIOS_DMA_COPY
  * @clobber d3/a6
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_DMA_COPY 0x400374
+#define BIOS_DMA_COPY 0x400374
 #else
-#define _BIOS_DMA_COPY 0x000374
+#define BIOS_DMA_COPY 0x000374
 #endif
 
 #if TARGET == MEGACD_MODE1
-#define _BIOS_UNKNOWN_3D 0x400378
+#define BIOS_UNKNOWN_3D 0x400378
 #else
-#define _BIOS_UNKNOWN_3D 0x000378
+#define BIOS_UNKNOWN_3D 0x000378
 #endif
 
 /**
- * @def _BIOS_TO_BCD_BYTE
+ * @def BIOS_TO_BCD_BYTE
  * @brief Convert a byte value to BCD
  * @param[in] D1.b Hex value
  * @param[out] D1.b BCD value
  * @ingroup bios_misc
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_TO_BCD_BYTE 0x40037C
+#define BIOS_TO_BCD_BYTE 0x40037C
 #else
-#define _BIOS_TO_BCD_BYTE 0x00037C
+#define BIOS_TO_BCD_BYTE 0x00037C
 #endif
 
 /**
- * @def _BIOS_TO_BCD
+ * @def BIOS_TO_BCD
  * @brief Convert a word value to BCD
  * @param[in] D1.w Hex value
  * @param[out] D1.w BCD value
  * @ingroup bios_misc
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_TO_BCD 0x400380
+#define BIOS_TO_BCD 0x400380
 #else
-#define _BIOS_TO_BCD 0x000380
+#define BIOS_TO_BCD 0x000380
 #endif
 
 /**
- * @def _BIOS_BLANK_DISPLAY
+ * @def BIOS_BLANK_DISPLAY
  * @brief Blanks the display
  * @ingroup bios_vdp
 
@@ -1315,78 +1321,79 @@
  * @note The VDP register cache will be updated
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_BLANK_DISPLAY 0x400384
+#define BIOS_BLANK_DISPLAY 0x400384
 #else
-#define _BIOS_BLANK_DISPLAY 0x000384
+#define BIOS_BLANK_DISPLAY 0x000384
 #endif
 
 /**
- * @def _BIOS_PAL_FADEOUT
+ * @def BIOS_PAL_FADEOUT
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_PAL_FADEOUT 0x400388
+#define BIOS_PAL_FADEOUT 0x400388
 #else
-#define _BIOS_PAL_FADEOUT 0x000388
+#define BIOS_PAL_FADEOUT 0x000388
 #endif
 
 /**
- * @def _BIOS_PAL_FADEIN
+ * @def BIOS_PAL_FADEIN
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_PAL_FADEIN 0x40038C
+#define BIOS_PAL_FADEIN 0x40038C
 #else
-#define _BIOS_PAL_FADEIN 0x00038C
+#define BIOS_PAL_FADEIN 0x00038C
 #endif
 
 /**
- * @def _BIOS_SET_FADEIN_PAL
+ * @def BIOS_SET_FADEIN_PAL
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_SET_FADEIN_PAL 0x400390
+#define BIOS_SET_FADEIN_PAL 0x400390
 #else
-#define _BIOS_SET_FADEIN_PAL 0x000390
+#define BIOS_SET_FADEIN_PAL 0x000390
 #endif
 
 /**
- * @def _BIOS_DMA_QUEUE
+ * @def BIOS_DMA_QUEUE
  */
 #if TARGET == MEGACD_MODE1
-#define _BIOS_DMA_QUEUE 0x400394
+#define BIOS_DMA_QUEUE 0x400394
 #else
-#define _BIOS_DMA_QUEUE 0x000394
+#define BIOS_DMA_QUEUE 0x000394
 #endif
 
 #if TARGET == MEGACD_MODE1
-#define _BIOS_UNKNOWN_44 0x400398
+#define BIOS_UNKNOWN_44 0x400398
 #else
-#define _BIOS_UNKNOWN_44 0x000398
+#define BIOS_UNKNOWN_44 0x000398
 #endif
 
 #if TARGET == MEGACD_MODE1
-#define _BIOS_ADD_TIME_VALUES 0x40039C
+#define BIOS_ADD_TIME_VALUES 0x40039C
 #else
-#define _BIOS_ADD_TIME_VALUES 0x00039C
+#define BIOS_ADD_TIME_VALUES 0x00039C
 #endif
 
 #if TARGET == MEGACD_MODE1
-#define _BIOS_UNKNOWN_46 0x4003A0
+#define BIOS_UNKNOWN_46 0x4003A0
 #else
-#define _BIOS_UNKNOWN_46 0x0003A0
+#define BIOS_UNKNOWN_46 0x0003A0
 #endif
 
 /**
  * @def _COMPRESSED_SUB_BIOS
- * @brief These define the location of the compressed Sub CPU bios stored within the Boot ROM.
- * In order to use the Sub CPU BIOS in Mode 1, you will need to manually decompress it to
- * its proper location in PRG RAM
+ * @brief These define the location of the compressed Sub CPU bios stored within
+ * the Boot ROM. In order to use the Sub CPU BIOS in Mode 1, you will need to
+ * manually decompress it to its proper location in PRG RAM
  *
- * @warning Tech Bulletin #3 indicates that the compressed Sub BIOS is at 0x016000, but it looks
- * like this is not consistent across Mega CD revisions!
+ * @warning Tech Bulletin #3 indicates that the compressed Sub BIOS is at
+ * 0x016000, but it looks like this is not consistent across Mega CD revisions!
  */
-// below is the offset for all revisions EXCEPT US/EU Model 1 and LaserActive (Mega LD) hardware
+// below is the offset for all revisions EXCEPT US/EU Model 1 and LaserActive
+// (Mega LD) hardware
 #if TARGET == MEGACD_MODE1
 #define _COMPRESSED_SUB_BIOS 0x416000
 #else

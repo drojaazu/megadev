@@ -47,7 +47,7 @@
 /**
  * @brief Beginning of user-available space in PRGRAM
  *
- * The Sub side program (SP) begins at 0x6000
+ * The Sub program (SP) begins at 0x6000
  * Memory before this point is used by BIOS and should not be written
  * by the user
  */
@@ -62,61 +62,6 @@
  * @brief Word RAM access (1M mode)
  */
 #define _WORD_RAM_1M 0x0C0000 /*word RAM base in 1M bit mode*/
-
-#define _BOOTSTAT 0x005EA0
-#define _INT2FLAG 0x005EA4
-#define _USERMODE 0x005EA6
-
-/*
- * @def _CDSTAT
- * @brief Contains the status value after calling @ref _CDBSTAT
- */
-#define _CDSTAT 0x005E80
-
-/**
- * System Jump Table
- * IN:
- * A1 ptr to user header (see MEGA CD BIOS MANUAL)
- * A0 ptr to jump table
- * BREAK A2
- * NOTES
- * expects the user header to begin with MAIN
- * also checks for SYS, SUB, or DAT, but these must appear beginning the 8th byte
- * (it looks like there is no tangible difference between these)
- * the flag (the last byte, normally zero the filename)
- * It looks like if the flag is non-zero, it calls the start address as a subroutine (JSR)
- * and checks for carry clear (BCC) on return; on carry clear, it skips the jump table
- * installation that is called on a normaly flag = 0 flow
- *
- * "ptr to link module" is an offset relative to the start of the user header
- * it then goes through the process of checking flag, possibly running entry, and installing jumps
- */
-#define _SETJMPTBL 0x005F0A
-
-#define _WAITVSYNC 0x005F10
-
-/**
- * @def _BURAM
- * @brief Backup RAM system calls vector
- */
-#define _BURAM 0x005F16
-
-/**
- * @def _CDBOOT
- * @brief CD Boot system calls vector
- */
-#define _CDBOOT 0x005F1C
-
-/**
- * @def _CDBIOS
- * @brief General system calls vector
- */
-#define _CDBIOS 0x005F22
-
-#define _USERCALL0 0x005F28 /* SP Init */
-#define _USERCALL1 0x005F2E /* SP Main */
-#define _USERCALL2 0x005F34 /* SP INT2 */
-#define _USERCALL3 0x005F3A /* SP User Call */
 
 #define _ADRERR 0x005F40
 #define _CODERR 0x005F46

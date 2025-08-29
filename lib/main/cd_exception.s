@@ -28,37 +28,37 @@ vdp_layout_debug:
 #define VIDEO_SIGNAL 0
 #endif
 
-.word _VDPREG_MODE1 | VDP_HICOLOR_ENABLE
-.word _VDPREG_MODE2 | VDP_MD_DISPLAY_MODE | VDP_DMA_ENABLE | VDP_VINT_ENABLE | VIDEO_SIGNAL | VDP_DISPLAY_ENABLE
-.word _VDPREG_PLA_ADDR | (PLA_ADDR_DEBUG / 0x400)
-.word _VDPREG_WIN_ADDR | (0xa00 / 0x400)
-.word _VDPREG_PLB_ADDR | (PLB_ADDR_DEBUG / 0x2000)
-.word _VDPREG_SPR_ADDR | (0xb800 / 0x200)
-.word _VDPREG_SPR_ADDR2
-.word _VDPREG_BGCOLOR
-.word _VDPREG_HINT_COUNT
-.word _VDPREG_MODE3 | VDP_EXTINT_ENABLE
-.word _VDPREG_MODE4 | VDP_WIDTH_40CELL
-.word _VDPREG_HS_ADDR | (0xbc00 / 0x400)
-.word _VDPREG_PL_ADDR2
-.word _VDPREG_AUTOINC | 2
-.word _VDPREG_PL_SIZE | VDP_PL_64x64
-.word _VDPREG_WIN_HPOS
-.word _VDPREG_WIN_VPOS
+.word VDPREG_MODE1 | VDP_HICOLOR_ENABLE
+.word VDPREG_MODE2 | VDP_MD_DISPLAY_MODE | VDP_DMA_ENABLE | VDP_VINT_ENABLE | VIDEO_SIGNAL | VDP_DISPLAY_ENABLE
+.word VDPREG_PLA_ADDR | (PLA_ADDR_DEBUG / 0x400)
+.word VDPREG_WIN_ADDR | (0xa00 / 0x400)
+.word VDPREG_PLB_ADDR | (PLB_ADDR_DEBUG / 0x2000)
+.word VDPREG_SPR_ADDR | (0xb800 / 0x200)
+.word VDPREG_SPR_ADDR2
+.word VDPREG_BGCOLOR
+.word VDPREG_HINT_COUNT
+.word VDPREG_MODE3 | VDP_EXTINT_ENABLE
+.word VDPREG_MODE4 | VDP_WIDTH_40CELL
+.word VDPREG_HS_ADDR | (0xbc00 / 0x400)
+.word VDPREG_PL_ADDR2
+.word VDPREG_AUTOINC | 2
+.word VDPREG_PL_SIZE | VDP_PL_64x64
+.word VDPREG_WIN_HPOS
+.word VDPREG_WIN_VPOS
 .word 0
 
 .section .text
 
 SUB set_vdp_layout_debug
-  move.l  #0xC0020000, (_VDP_CTRL)
-  move.w  #COLOR_WHITE, (_VDP_DATA)
-  move.w  #COLOR_RED, (_VDP_DATA)
-  move.w  #COLOR_GREEN, (_VDP_DATA)
-  move.w  #COLOR_BLUE, (_VDP_DATA)
-  jsr     _BIOS_CLEAR_VRAM
+  move.l  #0xC0020000, (VDP_CTRL)
+  move.w  #COLOR_WHITE, (VDP_DATA)
+  move.w  #COLOR_RED, (VDP_DATA)
+  move.w  #COLOR_GREEN, (VDP_DATA)
+  move.w  #COLOR_BLUE, (VDP_DATA)
+  jsr     BIOS_CLEAR_VRAM
   lea     vdp_layout_debug, a1
-  jsr     _BIOS_LOAD_VDPREGS
-  jsr     _BIOS_LOAD_FONT_DEFAULTS
+  jsr     BIOS_LOAD_VDPREGS
+  jsr     BIOS_LOAD_FONT_DEFAULTS
   rts
 
 // TODO
@@ -161,13 +161,13 @@ SUB handle_exception
   move.w  #0x0205, d0
   jbsr    nmtbl_xy_pos
   movea.l (err_str_ptr), a1
-  jbsr    _BIOS_PRINT
+  jbsr    BIOS_PRINT
 
   // PC=
   move.w  #0x0306, d0
   jbsr    nmtbl_xy_pos
   lea     str_pc, a1
-  jbsr    _BIOS_PRINT
+  jbsr    BIOS_PRINT
 
   // pc val
   move.l  (pc_val), d0
@@ -176,13 +176,13 @@ SUB handle_exception
   move.w  #0x0806, d0
   jbsr    nmtbl_xy_pos
   lea     str_cache, a1
-  jbsr    _BIOS_PRINT
+  jbsr    BIOS_PRINT
 
   // SR=
   move.w  #0x0307, d0
   jbsr    nmtbl_xy_pos
   lea     str_sr, a1
-  jbsr    _BIOS_PRINT
+  jbsr    BIOS_PRINT
 
   // sr val
   move.w  (sr_val), d0
@@ -191,13 +191,13 @@ SUB handle_exception
   move.w  #0x0807, d0
   jbsr    nmtbl_xy_pos
   lea     str_cache, a1
-  jbsr    _BIOS_PRINT
+  jbsr    BIOS_PRINT
 
   // OP=
   move.w  #0x0308, d0
   jbsr    nmtbl_xy_pos
   lea     str_op, a1
-  jbsr    _BIOS_PRINT
+  jbsr    BIOS_PRINT
 
   // op val
   move.w  (op_val), d0
@@ -206,13 +206,13 @@ SUB handle_exception
   move.w  #0x0808, d0
   jbsr    nmtbl_xy_pos
   lea     str_cache, a1
-  jbsr    _BIOS_PRINT
+  jbsr    BIOS_PRINT
 
   // ADDR=
   move.w  #0x0309, d0
   jbsr    nmtbl_xy_pos
   lea     str_addr, a1
-  jbsr    _BIOS_PRINT
+  jbsr    BIOS_PRINT
 
   // addr val
   move.l  (addr_val), d0
@@ -221,13 +221,13 @@ SUB handle_exception
   move.w  #0x0809, d0
   jbsr    nmtbl_xy_pos
   lea     str_cache, a1
-  jbsr    _BIOS_PRINT
+  jbsr    BIOS_PRINT
 
   // stop and enable all interrupts (for e.g. serial comm)
   stop    #2000
 
 SUB nmtbl_xy_pos
-1:move.w  (_BIOS_VDP_PLANE_WIDTH), d1  // d1 - tiles per row
+1:move.w  (BIOS_VDP_DEFAULT_PLANE_WIDTH), d1  // d1 - tiles per row
   move.w  d0, d2  // d0 - x/y offsey (upper/lower bytes of the word)
   lsr.w   #8, d2  // d2 has x pos
   and.w   #0xff, d0  // filter d0 so it only has y pos

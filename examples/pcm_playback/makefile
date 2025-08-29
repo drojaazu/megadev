@@ -6,13 +6,13 @@
 ## Project ID
 # ASCII text only; maximum of 11 characters
 # *** REQUIRED!***
-PROJECT_ID=pcm_play
+PROJECT_ID:=pcm_play
 
 ## Build Target
 # Determines for which hardware this project is intended
 # Valid values: MEGADRIVE, MEGACD
 # *** REQUIRED!***
-TARGET=MEGACD
+TARGET:=MEGACD
 
 ## Project Name
 # ASCII text only; maximum of 48 characters
@@ -21,13 +21,13 @@ PROJECT_NAME="PCM AUDIO PLAYBACK EXAMPLE"
 ## Hardware Region
 # This is *very important* for Mega CD builds as it determines which security code to use. It can be changed at compile
 # time by setting the variable when running make.
-REGION=US
+REGION?=US
 
 ## Video Output
 # Specifies the default video output for this game. It can be changed at compile time by setting the variable when
 # running make.
 # Valid values: NTSC, PAL
-VIDEO=NTSC
+VIDEO?=NTSC
 
 ## The following directory paths are relative to the location of this makefile
 ## (which should ideally be in the root of your project directory)
@@ -47,18 +47,16 @@ RES_PATH:=res
 # *** REQUIRED!***
 BUILD_PATH:=build
 
-# Output path
-# This will be the location of the final output Mega CD ISO and MD ROMs
-OUT_PATH:=out
+DISC_PATH:=disc
 
 # Additional C compiler flags
-CC_FLAGS:=-O1 -fconserve-stack -fomit-frame-pointer -fno-gcse
+CC_FLAGS?=-O1 -fconserve-stack -fomit-frame-pointer -fno-gcse
 
 # Additional assembler flags
-AS_FLAGS:=
+AS_FLAGS?=
 
 # Additional linker flags
-LD_FLAGS:=
+LD_FLAGS?=
 
 # Path to the Megadev directory
 # *** REQUIRED!***
@@ -66,20 +64,21 @@ MEGADEV_PATH?=/opt/megadev
 
 include $(MEGADEV_PATH)/megadev.make
 
-.PHONY: disc clean copy_res
+.PHONY: init disc clean
+
+init:
+	@mkdir -p $(SRC_PATH)
+	@mkdir -p $(RES_PATH)
+	@mkdir -p $(BUILD_PATH)
+	@mkdir -p $(DISC_PATH)
 
 disc: \
-	init \
-	copy_res \
 	disc/ipx.mmd \
 	disc/spx.smd \
-	disc.iso
+	$(PROJECT_ID).iso
 
 clean:
-	@rm -f disc.iso disc/*.mmd disc/*.smd build/*
-
-copy_res:
-	@cp -rf $(RES_PATH)/* disc
+	@rm -f $(PROJECT_ID).iso $(DISC_PATH)/*.mmd $(DISC_PATH)/*.smd build/* > /dev/null 2>&1
 
 disc/ipx.mmd: \
 	ipx_layout.s \

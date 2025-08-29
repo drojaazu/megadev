@@ -16,9 +16,9 @@
 
 #define SUB_ACK *GA_COMCMD0 = 0;
 
-#define print_xy(x, y) (VDPPTR(_BIOS_VDP_PLANEA_ADDR + PLANE_POS(x, y, Width64)) | VRAM_W)
+#define print_xy(x, y) (vdpptr(BIOS_VDP_DEFAULT_PLANEA + PLANE_POS(x, y, Width64)) | VRAM_W)
 
-char				val_buffer[5];
+char val_buffer[5];
 
 static void bram_init()
 {
@@ -306,8 +306,8 @@ void main()
 {
 	// setup boot rom library font
 	bios_load_font_defaults();
-	VDP_CTRL_32 = 0xC0020000;
-	VDP_DATA_16 = 0x0EEE;
+	vdp_ctrl_32 = 0xC0020000;
+	vdp_data_16 = 0x0EEE;
 
 	// print strings end in 0xff, so let's set up the value buffer so we don't
 	// have to mess with it later
@@ -344,11 +344,11 @@ void main()
 			bios_vint_wait_default();
 			for (int clearloop = 3; clearloop < 10; ++clearloop)
 			{
-				VDP_CTRL_32 = print_xy(1, clearloop);
-				VDP_DATA_16 = 0;
+				vdp_ctrl_32 = print_xy(1, clearloop);
+				vdp_data_16 = 0;
 			}
-			VDP_CTRL_32 = print_xy(1, menupos + 3);
-			VDP_DATA_16 = '>';
+			vdp_ctrl_32 = print_xy(1, menupos + 3);
+			vdp_data_16 = '>';
 
 			if ((bios_joy1_hit & PAD_DOWN))
 			{

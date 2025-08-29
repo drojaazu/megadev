@@ -287,7 +287,7 @@ cdacc_loop_loaddir_err:
 
 /**
  * @fn load_data_sub
- * @brief Load data using _BIOS_CDCTRN (only available for Sub CPU Read)
+ * @brief Load data using BIOS_CDCTRN (only available for Sub CPU Read)
  */
 load_data_sub:
   // we want to save the call site in order to properly return, since we'll
@@ -298,7 +298,7 @@ load_data_sub:
 
 load_data_begin:
   move.b  cdc_dev_dest, (_GAREG_CDCMODE)
-  lea     cdread_sector_start, a0 // point to sector struct for _BIOS_ROMREADN
+  lea     cdread_sector_start, a0 // point to sector struct for BIOS_ROMREADN
 
   /*
   	Next we want to partially convert the start sector to MM:SS:FF format and
@@ -313,12 +313,12 @@ load_data_begin:
                                            // value MM:SS:FF format)
   move.b  d0, cdc_frame_check              // cache for later error checking
 
-  CDBIOS   #_BIOS_CDCSTOP                  // stop any current CDC transfers
-  CDBIOS   #_BIOS_ROMREADN                 // begin the data read
+  CDBIOS   #BIOS_CDCSTOP                  // stop any current CDC transfers
+  CDBIOS   #BIOS_ROMREADN                 // begin the data read
 
   move.w   #0x258, read_timeout
 1:bsr      accloop_reentry  /*take a break here and come back next VINT*/
-2:CDBIOS   #_BIOS_CDCSTAT            /*check CDC status since our read call*/
+2:CDBIOS   #BIOS_CDCSTAT            /*check CDC status since our read call*/
   bcc      3f              /*we have a sector read to be read*/
   subq.w   #1, read_timeout  /*count down read timeout & try again*/
   bge      1b
@@ -326,9 +326,9 @@ load_data_begin:
   bge      load_data_begin
   bra      load_data_failure          /*failed completely, jump down*/
 
-3:CDBIOS   #_BIOS_CDCREAD    /*read out the data from the CDC*/
+3:CDBIOS   #BIOS_CDCREAD    /*read out the data from the CDC*/
   bcs      4f      /*sector not ready, this shouldn't happen since*/
-  								/*_BIOS_CDCSTAT said we were good; jump down & try again*/
+  								/*BIOS_CDCSTAT said we were good; jump down & try again*/
   move.l   d0, cdc_read_timecode  /*the timecode for the read sector comes back in d0*/
   move.b   cdc_frame_check, d0    /*bring back the frame count we calculated earlier*/
   cmp.b    cdc_read_timecode+2, d0  /*and check it against the frame count from CDC*/
@@ -344,10 +344,10 @@ load_data_begin:
   bge      load_data_begin
   bra      load_data_failure
 6:cmpi.b   #2, cdc_dev_dest  /*is this a main CPU read?*/
-  beq      load_data_maincpudest    /*if so, jump down; main cpu can't use _BIOS_CDCTRN*/
-  movea.l  (filebuff), a0  /*setup _BIOS_CDCTRN pointers*/
+  beq      load_data_maincpudest    /*if so, jump down; main cpu can't use BIOS_CDCTRN*/
+  movea.l  (filebuff), a0  /*setup BIOS_CDCTRN pointers*/
   lea      cdc_read_timecode, a1
-  CDBIOS   #_BIOS_CDCTRN            /*transfer data from CDC to RAM*/
+  CDBIOS   #BIOS_CDCTRN            /*transfer data from CDC to RAM*/
   bcs      7f
   move.b   cdc_frame_check, d0      /*check against our expected frame count again*/
   cmp.b    cdc_read_timecode+2, d0  
@@ -364,7 +364,7 @@ load_data_begin:
   cmpi.b   #0x75, cdc_frame_check  /* check if we're past 75 frames (0 indexed,BCD)*/
   bcs      9f        /*not yet*/
   move.b   #0, cdc_frame_check    /*frame counter rolled past 75, reset our check*/
-9:CDBIOS   #_BIOS_CDCACK        /*send ack to CDC*/
+9:CDBIOS   #BIOS_CDCACK        /*send ack to CDC*/
   move.w   #6, read_timeout    /*reset error counters*/
   move.w   #0x1e, read_retry_count
   addi.l   #0x800, filebuff  /*move the dest buffer up a sector*/
@@ -395,7 +395,7 @@ load_data_maincpudest:
 
 /**
  * @fn load_data_dma
- * @brief Load data without _BIOS_CDCTRN (for DMA processes)
+ * @brief Load data without BIOS_CDCTRN (for DMA processes)
  */
 load_data_dma:
   // we want to save the call site in order to properly return, since we'll
@@ -406,7 +406,7 @@ load_data_dma:
 
 load_data_dma_begin:
   move.b   cdc_dev_dest, (_GAREG_CDCMODE)
-  lea      cdread_sector_start, a0  // point to sector struct for _BIOS_ROMREADN
+  lea      cdread_sector_start, a0  // point to sector struct for BIOS_ROMREADN
 
   /*
   	Next we want to partially convert the start sector to MM:SS:FF format and
@@ -421,12 +421,12 @@ load_data_dma_begin:
                     // value MM:SS:FF format)
   move.b   d0, cdc_frame_check  // cache for later error checking
 
-  CDBIOS   #_BIOS_CDCSTOP     // stop any current CDC transfers
-  CDBIOS   #_BIOS_ROMREADN    // begin the data read
+  CDBIOS   #BIOS_CDCSTOP     // stop any current CDC transfers
+  CDBIOS   #BIOS_ROMREADN    // begin the data read
 
   move.w   #0x258, read_timeout // set up for reading
 1:bsr      accloop_reentry    // take a break here and come back next VINT
-2:CDBIOS   #_BIOS_CDCSTAT               // check on the CDC on the status of our data
+2:CDBIOS   #BIOS_CDCSTAT               // check on the CDC on the status of our data
   bcc      3f                // sector is ready! jump down
   subq.w   #1, read_timeout  // not ready yet,count down read timeout
   bge      1b                // and try again
@@ -434,9 +434,9 @@ load_data_dma_begin:
   bge      load_data_dma_begin   // and try again
   bra      load_data_dma_failure // failed after all attempts, return error
 
-3:CDBIOS   #_BIOS_CDCREAD     // read out the data from the CDC to the destination
+3:CDBIOS   #BIOS_CDCREAD     // read out the data from the CDC to the destination
   bcs      4f      // data not ready, this really shouldn't happen since
-                  // _BIOS_CDCSTAT said we were good; jump down & try again
+                  // BIOS_CDCSTAT said we were good; jump down & try again
   lsr      #8, d0  // the timecode for the loaded sector comes back in d0
                   // shift it over to get the frame offset into the low byte
   move.b   cdc_frame_check, d1   // bring back the expected frame offset...
@@ -465,7 +465,7 @@ load_data_dma_begin:
   bge      7b
   bra      load_data_dma_failure
 
-9:CDBIOS   #_BIOS_CDCACK          // send ack to CDC (required after every sector/frame)
+9:CDBIOS   #BIOS_CDCACK          // send ack to CDC (required after every sector/frame)
   move.w   #6, read_timeout          // reset error counters for next sector
   move.w   #0x1e, read_retry_count
   addq.w   #1, sectors_read_count    // add to the sectors loaded count
@@ -499,7 +499,7 @@ acc_loop_jump: .long 0
 
 load_method_ptr: .long 0
 
-// the two longs are the table used by _BIOS_ROMREADN/ROMREADE, so
+// the two longs are the table used by BIOS_ROMREADN/ROMREADE, so
 //# it is necessary that there are two consecutive long values!
 cdread_sector_start: .long 0
 cdread_sector_count: .long 0

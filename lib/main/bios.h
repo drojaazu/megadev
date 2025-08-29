@@ -1,8 +1,8 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file bios.h
- * @brief C wrappers for Boot ROM calls
+ * @file main/bios.h
+ * @brief Main CPU side system library
  *
  * @details
  * ## Memory Layout
@@ -34,44 +34,45 @@
 struct SpriteMapping
 {
 	s8 relpos_y;
-	u8 : 4;
-	u8 width : 2;
-	u8 height : 2;
-	u8 priority : 1;
-	u8 pal_line : 2;
-	u8 v_flip : 1;
-	u8 h_flip : 1;
-	u16 chridx : 11;
-	s8 relpos_x;
-	s8 mirrored_relpos_x;
+	u8					 : 4;
+	u8	width		 : 2;
+	u8	height	 : 2;
+	u8	priority : 1;
+	u8	pal_line : 2;
+	u8	v_flip	 : 1;
+	u8	h_flip	 : 1;
+	u16 chridx	 : 11;
+	s8	relpos_x;
+	s8	mirrored_relpos_x;
 } __attribute__((__packed__));
 
-struct SpriteLayout
+typedef struct SpriteLayout
 {
 	u8 mapping_count;
 	// this byte is a bit of a mystery: it is copied to 0x19 of the Entity
 	// and if the h flip flag is set, it will add +1 to the value in the object.
 	// It does not have any effect on the object and its purpose is unknown
-	u8 unknown;
+	u8									 unknown;
 	struct SpriteMapping mappings[];
-};
+} SpriteLayout;
 
 // BIOS defined Entity display flags
 #define ENTITY_HFLIP 1 << 7
-#define ENTITY_HIDE 1 << 1
+#define ENTITY_HIDE	 1 << 1
 
 // size: 26 bytes
-struct Entity
+typedef struct
 {
-	u16 enable : 1;
+	u16 enable				: 1;
 	u16 jmptbl_offset : 15;
 	// uses the display flags defined above; the rest of the bits are user
 	// definable
 	u8 display_flags;
 	// this byte is not used by blib, so presumably it can be used however
 	// you'd like
-	u8 user;
+	u8													user;
 	struct SpriteLayout const * layout;
+
 	f32 pos_x;
 	f32 pos_y;
 	f32 move_x;
@@ -81,7 +82,7 @@ struct Entity
 	u8 sprite_flags;
 	// the second byte of the SpriteLayout header is copied here
 	u8 unknown;
-};
+} Entity;
 
 /**
  * @struct Palette
@@ -92,20 +93,20 @@ struct Entity
  */
 typedef struct Palette
 {
-	u8 cram_offset;
-	u8 length; // length in words (i.e. color entries) MINUS ONE
+	u8	cram_offset;
+	u8	length; // length in words (i.e. color entries) MINUS ONE
 	s16 colors[];
 } Palette;
 
 /**
  * @def* bios_work_buffer
  * @brief Work RAM for graphics decompression routines
- * @sa _BIOS_WORK_BUFFER
+ * @sa BIOS_WORK_BUFFER
  * @ingroup bios_cmp
  */
 // TODO test this
-#define bios_work_buffer (*(u8[0x200]) _BIOS_WORK_BUFFER)
-// #define bios_work_buffer ((u8 *) _BIOS_WORK_BUFFER)
+#define bios_work_buffer (*(u8[0x200]) BIOS_WORK_BUFFER)
+// #define bios_work_buffer ((u8 *) BIOS_WORK_BUFFER)
 
 // TODO check that the LEN/SZ's in this section can be replaced with sizeof()
 /**
@@ -118,13 +119,13 @@ typedef struct Palette
  * @def Sprite* bios_sprlist
  * @brief Sprite list buffer
  * @ingroup bios_vdp
- * @sa _BIOS_SPRLIST
+ * @sa BIOS_SPRITE_CACHE
  *
  * @details
  * Size: 0x280 bytes
  */
-#define bios_sprlist (*((Sprite(*)[80]) _BIOS_SPRLIST))
-// #define bios_sprlist ((Sprite *)_BIOS_SPRLIST)
+#define bios_sprlist (*((Sprite(*)[80]) BIOS_SPRITE_CACHE))
+// #define bios_sprlist ((Sprite *)BIOS_SPRITE_CACHE)
 
 // #define bios_sprlist_len 0x280
 
@@ -132,9 +133,9 @@ typedef struct Palette
  * @def s16* bios_palette
  * @brief CRAM (palette) buffer
  * @ingroup bios_vdp
- * @sa _BIOS_PALETTE
+ * @sa BIOS_PALETTE_CACHE
  */
-#define bios_palette (*((s16(*)[64]) _BIOS_PALETTE))
+#define bios_palette (*((s16(*)[64]) BIOS_PALETTE_CACHE))
 
 // #define BIOS_PALETTE_SZ 0x80
 
@@ -142,40 +143,40 @@ typedef struct Palette
  * @def bios_pal1
  * @brief Palette line #0 buffer
  * @ingroup bios_vdplib/main
- * @sa _BIOS_PAL1
+ * @sa BIOS_PAL1
  */
-#define bios_pal1 (*((s16(*)[16]) _BIOS_PAL1))
+#define bios_pal1 (*((s16(*)[16]) BIOS_PAL1))
 
 /**
  * @def bios_pal2
  * @brief Palette line #1 buffer
  * @ingroup bios_vdp
- * @sa _BIOS_PAL2
+ * @sa BIOS_PAL2
  */
-#define bios_pal2 (*((s16(*)[16]) _BIOS_PAL2))
+#define bios_pal2 (*((s16(*)[16]) BIOS_PAL2))
 
 /**
  * @def bios_pal3
  * @brief Palette line #2 buffer
  * @ingroup bios_vdp
- * @sa _BIOS_PAL3
+ * @sa BIOS_PAL3
  */
-#define bios_pal3 (*((s16(*)[16]) _BIOS_PAL3))
+#define bios_pal3 (*((s16(*)[16]) BIOS_PAL3))
 
 /**
  * @def bios_pal4
  * @brief Palette line #3 buffer
  * @ingroup bios_vdp
- * @sa _BIOS_PAL4
+ * @sa BIOS_PAL4
  */
-#define bios_pal4 (*((s16(*)[16]) _BIOS_PAL4))
+#define bios_pal4 (*((s16(*)[16]) BIOS_PAL4))
 
 /**
  * @def void* bios_vint_user
  * @brief Pointer to the VINT_USER routine used in the Boot ROM VINT handler.
- * @sa _BIOS_VINT_USER
+ * @sa BIOS_VINT_USER
  */
-#define bios_vint_user ((volatile void *(*) ) _BIOS_VINT_USER)
+#define bios_vint_user ((volatile void *(*) ) BIOS_VINT_USER)
 
 /**
  * @def* bios_vdp_regs
@@ -184,110 +185,110 @@ typedef struct Palette
  *
  * @details Buffer of all VDP registers (except DMA regs), making up 19
  * entries. You will need to keep these updated manually unless you use
- * _BIOS_LOAD_VDPREGS
+ * BIOS_LOAD_VDPREGS
  *
  * Size: 16bit * 19 = 0x26 bytes
  *
- * @sa _BIOS_VDP_REGS
+ * @sa BIOS_VDPREG_CACHE
  */
-// #define bios_vdp_regs (*((volatile u16(*)[19]) _BIOS_VDP_REGS))
-#define bios_vdp_regs ((volatile u16 *) _BIOS_VDP_REGS)
+// #define bios_vdp_regs (*((volatile u16(*)[19]) BIOS_VDPREG_CACHE))
+#define bios_vdp_regs ((volatile u16 *) BIOS_VDPREG_CACHE)
 
 /**
  * @def bios_comflags_main
  * @brief GA comm flags for Main CPU buffer
- * @sa _BIOS_COMFLAGS_MAIN
+ * @sa BIOS_COMMFLAGS_MAIN_CACHE
  */
-#define bios_comflags_main ((volatile u8 *) _BIOS_COMFLAGS_MAIN)
+#define bios_comflags_main ((volatile u8 *) BIOS_COMMFLAGS_MAIN_CACHE)
 
 /**
  * @def const bios_comflags_sub
  * @brief GA comm flags for Sub CPU buffer
- * @sa _BIOS_COMFLAGS_SUB
+ * @sa BIOS_COMMFLAGS_SUB_CACHE
  */
-#define bios_comflags_sub ((volatile u8 const *) _BIOS_COMFLAGS_SUB)
+#define bios_comflags_sub ((volatile u8 const *) BIOS_COMMFLAGS_SUB_CACHE)
 
 /**
  * @def* bios_comcmd
  * @brief Array of cached GA COMCMD (Main -> Sub) registers
- * @sa _BIOS_COMCMD
+ * @sa BIOS_COMCMD
  */
-#define bios_comcmd (*((volatile u16(*)[8]) _BIOS_COMCMD))
+#define bios_comcmd (*((volatile u16(*)[8]) BIOS_COMCMD))
 
 /**
  * @def bios_comstat
  * @brief Array of cached GA COMSTAT (Main -> Sub) registers
- * @sa _BIOS_COMSTAT
+ * @sa BIOS_COMSTAT
  */
-#define bios_comstat (*((volatile u16 const(*)[8]) _BIOS_COMSTAT))
+#define bios_comstat (*((volatile u16 const(*)[8]) BIOS_COMSTAT))
 
 /**
  * @def bios_joy1_type
- * @sa _BIOS_JOY1_TYPE
+ * @sa BIOS_JOY1_TYPE
  * @ingroup bios_input
  */
-#define bios_joy1_type (*((u8 *) _BIOS_JOY1_TYPE))
+#define bios_joy1_type (*((u8 *) BIOS_JOY1_TYPE))
 
 /**
  * @def bios_joy2_type
- * @sa _BIOS_JOY2_TYPE
+ * @sa BIOS_JOY2_TYPE
  * @ingroup bios_input
  */
-#define bios_joy2_type ((u8 *) _BIOS_JOY2_TYPE)
+#define bios_joy2_type ((u8 *) BIOS_JOY2_TYPE)
 
 /**
  * @def bios_joy1_hold
  * @brief Port 1 controller input holds
- * @sa _BIOS_JOY1_HOLD
+ * @sa BIOS_JOY1_HOLD
  * @ingroup bios_input
  */
-#define bios_joy1_hold (*((volatile u8 const *) _BIOS_JOY1_HOLD))
+#define bios_joy1_hold (*((volatile u8 const *) BIOS_JOY1_HOLD))
 
 /**
  * @def bios_joy1_hit
  * @brief Port 1 controller input hits (single-press)
- * @sa _BIOS_JOY1_HIT
+ * @sa BIOS_JOY1_HIT
  * @ingroup bios_input
  */
-#define bios_joy1_hit (*((volatile u8 const *) _BIOS_JOY1_HIT))
+#define bios_joy1_hit (*((volatile u8 const *) BIOS_JOY1_HIT))
 
 /**
  * @def bios_joy2_hold
  * @brief Port 2 controller input holds
- * @sa _BIOS_JOY2_HOLD
+ * @sa BIOS_JOY2_HOLD
  * @ingroup bios_input
  */
-#define bios_joy2_hold (*((volatile u8 const *) _BIOS_JOY2_HOLD))
+#define bios_joy2_hold (*((volatile u8 const *) BIOS_JOY2_HOLD))
 
 /**
  * @def bios_joy2_hit
  * @brief Port 2 controller input hits (single-press)
- * @sa _BIOS_JOY2_HIT
+ * @sa BIOS_JOY2_HIT
  * @ingroup bios_input
  */
-#define bios_joy2_hit (*((volatile u8 const *) _BIOS_JOY2_HIT))
+#define bios_joy2_hit (*((volatile u8 const *) BIOS_JOY2_HIT))
 
 /**
  * @def bios_joy1_repeat_delay
- * @sa _BIOS_JOY1_REPEAT_DELAY
+ * @sa BIOS_JOY1_REPEAT_DELAY
  * @ingroup bios_input
  *
  * @note For use with @ref bios_input_repeat_delay
  */
-#define bios_joy1_repeat_delay (*((volatile u8 *) _BIOS_JOY1_REPEAT_DELAY))
+#define bios_joy1_repeat_delay (*((volatile u8 *) BIOS_JOY1_REPEAT_DELAY))
 
 /**
  * @def bios_joy2_repeat_delay
- * @sa _BIOS_JOY2_REPEAT_DELAY
+ * @sa BIOS_JOY2_REPEAT_DELAY
  * @ingroup bios_input
  *
  * @note For use with @ref bios_input_repeat_delay
  */
-#define bios_joy2_repeat_delay (*((volatile u8 *) _BIOS_JOY2_REPEAT_DELAY))
+#define bios_joy2_repeat_delay (*((volatile u8 *) BIOS_JOY2_REPEAT_DELAY))
 
 /**
  * @def bios_vint_handler_flags
- * @sa _BIOS_VINT_HANDLER_FLAGS
+ * @sa BIOS_VINT_HANDLER_FLAGS
  * @ingroup bios_int
  *
  * @details
@@ -297,19 +298,19 @@ typedef struct Palette
  * Bit 0 - Copy sprite list to VDP
  * Bit 1 - Call VINT_USER vector during vblank
  */
-#define bios_vint_handler_flags (*((u8 *) _BIOS_VINT_HANDLER_FLAGS))
+#define bios_vint_handler_flags (*((u8 *) BIOS_VINT_HANDLER_FLAGS))
 
 /**
  * @def bios_vint_counter
  * @brief Incremented by 1 on each vertical blank (VINT)
- * @sa _BIOS_VINT_COUNTER
+ * @sa BIOS_VINT_COUNTER
  * @ingroup bios_int
  */
-#define bios_vint_counter (*((volatile u8 *) _BIOS_VINT_COUNTER))
+#define bios_vint_counter (*((volatile u8 *) BIOS_VINT_COUNTER))
 
 /**
  * @def bios_vint_skip_gfx
- * @sa _BIOS_VINT_SKIP_GFX
+ * @sa BIOS_VINT_FAST_FLAG
  * @ingroup bios_int
  *
  * @details Skips these operations during vblank:
@@ -317,43 +318,43 @@ typedef struct Palette
  *
  * Will still perform IO updates, though
  */
-#define bios_vint_skip_gfx (*((u8 *) _BIOS_VINT_SKIP_GFX))
+#define bios_vint_skip_gfx (*((u8 *) BIOS_VINT_FAST_FLAG))
 
 /**
  * @def bios_vdp_update_flags
- * @sa _BIOS_VDP_UPDATE_FLAGS
+ * @sa BIOS_VDP_UPDATE_FLAGS
  * @ingroup bios_int
  */
-#define bios_vdp_update_flags (*((u8 *) _BIOS_VDP_UPDATE_FLAGS))
+#define bios_vdp_update_flags (*((u8 *) BIOS_VDP_UPDATE_FLAGS))
 
 /**
  * @def bios_random
  * @brief Contains a random 16 bit value
- * @sa _BIOS_RANDOM
+ * @sa BIOS_RANDOM
  * @ingroup bios_misc
  *
  * @note
  * You must make a call to @ref BIOS_PRNG on each vblank in order to
  * use this!
  */
-#define bios_random (*((u16 const *) _BIOS_RANDOM))
+#define bios_random (*((u16 const *) BIOS_RANDOM))
 
 /**
  * @def bios_font_tile_base
- * @sa _BIOS_FONT_TILE_BASE
+ * @sa BIOS_FONT_TILE_BASE
  * @ingroup bios_misc
  *
  * @details
  * The value added to each character byte when calling _PRINT_STRING.
  * The font can begin no earlier than tile index 0x20
  */
-#define bios_font_tile_base (*((u16 *) _BIOS_FONT_TILE_BASE))
+#define bios_font_tile_base (*((u16 *) BIOS_FONT_TILE_BASE))
 
 /**
  * @def bios_plane_width
  * @brief Cached value of the plane width as defined in VDP reg. 0x10.
  * @ingroup bios_vdp
- * @sa _BIOS_VDP_PLANE_WIDTH
+ * @sa BIOS_VDP_DEFAULT_PLANE_WIDTH
  *
  * @note
  * This value is stored as BYTES, which is effectively the width in
@@ -365,47 +366,47 @@ typedef struct Palette
  * Use the @ref PlaneWidth enum to make it semantically clear what
  * the width is in tiles
  */
-#define bios_plane_width (*((u16 *) _BIOS_PLANE_WIDTH))
+#define bios_plane_width (*((u16 *) BIOS_PLANE_WIDTH_CACHE))
 
 /**
  * @def bios_entity_routines
  * @brief Pointer to the jump table for entity processing
- * @sa _BIOS_ENTITY_ROUTINES
+ * @sa BIOS_ENTITY_ROUTINES
  * @ingroup bios_vdp
  */
-#define bios_entity_routines (*((void const **) _BIOS_ENTITY_ROUTINES))
+#define bios_entity_routines (*((void const **) BIOS_ENTITY_ROUTINES))
 
 /**
  * @def bios_fadein_cram_index
  * @brief Palette offset on which the fade in palette should begin
- * @sa _BIOS_FADEIN_CRAM_INDEX
+ * @sa BIOS_FADEIN_PAL_INDEX
  * @ingroup bios_vdp
  */
-#define bios_fadein_cram_index (*((u8 *) _BIOS_FADEIN_CRAM_INDEX))
+#define bios_fadein_cram_index (*((u8 *) BIOS_FADEIN_PAL_INDEX))
 
 /**
  * @def bios_fadein_pal_length
  * @brief Number of entries in the fade in palette
- * @sa _BIOS_FADEIN_PAL_LENGTH
+ * @sa BIOS_FADEIN_PAL_LENGTH
  * @ingroup bios_vdp
  */
-#define bios_fadein_pal_length (*((u8 *) _BIOS_FADEIN_PAL_LENGTH))
+#define bios_fadein_pal_length (*((u8 *) BIOS_FADEIN_PAL_LENGTH))
 
 /**
  * @def bios_fadein_step
  * @brief Indicates if a fade in is still in progress
- * @sa _BIOS_FADEIN_STEP
+ * @sa BIOS_FADEIN_STEP
  * @ingroup bios_vdp
  */
-#define bios_fadein_step (*((volatile u16 *) _BIOS_FADEIN_STEP))
+#define bios_fadein_step (*((volatile u16 *) BIOS_FADEIN_STEP))
 
 /**
- * @def _BIOS_FADEIN_TARGET_PAL
+ * @def BIOS_FADEIN_TARGET_PAL
  * @brief Pointer to the target fade in palette
- * @sa _BIOS_FADEIN_TARGET_PAL
+ * @sa BIOS_FADEIN_TARGET_PAL
  * @ingroup bios_vdp
  */
-#define bios_fadein_target_pal (*((u8 *) _BIOS_FADEIN_TARGET_PAL))
+#define bios_fadein_target_pal (*((u8 *) BIOS_FADEIN_TARGET_PAL))
 
 /**
  * @fn bios_entry
@@ -422,7 +423,7 @@ static inline void bios_entry()
   jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_ENTRY));
+		: "i"(BIOS_ENTRY));
 }
 
 /**
@@ -446,7 +447,7 @@ static inline void bios_reset()
   jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_RESET));
+		: "i"(BIOS_RESET));
 }
 
 /**
@@ -465,7 +466,7 @@ static inline void bios_init()
   jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_INIT));
+		: "i"(BIOS_INIT));
 }
 
 /**
@@ -483,7 +484,7 @@ static inline void bios_init_sp()
   jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_INIT_SP));
+		: "i"(BIOS_INIT_SP));
 }
 
 /**
@@ -502,7 +503,7 @@ static inline void bios_vint_handler()
   jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_VINT_HANDLER));
+		: "i"(BIOS_VINT_HANDLER));
 }
 
 /**
@@ -524,7 +525,7 @@ static inline void bios_set_hint(void * hint_handler)
   jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_SET_HINT), "a"(A1)
+		: "i"(BIOS_SET_HINT), "a"(A1)
 		: "cc");
 }
 
@@ -542,7 +543,7 @@ static inline void bios_read_joypad()
   move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BIOS_READ_JOYPAD)
+		: "i"(BIOS_READ_JOYPAD)
 		: "d6", "d7", "a5");
 }
 
@@ -566,13 +567,13 @@ typedef enum ControllerType
 static inline u8 bios_detect_controller(u8 * io_data_port)
 {
 	register u32 A6 asm("a6") = (u32) io_data_port;
-	register u8 D6 asm("d6");
+	register u8	 D6 asm("d6");
 	asm volatile(
 		"\
   jsr %c0 \n\
 		"
 		: "=d"(D6)
-		: "i"(_BIOS_DETECT_CONTROLLER), "a"(A6)
+		: "i"(BIOS_DETECT_CONTROLLER), "a"(A6)
 		: "cc");
 
 	return D6;
@@ -597,7 +598,7 @@ static inline void bios_clear_vram()
   move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BIOS_CLEAR_VRAM)
+		: "i"(BIOS_CLEAR_VRAM)
 		: "d0", "d1", "d2", "d3");
 }
 
@@ -617,7 +618,7 @@ static inline void bios_clear_tables()
   move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BIOS_CLEAR_TABLES)
+		: "i"(BIOS_CLEAR_TABLES)
 		: "d0", "d1", "d2", "d3");
 }
 
@@ -633,7 +634,7 @@ static inline void bios_clear_vsram()
   jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_CLEAR_VSRAM)
+		: "i"(BIOS_CLEAR_VSRAM)
 		: "d0", "d1", "d2");
 }
 
@@ -684,7 +685,7 @@ static inline void bios_load_vdpregs_default()
   jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_LOAD_VDPREGS_DEFAULT)
+		: "i"(BIOS_LOAD_DEFAULT_VDPREGS)
 		: "d0", "d1", "a1", "a2");
 }
 
@@ -698,7 +699,7 @@ static inline void bios_load_vdpregs_default()
  * (e.g. 80, 81, etc) and the lower byte is
  * the value, with the list terminated by 0.
  */
-static inline void bios_load_vdpregs(VDPREG const * vdp_reg_data)
+static inline void bios_load_vdpregs(vdpreg const * vdp_reg_data)
 {
 	register u32 A1 asm("a1") = (u32) vdp_reg_data;
 
@@ -707,7 +708,7 @@ static inline void bios_load_vdpregs(VDPREG const * vdp_reg_data)
   jsr %p1 \n\
 		"
 		: "+a"(A1)
-		: "i"(_BIOS_LOAD_VDPREGS), "a"(A1)
+		: "i"(BIOS_LOAD_VDPREGS), "a"(A1)
 		: "cc", "d0", "d1", "a2");
 }
 
@@ -719,7 +720,10 @@ static inline void bios_load_vdpregs(VDPREG const * vdp_reg_data)
  * @details This is a simple data transfer via the VDP data port rather than
  * DMA.
  */
-static inline void bios_vdp_fill(u32 vdpptr, u16 length, u16 value)
+static inline void bios_vdp_fill(
+	u32 vdpptr,
+	u16 length,
+	u16 value)
 {
 	register u32 D0 asm("d0") = vdpptr;
 	register u16 D1 asm("d1") = length;
@@ -729,7 +733,7 @@ static inline void bios_vdp_fill(u32 vdpptr, u16 length, u16 value)
   jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_VDP_FILL), "d"(D0), "d"(D1), "d"(D2));
+		: "i"(BIOS_VDP_FILL), "d"(D0), "d"(D1), "d"(D2));
 }
 
 /**
@@ -740,7 +744,9 @@ static inline void bios_vdp_fill(u32 vdpptr, u16 length, u16 value)
  * @details This is a simple data transfer via the VDP data port rather than
  * DMA.
  */
-static inline void bios_vdp_fill_clear(u32 vdpptr, u16 length)
+static inline void bios_vdp_fill_clear(
+	u32 vdpptr,
+	u16 length)
 {
 	register u32 D0 asm("d0") = vdpptr;
 	register u16 D1 asm("d1") = length;
@@ -749,7 +755,7 @@ static inline void bios_vdp_fill_clear(u32 vdpptr, u16 length)
   jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_VDP_FILL_CLEAR), "d"(D0), "d"(D1)
+		: "i"(BIOS_VDP_FILL_CLEAR), "d"(D0), "d"(D1)
 		: "d2");
 }
 
@@ -757,9 +763,11 @@ static inline void bios_vdp_fill_clear(u32 vdpptr, u16 length)
  * @fn bios_dma_fill_clear
  * @brief Fill a region of VDP memory with zero
  * @ingroup bios_vdp
- * @sa _BIOS_DMA_FILL_CLEAR
+ * @sa BIOS_DMA_FILL_CLEAR
  */
-static inline void bios_dma_fill_clear(u32 vdpptr, u16 length)
+static inline void bios_dma_fill_clear(
+	u32 vdpptr,
+	u16 length)
 {
 	register u32 D0 asm("d0") = vdpptr;
 	register u16 D1 asm("d1") = length;
@@ -770,17 +778,20 @@ static inline void bios_dma_fill_clear(u32 vdpptr, u16 length)
   move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BIOS_DMA_FILL_CLEAR), "d"(D0), "d"(D1)
+		: "i"(BIOS_DMA_FILL_CLEAR), "d"(D0), "d"(D1)
 		: "d2", "d3");
 }
 
 /**
  * @fn bios_dma_fill
  * @brief Fill a region of VDP memory with a value
- * @sa _BIOS_DMA_FILL
+ * @sa BIOS_DMA_FILL
  * @ingroup bios_vdp
  */
-static inline void bios_dma_fill(u32 vdpptr, u16 length, u16 value)
+static inline void bios_dma_fill(
+	u32 vdpptr,
+	u16 length,
+	u16 value)
 {
 	register u32 D0 asm("d0") = vdpptr;
 	register u16 D1 asm("d1") = length;
@@ -792,20 +803,24 @@ static inline void bios_dma_fill(u32 vdpptr, u16 length, u16 value)
   move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BIOS_DMA_FILL), "d"(D0), "d"(D1), "d"(D2)
+		: "i"(BIOS_DMA_FILL), "d"(D0), "d"(D1), "d"(D2)
 		: "d3");
 }
 
 /**
  * @fn bios_load_map
  * @brief Fill a region of a nametable with map data
- * @sa _BIOS_LOAD_MAP
+ * @sa BIOS_LOAD_MAP
  * @ingroup bios_vdp
  *
  * @details The map data should be an array of word values in the standard
  * nametable entry format.
  */
-static inline void bios_load_map(u32 const vdpptr, u16 const width, u16 const height, void const * map)
+static inline void bios_load_map(
+	u32 const		 vdpptr,
+	u16 const		 width,
+	u16 const		 height,
+	void const * map)
 {
 	register u32 D0 asm("d0") = vdpptr;
 	register u16 D1 asm("d1") = width;
@@ -817,14 +832,14 @@ static inline void bios_load_map(u32 const vdpptr, u16 const width, u16 const he
   jsr %p1 \n\
 		"
 		: "+d"(D2)
-		: "i"(_BIOS_LOAD_MAP), "d"(D0), "d"(D1), "d"(D2), "a"(A1)
+		: "i"(BIOS_LOAD_MAP), "d"(D0), "d"(D1), "d"(D2), "a"(A1)
 		: "d3", "a5", "cc");
 }
 
 /**
  * @fn bios_set_hint_workram
  * @brief Sets the HINT vector for a Work RAM destination
- * @sa _BIOS_SET_HINT_WORK_RAM
+ * @sa BIOS_SET_HINT_WORK_RAM
  * @ingroup bios_int
  *
  * @details
@@ -840,7 +855,7 @@ static inline void bios_load_map(u32 const vdpptr, u16 const width, u16 const he
  * use @ref bios_set_hint instead.
  *
  * @details
- * The VDP register buffer (_BIOS_VDP_REGS) is updated with this call.
+ * The VDP register buffer (BIOS_VDPREG_CACHE) is updated with this call.
  */
 static inline void bios_set_hint_workram(void * hint_handler)
 {
@@ -851,7 +866,7 @@ static inline void bios_set_hint_workram(void * hint_handler)
 			jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_SET_HINT_WORK_RAM), "a"(A1)
+		: "i"(BIOS_SET_HINT_WORK_RAM), "a"(A1)
 		: "cc");
 }
 
@@ -869,12 +884,12 @@ static inline void bios_disable_hint()
   jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_DISABLE_HINT)
+		: "i"(BIOS_DISABLE_HINT)
 		: "cc");
 }
 
 /**
- * @sa _BIOS_GFX_DECOMP
+ * @sa BIOS_GFX_DECOMP
  * @ingroup bios_cmp
  */
 static inline void bios_gfx_decomp(u8 const * data)
@@ -885,11 +900,11 @@ static inline void bios_gfx_decomp(u8 const * data)
 			jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_GFX_DECOMP), "a"(a1_data));
+		: "i"(BIOS_GFX_DECOMP), "a"(a1_data));
 }
 
 /**
- * @sa _BIOS_VDP_DISP_ENABLE
+ * @sa BIOS_VDP_DISP_ENABLE
  * @ingroup bios_vdp
  */
 static inline void bios_vdp_disp_enable()
@@ -899,11 +914,11 @@ static inline void bios_vdp_disp_enable()
 			jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_VDP_DISP_ENABLE));
+		: "i"(BIOS_VDP_DISP_ENABLE));
 }
 
 /**
- * @sa _BIOS_VDP_DISP_DISABLE
+ * @sa BIOS_VDP_DISP_DISABLE
  * @ingroup bios_vdp
  */
 static inline void bios_vdp_disp_disable()
@@ -913,14 +928,14 @@ static inline void bios_vdp_disp_disable()
 			jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_VDP_DISP_DISABLE));
+		: "i"(BIOS_VDP_DISP_DISABLE));
 }
 
 /**
  * @fn bios_vint_wait_default
  * @brief Wait for VBLANK interrupt with default flags
  * @ingroup bios_int
- * @sa _BIOS_VINT_WAIT_DEFAULT
+ * @sa BIOS_VINT_WAIT_DEFAULT
  *
  * @details This will set the default VINT flags (copy sprite list & call
  * VINT_USER) before waiting for VINT
@@ -936,7 +951,7 @@ static inline void bios_vint_wait_default()
 			jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_VINT_WAIT_DEFAULT)
+		: "i"(BIOS_VINT_WAIT_DEFAULT)
 		: "d0");
 }
 
@@ -944,7 +959,7 @@ static inline void bios_vint_wait_default()
  * @fn bios_vint_wait
  * @brief Wait for VBLANK interrupt
  * @ingroup bios_int
- * @sa _BIOS_VINT_WAIT
+ * @sa BIOS_VINT_WAIT
  *
  * @note This will also make a call to _PRNG
  *
@@ -958,7 +973,7 @@ static inline void bios_vint_wait(u8 flags)
 			jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_VINT_WAIT), "d"(D0));
+		: "i"(BIOS_VINT_WAIT), "d"(D0));
 }
 
 /**
@@ -975,7 +990,9 @@ static inline void bios_vint_wait(u8 flags)
  *
  * @note Sets the palette update flag on _GFX_REFRESH
  */
-static inline bool bios_pal_fadeout(u8 palette_index, u8 length)
+static inline bool bios_pal_fadeout(
+	u8 palette_index,
+	u8 length)
 {
 	register u16 D0 asm("d0") = (u16) (palette_index << 1);
 	register u16 D1 asm("d1") = (u16) length;
@@ -986,7 +1003,7 @@ static inline bool bios_pal_fadeout(u8 palette_index, u8 length)
 			beq %l[fade_complete] \n\
 		"
 		:
-		: "i"(_BIOS_PAL_FADEOUT), "d"(D0), "d"(D1)
+		: "i"(BIOS_PAL_FADEOUT), "d"(D0), "d"(D1)
 		: "cc"
 		: fade_complete);
 
@@ -1012,7 +1029,7 @@ static inline void bios_load_font_defaults()
 			jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_LOAD_FONT_DEFAULTS)
+		: "i"(BIOS_LOAD_FONT_DEFAULTS)
 		: "d0", "d1", "d2", "d3", "d4", "a1", "a5");
 };
 
@@ -1021,7 +1038,11 @@ static inline void bios_load_font_defaults()
  * @brief Load the 1bpp graphics into VDP
  * @ingroup bios_misc
  */
-static inline void bios_load_1bpp_tiles(void * chr_data, u16 tile_count, VDPCMD dest, u32 color_pattern)
+static inline void bios_load_1bpp_tiles(
+	void * chr_data,
+	u16		 tile_count,
+	vdpcmd dest,
+	u32		 color_pattern)
 {
 	register u32 D0 asm("d0") = dest;
 	register u32 D1 asm("d1") = color_pattern;
@@ -1033,7 +1054,7 @@ static inline void bios_load_1bpp_tiles(void * chr_data, u16 tile_count, VDPCMD 
 			jsr %p2 \n\
 		"
 		: "+d"(D2), "+a"(A1)
-		: "i"(_BIOS_LOAD_1BPP_TILES), "a"(A1), "d"(D0), "d"(D1), "d"(D2)
+		: "i"(BIOS_LOAD_1BPP_TILES), "a"(A1), "d"(D0), "d"(D1), "d"(D2)
 		: "d3", "d4", "a5");
 };
 
@@ -1052,7 +1073,9 @@ static inline void bios_load_1bpp_tiles(void * chr_data, u16 tile_count, VDPCMD 
  * output variable (set in a1) rather than the standard input mirror in order
  * to use this correctly.
  */
-static inline void bios_input_repeat_delay(u8 * input, bool use_2p)
+static inline void bios_input_repeat_delay(
+	u8 * input,
+	bool use_2p)
 {
 	register u32 A1 asm("a1") = (u32) input;
 	register u16 D0 asm("d0") = (u16) use_2p;
@@ -1062,7 +1085,7 @@ static inline void bios_input_repeat_delay(u8 * input, bool use_2p)
 			jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_INPUT_REPEAT_DELAY), "a"(A1), "d"(D0)
+		: "i"(BIOS_INPUT_REPEAT_DELAY), "a"(A1), "d"(D0)
 		: "cc", "d1", "a5");
 }
 
@@ -1081,7 +1104,7 @@ static inline void bios_clear_comm()
 			jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_CLEAR_COMM)
+		: "i"(BIOS_CLEAR_COMM)
 		: "d0", "a6");
 }
 
@@ -1094,12 +1117,14 @@ static inline void bios_clear_comm()
  * @param[in] D0.l VRAM destination (vdpptr)
  *
  * @details Strings are terminated with 0xFF and use 0x00 for newline.
- * The value in _BIOS_FONT_TILE_BASE is added to each character byte, but no
+ * The value in BIOS_FONT_TILE_BASE is added to each character byte, but no
  * other transformations are done. This means that the font must begin at index
- * 0x20 at the earliest (where _BIOS_FONT_TILE_BASE is 0). Note that this can
+ * 0x20 at the earliest (where BIOS_FONT_TILE_BASE is 0). Note that this can
  * only use palette line 0.
  */
-static inline void bios_print(char const * string, VDPCMD pos)
+static inline void bios_print(
+	char const * string,
+	vdpcmd			 pos)
 {
 	register u32 A1 asm("a1") = (u32) string;
 	register u32 D0 asm("d0") = pos;
@@ -1109,7 +1134,7 @@ static inline void bios_print(char const * string, VDPCMD pos)
 			jsr %p1 \n\
 		"
 		: "+a"(A1)
-		: "i"(_BIOS_PRINT), "a"(A1), "d"(D0)
+		: "i"(BIOS_PRINT), "a"(A1), "d"(D0)
 		: "d1", "d2", "a5");
 };
 
@@ -1122,7 +1147,11 @@ static inline void bios_print(char const * string, VDPCMD pos)
  * @param[in] D3.w Value
  * @ingroup bios_vdp
  */
-static inline void bios_plane_fill(VDPCMD pos, u16 width, u16 height, u16 value)
+static inline void bios_plane_fill(
+	vdpcmd pos,
+	u16		 width,
+	u16		 height,
+	u16		 value)
 {
 	register u32 D0 asm("d0") = pos;
 	register u32 D1 asm("d1") = width;
@@ -1136,7 +1165,7 @@ static inline void bios_plane_fill(VDPCMD pos, u16 width, u16 height, u16 value)
     	move.l (sp)+, a6 \n\
   	"
 		: "+d"(D2)
-		: "i"(_BIOS_PLANE_FILL), "d"(D0), "d"(D1), "d"(D2), "d"(D3)
+		: "i"(BIOS_PLANE_FILL), "d"(D0), "d"(D1), "d"(D2), "d"(D3)
 		: "cc", "d5", "a5");
 };
 
@@ -1148,7 +1177,10 @@ static inline void bios_plane_fill(VDPCMD pos, u16 width, u16 height, u16 value)
  * @param[in] D2.w Length (in words)
  * @ingroup bios_vdp
  */
-static inline void bios_dma_xfer(VDPCMD dest, u8 const * source, u16 length)
+static inline void bios_dma_xfer(
+	vdpcmd		 dest,
+	u8 const * source,
+	u16				 length)
 {
 	register u32 D0 asm("d0") = dest;
 	register u32 D1 asm("d1") = (u32) source;
@@ -1161,7 +1193,7 @@ static inline void bios_dma_xfer(VDPCMD dest, u8 const * source, u16 length)
   		move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BIOS_DMA_XFER), "d"(D0), "d"(D1), "d"(D2)
+		: "i"(BIOS_DMA_XFER), "d"(D0), "d"(D1), "d"(D2)
 		: "d3");
 };
 
@@ -1177,7 +1209,10 @@ static inline void bios_dma_xfer(VDPCMD dest, u8 const * source, u16 length)
  * Word RAM to VRAM which must be accounted for by writing the final word of
  * data to the data port. This subroutine takes care of that extra step.
  */
-static inline void bios_dma_xfer_word_ram(VDPCMD const dest, void const * source, u16 const length)
+static inline void bios_dma_xfer_word_ram(
+	vdpcmd const dest,
+	void const * source,
+	u16 const		 length)
 {
 	register u32 D0 asm("d0") = dest;
 	register u32 D1 asm("d1") = (u32) source;
@@ -1190,7 +1225,7 @@ static inline void bios_dma_xfer_word_ram(VDPCMD const dest, void const * source
   move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BIOS_DMA_XFER_WORD_RAM), "d"(D0), "d"(D1), "d"(D2)
+		: "i"(BIOS_DMA_XFER_WORD_RAM), "d"(D0), "d"(D1), "d"(D2)
 		: "cc", "d3");
 };
 
@@ -1202,7 +1237,10 @@ static inline void bios_dma_xfer_word_ram(VDPCMD const dest, void const * source
  * @param[in] D2.w Length
  * @ingroup bios_vdp
  */
-static inline void bios_dma_copy(u32 vdpptr_dest, u16 source, u16 length)
+static inline void bios_dma_copy(
+	u32 vdpptr_dest,
+	u16 source,
+	u16 length)
 {
 	register u32 D0 asm("d0") = vdpptr_dest;
 	register u16 D1 asm("d1") = source;
@@ -1215,7 +1253,7 @@ static inline void bios_dma_copy(u32 vdpptr_dest, u16 source, u16 length)
   move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BIOS_DMA_COPY), "d"(D0), "d"(D1), "d"(D2)
+		: "i"(BIOS_DMA_COPY), "d"(D0), "d"(D1), "d"(D2)
 		: "d3");
 };
 
@@ -1235,7 +1273,7 @@ static inline void bios_copy_sprlist()
 			jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_COPY_SPRLIST)
+		: "i"(BIOS_COPY_SPRLIST)
 		: "d4", "a4");
 };
 
@@ -1246,7 +1284,9 @@ static inline void bios_copy_sprlist()
  * @param[in] D7.l Size to clear (in longs) MINUS 1
  * @ingroup bios_misc
  */
-static inline void bios_clear_ram(void * address, u32 long_count)
+static inline void bios_clear_ram(
+	void * address,
+	u32		 long_count)
 {
 	register u32 A0 asm("a0") = (u32) address;
 	register u32 D7 asm("d7") = long_count;
@@ -1258,7 +1298,7 @@ static inline void bios_clear_ram(void * address, u32 long_count)
 			move.l (sp)+, a6 \n\
 		"
 		:
-		: "i"(_BIOS_CLEAR_RAM), "d"(D7), "a"(A0));
+		: "i"(BIOS_CLEAR_RAM), "d"(D7), "a"(A0));
 };
 
 /**
@@ -1278,7 +1318,7 @@ static inline void bios_load_pal(Palette const * pal_data)
 			jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_LOAD_PAL), "a"(A1)
+		: "i"(BIOS_LOAD_PAL), "a"(A1)
 		: "d0");
 };
 
@@ -1297,7 +1337,7 @@ static inline void bios_load_pal_update(Palette const * pal_data)
 			jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_LOAD_PAL_UPDATE), "a"(A1)
+		: "i"(BIOS_LOAD_PAL_UPDATE), "a"(A1)
 		: "d0");
 };
 
@@ -1315,7 +1355,7 @@ static inline void bios_copy_pal()
 			jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_COPY_PAL)
+		: "i"(BIOS_COPY_PAL)
 		: "cc", "a4", "d4");
 };
 
@@ -1329,7 +1369,10 @@ static inline void bios_copy_pal()
  * @ingroup bios_vdp
  */
 static inline void bios_process_entities(
-	struct Entity const * obj_array, Sprite const * sprtbl_cache, u16 const obj_count, u16 const obj_size)
+	Entity const * obj_array,
+	Sprite const * sprtbl_cache,
+	u16 const			 obj_count,
+	u16 const			 obj_size)
 {
 	register u32 A0 asm("a0") = (u32) obj_array;
 	register u32 A1 asm("a1") = (u32) sprtbl_cache;
@@ -1341,7 +1384,7 @@ static inline void bios_process_entities(
   jsr %c2 \n\
 		"
 		: "+a"(A0), "+a"(A1)
-		: "i"(_BIOS_PROCESS_ENTITIES), "a"(A0), "a"(A1), "d"(D0), "d"(D1)
+		: "i"(BIOS_PROCESS_ENTITIES), "a"(A0), "a"(A1), "d"(D0), "d"(D1)
 		: "d2", "d3", "d4", "d6", "a2");
 };
 
@@ -1370,7 +1413,7 @@ static inline u16 bios_prng_mod(u16 const modulo)
   jsr %p1 \n\
 		"
 		: "+d"(d0_random)
-		: "i"(_BIOS_PRNG_MOD), "d"(d0_modulo)
+		: "i"(BIOS_PRNG_MOD), "d"(d0_modulo)
 		: "d1");
 
 	return d0_random;
@@ -1390,7 +1433,7 @@ static inline void bios_prng()
   jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_PRNG)
+		: "i"(BIOS_PRNG)
 		: "d0");
 };
 
@@ -1404,7 +1447,7 @@ static inline void bios_prng()
  */
 static inline void bios_set_fadein_pal(Palette const * palette)
 {
-	register u32 a1_BIOS_PALETTE asm("a1") = (u32) palette;
+	register u32 a1_bios_palette asm("a1") = (u32) palette;
 	register u32 a1_change asm("a1");
 
 	asm volatile(
@@ -1412,7 +1455,7 @@ static inline void bios_set_fadein_pal(Palette const * palette)
   jsr %p1 \n\
 		"
 		: "=a"(a1_change)
-		: "i"(_BIOS_SET_FADEIN_PAL), "a"(a1_BIOS_PALETTE));
+		: "i"(BIOS_SET_FADEIN_PAL), "a"(a1_bios_palette));
 };
 
 /**
@@ -1422,11 +1465,11 @@ static inline void bios_set_fadein_pal(Palette const * palette)
  *
  * @details The fade-in routine works a little bit differently from the
  * fade-out counterpart. Instead of checking the Z flag, the value of
- * _BIOS_FADEIN_STEP should be checked. If it is > 0, the fade is not yet
+ * BIOS_FADEIN_STEP should be checked. If it is > 0, the fade is not yet
  * complete.
  *
  * This may be a bug in the implementation. Using the Z flag to check for
- * completion *could* work, as the code checks whether _BIOS_FADEIN_STEP is
+ * completion *could* work, as the code checks whether BIOS_FADEIN_STEP is
  * zero with a TST opcode. However, this is followed by setting the VDP flags
  * for a palette update, which will set the Z flag if palette update flag was
  * not already set.
@@ -1438,7 +1481,7 @@ static inline void bios_pal_fadein()
   jsr %c0 \n\
 		"
 		:
-		: "i"(_BIOS_PAL_FADEIN));
+		: "i"(BIOS_PAL_FADEIN));
 }
 
 /**
@@ -1476,7 +1519,7 @@ static inline void bios_dma_queue(DmaTransfer const * queue)
   move.l (sp)+, a6 \n\
 		"
 		: "=a"(a1_change)
-		: "i"(_BIOS_DMA_QUEUE), "a"(a1_queue)
+		: "i"(BIOS_DMA_QUEUE), "a"(a1_queue)
 		: "d0", "d1", "d2", "d3");
 }
 

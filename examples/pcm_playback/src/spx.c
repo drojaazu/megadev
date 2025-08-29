@@ -1,4 +1,5 @@
 
+#include "bridge.h"
 #include <sub/cdrom.h>
 #include <sub/gate_arr.h>
 #include <sub/memmap.h>
@@ -6,40 +7,53 @@
 
 // void PCM_PLAYBACK_C(u8 * pcm_data, u32 pcm_data_size);
 
-static inline void PCM_PLAYBACK_C(u8 * pcm_data, u32 pcm_data_size)
+char const * const			 filenames[] = {"IPX.MMD;1"};
+
+const PcmChannelSettings pcmSettings = {0xff, 0xff, 0x6b, 0x5, 0, 0, 0};
+
+static inline void			 PCM_PLAYBACK_C(
+				u8 * pcm_data,
+				u32	 pcm_data_size)
 {
 	register u32 a0_pcm_data asm("a0") = (u32) pcm_data;
 	register u32 d0_data_size asm("d0") = pcm_data_size;
 
 	asm volatile("jsr PCM_PLAYBACK"
-		: "+d"(d0_data_size), "+a"(a0_pcm_data)
-		: "d"(d0_data_size), "a"(a0_pcm_data)
-		: "cc", "d6", "d7", "a1", "a2");
+							 : "+d"(d0_data_size), "+a"(a0_pcm_data)
+							 : "d"(d0_data_size), "a"(a0_pcm_data)
+							 : "cc", "d6", "d7", "a1", "a2");
 }
 
-const PcmChannelSettings pcmSettings = {0xff, 0xff, 0x6b, 0x5, 0, 0, 0};
-
-void load_ipx();
-
-extern void sp_fatal();
+extern void														 sp_fatal();
 
 __attribute__((section(".init"))) void main()
 {
-	register u16 cmd0;
+	register u16 command, param1;
+
 	do
 	{
 		do
 		{
-			cmd0 = *GA_COMCMD0;
-		} while (cmd0 == 0);
+			command = *GA_COMCMD0;
+		} while (command == 0);
 
-		if (cmd0 != *GA_COMCMD0)
+		if (command != *GA_COMCMD0)
 			continue;
 
-		switch (cmd0)
-		{
+		param1 = *GA_COMCMD1;
 
-			case 2:
+		switch (command)
+		{
+			case CMD_LOAD_WORDRAM:
+				load_file(CDROM_LOAD_CDC, filenames[param1], (u8 *) _WORD_RAM_2M);
+				grant_2m();
+				if (access_op_result != CDROM_RESULT_OK)
+				{
+					sp_fatal();
+				}
+				break;
+
+			case CMD_LOAD_PRGRAM:
 				load_file(CDROM_LOAD_CDC, "AUDIO.PCM;1", (u8 *) _PRGRAM_1M_2);
 				if (access_op_result != CDROM_RESULT_OK)
 				{
@@ -47,7 +61,7 @@ __attribute__((section(".init"))) void main()
 				}
 				break;
 
-			case 0x10:
+			case CMD_PLAY_PCM:
 				pcm_clear_ram_c();
 
 				pcm_config_channel_c(CHANNEL(1), &pcmSettings);
@@ -66,28 +80,20 @@ __attribute__((section(".init"))) void main()
 
 				*GA_COMFLAGS_SUB &= ~0x80;
 				break;
-
-			// load IPX
-			case 0xfe:
-				load_file(CDROM_LOAD_CDC, "IPX.MMD;1", (u8 *) _WORD_RAM_2M);
-				grant_2m();
-				if (access_op_result != CDROM_RESULT_OK)
-				{
-					sp_fatal();
-				}
-				break;
 		}
 
 		*GA_COMSTAT0 = *GA_COMCMD0;
 		do
 		{
-			cmd0 = *GA_COMCMD0;
-		} while (cmd0 != 0);
+			asm("nop");
+			command = *GA_COMCMD0;
+		} while (command != 0);
 
 		do
 		{
-			cmd0 = *GA_COMCMD0;
-		} while (cmd0 != 0);
+			asm("nop");
+			command = *GA_COMCMD0;
+		} while (command != 0);
 
 		*GA_COMSTAT0 = 0;
 
@@ -108,16 +114,18 @@ __attribute__((section(".init"))) void main()
  * oddly sized files and streaming from disc with some further
  * modification.)
  */
-void pcm_playback(u8 * pcm_data, u32 pcm_data_size)
+void pcm_playback(
+	u8 * pcm_data,
+	u32	 pcm_data_size)
 {
 
 	bool pcm_put_upper = false;
 	// 32kb blocks
-	u8 pcmram_blocks = pcm_data_size / 0x8000;
+	u8	 pcmram_blocks = pcm_data_size / 0x8000;
 
 	// wave bank select
 	// put initial block of data into lower bank
-	u8 wb_select = WAVEBANK(0);
+	u8	 wb_select = WAVEBANK(0);
 	for (u8 copy_iter = 0; copy_iter < 8; ++copy_iter)
 	{
 		*PCM_CTRL = wb_select;

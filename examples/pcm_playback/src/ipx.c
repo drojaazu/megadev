@@ -1,21 +1,20 @@
-#include "ipx.h"
+#include "bridge.h"
 #include <fixed.h>
 #include <main/bios.h>
 #include <main/gate_arr.h>
 #include <main/io.def.h>
 #include <main/memmap.h>
-#include <main/mmd.h>
 #include <main/vdp.h>
 #include <system.h>
 #include <types.h>
 
-u8 global_mode;
-
 void play_pcm()
 {
-	*GA_COMCMD0 = 0x10;
+	*GA_COMCMD0 = CMD_PLAY_PCM;
 
-	bios_print("Playing...\xff", (VDPPTR(_BIOS_VDP_PLANEA_ADDR + PLANE_POS(1, 2, Width64)) | VRAM_W));
+	bios_print(
+		"Playing...\xff",
+		(vdpptr(BIOS_VDP_DEFAULT_PLANEA + PLANE_POS(1, 2, Width64)) | VRAM_W));
 
 	// wait for the playing flag to clear
 	while (*GA_COMFLAGS_SUB & 0x80)
@@ -27,13 +26,17 @@ void play_pcm()
 	while (*GA_COMSTAT0 != 0)
 		;
 
-	bios_print("Done      \xff", (VDPPTR(_BIOS_VDP_PLANEA_ADDR + PLANE_POS(1, 2, Width64)) | VRAM_W));
+	bios_print(
+		"Done      \xff",
+		(vdpptr(BIOS_VDP_DEFAULT_PLANEA + PLANE_POS(1, 2, Width64)) | VRAM_W));
 }
 
 void load_pcm()
 {
-	bios_print("Loading...\xff", (VDPPTR(_BIOS_VDP_PLANEA_ADDR + PLANE_POS(1, 2, Width64)) | VRAM_W));
-	*GA_COMCMD0 = 2;
+	bios_print(
+		"Loading...\xff",
+		(vdpptr(BIOS_VDP_DEFAULT_PLANEA + PLANE_POS(1, 2, Width64)) | VRAM_W));
+	*GA_COMCMD0 = CMD_LOAD_PRGRAM;
 	while (*GA_COMSTAT0 == 0)
 		;
 	*GA_COMCMD0 = 0;
@@ -45,18 +48,20 @@ void load_pcm()
 
 void main()
 {
-	// basic setup stuff we've covered elsewhere
-	MLEVEL6_VECTOR = (void *(*) ) _BIOS_VINT_HANDLER;
-	enable_interrupts();
 	bios_load_font_defaults();
 	bios_palette[1] = 0xeee;
-	bios_vdp_update_flags |= VDPUPDATE_PAL;
+	bios_vdp_update_flags |= BIOS_VDPUPDATE_COPY_PALETTE_FLAG;
+	bios_vint_wait_default();
 
-	bios_print("PCM Audio Playback\xff", (VDPPTR(_BIOS_VDP_PLANEA_ADDR + PLANE_POS(1, 1, Width64)) | VRAM_W));
+	bios_print(
+		"PCM Audio Playback\xff",
+		(vdpptr(BIOS_VDP_DEFAULT_PLANEA + PLANE_POS(1, 1, Width64)) | VRAM_W));
 
 	load_pcm();
 
-	bios_print("Press A to replay\xff", (VDPPTR(_BIOS_VDP_PLANEA_ADDR + PLANE_POS(1, 4, Width64)) | VRAM_W));
+	bios_print(
+		"Press A to replay\xff",
+		(vdpptr(BIOS_VDP_DEFAULT_PLANEA + PLANE_POS(1, 4, Width64)) | VRAM_W));
 
 	// main loop
 	while (true)

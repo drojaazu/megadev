@@ -11,7 +11,6 @@
 #include "mmd_layout.s"
 #include "bridge.h"
 
-ip_entry:
   // First, disable all interrupts while we do some basic init
   DISABLE_INTERRUPTS
 
@@ -25,19 +24,19 @@ ip_entry:
 
   // Next, begin to initialiaze video output (the VDP)
   // We will use the default VDP settings provided by the Main BIOS
-  // See the comments for _BIOS_LOAD_VDPREGS_DEFAULT for details on what those settings are.
-  jbsr     _BIOS_LOAD_VDPREGS_DEFAULT
+  // See the comments for BIOS_LOAD_DEFAULT_VDPREGS for details on what those settings are.
+  jbsr     BIOS_LOAD_DEFAULT_VDPREGS
 
   // Clear out VRAM in case there's any junk left over after the system startup graphics
   // (note: this does not clear CRAM!)
   // This is a BIOS call that makes use of the VDP register cache
   // Even if you don't plan to use the Main BIOS library, this call is safe
   // to use here as the memory will not be preserved after we jump to the IPX
-  jbsr     _BIOS_CLEAR_VRAM
+  jbsr     BIOS_CLEAR_VRAM
 
   // Clear the Gate Array communication registers
   // Again, we conveniently have a BIOS call to take of this
-  jbsr     _BIOS_CLEAR_COMM
+  jbsr     BIOS_CLEAR_COMM
 
   // point VINT vector to the minimal, temporary handler
   // (note that we use _MLEVEL6 *+ 2*, as the first two bytes are
@@ -46,12 +45,12 @@ ip_entry:
   // (Which needs to happen soon, as this keeps the Sub CPU on the Mega CD side in "sync" by alerting
   // it when a VBLANK occurs.)
   // Once again, the built-in BIOS has a handler that can help us. It uses a couple of bits in the
-  // _BIOS_VINT_HANDLER_FLAGS variable to call an user function and to update the sprite table (neither of which
+  // BIOS_VINT_HANDLER_FLAGS variable to call an user function and to update the sprite table (neither of which
   // we need right now, so we should make sure that is cleared out.)
   // We set the pointer to the handler in the system vector jump table. The +2 is because the first two
   // bytes are the JMP opcode and we want to set the address to which it jumps.
-  move     #0, (_BIOS_VINT_HANDLER_FLAGS)
-  move.l   #_BIOS_VINT_HANDLER, (_MLEVEL6 + 2)
+  move     #0, (BIOS_VINT_HANDLER_FLAGS)
+  move.l   #BIOS_VINT_HANDLER, (_MLEVEL6 + 2)
 
   // Restore interrupts to allow VINTs to fire and ultimately allow CD-ROM data to flow
   ENABLE_INTERRUPTS
@@ -67,7 +66,7 @@ ip_entry:
   WAIT_2M
 
   // Everything is almost ready to go, so let's re-enable the display
-  jbsr     _BIOS_VDP_DISP_ENABLE
+  jbsr     BIOS_VDP_DISP_ENABLE
 
   // Reset the stack since we're starting fresh
   movea.l  (0), sp

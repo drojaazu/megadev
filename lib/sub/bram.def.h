@@ -8,7 +8,7 @@
 #ifndef MEGADEV__SUB_BRAM_DEF_H
 #define MEGADEV__SUB_BRAM_DEF_H
 
-#include "sub/memmap.def.h"
+#include "sub/bios.def.h"
 
 /**
  * @def BRMINIT

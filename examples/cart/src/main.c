@@ -10,7 +10,7 @@
 volatile u8 p1_hold, p1_single, p1_prev;
 volatile u8 p2_hold, p2_single, p2_prev;
 
-void				update_inputs()
+void update_inputs()
 {
 	p1_hold = (read_input_joypad(io_data1));
 	p2_hold = (read_input_joypad(io_data2));
@@ -36,8 +36,8 @@ __attribute__((interrupt)) void INT4_HBLANK()
 	return;
 }
 
-volatile bool										vblank_done;
-u32															vblank_counter;
+volatile bool vblank_done;
+u32						vblank_counter;
 
 __attribute__((interrupt)) void INT6_VBLANK()
 {
@@ -49,38 +49,38 @@ __attribute__((interrupt)) void INT6_VBLANK()
 
 // copy of VDP registers in memory
 // these need to be updated to the VDP whenever they are updated
-u16	 vdp_regs[18];
+u16 vdp_regs[18];
 
 void update_vdp_regs()
 {
 	for (u8 i = 0; i < 18; ++i)
-		VDP_CTRL = vdp_regs[i];
+		vdp_ctrl = vdp_regs[i];
 }
 
 // copy of color RAM in memory
-u16	 cram[64];
+u16 cram[64];
 
 void update_cram_line(u8 pal_line)
 {
 	pal_line <<= 4;
-	VDP_CTRL_32 = VDPPTR(pal_line) | CRAM_W;
+	vdp_ctrl_32 = vdpptr(pal_line) | CRAM_W;
 	u16 * ptr_pal_line = cram + pal_line;
 	for (u8 i = 0; i < 16; ++i)
-		VDP_DATA = *ptr_pal_line++;
+		vdp_data = *ptr_pal_line++;
 }
 
 void update_cram()
 {
-	VDP_CTRL_32 = VDPPTR(0) | CRAM_W;
+	vdp_ctrl_32 = vdpptr(0) | CRAM_W;
 	u16 * ptr_pal_line = cram;
 	for (u8 i = 0; i < 64; ++i)
-		VDP_DATA = *ptr_pal_line++;
+		vdp_data = *ptr_pal_line++;
 }
 
 void clear_vram()
 {
 	for (u16 i = 0; i < (0x10000 / 4); ++i)
-		VDP_DATA_32 = 0;
+		vdp_data_32 = 0;
 }
 
 #define PLANE_A_ADDR 0x2000
@@ -93,36 +93,36 @@ void clear_vram()
 #endif
 
 u16 const default_vdp_regs[] = {
-	_VDPREG_MODE1 | VDP_HICOLOR_ENABLE,
-	_VDPREG_MODE2 | VDP_MD_DISPLAY_MODE | VDP_VINT_ENABLE | VIDEO_SIGNAL | VDP_DISPLAY_ENABLE,
-	_VDPREG_PLA_ADDR | (PLANE_A_ADDR / 0x400),
-	_VDPREG_WIN_ADDR | (0xa00 / 0x400),
-	_VDPREG_PLB_ADDR | (PLANE_B_ADDR / 0x2000),
-	_VDPREG_SPR_ADDR | (0xb800 / 0x200),
-	_VDPREG_SPR_ADDR2,
-	_VDPREG_BGCOLOR,
-	_VDPREG_HINT_COUNT,
-	_VDPREG_MODE3 | VDP_EXTINT_ENABLE,
-	_VDPREG_MODE4 | VDP_WIDTH_40CELL,
-	_VDPREG_HS_ADDR | (0xbc00 / 0x400),
-	_VDPREG_PL_ADDR2,
-	_VDPREG_AUTOINC | 2,
-	_VDPREG_PL_SIZE | VDP_PL_32x32,
-	_VDPREG_WIN_HPOS,
-	_VDPREG_WIN_VPOS};
+	VDPREG_MODE1 | VDP_HICOLOR_ENABLE,
+	VDPREG_MODE2 | VDP_MD_DISPLAY_MODE | VDP_VINT_ENABLE | VIDEO_SIGNAL | VDP_DISPLAY_ENABLE,
+	VDPREG_PLA_ADDR | (PLANE_A_ADDR / 0x400),
+	VDPREG_WIN_ADDR | (0xa00 / 0x400),
+	VDPREG_PLB_ADDR | (PLANE_B_ADDR / 0x2000),
+	VDPREG_SPR_ADDR | (0xb800 / 0x200),
+	VDPREG_SPR_ADDR2,
+	VDPREG_BGCOLOR,
+	VDPREG_HINT_COUNT,
+	VDPREG_MODE3 | VDP_EXTINT_ENABLE,
+	VDPREG_MODE4 | VDP_WIDTH_40CELL,
+	VDPREG_HS_ADDR | (0xbc00 / 0x400),
+	VDPREG_PL_ADDR2,
+	VDPREG_AUTOINC | 2,
+	VDPREG_PL_SIZE | VDP_PL_32x32,
+	VDPREG_WIN_HPOS,
+	VDPREG_WIN_VPOS};
 
-#define plane_xy(x, y) (VDPPTR(PLANE_POS(x, y, Width32) + PLANE_A_ADDR) | VRAM_W)
+#define plane_xy(x, y) (vdpptr(PLANE_POS(x, y, Width32) + PLANE_A_ADDR) | VRAM_W)
 
 void print(
 	char const * string,
-	VDPPTR			 pos)
+	vdpptr			 pos)
 {
-	VDP_CTRL_32 = pos;
+	vdp_ctrl_32 = pos;
 	while (*string != 0)
-		VDP_DATA = *string++;
+		vdp_data = *string++;
 }
 
-u8	 counter;
+u8 counter;
 
 void main()
 {
@@ -145,11 +145,11 @@ void main()
 
 	init_joypads();
 	vdp_regs[1] |= VDP_DMA_ENABLE;
-	VDP_CTRL = vdp_regs[1];
+	vdp_ctrl = vdp_regs[1];
 	asm("transfer:");
-	vdp_dma_transfer(res_basic_font, VDPPTR(VRAM_AT(0x20)), (res_basic_font_size << 1));
+	vdp_dma_transfer(res_basic_font, vdpptr(VRAMPTR(0x20)), (res_basic_font_size << 1));
 	vdp_regs[1] &= ~VDP_DMA_ENABLE;
-	VDP_CTRL = vdp_regs[1];
+	vdp_ctrl = vdp_regs[1];
 
 	enable_interrupts();
 

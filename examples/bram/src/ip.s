@@ -8,8 +8,10 @@
 #include <system.macros.s>
 #include "bram_demo_layout.s"
 
-ip_entry:
-  // First, disable all interrupts while we do some basic init
+/*
+  Please see the ip.s file in the ipx_spx project for details about the process below.
+*/
+
   DISABLE_INTERRUPTS
   
 	// clear ram
@@ -21,40 +23,15 @@ ip_entry:
 0:move.l   d0, (a0)+
 1:dbra     d1, 0b
 
-  // Next, begin to initialiaze video output (the VDP)
-  // We will use the default VDP settings provided by the Main BIOS
-  // See the comments for _BIOS_LOAD_VDPREGS_DEFAULT for details on what those settings are.
-  jbsr     _BIOS_LOAD_VDPREGS_DEFAULT
+  jbsr     BIOS_LOAD_DEFAULT_VDPREGS
+  jbsr     BIOS_CLEAR_VRAM
+  jbsr     BIOS_CLEAR_COMM
 
-  // Clear out VRAM in case there's any junk left over after the system startup graphics
-  // (note: this does not clear CRAM!)
-  // This is a BIOS call that makes use of the VDP register cache
-  // Even if you don't plan to use the Main BIOS library, this call is safe
-  // to use here as the memory will not be preserved after we jump to the IPX
-  jbsr     _BIOS_CLEAR_VRAM
+  move     #0, (BIOS_VINT_HANDLER_FLAGS)
+  move.l   #BIOS_VINT_HANDLER, (_MLEVEL6 + 2)
 
-  // Clear the Gate Array communication registers
-  // Again, we conveniently have a BIOS call to take of this
-  jbsr     _BIOS_CLEAR_COMM
-
-  // point VINT vector to the minimal, temporary handler
-  // (note that we use _MLEVEL6 *+ 2*, as the first two bytes are
-  // a jmp/bra opcode)
-  // We need to set up the VBLANK interrupt (VINT) handler before we can turn interrupts back on.
-  // (Which needs to happen soon, as this keeps the Sub CPU on the Mega CD side in "sync" by alerting
-  // it when a VBLANK occurs.)
-  // Once again, the built-in BIOS has a handler that can help us. It uses a couple of bits in the
-  // _BIOS_VINT_HANDLER_FLAGS variable to call an user function and to update the sprite table (neither of which
-  // we need right now, so we should make sure that is cleared out.)
-  // We set the pointer to the handler in the system vector jump table. The +2 is because the first two
-  // bytes are the JMP opcode and we want to set the address to which it jumps.
-  move     #0, (_BIOS_VINT_HANDLER_FLAGS)
-  move.l   #_BIOS_VINT_HANDLER, (_MLEVEL6 + 2)
-
-  // Restore interrupts to allow VINTs to fire and ultimately allow CD-ROM data to flow
   ENABLE_INTERRUPTS
 
-  // make IPX file request to SP
 	GRANT_2M
   move.w	#0xfe, _GAREG_COMCMD0	//send the load IPX command to sub
 0:tst.w		_GAREG_COMSTAT0				//wait for response on status reg #0
@@ -64,18 +41,9 @@ ip_entry:
 	bne			1b
 	WAIT_2M
 
-  // Everything is almost ready to go, so let's re-enable the display
-  jbsr     _BIOS_VDP_DISP_ENABLE
+  jbsr     BIOS_VDP_DISP_ENABLE
 
 	// Reset the stack since we're starting fresh
 	movea.l (0), sp
 
-	// the IPX is a special case, so we won't use the standard MMD loader
-	// (doing so would cause the mmd loader code to be overwritten as the
-	// ipx is copied into work ram (where we are now) and everything would
-	// fall apart)
-	// instead, we'll jump right into the IPX entry currently in Word RAM
-	// which will copy itself into Work RAM
 	jbra _WORD_RAM + 0x100
-
-	.align 2

@@ -18,6 +18,8 @@ TARGET:=MEGACD
 # ASCII text only; maximum of 48 characters
 PROJECT_NAME:="IPX SPX EXAMPLE"
 
+HEADER_SOFTWARE_ID="MEGADEV DEMO"
+
 ## Hardware Region
 # This is *very important* for Mega CD builds as it determines which security code to use. It can be changed at compile
 # time by setting the variable when running make.
@@ -29,7 +31,7 @@ REGION?=US
 # Valid values: NTSC, PAL
 VIDEO?=NTSC
 
-## The following directory paths are relative to the location of this makefile
+## The following directory paths are relative to the location of this makefile``
 ## (which should ideally be in the root of your project directory)
 
 ## Source code path
@@ -75,44 +77,45 @@ init:
 	@mkdir -p $(DISC_PATH)
 
 disc: \
-	disc/ipx.mmd \
-	disc/ex1.mmd \
-	disc/ex2.mmd \
-	disc/ex3.mmd \
-	disc/spx.smd \
+	$(DISC_PATH)/ipx.mmd \
+	$(DISC_PATH)/spx.smd \
+	$(DISC_PATH)/ex1.mmd \
+	$(DISC_PATH)/ex2.mmd \
+	$(DISC_PATH)/ex3.mmd \
 	$(PROJECT_ID).iso
 
 clean:
-	@rm -f $(PROJECT_ID).iso disc/*.mmd disc/*.smd build/* > /dev/null 2>&1
+	@rm -f $(PROJECT_ID).iso $(DISC_PATH)/*.mmd $(DISC_PATH)/*.smd $(BUILD_PATH)/* > /dev/null 2>&1
 
-disc/ipx.mmd: \
+$(DISC_PATH)/ipx.mmd: \
+	test.c \
 	ipx_layout.s \
 	main/ipx_init.s \
 	ipx.c \
 	io.macros.s
 
-disc/ex1.mmd: \
+$(DISC_PATH)/ex1.mmd: \
 	shared_mmd_layout.s \
 	std_init.s \
 	ex1.c \
 	ex1_res.s \
-	disc/ipx.mmd
+	$(DISC_PATH)/ipx.mmd
 
-disc/ex2.mmd: \
+$(DISC_PATH)/ex2.mmd: \
 	shared_mmd_layout.s \
 	std_init.s \
 	ex2.c \
 	ex2_res.s \
-	disc/ipx.mmd
+	$(DISC_PATH)/ipx.mmd
 
-disc/ex3.mmd: \
+$(DISC_PATH)/ex3.mmd: \
 	shared_mmd_layout.s \
 	std_init.s \
 	ex3.c \
 	ex3_res.s \
-	disc/ipx.mmd
+	$(DISC_PATH)/ipx.mmd
 
-disc/spx.smd: \
+$(DISC_PATH)/spx.smd: \
 	spx_layout.s \
 	spx.c \
 	$(BUILD_PATH)/sp.bin

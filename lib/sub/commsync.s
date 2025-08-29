@@ -2,7 +2,7 @@
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
  * @file commsync.s
- * @brief Gate Array comm register sync for use with _BIOS_COMM_SYNC in the
+ * @brief Gate Array comm register sync for use with BIOS_COMM_SYNC in the
  * Boot ROM library (EXPERIMENTAL)
  * 
  * This still needs a fair amount of research...

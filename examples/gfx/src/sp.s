@@ -32,9 +32,9 @@ GLABEL sp_init
 	// it's important to drvinit/cdbstat here even if bios already did it
 	// otherwise there may be issues with CD audio track playback
 	lea drvinit_tracklist, a0
-	CDBIOS #_BIOS_DRVINIT
+	CDBIOS #BIOS_DRVINIT
 	// loop until done reading the disc TOC
-1:CDBIOS #_BIOS_CDBSTAT
+1:CDBIOS #BIOS_CDBSTAT
 	andi.b	#0xf0, (_CDSTAT).w
 	bne			1b
   CLEAR_COMM_REGS
@@ -144,8 +144,8 @@ cmd02_play_cdda:
 	add.w d1, d1
 	lea	cd_track(pc,d1.w), a0
 	move.w	#0x400, d1
-	CDBIOS #_BIOS_FDRSET
-	CDBIOS #_BIOS_MSCPLAYR
+	CDBIOS #BIOS_FDRSET
+	CDBIOS #BIOS_MSCPLAYR
 	bra			command_complete_sync
 cd_track:
 	.word 2
@@ -163,7 +163,7 @@ sp_fatal:
 	// make both LEDs blink (which is normally disallowed but Sega QA isn't
 	// here to boss us around)
 	moveq		#_LED_ERROR, d1
-	CDBIOS #_BIOS_LEDSET
+	CDBIOS #BIOS_LEDSET
 0:nop
 	nop
 	bra 0b

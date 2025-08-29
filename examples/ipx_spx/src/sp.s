@@ -42,9 +42,9 @@ GLABEL sp_init
     even though already did it, otherwise there may be issues with CD audio track playback
   */
   lea drvinit_tracklist, a0
-  CDBIOS   #_BIOS_DRVINIT
+   CDBIOS   #BIOS_DRVINIT
   // loop until done reading the disc TOC
-1:CDBIOS   #_BIOS_CDBSTAT
+1:CDBIOS   #BIOS_CDBSTAT
   andi.b   #0xf0, (_CDSTAT).w
   bne      1b
   CLEAR_COMM_REGS
@@ -107,7 +107,7 @@ GLABEL sp_fatal
   // make both LEDs blink (which is normally disallowed but Sega QA isn't
   // here to boss us around)
   moveq    #_LED_ERROR, d1
-  CDBIOS   #_BIOS_LEDSET
+  CDBIOS   #BIOS_LEDSET
 0:nop
   nop
   bra      0b

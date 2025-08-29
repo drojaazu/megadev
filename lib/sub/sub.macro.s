@@ -8,8 +8,9 @@
 #ifndef MEGADEV__SUB_MACROS_S
 #define MEGADEV__SUB_MACROS_S
 
-#include "sub/memmap.def.h"
-#include "sub/gate_arr.def.h"
+#include <sub/memmap.def.h>
+#include <sub/gate_arr.def.h>
+#include <sub/bios.def.h>
 
 /**
  * @macro BURAM

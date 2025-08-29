@@ -4,8 +4,18 @@ BasedOnStyle: LLVM
 
 AlignAfterOpenBracket: AlwaysBreak
 AlignEscapedNewlines: LeftWithLastLine
-AlignConsecutiveDeclarations: AcrossEmptyLinesAndComments
-AlignConsecutiveMacros: Consecutive
+AlignConsecutiveBitFields:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: false
+AlignConsecutiveDeclarations:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: false
+AlignConsecutiveMacros:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: false
 AlignOperands: Align
 AlignTrailingComments: true
 AllowAllArgumentsOnNextLine: true
@@ -24,7 +34,7 @@ BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: AfterColon
 BinPackArguments: false
 BinPackParameters: AlwaysOnePerLine
-ColumnLimit: 120
+ColumnLimit: 80
 ContinuationIndentWidth: 2
 Cpp11BracedListStyle: true
 MaxEmptyLinesToKeep: 1
@@ -36,7 +46,7 @@ SortIncludes: true
 SpaceAfterCStyleCast: true
 SpaceAfterLogicalNot: true
 SpaceAroundPointerQualifiers: Both
-SpaceBeforeAssignmentOperators: true
+SpaceBeforeAssignmentOperators: 
 SpaceBeforeCpp11BracedList: true
 SpaceBeforeCtorInitializerColon: true
 SpaceBeforeInheritanceColon: true

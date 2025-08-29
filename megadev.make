@@ -207,7 +207,7 @@ $(BUILD_PATH)/ip.bin: $(BUILD_PATH)/ip.bin.elf
 #@$(CC) $(CC_FLAGS) -I$(MEGADEV_PATH)/lib -c $< -o $@
 $(BUILD_PATH)/security.s.o: $(MEGADEV_PATH)/lib/security.c
 	$(call msg_info,Creating security block)
-	$(CC) $(CC_FLAGS) $(INC) -c $< -o $@
+	@$(CC) $(CC_FLAGS) $(INC) -c $< -o $@
 
 $(BUILD_PATH)/ip.bin.elf: $(BUILD_PATH)/security.s.o $(BUILD_PATH)/ip.s.o
 	@$(LD) $(LD_FLAGS) -T$(CFG_PATH)/ip.ld -o$@ $^

@@ -266,9 +266,9 @@ The VINT component is useful but requires a commitment to using the Main BIOS li
 
 The VINT handler also calls VINT_USER which points to a user-defined function that performs your game-specific logic during the VBLANK interval.
 
-The VINT handler also uses a variable defined as `_BIOS_VINT_HANDLER_FLAGS` which acts as both the "VBLANK occured" indicator and as a set of update flags. Only two bits are used by the handler: bit 0, which will copy the sprite list cache to VRAM when set, and bit 1, which will call VINT_USER when set. The value is always reset to zero at the end of the handler code, so the wait routines check that this value is zero to indicate a VBLANK has completed. Note that, although it uses bit 0 of `_BIOS_VINT_HANDLER_FLAGS`, `_BIOS_COPY_SPRLIST` is not actually called in the VINT routine. You will need to include a call to that routine in your VINT_USER function.
+The VINT handler also uses a variable defined as `BIOS_VINT_HANDLER_FLAGS` which acts as both the "VBLANK occured" indicator and as a set of update flags. Only two bits are used by the handler: bit 0, which will copy the sprite list cache to VRAM when set, and bit 1, which will call VINT_USER when set. The value is always reset to zero at the end of the handler code, so the wait routines check that this value is zero to indicate a VBLANK has completed. Note that, although it uses bit 0 of `BIOS_VINT_HANDLER_FLAGS`, `BIOS_COPY_SPRLIST` is not actually called in the VINT routine. You will need to include a call to that routine in your VINT_USER function.
 
-There are two VBLANK wait routines which are mostly identical. These calls enter a tight loop waiting for VINT_FLAGS to be reset to 0 (which will be set when VBLANK occurs), and will update the random number generator on each iteration. The only difference between the two is that `_BIOS_VINT_WAIT_DEFAULT` will set both VINT Update flags (copy sprite list and call VINT_USER), while `_BIOS_VINT_WAIT` will not set any flags beforehand.
+There are two VBLANK wait routines which are mostly identical. These calls enter a tight loop waiting for VINT_FLAGS to be reset to 0 (which will be set when VBLANK occurs), and will update the random number generator on each iteration. The only difference between the two is that `BIOS_VINT_WAIT_DEFAULT` will set both VINT Update flags (copy sprite list and call VINT_USER), while `BIOS_VINT_WAIT` will not set any flags beforehand.
 
 Please see the `gfx` example project which uses the VINT component.
 
@@ -297,21 +297,21 @@ However, a number of Main BIOS library routines expect the VRAM to have a specif
 
 This is a pretty standard layout that would work well for many applications, but your usage may vary throughout your program. It is possible to change this layout so long as the the blocks specifically used by a certain call are in their expected location. For example, the sprite list update calls expect the sprite table to be at 0xB800, but it doesn't address anything else in VRAM, and thus the rest of the layout can be different so long as the sprite table is at 0xB800. For each call that expects this layout, we will mark which blocks are used/affected.
 
-This layout is set when using the default VDP register values in `_BIOS_LOAD_VDPREGS_DEFAULT`. 
+This layout is set when using the default VDP register values in `BIOS_LOAD_DEFAULT_VDPREGS`. 
 
 ## VDP Register Cache Component
 
 Since the value of VDP registers cannot be read (except for the Status register), we must maintain a mirror of those values in RAM for reference in order to preserve settings when making bitwise changes. For example, when performing a DMA operation, we must first set bit #4 on Mode Register 2. Since we cannot do a bitwise operation and must set the whole register at once, we need to know the current value so we do not alter any other bit level settings.
 
-The cache is an array of 18 words (36 bytes), one for each of the first 18 registers. (The DMA register values are not maintained, as they need to be set on each DMA operation anyway.) It is defined as `_BIOS_VDP_REGS` within Megadev.
+The cache is an array of 18 words (36 bytes), one for each of the first 18 registers. (The DMA register values are not maintained, as they need to be set on each DMA operation anyway.) It is defined as `BIOS_VDPREG_CACHE` within Megadev.
 
 ## Plane Width Cache Component
 
 The width and height of planes can be adjusted in VDP Register 0x10 to one of three values. It is important to know the current width when working with tilemaps, as the nametable data is linear. That is, to arrive at the next line in the same column, we move forward by the width of the plane in bytes in nametable memory. Thus, the plane width must be cached.
 
-All of the nametable (tilemap) related functions use the plane width cache, which is a byte value defined as `_BIOS_VDP_PLANE_WIDTH`. Note that this value is the width *in bytes* rather than tiles. At two bytes per entry, this means the value should simply be double the width in tiles. I.E.: 32 tiles = 64 byte width, 64 tiles = 128 byte width, 128 tiles = 256 byte width.
+All of the nametable (tilemap) related functions use the plane width cache, which is a byte value defined as `BIOS_VDP_DEFAULT_PLANE_WIDTH`. Note that this value is the width *in bytes* rather than tiles. At two bytes per entry, this means the value should simply be double the width in tiles. I.E.: 32 tiles = 64 byte width, 64 tiles = 128 byte width, 128 tiles = 256 byte width.
 
-Also note that this value must be manually updated whenever changing the width setting in VDP Register 0x10! The only exception to this is when using `_BIOS_LOAD_VDPREGS_DEFAULT` which will update the plane width cache to match the default registers.
+Also note that this value must be manually updated whenever changing the width setting in VDP Register 0x10! The only exception to this is when using `BIOS_LOAD_DEFAULT_VDPREGS` which will update the plane width cache to match the default registers.
 
 ## DMA Component
 
@@ -323,7 +323,7 @@ The VDP Register Cache component is required as Mode Register 2 is updated with 
 
 Rather than making multiple updates to CRAM via the VDP ports, the color palette is mirrored in RAM and dumped to CRAM all at once during a blanking interval.
 
-The cache is an array of 64 words (128 bytes), a 1:1 copy of CRAM. Within Megadev, it is defined as `_BIOS_PALETTE` with each of the subpalettes defined as `_BIOS_PALETTE0`, `_BIOS_PALETTE1`, `_BIOS_PALETTE2` and `_BIOS_PALETTE3`. It resides in Work RAM from 0xFFFB80 to 0xFFFC00 (see the Main BIOS Use Block section above).
+The cache is an array of 64 words (128 bytes), a 1:1 copy of CRAM. Within Megadev, it is defined as `BIOS_PALETTE_CACHE` with each of the subpalettes defined as `BIOS_PALETTE0`, `BIOS_PALETTE1`, `BIOS_PALETTE2` and `BIOS_PALETTE3`. It resides in Work RAM from 0xFFFB80 to 0xFFFC00 (see the Main BIOS Use Block section above).
 
 The palette-related functions take a pointer to color data with a two byte header. The first byte is the offset into CRAM at which the colors should be loaded. This offset is in BYTES rather than entries. Each entry is 2 bytes so e.g. the second color of the second subpalette would be offset 34. The second byte is the number of colors to load, which is counted in ENTRIES rather than bytes. The color data follows immediately.
 
@@ -337,7 +337,7 @@ See also Fixed VRAM Layout component.
 
 ## VDP Update Flags Component
 
-Rather than unconditionally copying everything to the VDP on a blanking interval, we should only copy over data that had a change. This is done by maintaining a set of flags that indicate which parts need action and which do not need any updates. In the Boot ROM, this is a byte defined as `_BIOS_VDP_UPDATE_FLAGS`.
+Rather than unconditionally copying everything to the VDP on a blanking interval, we should only copy over data that had a change. This is done by maintaining a set of flags that indicate which parts need action and which do not need any updates. In the Boot ROM, this is a byte defined as `BIOS_VDP_UPDATE_FLAGS`.
 
 Only one bit is actually used by the library functions: bit 0, to indicate the palette cache should be copied to CRAM. This bit must be used if you plan to use palette related functions like fade in/out.
 
@@ -350,7 +350,7 @@ An entity is any element appearing on screen as composite of multiple sprites wi
 In most games (including the Main BIOS library), entities have state related to their position, velocity and x/y flipping, etc. Moreover, they contain a pointer to a function which is run on each update.
 
 The Entity struct represents the object and its state.
-TODO jmptble_offset is offset into _BIOS_ENTITY_ROUTINES
+TODO jmptble_offset is offset into BIOS_ENTITY_ROUTINES
 ptr to SpriteList
 
 sprite list is:
@@ -373,23 +373,23 @@ each sprite in the list is 6 bytes, in the Sonic 1 format ( http://info.sonicret
  * to make them 6 bytes each (likely for CPU alignment)
  */
 
-After much analysis and testing, the code interacts with the sprite list unknown byte mentioned above, but does do anything with it. Its value is copied to offset 0x19 within the sprobj as part of the `_BIOS_DISP_SPROBJ` routine. If the h flip flag is set, it adds to this same offset. Aside form that, the value seems to have no effect on what is displayed and it's unclear for what it is intended.
+After much analysis and testing, the code interacts with the sprite list unknown byte mentioned above, but does do anything with it. Its value is copied to offset 0x19 within the sprobj as part of the `BIOS_DISP_SPROBJ` routine. If the h flip flag is set, it adds to this same offset. Aside form that, the value seems to have no effect on what is displayed and it's unclear for what it is intended.
 
 The sprobjs calls are used by the BIOS CD player and Wondermega Collection.
 
 ## Random Number Generator Component
 
-There is a simple multiply-with-carry psuedo random number generator available within the Main BIOS library. A random number can be obtained by reading the word value from `_BIOS_RANDOM`. However, the `_BIOS_PRNG` must be called on each VBLANK iteration in order to maintain a constantly random value. `_BIOS_PRNG_MOD` can be used to get a value with a maximum range.
+There is a simple multiply-with-carry psuedo random number generator available within the Main BIOS library. A random number can be obtained by reading the word value from `BIOS_RANDOM`. However, the `BIOS_PRNG` must be called on each VBLANK iteration in order to maintain a constantly random value. `BIOS_PRNG_MOD` can be used to get a value with a maximum range.
 
 ## Font & Print Component
 
 There is only one print routine, which take a pointer to the text and a pointer to a VRAM nametable address where it should be displayed. Unlike C strings, text must be terminated by 0xFF, while 0x00 marks a newline.
 
-There is a standard ASCII font in the Main BIOS data which can be used if you don't need/want your own. The functions `_BIOS_LOAD_FONT` and `_BIOS_LOAD_FONT_DEFAULTS` will load this font into VRAM for use with the print function. `_BIOS_LOAD_FONT` takes a VDP pointer to the location in VRAM where the font should be loaded as well as a 1bpp color definition (see `_BIOS_LOAD_1BPP_TILES`).
+There is a standard ASCII font in the Main BIOS data which can be used if you don't need/want your own. The functions `BIOS_LOAD_FONT` and `BIOS_LOAD_FONT_DEFAULTS` will load this font into VRAM for use with the print function. `BIOS_LOAD_FONT` takes a VDP pointer to the location in VRAM where the font should be loaded as well as a 1bpp color definition (see `BIOS_LOAD_1BPP_TILES`).
 
-You must also set the `_BIOS_FONT_TILE_BASE` variable to the tile index of the first tile of the font within VRAM *minus 32*. The reason for this is because ASCII codes begin at 32, and the print function simply matches an ASCII character to a tile index. Since `_BIOS_FONT_TILE_BASE` cannot be negative, this implies the font must be loaded at tile index 32 or later, but cannot be placed before index 32. When placed at index 32, `_BIOS_FONT_TILE_BASE` will be 0. This is the configuration the BIOS works with and you can observe this by viewing the VRAM tiles while the "Produced by or under license..." screen is being displayed.
+You must also set the `BIOS_FONT_TILE_BASE` variable to the tile index of the first tile of the font within VRAM *minus 32*. The reason for this is because ASCII codes begin at 32, and the print function simply matches an ASCII character to a tile index. Since `BIOS_FONT_TILE_BASE` cannot be negative, this implies the font must be loaded at tile index 32 or later, but cannot be placed before index 32. When placed at index 32, `BIOS_FONT_TILE_BASE` will be 0. This is the configuration the BIOS works with and you can observe this by viewing the VRAM tiles while the "Produced by or under license..." screen is being displayed.
 
-The other font load function, `_FONT_LOAD_FONT_DEFAULTS` simplifies things by loading the font to tile index 32, setting `_BIOS_FONT_TILE_BASE` to 0, and setting the 1bpp color definition to palette index #1. This is the simplest method to load the font and is useful in situations where you don't need to be meticulous about VRAM management.
+The other font load function, `_FONT_LOAD_FONT_DEFAULTS` simplifies things by loading the font to tile index 32, setting `BIOS_FONT_TILE_BASE` to 0, and setting the 1bpp color definition to palette index #1. This is the simplest method to load the font and is useful in situations where you don't need to be meticulous about VRAM management.
 
 ## Predefined Comm Flag Semantics
 
@@ -397,7 +397,7 @@ The ga_comflags register is intended to keep the two CPUs in sync by informing e
 
 There are a few Main BIOS library functions that use these flags, however, which inherently assigns meaning to those bits. The problem here is that we don't know what those meanings are due to a lack of documentation. We can only guess based on the context in which they appear as we reverse engineer the code. This includes understanding not just the library calls that use these bits, but what must be done on the Sub CPU side to correctly read, set and clear bits in response. Thankfully, the built in software (namely the CD player) uses these calls, meaning we have usage examples on the Sub CPU side to look at. Moreover, of the retail games identified so far that use the Main BIOS library, most of them make use of these calls and exhibit a similarity in their implementation (to the point of being nearly identical) that suggests they were built from example code.
 
-At this point, we are still investigating and have only a rough idea of what the flags represent. Therefore, we do not recommend using the functions marked as using the Predefined Comm Flag Semantics component. However, **if you plan to use the built-in vblank handler (_BIOS_VINT_HANDLER), keep in mind that it includes a call to one of these subroutines. Please see the notes for _BIOS_COMM_SYNC.**
+At this point, we are still investigating and have only a rough idea of what the flags represent. Therefore, we do not recommend using the functions marked as using the Predefined Comm Flag Semantics component. However, **if you plan to use the built-in vblank handler (BIOS_VINT_HANDLER), keep in mind that it includes a call to one of these subroutines. Please see the notes for BIOS_COMM_SYNC.**
 
 NOTES:
 A fresh look at this suggests that bit 0 SET indicates that the comm registers have been updated and that a fresh copy to the local cache of the opposite CPU should be made, and that bit 1 SET indicates the the CPU is ready for the copy (and inversely, that bit 1 CLEAR indicates the CPU is busy (registers comms have not yet fully propagated?) and that a copy should not yet be made).
@@ -407,108 +407,108 @@ A fresh look at this suggests that bit 0 SET indicates that the comm registers h
 
 ## System Group
 
-### __BIOS_BIOS_ENTRY
+### _BIOS_BIOS_ENTRY
 
-### __BIOS_RESET
+### _BIOS_RESET
 
-### __BIOS_INIT
+### _BIOS_INIT
 
-### __BIOS_INIT_SP
+### _BIOS_INIT_SP
 
-### __BIOS_SEGA_LOGO
+### _BIOS_SEGA_LOGO
 
 
 ## Interrupts Group
 
-### `_BIOS_VINT_HANDLER`
+### `BIOS_VINT_HANDLER`
 
 Components: VINT, GA Comm, Sprite Table Cache, Palette Cache, Input
 
-A generic VINT handler. Calls `_BIOS_COMM_SYNC`, `_BIOS_COPY_PAL` and `_BIOS_READ_JOYPAD` on each iteration. If bit 1 of `_BIOS_VINT_HANDLER_FLAGS` is set, `_BIOS_VINT_USER` will also be called. `_BIOS_VINT_USER` points to a user-defined routine with game-specific logic to be run during VBLANK. We recommend including a call to `_BIOS_COPY_SPRLIST` in your VINT_USER routine.
+A generic VINT handler. Calls `BIOS_COMM_SYNC`, `BIOS_COPY_PAL` and `BIOS_READ_JOYPAD` on each iteration. If bit 1 of `BIOS_VINT_HANDLER_FLAGS` is set, `BIOS_VINT_USER` will also be called. `BIOS_VINT_USER` points to a user-defined routine with game-specific logic to be run during VBLANK. We recommend including a call to `BIOS_COPY_SPRLIST` in your VINT_USER routine.
 
-`_BIOS_VINT_HANDLER` increments the `_BIOS_VINT_COUNTER` variable by 1 on each iteration. It also uses the `_SKIP_GFX_UPDATES` variable. When this value is non-zero, it will skip the call to `_BIOS_COPY_PAL` and `_BIOS_VINT_USER` and skip the `_BIOS_VINT_COUNTER` increment.
+`BIOS_VINT_HANDLER` increments the `BIOS_VINT_COUNTER` variable by 1 on each iteration. It also uses the `_SKIP_GFX_UPDATES` variable. When this value is non-zero, it will skip the call to `BIOS_COPY_PAL` and `BIOS_VINT_USER` and skip the `BIOS_VINT_COUNTER` increment.
 
-### `_BIOS_SET_VINT`
+### `BIOS_SET_VINT`
 
 (Tiny)
 
 Sets the specified pointer as the VINT vector.
 
-### `_BIOS_VINT_WAIT`
+### `BIOS_VINT_WAIT`
 
-Sets the specified value to `_BIOS_VINT_HANDLER_FLAGS` and waits for the next VBLANK occurance, which resets `_BIOS_VINT_HANDLER_FLAGS` to zero. This means `_BIOS_VINT_HANDLER_FLAGS` must be set to a non-zero value in order to actually wait for a VBLANK occurance. If you want to wait for VBLANK without triggering a sprite list or palette copy, simply set an unused bit.
+Sets the specified value to `BIOS_VINT_HANDLER_FLAGS` and waits for the next VBLANK occurance, which resets `BIOS_VINT_HANDLER_FLAGS` to zero. This means `BIOS_VINT_HANDLER_FLAGS` must be set to a non-zero value in order to actually wait for a VBLANK occurance. If you want to wait for VBLANK without triggering a sprite list or palette copy, simply set an unused bit.
 
-### `_BIOS_VINT_WAIT_DEFAULT`
+### `BIOS_VINT_WAIT_DEFAULT`
 
-A wrapper for `_BIOS_VINT_WAIT` that sets `_BIOS_VINT_HANDLER_FLAGS` to 3 (bit 0 and 1 set) before waiting. This would be useful if you do not implement any extra `_BIOS_VINT_HANDLER_FLAGS` and only use the two used by the library. In any other case, you should stick to `_BIOS_VINT_WAIT` as it allows you to specify flags.
+A wrapper for `BIOS_VINT_WAIT` that sets `BIOS_VINT_HANDLER_FLAGS` to 3 (bit 0 and 1 set) before waiting. This would be useful if you do not implement any extra `BIOS_VINT_HANDLER_FLAGS` and only use the two used by the library. In any other case, you should stick to `BIOS_VINT_WAIT` as it allows you to specify flags.
 
-### `_BIOS_SET_HINT`
+### `BIOS_SET_HINT`
 
-### `_BIOS_SET_HINT_WORK_RAM`
+### `BIOS_SET_HINT_WORK_RAM`
 
-### `_BIOS_DISABLE_HINT`
+### `BIOS_DISABLE_HINT`
 
-### `_BIOS_TRIGGER_IFL2`
+### `BIOS_TRIGGER_IFL2`
 
 ## Input Group
 
-### `_BIOS_READ_JOYPAD`
+### `BIOS_READ_JOYPAD`
 
-### `_BIOS_INPUT_REPEAT_DELAY`
+### `BIOS_INPUT_REPEAT_DELAY`
 
-### `_BIOS_DETECT_CONTROLLER`
+### `BIOS_DETECT_CONTROLLER`
 
 
 
 ## VDP/Graphics Group
 
-### `_BIOS_DMA_FILL_CLEAR`
+### `BIOS_DMA_FILL_CLEAR`
 Components: DMA, VDP Register Cache
 
 Clears VRAM at the specifed address for the given size (in words) using DMA.
 
-### `_BIOS_DMA_FILL`
+### `BIOS_DMA_FILL`
 Components: DMA, VDP Register Cache
 
 Loads the specified value into VRAM at the specified address for the given size (in words) using DMA.
 
-### `_BIOS_DMA_XFER`
+### `BIOS_DMA_XFER`
 Components: DMA, VDP Register Cache
 
 Performs a DMA transfer to VRAM.
 
-### `_BIOS_DMA_XFER_WORD_RAM`
+### `BIOS_DMA_XFER_WORD_RAM`
 Components: DMA, VDP Register Cache
 
 Performs a DMA transfer to VRAM for source data in Word RAM.
 
-### `_BIOS_DMA_COPY`
+### `BIOS_DMA_COPY`
 Components: DMA, VDP Register Cache
 
 Performs a DMA copy.
 
-### `_BIOS_DMA_QUEUE`
+### `BIOS_DMA_QUEUE`
 Components: DMA, VDP Register Cache
 
 A simple DMA queue. Processes a list of DMA transfers from Word RAM.
 
-### `_BIOS_CLEAR_VRAM`
+### `BIOS_CLEAR_VRAM`
 Components: DMA, VDP Register Cache
 
-Clear all of VRAM and VSRAM via DMA Fill. Also clears VSRAM with a call to `_BIOS_CLEAR_VSRAM`.
+Clear all of VRAM and VSRAM via DMA Fill. Also clears VSRAM with a call to `BIOS_CLEAR_VSRAM`.
 
-### `_BIOS_CLEAR_TABLES`
+### `BIOS_CLEAR_TABLES`
 Components: Fixed VRAM Layout (Sprite List, Plane A, Plane B, Window), Sprite Table Cache
 
 Clears the nametables (tile mappings) and sprite table. Note that it only clears the first value in the sprite table, which sets the first sprite "next" value to 0 and prevents any sprites from displaying, but does not actually clear any memory in that region.
 
-### `_BIOS_CLEAR_VSRAM`
+### `BIOS_CLEAR_VSRAM`
 Clears VSRAM.
 
-### `_BIOS_LOAD_VDPREGS_DEFAULT`
+### `BIOS_LOAD_DEFAULT_VDPREGS`
 Components: Fixed VRAM Layout (All), VDP Register Cache, Plane Width Cache
 
-Loads the Main BIOS default VDP settings to the cache and to the registers. Also updates the `_BIOS_VDP_PLANE_WIDTH` cached value.
+Loads the Main BIOS default VDP settings to the cache and to the registers. Also updates the `BIOS_VDP_DEFAULT_PLANE_WIDTH` cached value.
 
 Here is the default VDP data loaded by the function, in the order in which it appears in the data, with notes highlighting important settings on each register:
 
@@ -562,7 +562,7 @@ Here is the default VDP data loaded by the function, in the order in which it ap
   Window plane Y position
   - 0
 
-### `_BIOS_LOAD_VDPREGS`
+### `BIOS_LOAD_VDPREGS`
 
 Components: VDP Reg Cache
 
@@ -570,80 +570,80 @@ Loads a list of VDP settings to the cache and to registers.
 
 This list should be null terminated array of 16 bit values, with each value being the VDP control port register write format (i.e. the upper byte is the register index with the top bit set and the lower byte is the value to write).
 
-Note that this does NOT update the `_BIOS_VDP_PLANE_WIDTH` variable when setting register 0x10.
+Note that this does NOT update the `BIOS_VDP_DEFAULT_PLANE_WIDTH` variable when setting register 0x10.
 
 
-### `_BIOS_VDP_FILL` (Tiny)
+### `BIOS_VDP_FILL` (Tiny)
 
 Loads the specified value to VRAM at the specified address for the given size (in words).
 
-### `_BIOS_VDP_FILL_CLEAR` (Tiny)
+### `BIOS_VDP_FILL_CLEAR` (Tiny)
 
 Clears VRAM at the specified address for the given size (in words).
 
-### `_BIOS_LOAD_MAP`
+### `BIOS_LOAD_MAP`
 
 Components: Plane Width Cache
 
 Loads a tilemap to VRAM.
 
-### `_BIOS_LOAD_MAP_TEMPLATE`
+### `BIOS_LOAD_MAP_TEMPLATE`
 
 Components: Plane Width Cache
 
 Loads a tilemap to VRAM with a template value applied to each map entry.
 
-### `_BIOS_PLANE_FILL`
+### `BIOS_PLANE_FILL`
 
 Components: Plane Width Cache
 
 Writes a given tilemap entry to VRAM with the given dimensions.
 
-### `_BIOS_VDP_DISP_ENABLE`
+### `BIOS_VDP_DISP_ENABLE`
 
 Components: VDP Register Cache
 
 Enables VDP display (bit 6 on VDP register 1).
 
-### `_BIOS_VDP_DISP_DISABLE`
+### `BIOS_VDP_DISP_DISABLE`
 
 Components: VDP Register Cache
 
 Disables VDP display (bit 6 on VDP register 1).
 
-### `_BIOS_LOAD_PAL`
+### `BIOS_LOAD_PAL`
 
 Components: Palette Cache
 
 Loads an array of colors to the palette cache. Does not update CRAM directly.
 
-### `_BIOS_LOAD_PAL_UPDATE`
+### `BIOS_LOAD_PAL_UPDATE`
 
 Components: Palette Cache, VDP Update Flags
 
 Loads an array of colors to the palette cache and sets the CRAM update flag. Does not update CRAM directly.
 
-### `_BIOS_COPY_PAL`
+### `BIOS_COPY_PAL`
 
 Components: VDP Reg Cache, DMA, Palette Cache, VDP Update Flags
 
 Copies the palette cache to CRAM.
 
-### `_BIOS_PROCESS_ENTITIES`
+### `BIOS_PROCESS_ENTITIES`
 
 Update the state of an array of entitys. Please see the Entities section.
 
-### `_BIOS_DISP_SPROBJ`
+### `BIOS_DISP_SPROBJ`
 
 Display an entity. Please see the Entities section.
 
-### `_BIOS_COPY_SPRLIST`
+### `BIOS_COPY_SPRLIST`
 
 Components: Sprite Cache, VDP Register Cache, VINT Flags
 
 Copies the sprite cache to the sprite table in VRAM.
 
-### `_BIOS_LOAD_1BPP_TILES`
+### `BIOS_LOAD_1BPP_TILES`
 
 Converts 1bpp formatted graphics data to 4bpp VDP format and copies to VRAM.
 
@@ -651,7 +651,7 @@ It is a form of compression as, logically, 1bpp graphics only use 1/4 of the spa
 
 Of course, this is not strictly limited to fonts and you can use the routine however you'd like to convert 1bpp graphics to Mega Drive 4bpp tiles.
 
-The function takes a pointer to the 1bpp data, a VDPPTR formatted VRAM destination, the number of tiles and the color definition. The color definition requires some explanation. It is a 32 bit value that acts as a mapping for each possible pair of 1 bit values. The full value is divided into four bytes visualized like so:
+The function takes a pointer to the 1bpp data, a vdpptr formatted VRAM destination, the number of tiles and the color definition. The color definition requires some explanation. It is a 32 bit value that acts as a mapping for each possible pair of 1 bit values. The full value is divided into four bytes visualized like so:
 
     00'0X'X0'XX
 
@@ -662,13 +662,13 @@ Where X is the palette index of the color to be used. So, for example, if you wa
 That should be enough information to implement in your code, but if you you want to understand why this value is necessary and formatted like it is, here is the algorithm in summary. Since the native VDP tile format is 4bpp, that means there are four bytes per tile row (8 pixels * 4 bits = 32 bits = 4 bytes). For 1bpp data, there is one byte per tile row (8 pixels * 1 bit = 8 bits = 1 byte). For every byte of 1bpp data, it rotates the value by 2 bits and masks those off. That 2 bit value is then used as a byte offset relative to the MSB of the 32 bit color definition, which contains an equivalent 4bpp 2 pixel representation of that value. For example, if 2 bits of 1bpp data are binary 10 (decimal 2), then it uses the value that is two bytes from the MSB of the color definition. That value is X0, which is appended to the output 4bpp data. Basically, for each possible pair of two bits, there is a corresponding pair of nibbles (4 bits) that matches it within the color definition.
 
 
-### `_BIOS_LOAD_STAMP_MAP`
+### `BIOS_LOAD_STAMP_MAP`
 
 Components: Plane Width Cache
 
 Loads a tilemap to VRAM based on sequential tiles which are vertically oriented.
 
-### `_BIOS_LOAD_MAP_HORIZ`
+### `BIOS_LOAD_MAP_HORIZ`
 
 Properties: Plane Width Cache
 
@@ -676,25 +676,25 @@ Loads a tilemap to VRAM based on sequential tiles which are horizontally oriente
 
 
 
-### `_BIOS_BLANK_DISPLAY`
+### `BIOS_BLANK_DISPLAY`
 
 Properties: VDP Reg Cache
 
 Sets the background color to black and disables the display.
 
-### `_BIOS_PAL_FADEOUT`
+### `BIOS_PAL_FADEOUT`
 
 Properties: VDP Update Flags, Palette Cache
 
 Fades a palette range to black.
 
-### `_BIOS_PAL_FADEIN`
+### `BIOS_PAL_FADEIN`
 
 Properties: VDP Update Flags, Palette Cache, Other Memory
 
 Fades a palette to a target palette.
 
-### `_BIOS_SET_FADEIN_PAL`
+### `BIOS_SET_FADEIN_PAL`
 
 Properties: Other Memory
 
@@ -705,22 +705,22 @@ Sets the target palette for fade in.
 
 ## Decompression
 
-### `_BIOS_GFX_DECOMP`
+### `BIOS_GFX_DECOMP`
 
-### `_BIOS_GFX_DECOMP_RAM`
+### `BIOS_GFX_DECOMP_RAM`
 
-### `_BIOS_MAP_DECOMP`
+### `BIOS_MAP_DECOMP`
 
 ## GA CPU Communication - Components
 Functions related to inter-CPU communication via the Gate Array comm registers.
 
 ## GA CPU Communication - Functions
 
-### `_BIOS_CLEAR_COMM`
+### `BIOS_CLEAR_COMM`
 
 Clears all Gate Array COMCMD and COMFLAGS registers and the COMCMD and COMFLAGS cache.
 
-### `_BIOS_COMM_SYNC`
+### `BIOS_COMM_SYNC`
 
 Components: Predefined Comm Flag Semantics
 
@@ -730,17 +730,17 @@ IFL2 is set on each call regardless, but the COMCMD/COMSTAT sync is dependent on
 
 As mentioned in the Predefined Comm Flag Semantics component description, we recommend not using this function until we have a better understanding of the flags system on both CPUs.
 
-Note that if you are using `_BIOS_VINT_HANDLER` for your vblank handler, `_BIOS_COMM_SYNC` is called as part of that subroutine, which is important as it takes care of the IFL2 bit. The best way to keep things flowing smoothly is to ensure bit 0 is always unset on the Sub side COMFLAGS. This will ensure that the COMCMD/COMSTAT sync is skipped and that a stuck loop is avoided.
+Note that if you are using `BIOS_VINT_HANDLER` for your vblank handler, `BIOS_COMM_SYNC` is called as part of that subroutine, which is important as it takes care of the IFL2 bit. The best way to keep things flowing smoothly is to ensure bit 0 is always unset on the Sub side COMFLAGS. This will ensure that the COMCMD/COMSTAT sync is skipped and that a stuck loop is avoided.
 
-### `_BIOS_UK_COMM_CDINFO`
+### `BIOS_UK_COMM_CDINFO`
 
 Components: Predefined Comm Flag Semantics
 
-Copies various CD read status values sent from the Sub CPU via COMSTAT registers, including disc read absolute and relative timecodes. One use for getting this information in real time is to time the playback of CD audio with actions on the screen. Code that implements this call suggests it is mean to be used in conjunction with `_BIOS_COMM_SYNC`, with the latter called at the start of VBLANK and `_BIOS_UK_COMM_CDINFO` called at the end.
+Copies various CD read status values sent from the Sub CPU via COMSTAT registers, including disc read absolute and relative timecodes. One use for getting this information in real time is to time the playback of CD audio with actions on the screen. Code that implements this call suggests it is mean to be used in conjunction with `BIOS_COMM_SYNC`, with the latter called at the start of VBLANK and `BIOS_UK_COMM_CDINFO` called at the end.
 
 As mentioned in the Predefined Comm Flag Semantics component description, we recommend not using this function until we have a better understanding of the flags system on both CPUs.
 
-### `_BIOS_UK_COMMFLAGS_RELATED`
+### `BIOS_UK_COMMFLAGS_RELATED`
 
 Components: Predefined Comm Flag Semantics
 
@@ -748,31 +748,31 @@ Waits for bit 6 on Sub side COMFLAGS to set, then clears Main side COMFLAGS bit 
 
 As mentioned in the Predefined Comm Flag Semantics component description, we recommend not using this function until we have a better understanding of the flags system on both CPUs.
 
-### `_BIOS_SET_COMCMD0_1_CACHE`
+### `BIOS_SET_COMCMD0_1_CACHE`
 
 Copies the word value in D0 and D1 into COMCMD0 and COMCMD1 cache, respectively.
 
 Although this does not use the Predefined Comm Flag Semantics component directly, it is likely meant to be part of its system. Therefore we recommend reviewing its code closely to make sure it does exactly what you expect before using it.
 
-### `_BIOS_SET_COMCMD2_3_CACHE`
+### `BIOS_SET_COMCMD2_3_CACHE`
 
 Copies the word value in D0 and D1 into COMCMD2 and COMCMD3 cache, respectively. In addition, if the value in D0 is 1, it also sets bit 2 on Main side COMFLAGS.
 
 Although this does not use the Predefined Comm Flag Semantics component directly, it is likely meant to be part of its system. Therefore we recommend reviewing its code closely to make sure it does exactly what you expect before using it.
 
-### `_BIOS_SET_COMCMD4_5_CACHE`
+### `BIOS_SET_COMCMD4_5_CACHE`
 
 Copies the word value in D0 and D1 into COMCMD4 and COMCMD5 cache, respectively.
 
 Although this does not use the Predefined Comm Flag Semantics component directly, it is likely meant to be part of its system. Therefore we recommend reviewing its code closely to make sure it does exactly what you expect before using it.
 
-### `_BIOS_SET_COMCMD6_7_CACHE`
+### `BIOS_SET_COMCMD6_7_CACHE`
 
 Copies the word value in D0 and D1 into COMCMD6 and COMCMD7 cache, respectively.
 
 Although this does not use the Predefined Comm Flag Semantics component directly, it is likely meant to be part of its system. Therefore we recommend reviewing its code closely to make sure it does exactly what you expect before using it.
 
-### `_BIOS_SET_IFL2`
+### `BIOS_SET_IFL2`
 
 Sets the IFL2 bit on ga_memmode to trigger INT2 on the Sub side. Should be called during VBLANK only.
 
@@ -781,61 +781,61 @@ Sets the IFL2 bit on ga_memmode to trigger INT2 on the Sub side. Should be calle
 
 ## Misc - Functions
 
-### `_BIOS_PRNG`
+### `BIOS_PRNG`
 
 Components: Random Number Generator
 
-Generates a new 16bit random number, stored in `_BIOS_RANDOM`.
+Generates a new 16bit random number, stored in `BIOS_RANDOM`.
 
-### `_BIOS_PRNG_MOD`
+### `BIOS_PRNG_MOD`
 
 Components: Random Number Generator
 
 Generates a random number with a specificed maximum value, stored in a return register.
 
-### `_BIOS_CLEAR_RAM`
+### `BIOS_CLEAR_RAM`
 
 Clears a region of RAM in 32bit iterations.
 
-### `_BIOS_LOAD_FONT`
+### `BIOS_LOAD_FONT`
 
 Components: Font & Print Component
 
 Load the internal Main BIOS font to VRAM.
 
-### `_BIOS_LOAD_FONT_DEFAULTS`
+### `BIOS_LOAD_FONT_DEFAULTS`
 
 Components: Font & Print Component
 
 Load the internal Main BIOS font to VRAM with default settings.
 
-### `_BIOS_PRINT`
+### `BIOS_PRINT`
 
 Components: Font & Print Component, Plane Width Cache
 
 Prints a string of ASCII text. The position of the text on screen is determined by the passed VDP address.
 
-### `_BIOS_TO_BCD`
+### `BIOS_TO_BCD`
 
 Converts a specified native value to binary coded decimal (BCD).
 
-### `_BIOS_TO_BCD_BYTE`
+### `BIOS_TO_BCD_BYTE`
 
 Converts the specified 8bit value to binary coded decimal (BCD).
 
 ## Unknown Functions
 
-### `_BIOS_UNKNOWN_1F`
+### `BIOS_UNKNOWN_1F`
 
-### `_BIOS_UNKNOWN_24`
+### `BIOS_UNKNOWN_24`
 
-### `_BIOS_UNKNOWN_35`
+### `BIOS_UNKNOWN_35`
 
-### `_BIOS_UNKNOWN_36`
+### `BIOS_UNKNOWN_36`
 
-### `_BIOS_UNKNOWN_37`
+### `BIOS_UNKNOWN_37`
 
-### `_BIOS_UNKNOWN_38`
+### `BIOS_UNKNOWN_38`
 
 ### `_BIOD_LOAD_TILEMAP_PARTIAL`
 
@@ -844,10 +844,10 @@ d1.w - width
 d2.w - height
 a1.l - ptr to pattern data
 
-### `_BIOS_UNKNOWN_3D`
+### `BIOS_UNKNOWN_3D`
 
-### `_BIOS_UNKNOWN_44`
+### `BIOS_UNKNOWN_44`
 
-### `_BIOS_ADD_TIME_VALUES`
+### `BIOS_ADD_TIME_VALUES`
 
-### `_BIOS_UNKNOWN_46`
+### `BIOS_UNKNOWN_46`

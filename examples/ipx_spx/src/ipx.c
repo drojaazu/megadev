@@ -5,7 +5,6 @@
 #include <main/io.h>
 #include <main/memmap.h>
 #include <main/mmd.h>
-#include <main/vdp.h>
 #include <system.h>
 #include <types.h>
 
@@ -33,16 +32,17 @@ void init_particle(u8 particle_idx)
 	bios_sprlist[particle_idx].height = settings.main_height;
 }
 
-void init_particles(u16 main_tile,
+void init_particles(
+	u16 main_tile,
 	u16 end_tile,
-	u8 main_width,
-	u8 main_height,
-	u8 end_width,
-	u8 end_height,
+	u8	main_width,
+	u8	main_height,
+	u8	end_width,
+	u8	end_height,
 	u16 end_countdown,
-	u8 min_speed,
-	u8 max_speed,
-	u8 palette)
+	u8	min_speed,
+	u8	max_speed,
+	u8	palette)
 {
 
 	settings.main_tile = main_tile;
@@ -124,7 +124,7 @@ void main()
 		The function pointer stored in bios_vint_user is called on every VBLANK interrupt
 		when using the built-in handler in BIOS (BIOS_VINT_HANDLER, which we set up in the IP).
 		This is intended for VBLANK interval operations specific to your program. Note that the
-		CALL_VINT_USER flag must be set on bios_vint_handler_flags
+		BIOS_VINT_USERCALL_FLAG flag must be set on bios_vint_handler_flags
 	*/
 	*bios_vint_user = vint_user;
 
@@ -140,7 +140,7 @@ void main()
 
 	// The font uses palette entry #1, so we'll manually set that to white
 	bios_palette[1] = 0xeee;
-	bios_vdp_update_flags |= VDPUPDATE_PAL;
+	bios_vdp_update_flags |= BIOS_VDPUPDATE_COPY_PALETTE_FLAG;
 
 	do
 	{

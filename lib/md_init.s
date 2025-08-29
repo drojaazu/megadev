@@ -35,7 +35,7 @@ init_system:
 
 skip_tmss:
   // Read from the VDP control port to cancel any pending read/write command
-  move.w  (_VDP_CTRL), d0
+  move.w  (VDP_CTRL), d0
   // TODO add VDP initialization (CRAM/VRAM clear)
 
   // clear work RAM
