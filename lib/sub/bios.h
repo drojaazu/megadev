@@ -18,7 +18,7 @@ static inline void bios_waitvsync()
 		"\
 		jsr %p0"
 		:
-		: "i"(_WAITVSYNC)
+		: "i"(WAITVSYNC)
 		: "cc");
 }
 
@@ -36,7 +36,7 @@ static inline void bios_mscstop()
 		"\
 		jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc", "a0", "a1");
 }
 
@@ -57,7 +57,7 @@ static inline void bios_mscpauseon()
 		"\
 		jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc", "a0", "a1");
 }
 
@@ -78,7 +78,7 @@ static inline void bios_mscpauseoff()
 		"\
 		jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc", "a0", "a1");
 };
 
@@ -96,7 +96,7 @@ static inline void bios_mscscanff()
 		"\
 		jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc", "a0", "a1");
 };
 
@@ -114,7 +114,7 @@ static inline void bios_mscscanfr()
 		"\
 		jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc", "a0", "a1");
 };
 
@@ -135,7 +135,7 @@ static inline void bios_mscscanoff()
 		"\
 		jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc", "a0", "a1");
 };
 
@@ -153,7 +153,7 @@ static inline void bios_rompauseon()
 		"\
 		jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc", "a0", "a1");
 };
 
@@ -171,7 +171,7 @@ static inline void bios_rompauseoff()
 		"\
 		jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc", "a0", "a1");
 };
 
@@ -191,7 +191,7 @@ static inline void bios_drvopen()
 		"\
 		jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc", "a0", "a1");
 };
 
@@ -220,7 +220,7 @@ static inline void bios_drvinit(struct DrvinitParams const * drvinit_param)
 		"\
 		jsr %p2"
 		: "+d"(D0), "+a"(a0_drvinit_param)
-		: "i"(_CDBIOS), "d"(D0), "a"(a0_drvinit_param)
+		: "i"(CDBIOS), "d"(D0), "a"(a0_drvinit_param)
 		: "cc", "a1");
 };
 
@@ -240,7 +240,7 @@ static inline void bios_mscplay(u16 const * track_number)
 		"\
 		jsr %p2"
 		: "+d"(D0), "+a"(A0)
-		: "i"(_CDBIOS), "d"(D0), "a"(A0)
+		: "i"(CDBIOS), "d"(D0), "a"(A0)
 		: "cc", "a1");
 };
 
@@ -259,7 +259,7 @@ static inline void bios_mscplay1(u16 const * track_number)
 		"\
 		jsr %p2"
 		: "+d"(D0), "+a"(A0)
-		: "i"(_CDBIOS), "d"(D0), "a"(A0)
+		: "i"(CDBIOS), "d"(D0), "a"(A0)
 		: "cc", "a1");
 };
 
@@ -278,7 +278,7 @@ static inline void bios_mscplayr(u16 const * track_number)
 		"\
 		jsr %p2"
 		: "+d"(D0), "+a"(A0)
-		: "i"(_CDBIOS), "d"(D0), "a"(A0)
+		: "i"(CDBIOS), "d"(D0), "a"(A0)
 		: "cc", "a1");
 };
 
@@ -297,7 +297,7 @@ static inline void bios_mscplayt(u32 const * timecode)
 		"\
 		jsr %p2"
 		: "+d"(D0), "+a"(A0)
-		: "i"(_CDBIOS), "d"(D0), "a"(A0)
+		: "i"(CDBIOS), "d"(D0), "a"(A0)
 		: "cc", "a1");
 };
 
@@ -316,7 +316,7 @@ static inline void bios_mscseek(u16 const * track_number)
 		"\
 		jsr %p2"
 		: "+d"(D0), "+a"(A0)
-		: "i"(_CDBIOS), "d"(D0), "a"(A0)
+		: "i"(CDBIOS), "d"(D0), "a"(A0)
 		: "cc", "a1");
 };
 
@@ -335,7 +335,7 @@ static inline void bios_mscseekt(u32 const * timecode)
 		"\
 		jsr %p2"
 		: "+d"(D0), "+a"(A0)
-		: "i"(_CDBIOS), "d"(D0), "a"(A0)
+		: "i"(CDBIOS), "d"(D0), "a"(A0)
 		: "cc", "a1");
 };
 
@@ -362,7 +362,7 @@ static inline void bios_romread(u32 const * sector_number)
 		"\
 		jsr %p2"
 		: "+d"(D0), "+a"(A0)
-		: "i"(_CDBIOS), "d"(D0), "a"(A0)
+		: "i"(CDBIOS), "d"(D0), "a"(A0)
 		: "cc", "a1");
 };
 
@@ -381,7 +381,7 @@ static inline void bios_romseek(u32 const * sector_number)
 		"\
 		jsr %p2"
 		: "+d"(D0), "+a"(A0)
-		: "i"(_CDBIOS), "d"(D0), "a"(A0)
+		: "i"(CDBIOS), "d"(D0), "a"(A0)
 		: "cc", "a1");
 };
 
@@ -401,7 +401,7 @@ static inline void bios_mscseek1(u16 const * track_number)
 		"\
 		jsr %p2"
 		: "+d"(D0), "+a"(A0)
-		: "i"(_CDBIOS), "d"(D0), "a"(A0)
+		: "i"(CDBIOS), "d"(D0), "a"(A0)
 		: "cc", "a1");
 };
 
@@ -428,7 +428,7 @@ static inline void bios_romreadn(struct RomreadParams const * param)
 		"\
 		jsr %p2"
 		: "+d"(D0), "+a"(A0)
-		: "i"(_CDBIOS), "d"(D0), "a"(A0)
+		: "i"(CDBIOS), "d"(D0), "a"(A0)
 		: "cc", "a1");
 };
 
@@ -446,7 +446,7 @@ static inline void bios_romreade(struct RomreadParams const * param)
 		"\
 		jsr %p2"
 		: "+d"(D0), "+a"(A0)
-		: "i"(_CDBIOS), "d"(D0), "a"(A0)
+		: "i"(CDBIOS), "d"(D0), "a"(A0)
 		: "cc", "a1");
 };
 
@@ -467,7 +467,7 @@ static inline bool bios_cdbchk()
 		bcc %l[cmd_complete] \n\
 		"
 		:
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc"
 		: cmd_complete);
 
@@ -501,7 +501,7 @@ static inline struct cdbstat const * bios_cdbstat()
 		"\
 		jsr %p2"
 		: "+d"(D0), "=a"(A0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc", "d1");
 
 	return (struct cdbstat *) A0;
@@ -532,7 +532,7 @@ static inline void bios_fdrset(u16 const volume)
 		"\
 		jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0), "d"(D1)
+		: "i"(CDBIOS), "d"(D0), "d"(D1)
 		: "cc");
 };
 
@@ -561,7 +561,7 @@ static inline void bios_fdrchg(u32 const volume)
 		"\
 		jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0), "d"(D1)
+		: "i"(CDBIOS), "d"(D0), "d"(D1)
 		: "cc");
 };
 
@@ -576,7 +576,7 @@ static inline void bios_cdcstart()
 		"\
 		jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc", "d1");
 };
 
@@ -591,7 +591,7 @@ static inline void bios_cdcstop()
 		"\
 jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc");
 };
 
@@ -607,7 +607,7 @@ static inline void bios_cdcstat()
 		"\
 jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc", "d1");
 };
 
@@ -621,7 +621,7 @@ static inline bool bios_cdcread() {
 
 				asm goto(R"(jsr %p1)"
 																				 : "+d"(D0)
-																				 : "i"(_CDBIOS), "d"(D0)
+																				 : "i"(CDBIOS), "d"(D0)
 																				 : "cc", "d1");
 
 				return false;
@@ -634,9 +634,7 @@ sector_ready:
 /**
  * @sa BIOS_CDCTRN
  */
-static inline void bios_cdctrn(
-	u8 * sector_dest,
-	u8 * header_dest)
+static inline void bios_cdctrn(u8 * sector_dest, u8 * header_dest)
 {
 	register u16	D0 asm("d0") = BIOS_CDCTRN;
 	register u8 * a0_sector_dest asm("a0") = sector_dest;
@@ -646,7 +644,7 @@ static inline void bios_cdctrn(
 		"\
 jsr %p3"
 		: "+d"(D0), "+a"(a0_sector_dest), "+a"(a1_header_dest)
-		: "i"(_CDBIOS), "d"(D0), "a"(a0_sector_dest), "a"(a1_header_dest)
+		: "i"(CDBIOS), "d"(D0), "a"(a0_sector_dest), "a"(a1_header_dest)
 		: "cc", "d1");
 };
 
@@ -661,7 +659,7 @@ static inline void bios_cdcack()
 		"\
 jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc");
 };
 

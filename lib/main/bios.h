@@ -720,10 +720,7 @@ static inline void bios_load_vdpregs(vdpreg const * vdp_reg_data)
  * @details This is a simple data transfer via the VDP data port rather than
  * DMA.
  */
-static inline void bios_vdp_fill(
-	u32 vdpptr,
-	u16 length,
-	u16 value)
+static inline void bios_vdp_fill(u32 vdpptr, u16 length, u16 value)
 {
 	register u32 D0 asm("d0") = vdpptr;
 	register u16 D1 asm("d1") = length;
@@ -744,9 +741,7 @@ static inline void bios_vdp_fill(
  * @details This is a simple data transfer via the VDP data port rather than
  * DMA.
  */
-static inline void bios_vdp_fill_clear(
-	u32 vdpptr,
-	u16 length)
+static inline void bios_vdp_fill_clear(u32 vdpptr, u16 length)
 {
 	register u32 D0 asm("d0") = vdpptr;
 	register u16 D1 asm("d1") = length;
@@ -765,9 +760,7 @@ static inline void bios_vdp_fill_clear(
  * @ingroup bios_vdp
  * @sa BIOS_DMA_FILL_CLEAR
  */
-static inline void bios_dma_fill_clear(
-	u32 vdpptr,
-	u16 length)
+static inline void bios_dma_fill_clear(u32 vdpptr, u16 length)
 {
 	register u32 D0 asm("d0") = vdpptr;
 	register u16 D1 asm("d1") = length;
@@ -788,10 +781,7 @@ static inline void bios_dma_fill_clear(
  * @sa BIOS_DMA_FILL
  * @ingroup bios_vdp
  */
-static inline void bios_dma_fill(
-	u32 vdpptr,
-	u16 length,
-	u16 value)
+static inline void bios_dma_fill(u32 vdpptr, u16 length, u16 value)
 {
 	register u32 D0 asm("d0") = vdpptr;
 	register u16 D1 asm("d1") = length;
@@ -817,10 +807,7 @@ static inline void bios_dma_fill(
  * nametable entry format.
  */
 static inline void bios_load_map(
-	u32 const		 vdpptr,
-	u16 const		 width,
-	u16 const		 height,
-	void const * map)
+	u32 const vdpptr, u16 const width, u16 const height, void const * map)
 {
 	register u32 D0 asm("d0") = vdpptr;
 	register u16 D1 asm("d1") = width;
@@ -990,9 +977,7 @@ static inline void bios_vint_wait(u8 flags)
  *
  * @note Sets the palette update flag on _GFX_REFRESH
  */
-static inline bool bios_pal_fadeout(
-	u8 palette_index,
-	u8 length)
+static inline bool bios_pal_fadeout(u8 palette_index, u8 length)
 {
 	register u16 D0 asm("d0") = (u16) (palette_index << 1);
 	register u16 D1 asm("d1") = (u16) length;
@@ -1039,10 +1024,7 @@ static inline void bios_load_font_defaults()
  * @ingroup bios_misc
  */
 static inline void bios_load_1bpp_tiles(
-	void * chr_data,
-	u16		 tile_count,
-	vdpcmd dest,
-	u32		 color_pattern)
+	void * chr_data, u16 tile_count, vdpcmd dest, u32 color_pattern)
 {
 	register u32 D0 asm("d0") = dest;
 	register u32 D1 asm("d1") = color_pattern;
@@ -1073,9 +1055,7 @@ static inline void bios_load_1bpp_tiles(
  * output variable (set in a1) rather than the standard input mirror in order
  * to use this correctly.
  */
-static inline void bios_input_repeat_delay(
-	u8 * input,
-	bool use_2p)
+static inline void bios_input_repeat_delay(u8 * input, bool use_2p)
 {
 	register u32 A1 asm("a1") = (u32) input;
 	register u16 D0 asm("d0") = (u16) use_2p;
@@ -1122,9 +1102,7 @@ static inline void bios_clear_comm()
  * 0x20 at the earliest (where BIOS_FONT_TILE_BASE is 0). Note that this can
  * only use palette line 0.
  */
-static inline void bios_print(
-	char const * string,
-	vdpcmd			 pos)
+static inline void bios_print(char const * string, vdpcmd pos)
 {
 	register u32 A1 asm("a1") = (u32) string;
 	register u32 D0 asm("d0") = pos;
@@ -1147,11 +1125,7 @@ static inline void bios_print(
  * @param[in] D3.w Value
  * @ingroup bios_vdp
  */
-static inline void bios_plane_fill(
-	vdpcmd pos,
-	u16		 width,
-	u16		 height,
-	u16		 value)
+static inline void bios_plane_fill(vdpcmd pos, u16 width, u16 height, u16 value)
 {
 	register u32 D0 asm("d0") = pos;
 	register u32 D1 asm("d1") = width;
@@ -1177,10 +1151,7 @@ static inline void bios_plane_fill(
  * @param[in] D2.w Length (in words)
  * @ingroup bios_vdp
  */
-static inline void bios_dma_xfer(
-	vdpcmd		 dest,
-	u8 const * source,
-	u16				 length)
+static inline void bios_dma_xfer(vdpcmd dest, u8 const * source, u16 length)
 {
 	register u32 D0 asm("d0") = dest;
 	register u32 D1 asm("d1") = (u32) source;
@@ -1209,10 +1180,8 @@ static inline void bios_dma_xfer(
  * Word RAM to VRAM which must be accounted for by writing the final word of
  * data to the data port. This subroutine takes care of that extra step.
  */
-static inline void bios_dma_xfer_word_ram(
-	vdpcmd const dest,
-	void const * source,
-	u16 const		 length)
+static inline void
+bios_dma_xfer_word_ram(vdpcmd const dest, void const * source, u16 const length)
 {
 	register u32 D0 asm("d0") = dest;
 	register u32 D1 asm("d1") = (u32) source;
@@ -1237,10 +1206,7 @@ static inline void bios_dma_xfer_word_ram(
  * @param[in] D2.w Length
  * @ingroup bios_vdp
  */
-static inline void bios_dma_copy(
-	u32 vdpptr_dest,
-	u16 source,
-	u16 length)
+static inline void bios_dma_copy(u32 vdpptr_dest, u16 source, u16 length)
 {
 	register u32 D0 asm("d0") = vdpptr_dest;
 	register u16 D1 asm("d1") = source;
@@ -1284,9 +1250,7 @@ static inline void bios_copy_sprlist()
  * @param[in] D7.l Size to clear (in longs) MINUS 1
  * @ingroup bios_misc
  */
-static inline void bios_clear_ram(
-	void * address,
-	u32		 long_count)
+static inline void bios_clear_ram(void * address, u32 long_count)
 {
 	register u32 A0 asm("a0") = (u32) address;
 	register u32 D7 asm("d7") = long_count;

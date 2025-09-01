@@ -8,12 +8,11 @@
  * Subdirectories are *not* supported. All files should be in the root.
  */
 
-#include "macros.s"
-#include "sub/cdrom.def.h"
-#include "sub/bios.def.h"
-#include "sub/gate_arr.def.h"
-
-#include "sub/sub.macro.s"
+#include <macros.s>
+#include <sub/cdrom.def.h>
+#include <sub/bios.def.h>
+#include <sub/gate_arr.def.h>
+#include <sub/sub.macro.s>
 
 .section .text
 
@@ -40,7 +39,7 @@ load_file_sub:
 
 load_file:
   move.l  a0, filename
-0:jbsr    _WAITVSYNC
+0:jbsr    WAITVSYNC
   jbsr    check_status
   bcs     0b  // wait for completion
   // should have the caller check the status
@@ -313,12 +312,12 @@ load_data_begin:
                                            // value MM:SS:FF format)
   move.b  d0, cdc_frame_check              // cache for later error checking
 
-  CDBIOS   #BIOS_CDCSTOP                  // stop any current CDC transfers
-  CDBIOS   #BIOS_ROMREADN                 // begin the data read
+  BIOSCALL   #BIOS_CDCSTOP                  // stop any current CDC transfers
+  BIOSCALL   #BIOS_ROMREADN                 // begin the data read
 
   move.w   #0x258, read_timeout
 1:bsr      accloop_reentry  /*take a break here and come back next VINT*/
-2:CDBIOS   #BIOS_CDCSTAT            /*check CDC status since our read call*/
+2:BIOSCALL   #BIOS_CDCSTAT            /*check CDC status since our read call*/
   bcc      3f              /*we have a sector read to be read*/
   subq.w   #1, read_timeout  /*count down read timeout & try again*/
   bge      1b
@@ -326,7 +325,7 @@ load_data_begin:
   bge      load_data_begin
   bra      load_data_failure          /*failed completely, jump down*/
 
-3:CDBIOS   #BIOS_CDCREAD    /*read out the data from the CDC*/
+3:BIOSCALL   #BIOS_CDCREAD    /*read out the data from the CDC*/
   bcs      4f      /*sector not ready, this shouldn't happen since*/
   								/*BIOS_CDCSTAT said we were good; jump down & try again*/
   move.l   d0, cdc_read_timecode  /*the timecode for the read sector comes back in d0*/
@@ -347,7 +346,7 @@ load_data_begin:
   beq      load_data_maincpudest    /*if so, jump down; main cpu can't use BIOS_CDCTRN*/
   movea.l  (filebuff), a0  /*setup BIOS_CDCTRN pointers*/
   lea      cdc_read_timecode, a1
-  CDBIOS   #BIOS_CDCTRN            /*transfer data from CDC to RAM*/
+  BIOSCALL   #BIOS_CDCTRN            /*transfer data from CDC to RAM*/
   bcs      7f
   move.b   cdc_frame_check, d0      /*check against our expected frame count again*/
   cmp.b    cdc_read_timecode+2, d0  
@@ -364,7 +363,7 @@ load_data_begin:
   cmpi.b   #0x75, cdc_frame_check  /* check if we're past 75 frames (0 indexed,BCD)*/
   bcs      9f        /*not yet*/
   move.b   #0, cdc_frame_check    /*frame counter rolled past 75, reset our check*/
-9:CDBIOS   #BIOS_CDCACK        /*send ack to CDC*/
+9:BIOSCALL   #BIOS_CDCACK        /*send ack to CDC*/
   move.w   #6, read_timeout    /*reset error counters*/
   move.w   #0x1e, read_retry_count
   addi.l   #0x800, filebuff  /*move the dest buffer up a sector*/
@@ -421,12 +420,12 @@ load_data_dma_begin:
                     // value MM:SS:FF format)
   move.b   d0, cdc_frame_check  // cache for later error checking
 
-  CDBIOS   #BIOS_CDCSTOP     // stop any current CDC transfers
-  CDBIOS   #BIOS_ROMREADN    // begin the data read
+  BIOSCALL   #BIOS_CDCSTOP     // stop any current CDC transfers
+  BIOSCALL   #BIOS_ROMREADN    // begin the data read
 
   move.w   #0x258, read_timeout // set up for reading
 1:bsr      accloop_reentry    // take a break here and come back next VINT
-2:CDBIOS   #BIOS_CDCSTAT               // check on the CDC on the status of our data
+2:BIOSCALL   #BIOS_CDCSTAT               // check on the CDC on the status of our data
   bcc      3f                // sector is ready! jump down
   subq.w   #1, read_timeout  // not ready yet,count down read timeout
   bge      1b                // and try again
@@ -434,7 +433,7 @@ load_data_dma_begin:
   bge      load_data_dma_begin   // and try again
   bra      load_data_dma_failure // failed after all attempts, return error
 
-3:CDBIOS   #BIOS_CDCREAD     // read out the data from the CDC to the destination
+3:BIOSCALL   #BIOS_CDCREAD     // read out the data from the CDC to the destination
   bcs      4f      // data not ready, this really shouldn't happen since
                   // BIOS_CDCSTAT said we were good; jump down & try again
   lsr      #8, d0  // the timecode for the loaded sector comes back in d0
@@ -465,7 +464,7 @@ load_data_dma_begin:
   bge      7b
   bra      load_data_dma_failure
 
-9:CDBIOS   #BIOS_CDCACK          // send ack to CDC (required after every sector/frame)
+9:BIOSCALL   #BIOS_CDCACK          // send ack to CDC (required after every sector/frame)
   move.w   #6, read_timeout          // reset error counters for next sector
   move.w   #0x1e, read_retry_count
   addq.w   #1, sectors_read_count    // add to the sectors loaded count

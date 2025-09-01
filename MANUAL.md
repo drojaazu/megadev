@@ -90,13 +90,13 @@ After that, feel free to try the remaining examples. In all cases, check the `RE
 
 # Project Composition & Compilation
 
-Megadev uses GNU `make` for its build system. At the bare minimum, a Megadev project must contain a Makefile with *configuration variables* (discussed below) and which *includes the Megadev parent Makefile*. You are free to lay out your project tree as you like so long as the `SRC_PATH`, `RES_PATH`, and `BUILD_PATH` variables are defined. There are a couple other settings that must be set for the build process to complete; refer to the next section for those.
+Megadev uses GNU `make` for its build system. At the bare minimum, a Megadev project must contain a Makefile which contains certain required *configuration variables* (discussed below) and *includes the Megadev parent Makefile*. You are free to lay out your project tree as you like so long as the `SRC_PATH`, `RES_PATH`, and `BUILD_PATH` variables are defined. There are a couple other settings that must be set for the build process to complete; refer to the next section for those.
 
 We recommend modifying an existing Makefile from one of the example project to start.
 
 ## Makefile Configuration
 
-Configuration settings must appear at the top of the Makefile, before including the `megadev.make` parent. Some configuration settings are required, some are recommended, and some are optional. **Please pay careful attention with these settings, as some have limits on character length or other restrictions.**
+Configuration settings must appear at the top of the Makefile, before including the `megadev.make` parent. Some configuration settings are required, some are recommended, and some are optional. **Please pay careful attention with these settings, as many have text length limits or other restrictions.**
 
 All settings can be changed at compile time by including them in the make command. For example:
 

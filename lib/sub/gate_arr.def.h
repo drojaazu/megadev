@@ -43,22 +43,22 @@
 #define _GAREG_RESET 0xFF8000
 
 /**
- * @def GA_LED_R
+ * @def GALED_R
  * @brief Red LED Control
  * @sa ga_reset
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_subctrl
  */
-#define GA_LED_R (1 << 0)
+#define GALED_R (1 << 0)
 
 /**
- * @def GA_LED_G
+ * @def GALED_G
  * @brief Green LED Control
  * @sa ga_reset
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_subctrl
  */
-#define GA_LED_G (1 << 1)
+#define GALED_G (1 << 1)
 
 /**
  * @def GA_VERSION

@@ -1,4 +1,4 @@
-ARG OS_VERSION=12
+ARG OS_VERSION=13
 
 FROM debian:${OS_VERSION}-slim AS base
 RUN \
@@ -11,9 +11,14 @@ RUN \
 		gcc-m68k-linux-gnu \
 		genisoimage \
 		xxd \
+		clang-format-19 \
 		&& \
 	apt-get clean && \
-	rm -rf /var/lib/apt/lists/*
+	rm -rf /var/lib/apt/lists/* && \
+	update-alternatives \
+				--install   /usr/bin/clang-format          clang-format          /usr/bin/clang-format-19 100 && \
+	update-alternatives \
+				--install   /usr/bin/clang-format-diff     clang-format-diff     /usr/bin/clang-format-diff-19 100
 
 FROM base AS devcontainer
 

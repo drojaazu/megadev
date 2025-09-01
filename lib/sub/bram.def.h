@@ -8,7 +8,11 @@
 #ifndef MEGADEV__SUB_BRAM_DEF_H
 #define MEGADEV__SUB_BRAM_DEF_H
 
-#include "sub/bios.def.h"
+/**
+ * @def BURAM
+ * @brief Backup RAM system calls vector
+ */
+#define BURAM 0x005F16
 
 /**
  * @def BRMINIT

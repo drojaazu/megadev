@@ -8,15 +8,24 @@
  * Do not change the order of the defines in this file!
  */
 
+#define STR(x) XSTR(x)
+#define XSTR(x) #x
 
-HardwareType:  .ascii HEADER_HARDWARE_ID
-Copyright:     .ascii HEADER_COPYRIGHT
-TitleDomestic: .ascii PROJECT_NAME_DOMESTIC
-TitleIntl:     .ascii PROJECT_NAME
-SoftwareID:    .ascii HEADER_SOFTWARE_ID
+.org 0x100
+HardwareType:  .ascii STR(HEADER_HARDWARE_ID)
+.org 0x110, 0x20
+Copyright:     .ascii STR(HEADER_COPYRIGHT)
+.org 0x120, 0x20
+TitleDomestic: .ascii STR(PROJECT_NAME_DOMESTIC)
+.org 0x150, 0x20
+TitleIntl:     .ascii STR(PROJECT_NAME)
+.org 0x180, 0x20
+SoftwareID:    .ascii STR(HEADER_SOFTWARE_ID)
+.org 0x18E, 0x20
 Checksum:      .word  0
-Devices:       .ascii "J               "
-//                     ################
+.org 0x190
+Devices:       .ascii "J"
+.org 0x1A0, 0x20
 RomRangeStart: .long 0x0
 RomRangeEnd:   .long 0x3FFFFF
 ExtraMemory:   .ascii "            "
@@ -24,5 +33,5 @@ ExtraMemory:   .ascii "            "
 Modem:         .ascii "            "
 //                     ############
 .fill 40
-Region:       .ascii HEADER_REGION
+Region:       .ascii STR(HEADER_REGION)
 .fill 13

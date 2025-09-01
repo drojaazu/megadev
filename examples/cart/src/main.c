@@ -37,7 +37,7 @@ __attribute__((interrupt)) void INT4_HBLANK()
 }
 
 volatile bool vblank_done;
-u32						vblank_counter;
+volatile u32	vblank_counter;
 
 __attribute__((interrupt)) void INT6_VBLANK()
 {
@@ -94,7 +94,8 @@ void clear_vram()
 
 u16 const default_vdp_regs[] = {
 	VDPREG_MODE1 | VDP_HICOLOR_ENABLE,
-	VDPREG_MODE2 | VDP_MD_DISPLAY_MODE | VDP_VINT_ENABLE | VIDEO_SIGNAL | VDP_DISPLAY_ENABLE,
+	VDPREG_MODE2 | VDP_MD_DISPLAY_MODE | VDP_VINT_ENABLE | VIDEO_SIGNAL |
+		VDP_DISPLAY_ENABLE,
 	VDPREG_PLA_ADDR | (PLANE_A_ADDR / 0x400),
 	VDPREG_WIN_ADDR | (0xa00 / 0x400),
 	VDPREG_PLB_ADDR | (PLANE_B_ADDR / 0x2000),
@@ -111,11 +112,10 @@ u16 const default_vdp_regs[] = {
 	VDPREG_WIN_HPOS,
 	VDPREG_WIN_VPOS};
 
-#define plane_xy(x, y) (vdpptr(PLANE_POS(x, y, Width32) + PLANE_A_ADDR) | VRAM_W)
+#define plane_xy(x, y)                                       \
+	(vdpptr(PLANE_POS(x, y, Width32) + PLANE_A_ADDR) | VRAM_W)
 
-void print(
-	char const * string,
-	vdpptr			 pos)
+void print(char const * string, vdpptr pos)
 {
 	vdp_ctrl_32 = pos;
 	while (*string != 0)
@@ -147,7 +147,8 @@ void main()
 	vdp_regs[1] |= VDP_DMA_ENABLE;
 	vdp_ctrl = vdp_regs[1];
 	asm("transfer:");
-	vdp_dma_transfer(res_basic_font, vdpptr(VRAMPTR(0x20)), (res_basic_font_size << 1));
+	vdp_dma_transfer(
+		res_basic_font, vdpptr(VRAMPTR(0x20)), (res_basic_font_size << 1));
 	vdp_regs[1] &= ~VDP_DMA_ENABLE;
 	vdp_ctrl = vdp_regs[1];
 

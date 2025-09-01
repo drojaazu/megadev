@@ -40,15 +40,26 @@
  * @defgroup bios_unknown Sub CPU / BIOS / Undocumented calls
  */
 
-#define _BOOTSTAT 0x005EA0
-#define _INT2FLAG 0x005EA4
-#define _USERMODE 0x005EA6
+/**
+ * @def BOOTSTAT
+ */
+#define BOOTSTAT 0x005EA0
+
+/**
+ * @def INT2FLAG
+ */
+#define INT2FLAG 0x005EA4
+
+/**
+ * @def USERMODE
+ */
+#define USERMODE 0x005EA6
 
 /*
- * @def _CDSTAT
- * @brief Contains the status value after calling @ref _CDBSTAT
+ * @def CDSTAT
+ * @brief Contains the status after calling @ref _CDBSTAT
  */
-#define _CDSTAT 0x005E80
+#define CDSTAT 0x005E80
 
 /**
  * System Jump Table
@@ -58,42 +69,49 @@
  * BREAK A2
  * NOTES
  * expects the user header to begin with MAIN
- * also checks for SYS, SUB, or DAT, but these must appear beginning the 8th byte
- * (it looks like there is no tangible difference between these)
- * the flag (the last byte, normally zero the filename)
- * It looks like if the flag is non-zero, it calls the start address as a subroutine (JSR)
- * and checks for carry clear (BCC) on return; on carry clear, it skips the jump table
+ * also checks for SYS, SUB, or DAT, but these must appear beginning the 8th
+ * byte (it looks like there is no tangible difference between these) the flag
+ * (the last byte, normally zero the filename) It looks like if the flag is
+ * non-zero, it calls the start address as a subroutine (JSR) and checks for
+ * carry clear (BCC) on return; on carry clear, it skips the jump table
  * installation that is called on a normaly flag = 0 flow
  *
  * "ptr to link module" is an offset relative to the start of the user header
- * it then goes through the process of checking flag, possibly running entry, and installing jumps
+ * it then goes through the process of checking flag, possibly running entry,
+ * and installing jumps
  */
-#define _SETJMPTBL 0x005F0A
-
-#define _WAITVSYNC 0x005F10
+#define SETJMPTBL 0x005F0A
 
 /**
- * @def _BURAM
- * @brief Backup RAM system calls vector
+ * @def WAITVSYNC
  */
-#define _BURAM 0x005F16
+#define WAITVSYNC 0x005F10
 
 /**
- * @def _CDBOOT
- * @brief CD Boot system calls vector
+ * @def USERCALL0
  */
-#define _CDBOOT 0x005F1C
+#define USERCALL0 0x005F28 /* SP Init */
 
 /**
- * @def _CDBIOS
+ * @def USERCALL1
+ */
+#define USERCALL1 0x005F2E /* SP Main */
+
+/**
+ * @def USERCALL2
+ */
+#define USERCALL2 0x005F34 /* SP INT2 */
+
+/**
+ * @def USERCALL3
+ */
+#define USERCALL3 0x005F3A /* SP User Call */
+
+/**
+ * @def CDBIOS
  * @brief General system calls vector
  */
-#define _CDBIOS 0x005F22
-
-#define _USERCALL0 0x005F28 /* SP Init */
-#define _USERCALL1 0x005F2E /* SP Main */
-#define _USERCALL2 0x005F34 /* SP INT2 */
-#define _USERCALL3 0x005F3A /* SP User Call */
+#define CDBIOS 0x005F22
 
 /**
  * @def BIOS_UNKNOWN00
@@ -312,9 +330,8 @@
  *
  * @details
  * The structure is made up of two 32 bit values:
- *
- *       dc.l 0x00000001   // First sector to read
- *       dc.l 0x00001234   // Number of sectors to read
+ *   dc.l 0x00000001   // First sector to read
+ *   dc.l 0x00001234   // Number of sectors to read
  */
 #define BIOS_ROMREADN 0x0020
 
@@ -327,8 +344,8 @@
  * @param[in] A0.l Pointer to a sector read info structure
  *
  * @details The structure is made up of two 32 bit values:
- *       dc.l 0x00000001   // First sector to read
- *       dc.l 0x00001234   // Number of logical sectors to read
+ *   dc.l 0x00000001   // First sector to read
+ *   dc.l 0x00001234   // Number of logical sectors to read
  * OUT:
  *  none
  */
@@ -595,15 +612,6 @@
  */
 #define BIOS_SCDPQL 0x0094
 
-#define _LED_READY	 0
-#define _LED_DISCIN	 1
-#define _LED_ACCESS	 2
-#define _LED_STANDBY 3
-#define _LED_ERROR	 4
-#define _LED_MODE5	 5
-#define _LED_MODE6	 6
-#define _LED_MODE7	 7
-
 /**
  * @def BIOS_LEDSET
  * @brief Controls the status LEDs on the front of the CD unit
@@ -615,22 +623,27 @@
  * @details
  * |MODE          |Green|Red  |System Indication
  * |:------------:|:---:|:---:|:----------------:|
- * |LEDREADY (0)  |on   |blink|CD ready / no disk|
- * |LEDDISCIN (1) |on   |off  |CD ready / disk ok|
- * |LEDACCESS (2) |on   |on   |CD accessing      |
- * |LEDSTANDBY (3)|blink|off  |standby mode      |
- * |LED_ERROR (4) |blink|blink|reserved          |
- * |LEDMODE5 (5)  |blink|on   |reserved          |
- * |LEDMODE6 (6)  |off  |blink|reserved          |
- * |LEDMODE7 (7)  |off  |on   |reserved          |
- * |LEDSYSTEM (?) |     |     |return control to BIOS|
+ * |BIOS_LED_READY (0)  |on   |blink|CD ready / no disk|
+ * |BIOS_LED_DISCIN (1) |on   |off  |CD ready / disk ok|
+ * |BIOS_LED_ACCESS (2) |on   |on   |CD accessing      |
+ * |BIOS_LED_STANDBY (3)|blink|off  |standby mode      |
+ * |BIOS_LED_ERROR (4) |blink|blink|reserved          |
+ * |BIOS_LED_MODE5 (5)  |blink|on   |reserved          |
+ * |BIOS_LED_MODE6 (6)  |off  |blink|reserved          |
+ * |BIOS_LED_MODE7 (7)  |off  |on   |reserved          |
+ * |BIOS_LED_SYSTEM (?) |     |     |return control to BIOS|
  *
  */
 #define BIOS_LEDSET 0x0095
 
-#define BIOS_CDC_MODE0 2 // bios_cdda
-#define BIOS_CDC_MODE1 0 // bios_cdrom with full error correction
-#define BIOS_CDC_MODE2 1 // bios_cdrom with CRC only
+#define BIOS_LED_READY	 0
+#define BIOS_LED_DISCIN	 1
+#define BIOS_LED_ACCESS	 2
+#define BIOS_LED_STANDBY 3
+#define BIOS_LED_ERROR	 4
+#define BIOS_LED_MODE5	 5
+#define BIOS_LED_MODE6	 6
+#define BIOS_LED_MODE7	 7
 
 /**
  * @def BIOS_CDCSETMODE
@@ -640,8 +653,8 @@
  *
  * @param[in] D1.w Mode bit flags
  *
- * @note Use the predefined CDC_MODE0, CDC_MODE1, CDC_MODE2 values
- * to set the CDC mode
+ * @note Use the predefined BIOS_CDC_MODE0, BIOS_CDC_MODE1, BIOS_CDC_MODE2
+ * values to set the CDC mode
  *
  * @details
  *   These are the allowed bit fields
@@ -652,6 +665,24 @@
  *    3     Re-read last data
  */
 #define BIOS_CDCSETMODE 0x0096
+
+/**
+ * @def BIOS_CDC_MODE0
+ * @brief Put CDC in CD Audio (CDDA) mode
+ */
+#define BIOS_CDC_MODE0 2
+
+/**
+ * @def BIOS_CDC_MODE1
+ * @brief Put CDC in full error correction mode
+ */
+#define BIOS_CDC_MODE1 0
+
+/**
+ * @def BIOS_CDC_MODE2
+ * @brief Put CDC in CRC check only mode
+ */
+#define BIOS_CDC_MODE2 1
 
 /**
  * @def BIOS_WONDERREQ
@@ -669,4 +700,4 @@
  */
 #define BIOS_WONDERCHK 0x0098
 
-#endif
+  #endif

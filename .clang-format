@@ -33,10 +33,9 @@ BreakBeforeBraces: Allman
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: AfterColon
 BinPackArguments: false
-BinPackParameters: AlwaysOnePerLine
+BinPackParameters: false
 ColumnLimit: 80
 ContinuationIndentWidth: 2
-Cpp11BracedListStyle: true
 MaxEmptyLinesToKeep: 1
 IndentCaseLabels: true
 PackConstructorInitializers: Never
@@ -46,7 +45,6 @@ SortIncludes: true
 SpaceAfterCStyleCast: true
 SpaceAfterLogicalNot: true
 SpaceAroundPointerQualifiers: Both
-SpaceBeforeAssignmentOperators: 
 SpaceBeforeCpp11BracedList: true
 SpaceBeforeCtorInitializerColon: true
 SpaceBeforeInheritanceColon: true

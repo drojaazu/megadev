@@ -14,10 +14,10 @@ GLABEL sp_init
 	// it's important to drvinit/cdbstat here even if bios already did it
 	// otherwise there may be issues with CD audio track playback
 	lea drvinit_tracklist, a0
-	CDBIOS #BIOS_DRVINIT
+	BIOSCALL #BIOS_DRVINIT
 	// loop until done reading the disc TOC
-1:CDBIOS #BIOS_CDBSTAT
-	andi.b	#0xf0, (_CDSTAT).w
+1:BIOSCALL #BIOS_CDBSTAT
+	andi.b	#0xf0, (CDSTAT).w
 	bne			1b
 	CLEAR_COMM_REGS
   rts

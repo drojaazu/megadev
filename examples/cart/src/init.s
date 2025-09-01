@@ -1,5 +1,4 @@
 #include "md_vectors.s"
-#include "config.h"
 #include "md_header.s"
 #include "md_init.s"
 

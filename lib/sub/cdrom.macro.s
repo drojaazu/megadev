@@ -39,7 +39,7 @@
 LOCAL loop
 
 loop:
-  jsr     _WAITVSYNC
+  jsr     WAITVSYNC
   jbsr    check_status
   bcs     loop
 .endm

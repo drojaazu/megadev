@@ -20,18 +20,18 @@
  */
 .macro BURAM fcode
 	move.w  \fcode, d0
-	jsr     _BURAM
+	jsr     BURAM
 .endm
 
 /**
- * @macro CDBIOS
+ * @macro BIOSCALL
  * @param fcode BIOS function code
  * @brief Call the specified internal BIOS function
  * @clobber d0
  */
-.macro CDBIOS fcode
+.macro BIOSCALL fcode
 	move.w  \fcode, d0
-	jsr     _CDBIOS
+	jsr     CDBIOS
 .endm
 
 /**
@@ -42,7 +42,7 @@
  */
 .macro CDBOOT fcode
 	move.w  \fcode, d0
-	jsr     _CDBOOT
+	jsr     CDBOOT
 .endm
 
 /**

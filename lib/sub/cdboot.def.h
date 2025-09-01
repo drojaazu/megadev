@@ -8,7 +8,11 @@
 #ifndef MEGADEV__SUB_CDBOOT_DEF_H
 #define MEGADEV__SUB_CDBOOT_DEF_H
 
-#include "sub/memmap.def.h"
+/**
+ * @def CDBOOT
+ * @brief CD Boot system calls vector
+ */
+#define CDBOOT 0x005F1C
 
 /**
  * @def CBTINIT

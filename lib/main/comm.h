@@ -28,7 +28,8 @@ static inline void init_ext_port()
   move.b   #0x7f, %c[ext_ctrl] \n\
 	"
 		:
-		: [sctrl_settings] "i"(SCTRL_SERIAL_ENABLE | SCTRL_RX_INT_ENABLE | EXT_BAUD),
+		: [sctrl_settings] "i"(
+				SCTRL_SERIAL_ENABLE | SCTRL_RX_INT_ENABLE | EXT_BAUD),
 			[ext_sctrl] "i"(EXT_SCTRL),
 			[ext_ctrl] "i"(EXT_CTRL)
 		:);
@@ -52,7 +53,9 @@ static inline u8 ext_rx()
   move.b   (%c[ext_rx_data]), %[rx] \n\
 	"
 		: [rx] "=d"(rx_data), [scratch_a] "=&a"(scratch_a)
-		: [sctrl_rx_ready] "i"(SCTRL_RX_READY), [ext_sctrl] "i"(EXT_SCTRL), [ext_rx_data] "i"(EXT_RXDATA)
+		: [sctrl_rx_ready] "i"(SCTRL_RX_READY),
+			[ext_sctrl] "i"(EXT_SCTRL),
+			[ext_rx_data] "i"(EXT_RXDATA)
 		:);
 
 	return rx_data;
@@ -73,7 +76,10 @@ static inline void ext_tx(register u8 tx_data)
   move.b   %c[tx], (%c[ext_tx_data]) \n\
 	"
 		: [scratch_a] "=&a"(scratch_a)
-		: [tx] "=d"(tx_data), [sctrl_tx_full] "i"(SCTRL_TX_FULL), [ext_sctrl] "i"(EXT_SCTRL), [ext_tx_data] "i"(EXT_TXDATA)
+		: [tx] "=d"(tx_data),
+			[sctrl_tx_full] "i"(SCTRL_TX_FULL),
+			[ext_sctrl] "i"(EXT_SCTRL),
+			[ext_tx_data] "i"(EXT_TXDATA)
 		:);
 }
 

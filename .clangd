@@ -1,7 +1,0 @@
-Diagnostics:
-  ClangTidy:
-    Add: [performance*, modernize*]
-    Remove: [modernize-use-trailing-return-type, modernize-avoid-c-arrays]
-    CheckOptions:
-      readability-identifier-naming.VariableCase: SnakeCase
-

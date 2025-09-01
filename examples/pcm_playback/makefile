@@ -64,7 +64,7 @@ MEGADEV_PATH?=/opt/megadev
 
 include $(MEGADEV_PATH)/megadev.make
 
-.PHONY: init disc clean
+.PHONY: init all clean
 
 init:
 	@mkdir -p $(SRC_PATH)
@@ -72,13 +72,13 @@ init:
 	@mkdir -p $(BUILD_PATH)
 	@mkdir -p $(DISC_PATH)
 
-disc: \
+all: \
 	disc/ipx.mmd \
 	disc/spx.smd \
 	$(PROJECT_ID).iso
 
 clean:
-	@rm -f $(PROJECT_ID).iso $(DISC_PATH)/*.mmd $(DISC_PATH)/*.smd build/* > /dev/null 2>&1
+	@rm -f $(PROJECT_ID).iso $(DISC_PATH)/*.mmd $(DISC_PATH)/*.smd $(BUILD_PATH)/* > /dev/null 2>&1
 
 disc/ipx.mmd: \
 	ipx_layout.s \

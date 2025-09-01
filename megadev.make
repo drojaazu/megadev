@@ -120,11 +120,15 @@ LD_FLAGS+= \
 	-nostdlib -z noexecstack
 
 define msg_info
-	@echo "${BOLD}${CYAN}$(1)${CLEAR}"
+	@echo "${BOLD}- ${CYAN}$(1)${CLEAR}"
 endef
 
 define msg_warning
-	@echo "${BOLD}${RED}$(1)${CLEAR}"
+	@echo "${BOLD}! ${RED}$(1)${CLEAR}"
+endef
+
+define msg_done
+	@echo "${BOLD}* ${GREEN}$(1)${CLEAR}"
 endef
 
 vpath %.c $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
@@ -135,6 +139,8 @@ vpath %.c.o $(BUILD_PATH)
 vpath %.s.o $(BUILD_PATH)
 
 .SECONDARY: $(BUILD_PATH)/*
+
+.DEFAULT_GOAL:=all
 
 # need to specify paths here as they're called through a secondary make
 $(BUILD_PATH)/%.c.o: %.c
@@ -154,6 +160,7 @@ $(BUILD_PATH)/%.s.o: %.s
 %.mmd:
 # @echo "mmd in: $^"
 # @echo "mmd out: $@"
+	$(call msg_info,Building module $(notdir $@))
 	$(eval BUILD_SRC:=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o, $(filter %.c %.h %.s, $^)))))
 	$(eval BUILD_MOD:=$(filter %.mmd %.smd %.bin, $^))
 # @echo "build mod: $(BUILD_MOD)"
@@ -168,6 +175,7 @@ $(BUILD_PATH)/%.s.o: %.s
 %.smd:
 # @echo "smd in: $^"
 # @echo "smd out: $@"
+	$(call msg_info,Building module $(notdir $@))
 	$(eval BUILD_SRC:=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o, $(filter %.c %.h %.s, $^)))))
 	$(eval BUILD_MOD:=$(filter %.mmd %.smd %.bin, $^))
 # @echo "build mod: $(BUILD_MOD)"
@@ -179,32 +187,23 @@ $(BUILD_PATH)/%.s.o: %.s
 	@$(NM) -n $(OUT_MOD_ELF) > $(addsuffix .sym,$(OUT_MOD_ELF))
 	@$(OBJCPY) -O binary $(OUT_MOD_ELF) $@
 
-
 %.cart:
 	@echo "rom elf in: $^"
 	@echo "rom elf out: $@"
+	$(call msg_info,Building cart ROM $(notdir $@))
 	$(eval BUILD_SRC:=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o, $(filter %.c %.h %.s, $^)))))
+	@echo BUILD SRC: $(BUILD_SRC)
 	@$(if $(BUILD_SRC), $(MAKE) -s $(BUILD_SRC))
-	$(call msg_info,Linking module $(notdir $@))
+	$(call msg_info,Linking cart ROM $(notdir $@))
 	$(eval OUT_CART_ELF:=$(addprefix $(BUILD_PATH)/,$(addsuffix .elf,$(notdir $@))))
 	@$(LD) $(LD_FLAGS) -T $(CFG_PATH)/md_cart.ld $(BUILD_SRC) -o $(OUT_CART_ELF)
 	@$(NM) -n $(OUT_CART_ELF) > $(addprefix $(BUILD_PATH)/,$(addsuffix .sym,$(notdir $@)))
 	@$(OBJCPY) -O binary $(OUT_CART_ELF) $@
 
-default: init boot
-
-.PHONY: init boot
-
-boot: $(BUILD_PATH)/boot.bin
-
-init_build:
-	@mkdir -p $(BUILD_PATH) $(DISC_PATHS)
-
 # special rules for boot sector binaries
 $(BUILD_PATH)/ip.bin: $(BUILD_PATH)/ip.bin.elf
 	@$(OBJCPY) -O binary $< $@
 
-#@$(CC) $(CC_FLAGS) -I$(MEGADEV_PATH)/lib -c $< -o $@
 $(BUILD_PATH)/security.s.o: $(MEGADEV_PATH)/lib/security.c
 	$(call msg_info,Creating security block)
 	@$(CC) $(CC_FLAGS) $(INC) -c $< -o $@
@@ -225,9 +224,11 @@ $(BUILD_PATH)/boot.bin: $(BUILD_PATH)/ip.bin $(BUILD_PATH)/sp.bin
 	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $(LIB_PATH)/cd_boot.s -o$@
 	@$(OBJCPY) -O binary $@
 
-# this is used to trigger an ISO rebuild if there are any file changes in the disc dir
-DISC_DIR_UPDATES = $(shell find $(DISC_PATH)/ -type d)
-DISC_FILES_UPDATES = $(shell find $(DISC_PATH)/ -type f -name '*')
+ifdef DISC_PATH
+	# this is used to trigger an ISO rebuild if there are any file changes in the disc dir
+	DISC_DIR_UPDATES = $(shell find $(DISC_PATH)/ -type d)
+	DISC_FILES_UPDATES = $(shell find $(DISC_PATH)/ -type f -name '*')
+endif
 
 # TODO make the ISO settings user configurable
 %.iso: $(BUILD_PATH)/boot.bin $(DISC_FILES_UPDATES) $(DISC_DIR_UPDATES)
@@ -235,6 +236,4 @@ DISC_FILES_UPDATES = $(shell find $(DISC_PATH)/ -type f -name '*')
 	@mkisofs -quiet -iso-level 1 -G $< -pad -V "$(PROJECT_ID)" \
 		-sysid "MEGA_CD" -appid "" -publisher "" -preparer "" \
 		-o $@ $(DISC_PATH)
-	$(info Target: $(TARGET))
-	$(info Region: $(REGION))
-	$(info Video: $(VIDEO))
+	$(call msg_done,Completed build of $(PROJECT_ID) ($(TARGET) / $(REGION) / $(VIDEO)))
