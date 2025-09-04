@@ -34,7 +34,7 @@ The simplest way to set up such a build environment is to use the included Docke
 
 The included Dockerfile can be used to set up a [dev container](https://containers.dev/) in a supported IDE such as [VS Code](https://code.visualstudio.com/). This is the modern, preferred method for development as it should work on any host platform (Windows, Linux, MacOS).
 
-It uses a minimal Debian installation and installs all necessary build tools. The Megadev project is installed to `/opt/megadev` within the container. From there you can copy the skeleton project or one of the examples into the workspace and begin development.
+It uses a minimal Debian installation and installs all necessary build tools. The Megadev project is installed to `/opt/megadev` within the container. From there you can copy one of the examples into the workspace and begin development.
 
 ### Manual Installation - By Distro
 
@@ -90,7 +90,7 @@ After that, feel free to try the remaining examples. In all cases, check the `RE
 
 # Project Composition & Compilation
 
-Megadev uses GNU `make` for its build system. At the bare minimum, a Megadev project must contain a Makefile which contains certain required *configuration variables* (discussed below) and *includes the Megadev parent Makefile*. You are free to lay out your project tree as you like so long as the `SRC_PATH`, `RES_PATH`, and `BUILD_PATH` variables are defined. There are a couple other settings that must be set for the build process to complete; refer to the next section for those.
+Megadev uses GNU `make` for its build system. At the bare minimum, a Megadev project must contain a Makefile which *contains certain required configuration variables* (discussed below) and *includes the Megadev parent Makefile*. You are free to lay out your project tree as you like so long as the `SRC_PATH`, `RES_PATH`, and `BUILD_PATH` variables are defined. There are a couple other settings that must be set for the build process to complete; refer to the next section for those.
 
 We recommend modifying an existing Makefile from one of the example project to start.
 
@@ -105,6 +105,18 @@ make REGION=EU VIDEO=PAL disc
 ```
 
 ### Required Settings
+
+#### `SRC_PATH`
+
+The path to your source code. This should be relatve to your project root.
+
+#### `RES_PATH`
+
+The path to your resources (graphics, sounds, etc). This should be relatve to your project root.
+
+#### `BUILD_PATH`
+
+The path to the compilation workspace, where build artifacts (including symbol lists) will be stored. This should be relatve to your project root.
 
 #### `MEGADEV_PATH`
 
@@ -251,12 +263,21 @@ Applies to Mega CD only. The disc type appearing in the disc header. **The wrong
 
 # Megadev Concepts & Utilities
 
-We have aimed to make Megadev as flexible and un-opinionated as possible: for devs who want to micromanage their project, for devs who want to make extensive use of a library of pre-written code to make life simple, and for devs somewhere in between. While there are recommended processes and tools, we have aimed to make them optional so you can write your code as you like it.
+We have aimed to make Megadev as flexible and un-opinionated as possible: for devs who want to micromanage their project, and for those who want to make extensive use of a library of pre-written code to make life simple, as well as for devs somewhere in between. While there are recommended processes and tools, we have aimed to make as many things as optional as possible so you can write your code how you like it.
 
 This section will go over the basics of a Megadev project, compiling that project, and using the library.
 
 [[the only requirment is the boot sector setup and makefile compliance]]
 
+## Supported Languages
+
+Megadev supports C (with GCC extensions) and M68000 ASM. These can be mixed freely.
+
+We do not yet support Z80 ASM for the Mega Drive's Z80 coprocessor, but this is definitely on the roadmap.
+
+We do not officially support C++ as we do not feel it brings anything that would support embedded development better than native C does, but you are welcome to retool the makefile to get it working with GCC's C++ compiler.
+
+We may explore support for clang (i.e. llvm) sometime in the future.
 
 ## MEGADEV Library
 
