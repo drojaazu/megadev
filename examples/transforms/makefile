@@ -6,7 +6,7 @@
 ## Project ID
 # ASCII text only; maximum of 11 characters
 # *** REQUIRED!***
-PROJECT_ID:=gfx
+PROJECT_ID:=xform
 
 ## Build Target
 # Determines for which hardware this project is intended
@@ -16,7 +16,7 @@ TARGET:=MEGACD
 
 ## Project Name
 # ASCII text only; maximum of 48 characters
-PROJECT_NAME:="GFX ROUTINES EXAMPLE"
+PROJECT_NAME:="TRANSFORMS EXAMPLE"
 
 ## Hardware Region
 # This is *very important* for Mega CD builds as it determines which security code to use. It can be changed at compile
@@ -75,14 +75,21 @@ init:
 	@mkdir -p $(DISC_PATH)
 
 all: \
-	$(DISC_PATH)/cyber.mmd \
+	$(DISC_PATH)/ipx.mmd \
+	$(DISC_PATH)/spx.smd \
 	$(PROJECT_ID).iso
 
 clean:
 	@rm -f $(PROJECT_ID).iso $(DISC_PATH)/*.mmd $(DISC_PATH)/*.smd $(BUILD_PATH)/* > /dev/null 2>&1
 
-$(DISC_PATH)/cyber.mmd: \
-	mmd_layout.s \
+$(DISC_PATH)/ipx.mmd: \
+	ipx_layout.s \
 	main/ipx_init.s \
-	cybercity.c \
-	cybercity.res.s
+	ipx.c \
+	io.macros.s
+
+$(DISC_PATH)/spx.smd: \
+	spx_layout.s \
+	spx.c \
+	xform.res.s \
+	$(BUILD_PATH)/sp.bin

@@ -131,6 +131,12 @@ define msg_done
 	@echo "${BOLD}* ${GREEN}$(1)${CLEAR}"
 endef
 
+# this is used to trigger an ISO rebuild if there are any file changes in the disc dir
+ifdef DISC_PATH
+	DISC_DIR_UPDATES = $(shell find $(DISC_PATH)/ -type d)
+	DISC_FILES_UPDATES = $(shell find $(DISC_PATH)/ -type f -name '*')
+endif
+
 vpath %.c $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
 vpath %.h $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
 vpath %.s $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
@@ -224,14 +230,11 @@ $(BUILD_PATH)/boot.bin: $(BUILD_PATH)/ip.bin $(BUILD_PATH)/sp.bin
 	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $(LIB_PATH)/cd_boot.s -o$@
 	@$(OBJCPY) -O binary $@
 
-ifdef DISC_PATH
-	# this is used to trigger an ISO rebuild if there are any file changes in the disc dir
-	DISC_DIR_UPDATES = $(shell find $(DISC_PATH)/ -type d)
-	DISC_FILES_UPDATES = $(shell find $(DISC_PATH)/ -type f -name '*')
-endif
+
 
 # TODO make the ISO settings user configurable
 %.iso: $(BUILD_PATH)/boot.bin $(DISC_FILES_UPDATES) $(DISC_DIR_UPDATES)
+
 	$(call msg_info,Generating ISO image $(notdir $@))
 	@mkisofs -quiet -iso-level 1 -G $< -pad -V "$(PROJECT_ID)" \
 		-sysid "MEGA_CD" -appid "" -publisher "" -preparer "" \

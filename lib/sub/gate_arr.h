@@ -28,7 +28,7 @@
 #define ga_comflags ((volatile const u16 *) _GAREG_COMFLAGS)
 
 #define GA_COMFLAGS_MAIN ((volatile const u8 *) _GAREG_COMFLAGS)
-#define GA_COMFLAGS_SUB ((volatile u8 *) _GAREG_COMFLAGS + 1)
+#define GA_COMFLAGS_SUB	 ((volatile u8 *) _GAREG_COMFLAGS + 1)
 
 #define GA_COMCMD0 ((u16 volatile const *) _GAREG_COMCMD0)
 
@@ -477,7 +477,7 @@
  * @sa _GAREG_STAMPSIZE
  * @ingroup gatearray_sub
  */
-#define GA_STAMPSIZE ((u16 volatile *) _GAREG_STAMPSIZE)
+#define GA_STAMPSIZE (*((u16 volatile *) _GAREG_STAMPSIZE))
 
 /**
  * @def GA_STAMPMAPBASE
@@ -485,7 +485,7 @@
  * @sa _GAREG_STAMPMAPBASE
  * @ingroup gatearray_sub
  */
-#define GA_STAMPMAPBASE ((u16 volatile *) _GAREG_STAMPMAPBASE)
+#define GA_STAMPMAPBASE (*((u16 volatile *) _GAREG_STAMPMAPBASE))
 
 /**
  * @def GA_IMGBUFVSIZE
@@ -493,7 +493,7 @@
  * @sa _GAREG_IMGBUFVSIZE
  * @ingroup gatearray_sub
  */
-#define GA_IMGBUFVSIZE ((u16 volatile *) _GAREG_IMGBUFVSIZE)
+#define GA_IMGBUFVSIZE (*((u16 volatile *) _GAREG_IMGBUFVSIZE))
 
 /**
  * @def GA_IMGBUFSTART
@@ -501,7 +501,7 @@
  * @sa _GAREG_IMGBUFSTART
  * @ingroup gatearray_sub
  */
-#define GA_IMGBUFSTART ((u16 volatile *) _GAREG_IMGBUFSTART)
+#define GA_IMGBUFSTART (*((u16 volatile *) _GAREG_IMGBUFSTART))
 
 /**
  * @def GA_IMGBUFOFFSET
@@ -509,7 +509,7 @@
  * @sa _GAREG_IMGBUFOFFSET
  * @ingroup gatearray_sub
  */
-#define GA_IMGBUFOFFSET ((u16 volatile *) _GAREG_IMGBUFOFFSET)
+#define GA_IMGBUFOFFSET (*((u16 volatile *) _GAREG_IMGBUFOFFSET))
 
 /**
  * @def GA_IMGBUFHDOTSIZE
@@ -517,7 +517,7 @@
  * @sa _GAREG_IMGBUFHDOTSIZE
  * @ingroup gatearray_sub
  */
-#define GA_IMGBUFHDOTSIZE ((u16 volatile *) _GAREG_IMGBUFHDOTSIZE)
+#define GA_IMGBUFHDOTSIZE (*((u16 volatile *) _GAREG_IMGBUFHDOTSIZE))
 
 /**
  * @def GA_IMGBUFVDOTSIZE
@@ -525,7 +525,7 @@
  * @sa _GAREG_IMGBUFVDOTSIZE
  * @ingroup gatearray_sub
  */
-#define GA_IMGBUFVDOTSIZE ((u16 volatile *) _GAREG_IMGBUFVDOTSIZE)
+#define GA_IMGBUFVDOTSIZE (*((u16 volatile *) _GAREG_IMGBUFVDOTSIZE))
 
 /**
  * @def GA_TRACEVECTBASE
@@ -533,7 +533,7 @@
  * @sa _GAREG_TRACEVECTBASE
  * @ingroup gatearray_sub
  */
-#define GA_TRACEVECTBASE ((u16 volatile *) _GAREG_TRACEVECTBASE)
+#define GA_TRACEVECTBASE (*((u16 volatile *) _GAREG_TRACEVECTBASE))
 
 /**
  * @def GA_SUBCODEADDR

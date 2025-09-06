@@ -8,8 +8,8 @@
 #ifndef MEGADEV__SUB_MEMMAP_H
 #define MEGADEV__SUB_MEMMAP_H
 
-#include "sub/memmap.def.h"
-#include "types.h"
+#include <sub/memmap.def.h>
+#include <types.h>
 
 #define DMAADDR_WORDRAM1M(addr) (((addr) & 0x3FFF) >> 3)
 #define DMAADDR_WORDRAM2M(addr) (((addr) & 0x7FFF) >> 3)
