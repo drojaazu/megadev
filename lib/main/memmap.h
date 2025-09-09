@@ -11,14 +11,14 @@
 #include "main/memmap.def.h"
 
 /**
- * @sa _WORD_RAM
+ * @sa WORD_RAM
  */
-#define WRDRAM ((volatile void *) _WORD_RAM)
+#define word_ram ((volatile void *) WORD_RAM)
 
 /**
- * @sa _PRGRAM
+ * @sa PRG_RAM_1M
  */
-#define PRGRAM ((volatile void *) _PRGRAM)
+#define prg_ram_1m ((volatile void *) PRG_RAM_1M)
 
 /**
  * @note The system jump table gives you six bytes to work with per entry,
@@ -27,12 +27,5 @@
  * there is really no reason to change the JSR opcode. If such a change is
  * necessary for some reason, it should be done in asm.
  */
-
-// L6 interrupt = VINT
-#define MLEVEL6_VECTOR (*((void volatile *(*) )(_MLEVEL6 + 2)))
-// L4 interrupt = HINT
-#define MLEVEL4_VECTOR (*((void volatile *(*) )(_MLEVEL4 + 2)))
-// L2 interrupt = Ext. port
-#define MLEVEL2_VECTOR (*((void volatile *(*) )(_MLEVEL2 + 2)))
 
 #endif

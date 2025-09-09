@@ -24,14 +24,14 @@ __attribute__((noreturn)) void main()
 	// GA_IMGBUFHDOTSIZE
 	// GA_IMGBUFVDOTSIZE
 	// GA_TRACEVECTBASE
-	memcpy16(res_stamp01.data, (_WORD_RAM_2M + STAMP_DATA), res_stamp01.size / 2);
+	memcpy16(res_stamp01.data, (WORD_RAM_2M + STAMP_DATA), res_stamp01.size / 2);
 
 	memcpy16(
-		res_stamp_map.data, (_WORD_RAM_2M + STAMP_MAP), res_stamp_map.size / 2);
+		res_stamp_map.data, (WORD_RAM_2M + STAMP_MAP), res_stamp_map.size / 2);
 
 	GA_STAMPSIZE = _GAREG_STAMPSIZE_REPEAT | _GAREG_STAMPSIZE_32x32_STAMP;
-	GA_STAMPMAPBASE = (_WORD_RAM_2M + STAMP_MAP) / 4;
-	GA_IMGBUFSTART = (_WORD_RAM_2M + IMG_BUFFER) / 4;
+	GA_STAMPMAPBASE = (WORD_RAM_2M + STAMP_MAP) / 4;
+	GA_IMGBUFSTART = (WORD_RAM_2M + IMG_BUFFER) / 4;
 	GA_IMGBUFVSIZE = 31;
 	GA_IMGBUFVDOTSIZE = IMG_HEIGHT;
 	GA_IMGBUFHDOTSIZE = IMG_WIDTH;

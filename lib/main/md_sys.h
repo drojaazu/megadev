@@ -11,10 +11,8 @@
 
 #include <main/md_sys.def.h>
 
-#define hardware_version (*((u8 const volatile *) _HW_VERSION))
+#define hw_version (*((u8 const volatile *) HW_VERSION))
 
-#define tmss_vdp_unlock (*((u8 volatile *) _TMSS_VDP_UNLOCK))
-
-#define tmss_bank_switch (*((u8 volatile *) _TMSS_BANK_SWITCH))
+#define tmss (*((u8 volatile *) TMSS))
 
 #endif

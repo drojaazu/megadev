@@ -14,9 +14,9 @@ typedef long ptrdiff_t;
 
 typedef unsigned long size_t;
 
-#define bool _Bool
-#define true 1
-#define false 0
+#define bool													_Bool
+#define true													1
+#define false													0
 #define __bool_true_false_are_defined 1
 
 /**
@@ -92,21 +92,21 @@ typedef unsigned long uint32_t;
 typedef uint32_t u32;
 
 typedef signed long intptr_t;
-typedef intptr_t sptr;
+typedef intptr_t		sptr;
 
 typedef unsigned long uintptr_t;
-typedef uintptr_t uptr;
+typedef uintptr_t			uptr;
 
-#define INT8_MIN (-0x7f - 1)
-#define INT16_MIN (-0x7fff - 1)
-#define INT32_MIN (-0x7fffffff - 1)
+#define INT8_MIN	(-0x7F - 1)
+#define INT16_MIN (-0x7FFF - 1)
+#define INT32_MIN (-0x7FFFFFFF - 1)
 
-#define INT8_MAX 0x7f
-#define INT16_MAX 0x7fff
-#define INT32_MAX 0x7fffffff
+#define INT8_MAX	0x7F
+#define INT16_MAX 0x7FFF
+#define INT32_MAX 0x7FFFFFFF
 
-#define UINT8_MAX 0xff
-#define UINT16_MAX 0xffff
-#define UINT32_MAX 0xffffffff
+#define UINT8_MAX	 0xFF
+#define UINT16_MAX 0xFFFF
+#define UINT32_MAX 0xFFFFFFFF
 
 #endif

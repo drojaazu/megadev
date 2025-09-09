@@ -67,18 +67,18 @@
  * @def CDROM_RESULT_LOAD_FAIL
  * @brief Error in core load_data_sub routine
  */
-#define CDROM_RESULT_LOAD_FAIL 0xff9c
+#define CDROM_RESULT_LOAD_FAIL 0xFF9C
 
 /**
  * @def CDROM_RESULT_FILE_LIST_FAIL
  * @brief Error occurred when trying to load file list from directory
  */
-#define CDROM_RESULT_FILE_LIST_FAIL 0xffff
+#define CDROM_RESULT_FILE_LIST_FAIL 0xFFFF
 
 /**
  * @def CDROM_RESULT_NOT_FOUND
  * @brief Filename not found on load attempt
  */
-#define CDROM_RESULT_NOT_FOUND 0xfffe
+#define CDROM_RESULT_NOT_FOUND 0xFFFE
 
 #endif

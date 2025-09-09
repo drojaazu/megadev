@@ -19,8 +19,8 @@
  */
 .macro INIT_JOYPADS
   /* set TH pin to enable write */
-  move.b  #CTRL_PC6, (_IO_CTRL1)
-  move.b  #CTRL_PC6, (_IO_CTRL2)
+  move.b  #CTRL_PC6, (IO_CTRL1)
+  move.b  #CTRL_PC6, (IO_CTRL2)
 .endm
 
 /**

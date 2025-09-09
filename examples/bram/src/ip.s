@@ -28,16 +28,16 @@
   jbsr     BIOS_CLEAR_COMM
 
   move     #0, (BIOS_VINT_HANDLER_FLAGS)
-  move.l   #BIOS_VINT_HANDLER, (_MLEVEL6 + 2)
+  move.l   #BIOS_VINT_HANDLER, (EXVEC_LEVEL6)
 
   ENABLE_INTERRUPTS
 
 	GRANT_2M
-  move.w	#0xfe, _GAREG_COMCMD0	//send the load IPX command to sub
-0:tst.w		_GAREG_COMSTAT0				//wait for response on status reg #0
+  move.w	#0xFE, GAREG_COMCMD0	//send the load IPX command to sub
+0:tst.w		GAREG_COMSTAT0				//wait for response on status reg #0
 	beq			0b
-	move.w	#0, _GAREG_COMCMD0			//send ack
-1:tst.w		_GAREG_COMSTAT0				//wait for response (wait for 0 from Sub)
+	move.w	#0, GAREG_COMCMD0			//send ack
+1:tst.w		GAREG_COMSTAT0				//wait for response (wait for 0 from Sub)
 	bne			1b
 	WAIT_2M
 
@@ -46,4 +46,4 @@
 	// Reset the stack since we're starting fresh
 	movea.l (0), sp
 
-	jbra _WORD_RAM + 0x100
+	jbra WORD_RAM + 0x100

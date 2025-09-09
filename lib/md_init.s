@@ -22,16 +22,16 @@ z80_dummy_program_end:
 .align 2
 init_system:
   DISABLE_INTERRUPTS
-  tst.l   (_IO_CTRL1 - 1)
+  tst.l   (IO_CTRL1 - 1)
   bne.s   0f
-  tst.w   (_IO_CTRL3 - 1)
+  tst.w   (IO_CTRL3 - 1)
 0:bne.s   skip_init
 
   // Check Version Number
-  move.b  (_HW_VERSION), d0
+  move.b  (HW_VERSION), d0
   andi.b  #HW_REV, d0
   beq.s   skip_tmss
-  move.l  #0x53454741, (_TMSS)
+  move.l  #0x53454741, (TMSS)
 
 skip_tmss:
   // Read from the VDP control port to cancel any pending read/write command
@@ -39,9 +39,9 @@ skip_tmss:
   // TODO add VDP initialization (CRAM/VRAM clear)
 
   // clear work RAM
-  move.l  #0x3fff,d7
+  move.l  #0x3FFF,d7
   moveq   #0, d0
-  lea     0xff0000, a0
+  lea     0xFF0000, a0
 1:move.l  d0, (a0)+
   dbra    d7, 1b
 

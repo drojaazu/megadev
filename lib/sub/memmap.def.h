@@ -13,7 +13,7 @@
  *
  * @details Size: 4Mbit
  */
-#define _PRGRAM 0x000000
+#define PRG_RAM 0x000000
 
 /**
  * @brief PRG RAM 1Mbit Bank 0
@@ -21,28 +21,28 @@
  * @details PRG RAM can be accessed in 1M banks by the Main CPU.
  * These provide quick access to each bank
  */
-#define _PRGRAM_1M_0 0x00000
+#define PRG_RAM_BANK1 0x00000
 
 /**
  * @brief PRG RAM 1Mbit Bank 1
  *
- * @sa _PRGRAM_1M_0
+ * @sa PRG_RAM_BANK1
  */
-#define _PRGRAM_1M_1 0x20000
+#define PRG_RAM_BANK2 0x20000
 
 /**
  * @brief PRG RAM 1Mbit Bank 2
  *
- * @sa _PRGRAM_1M_0
+ * @sa PRG_RAM_BANK1
  */
-#define _PRGRAM_1M_2 0x40000
+#define PRG_RAM_BANK3 0x40000
 
 /**
  * @brief PRG RAM 1Mbit Bank 3
  *
- * @sa _PRGRAM_1M_0
+ * @sa PRG_RAM_BANK1
  */
-#define _PRGRAM_1M_3 0x60000
+#define PRG_RAM_BANK4 0x60000
 
 /**
  * @brief Beginning of user-available space in PRGRAM
@@ -56,22 +56,22 @@
 /**
  * @brief Word RAM access (2M mode)
  */
-#define _WORD_RAM_2M 0x080000 /*word RAM base in 2M bit mode*/
+#define WORD_RAM_2M 0x080000 /*word RAM base in 2M bit mode*/
 
 /**
  * @brief Word RAM access (1M mode)
  */
-#define _WORD_RAM_1M 0x0C0000 /*word RAM base in 1M bit mode*/
+#define WORD_RAM_1M 0x0C0000 /*word RAM base in 1M bit mode*/
 
-#define _ADRERR 0x005F40
-#define _CODERR 0x005F46
-#define _DIVERR 0x005F4C
-#define _CHKERR 0x005F52
-#define _TRPERR 0x005F58
-#define _SPVERR 0x005F5E
-#define _TRACE 0x005F64
-#define _NOCOD0 0x005F6A
-#define _NOCOD1 0x005F70
+#define _ADRERR	 0x005F40
+#define _CODERR	 0x005F46
+#define _DIVERR	 0x005F4C
+#define _CHKERR	 0x005F52
+#define _TRPERR	 0x005F58
+#define _SPVERR	 0x005F5E
+#define _TRACE	 0x005F64
+#define _NOCOD0	 0x005F6A
+#define _NOCOD1	 0x005F70
 #define _SLEVEL1 0x005F76 /* Graphics operation complete */
 #define _SLEVEL2 0x005F7C /* INT 2 from Main CPU */
 #define _SLEVEL3 0x005F82 /* GA Timer Interrupt */

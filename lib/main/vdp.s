@@ -12,7 +12,7 @@
 
 /**
  * @fn VDP_DMA_TRANSFER
- * @param[in] D0.l Destination address (in vdpcmd format)
+ * @param[in] D0.l Destination address (in vdp_cmd format)
  * @param[in] D1.l Source address
  * @param[in] D2.w Length of data (in words)
  * @clobber a6, d0-d3
@@ -49,7 +49,7 @@ SUB VDP_DMA_TRANSFER
 
 /**
  * @fn VDP_DMA_FILL
- * @param[in] D0.l Destination address (in vdpcmd format)
+ * @param[in] D0.l Destination address (in vdp_cmd format)
  * @param[in] D1.w Count (in bytes)
  * @param[in] D2.b Value to write
  * @clobber a6, d0, d3

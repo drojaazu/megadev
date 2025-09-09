@@ -116,5 +116,6 @@ $(DISC_PATH)/ex3.mmd: \
 
 $(DISC_PATH)/spx.smd: \
 	spx_layout.s \
+	std_init.s \
 	spx.c \
 	$(BUILD_PATH)/sp.bin

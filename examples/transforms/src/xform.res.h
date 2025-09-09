@@ -12,4 +12,4 @@ extern DataChunk const res_stamp_map;
 
 extern DataChunk const res_stamp01;
 
-extern Palette const r_pal_clear;
+

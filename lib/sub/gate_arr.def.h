@@ -18,7 +18,7 @@
  */
 
 /**
- * @def _GAREG_RESET
+ * @def GAREG_RESET
  * @brief Sub CPU & Hardware Control
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_subctrl
@@ -41,7 +41,7 @@
  * @param Ver ROM Version
  * [read] ROM Version
  */
-#define _GAREG_RESET 0xFF8000
+#define GAREG_RESET 0xFF8000
 
 /**
  * @def GALED_R
@@ -75,7 +75,7 @@
  */
 
 /**
- * @def _GAREG_MEMMODE
+ * @def GAREG_MEMMODE
  * @brief GA Reg 01 - Word RAM Memory Mode / RAM Write Protect / Priority Mode
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_memmode
@@ -95,7 +95,7 @@
  * In 1M mode: Change 1M block ownership
  *
  */
-#define _GAREG_MEMMODE 0xFF8002
+#define GAREG_MEMMODE 0xFF8002
 
 #define BIT_GAREG_RET	 0
 #define BIT_GAREG_DMNA 1
@@ -133,7 +133,7 @@
  */
 
 /**
- * @def _GAREG_CDCMODE
+ * @def GAREG_CDCMODE
  * @brief CDC Mode & CDC Registers #1
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cdcmode
@@ -160,7 +160,7 @@
  *
  *   All other values for DD are invalid.
  */
-#define _GAREG_CDCMODE 0xFF8004
+#define GAREG_CDCMODE 0xFF8004
 
 /**
  * @defgroup ga_reg_sub_cdcregs2 Sub CPU / Gate Array / Registers / CDC
@@ -188,7 +188,7 @@
  */
 
 /**
- * @def _GAREG_CDCHOSTDATA
+ * @def GAREG_CDCHOSTDATA
  * @brief CDC Host Data
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cdcdata
@@ -202,7 +202,7 @@
  * [read] 2 bytes of data read by the CDC and ready to be transferred to
  * Main or Sub CPU memory
  */
-#define _GAREG_CDCHOSTDATA 0xFF8008
+#define GAREG_CDCHOSTDATA 0xFF8008
 
 /**
  * @defgroup ga_reg_sub_dmaaddr Sub CPU / Gate Array / Registers / CDC DMA
@@ -236,7 +236,7 @@
  */
 
 /**
- * @def _GAREG_STOPWATCH
+ * @def GAREG_STOPWATCH
  * @brief Stopwatch
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_stopwatch
@@ -251,7 +251,7 @@
  * This is a general use timer, though it is primarily used for CDD/CDC
  * timing. Each tick is 30.72 microseconds.
  */
-#define _GAREG_STOPWATCH 0xFF800C
+#define GAREG_STOPWATCH 0xFF800C
 
 /**
  * @defgroup ga_reg_sub_cpucomm Sub CPU / Gate Array / Registers / CPU
@@ -259,7 +259,7 @@
  */
 
 /**
- * @def _GAREG_COMFLAGS
+ * @def GAREG_COMFLAGS
  * @brief Main/Sub CPU communication flags
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
@@ -272,123 +272,123 @@
  * CFM: Comm flags for Main CPU
  * CFS: Comm flags for Sub CPU
  */
-#define _GAREG_COMFLAGS 0xFF800E
+#define GAREG_COMFLAGS 0xFF800E
 
 /**
- * @def _GAREG_COMCMD0
+ * @def GAREG_COMCMD0
  * @brief Comm Command 0 (Main -> Sub)
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  *
  * @details R: 16 bit data
  */
-#define _GAREG_COMCMD0 0xFF8010
+#define GAREG_COMCMD0 0xFF8010
 
 /**
- * @def _GAREG_COMCMD1
+ * @def GAREG_COMCMD1
  * @brief Comm Command  (Main -> Sub)
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define _GAREG_COMCMD1 0xFF8012
+#define GAREG_COMCMD1 0xFF8012
 
 /**
- * @def _GAREG_COMCMD2
+ * @def GAREG_COMCMD2
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define _GAREG_COMCMD2 0xFF8014
+#define GAREG_COMCMD2 0xFF8014
 
 /**
- * @def _GAREG_COMCMD3
+ * @def GAREG_COMCMD3
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define _GAREG_COMCMD3 0xFF8016
+#define GAREG_COMCMD3 0xFF8016
 
 /**
- * @def _GAREG_COMCMD4
+ * @def GAREG_COMCMD4
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define _GAREG_COMCMD4 0xFF8018
+#define GAREG_COMCMD4 0xFF8018
 
 /**
- * @def _GAREG_COMCMD5
+ * @def GAREG_COMCMD5
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define _GAREG_COMCMD5 0xFF801A
+#define GAREG_COMCMD5 0xFF801A
 
 /**
- * @def _GAREG_COMCMD6
+ * @def GAREG_COMCMD6
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define _GAREG_COMCMD6 0xFF801C
+#define GAREG_COMCMD6 0xFF801C
 
 /**
- * @def _GAREG_COMCMD7
+ * @def GAREG_COMCMD7
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define _GAREG_COMCMD7 0xFF801E
+#define GAREG_COMCMD7 0xFF801E
 
 /**
- * @def _GAREG_COMSTAT0
+ * @def GAREG_COMSTAT0
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define _GAREG_COMSTAT0 0xFF8020
+#define GAREG_COMSTAT0 0xFF8020
 
 /**
- * @def _GAREG_COMSTAT1
+ * @def GAREG_COMSTAT1
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define _GAREG_COMSTAT1 0xFF8022
+#define GAREG_COMSTAT1 0xFF8022
 
 /**
- * @def _GAREG_COMSTAT2
+ * @def GAREG_COMSTAT2
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define _GAREG_COMSTAT2 0xFF8024
+#define GAREG_COMSTAT2 0xFF8024
 
 /**
- * @def _GAREG_COMSTAT3
+ * @def GAREG_COMSTAT3
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define _GAREG_COMSTAT3 0xFF8026
+#define GAREG_COMSTAT3 0xFF8026
 
 /**
- * @def _GAREG_COMSTAT4
+ * @def GAREG_COMSTAT4
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define _GAREG_COMSTAT4 0xFF8028
+#define GAREG_COMSTAT4 0xFF8028
 
 /**
- * @def _GAREG_COMSTAT5
+ * @def GAREG_COMSTAT5
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define _GAREG_COMSTAT5 0xFF802A
+#define GAREG_COMSTAT5 0xFF802A
 
 /**
- * @def _GAREG_COMSTAT6
+ * @def GAREG_COMSTAT6
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define _GAREG_COMSTAT6 0xFF802C
+#define GAREG_COMSTAT6 0xFF802C
 
 /**
- * @def _GAREG_COMSTAT7
+ * @def GAREG_COMSTAT7
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define _GAREG_COMSTAT7 0xFF802E
+#define GAREG_COMSTAT7 0xFF802E
 
 /**
  * @def _GAREG_INT3TIMER
@@ -570,10 +570,10 @@
  * offset relative to the start of Word RAM divided by 4. What the raw location
  * needs to be a multiple of depends on the sizes you have set:
 
-    16x16px stamps, 256x256px stamp map: Multiples of 0x200
-    32x32px stamps, 256x256px stamp map: Multiples of 0x80
-    16x16px stamps, 4096x4096px stamp map: Multiples of 0x20000
-    32x32px stamps, 4096x4096px stamp map: Multiples of 0x8000
+		16x16px stamps, 256x256px stamp map: Multiples of 0x200
+		32x32px stamps, 256x256px stamp map: Multiples of 0x80
+		16x16px stamps, 4096x4096px stamp map: Multiples of 0x20000
+		32x32px stamps, 4096x4096px stamp map: Multiples of 0x8000
 
  */
 #define _GAREG_STAMPMAPBASE 0xFF805A

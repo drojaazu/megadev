@@ -35,18 +35,18 @@ GLABEL sp_init
 	BIOSCALL #BIOS_DRVINIT
 	// loop until done reading the disc TOC
 1:BIOSCALL #BIOS_CDBSTAT
-	andi.b	#0xf0, (CDSTAT).w
+	andi.b	#0xF0, (CDSTAT).w
 	bne			1b
   CLEAR_COMM_REGS
 	// Put Word RAM into 2M mode and assert control of it
-	andi.w	#~(GA_RET | GA_MODE), _GAREG_MEMMODE
+	andi.w	#~(GA_RET | GA_MODE), GAREG_MEMMODE
 	// This sets up the CD-ROM access loop with initial settings. It only needs
 	// to be called once, here in sp_init
 	INIT_ACC_LOOP
 	rts
 
 drvinit_tracklist:
-	.byte 1, 0xff
+	.byte 1, 0xFF
 
 /*
   sp_main
@@ -66,7 +66,7 @@ GLABEL sp_main
   // We'll repoint stack to the end of the first bank of PRG-RAM to free up RAM
 	// a little bit (since at this point, as we're about to enter the main loop,
 	// we're not returning to anything)
-	lea			_PRGRAM_1M_1, sp
+	lea			PRG_RAM_BANK2, sp
 
   /*
 	  The architecture of the command loop is like so: we constantly poll COMCMD0
@@ -77,12 +77,12 @@ GLABEL sp_main
 		monitoring COMCMD0/1
 	*/
 command_loop:
-  move.w	_GAREG_COMCMD0, d0
+  move.w	GAREG_COMCMD0, d0
 	beq			command_loop
-	cmp.w		_GAREG_COMCMD0, d0
+	cmp.w		GAREG_COMCMD0, d0
 	bne			command_loop
 	#move.w	d0, d1
-	move.w  _GAREG_COMCMD1, d1
+	move.w  GAREG_COMCMD1, d1
 	add.w		d0, d0
 	move.w	command_tbl(pc,d0.w), d0
 	jsr			command_tbl(pc,d0.w)
@@ -94,12 +94,12 @@ command_loop:
 	Main CPU the work is done and get the comm registers back in "sync."
 */
 command_complete_sync:
-	move.w	_GAREG_COMCMD0, _GAREG_COMSTAT0
-1:move.w	_GAREG_COMCMD0, d0
+	move.w	GAREG_COMCMD0, GAREG_COMSTAT0
+1:move.w	GAREG_COMCMD0, d0
 	bne			1b
-	move.w	_GAREG_COMCMD0, d0
+	move.w	GAREG_COMCMD0, d0
 	bne			1b
-	move.w	#0, _GAREG_COMSTAT0
+	move.w	#0, GAREG_COMSTAT0
 	rts
 
 /*
@@ -124,7 +124,7 @@ cmd01_load_mmd:
 	move.w  mmd_file_tbl(pc,d1.w), d1
 	lea			mmd_file_tbl(pc,d1.w), a0
 	WAIT_2M
-	lea			_WORD_RAM_2M, a1
+	lea			WORD_RAM_2M, a1
 	// load_file_ is a convenience function to get a file loaded. The filename is
 	// A0 and the destination buffer is in A1
 	jbsr		load_file_sub

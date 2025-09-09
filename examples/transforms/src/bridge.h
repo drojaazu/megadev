@@ -6,6 +6,7 @@
 
 #define CMD_LOAD_FILE 1
 #define CMD_PLAY_CDDA 2
+#define CMD_REDRAW		3
 
 #define FILE_IPX 0
 

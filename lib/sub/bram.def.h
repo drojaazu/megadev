@@ -78,7 +78,7 @@
  * @param[out] D1.b Mode
  * @details Mode
  *     0: Normal
- *  0xff: Data protected
+ *  0xFF: Data protected
  *
  */
 #define BRMREAD 0x0003

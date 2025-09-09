@@ -8,9 +8,9 @@
 #ifndef MEGADEV__SUB_BRAM_H
 #define MEGADEV__SUB_BRAM_H
 
+#include "types.h"
 #include <sub/bram.def.h>
 #include <sub/memmap.def.h>
-#include "types.h"
 
 u8 bram_work_buff[0x640];
 u8 bram_string_buff[12];
@@ -34,7 +34,7 @@ typedef struct BrminitRes
 	char *					strings;
 } BrminitRes;
 
-BrminitRes								 init_info;
+BrminitRes init_info;
 
 /**
  * @def bram_brminit
@@ -63,7 +63,10 @@ static inline BrminitRes * bram_brminit()
 		2: \n\
 		"
 		: "=d"(d0_bram_size), "=d"(d1_bram_status)
-		: "i"(_BURAM), "d"(d0_fcode), "a"(a0_bram_work_buff), "a"(a1_bram_string_buff)
+		: "i"(_BURAM),
+			"d"(d0_fcode),
+			"a"(a0_bram_work_buff),
+			"a"(a1_bram_string_buff)
 		: "cc");
 
 	init_info.bram_size = d0_bram_size;
@@ -83,7 +86,7 @@ typedef struct BrmstatRes
 	u16 filecount;
 } BrmstatRes;
 
-BrmstatRes								 brmstat_results;
+BrmstatRes brmstat_results;
 
 /**
  * @def bram_brmstat
@@ -117,7 +120,7 @@ typedef struct BrmserchRes
 	u8 * dataptr;
 } BrmserchRes;
 
-BrmserchRes									brmserch_results;
+BrmserchRes brmserch_results;
 
 /**
  * @def bram_brmserch
@@ -128,9 +131,9 @@ static inline BrmserchRes * bram_brmserch(char const * filename)
 	register u16					d0_fcode asm("d0") = BRMSERCH;
 	register void const * a0_filename asm("a0") = filename;
 
-	register u16					d0_filesize asm("d0");
-	register u16					d1_filemode asm("d1");
-	register void *				a0_dataptr asm("a0");
+	register u16		d0_filesize asm("d0");
+	register u16		d1_filemode asm("d1");
+	register void * a0_dataptr asm("a0");
 
 	// if the file is not found, we'll return null
 	// the user should check that the dataptr member of the struct
@@ -162,15 +165,13 @@ typedef struct BrmreadRes
 	u8	 mode;
 } BrmreadRes;
 
-BrmreadRes								 brmread_results;
+BrmreadRes brmread_results;
 
 /**
  * @def bram_brmread
  * @sa BRMREAD
  */
-static inline BrmreadRes * bram_brmread(
-	char const * filename,
-	u8 *				 buffer)
+static inline BrmreadRes * bram_brmread(char const * filename, u8 * buffer)
 {
 	register u16 d0_fcode asm("d0") = BRMREAD;
 	register u32 a0_filename asm("a0") = (u32) filename;
@@ -183,13 +184,13 @@ static inline BrmreadRes * bram_brmread(
 		"\
 		jsr %p2 \n\
 		bcc 2f \n\
-		move.w #0xffff, d0 \n\
+		move.w #0xFFFF, d0 \n\
 	2: \n\
 	"
 		: "=d"(d0_size), "=d"(d1_mode)
 		: "i"(_BURAM), "d"(d0_fcode), "a"(a0_filename), "a"(a1_buffer));
 
-	if (d0_size == 0xffff)
+	if (d0_size == 0xFFFF)
 	{
 		brmread_results.success = false;
 	}
@@ -213,9 +214,7 @@ typedef struct BramFileInfo
 /**
  * @sa BRMWRITE
  */
-static inline bool bram_brmwrite(
-	BramFileInfo const * params,
-	u8 const *					 data)
+static inline bool bram_brmwrite(BramFileInfo const * params, u8 const * data)
 {
 	register u16 d0_fcode asm("d0") = BRMWRITE;
 	register u32 a0_params asm("a0") = (u32) params;
@@ -267,10 +266,7 @@ failed:
  * @sa BRMDIR
  */
 static inline bool bram_brmdir(
-	char const * filename,
-	u8 *				 dirbuffer,
-	u16 const		 fileskip,
-	u16 const		 dirsize)
+	char const * filename, u8 * dirbuffer, u16 const fileskip, u16 const dirsize)
 {
 	register u16 d0_fcode asm("d0") = BRMDIR;
 	register u32 a0_filename asm("a0") = (u32) filename;
@@ -283,7 +279,11 @@ static inline bool bram_brmdir(
 			bcs %l[too_large] \n\
 		"
 		:
-		: "i"(_BURAM), "d"(d0_fcode), "d"(d1_params), "a"(a0_filename), "a"(a1_dirbuffer)
+		: "i"(_BURAM),
+			"d"(d0_fcode),
+			"d"(d1_params),
+			"a"(a0_filename),
+			"a"(a1_dirbuffer)
 		: "cc"
 		: too_large);
 

@@ -57,11 +57,11 @@ PCM_WAIT:
 	btst #0, playback_flags
 	beq 2f
 1:nop
-	cmp.b #0x7e, (a2)
+	cmp.b #0x7E, (a2)
 	bls 1b
 	bra 5f
 2:nop
-	cmp.b #0x7e, (a2)
+	cmp.b #0x7E, (a2)
 	bhi 2b
 5:rts
 
@@ -80,7 +80,7 @@ PCM_LOAD_BUFFER:
 	// ptr to data in a0
 	// size of data in d0
 	// 0x1000 == 4k
-	// and.w d0, #0xffff
+	// and.w d0, #0xFFFF
 	divu.w #0x1000, d0
 	move.w d0, sblock_count
 	swap d0
@@ -90,8 +90,8 @@ PCM_LOAD_BUFFER:
 	// if 0 sblocks, jump to check the remainder
 	beq 2f
 	subq #1, d7
-	// TODO sonic cd op streaming has 0xffe, hmm
-0:move.w #0xfff, d6
+	// TODO sonic cd op streaming has 0xFFE, hmm
+0:move.w #0xFFF, d6
 	move.b (wb_select), (_PCM_CTRL)
 	lea (0xFF2000+1), a1
 1:move.b (a0)+,(a1)

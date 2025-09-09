@@ -17,13 +17,13 @@ GLABEL sp_init
 	BIOSCALL #BIOS_DRVINIT
 	// loop until done reading the disc TOC
 1:BIOSCALL #BIOS_CDBSTAT
-	andi.b	#0xf0, (CDSTAT).w
+	andi.b	#0xF0, (CDSTAT).w
 	bne			1b
 	CLEAR_COMM_REGS
   rts
 
 drvinit_tracklist:
-	.byte 1, 0xff
+	.byte 1, 0xFF
 
 GLABEL sp_int2
 GLABEL sp_main

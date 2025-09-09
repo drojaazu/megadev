@@ -25,7 +25,7 @@ static inline void init_ext_port()
 	asm volatile(
 		"\
   move.b   #%c[sctrl_settings], %c[ext_sctrl] \n\
-  move.b   #0x7f, %c[ext_ctrl] \n\
+  move.b   #0x7F, %c[ext_ctrl] \n\
 	"
 		:
 		: [sctrl_settings] "i"(

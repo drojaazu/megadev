@@ -63,7 +63,7 @@ u16 cram[64];
 void update_cram_line(u8 pal_line)
 {
 	pal_line <<= 4;
-	vdp_ctrl_32 = vdpptr(pal_line) | CRAM_W;
+	vdp_ctrl_32 = vdp_ptr(pal_line) | CRAM_W;
 	u16 * ptr_pal_line = cram + pal_line;
 	for (u8 i = 0; i < 16; ++i)
 		vdp_data = *ptr_pal_line++;
@@ -71,7 +71,7 @@ void update_cram_line(u8 pal_line)
 
 void update_cram()
 {
-	vdp_ctrl_32 = vdpptr(0) | CRAM_W;
+	vdp_ctrl_32 = vdp_ptr(0) | CRAM_W;
 	u16 * ptr_pal_line = cram;
 	for (u8 i = 0; i < 64; ++i)
 		vdp_data = *ptr_pal_line++;
@@ -97,25 +97,25 @@ u16 const default_vdp_regs[] = {
 	VDPREG_MODE2 | VDP_MD_DISPLAY_MODE | VDP_VINT_ENABLE | VIDEO_SIGNAL |
 		VDP_DISPLAY_ENABLE,
 	VDPREG_PLA_ADDR | (PLANE_A_ADDR / 0x400),
-	VDPREG_WIN_ADDR | (0xa00 / 0x400),
+	VDPREG_WIN_ADDR | (0xA00 / 0x400),
 	VDPREG_PLB_ADDR | (PLANE_B_ADDR / 0x2000),
-	VDPREG_SPR_ADDR | (0xb800 / 0x200),
+	VDPREG_SPR_ADDR | (0xB800 / 0x200),
 	VDPREG_SPR_ADDR2,
 	VDPREG_BGCOLOR,
 	VDPREG_HINT_COUNT,
 	VDPREG_MODE3 | VDP_EXTINT_ENABLE,
 	VDPREG_MODE4 | VDP_WIDTH_40CELL,
-	VDPREG_HS_ADDR | (0xbc00 / 0x400),
+	VDPREG_HS_ADDR | (0xBC00 / 0x400),
 	VDPREG_PL_ADDR2,
 	VDPREG_AUTOINC | 2,
 	VDPREG_PL_SIZE | VDP_PL_32x32,
 	VDPREG_WIN_HPOS,
 	VDPREG_WIN_VPOS};
 
-#define plane_xy(x, y)                                       \
-	(vdpptr(PLANE_POS(x, y, Width32) + PLANE_A_ADDR) | VRAM_W)
+#define plane_xy(x, y)                                        \
+	(vdp_ptr(PLANE_POS(x, y, Width32) + PLANE_A_ADDR) | VRAM_W)
 
-void print(char const * string, vdpptr pos)
+void print(char const * string, vdp_ptr pos)
 {
 	vdp_ctrl_32 = pos;
 	while (*string != 0)
@@ -137,10 +137,10 @@ void main()
 	clear_vram();
 
 	cram[0] = 0x0000;
-	cram[1] = 0x0eee;
-	cram[2] = 0x000e;
-	cram[3] = 0x00e0;
-	cram[4] = 0x0e00;
+	cram[1] = 0x0EEE;
+	cram[2] = 0x000E;
+	cram[3] = 0x00E0;
+	cram[4] = 0x0E00;
 	update_cram();
 
 	init_joypads();
@@ -148,7 +148,7 @@ void main()
 	vdp_ctrl = vdp_regs[1];
 	asm("transfer:");
 	vdp_dma_transfer(
-		res_basic_font, vdpptr(VRAMPTR(0x20)), (res_basic_font_size << 1));
+		res_basic_font, vdp_ptr(VRAMPTR(0x20)), (res_basic_font_size << 1));
 	vdp_regs[1] &= ~VDP_DMA_ENABLE;
 	vdp_ctrl = vdp_regs[1];
 

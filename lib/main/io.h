@@ -11,87 +11,87 @@
 #include "types.h"
 #include <main/io.def.h>
 
-typedef u8 volatile * IO_REGISTER;
+typedef u8 volatile * io_reg;
 
 /**
- * @sa _IO_DATA1
+ * @sa IO_DATA1
  */
-#define io_data1 ((IO_REGISTER) _IO_DATA1)
+#define io_data1 ((io_reg) IO_DATA1)
 
 /**
- * @sa _IO_DATA2
+ * @sa IO_DATA2
  */
-#define io_data2 ((IO_REGISTER) _IO_DATA2)
+#define io_data2 ((io_reg) IO_DATA2)
 
 /**
- * @sa _IO_DATA3
+ * @sa IO_DATA3
  */
-#define io_data3 ((IO_REGISTER) _IO_DATA3)
+#define io_data3 ((io_reg) IO_DATA3)
 
 /**
- * @sa _IO_CTRL1
+ * @sa IO_CTRL1
  */
-#define io_ctrl1 ((IO_REGISTER) _IO_CTRL1)
+#define io_ctrl1 ((io_reg) IO_CTRL1)
 
 /**
- * @sa _IO_CTRL2
+ * @sa IO_CTRL2
  */
-#define io_ctrl2 ((IO_REGISTER) _IO_CTRL2)
+#define io_ctrl2 ((io_reg) IO_CTRL2)
 
 /**
- * @sa _IO_CTRL3
+ * @sa IO_CTRL3
  */
-#define io_ctrl3 ((IO_REGISTER) _IO_CTRL3)
+#define io_ctrl3 ((io_reg) IO_CTRL3)
 
 /**
- * @sa _IO_TXDATA1
+ * @sa IO_TXDATA1
  */
-#define io_txdata1 ((IO_REGISTER) _IO_TXDATA1)
+#define io_txdata1 ((io_reg) IO_TXDATA1)
 
 /**
- * @sa _IO_TXDATA2
+ * @sa IO_TXDATA2
  */
-#define io_txdata2 ((IO_REGISTER) _IO_TXDATA2)
+#define io_txdata2 ((io_reg) IO_TXDATA2)
 
 /**
- * @sa _IO_TXDATA3
+ * @sa IO_TXDATA3
  */
-#define io_txdata3 ((IO_REGISTER) _IO_TXDATA3)
+#define io_txdata3 ((io_reg) IO_TXDATA3)
 
 /**
- * @sa _IO_RXDATA1
+ * @sa IO_RXDATA1
  */
-#define io_rxdata1 ((const IO_REGISTER) _IO_RXDATA1)
+#define io_rxdata1 ((const io_reg) IO_RXDATA1)
 
 /**
- * @sa _IO_RXDATA2
+ * @sa IO_RXDATA2
  */
-#define io_rxdata2 ((const IO_REGISTER) _IO_RXDATA2)
+#define io_rxdata2 ((const io_reg) IO_RXDATA2)
 
 /**
- * @sa _IO_RXDATA3
+ * @sa IO_RXDATA3
  */
-#define io_rxdata3 ((const IO_REGISTER) _IO_RXDATA3)
+#define io_rxdata3 ((const io_reg) IO_RXDATA3)
 
 /**
- * @sa _IO_SCTRL1
+ * @sa IO_SCTRL1
  */
-#define io_sctrl1 ((IO_REGISTER) _IO_SCTRL1)
+#define io_sctrl1 ((io_reg) IO_SCTRL1)
 
 /**
- * @sa _IO_SCTRL2
+ * @sa IO_SCTRL2
  */
-#define io_sctrl2 ((IO_REGISTER) _IO_SCTRL2)
+#define io_sctrl2 ((io_reg) IO_SCTRL2)
 
 /**
- * @sa _IO_SCTRL3
+ * @sa IO_SCTRL3
  */
-#define io_sctrl3 ((IO_REGISTER) _IO_SCTRL3)
+#define io_sctrl3 ((io_reg) IO_SCTRL3)
 
 /**
- * @sa _TIME_MAPPING
+ * @sa TIME_MAPPING
  */
-#define time_mapping ((u8)[0x100] _TIME_MAPPING)
+#define time_mapping ((u8)[0x100] TIME_MAPPING)
 
 static inline void init_joypads()
 {
@@ -101,11 +101,11 @@ static inline void init_joypads()
   move.b   #%c[ctrl_pc6], (%c[ctrl2]) \n\
 		"
 		:
-		: [ctrl_pc6] "i"(CTRL_PC6), [ctrl1] "i"(_IO_CTRL1), [ctrl2] "i"(_IO_CTRL2)
+		: [ctrl_pc6] "i"(CTRL_PC6), [ctrl1] "i"(IO_CTRL1), [ctrl2] "i"(IO_CTRL2)
 		: "cc");
 }
 
-static inline u8 read_input_joypad(IO_REGISTER io_port)
+static inline u8 read_input_joypad(io_reg io_port)
 {
 	register u32 scratch_d;
 	register u8	 joypad_state;

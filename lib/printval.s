@@ -23,7 +23,7 @@ SUB printval_u8
 	rol.b #4, d0
 	jbsr hex_to_ascii
 	move.b d1, (a0)+
-	move.b #0xff,(a0)
+	move.b #0xFF,(a0)
 	rts
 
 /**
@@ -38,7 +38,7 @@ SUB printval_u16
 	jbsr hex_to_ascii
 	move.b d1, (a0)+
 	dbf d7, 1b
-	move.b #0xff,(a0)
+	move.b #0xFF,(a0)
 	rts
 
 /**
@@ -53,12 +53,12 @@ SUB printval_u32
 	jbsr hex_to_ascii
 	move.b d1, (a0)+
 	dbf d7, 1b
-	move.b #0xff,(a0)
+	move.b #0xFF,(a0)
 	rts
 
 hex_to_ascii:
 	move.b d0, d1
-	and.b #0x0f, d1
+	and.b #0x0F, d1
 	cmp.b #0x09, d1
 	bgt 2f
 	add.b #0x30, d1

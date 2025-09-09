@@ -56,7 +56,7 @@ file_end:
  */
 .macro HEX2BCD
 	ext.l	d0
-	divu.w	#0xa, d0
+	divu.w	#0xA, d0
 	move.b	d0, d1
 	lsl.b	#4, d1
 	swap	d0

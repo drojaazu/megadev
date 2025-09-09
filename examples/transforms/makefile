@@ -85,11 +85,13 @@ clean:
 $(DISC_PATH)/ipx.mmd: \
 	ipx_layout.s \
 	main/ipx_init.s \
+	ipx.res.s \
 	ipx.c \
 	io.macros.s
 
 $(DISC_PATH)/spx.smd: \
 	spx_layout.s \
+	std_init.s \
 	spx.c \
 	xform.res.s \
 	$(BUILD_PATH)/sp.bin

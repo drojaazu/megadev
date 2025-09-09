@@ -18,11 +18,12 @@
  */
 
 /**
- * @defgroup ga_reg_main_subctrl Main CPU / Gate Array / Registers / Sub CPU Control
+ * @defgroup ga_reg_main_subctrl Main CPU / Gate Array / Registers / Sub CPU
+ * Control
  */
 
 /**
- * @def _GAREG_RESET
+ * @def GAREG_RESET
  * @brief Sub CPU Control
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_subctrl
@@ -48,7 +49,7 @@
  *
  * @note Only BTST bitwise operation allowed on this register
  */
-#define _GAREG_RESET 0xA12000
+#define GAREG_RESET 0xA12000
 
 /**
  * @def GA_SUB_RESET
@@ -94,7 +95,7 @@
  */
 
 /**
- * @def _GAREG_MEMMODE
+ * @def GAREG_MEMMODE
  * @brief Memory Mode
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_memmode
@@ -135,7 +136,7 @@
  *                   1: Word RAM Bank 0 attached to Sub CPU, Bank 1 to Main CPU
  *
  */
-#define _GAREG_MEMMODE 0xA12002
+#define GAREG_MEMMODE 0xA12002
 
 /**
  * @def GA_RET_BIT
@@ -176,14 +177,14 @@
 #define GA_MODE (1 << 2)
 
 #define MEMMODE_BK0_MSK 0b11 << 6
-#define MEMMODE_WP0_MSK 0xff
+#define MEMMODE_WP0_MSK 0xFF
 
 /**
  * @defgroup ga_reg_main_cdcmode Main CPU / Gate Array / Registers / CDC Mode
  */
 
 /**
- * @def _GAREG_CDCMODE
+ * @def GAREG_CDCMODE
  * @brief CDC Mode
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cdcmode
@@ -209,7 +210,7 @@
  *
  *   All other values for DD are invalid.
  */
-#define _GAREG_CDCMODE 0xA12004
+#define GAREG_CDCMODE 0xA12004
 
 /**
  * @def GA_CDC_DEST_MAIN
@@ -240,11 +241,12 @@
 #define GA_CDC_DEST_WORD 0b111
 
 /**
- * @defgroup ga_reg_main_hintvect Main CPU / Gate Array / Registers / HINT Vector
+ * @defgroup ga_reg_main_hintvect Main CPU / Gate Array / Registers / HINT
+ * Vector
  */
 
 /**
- * @def _GAREG_HINTVECT
+ * @def GAREG_HINTVECT
  * @brief HINT Vector
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_hintvect
@@ -261,14 +263,15 @@
  *
  * @warning Bit level opcodes (BTST, BCLR, BSET) are undefined for this register
  */
-#define _GAREG_HINTVECT 0xA12006
+#define GAREG_HINTVECT 0xA12006
 
 /**
- * @defgroup ga_reg_main_cdcdata Main CPU / Gate Array / Registers / CDC Host Data
+ * @defgroup ga_reg_main_cdcdata Main CPU / Gate Array / Registers / CDC Host
+ * Data
  */
 
 /**
- * @def _GAREG_CDCHOSTDATA
+ * @def GAREG_CDCHOSTDATA
  * @brief CDC Host Data
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cdcdata
@@ -283,14 +286,14 @@
  *
  * @warning Bit level opcodes (BTST, BCLR, BSET) are undefined for this register
  */
-#define _GAREG_CDCHOSTDATA 0xA12008
+#define GAREG_CDCHOSTDATA 0xA12008
 
 /**
  * @defgroup ga_reg_main_stopwatch Main CPU / Gate Array / Registers / Stopwatch
  */
 
 /**
- * @def _GAREG_STOPWATCH
+ * @def GAREG_STOPWATCH
  * @brief Stop watch
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_stopwatch
@@ -307,14 +310,15 @@
  *
  * @warning Bit level opcodes (BTST, BCLR, BSET) are undefined for this register
  */
-#define _GAREG_STOPWATCH 0xA1200C
+#define GAREG_STOPWATCH 0xA1200C
 
 /**
- * @defgroup ga_reg_main_cpucomm Main CPU / Gate Array / Registers / CPU Communication
+ * @defgroup ga_reg_main_cpucomm Main CPU / Gate Array / Registers / CPU
+ * Communication
  */
 
 /**
- * @def _GAREG_COMFLAGS
+ * @def GAREG_COMFLAGS
  * @brief CPU Communication Flags
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -328,10 +332,10 @@
  * @param CFM Comm flags for Main CPU
  * @param CFS Comm flags for Sub CPU
  */
-#define _GAREG_COMFLAGS 0xA1200E
+#define GAREG_COMFLAGS 0xA1200E
 
 /**
- * @def _GAREG_COMCMD0
+ * @def GAREG_COMCMD0
  * @brief Comm Command 0 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -339,10 +343,10 @@
  * @param [width] 8 bit/16 bit
  * @param CMD Communication data
  */
-#define _GAREG_COMCMD0 0xA12010
+#define GAREG_COMCMD0 0xA12010
 
 /**
- * @def _GAREG_COMCMD1
+ * @def GAREG_COMCMD1
  * @brief Comm Command 1 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -350,10 +354,10 @@
  * @param [width] 8 bit/16 bit
  * @param CMD Communication data
  */
-#define _GAREG_COMCMD1 0xA12012
+#define GAREG_COMCMD1 0xA12012
 
 /**
- * @def _GAREG_COMCMD2
+ * @def GAREG_COMCMD2
  * @brief Comm Command 2 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -361,10 +365,10 @@
  * @param [width] 8 bit/16 bit
  * @param CMD Communication data
  */
-#define _GAREG_COMCMD2 0xA12014
+#define GAREG_COMCMD2 0xA12014
 
 /**
- * @def _GAREG_COMCMD3
+ * @def GAREG_COMCMD3
  * @brief Comm Command 3 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -372,10 +376,10 @@
  * @param [width] 8 bit/16 bit
  * @param CMD Communication data
  */
-#define _GAREG_COMCMD3 0xA12016
+#define GAREG_COMCMD3 0xA12016
 
 /**
- * @def _GAREG_COMCMD4
+ * @def GAREG_COMCMD4
  * @brief Comm Command 4 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -383,10 +387,10 @@
  * @param [width] 8 bit/16 bit
  * @param CMD Communication data
  */
-#define _GAREG_COMCMD4 0xA12018
+#define GAREG_COMCMD4 0xA12018
 
 /**
- * @def _GAREG_COMCMD5
+ * @def GAREG_COMCMD5
  * @brief Comm Command 5 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -394,10 +398,10 @@
  * @param [width] 8 bit/16 bit
  * @param CMD Communication data
  */
-#define _GAREG_COMCMD5 0xA1201A
+#define GAREG_COMCMD5 0xA1201A
 
 /**
- * @def _GAREG_COMCMD6
+ * @def GAREG_COMCMD6
  * @brief Comm Command 6 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -405,10 +409,10 @@
  * @param [width] 8 bit/16 bit
  * @param CMD Communication data
  */
-#define _GAREG_COMCMD6 0xA1201C
+#define GAREG_COMCMD6 0xA1201C
 
 /**
- * @def _GAREG_COMCMD7
+ * @def GAREG_COMCMD7
  * @brief Comm Command 7 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -416,10 +420,10 @@
  * @param [width] 8 bit/16 bit
  * @param CMD Communication data
  */
-#define _GAREG_COMCMD7 0xA1201E
+#define GAREG_COMCMD7 0xA1201E
 
 /**
- * @def _GAREG_COMSTAT0
+ * @def GAREG_COMSTAT0
  * @brief Comm Status 0 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -427,10 +431,10 @@
  * @param [width] 8 bit/16 bit
  * @param STAT Comm Status
  */
-#define _GAREG_COMSTAT0 0xA12020
+#define GAREG_COMSTAT0 0xA12020
 
 /**
- * @def _GAREG_COMSTAT1
+ * @def GAREG_COMSTAT1
  * @brief Comm Status 1 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -438,10 +442,10 @@
  * @param [width] 8 bit/16 bit
  * @param STAT Comm Status
  */
-#define _GAREG_COMSTAT1 0xA12022
+#define GAREG_COMSTAT1 0xA12022
 
 /**
- * @def _GAREG_COMSTAT2
+ * @def GAREG_COMSTAT2
  * @brief Comm Status 2 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -449,10 +453,10 @@
  * @param [width] 8 bit/16 bit
  * @param STAT Comm Status
  */
-#define _GAREG_COMSTAT2 0xA12024
+#define GAREG_COMSTAT2 0xA12024
 
 /**
- * @def _GAREG_COMSTAT3
+ * @def GAREG_COMSTAT3
  * @brief Comm Status 3 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -460,10 +464,10 @@
  * @param [width] 8 bit/16 bit
  * @param STAT Comm Status
  */
-#define _GAREG_COMSTAT3 0xA12026
+#define GAREG_COMSTAT3 0xA12026
 
 /**
- * @def _GAREG_COMSTAT4
+ * @def GAREG_COMSTAT4
  * @brief Comm Status 4 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -471,10 +475,10 @@
  * @param [width] 8 bit/16 bit
  * @param STAT Comm Status
  */
-#define _GAREG_COMSTAT4 0xA12028
+#define GAREG_COMSTAT4 0xA12028
 
 /**
- * @def _GAREG_COMSTAT5
+ * @def GAREG_COMSTAT5
  * @brief Comm Status 5 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -482,10 +486,10 @@
  * @param [width] 8 bit/16 bit
  * @param STAT Comm Status
  */
-#define _GAREG_COMSTAT5 0xA1202A
+#define GAREG_COMSTAT5 0xA1202A
 
 /**
- * @def _GAREG_COMSTAT6
+ * @def GAREG_COMSTAT6
  * @brief Comm Status 6 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -493,10 +497,10 @@
  * @param [width] 8 bit/16 bit
  * @param STAT Comm Status
  */
-#define _GAREG_COMSTAT6 0xA1202C
+#define GAREG_COMSTAT6 0xA1202C
 
 /**
- * @def _GAREG_COMSTAT7
+ * @def GAREG_COMSTAT7
  * @brief Comm Status 7 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -504,6 +508,6 @@
  * @param [width] 8 bit/16 bit
  * @param STAT Comm Status
  */
-#define _GAREG_COMSTAT7 0xA1202E
+#define GAREG_COMSTAT7 0xA1202E
 
 #endif

@@ -44,12 +44,12 @@ GLABEL sp_init
   BIOSCALL   #BIOS_DRVINIT
   // loop until done reading the disc TOC
 1:BIOSCALL   #BIOS_CDBSTAT
-  andi.b   #0xf0, (CDSTAT).w
+  andi.b   #0xF0, (CDSTAT).w
   bne      1b
   CLEAR_COMM_REGS
   
   // Put Word RAM into 2M mode and assert control of it
-  andi.w   #~(GA_RET | GA_MODE), _GAREG_MEMMODE
+  andi.w   #~(GA_RET | GA_MODE), GAREG_MEMMODE
   
   // This sets up the CD-ROM access loop with initial settings. It only needs
   // to be called once, here in sp_init
@@ -57,7 +57,7 @@ GLABEL sp_init
   rts
 
 drvinit_tracklist:
-  .byte 1, 0xff
+  .byte 1, 0xFF
 
 /*
   sp_int2
@@ -102,7 +102,7 @@ spx_filename:
 // was a problem
 GLABEL sp_fatal
   // move the "fatal error" code to comstat0 so the Main CPU knows what's up
-  move.w   #0xff, _GAREG_COMSTAT0
+  move.w   #0xFF, GAREG_COMSTAT0
   // make both LEDs blink (which is normally disallowed but Sega QA isn't
   // here to boss us around)
   moveq    #BIOS_LED_ERROR, d1

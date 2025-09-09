@@ -18,8 +18,8 @@
 
 .section .rodata
 
-#define PLA_ADDR_DEBUG 0xc000
-#define PLB_ADDR_DEBUG 0xe000
+#define PLA_ADDR_DEBUG 0xC000
+#define PLB_ADDR_DEBUG 0xE000
 
 vdp_layout_debug:
 #if VIDEO == PAL
@@ -31,15 +31,15 @@ vdp_layout_debug:
 .word VDPREG_MODE1 | VDP_HICOLOR_ENABLE
 .word VDPREG_MODE2 | VDP_MD_DISPLAY_MODE | VDP_DMA_ENABLE | VDP_VINT_ENABLE | VIDEO_SIGNAL | VDP_DISPLAY_ENABLE
 .word VDPREG_PLA_ADDR | (PLA_ADDR_DEBUG / 0x400)
-.word VDPREG_WIN_ADDR | (0xa00 / 0x400)
+.word VDPREG_WIN_ADDR | (0xA00 / 0x400)
 .word VDPREG_PLB_ADDR | (PLB_ADDR_DEBUG / 0x2000)
-.word VDPREG_SPR_ADDR | (0xb800 / 0x200)
+.word VDPREG_SPR_ADDR | (0xB800 / 0x200)
 .word VDPREG_SPR_ADDR2
 .word VDPREG_BGCOLOR
 .word VDPREG_HINT_COUNT
 .word VDPREG_MODE3 | VDP_EXTINT_ENABLE
 .word VDPREG_MODE4 | VDP_WIDTH_40CELL
-.word VDPREG_HS_ADDR | (0xbc00 / 0x400)
+.word VDPREG_HS_ADDR | (0xBC00 / 0x400)
 .word VDPREG_PL_ADDR2
 .word VDPREG_AUTOINC | 2
 .word VDPREG_PL_SIZE | VDP_PL_64x64
@@ -71,14 +71,14 @@ SUB set_vdp_layout_debug
  * routines
  */
 SUB install_handlers
-  move.l  #ex_addr_err, _MADRERR+2
-  move.l  #ex_zero_div, _MDIVERR+2
-  move.l  #ex_chk_inst, _MONKERR+2
-  move.l  #ex_trapv, _MTRPERR+2
-  move.l  #ex_priv_viol, _MSPVERR+2
-  move.l  #ex_trace, _MTRACE+2
-  move.l  #ex_line1010, _MNOCOD0+2
-  move.l  #ex_line1111, _MNOCOD1+2
+  move.l  #ex_addr_err, EXVEC_ADDRERR+2
+  move.l  #ex_zero_div, EXVEC_ZERODIV+2
+  move.l  #ex_chk_inst, EXVEC_CHK+2
+  move.l  #ex_trapv, EXVEC_TRAPV+2
+  move.l  #ex_priv_viol, EXVEC_PRIVERR+2
+  move.l  #ex_trace, EXVEC_TRACE+2
+  move.l  #ex_line1010, EXVEC_LINE1010+2
+  move.l  #ex_line1111, EXVEC_LINE1111+2
   rts
 
 
@@ -230,7 +230,7 @@ SUB nmtbl_xy_pos
 1:move.w  (BIOS_VDP_DEFAULT_PLANE_WIDTH), d1  // d1 - tiles per row
   move.w  d0, d2  // d0 - x/y offsey (upper/lower bytes of the word)
   lsr.w   #8, d2  // d2 has x pos
-  and.w   #0xff, d0  // filter d0 so it only has y pos
+  and.w   #0xFF, d0  // filter d0 so it only has y pos
   mulu    d1, d0
   # d0 is now y pos * tiles per row
   # add x pos
@@ -239,8 +239,8 @@ SUB nmtbl_xy_pos
   lsl.l   #1, d0
   # TODO: make this dynamic
   # or make sure we set the nmtbl base register
-  add.w   #0xc000, d0
-  and.l   #0xffff, d0
+  add.w   #0xC000, d0
+  and.l   #0xFFFF, d0
   lsl.l   #2, d0
   lsr.w   #2, d0
   or.l    #0x4000, d0

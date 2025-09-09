@@ -306,7 +306,7 @@ If you are doing Megadrive only development, only the `main/` side files will be
 
 #### Macros
 
-Assembly files that have the `.macros.s` suffix contain only macros and can thus be included multiple times without worry of code or symbol duplication.
+Assembly files that have the `.macros.s` suffix contain only macros and can thus be included multiple times without worry of symbol duplication.
 
 The choice for what code was written as a macro and what was written as a subroutine is based on our judgement of how small the code is and how often it will be used. Code that initializes some hardware will probably be a subroutine as it will rarely be called; a short piece of code that sets up te VDP port for a transfer, for example, will be a macro.
 
@@ -358,9 +358,31 @@ Though it is technically possible to create the boot sector from C source, we hi
 
 
 
+# Mega CD Development
 
+## Exception Vectors
 
+Since both the Main and Sub CPUs are booted by the internal ROM, the system exception vector table is set by these programs. The system table is confgured such that any actionable exceptions are "forwarded" to a jump table with user-defined values.
 
+On the Main side, this table begins at 0xFFFD00. This is located near the top of Work RAM and this should generally be considered the limit of Work RAM usage. It is not a 1:1 mapping of the execption vector list as some entries are missing, most notably the interrupt vectors except for levels 2, 4, and 6 (the EXT, HBLANK and VBLANK interrupts, respectively), as the other levels are not used by the system.
+
+Entries within this table are user-defined, and you will almost certainly change at least the VBLANK vector to handle this important interrupt. Error vectors and TRAP vectors are also available, as well as the reset vector.
+
+As expected from a jump table, each vector is prefixed with a JMP instruction to redirect to the handler. It is possible to change this instruction to any two byte opcode, though there is very little reason to do so. Perhaps the only use case here is to change the JMP to an RTE for unimplemented exception handlers. Should you wish to change the instruction, you will need to subtract 2 from the memory pointer for the entry.
+
+## Main Side Stack Pointer
+
+Officially, the space from 0xFFFD00 to 0xFFFFFF is reserved for system use and unavailable to the user, aside from changing exception vectors (see the Exception Vectors section above). Thus, 0xFFFD00 is the safe "end" of Work RAM available to the user and the address used for the stack pointer. The official documentation sets aside 256 bytes, from 0xFFFC00 to 0xFFFD00 as the stack.
+
+However, within this reserved system space, only the exception vector jump table is of dire importance. The jump table ends at 0xFFFDB4, and from there, most of the variables used by the Boot ROM are stored. The space used by these variables ends at 0xFFFE58 (this may vary by revision), and from there to the end of Work RAM, it appears to be unused space.
+
+What this means is, if you are not using the Main side BIOS library *at all*, then the entire space from the end of the jump table (0xFFFDB4) to the end of Work RAM is free to use. That is 588 bytes of space, more than double the 256 bytes allotted officialy. In this case, setting your stack pointer to 0 is acceptable and you can utilize lower Work RAM more fully, all the way up to 0xFFFD00.
+
+Even if you are using the Main BIOS with its memory usage ending around 0xFFFE58, that is still 424 bytes of stack space, far more than the official allotment. You can perhaps get more if the BIOS calls you make do not use the space towards the end of the reserved block.
+
+In summary, it's probably safe to set your stack pointer to 0 to gain some extra stack space rather than leaving it at 0xFFFC00 as it is from boot, especially if you are coding in C as your stack frames may be unnecessarily large at times. If you do see strange issues, check that your stack isn't getting too deep and interfering with/being damaged by memory space used by BIOS.
+
+In all cases, the space from 0xFFFD00 to 0xFFFDB4 *must be preserved as the exception jump table*.
 
 ---
 

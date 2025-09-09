@@ -116,7 +116,7 @@ static inline u16 divu_round(u32 dividend, u16 divisor)
 		divu.w %1, %0 \n\
 		mov.l %0, %2 \n\
 		swap %2 \n\
-		and #0xffff, %2 \n\
+		and #0xFFFF, %2 \n\
 		lsl.l #1, %2 \n\
 		cmp.w %3, %2 \n\
 		blt 1f \n\
@@ -144,7 +144,7 @@ static inline s16 divs_round(s32 dividend, s16 divisor)
 		divs.w %1, %0 \n\
 		mov.l %0, %2 \n\
 		swap %2 \n\
-		and #0xffff, %2 \n\
+		and #0xFFFF, %2 \n\
 		lsl.l #1, %2 \n\
 		cmp.w %3, %2 \n\
 		blt 1f \n\
@@ -163,7 +163,7 @@ static inline u16 bcd(u16 value)
 	asm(
 		"\
 		ext.l	%0 \n\
-		divu.w #0xa, %0 \n\
+		divu.w #0xA, %0 \n\
 		move.b %0, %1 \n\
 		lsl.b	#4, %1 \n\
 		swap %0 \n\

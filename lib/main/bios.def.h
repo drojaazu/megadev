@@ -104,14 +104,14 @@
  * @ingroup bios_comm
  * @sa bios_comflags_main
  */
-#define BIOS_COMMFLAGS_MAIN_CACHE 0xfffdde
+#define BIOS_COMMFLAGS_MAIN_CACHE 0xFFFDDE
 
 /**
  * @def BIOS_COMMFLAGS_SUB_CACHE
  * @ingroup bios_comm
  * @sa bios_comflags_sub
  */
-#define BIOS_COMMFLAGS_SUB_CACHE 0xfffddf
+#define BIOS_COMMFLAGS_SUB_CACHE 0xFFFDDF
 
 /**
  * @def BIOS_COMCMD
@@ -122,63 +122,63 @@
  *
  * @sa bios_comcmd
  */
-#define BIOS_COMCMD 0xfffde0
+#define BIOS_COMCMD 0xFFFDE0
 
 /**
  * @def BIOS_COMCMD0
  * @brief GA COMCMD0 register cache
  * @ingroup bios_comm
  */
-#define BIOS_COMCMD0 0xfffde0
+#define BIOS_COMCMD0 0xFFFDE0
 
 /**
  * @def BIOS_COMCMD1
  * @brief GA COMCMD1 register cache
  * @ingroup bios_comm
  */
-#define BIOS_COMCMD1 0xfffde2
+#define BIOS_COMCMD1 0xFFFDE2
 
 /**
  * @def BIOS_COMCMD2
  * @brief GA COMCMD2 register cache
  * @ingroup bios_comm
  */
-#define BIOS_COMCMD2 0xfffde4
+#define BIOS_COMCMD2 0xFFFDE4
 
 /**
  * @def BIOS_COMCMD3
  * @brief GA COMCMD3 register cache
  * @ingroup bios_comm
  */
-#define BIOS_COMCMD3 0xfffde6
+#define BIOS_COMCMD3 0xFFFDE6
 
 /**
  * @def BIOS_COMCMD4
  * @brief GA COMCMD4 register cache
  * @ingroup bios_comm
  */
-#define BIOS_COMCMD4 0xfffde8
+#define BIOS_COMCMD4 0xFFFDE8
 
 /**
  * @def BIOS_COMCMD5
  * @brief GA COMCMD5 register cache
  * @ingroup bios_comm
  */
-#define BIOS_COMCMD5 0xfffdea
+#define BIOS_COMCMD5 0xFFFDEA
 
 /**
  * @def BIOS_COMCMD6
  * @brief GA COMCMD6 register cache
  * @ingroup bios_comm
  */
-#define BIOS_COMCMD6 0xfffdec
+#define BIOS_COMCMD6 0xFFFDEC
 
 /**
  * @def BIOS_COMCMD7
  * @brief GA COMCMD7 register cache
  * @ingroup bios_comm
  */
-#define BIOS_COMCMD7 0xfffdee
+#define BIOS_COMCMD7 0xFFFDEE
 
 /**
  * @def BIOS_COMSTAT
@@ -188,112 +188,112 @@
  * @note
  * Size: 16bit * 8 = 0x10 bytes
  */
-#define BIOS_COMSTAT 0xfffdf0
+#define BIOS_COMSTAT 0xFFFDF0
 
 /**
  * @def BIOS_COMSTAT0
  * @brief GA COMSTAT0 register cache
  * @ingroup bios_comm
  */
-#define BIOS_COMSTAT0 0xfffdf0
+#define BIOS_COMSTAT0 0xFFFDF0
 
 /**
  * @def BIOS_COMSTAT1
  * @brief GA COMSTAT1 register cache
  * @ingroup bios_comm
  */
-#define BIOS_COMSTAT1 0xfffdf2
+#define BIOS_COMSTAT1 0xFFFDF2
 
 /**
  * @def BIOS_COMSTAT2
  * @brief GA COMSTAT2 register cache
  * @ingroup bios_comm
  */
-#define BIOS_COMSTAT2 0xfffdf4
+#define BIOS_COMSTAT2 0xFFFDF4
 
 /**
  * @def BIOS_COMSTAT3
  * @brief GA COMSTAT3 register cache
  * @ingroup bios_comm
  */
-#define BIOS_COMSTAT3 0xfffdf6
+#define BIOS_COMSTAT3 0xFFFDF6
 
 /**
  * @def BIOS_COMSTAT4
  * @brief GA COMSTAT4 register cache
  * @ingroup bios_comm
  */
-#define BIOS_COMSTAT4 0xfffdf8
+#define BIOS_COMSTAT4 0xFFFDF8
 
 /**
  * @def BIOS_COMSTAT5
  * @brief GA COMSTAT5 register cache
  * @ingroup bios_comm
  */
-#define BIOS_COMSTAT5 0xfffdfa
+#define BIOS_COMSTAT5 0xFFFDFA
 
 /**
  * @def BIOS_COMSTAT6
  * @brief GA COMSTAT6 register cache
  * @ingroup bios_comm
  */
-#define BIOS_COMSTAT6 0xfffdfc
+#define BIOS_COMSTAT6 0xFFFDFC
 
 /**
  * @def BIOS_COMSTAT7
  * @brief GA COMSTAT7 register cache
  * @ingroup bios_comm
  */
-#define BIOS_COMSTAT7 0xfffdfe
+#define BIOS_COMSTAT7 0xFFFDFE
 
 /**
  * @def BIOS_JOY1_HOLD
  * @ingroup bios_input
  * @sa bios_joy1_hold
  */
-#define BIOS_JOY1_HOLD 0xfffe20
+#define BIOS_JOY1_HOLD 0xFFFE20
 
 /**
  * @def BIOS_JOY1_HIT
  * @ingroup bios_input
  * @sa bios_joy1_hit
  */
-#define BIOS_JOY1_HIT 0xfffe21
+#define BIOS_JOY1_HIT 0xFFFE21
 
 /**
  * @def BIOS_JOY2_HOLD
  * @ingroup bios_input
  * @sa bios_joy2_hold
  */
-#define BIOS_JOY2_HOLD 0xfffe22
+#define BIOS_JOY2_HOLD 0xFFFE22
 
 /**
  * @def BIOS_JOY2_HIT
  * @ingroup bios_input
  * @sa bios_joy2_hit
  */
-#define BIOS_JOY2_HIT 0xfffe23
+#define BIOS_JOY2_HIT 0xFFFE23
 
 /**
  * @def BIOS_JOY1_REPEAT_DELAY
  * @ingroup bios_input
  * @sa bios_joy1_repeat_delay
  */
-#define BIOS_JOY1_REPEAT_DELAY 0xfffe24
+#define BIOS_JOY1_REPEAT_DELAY 0xFFFE24
 
 /**
  * @def BIOS_JOY2_REPEAT_DELAY
  * @ingroup bios_input
  * @sa BIOS_JOY2_REPEAT_DELAY
  */
-#define BIOS_JOY2_REPEAT_DELAY 0xfffe25
+#define BIOS_JOY2_REPEAT_DELAY 0xFFFE25
 
 /**
  * @def BIOS_VINT_HANDLER_FLAGS
  * @ingroup bios_int
  * @sa bios_vint_handler_flags
  */
-#define BIOS_VINT_HANDLER_FLAGS 0xfffe26
+#define BIOS_VINT_HANDLER_FLAGS 0xFFFE26
 
 #define BIOS_VINT_COPY_SPRLIST_BIT 0
 #define BIOS_VINT_USERCALL_BIT		 1
@@ -317,7 +317,7 @@
  * @ingroup bios_int
  * @sa bios_vint_counter
  */
-#define BIOS_VINT_COUNTER 0xfffe27
+#define BIOS_VINT_COUNTER 0xFFFE27
 
 /**
  * @def BIOS_VINT_FAST_FLAG
@@ -325,13 +325,13 @@
  * palette copy and the user call
  * @ingroup bios_int
  */
-#define BIOS_VINT_FAST_FLAG 0xfffe28
+#define BIOS_VINT_FAST_FLAG 0xFFFE28
 
 /**
  * @def BIOS_VDP_UPDATE_FLAGS
  * @ingroup bios_vdp
  */
-#define BIOS_VDP_UPDATE_FLAGS 0xfffe29
+#define BIOS_VDP_UPDATE_FLAGS 0xFFFE29
 
 #define BIOS_VDPUPDATE_COPY_PALETTE_BIT 0
 
@@ -347,14 +347,14 @@
  * @ingroup bios_misc
  * @sa bios_random
  */
-#define BIOS_RANDOM 0xfffe2a
+#define BIOS_RANDOM 0xFFFE2A
 
 /**
  * @def BIOS_FONT_TILE_BASE
  * @ingroup bios_misc
  * @sa bios_font_tile_base
  */
-#define BIOS_FONT_TILE_BASE 0xfffe2c
+#define BIOS_FONT_TILE_BASE 0xFFFE2C
 
 /**
  * @def BIOS_PLANE_WIDTH_CACHE
@@ -375,28 +375,28 @@
  * @ingroup bios_vdp
  * @sa bios_fadein_cram_index
  */
-#define BIOS_FADEIN_PAL_INDEX 0xfffe46
+#define BIOS_FADEIN_PAL_INDEX 0xFFFE46
 
 /**
  * @def BIOS_FADEIN_PAL_LENGTH
  * @ingroup bios_vdp
  * @sa bios_fadein_pal_length
  */
-#define BIOS_FADEIN_PAL_LENGTH 0xfffe47
+#define BIOS_FADEIN_PAL_LENGTH 0xFFFE47
 
 /**
  * @def BIOS_FADEIN_STEP
  * @ingroup bios_vdp
  * @sa bios_fadein_step
  */
-#define BIOS_FADEIN_STEP 0xfffe48
+#define BIOS_FADEIN_STEP 0xFFFE48
 
 /**
  * @def BIOS_FADEIN_TARGET_PAL
  * @ingroup bios_vdp
  * @sa bios_fadein_target_pal
  */
-#define BIOS_FADEIN_TARGET_PAL 0xfffe4a
+#define BIOS_FADEIN_TARGET_PAL 0xFFFE4A
 
 // This is the VRAM layout and commonly referenced settings
 // when using the default VDP registers
@@ -666,7 +666,7 @@
 
 /**
  * @sa bios_vdp_fill_clear
- * @param[in] D0.l Address (vdpptr)
+ * @param[in] D0.l Address (vdp_ptr)
  * @param[in] D1.w Length (in words)
  * @ingroup bios_vdp
  * @clobber d0-d2
@@ -1014,7 +1014,7 @@
  * @def BIOS_LOAD_1BPP_TILES
  * @brief Load 1bpp graphics into VDP
  * @param[in] A1.l Pointer to 1bpp graphics data
- * @param[in] D0.l VRAM destination (vdpcmd)
+ * @param[in] D0.l VRAM destination (vdp_cmd)
  * @param[in] D1.l Color bit map
  * @param[in] D2.l Tile count
  * @clobber d3-d4/a5
@@ -1036,7 +1036,7 @@
 /**
  * @def BIOS_LOAD_FONT
  * @brief Load the internal 1bpp ASCII font
- * @param[in] D0.l VRAM destination (vdpcmd)
+ * @param[in] D0.l VRAM destination (vdp_cmd)
  * @param[in] D1.l Color bit map
  * @clobber d2-d4/a1/a5
  * @ingroup bios_misc
@@ -1089,7 +1089,7 @@
 /**
  * @def BIOS_LOAD_STAMP_MAP
  * @brief Load map for a vertically-oriented contiguous group of tiles
- * @param[in] D0.l Destination VRAM address (vdpptr)
+ * @param[in] D0.l Destination VRAM address (vdp_ptr)
  * @param[in] D1.w Map width
  * @param[in] D2.w Map height
  * @param[in] D3.w Initial tile index
@@ -1235,7 +1235,7 @@
 /**
  * @def BIOS_LOAD_MAP_HORIZ
  * @brief Load map for a horizontally-oriented contiguous group of tiles
- * @param[in] D0.l Destination VRAM address (vdpptr)
+ * @param[in] D0.l Destination VRAM address (vdp_ptr)
  * @param[in] D1.w Map width
  * @param[in] D2.w Map height
  * @param[in] D3.w Initial tile index
@@ -1254,7 +1254,7 @@
  * GROUP: bios_vdp
  *
  * IN:
- *  d0.l - Destination vdpptr
+ *  d0.l - Destination vdp_ptr
  *  d1.w - Map width
  *  d2.w - Map height
  *  d3.w - ?

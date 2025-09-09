@@ -21,20 +21,20 @@ __attribute__((section(".init"))) void main()
 
 		do
 		{
-			cmd0 = *GA_COMCMD0;
+			cmd0 = *gareg_comcmd0;
 		} while (cmd0 == 0);
 
-		if (cmd0 != *GA_COMCMD0)
+		if (cmd0 != *gareg_comcmd0)
 			continue;
 
-		cmd1 = *GA_COMCMD1;
+		cmd1 = *gareg_comcmd1;
 
 		switch (cmd0)
 		{
 
 			// load MMD
 			case 1:
-				load_file(CDROM_LOAD_CDC, filenames[cmd1], (u8 *) _WORD_RAM_2M);
+				load_file(CDROM_LOAD_CDC, filenames[cmd1], (u8 *) WORD_RAM_2M);
 				grant_2m();
 				if (access_op_result != CDROM_RESULT_OK)
 				{
@@ -78,11 +78,12 @@ __attribute__((section(".init"))) void main()
 
 				wait_2m();
 
-				BrmreadRes * read = bram_brmread(file_info.filename, (u8 *) _WORD_RAM_2M);
+				BrmreadRes * read =
+					bram_brmread(file_info.filename, (u8 *) WORD_RAM_2M);
 
 				if (! read->success)
 				{
-					*GA_COMSTAT1 = 0xffff;
+					*GA_COMSTAT1 = 0xFFFF;
 				}
 				else
 				{
@@ -98,7 +99,7 @@ __attribute__((section(".init"))) void main()
 			case 5:
 				wait_2m();
 
-				if (! bram_brmwrite(&file_info, (u8 *) _WORD_RAM_2M))
+				if (! bram_brmwrite(&file_info, (u8 *) WORD_RAM_2M))
 				{
 					*GA_COMSTAT1 = 0xFFFF;
 				}
@@ -119,7 +120,7 @@ __attribute__((section(".init"))) void main()
 				if (bram_brmdel(&file_info.filename))
 					*GA_COMSTAT1 = 0;
 				else
-					*GA_COMSTAT1 = 0xffff;
+					*GA_COMSTAT1 = 0xFFFF;
 				break;
 
 			// brmdir
@@ -128,8 +129,8 @@ __attribute__((section(".init"))) void main()
 
 				wait_2m();
 
-				if (! bram_brmdir("*\0", (u8 *) _WORD_RAM_2M, 0, 0x100))
-					*GA_COMSTAT1 = 0xffff;
+				if (! bram_brmdir("*\0", (u8 *) WORD_RAM_2M, 0, 0x100))
+					*GA_COMSTAT1 = 0xFFFF;
 				else
 					*GA_COMSTAT0 = 0;
 
@@ -137,8 +138,8 @@ __attribute__((section(".init"))) void main()
 				break;
 
 			// load demo
-			case 0xfe:
-				load_file(CDROM_LOAD_CDC, "BRAMDEMO.MMD;1", (u8 *) _WORD_RAM_2M);
+			case 0xFE:
+				load_file(CDROM_LOAD_CDC, "BRAMDEMO.MMD;1", (u8 *) WORD_RAM_2M);
 				grant_2m();
 				if (access_op_result != CDROM_RESULT_OK)
 				{
@@ -147,15 +148,15 @@ __attribute__((section(".init"))) void main()
 				break;
 		}
 
-		*GA_COMSTAT0 = *GA_COMCMD0;
+		*GA_COMSTAT0 = *gareg_comcmd0;
 		do
 		{
-			cmd0 = *GA_COMCMD0;
+			cmd0 = *gareg_comcmd0;
 		} while (cmd0 != 0);
 
 		do
 		{
-			cmd0 = *GA_COMCMD0;
+			cmd0 = *gareg_comcmd0;
 		} while (cmd0 != 0);
 
 		*GA_COMSTAT0 = 0;

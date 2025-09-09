@@ -699,7 +699,7 @@ static inline void bios_load_vdpregs_default()
  * (e.g. 80, 81, etc) and the lower byte is
  * the value, with the list terminated by 0.
  */
-static inline void bios_load_vdpregs(vdpreg const * vdp_reg_data)
+static inline void bios_load_vdpregs(vdp_reg const * vdp_reg_data)
 {
 	register u32 A1 asm("a1") = (u32) vdp_reg_data;
 
@@ -720,9 +720,9 @@ static inline void bios_load_vdpregs(vdpreg const * vdp_reg_data)
  * @details This is a simple data transfer via the VDP data port rather than
  * DMA.
  */
-static inline void bios_vdp_fill(u32 vdpptr, u16 length, u16 value)
+static inline void bios_vdp_fill(u32 vdp_ptr, u16 length, u16 value)
 {
-	register u32 D0 asm("d0") = vdpptr;
+	register u32 D0 asm("d0") = vdp_ptr;
 	register u16 D1 asm("d1") = length;
 	register u16 D2 asm("d2") = value;
 	asm volatile(
@@ -741,9 +741,9 @@ static inline void bios_vdp_fill(u32 vdpptr, u16 length, u16 value)
  * @details This is a simple data transfer via the VDP data port rather than
  * DMA.
  */
-static inline void bios_vdp_fill_clear(u32 vdpptr, u16 length)
+static inline void bios_vdp_fill_clear(u32 vdp_ptr, u16 length)
 {
-	register u32 D0 asm("d0") = vdpptr;
+	register u32 D0 asm("d0") = vdp_ptr;
 	register u16 D1 asm("d1") = length;
 	asm volatile(
 		"\
@@ -760,9 +760,9 @@ static inline void bios_vdp_fill_clear(u32 vdpptr, u16 length)
  * @ingroup bios_vdp
  * @sa BIOS_DMA_FILL_CLEAR
  */
-static inline void bios_dma_fill_clear(u32 vdpptr, u16 length)
+static inline void bios_dma_fill_clear(u32 vdp_ptr, u16 length)
 {
-	register u32 D0 asm("d0") = vdpptr;
+	register u32 D0 asm("d0") = vdp_ptr;
 	register u16 D1 asm("d1") = length;
 	asm volatile(
 		"\
@@ -781,9 +781,9 @@ static inline void bios_dma_fill_clear(u32 vdpptr, u16 length)
  * @sa BIOS_DMA_FILL
  * @ingroup bios_vdp
  */
-static inline void bios_dma_fill(u32 vdpptr, u16 length, u16 value)
+static inline void bios_dma_fill(u32 vdp_ptr, u16 length, u16 value)
 {
-	register u32 D0 asm("d0") = vdpptr;
+	register u32 D0 asm("d0") = vdp_ptr;
 	register u16 D1 asm("d1") = length;
 	register u16 D2 asm("d2") = value;
 	asm volatile(
@@ -807,9 +807,9 @@ static inline void bios_dma_fill(u32 vdpptr, u16 length, u16 value)
  * nametable entry format.
  */
 static inline void bios_load_map(
-	u32 const vdpptr, u16 const width, u16 const height, void const * map)
+	u32 const vdp_ptr, u16 const width, u16 const height, void const * map)
 {
-	register u32 D0 asm("d0") = vdpptr;
+	register u32 D0 asm("d0") = vdp_ptr;
 	register u16 D1 asm("d1") = width;
 	register u16 D2 asm("d2") = height;
 	register u32 A1 asm("a1") = (u32) map;
@@ -1024,7 +1024,7 @@ static inline void bios_load_font_defaults()
  * @ingroup bios_misc
  */
 static inline void bios_load_1bpp_tiles(
-	void * chr_data, u16 tile_count, vdpcmd dest, u32 color_pattern)
+	void * chr_data, u16 tile_count, vdp_cmd dest, u32 color_pattern)
 {
 	register u32 D0 asm("d0") = dest;
 	register u32 D1 asm("d1") = color_pattern;
@@ -1094,7 +1094,7 @@ static inline void bios_clear_comm()
  * @ingroup bios_misc
  *
  * @param[in] A1.l Pointer to string
- * @param[in] D0.l VRAM destination (vdpptr)
+ * @param[in] D0.l VRAM destination (vdp_ptr)
  *
  * @details Strings are terminated with 0xFF and use 0x00 for newline.
  * The value in BIOS_FONT_TILE_BASE is added to each character byte, but no
@@ -1102,7 +1102,7 @@ static inline void bios_clear_comm()
  * 0x20 at the earliest (where BIOS_FONT_TILE_BASE is 0). Note that this can
  * only use palette line 0.
  */
-static inline void bios_print(char const * string, vdpcmd pos)
+static inline void bios_print(char const * string, vdp_cmd pos)
 {
 	register u32 A1 asm("a1") = (u32) string;
 	register u32 D0 asm("d0") = pos;
@@ -1119,13 +1119,14 @@ static inline void bios_print(char const * string, vdpcmd pos)
 /**
  * @fn bios_plane_fill
  * @brief Fill a region of a nametable with a value
- * @param[in] D0.l Address (vdpptr format)
+ * @param[in] D0.l Address (vdp_ptr format)
  * @param[in] D1.w Width
  * @param[in] D2.w Height
  * @param[in] D3.w Value
  * @ingroup bios_vdp
  */
-static inline void bios_plane_fill(vdpcmd pos, u16 width, u16 height, u16 value)
+static inline void
+bios_plane_fill(vdp_cmd pos, u16 width, u16 height, u16 value)
 {
 	register u32 D0 asm("d0") = pos;
 	register u32 D1 asm("d1") = width;
@@ -1146,12 +1147,12 @@ static inline void bios_plane_fill(vdpcmd pos, u16 width, u16 height, u16 value)
 /**
  * @fn bios_dma_xfer
  * @brief Performs a data transfer to VRAM via DMA
- * @param[in] D0.l VRAM destination address (vdpptr format)
+ * @param[in] D0.l VRAM destination address (vdp_ptr format)
  * @param[in] D1.l Source address
  * @param[in] D2.w Length (in words)
  * @ingroup bios_vdp
  */
-static inline void bios_dma_xfer(vdpcmd dest, u8 const * source, u16 length)
+static inline void bios_dma_xfer(vdp_cmd dest, u8 const * source, u16 length)
 {
 	register u32 D0 asm("d0") = dest;
 	register u32 D1 asm("d1") = (u32) source;
@@ -1171,7 +1172,7 @@ static inline void bios_dma_xfer(vdpcmd dest, u8 const * source, u16 length)
 /**
  * @fn bios_dma_xfer_word_ram
  * @brief Performs a data transfer from Word RAM to VRAM via DMA
- * @param[in] D0.l VRAM destination (vdpptr format)
+ * @param[in] D0.l VRAM destination (vdp_ptr format)
  * @param[in] D1.l Source address
  * @param[in] D2.w Length (in words)
  * @ingroup bios_vdp
@@ -1180,8 +1181,8 @@ static inline void bios_dma_xfer(vdpcmd dest, u8 const * source, u16 length)
  * Word RAM to VRAM which must be accounted for by writing the final word of
  * data to the data port. This subroutine takes care of that extra step.
  */
-static inline void
-bios_dma_xfer_word_ram(vdpcmd const dest, void const * source, u16 const length)
+static inline void bios_dma_xfer_word_ram(
+	vdp_cmd const dest, void const * source, u16 const length)
 {
 	register u32 D0 asm("d0") = dest;
 	register u32 D1 asm("d1") = (u32) source;
@@ -1201,7 +1202,7 @@ bios_dma_xfer_word_ram(vdpcmd const dest, void const * source, u16 const length)
 /**
  * @fn bios_dma_copy
  * @brief Copy data within VRAM via DMA
- * @param[in] D0.l Destination VRAM address (vdpptr)
+ * @param[in] D0.l Destination VRAM address (vdp_ptr)
  * @param[in] D1.w Source VRAM address
  * @param[in] D2.w Length
  * @ingroup bios_vdp
@@ -1454,7 +1455,7 @@ static inline void bios_pal_fadein()
 typedef struct DmaTransfer
 {
 	u16 length;
-	u32 vdpptr;
+	u32 vdp_ptr;
 	u32 source;
 } DmaTransfer;
 
@@ -1465,7 +1466,7 @@ typedef struct DmaTransfer
  *
  * @details The queue is an array of DMA transfer entries in this format:
  *     0.w Data length
- *     2.l Destination (vdpptr)
+ *     2.l Destination (vdp_ptr)
  *     6.l Source address
  * The list should be terminated with a 0 word. Note that this system is
  * extremely basic and does not account for DMA bandwidth, etc. Moreover, no

@@ -231,7 +231,8 @@
  * |-:|-:|-:|-:|-:|-:|-:|-:|
  * | ||L|IE1| |CM|M3|DE|
  *
- * @param L [@ref VDP_LEFT_COL_BLANK] Blank leftmost 8 pixels to background color
+ * @param L [@ref VDP_LEFT_COL_BLANK] Blank leftmost 8 pixels to background
+ * color
  * @param IE1 [@ref VDP_HINT_ENABLE] Enable HBLANK interrupts
  * @param CM [@ref VDP_HICOLOR_ENABLE]
  * \n 1: normal 9-bit color mode (512 colour)
@@ -390,7 +391,8 @@
 #define VDP_128K_VRAM_ENABLE (1 << 7)
 
 /**
- * @defgroup vdp_reg02 Main CPU / VDP / Register 02 (Plane A Name Table VRAM Address)
+ * @defgroup vdp_reg02 Main CPU / VDP / Register 02 (Plane A Name Table VRAM
+ * Address)
  */
 
 /**
@@ -423,7 +425,8 @@
 #define VDPREG_PLA_ADDR VDPREG02
 
 /**
- * @defgroup vdp_reg03 Main CPU / VDP / Register 03 (Window Name Table VRAM Address)
+ * @defgroup vdp_reg03 Main CPU / VDP / Register 03 (Window Name Table VRAM
+ * Address)
  */
 
 /**
@@ -459,7 +462,8 @@
 #define VDPREG_WIN_ADDR VDPREG03
 
 /**
- * @defgroup vdp_reg04 Main CPU / VDP / Register 04 (Plane B Name Table VRAM Address)
+ * @defgroup vdp_reg04 Main CPU / VDP / Register 04 (Plane B Name Table VRAM
+ * Address)
  */
 
 /**
@@ -526,7 +530,8 @@
 #define VDPREG_SPR_ADDR VDPREG05
 
 /**
- * @defgroup vdp_reg06 Main CPU / VDP / Register 06 (Sprite Table VRAM Address for 128k VRAM)
+ * @defgroup vdp_reg06 Main CPU / VDP / Register 06 (Sprite Table VRAM Address
+ * for 128k VRAM)
  */
 
 /**
@@ -585,7 +590,8 @@
 #define VDPREG_BGCOLOR VDPREG07
 
 /**
- * @defgroup vdp_reg08 Main CPU / VDP / Register 08 (Mark III/Master System horizontal scroll)
+ * @defgroup vdp_reg08 Main CPU / VDP / Register 08 (Mark III/Master System
+ * horizontal scroll)
  */
 
 /**
@@ -608,7 +614,8 @@
 #define VDPREG_M3_HSCROLL VDPREG08
 
 /**
- * @defgroup vdp_reg09 Main CPU / VDP / Register 09 (Mark III/Master System vertical scroll)
+ * @defgroup vdp_reg09 Main CPU / VDP / Register 09 (Mark III/Master System
+ * vertical scroll)
  */
 
 /**
@@ -821,7 +828,8 @@
 #define VDP_INTERLACE_DOUBLE (0b11 << 1)
 
 /**
- * @defgroup vdp_reg0D Main CPU / VDP / Register 0D (Horizontal Scroll Data VRAM Address)
+ * @defgroup vdp_reg0D Main CPU / VDP / Register 0D (Horizontal Scroll Data VRAM
+ * Address)
  */
 
 /**
@@ -854,7 +862,8 @@
 #define VDPREG_HS_ADDR VDPREG0D
 
 /**
- * @defgroup vdp_reg0E Main CPU / VDP / Register 0B (Plane A/B Name Table VRAM Address for 128k VRAM)
+ * @defgroup vdp_reg0E Main CPU / VDP / Register 0B (Plane A/B Name Table VRAM
+ * Address for 128k VRAM)
  */
 
 /**
@@ -900,8 +909,8 @@
  *
  * @param INC Autoincrement value
  *
- * @details Value to be added to the VDP address register after each read/write to
- * the data port
+ * @details Value to be added to the VDP address register after each read/write
+ * to the data port
  *
  * @note 2 is most common value in this register and many VDP related functions
  * assume that is the value set.
@@ -1076,7 +1085,8 @@
 #define VDP_PL_128x32 (VDP_PL_W128 | VDP_PL_H32)
 
 /**
- * @defgroup vdp_reg11 Main CPU / VDP / Register 11 (Window Plane Horizontal Position)
+ * @defgroup vdp_reg11 Main CPU / VDP / Register 11 (Window Plane Horizontal
+ * Position)
  */
 
 /**
@@ -1108,7 +1118,8 @@
 #define VDPREG_WIN_HPOS VDPREG11
 
 /**
- * @defgroup vdp_reg12 Main CPU / VDP / Register 12 (Window Plane Vertical Position)
+ * @defgroup vdp_reg12 Main CPU / VDP / Register 12 (Window Plane Vertical
+ * Position)
  */
 
 /**
@@ -1302,6 +1313,6 @@
  * @brief Returns tile index for the given VRAM address
  * (assuming tile data begins at 0 in VRAM)
  */
-#define TILEIDX(vramptr) ((vramptr) >> 5)
+#define TILEIDX(vram_ptr) ((vram_ptr) >> 5)
 
 #endif

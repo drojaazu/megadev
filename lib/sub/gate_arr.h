@@ -11,176 +11,178 @@
 #include "gate_arr.def.h"
 #include <types.h>
 
-#define ga_reset ((volatile u16 *) _GAREG_RESET)
+typedef u16 volatile * ga_reg;
 
-#define ga_memmode ((volatile u16 *) _GAREG_MEMMODE)
+#define ga_reset ((ga_reg) GAREG_RESET)
 
-#define ga_cdcmode ((volatile u16 *) _GAREG_CDCMODE)
+#define ga_memmode ((ga_reg) GAREG_MEMMODE)
 
-#define GA_CDCRS1 ((volatile u16 *) _GAREG_CDCRS1)
+#define ga_cdcmode ((ga_reg) GAREG_CDCMODE)
 
-#define ga_cdchostdata ((volatile u16 *) _GAREG_CDCHOSTDATA)
+#define GA_CDCRS1 ((ga_reg) _GAREG_CDCRS1)
 
-#define GA_DMAADDR ((volatile u16 *) _GAREG_DMAADDR)
+#define ga_cdchostdata ((ga_reg) GAREG_CDCHOSTDATA)
 
-#define ga_stopwatch ((volatile u16 *) _GAREG_STOPWATCH)
+#define GA_DMAADDR ((ga_reg) _GAREG_DMAADDR)
 
-#define ga_comflags ((volatile const u16 *) _GAREG_COMFLAGS)
+#define ga_stopwatch ((ga_reg) GAREG_STOPWATCH)
 
-#define GA_COMFLAGS_MAIN ((volatile const u8 *) _GAREG_COMFLAGS)
-#define GA_COMFLAGS_SUB	 ((volatile u8 *) _GAREG_COMFLAGS + 1)
+#define ga_comflags ((ga_reg const) GAREG_COMFLAGS)
 
-#define GA_COMCMD0 ((u16 volatile const *) _GAREG_COMCMD0)
+#define GA_COMFLAGS_MAIN ((volatile const u8 *) GAREG_COMFLAGS)
+#define GA_COMFLAGS_SUB	 ((volatile u8 *) GAREG_COMFLAGS + 1)
+
+#define gareg_comcmd0 ((ga_reg const) GAREG_COMCMD0)
 
 /**
- * @def GA_COMCMD1
+ * @def gareg_comcmd1
  * @brief GA Reg 09 - Comm. command (Main -> Sub)
  * @ingroup gatearray_sub
- * @sa _GAREG_COMCMD1
+ * @sa GAREG_COMCMD1
  *
  * @details R: 16 bit data
  */
-#define GA_COMCMD1 ((u16 volatile const *) _GAREG_COMCMD1)
+#define gareg_comcmd1 ((ga_reg const) GAREG_COMCMD1)
 
 /**
- * @def GA_COMCMD2
+ * @def gareg_comcmd2
  * @brief GA Reg 0A - Comm. command (Main -> Sub)
  * @ingroup gatearray_sub
- * @sa _GAREG_COMCMD2
+ * @sa GAREG_COMCMD2
  *
  * @details R: 16 bit data
  */
-#define GA_COMCMD2 ((u16 volatile const *) _GAREG_COMCMD2)
+#define gareg_comcmd2 ((ga_reg const) GAREG_COMCMD2)
 
 /**
- * @def GA_COMCMD3
+ * @def gareg_comcmd3
  * @brief GA Reg 0B - Comm. command (Main -> Sub)
  * @ingroup gatearray_sub
- * @sa _GAREG_COMCMD3
+ * @sa GAREG_COMCMD3
  *
  * @details R: 16 bit data
  */
-#define GA_COMCMD3 ((u16 volatile const *) _GAREG_COMCMD3)
+#define gareg_comcmd3 ((ga_reg const) GAREG_COMCMD3)
 
 /**
- * @def GA_COMCMD4
+ * @def gareg_comcmd4
  * @brief GA Reg 0C - Comm. command (Main -> Sub)
  * @ingroup gatearray_sub
- * @sa _GAREG_COMCMD4
+ * @sa GAREG_COMCMD4
  *
  * @details R: 16 bit data
  */
-#define GA_COMCMD4 ((u16 volatile const *) _GAREG_COMCMD4)
+#define gareg_comcmd4 ((ga_reg const) GAREG_COMCMD4)
 
 /**
- * @def GA_COMCMD5
+ * @def gareg_comcmd5
  * @brief GA Reg 0D - Comm. command (Main -> Sub)
  * @ingroup gatearray_sub
- * @sa _GAREG_COMCMD5
+ * @sa GAREG_COMCMD5
  *
  * @details R: 16 bit data
  */
-#define GA_COMCMD5 ((u16 volatile const *) _GAREG_COMCMD5)
+#define gareg_comcmd5 ((ga_reg const) GAREG_COMCMD5)
 
 /**
- * @def GA_COMCMD6
+ * @def gareg_comcmd6
  * @brief GA Reg 0E - Comm. command (Main -> Sub)
  * @ingroup gatearray_sub
- * @sa _GAREG_COMCMD6
+ * @sa GAREG_COMCMD6
  *
  * @details R: 16 bit data
  */
-#define GA_COMCMD6 ((u16 volatile const *) _GAREG_COMCMD6)
+#define gareg_comcmd6 ((ga_reg const) GAREG_COMCMD6)
 
 /**
- * @def GA_COMCMD7
+ * @def gareg_comcmd7
  * @brief GA Reg 0F - Comm. command (Main -> Sub)
  * @ingroup gatearray_sub
- * @sa _GAREG_COMCMD7
+ * @sa GAREG_COMCMD7
  *
  * @details R: 16 bit data
  */
-#define GA_COMCMD7 ((u16 volatile const *) _GAREG_COMCMD7)
+#define gareg_comcmd7 ((ga_reg const) GAREG_COMCMD7)
 
 /**
  * @def GA_COMSTAT0
  * @brief GA Reg 10 - Comm. status (Sub -> Main)
  * @ingroup gatearray_sub
- * @sa _GAREG_COMSTAT0
+ * @sa GAREG_COMSTAT0
  *
  * @details RW: 16 bit data
  */
-#define GA_COMSTAT0 ((u16 volatile *) _GAREG_COMSTAT0)
+#define GA_COMSTAT0 ((ga_reg) GAREG_COMSTAT0)
 
 /**
  * @def GA_COMSTAT1
  * @brief GA Reg 11 - Comm. status (Sub -> Main)
  * @ingroup gatearray_sub
- * @sa _GAREG_COMSTAT1
+ * @sa GAREG_COMSTAT1
  *
  * @details RW: 16 bit data
  */
-#define GA_COMSTAT1 ((u16 volatile *) _GAREG_COMSTAT1)
+#define GA_COMSTAT1 ((ga_reg) GAREG_COMSTAT1)
 
 /**
  * @def GA_COMSTAT2
  * @brief GA Reg 12 - Comm. status (Sub -> Main)
  * @ingroup gatearray_sub
- * @sa _GAREG_COMSTAT2
+ * @sa GAREG_COMSTAT2
  *
  * @details RW: 16 bit data
  */
-#define GA_COMSTAT2 ((u16 volatile *) _GAREG_COMSTAT2)
+#define GA_COMSTAT2 ((ga_reg) GAREG_COMSTAT2)
 
 /**
  * @def GA_COMSTAT3
  * @brief GA Reg 13 - Comm. status (Sub -> Main)
  * @ingroup gatearray_sub
- * @sa _GAREG_COMSTAT3
+ * @sa GAREG_COMSTAT3
  *
  * @details RW: 16 bit data
  */
-#define GA_COMSTAT3 ((u16 volatile *) _GAREG_COMSTAT3)
+#define GA_COMSTAT3 ((ga_reg) GAREG_COMSTAT3)
 
 /**
  * @def GA_COMSTAT4
  * @brief GA Reg 14 - Comm. status (Sub -> Main)
  * @ingroup gatearray_sub
- * @sa _GAREG_COMSTAT4
+ * @sa GAREG_COMSTAT4
  *
  * @details RW: 16 bit data
  */
-#define GA_COMSTAT4 ((u16 volatile *) _GAREG_COMSTAT4)
+#define GA_COMSTAT4 ((ga_reg) GAREG_COMSTAT4)
 
 /**
  * @def GA_COMSTAT5
  * @brief GA Reg 15 - Comm. status (Sub -> Main)
  * @ingroup gatearray_sub
- * @sa _GAREG_COMSTAT5
+ * @sa GAREG_COMSTAT5
  *
  * @details RW: 16 bit data
  */
-#define GA_COMSTAT5 ((u16 volatile *) _GAREG_COMSTAT5)
+#define GA_COMSTAT5 ((ga_reg) GAREG_COMSTAT5)
 
 /**
  * @def GA_COMSTAT6
  * @brief GA Reg 16 - Comm. status (Sub -> Main)
  * @ingroup gatearray_sub
- * @sa _GAREG_COMSTAT6
+ * @sa GAREG_COMSTAT6
  *
  * @details RW: 16 bit data
  */
-#define GA_COMSTAT6 ((u16 volatile *) _GAREG_COMSTAT6)
+#define GA_COMSTAT6 ((ga_reg) GAREG_COMSTAT6)
 
 /**
  * @def GA_COMSTAT7
  * @brief GA Reg 17 - Comm. status (Sub -> Main)
  * @ingroup gatearray_sub
- * @sa _GAREG_COMSTAT7
+ * @sa GAREG_COMSTAT7
  *
  * @details RW: 16 bit data
  */
-#define GA_COMSTAT7 ((u16 volatile *) _GAREG_COMSTAT7)
+#define GA_COMSTAT7 ((ga_reg) GAREG_COMSTAT7)
 
 /**
  * @def GA_INT3TIMER
@@ -204,7 +206,7 @@
  * This does not seem to properly reflected in emulators, but initial tests on
  * hardware show it to be accurate
  */
-#define GA_INT3TIMER ((u16 volatile *) _GAREG_INT3TIMER)
+#define GA_INT3TIMER ((ga_reg) _GAREG_INT3TIMER)
 
 /**
  * @def GA_INTMASK
@@ -229,7 +231,7 @@
  *   5: CDC
  *   6: SUBCODE
  */
-#define GA_INTMASK ((u16 volatile *) _GAREG_INTMASK)
+#define GA_INTMASK ((ga_reg) _GAREG_INTMASK)
 
 /**
  * @def GA_CDFADER
@@ -257,7 +259,7 @@
  * for direct access from user applications. Consider using the FDRSET and
  * FDRCHG BIOS functions.
  */
-#define GA_CDFADER ((u16 volatile *) _GAREG_CDFADER)
+#define GA_CDFADER ((ga_reg) _GAREG_CDFADER)
 
 /**
  * @def GA_CDDCTRL
@@ -290,7 +292,7 @@
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define GA_CDDCTRL ((u16 volatile *) _GAREG_CDDCTRL)
+#define GA_CDDCTRL ((ga_reg) _GAREG_CDDCTRL)
 
 /**
  * @def GA_CDDCOMM0
@@ -304,7 +306,7 @@
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define GA_CDDCOMM0 ((u16 volatile *) _GAREG_CDDCOMM0)
+#define GA_CDDCOMM0 ((ga_reg) _GAREG_CDDCOMM0)
 
 /**
  * @def GA_CDDCOMM1
@@ -318,7 +320,7 @@
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define GA_CDDCOMM1 ((u16 volatile *) _GAREG_CDDCOMM1)
+#define GA_CDDCOMM1 ((ga_reg) _GAREG_CDDCOMM1)
 
 /**
  * @def GA_CDDCOMM2
@@ -332,7 +334,7 @@
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define GA_CDDCOMM2 ((u16 volatile *) _GAREG_CDDCOMM2)
+#define GA_CDDCOMM2 ((ga_reg) _GAREG_CDDCOMM2)
 
 /**
  * @def GA_CDDCOMM3
@@ -346,7 +348,7 @@
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define GA_CDDCOMM3 ((u16 volatile *) _GAREG_CDDCOMM3)
+#define GA_CDDCOMM3 ((ga_reg) _GAREG_CDDCOMM3)
 
 /**
  * @def GA_CDDCOMM4
@@ -360,7 +362,7 @@
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define GA_CDDCOMM4 ((u16 volatile *) _GAREG_CDDCOMM4)
+#define GA_CDDCOMM4 ((ga_reg) _GAREG_CDDCOMM4)
 
 /**
  * @def GA_CDDCOMM5
@@ -374,7 +376,7 @@
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define GA_CDDCOMM5 ((u16 volatile *) _GAREG_CDDCOMM5)
+#define GA_CDDCOMM5 ((ga_reg) _GAREG_CDDCOMM5)
 
 /**
  * @def GA_CDDCOMM6
@@ -388,7 +390,7 @@
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define GA_CDDCOMM6 ((u16 volatile *) _GAREG_CDDCOMM6)
+#define GA_CDDCOMM6 ((ga_reg) _GAREG_CDDCOMM6)
 
 /**
  * @def GA_CDDCOMM7
@@ -402,7 +404,7 @@
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define GA_CDDCOMM7 ((u16 volatile *) _GAREG_CDDCOMM7)
+#define GA_CDDCOMM7 ((ga_reg) _GAREG_CDDCOMM7)
 
 /**
  * @def GA_CDDCOMM8
@@ -416,7 +418,7 @@
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define GA_CDDCOMM8 ((u16 volatile *) _GAREG_CDDCOMM8)
+#define GA_CDDCOMM8 ((ga_reg) _GAREG_CDDCOMM8)
 
 /**
  * @def GA_CDDCOMM9
@@ -430,7 +432,7 @@
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define GA_CDDCOMM9 ((u16 volatile *) _GAREG_CDDCOMM9)
+#define GA_CDDCOMM9 ((ga_reg) _GAREG_CDDCOMM9)
 
 /**
  * @def GA_FONTCOLOR
@@ -449,7 +451,7 @@
  * SC10-13: Source Color Data for font bits set to 1
  * @details RW: Palette entry
  */
-#define GA_FONTCOLOR ((u16 volatile *) _GAREG_FONTCOLOR)
+#define GA_FONTCOLOR ((ga_reg) _GAREG_FONTCOLOR)
 
 /**
  * @def GA_FONTBITS
@@ -457,7 +459,7 @@
  * @sa _GAREG_FONTBITS
  * @ingroup gatearray_sub
  */
-#define GA_FONTBITS ((u16 volatile *) _GAREG_FONTBITS)
+#define GA_FONTBITS ((ga_reg) _GAREG_FONTBITS)
 
 /**
  * @def GA_FONTDATA
@@ -469,7 +471,7 @@
  * This register is a group of four 16-bit values which represent
  * the 4bpp VDP tile data converted from the 1bpp data in @ref GA_FONTBITS
  */
-#define GA_FONTDATA ((u16 volatile *) _GAREG_FONTDATA)
+#define GA_FONTDATA ((ga_reg) _GAREG_FONTDATA)
 
 /**
  * @def GA_STAMPSIZE
@@ -477,7 +479,7 @@
  * @sa _GAREG_STAMPSIZE
  * @ingroup gatearray_sub
  */
-#define GA_STAMPSIZE (*((u16 volatile *) _GAREG_STAMPSIZE))
+#define GA_STAMPSIZE (*((ga_reg) _GAREG_STAMPSIZE))
 
 /**
  * @def GA_STAMPMAPBASE
@@ -485,7 +487,7 @@
  * @sa _GAREG_STAMPMAPBASE
  * @ingroup gatearray_sub
  */
-#define GA_STAMPMAPBASE (*((u16 volatile *) _GAREG_STAMPMAPBASE))
+#define GA_STAMPMAPBASE (*((ga_reg) _GAREG_STAMPMAPBASE))
 
 /**
  * @def GA_IMGBUFVSIZE
@@ -493,7 +495,7 @@
  * @sa _GAREG_IMGBUFVSIZE
  * @ingroup gatearray_sub
  */
-#define GA_IMGBUFVSIZE (*((u16 volatile *) _GAREG_IMGBUFVSIZE))
+#define GA_IMGBUFVSIZE (*((ga_reg) _GAREG_IMGBUFVSIZE))
 
 /**
  * @def GA_IMGBUFSTART
@@ -501,7 +503,7 @@
  * @sa _GAREG_IMGBUFSTART
  * @ingroup gatearray_sub
  */
-#define GA_IMGBUFSTART (*((u16 volatile *) _GAREG_IMGBUFSTART))
+#define GA_IMGBUFSTART (*((ga_reg) _GAREG_IMGBUFSTART))
 
 /**
  * @def GA_IMGBUFOFFSET
@@ -509,7 +511,7 @@
  * @sa _GAREG_IMGBUFOFFSET
  * @ingroup gatearray_sub
  */
-#define GA_IMGBUFOFFSET (*((u16 volatile *) _GAREG_IMGBUFOFFSET))
+#define GA_IMGBUFOFFSET (*((ga_reg) _GAREG_IMGBUFOFFSET))
 
 /**
  * @def GA_IMGBUFHDOTSIZE
@@ -517,7 +519,7 @@
  * @sa _GAREG_IMGBUFHDOTSIZE
  * @ingroup gatearray_sub
  */
-#define GA_IMGBUFHDOTSIZE (*((u16 volatile *) _GAREG_IMGBUFHDOTSIZE))
+#define GA_IMGBUFHDOTSIZE (*((ga_reg) _GAREG_IMGBUFHDOTSIZE))
 
 /**
  * @def GA_IMGBUFVDOTSIZE
@@ -525,7 +527,7 @@
  * @sa _GAREG_IMGBUFVDOTSIZE
  * @ingroup gatearray_sub
  */
-#define GA_IMGBUFVDOTSIZE (*((u16 volatile *) _GAREG_IMGBUFVDOTSIZE))
+#define GA_IMGBUFVDOTSIZE (*((ga_reg) _GAREG_IMGBUFVDOTSIZE))
 
 /**
  * @def GA_TRACEVECTBASE
@@ -533,7 +535,7 @@
  * @sa _GAREG_TRACEVECTBASE
  * @ingroup gatearray_sub
  */
-#define GA_TRACEVECTBASE (*((u16 volatile *) _GAREG_TRACEVECTBASE))
+#define GA_TRACEVECTBASE (*((ga_reg) _GAREG_TRACEVECTBASE))
 
 /**
  * @def GA_SUBCODEADDR
@@ -541,7 +543,7 @@
  * @sa _GAREG_SUBCODEADDR
  * @ingroup gatearray_sub
  */
-#define GA_SUBCODEADDR ((u16 volatile *) _GAREG_SUBCODEADDR)
+#define GA_SUBCODEADDR ((ga_reg) _GAREG_SUBCODEADDR)
 
 /**
  * @def GA_SUBCODEBUF
@@ -552,7 +554,7 @@
  * @details
  * Size: 64 x 16-bit words (128 bytes)
  */
-#define GA_SUBCODEBUF ((u16 volatile *) _GAREG_SUBCODEBUF)
+#define GA_SUBCODEBUF ((ga_reg) _GAREG_SUBCODEBUF)
 
 /**
  * @def GA_SUBCODEBUFIMG
@@ -560,7 +562,7 @@
  * @sa _GAREG_SUBCODEBUFIMG
  * @ingroup gatearray_sub
  */
-#define GA_SUBCODEBUFIMG ((u16 volatile *) _GAREG_SUBCODEBUFIMG)
+#define GA_SUBCODEBUFIMG ((ga_reg) _GAREG_SUBCODEBUFIMG)
 
 /**
  * @fn wait_2m
@@ -574,7 +576,7 @@ static inline void wait_2m()
 			beq 1b \n\
 		"
 		:
-		: "i"(BIT_GAREG_DMNA), "i"(_GAREG_MEMMODE + 1));
+		: "i"(BIT_GAREG_DMNA), "i"(GAREG_MEMMODE + 1));
 }
 
 /**
@@ -590,7 +592,7 @@ static inline void grant_2m()
 			beq 1b \n\
 		"
 		:
-		: "i"(BIT_GAREG_RET), "i"(_GAREG_MEMMODE + 1));
+		: "i"(BIT_GAREG_RET), "i"(GAREG_MEMMODE + 1));
 }
 
 /**
@@ -606,7 +608,7 @@ static inline void set_1m()
 			beq 1b \n\
 		"
 		:
-		: "i"(BIT_GAREG_MODE), "i"(_GAREG_MEMMODE + 1));
+		: "i"(BIT_GAREG_MODE), "i"(GAREG_MEMMODE + 1));
 }
 
 /**
@@ -622,7 +624,7 @@ static inline void set_2m()
 			bne 1b \n\
 		"
 		:
-		: "i"(BIT_GAREG_MODE), "i"(_GAREG_MEMMODE + 1));
+		: "i"(BIT_GAREG_MODE), "i"(GAREG_MEMMODE + 1));
 }
 
 /**
@@ -642,7 +644,7 @@ static inline void clear_comm_regs()
 		move.l d0, (a0)+ \n\
 		"
 		:
-		: "i"(_GAREG_COMSTAT0)
+		: "i"(GAREG_COMSTAT0)
 		: "d0", "a0");
 }
 

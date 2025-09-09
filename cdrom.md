@@ -25,7 +25,7 @@ At this point, you are ready to load files. There are four steps involved:
 	- Set the appropriate access operation
   - Wait for the operation to complete
 
-You do not need to set the CDC device destination in the _GAREG_CDCMODE register. This will be done automatically depending on the access operation chosen.
+You do not need to set the CDC device destination in the GAREG_CDCMODE register. This will be done automatically depending on the access operation chosen.
 
 ### Filename
 

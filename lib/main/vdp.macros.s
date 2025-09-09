@@ -12,7 +12,7 @@
  * @brief Converts a 16 bit VRAM address into VDP format at runtime
  */
 .macro TO_VDPPTR dreg=d0
-  andi.l   #0xffff, \dreg
+  andi.l   #0xFFFF, \dreg
   lsl.l    #2, \dreg
   lsr.w    #2, \dreg
   swap     \dreg
@@ -22,7 +22,7 @@
  * @brief Converts a VDP format address to a 16 bit VRAM address at runtime
  */
 .macro VDPPTR_TO dreg=d0
-  andi.l  #0x3fff000c, \dreg
+  andi.l  #0x3FFF000C, \dreg
   ror.w    #2, \dreg
   lsr.l    #8, \dreg
   lsr.l    #6, \dreg

@@ -21,7 +21,7 @@
  */
 .macro INIT_MMD
   WAIT_2M
-  lea      _WORD_RAM, a0	//get MMD entry point
+  lea      WORD_RAM, a0	//get MMD entry point
   move.l   2(a0), d0	//get MMD data destination
   beq      1f             //if no destination, skip the copy
   movea.l  d0, a2         //put destination in a2
@@ -31,11 +31,11 @@
   dbf      d0, 0b
 1:move.l   12(a0), d0  //set HINT vector if provided
   beq      2f
-  move.l   d0, _MLEVEL4+2
+  move.l   d0, EXVEC_LEVEL4+2
 2:move.l   16(a0), d0
   beq      3f
-  move.l   d0, _MLEVEL6+2
-3:btst     #6, _WORD_RAM    // if bit 6 is set, return 2m to sub 
+  move.l   d0, EXVEC_LEVEL6+2
+3:btst     #6, WORD_RAM    // if bit 6 is set, return 2m to sub 
   beq      4f
   GRANT_2M
 4:movea.l  8(a0), a0

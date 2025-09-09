@@ -15,12 +15,12 @@
  */
 GLABEL pcm_clear_ram
   // disable channels
-  move.b   #0xff, _PCM_CDISABLE
+  move.b   #0xFF, _PCM_CDISABLE
   moveq    #0, d0
   move.b   #0x80, d1
 
 1:move.b   d1, _PCM_CTRL
-  move.w   #0xfff, d2
+  move.w   #0xFFF, d2
   lea      _PCM_RAM + 1, a6
 
 2:move.b   #0, (a6)

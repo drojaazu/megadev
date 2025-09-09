@@ -651,7 +651,7 @@ It is a form of compression as, logically, 1bpp graphics only use 1/4 of the spa
 
 Of course, this is not strictly limited to fonts and you can use the routine however you'd like to convert 1bpp graphics to Mega Drive 4bpp tiles.
 
-The function takes a pointer to the 1bpp data, a vdpptr formatted VRAM destination, the number of tiles and the color definition. The color definition requires some explanation. It is a 32 bit value that acts as a mapping for each possible pair of 1 bit values. The full value is divided into four bytes visualized like so:
+The function takes a pointer to the 1bpp data, a vdp_ptr formatted VRAM destination, the number of tiles and the color definition. The color definition requires some explanation. It is a 32 bit value that acts as a mapping for each possible pair of 1 bit values. The full value is divided into four bytes visualized like so:
 
     00'0X'X0'XX
 

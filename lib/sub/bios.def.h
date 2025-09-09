@@ -210,7 +210,7 @@
  *  byte 1 - track number from which to read TOC (normally 0x01); if bit 7 of
  *           this value is set, BIOS will start to play the first track
 						 automatically
- *  byte 2 - last track to read (0xff will read all tracks)
+ *  byte 2 - last track to read (0xFF will read all tracks)
  */
 #define BIOS_DRVINIT 0x0010
 
@@ -700,4 +700,4 @@
  */
 #define BIOS_WONDERCHK 0x0098
 
-  #endif
+#endif

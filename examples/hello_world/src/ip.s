@@ -32,7 +32,7 @@
   jbsr     BIOS_CLEAR_COMM
 
   move     #0, (BIOS_VINT_HANDLER_FLAGS)
-  move.l   #BIOS_VINT_HANDLER, (_MLEVEL6 + 2)
+  move.l   #BIOS_VINT_HANDLER, (EXVEC_LEVEL6)
 
   /*
     Now we'll load the internal Boot ROM font into the VDP with the default
@@ -71,7 +71,7 @@ SUB plane_xy_pos
 1:move.w   (BIOS_PLANE_WIDTH_CACHE), d1  // d1 - tiles per row 
   move.w   d0, d2  // d0 - x/y offset (upper/lower bytes of the word)
   lsr.w    #8, d2  // d2 has x pos
-  and.w    #0xff, d0  // filter d0 so it only has y pos
+  and.w    #0xFF, d0  // filter d0 so it only has y pos
   mulu     d1, d0
   // d0 is now y pos * tiles per row
   // add x pos
@@ -79,9 +79,9 @@ SUB plane_xy_pos
   // multiply by 2 for tilemap entry size
   lsl.l    #1, d0
   // TODO: make this dynamic
-  add.w    #0xc000, d0
+  add.w    #0xC000, d0
 
-  // convert the address in d0 to vdpptr format
+  // convert the address in d0 to vdp_ptr format
   TO_VDPPTR
   // and set the VRAM write operation flags
   or.l     #VRAM_W, d0

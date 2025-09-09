@@ -62,7 +62,7 @@ find_file:
   // we need this for string comparison
   moveq    #0, d1     // d1 will hold the size
   movea.l  a0, a1     // a1 is the string work register
-  moveq    #0xa, d0   // max length of filename (without version info) - 11 bytes
+  moveq    #0xA, d0   // max length of filename (without version info) - 11 bytes
 0:tst.b    (a1)       // begin check for end of string
   beq      1f         // Hit \0 - end of filename string
   cmpi.b   #';', (a1)  // Hit ; - end of filename string
@@ -228,8 +228,8 @@ access_op_load_dir:
   cmpi.w  #CDROM_RESULT_LOAD_FAIL, access_op_result  // check for problems
   beq     cdacc_loop_loaddir_err           // read failed, jump down
   lea     sector_buffer, a1                // PVD is in the buffer now
-  move.l  0xa2(a1), cdread_sector_start    // start sector of root dir record
-  move.l  0xaa(a1), d0                     // size of root dir record (bytes)
+  move.l  0xA2(a1), cdread_sector_start    // start sector of root dir record
+  move.l  0xAA(a1), d0                     // size of root dir record (bytes)
   divu.w  #0x800, d0                       // get size in sectors
   swap    d0                               // check for modulus
   tst.w   d0
@@ -258,13 +258,13 @@ access_op_load_dir:
 2:move.b  0(a1), d0                        // no more entries? (size is 0)
   beq     7f                               // no more, jump down
   move.l  6(a1), 14(a0)                    // file start sector (big endian)
-  move.l  0xe(a1), 18(a0)                  // file size in bytes (big endian)
+  move.l  0xE(a1), 18(a0)                  // file size in bytes (big endian)
   moveq   #0, d1                           // d1 will be filename char index
 4:move.b  0x21(a1,d1.w), (a0,d1.w)         // filename
   addq.w  #1, d1
   cmp.b   0x20(a1), d1                     // length of filename (including version suffix)
   blt     4b                               // not done with filename yet
-5:cmpi.b  #0xc, d1                         // is filename less than 0xC characters in length?
+5:cmpi.b  #0xC, d1                         // is filename less than 0xC characters in length?
   bge     6f                               // no, jump down
   move.b  #' ', (a0, d1.w)                 // yes, fill with spaces until it's 0xC length
   addq.w  #1, d1
@@ -293,10 +293,10 @@ load_data_sub:
   // be messing with the stack by calling accloop_reentry
   POP     return_ptr
   move.w  #0, sectors_read_count
-  move.w  #0x1e, read_retry_count
+  move.w  #0x1E, read_retry_count
 
 load_data_begin:
-  move.b  cdc_dev_dest, (_GAREG_CDCMODE)
+  move.b  cdc_dev_dest, (GAREG_CDCMODE)
   lea     cdread_sector_start, a0 // point to sector struct for BIOS_ROMREADN
 
   /*
@@ -335,8 +335,8 @@ load_data_begin:
 4:subq.w   #1, read_retry_count  /*count down read retry & try again*/
   bge      load_data_begin
   bra      load_data_failure
-5:move.w   #0x7ff, d0        /*wait for Data Set Ready flag from CDC*/
-  btst     #BIT_CDCMODE_DSR-8, (_GAREG_CDCMODE).l
+5:move.w   #0x7FF, d0        /*wait for Data Set Ready flag from CDC*/
+  btst     #BIT_CDCMODE_DSR-8, (GAREG_CDCMODE).l
   dbne     d0, 5b
   bne      6f
   subq.w   #1, read_retry_count  /*no response from CDC in time, retry*/
@@ -365,7 +365,7 @@ load_data_begin:
   move.b   #0, cdc_frame_check    /*frame counter rolled past 75, reset our check*/
 9:BIOSCALL   #BIOS_CDCACK        /*send ack to CDC*/
   move.w   #6, read_timeout    /*reset error counters*/
-  move.w   #0x1e, read_retry_count
+  move.w   #0x1E, read_retry_count
   addi.l   #0x800, filebuff  /*move the dest buffer up a sector*/
   addq.w   #1, sectors_read_count    /*add to the sectors read count*/
   addq.l   #1, cdread_sector_start  /*move to the next frame*/
@@ -373,7 +373,7 @@ load_data_begin:
   bgt      2b          /*and loop back if there are still frames pending*/
   move.w   #CDROM_RESULT_OK, access_op_result  /*indicate we completed successfully*/
 load_data_end:
-  move.b   cdc_dev_dest, _GAREG_CDCMODE
+  move.b   cdc_dev_dest, GAREG_CDCMODE
   movea.l  return_ptr, a0  /*return to the original call site*/
   jmp      (a0)
 load_data_failure:
@@ -384,7 +384,7 @@ load_data_failure:
 load_data_maincpudest:
   move.w   #6, read_timeout
 1:bsr      accloop_reentry
-  btst     #7, _GAREG_CDCMODE  /*check EDT*/
+  btst     #7, GAREG_CDCMODE  /*check EDT*/
   bne      9b
   subq.w   #1, read_timeout
   bge      1b
@@ -401,10 +401,10 @@ load_data_dma:
   // be messing with the stack by calling accloop_reentry
   POP      return_ptr
   move.w   #0, sectors_read_count
-  move.w   #0x1e, read_retry_count
+  move.w   #0x1E, read_retry_count
 
 load_data_dma_begin:
-  move.b   cdc_dev_dest, (_GAREG_CDCMODE)
+  move.b   cdc_dev_dest, (GAREG_CDCMODE)
   lea      cdread_sector_start, a0  // point to sector struct for BIOS_ROMREADN
 
   /*
@@ -448,7 +448,7 @@ load_data_dma_begin:
 6:move.w   #6, read_timeout  // next we want the signal from the CDC that 
   													 // everything is done
 7:bsr      accloop_reentry   // give it some time...
-  btst     #BIT_CDCMODE_EDT-8, _GAREG_CDCMODE  // check that the EDT bit is set
+  btst     #BIT_CDCMODE_EDT-8, GAREG_CDCMODE  // check that the EDT bit is set
   beq      0f               // not set yet, retry
   move.b   (cdc_frame_check), d0  // CDC is done, let's prepare for next frame
   moveq    #1, d1                 // grab the error check value
@@ -466,13 +466,13 @@ load_data_dma_begin:
 
 9:BIOSCALL   #BIOS_CDCACK          // send ack to CDC (required after every sector/frame)
   move.w   #6, read_timeout          // reset error counters for next sector
-  move.w   #0x1e, read_retry_count
+  move.w   #0x1E, read_retry_count
   addq.w   #1, sectors_read_count    // add to the sectors loaded count
   subq.l   #1, cdread_sector_count   // decrement remaining sector count
   bgt      2b                 // loop back if there are still frames pending
   move.w   #CDROM_RESULT_OK, access_op_result  // all data loaded!
 load_data_dma_return:
-  move.b   cdc_dev_dest, _GAREG_CDCMODE // write the dest. again to reset DMA
+  move.b   cdc_dev_dest, GAREG_CDCMODE // write the dest. again to reset DMA
   movea.l  return_ptr, a0          // return to the original call site
   jmp      (a0)
 load_data_dma_failure:

@@ -28,17 +28,17 @@
   jbsr     BIOS_CLEAR_COMM
 
   move     #0, (BIOS_VINT_HANDLER_FLAGS)
-  move.l   #BIOS_VINT_HANDLER, (_MLEVEL6 + 2)
+  move.l   #BIOS_VINT_HANDLER, (EXVEC_LEVEL6)
 
   ENABLE_INTERRUPTS
 
   GRANT_2M
-  move.w   #FILE_IPX_MMD, _GAREG_COMCMD1
-  move.w   #CMD_LOAD_WORDRAM, _GAREG_COMCMD0
-0:tst.w    _GAREG_COMSTAT0
+  move.w   #FILE_IPX_MMD, GAREG_COMCMD1
+  move.w   #CMD_LOAD_WORDRAM, GAREG_COMCMD0
+0:tst.w    GAREG_COMSTAT0
   beq      0b
-  move.w   #0, _GAREG_COMCMD0
-1:tst.w    _GAREG_COMSTAT0
+  move.w   #0, GAREG_COMCMD0
+1:tst.w    GAREG_COMSTAT0
   bne      1b
   WAIT_2M
 
@@ -47,4 +47,4 @@
   // Reset the stack since we're starting fresh
   movea.l  (0), sp
 
-  jbra     _WORD_RAM + 0x100
+  jbra     WORD_RAM + 0x100

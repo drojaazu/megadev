@@ -1,4 +1,4 @@
-	/**
+/**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
  * @file pcm.h
@@ -11,14 +11,14 @@
 #include "pcm.def.h"
 #include "types.h"
 
-#define PCM_ENV ((volatile u8 *) _PCM_ENV)
-#define PCM_PAN ((volatile u8 *) _PCM_PAN)
-#define PCM_FDL ((volatile u8 *) _PCM_FDL)
-#define PCM_FDH ((volatile u8 *) _PCM_FDH)
-#define PCM_LSL ((volatile u8 *) _PCM_LSL)
-#define PCM_LSH ((volatile u8 *) _PCM_LSH)
-#define PCM_ST ((u8 volatile *) _PCM_ST)
-#define PCM_CTRL ((volatile u8 *) _PCM_CTRL)
+#define PCM_ENV			 ((volatile u8 *) _PCM_ENV)
+#define PCM_PAN			 ((volatile u8 *) _PCM_PAN)
+#define PCM_FDL			 ((volatile u8 *) _PCM_FDL)
+#define PCM_FDH			 ((volatile u8 *) _PCM_FDH)
+#define PCM_LSL			 ((volatile u8 *) _PCM_LSL)
+#define PCM_LSH			 ((volatile u8 *) _PCM_LSH)
+#define PCM_ST			 ((u8 volatile *) _PCM_ST)
+#define PCM_CTRL		 ((volatile u8 *) _PCM_CTRL)
 #define PCM_CDISABLE ((volatile u8 *) _PCM_CDISABLE)
 
 /**
@@ -27,14 +27,14 @@
  * wave bank
  * @param wb desired wave bank (0 to 15)
  */
-#define WAVEBANK(wb) (0x80 | (wb & 0xf))
+#define WAVEBANK(wb) (0x80 | (wb & 0xF))
 
 /**
  * @def CHANNEL
  * @brief Generate the PCM control register setting to select a given channel
  * @param cb channel id (1 to 8)
  */
-#define CHANNEL(ch) (0xc0 | ((ch - 1) & 7))
+#define CHANNEL(ch) (0xC0 | ((ch - 1) & 7))
 
 /**
  * @struct PcmChannelSettings
@@ -74,9 +74,10 @@ static inline void pcm_clear_ram_c()
  * @param ctrlregChannel Channel index
  * @param settings Pointer to PcmChannelSettings
  */
-static inline void pcm_config_channel_c(u8 const ctrlregChannel, PcmChannelSettings const * settings)
+static inline void pcm_config_channel_c(
+	u8 const ctrlregChannel, PcmChannelSettings const * settings)
 {
-	register u8 d0_channel asm("d0") = ctrlregChannel;
+	register u8	 d0_channel asm("d0") = ctrlregChannel;
 	register u32 a5_settings asm("a5") = (u32) settings;
 
 	asm volatile(

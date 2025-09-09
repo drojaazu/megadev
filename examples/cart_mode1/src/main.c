@@ -56,7 +56,9 @@ void init_particle(u8 particle_idx)
 	// particles[particle_idx].pos_x = 84 + 128;
 	particles[particle_idx].pos_y = bios_prng_mod(5) + 123;
 	// particles[particle_idx].pos_y = 3 + 123;
-	particles[particle_idx].speed = bios_prng_mod((settings.max_speed - settings.min_speed) + 1) + settings.min_speed;
+	particles[particle_idx].speed =
+		bios_prng_mod((settings.max_speed - settings.min_speed) + 1) +
+		settings.min_speed;
 	// particles[particle_idx].speed = 4;
 	particles[particle_idx].end_at = bios_prng_mod(11) + 320;
 	// particles[particle_idx].end_at = 8 + 320;
@@ -103,14 +105,14 @@ void process_particles()
 {
 	for (u8 iter = 0; iter < 16; ++iter)
 	{
-		// u16 v = ((iter + 0x30) << 8) | 0x00ff;
-		//  bios_print((char *) &v, (vdpptr(PLANE_POS_PLANE(2, 10, BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W));
-		//  bios_vint_wait(0x80);
+		// u16 v = ((iter + 0x30) << 8) | 0x00FF;
+		//  bios_print((char *) &v, (vdp_ptr(PLANE_POS_PLANE(2, 10,
+		//  BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W)); bios_vint_wait(0x80);
 
 		if (particles[iter].status == Null)
 		{
-			// bios_print((char *) &v, (vdpptr(PLANE_POS_PLANE(2, 11, BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W));
-			// bios_vint_wait(0x80);
+			// bios_print((char *) &v, (vdp_ptr(PLANE_POS_PLANE(2, 11,
+			// BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W)); bios_vint_wait(0x80);
 			init_particle(iter);
 			continue;
 		}
@@ -118,8 +120,8 @@ void process_particles()
 		if (particles[iter].status == Ending)
 		{
 			// ending animation
-			// bios_print((char *) &v, (vdpptr(PLANE_POS_PLANE(2, 12, BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W));
-			// bios_vint_wait(0x80);
+			// bios_print((char *) &v, (vdp_ptr(PLANE_POS_PLANE(2, 12,
+			// BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W)); bios_vint_wait(0x80);
 			if (particles[iter].timer > 0)
 			{
 				--particles[iter].timer;
@@ -140,8 +142,8 @@ void process_particles()
 
 		if (particles[iter].status == Falling)
 		{
-			// bios_print((char *) &v, (vdpptr(PLANE_POS_PLANE(2, 13, BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W));
-			// bios_vint_wait(0x80);
+			// bios_print((char *) &v, (vdp_ptr(PLANE_POS_PLANE(2, 13,
+			// BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W)); bios_vint_wait(0x80);
 			if (particles[iter].pos_y >= particles[iter].end_at)
 			{
 				// reached its final destination
@@ -191,7 +193,9 @@ u32 to_atoi(char * p_c)
 
 __attribute__((interrupt)) void INT2_EXT()
 {
-	bios_print("INT2 last cmd:\xff", (vdpptr(PLANE_POS_PLANE(1, 8, BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W));
+	bios_print(
+		"INT2 last cmd:\xff",
+		(vdp_ptr(PLANE_POS_PLANE(1, 8, BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W));
 
 	char c = io_rxdata2;
 	if (rx_buffer_at >= rx_buffer + 16)
@@ -208,7 +212,9 @@ __attribute__((interrupt)) void INT2_EXT()
 		switch (cmd)
 		{
 			case 'g':
-				bios_print("get\xff", (vdpptr(PLANE_POS_PLANE(16, 8, BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W));
+				bios_print(
+					"get\xff",
+					(vdp_ptr(PLANE_POS_PLANE(16, 8, BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W));
 				if (rx_buffer[1] != ' ')
 					break;
 				rx_buffer_at = rx_buffer + 2;
@@ -239,7 +245,9 @@ __attribute__((interrupt)) void INT2_EXT()
 				}
 				break;
 			case 's':
-				bios_print("set\xff", (vdpptr(PLANE_POS_PLANE(16, 8, BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W));
+				bios_print(
+					"set\xff",
+					(vdp_ptr(PLANE_POS_PLANE(16, 8, BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W));
 				if (rx_buffer[1] != ' ')
 					break;
 				break;
@@ -271,25 +279,28 @@ void main()
 	bios_clear_vram();
 
 	bios_font_tile_base = 0;
-	// bios_load_1bpp_tiles(&res_sysfont_1bpp_chr, 0x60, vdpptr(VRAMPTR(0x20)) | VRAM_W, 0x00011011);
-	bios_load_1bpp_tiles((void *) 0x40b000, 0x60, vdpptr(VRAMPTR(0x20)) | VRAM_W, 0x00011011);
+	// bios_load_1bpp_tiles(&res_sysfont_1bpp_chr, 0x60, vdp_ptr(VRAMPTR(0x20)) |
+	// VRAM_W, 0x00011011);
+	bios_load_1bpp_tiles(
+		(void *) 0x40B000, 0x60, vdp_ptr(VRAMPTR(0x20)) | VRAM_W, 0x00011011);
 
 	// initialize serial comm on port 2
 	// 4800bps, serial in/out mode, ext interrupt enable
 	io_sctrl2 = SCTRL_SERIAL_ENABLE | SCTRL_BAUD_4800 | SCTRL_RX_INT_ENABLE;
-	io_ctrl2 = 0x7f;
-	bios_vdp_regs[0x0b] |= 0x08;
-	vdp_ctrl_16 = bios_vdp_regs[0x0b];
+	io_ctrl2 = 0x7F;
+	bios_vdp_regs[0x0B] |= 0x08;
+	vdp_ctrl_16 = bios_vdp_regs[0x0B];
 
 	// The modules only show some text, so we'll prepare the font for them here
 	// so it doesn't need to happen in the module itself
 	// bios_load_font_defaults();
 
-	bios_dma_xfer(vdpptr(VRAMPTR(0x80)) | VRAM_W, &res_rain_chr, res_rain_chr_sz >> 1);
+	bios_dma_xfer(
+		vdp_ptr(VRAMPTR(0x80)) | VRAM_W, &res_rain_chr, res_rain_chr_sz >> 1);
 
 	// The font uses palette entry #1, so we'll manually set that to white
 	bios_palette[0] = 0x000;
-	bios_palette[1] = 0xeee;
+	bios_palette[1] = 0xEEE;
 
 	bios_load_pal(&res_rain_pal);
 
@@ -304,24 +315,31 @@ void main()
 	memset8(0, info, 16);
 	info[16] = '\xff';
 
-	bios_print("Megadev Mode 1 testing\xff", (vdpptr(PLANE_POS_PLANE(1, 1, BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W));
-	bios_print("Mega CD rev: \xff", (vdpptr(PLANE_POS_PLANE(1, 3, BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W));
+	bios_print(
+		"Megadev Mode 1 testing\xff",
+		(vdp_ptr(PLANE_POS_PLANE(1, 1, BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W));
+	bios_print(
+		"Mega CD rev: \xff",
+		(vdp_ptr(PLANE_POS_PLANE(1, 3, BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W));
 
 	char * i = (char *) 0x400120;
 	for (int c = 0; c < 16; ++c)
 		info[c] = *i++;
 	// memcpy8((u8 *) 0x400120, (u8 *) info, 15);
-	bios_print(info, (vdpptr(PLANE_POS_PLANE(1, 4, BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W));
+	bios_print(
+		info, (vdp_ptr(PLANE_POS_PLANE(1, 4, BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W));
 	// memcpy8((char *) 0x400130, info, 15);
 	i = (char *) 0x400130;
 	for (int c = 0; c < 16; ++c)
 		info[c] = *i++;
-	bios_print(info, (vdpptr(PLANE_POS_PLANE(1, 5, BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W));
+	bios_print(
+		info, (vdp_ptr(PLANE_POS_PLANE(1, 5, BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W));
 	// memcpy8((char *) 0x400140, info, 15);
 	i = (char *) 0x400140;
 	for (int c = 0; c < 16; ++c)
 		info[c] = *i++;
-	bios_print(info, (vdpptr(PLANE_POS_PLANE(1, 6, BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W));
+	bios_print(
+		info, (vdp_ptr(PLANE_POS_PLANE(1, 6, BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W));
 
 	do
 	{
@@ -350,5 +368,7 @@ void main()
 		process_particles();
 	} while (! (bios_joy1_hit & PAD_START));
 
-	bios_print("BIG TEST\xff", (vdpptr(PLANE_POS_PLANE(2, 10, BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W));
+	bios_print(
+		"BIG TEST\xff",
+		(vdp_ptr(PLANE_POS_PLANE(2, 10, BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W));
 }

@@ -14,9 +14,10 @@
 		asm("nop");                \
 	} while (*GA_COMSTAT0 == 0);
 
-#define SUB_ACK *GA_COMCMD0 = 0;
+#define SUB_ACK *gareg_comcmd0 = 0;
 
-#define print_xy(x, y) (vdpptr(BIOS_VDP_DEFAULT_PLANEA + PLANE_POS(x, y, Width64)) | VRAM_W)
+#define print_xy(x, y)                                                   \
+	(vdp_ptr(BIOS_VDP_DEFAULT_PLANEA + PLANE_POS(x, y, Width64)) | VRAM_W)
 
 char val_buffer[5];
 
@@ -24,7 +25,7 @@ static void bram_init()
 {
 	bios_print("Performing BRMINIT...\xff", print_xy(1, 1));
 
-	*GA_COMCMD0 = 2;
+	*gareg_comcmd0 = 2;
 
 	SUB_WAIT
 
@@ -70,7 +71,7 @@ static void brmstat()
 	bios_clear_tables();
 	bios_print("Performing BRMSTAT...\xff", print_xy(1, 1));
 
-	*GA_COMCMD0 = 6;
+	*gareg_comcmd0 = 6;
 
 	SUB_WAIT
 
@@ -95,7 +96,7 @@ static bool brmserch()
 {
 	bios_print("Performing BRMSERCH...\xff", print_xy(1, 1));
 
-	*GA_COMCMD0 = 3;
+	*gareg_comcmd0 = 3;
 
 	SUB_WAIT
 
@@ -105,7 +106,7 @@ static bool brmserch()
 
 	SUB_ACK
 
-	if (found == 0xffff)
+	if (found == 0xFFFF)
 	{
 		bios_print("File BRMEX not found\xff", print_xy(1, 2));
 		return false;
@@ -171,11 +172,11 @@ static void brmwrite()
 		bios_print(val_buffer, print_xy(23, 2));
 	} while (! (bios_joy1_hit & PAD_START));
 
-	*(u16 *) WRDRAM = writeval;
+	*(u16 *) word_ram = writeval;
 
 	grant_2m();
 
-	*GA_COMCMD0 = 5;
+	*gareg_comcmd0 = 5;
 
 	SUB_WAIT
 
@@ -185,7 +186,7 @@ static void brmwrite()
 
 	wait_2m();
 
-	if (success == 0xffff)
+	if (success == 0xFFFF)
 	{
 		bios_print("Error while writing file\xff", print_xy(1, 4));
 	}
@@ -206,7 +207,7 @@ static void brmread()
 
 	grant_2m();
 
-	*GA_COMCMD0 = 4;
+	*gareg_comcmd0 = 4;
 
 	SUB_WAIT
 
@@ -218,13 +219,13 @@ static void brmread()
 
 	wait_2m();
 
-	if (success == 0xffff)
+	if (success == 0xFFFF)
 	{
 		bios_print("Error reading file\xff", print_xy(1, 7));
 		return;
 	}
 
-	u16 readval = *(u16 *) WRDRAM;
+	u16 readval = *(u16 *) word_ram;
 
 	bios_print("Success reading file\xff", print_xy(1, 7));
 
@@ -241,7 +242,7 @@ void brmdel()
 
 	bios_print("Performing BRMDEL...\xff", print_xy(1, 1));
 
-	*GA_COMCMD0 = 7;
+	*gareg_comcmd0 = 7;
 
 	SUB_WAIT
 
@@ -249,7 +250,7 @@ void brmdel()
 
 	SUB_ACK
 
-	if (success == 0xffff)
+	if (success == 0xFFFF)
 	{
 		bios_print("Failed to delete file\xff", print_xy(1, 3));
 	}
@@ -267,7 +268,7 @@ void brmdir()
 
 	grant_2m();
 
-	*GA_COMCMD0 = 8;
+	*gareg_comcmd0 = 8;
 
 	SUB_WAIT
 
@@ -277,7 +278,7 @@ void brmdir()
 
 	wait_2m();
 
-	if (success == 0xffff)
+	if (success == 0xFFFF)
 	{
 		bios_print("Data too big for buffer\xff", print_xy(1, 3));
 		return;
@@ -290,12 +291,12 @@ void brmdir()
 	char * filename;
 	while (1)
 	{
-		if (*(u8 *) (WRDRAM + (file_idx * 16)) == 0)
+		if (*(u8 *) (word_ram + (file_idx * 16)) == 0)
 			break;
-		filename = (char *) (WRDRAM + (file_idx * 16));
-		filename[11] = 0xff;
+		filename = (char *) (word_ram + (file_idx * 16));
+		filename[11] = 0xFF;
 		bios_print(filename, print_xy(1, curr_y));
-		printval_u16_c(*(u16 *) (WRDRAM + (file_idx * 16) + 14), val_buffer);
+		printval_u16_c(*(u16 *) (word_ram + (file_idx * 16) + 14), val_buffer);
 		bios_print(val_buffer, print_xy(16, curr_y));
 		++curr_y;
 		++file_idx;
@@ -309,7 +310,7 @@ void main()
 	vdp_ctrl_32 = 0xC0020000;
 	vdp_data_16 = 0x0EEE;
 
-	// print strings end in 0xff, so let's set up the value buffer so we don't
+	// print strings end in 0xFF, so let's set up the value buffer so we don't
 	// have to mess with it later
 	val_buffer[4] = '\xff';
 

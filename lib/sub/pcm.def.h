@@ -8,14 +8,14 @@
 #ifndef MEGADEV__SUB_PCM_DEF_H
 #define MEGADEV__SUB_PCM_DEF_H
 
-#define _PCM_ENV 0xFF0001
-#define _PCM_PAN 0xFF0003
-#define _PCM_FDL 0xFF0005
-#define _PCM_FDH 0xFF0007
-#define _PCM_LSL 0xFF0009
-#define _PCM_LSH 0xFF000B
-#define _PCM_ST 0xFF000D
-#define _PCM_CTRL 0xFF000F
+#define _PCM_ENV			0xFF0001
+#define _PCM_PAN			0xFF0003
+#define _PCM_FDL			0xFF0005
+#define _PCM_FDH			0xFF0007
+#define _PCM_LSL			0xFF0009
+#define _PCM_LSH			0xFF000B
+#define _PCM_ST				0xFF000D
+#define _PCM_CTRL			0xFF000F
 #define _PCM_CDISABLE 0xFF0011
 
 #define _PCM_RAM 0xFF2000

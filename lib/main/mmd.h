@@ -48,11 +48,11 @@ static inline void const * init_mmd()
 			[scratch_a0] "=a"(scratch_a0),
 			[scratch_a1] "=a"(scratch_a1)
 		:
-			[wrdram] "a"(_WORD_RAM),
-			[mlevel4] "i"(_MLEVEL4),
-			[mlevel6] "i"(_MLEVEL6),
+			[wrdram] "a"(WORD_RAM),
+			[mlevel4] "i"(EXVEC_LEVEL4),
+			[mlevel6] "i"(EXVEC_LEVEL6),
 			[ga_dmna_bit] "i"(GA_DMNA_BIT),
-			[gareg_memmode] "i"(_GAREG_MEMMODE)
+			[gareg_memmode] "i"(GAREG_MEMMODE)
 		:
 			"cc");
 	// clang-format on

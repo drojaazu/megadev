@@ -21,62 +21,63 @@
  */
 
 /**
- * Default bit mappings for joypad inputs when using the "standard" format of SACBRLDU.
- * This format is used the Mega CD's Bootlib as well as the read_input_joypad function in Megadev.
+ * Default bit mappings for joypad inputs when using the "standard" format of
+ * SACBRLDU. This format is used the Mega CD's Bootlib as well as the
+ * read_input_joypad function in Megadev.
  */
-#define PAD_UP (1 << 0)
-#define PAD_DOWN (1 << 1)
-#define PAD_LEFT (1 << 2)
+#define PAD_UP		(1 << 0)
+#define PAD_DOWN	(1 << 1)
+#define PAD_LEFT	(1 << 2)
 #define PAD_RIGHT (1 << 3)
-#define PAD_A (1 << 6)
-#define PAD_B (1 << 4)
-#define PAD_C (1 << 5)
-#define PAD_ABC (PAD_A | PAD_B | PAD_C)
+#define PAD_A			(1 << 6)
+#define PAD_B			(1 << 4)
+#define PAD_C			(1 << 5)
+#define PAD_ABC		(PAD_A | PAD_B | PAD_C)
 #define PAD_START (1 << 7)
 
 /**
- * @def _IO_DATA1
+ * @def IO_DATA1
  * @brief IO Data Port for Terminal 1
  * @ingroup ioports
  * @ingroup ioports_p
  */
-#define _IO_DATA1 0xA10003
+#define IO_DATA1 0xA10003
 
 /**
- * @def _IO_DATA2
+ * @def IO_DATA2
  * @brief IO Data Port for Terminal 2
  * @ingroup ioports
  * @ingroup ioports_p
  */
-#define _IO_DATA2 0xA10005
+#define IO_DATA2 0xA10005
 
 /**
- * @def _IO_DATA3
+ * @def IO_DATA3
  * @brief IO Data Port for Terminal 3
  * @ingroup ioports_p
  */
-#define _IO_DATA3 0xA10007
+#define IO_DATA3 0xA10007
 
 /**
- * @def _IO_CTRL1
+ * @def IO_CTRL1
  * @brief IO Control Port for Terminal 1
  * @ingroup ioports_p
  */
-#define _IO_CTRL1 0xA10009
+#define IO_CTRL1 0xA10009
 
 /**
- * @def _IO_CTRL2
+ * @def IO_CTRL2
  * @brief IO Control Port for Terminal 2
  * @ingroup ioports_p
  */
-#define _IO_CTRL2 0xA1000B
+#define IO_CTRL2 0xA1000B
 
 /**
- * @def _IO_CTRL3
+ * @def IO_CTRL3
  * @brief IO Control Port for Terminal 3
  * @ingroup ioports_p
  */
-#define _IO_CTRL3 0xA1000D
+#define IO_CTRL3 0xA1000D
 
 /**
  * @def CTRL_PC0
@@ -135,67 +136,67 @@
 #define CTRL_INT (1 << 7)
 
 /**
- * @def _IO_TXDATA1
+ * @def IO_TXDATA1
  * @brief Transmit Data Port for Terminal 1
  * @ingroup ioports_s
  */
-#define _IO_TXDATA1 0xA1000F
+#define IO_TXDATA1 0xA1000F
 
 /**
- * @def _IO_RXDATA1
+ * @def IO_RXDATA1
  * @brief Receive Data Port for Terminal 1
  * @ingroup ioports_s
  */
-#define _IO_RXDATA1 0xA10011
+#define IO_RXDATA1 0xA10011
 
 /**
- * @def _IO_SCTRL1
+ * @def IO_SCTRL1
  * @brief Serial Control Port for Terminal 1
  * @ingroup ioports_s
  */
-#define _IO_SCTRL1 0xA10013
+#define IO_SCTRL1 0xA10013
 
 /**
- * @def _IO_TXDATA2
+ * @def IO_TXDATA2
  * @brief Transmit Data Port for Terminal 2
  * @ingroup ioports_s
  */
-#define _IO_TXDATA2 0xA10015
+#define IO_TXDATA2 0xA10015
 
 /**
- * @def _IO_RXDATA2
+ * @def IO_RXDATA2
  * @brief Receive Data Port for Terminal 2
  * @ingroup ioports_s
  */
-#define _IO_RXDATA2 0xA10017
+#define IO_RXDATA2 0xA10017
 
 /**
- * @def _IO_SCTRL2
+ * @def IO_SCTRL2
  * @brief Serial Control Port for Terminal 2
  * @ingroup ioports_s
  */
-#define _IO_SCTRL2 0xA10019
+#define IO_SCTRL2 0xA10019
 
 /**
- * @def _IO_TXDATA3
+ * @def IO_TXDATA3
  * @brief Transmit Data Port for Terminal 3
  * @ingroup ioports_s
  */
-#define _IO_TXDATA3 0xA1001B
+#define IO_TXDATA3 0xA1001B
 
 /**
- * @def _IO_RXDATA3
+ * @def IO_RXDATA3
  * @brief Receive Data Port for Terminal 3
  * @ingroup ioports_s
  */
-#define _IO_RXDATA3 0xA1001D
+#define IO_RXDATA3 0xA1001D
 
 /**
- * @def _IO_SCTRL3
+ * @def IO_SCTRL3
  * @brief Serial Control Port for Terminal 3
  * @ingroup ioports_s
  */
-#define _IO_SCTRL3 0xA1001F
+#define IO_SCTRL3 0xA1001F
 
 /**
  * @def SCTRL_TX_FULL
@@ -279,6 +280,6 @@
  *
  * Size: 0x100 bytes
  */
-#define _TIME_MAPPING 0xA13000
+#define TIME_MAPPING 0xA13000
 
 #endif

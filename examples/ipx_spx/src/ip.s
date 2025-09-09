@@ -38,8 +38,6 @@
   jbsr     BIOS_CLEAR_COMM
 
   // point VINT vector to the minimal, temporary handler
-  // (note that we use _MLEVEL6 *+ 2*, as the first two bytes are
-  // a jmp/bra opcode)
   // We need to set up the VBLANK interrupt (VINT) handler before we can turn interrupts back on.
   // (Which needs to happen soon, as this keeps the Sub CPU on the Mega CD side in "sync" by alerting
   // it when a VBLANK occurs.)
@@ -49,7 +47,7 @@
   // We set the pointer to the handler in the system vector jump table. The +2 is because the first two
   // bytes are the JMP opcode and we want to set the address to which it jumps.
   move     #0, (BIOS_VINT_HANDLER_FLAGS)
-  move.l   #BIOS_VINT_HANDLER, (_MLEVEL6 + 2)
+  move.l   #BIOS_VINT_HANDLER, (EXVEC_LEVEL6)
 
   // Restore interrupts to allow VINTs to fire and ultimately allow CD-ROM data to flow
   ENABLE_INTERRUPTS
@@ -66,12 +64,12 @@
   //   - Wait for Word RAM ownership
   //   - Enjoy your freshly transferred data
   GRANT_2M
-  move.w   #FILE_IPX_MMD, _GAREG_COMCMD1
-  move.w   #CMD_LOAD_FILE, _GAREG_COMCMD0	//send the load IPX command to sub
-0:tst.w    _GAREG_COMSTAT0				//wait for response on status reg #0
+  move.w   #FILE_IPX_MMD, GAREG_COMCMD1
+  move.w   #CMD_LOAD_FILE, GAREG_COMCMD0	//send the load IPX command to sub
+0:tst.w    GAREG_COMSTAT0				//wait for response on status reg #0
   beq      0b
-  move.w   #0, _GAREG_COMCMD0			//send ack
-1:tst.w    _GAREG_COMSTAT0				//wait for response (wait for 0 from Sub)
+  move.w   #0, GAREG_COMCMD0			//send ack
+1:tst.w    GAREG_COMSTAT0				//wait for response (wait for 0 from Sub)
   bne      1b
   WAIT_2M
 
@@ -93,4 +91,4 @@
 
   // So... with the file in Word RAM, we jump directly to offset 0x100 and let it copy itself over and jump
   // to its own main().
-  jbra     _WORD_RAM + 0x100
+  jbra     WORD_RAM + 0x100
