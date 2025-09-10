@@ -76,7 +76,7 @@ SUB install_handlers
   move.l  #ex_chk_inst, EXVEC_CHK+2
   move.l  #ex_trapv, EXVEC_TRAPV+2
   move.l  #ex_priv_viol, EXVEC_PRIVERR+2
-  move.l  #ex_trace, EXVEC_TRACE+2
+  move.l  #exEXVEC_TRACE, EXVECEXVEC_TRACE+2
   move.l  #ex_line1010, EXVEC_LINE1010+2
   move.l  #ex_line1111, EXVEC_LINE1111+2
   rts
@@ -127,7 +127,7 @@ SUB ex_priv_viol
   move.l  #strPRIVV, (err_str_ptr)
   jbra    ex_group1_stack_copy
 
-SUB ex_trace
+SUB exEXVEC_TRACE
   move.l  #strTRACE, (err_str_ptr)
   jbra    ex_group1_stack_copy
 

@@ -65,35 +65,34 @@
 /**
  * System Jump Table
  */
-#define EXVEC_RESET	 0xFFFD02
-#define EXVEC_LEVEL6 0xFFFD08 /* VBLANK interrupt */
-#define EXVEC_LEVEL4 0xFFFD0E /* HBLANK interrupt */
-#define EXVEC_LEVEL2 0xFFFD14 /* External port interrupt */
-#define EXVEC_TRAP0	 0xFFFD1A
-#define EXVEC_TRAP1	 0xFFFD20
-#define EXVEC_TRAP2	 0xFFFD26
-#define EXVEC_TRAP3	 0xFFFD2C
-#define EXVEC_TRAP4	 0xFFFD32
-#define EXVEC_TRAP5	 0xFFFD38
-#define EXVEC_TRAP6	 0xFFFD3E
-#define EXVEC_TRAP7	 0xFFFD44
-#define EXVEC_TRAP8	 0xFFFD4A
-#define EXVEC_TRAP9	 0xFFFD50
-#define EXVEC_TRAPA	 0xFFFD56
-#define EXVEC_TRAPB	 0xFFFD5C
-#define EXVEC_TRAPC	 0xFFFD62
-#define EXVEC_TRAPD	 0xFFFD68
-#define EXVEC_TRAPE	 0xFFFD6E
-#define EXVEC_TRAPF	 0xFFFD74
-#define EXVEC_CHK		 0xFFFD7A // CHK Instruction
-// the duplicate addresses on the next two entries is intentional
-#define EXVEC_ADDRERR	 0xFFFD80 // Misaligned memory access
-#define EXVEC_ILLEGAL	 0xFFFD80 // Invalid Instruction
-#define EXVEC_ZERODIV	 0xFFFD86 // Division by zero
-#define EXVEC_TRAPV		 0xFFFD8C // TRAPV Instruction
-#define EXVEC_LINE1010 0xFFFD92 // Line 1010 Instruction
-#define EXVEC_LINE1111 0xFFFD98 // Line 1111 Instruction
-#define EXVEC_PRIVERR	 0xFFFD9E // Privilege Violation
-#define EXVEC_TRACE		 0xFFFDA4 // Trace
+#define EXVEC_RESET			 0xFFFD02
+#define EXVEC_LEVEL6		 0xFFFD08 /* VBLANK interrupt */
+#define EXVEC_LEVEL4		 0xFFFD0E /* HBLANK interrupt */
+#define EXVEC_LEVEL2		 0xFFFD14 /* External port interrupt */
+#define EXVEC_TRAP0			 0xFFFD1A
+#define EXVEC_TRAP1			 0xFFFD20
+#define EXVEC_TRAP2			 0xFFFD26
+#define EXVEC_TRAP3			 0xFFFD2C
+#define EXVEC_TRAP4			 0xFFFD32
+#define EXVEC_TRAP5			 0xFFFD38
+#define EXVEC_TRAP6			 0xFFFD3E
+#define EXVEC_TRAP7			 0xFFFD44
+#define EXVEC_TRAP8			 0xFFFD4A
+#define EXVEC_TRAP9			 0xFFFD50
+#define EXVEC_TRAPA			 0xFFFD56
+#define EXVEC_TRAPB			 0xFFFD5C
+#define EXVEC_TRAPC			 0xFFFD62
+#define EXVEC_TRAPD			 0xFFFD68
+#define EXVEC_TRAPE			 0xFFFD6E
+#define EXVEC_TRAPF			 0xFFFD74
+#define EXVEC_CHK				 0xFFFD7A // CHK Instruction
+#define EXVEC_ADDRERR		 0xFFFD80 // Misaligned memory access
+#define EXVEC_ILLEGAL		 0xFFFD80 // Invalid Instruction
+#define EXVEC_ZERODIV		 0xFFFD86 // Division by zero
+#define EXVEC_TRAPV			 0xFFFD8C // TRAPV Instruction
+#define EXVEC_LINE1010	 0xFFFD92 // Line 1010 Instruction
+#define EXVEC_LINE1111	 0xFFFD98 // Line 1111 Instruction
+#define EXVEC_PRIVERR		 0xFFFD9E // Privilege Violation
+#define EXVECEXVEC_TRACE 0xFFFDA4 // Trace
 
 #endif

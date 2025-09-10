@@ -14,8 +14,16 @@
 #define IMG_WIDTH		256
 #define IMG_HEIGHT	256
 
-u16 (*trace_table)[IMG_HEIGHT][4] =
-	(u16(*)[IMG_HEIGHT][4])(WORD_RAM_2M + TRACE_TABLE);
+typedef struct
+{
+	s16 x;
+	s16 y;
+	s16 delta_x;
+	s16 delta_y;
+} trace_entry;
+
+trace_entry (*trace_table)[IMG_HEIGHT] =
+	(trace_entry(*)[IMG_HEIGHT])(WORD_RAM_2M + TRACE_TABLE);
 
 extern void sp_fatal();
 
@@ -101,20 +109,21 @@ void redraw()
 		(u16 *) (WORD_RAM_2M + STAMP_MAP),
 		res_stamp_map.size / 2);
 
+	GA_STAMPMAPBASE = (u16) ((STAMP_MAP) / 4);
+	GA_IMGBUFSTART = (u16) ((IMG_BUFFER) / 4);
 	GA_STAMPSIZE = _GAREG_STAMPSIZE_REPEAT | _GAREG_STAMPSIZE_32x32_STAMP;
-	GA_STAMPMAPBASE = (u16) ((WORD_RAM_2M + STAMP_MAP) / 4);
-	GA_IMGBUFSTART = (u16) ((WORD_RAM_2M + IMG_BUFFER) / 4);
-	GA_IMGBUFVSIZE = 31;
 	GA_IMGBUFVDOTSIZE = IMG_HEIGHT;
 	GA_IMGBUFHDOTSIZE = IMG_WIDTH;
+	GA_IMGBUFVSIZE = (IMG_HEIGHT / 8) - 1;
+	GA_IMGBUFOFFSET = 0;
 
 	for (u16 trace_table_line = 0; trace_table_line < IMG_HEIGHT;
 			 ++trace_table_line)
 	{
-		(*trace_table)[trace_table_line][0] = 0;
-		(*trace_table)[trace_table_line][1] = trace_table_line;
-		(*trace_table)[trace_table_line][2] = trace_table_line + 1;
-		(*trace_table)[trace_table_line][3] = 0;
+		(*trace_table)[trace_table_line].x = 0;
+		(*trace_table)[trace_table_line].y = (trace_table_line << 4);
+		(*trace_table)[trace_table_line].delta_x = (1 << 11);
+		(*trace_table)[trace_table_line].delta_y = 0;
 	}
 
 	GA_TRACEVECTBASE = (u16) (TRACE_TABLE / 4);
