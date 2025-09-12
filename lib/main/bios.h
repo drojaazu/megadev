@@ -1069,6 +1069,23 @@ static inline void bios_input_repeat_delay(u8 * input, bool use_2p)
 		: "cc", "d1", "a5");
 }
 
+static inline void
+bios_load_stamp_tilemap(u16 width, u16 height, vdp_ptr dest, u16 chridx)
+{
+	register u32 D0 asm("d0") = (u32) dest;
+	register u16 D1 asm("d1") = width;
+	register u16 D2 asm("d2") = height;
+	register u16 D3 asm("d3") = chridx;
+
+	asm volatile(
+		"\
+			jsr %c3 \n\
+		"
+		: "+d"(D0), "+d"(D2), "+d"(D3)
+		: "i"(BIOS_LOAD_STAMP_MAP), "d"(D0), "d"(D1), "d"(D2), "d"(D3)
+		: "cc", "d4", "d5", "d6", "a5");
+}
+
 /**
  * @fn bios_clear_comm
  * @brief Clears all Gate Array communication registers

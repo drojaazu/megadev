@@ -121,10 +121,17 @@ void redraw()
 			 ++trace_table_line)
 	{
 		(*trace_table)[trace_table_line].x = 0;
-		(*trace_table)[trace_table_line].y = (trace_table_line << 4);
-		(*trace_table)[trace_table_line].delta_x = (1 << 11);
-		(*trace_table)[trace_table_line].delta_y = 0;
+		(*trace_table)[trace_table_line].y = (trace_table_line << 3);
+		(*trace_table)[trace_table_line].delta_x = (1 << 11) ;
+		(*trace_table)[trace_table_line].delta_y = 0x100;
 	}
 
 	GA_TRACEVECTBASE = (u16) (TRACE_TABLE / 4);
+
+	while (GA_STAMPSIZE & 0x8000)
+	{
+		asm("nop");
+	}
+
+	grant_2m();
 }

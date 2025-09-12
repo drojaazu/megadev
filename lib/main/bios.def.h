@@ -1090,10 +1090,11 @@
  * @def BIOS_LOAD_STAMP_MAP
  * @brief Load map for a vertically-oriented contiguous group of tiles
  * @param[in] D0.l Destination VRAM address (vdp_ptr)
- * @param[in] D1.w Map width
- * @param[in] D2.w Map height
+ * @param[in] D1.w Map width - 1
+ * @param[in] D2.w Map height - 1
  * @param[in] D3.w Initial tile index
  * @clobber d4-d6/a5
+ * @note Uses `plane_width` variable
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1

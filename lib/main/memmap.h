@@ -8,7 +8,7 @@
 #ifndef MEGADEV__MAIN_MEMMAP_H
 #define MEGADEV__MAIN_MEMMAP_H
 
-#include "main/memmap.def.h"
+#include <main/memmap.def.h>
 
 /**
  * @def word_ram

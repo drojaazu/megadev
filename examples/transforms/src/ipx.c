@@ -15,6 +15,8 @@ void vint_user()
 	bios_copy_sprlist();
 }
 
+vdp_cmd tiles = vdp_ptr(VRAMPTR(1)) | VRAM_W;
+
 __attribute__((noreturn)) void main()
 {
 
@@ -49,6 +51,20 @@ __attribute__((noreturn)) void main()
 			{
 				asm("nop");
 			} while (*GA_COMSTAT0 != 0);
+
+			wait_2m();
+
+			bios_vint_wait_default();
+			bios_vint_wait_default();
+			bios_vint_wait_default();
+			bios_vint_wait_default();
+			bios_dma_xfer_word_ram(
+				vdp_ptr(VRAMPTR(1)) | VRAM_W,
+				(void const *) (WORD_RAM + 0x30000),
+				(32 * 32 * 32) / 2);
+
+			bios_load_stamp_tilemap(
+				31, 31, vdp_ptr((BIOS_VDP_DEFAULT_PLANEA)) | VRAM_W, 1);
 		}
 	} while (1);
 }
