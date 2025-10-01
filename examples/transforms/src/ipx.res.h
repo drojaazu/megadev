@@ -2,4 +2,4 @@
 #include "types.h"
 #include <main/bios.h>
 
-extern Palette const res_pal_stamp01;
+extern Palette const res_pal_stamps;

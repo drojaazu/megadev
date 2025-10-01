@@ -8,6 +8,8 @@
 #ifndef MACROS_S
 #define MACROS_S
 
+#include <system.macros.s>
+
 .macro SUB name, align=2
   //.section .text.asm.\name
   .global  \name
@@ -62,38 +64,6 @@ file_end:
 	swap	d0
 	move	#0, ccr /* why?*/
 	abcd	d1, d0
-.endm
-
-/**
- * @brief Push a value on to the stack
- * @param reg Register holding the value to push
- */
-.macro PUSH reg
-	move.l \reg, -(sp)
-.endm
-
-/**
- * @brief Pop a value from the stack
- * @param reg Register to hold the popped value
- */
-.macro POP reg
-	move.l  (sp)+, \reg
-.endm
-
-/**
- * @brief Push multiple values on to the stack
- * @param regs Register list
- */
-.macro PUSHM regs
-	movem.l \regs, -(sp)
-.endm
-
-/**
- * @brief Pop multiple values from the stack
- * @param regs Register list
- */
-.macro POPM regs
-	movem.l (sp)+, \regs
 .endm
 
 /*

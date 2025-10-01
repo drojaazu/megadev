@@ -2,6 +2,7 @@
 #include <sub/cdrom.h>
 #include <sub/gate_arr.h>
 #include <sub/memmap.h>
+#include <string.h>
 
 void load_ipx();
 
@@ -10,6 +11,8 @@ extern void sp_fatal();
 char const * filenames[3];
 
 BramFileInfo const file_info = {"BRMEX", 0, 1};
+
+BrminitRes brminit_info;
 
 __attribute__((section(".init"))) void main()
 {
@@ -46,9 +49,9 @@ __attribute__((section(".init"))) void main()
 			case 2:
 				asm("nop");
 
-				BrminitRes * init = bram_brminit();
-				*GA_COMSTAT1 = init->bram_size;
-				*GA_COMSTAT2 = (u16) init->status;
+				bram_brminit(&brminit_info);
+				*GA_COMSTAT1 = brminit_info.bram_size;
+				*GA_COMSTAT2 = (u16) brminit_info.status;
 
 				break;
 

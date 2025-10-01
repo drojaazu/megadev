@@ -34,45 +34,49 @@ SECTIONS
   {
     SHORT(DEFINED(MMD_FLAGS) ? MMD_FLAGS : 0)
     LONG(MMD_DEST)
-    SHORT(_ROM_LENGTH)
+    SHORT(((_ROM_LENGTH + _RAM_DATA_LENGTH) >> 2) - 1)  /* counted in longs, minus 1 for the dbf loop */
     LONG(DEFINED(init) ? init : main)
     LONG(DEFINED(hint) ? hint : 0)
     LONG(DEFINED(vint) ? vint : 0)
     . = 0x100;
   }
 
-  .text MODULE_ROM_ORIGIN : AT ( ADDR(.header) + SIZEOF(.header) )
+  .rom MODULE_ROM_ORIGIN : AT ( ADDR(.header) + SIZEOF(.header) )
   {
     _INIT_ORIGIN = .;
     *(.init)
+    . = ALIGN(4);
     _INIT_LENGTH = ABSOLUTE(. - _INIT_ORIGIN);
     _TEXT_ORIGIN = .;
     *(.text*)
+    . = ALIGN(4);
     _TEXT_LENGTH = ABSOLUTE(. - _TEXT_ORIGIN);
     _RODATA_ORIGIN = .;
     *(.rodata*)
+    . = ALIGN(4);
     _RODATA_LENGTH = ABSOLUTE(. - _RODATA_ORIGIN);
-    /* Align to 4 since the MMD loader reads size in words */
-    /* TODO: should the size be - 1 for the dbf loop? */
-    . = ALIGN(4);
-    _ROM_LENGTH = ABSOLUTE(. - _INIT_ORIGIN) >> 2;
+    _ROM_LENGTH = ABSOLUTE(. - _INIT_ORIGIN);
+    _ROM_LENGTH_LOOPSZ = ABSOLUTE(_ROM_LENGTH) >> 2;
     _ROM_DATA_ORIGIN = .;
-    . = ALIGN(4);
   } > MODULE_ROM
+  
 
-  .data MODULE_RAM_ORIGIN : AT ( ADDR(.header) + SIZEOF(.header) + SIZEOF(.text) )
-  {
-    _RAM_DATA_ORIGIN = .;
-    *(.data*)
-    . = ALIGN(4);
-    _RAM_DATA_LENGTH = ABSOLUTE(. - _RAM_DATA_ORIGIN) >> 2;
-  } > MODULE_RAM
-
-  .bss :
+  .ram_bss MODULE_RAM_ORIGIN :
   {
     _BSS_ORIGIN = .;
     *(.bss*)
     . = ALIGN(4);
-    _BSS_LENGTH = ABSOLUTE(. - _BSS_ORIGIN) >> 2;
+    _BSS_LENGTH = ABSOLUTE(. - _BSS_ORIGIN);
+    _BSS_LENGTH_LOOPSZ = ABSOLUTE(_BSS_LENGTH) >> 2;
   } > MODULE_RAM
+
+  .ram_data : AT ( ADDR(.header) + SIZEOF(.header) + SIZEOF(.rom) )
+  {
+    _RAM_DATA_ORIGIN = .;
+    *(.data*)
+    . = ALIGN(4);
+    _RAM_DATA_LENGTH = ABSOLUTE(. - _RAM_DATA_ORIGIN);
+    _RAM_DATA_LENGTH_LOOPSZ = ABSOLUTE(_RAM_DATA_LENGTH) >> 2;
+  } > MODULE_RAM
+
 }

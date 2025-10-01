@@ -20,4 +20,38 @@
   stop #0x700
 .endm
 
+
+/**
+ * @brief Push a value on to the stack
+ * @param reg Register holding the value to push
+ */
+.macro PUSH reg
+	move.l \reg, -(sp)
+.endm
+
+/**
+ * @brief Pop a value from the stack
+ * @param reg Register to hold the popped value
+ */
+.macro POP reg
+	move.l  (sp)+, \reg
+.endm
+
+/**
+ * @brief Push multiple values on to the stack
+ * @param regs Register list
+ */
+.macro PUSHM regs
+	movem.l \regs, -(sp)
+.endm
+
+/**
+ * @brief Pop multiple values from the stack
+ * @param regs Register list
+ */
+.macro POPM regs
+	movem.l (sp)+, \regs
+.endm
+
+
 #endif

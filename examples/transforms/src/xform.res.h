@@ -11,5 +11,6 @@ typedef struct
 extern DataChunk const res_stamp_map;
 
 extern DataChunk const res_stamp01;
-
-
+extern DataChunk const res_stamp02;
+extern DataChunk const res_stamp03;
+extern DataChunk const res_stamp04;

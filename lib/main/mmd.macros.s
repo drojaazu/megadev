@@ -31,10 +31,10 @@
   dbf      d0, 0b
 1:move.l   12(a0), d0  //set HINT vector if provided
   beq      2f
-  move.l   d0, EXVEC_LEVEL4+2
+  move.l   d0, EXVEC_LEVEL4
 2:move.l   16(a0), d0
   beq      3f
-  move.l   d0, EXVEC_LEVEL6+2
+  move.l   d0, EXVEC_LEVEL6
 3:btst     #6, WORD_RAM    // if bit 6 is set, return 2m to sub 
   beq      4f
   GRANT_2M

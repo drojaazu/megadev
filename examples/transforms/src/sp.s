@@ -37,13 +37,13 @@ GLABEL sp_init
 1:dbra     d1, 0b
 
   /*
-    Per the documentation and disassemblies, drvinit/cdbstat should be called here
+    Per the documentation and disassemblies, drv_init/cdb_stat should be called here
     even though already did it, otherwise there may be issues with CD audio track playback
   */
-  lea drvinit_tracklist, a0
-  BIOSCALL   #BIOS_DRVINIT
+  lea drv_init_tracklist, a0
+  BIOSCALL   #BIOS_DRV_INIT
   // loop until done reading the disc TOC
-1:BIOSCALL   #BIOS_CDBSTAT
+1:BIOSCALL   #BIOS_CDB_STAT
   andi.b   #0xF0, (CDSTAT).w
   bne      1b
   CLEAR_COMM_REGS
@@ -56,7 +56,7 @@ GLABEL sp_init
   INIT_ACC_LOOP
   rts
 
-drvinit_tracklist:
+drv_init_tracklist:
   .byte 1, 0xFF
 
 /*

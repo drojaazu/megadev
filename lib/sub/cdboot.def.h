@@ -38,7 +38,7 @@
  * @param[out] CC OK
  * @param[out] CS BUSY
  *
- * @note Uses the DRVOPEN BIOS call.
+ * @note Uses the DRV_OPEN BIOS call.
  *
  * @note Returns BUSY only when interrupts are being handled by CBTINT.
  *

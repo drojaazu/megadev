@@ -6,6 +6,7 @@
 #include <sub/gate_arr.h>
 #include <sub/memmap.h>
 #include <system.h>
+#include <xform.h>
 
 #define STAMP_DATA	0x0
 #define STAMP_MAP		0x10000
@@ -29,14 +30,19 @@ extern void sp_fatal();
 
 char const * const filenames[] = {"IPX.MMD;1"};
 
-void redraw();
+void redraw(s16 trace_x, s16 trace_y, s16 trace_dx, s16 trace_dy);
 
 // It's a good idea to put SPX's main in .init to ensure it's at the very start
 // of the code, since we jump to where we expect it to be in memory
 void main()
 {
 	enable_interrupts();
-	register u16 command, param1;
+
+	wait_2m();
+
+	memset32(0, (u32 *) WORD_RAM_2M, 0x20000 * 2);
+
+	register s16 command, param1, param2, param3, param4;
 	do
 	{
 
@@ -49,6 +55,9 @@ void main()
 			continue;
 
 		param1 = *gareg_comcmd1;
+		param2 = *gareg_comcmd2;
+		param3 = *gareg_comcmd3;
+		param4 = *gareg_comcmd4;
 
 		switch (command)
 		{
@@ -64,7 +73,7 @@ void main()
 				break;
 
 			case CMD_REDRAW:
-				redraw();
+				redraw(param1, param2, param3, param4);
 				break;
 		}
 
@@ -88,9 +97,35 @@ void main()
 	} while (1);
 }
 
-void redraw()
+void load_gfx()
+{
+	memcpy16(
+		(u16 const *) &res_stamp01.data,
+		(u16 *) (WORD_RAM_2M + STAMP_DATA + (4 * 4 * 32 * 1)),
+		res_stamp01.size / 2);
+	memcpy16(
+		(u16 const *) &res_stamp02.data,
+		(u16 *) (WORD_RAM_2M + STAMP_DATA + (4 * 4 * 32 * 2)),
+		res_stamp02.size / 2);
+	memcpy16(
+		(u16 const *) &res_stamp03.data,
+		(u16 *) (WORD_RAM_2M + STAMP_DATA + (4 * 4 * 32 * 3)),
+		res_stamp03.size / 2);
+	memcpy16(
+		(u16 const *) &res_stamp04.data,
+		(u16 *) (WORD_RAM_2M + STAMP_DATA + (4 * 4 * 32 * 4)),
+		res_stamp04.size / 2);
+
+	memcpy16(
+		(u16 const *) &res_stamp_map.data,
+		(u16 *) (WORD_RAM_2M + STAMP_MAP),
+		res_stamp_map.size / 2);
+}
+
+void redraw(s16 trace_x, s16 trace_y, s16 trace_dx, s16 trace_dy)
 {
 	wait_2m();
+	load_gfx();
 	// GA_STAMPSIZE
 	// GA_STAMPMAPBASE
 	// GA_IMGBUFVSIZE
@@ -99,15 +134,6 @@ void redraw()
 	// GA_IMGBUFHDOTSIZE
 	// GA_IMGBUFVDOTSIZE
 	// GA_TRACEVECTBASE
-	memcpy16(
-		(u16 const *) &res_stamp01.data,
-		(u16 *) (WORD_RAM_2M + STAMP_DATA),
-		res_stamp01.size / 2);
-
-	memcpy16(
-		(u16 const *) &res_stamp_map.data,
-		(u16 *) (WORD_RAM_2M + STAMP_MAP),
-		res_stamp_map.size / 2);
 
 	GA_STAMPMAPBASE = (u16) ((STAMP_MAP) / 4);
 	GA_IMGBUFSTART = (u16) ((IMG_BUFFER) / 4);
@@ -120,10 +146,10 @@ void redraw()
 	for (u16 trace_table_line = 0; trace_table_line < IMG_HEIGHT;
 			 ++trace_table_line)
 	{
-		(*trace_table)[trace_table_line].x = 0;
-		(*trace_table)[trace_table_line].y = (trace_table_line << 3);
-		(*trace_table)[trace_table_line].delta_x = (1 << 11) ;
-		(*trace_table)[trace_table_line].delta_y = 0x100;
+		(*trace_table)[trace_table_line].x = trace_x;
+		(*trace_table)[trace_table_line].y = (trace_table_line << 3) + trace_y;
+		(*trace_table)[trace_table_line].delta_x = trace_dx;
+		(*trace_table)[trace_table_line].delta_y = trace_dy;
 	}
 
 	GA_TRACEVECTBASE = (u16) (TRACE_TABLE / 4);

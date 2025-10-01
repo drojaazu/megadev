@@ -20,23 +20,23 @@
 	interrupts (INT2) have been enabled.
 */
 GLABEL sp_init
-	// it's important to drvinit/cdbstat here even if bios already did it
+	// it's important to drv_init/cdb_stat here even if bios already did it
 	// otherwise there may be issues with CD audio track playback
-	lea drvinit_tracklist, a0
-	BIOSCALL #BIOS_DRVINIT
+	lea drv_init_tracklist, a0
+	BIOSCALL #BIOS_DRV_INIT
 	// loop until done reading the disc TOC
-1:BIOSCALL #BIOS_CDBSTAT
+1:BIOSCALL #BIOS_CDB_STAT
 	andi.b	#0xF0, (CDSTAT).w
 	bne			1b
   CLEAR_COMM_REGS
   // Put Word RAM into 2M mode and assert control of it
-  andi.w	#~(GA_RET | GA_MODE), _GAREG_MEMMODE
+  andi.w	#~(GA_RET | GA_MODE), GAREG_MEMMODE
   // This sets up the CD-ROM access loop with initial settings. It only needs
   // to be called once, here in sp_init
   INIT_ACC_LOOP
   rts
 
-drvinit_tracklist:
+drv_init_tracklist:
 	.byte 1, 0xFF
 
 

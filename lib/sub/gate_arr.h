@@ -256,8 +256,8 @@ typedef u16 volatile * ga_reg;
  * documentation for more details.
  *
  * @details Official documentation indicates this register is not intended
- * for direct access from user applications. Consider using the FDRSET and
- * FDRCHG BIOS functions.
+ * for direct access from user applications. Consider using the FDR_SET and
+ * FDR_CHG BIOS functions.
  */
 #define GA_CDFADER ((ga_reg) _GAREG_CDFADER)
 

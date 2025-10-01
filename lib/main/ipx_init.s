@@ -12,6 +12,13 @@
 .section .init
 
   DISABLE_INTERRUPTS
-  BASIC_INIT
+  /*
+    very important that we call INIT_MMD first, so that everything is copied to
+    where it is expected when doing the init - but we need to save the MMD
+    entry point returned in A0 beforehand, just in case, so we push/pop
+  */
   INIT_MMD
+  PUSH a0
+  BASIC_INIT
+  POP a0
   jmp      (a0)

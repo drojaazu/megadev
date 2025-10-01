@@ -34,8 +34,6 @@ typedef struct BrminitRes
 	char *					strings;
 } BrminitRes;
 
-BrminitRes init_info;
-
 /**
  * @def bram_brminit
  * @sa BRMINIT
@@ -46,7 +44,7 @@ BrminitRes init_info;
  * fourth status, representing a non-failure. The BramStatus enum reflects the C
  * version status.
  */
-static inline BrminitRes * bram_brminit()
+static inline void bram_brminit(BrminitRes * init_status)
 {
 	register u32 a0_bram_work_buff asm("a0") = (u32) bram_work_buff;
 	register u32 a1_bram_string_buff asm("a1") = (u32) bram_string_buff;
@@ -63,17 +61,15 @@ static inline BrminitRes * bram_brminit()
 		2: \n\
 		"
 		: "=d"(d0_bram_size), "=d"(d1_bram_status)
-		: "i"(_BURAM),
+		: "i"(BURAM),
 			"d"(d0_fcode),
 			"a"(a0_bram_work_buff),
 			"a"(a1_bram_string_buff)
 		: "cc");
 
-	init_info.bram_size = d0_bram_size;
-	init_info.status = (enum BramStatus) d1_bram_status;
-	init_info.strings = (char *) a1_bram_string_buff;
-
-	return &init_info;
+	init_status->bram_size = d0_bram_size;
+	init_status->status = (enum BramStatus) d1_bram_status;
+	init_status->strings = (char *) a1_bram_string_buff;
 }
 
 /**
@@ -105,7 +101,7 @@ static inline BrmstatRes * bram_brmstat()
 		jsr %p2 \n\
 		"
 		: "=d"(d0_free), "=d"(d1_filecount)
-		: "i"(_BURAM), "d"(d0_fcode), "a"(a1_bram_string_buff));
+		: "i"(BURAM), "d"(d0_fcode), "a"(a1_bram_string_buff));
 
 	brmstat_results.free = d0_free;
 	brmstat_results.filecount = d1_filecount;
@@ -146,7 +142,7 @@ static inline BrmserchRes * bram_brmserch(char const * filename)
 		2: \n\
 		"
 		: "=d"(d0_filesize), "=d"(d1_filemode), "=a"(a0_dataptr)
-		: "i"(_BURAM), "d"(d0_fcode), "a"(a0_filename)
+		: "i"(BURAM), "d"(d0_fcode), "a"(a0_filename)
 		: "a1", "cc");
 
 	if (a0_dataptr == NULL)
@@ -188,7 +184,7 @@ static inline BrmreadRes * bram_brmread(char const * filename, u8 * buffer)
 	2: \n\
 	"
 		: "=d"(d0_size), "=d"(d1_mode)
-		: "i"(_BURAM), "d"(d0_fcode), "a"(a0_filename), "a"(a1_buffer));
+		: "i"(BURAM), "d"(d0_fcode), "a"(a0_filename), "a"(a1_buffer));
 
 	if (d0_size == 0xFFFF)
 	{
@@ -228,7 +224,7 @@ static inline bool bram_brmwrite(BramFileInfo const * params, u8 const * data)
 		2: \n\
 		"
 		:
-		: "i"(_BURAM), "d"(d0_fcode), "a"(a0_params), "a"(a1_data)
+		: "i"(BURAM), "d"(d0_fcode), "a"(a0_params), "a"(a1_data)
 		: "d1", "cc"
 		: failed);
 
@@ -252,7 +248,7 @@ static inline bool bram_brmdel(char const (*filename)[11])
 			bcs %l[failed] \n\
 		"
 		:
-		: "i"(_BURAM), "d"(D0), "a"(A0)
+		: "i"(BURAM), "d"(D0), "a"(A0)
 		: "d1", "a1", "cc"
 		: failed);
 
@@ -279,7 +275,7 @@ static inline bool bram_brmdir(
 			bcs %l[too_large] \n\
 		"
 		:
-		: "i"(_BURAM),
+		: "i"(BURAM),
 			"d"(d0_fcode),
 			"d"(d1_params),
 			"a"(a0_filename),
@@ -306,7 +302,7 @@ static inline bool bram_brmformat()
 			bcs %l[failed] \n\
 		"
 		:
-		: "i"(_BURAM), "d"(D0)
+		: "i"(BURAM), "d"(D0)
 		: "d1", "a0", "a1", "cc"
 		: failed);
 
@@ -340,7 +336,7 @@ static inline enum BrmverifyStatus bram_brmverify(BramFileInfo const * params)
 		1: \n\
 		"
 		: "=d"(d0_result)
-		: "i"(_BURAM), "d"(d0_fcode), "a"(A0)
+		: "i"(BURAM), "d"(d0_fcode), "a"(A0)
 		: "a1");
 
 	return d0_result;

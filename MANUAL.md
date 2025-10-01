@@ -20,7 +20,7 @@ Megadev is a development kit for creating software for the Sega Mega Drive and M
 
 Megadev is intended for those who already have some experience with C or M68k assembly programming and have at least a passing familiarity with embedded systems. It is less "friendly" than something like [SGDK](https://github.com/Stephane-D/SGDK). This is due in large part to the addition of the Mega CD (which SGDK does not support) which brings with it increased complexity, but also arises from a desire for a development system that is more flexible for skilled developers and less reliant on an abundance of external utilities.
 
-The original target hardware for the project was the Mega CD, with support for vanilla Mega Drive development being somewhat of a late addition. That aside, there is already a wealth of information about and examples for programming the Mega Drive. As such, most of the information introduced here is focused on the Mega CD aspect of the project.
+The original target hardware for the project was the Mega CD, with support for vanilla Mega Drive development being somewhat of a late addition. As such, most of the information introduced here is focused on the Mega CD aspect of the project.
 
 # Getting Started
 
@@ -72,19 +72,25 @@ You *must* add `--target=m68k-elf` as an option when you run the configure scrip
 
 You may wish to use a helper script [like the ones found here](https://github.com/kentosama/m68k-elf-gcc).
 
+### Windows
+
+Development in Windows is not officially supported, though Megadev should work in an environment such as cygwin, for example. We recommend using the Docker based dev container for development in Windows.
+
 ## Install Megadev
 
 (This step is not necessary if you are using the Dockerfile and a dev container.)
 
-Clone the repo and place it in a wherever you would like (we recommend /opt/megadev). In the root of the directory is the `megadev.make` file which will be used as a system-wide base for all projects. Edit the settings in its top section as necessary to match your build environment. Alternatively, set the values 
+Clone the repo and place it in a wherever you would like (we recommend `/opt/megadev`). In the root of the directory is the `megadev.make` file which will be used as a system-wide base for all projects. Edit the settings in its top section as necessary to match your build environment.
 
 ## Build An Example Project
 
 Once your build environment is in place, you should attempt to compile and run one of the example projects. We recommend copying the examples to somewhere outside of the Megadev installation directory before compiling.
 
-To build the example project, run `make disc` from the root directory. This should generate a disc.iso file which can run in an emulator or burnt to disc. You will need to modify the `MEGADEV_PATH` variable inside makefile within the project if you installed it somewhere besides `/opt/megadev`.
+If you placed the Megadev installation somewhere other than `/opt/megadev`, be sure to edit the value of `MEGADEV_PATH` in the project makefile, or set it as an environment variable.
 
-Try `hello_world` first and then `ipx_spx` after that, as these are the simplest examples of booting the Mega CD and loading files from disc.
+To build the project, run `make` within the root of the project directory. This will generate an ISO disc image file which can be run in an emulator or burnt to disc.
+
+Try the `hello_world` example first and then `ipx_spx` after that, as these are the simplest examples of booting the Mega CD and loading files from disc.
 
 After that, feel free to try the remaining examples. In all cases, check the `README.md` file for details about each example.
 
@@ -101,7 +107,7 @@ Configuration settings must appear at the top of the Makefile, before including 
 All settings can be changed at compile time by including them in the make command. For example:
 
 ```
-make REGION=EU VIDEO=PAL disc
+make REGION=EU VIDEO=PAL all
 ```
 
 ### Required Settings
@@ -120,7 +126,7 @@ The path to the compilation workspace, where build artifacts (including symbol l
 
 #### `MEGADEV_PATH`
 
-The path to your Megadev installation (NOT your project).
+The full path to your Megadev installation.
 
 #### `PROJECT_ID`
 
@@ -166,7 +172,7 @@ If unspecified, defaults to `NTSC`.
 
 ### Optional Settings
 
-These settings are mostly related to the ROM header, occupying the space between 0x100 and 0x200 within a Mega Drive ROM or the IP of a Mega CD game. The header is, for the most part, not used by the hardware and existed only as a requirement by Sega. Therefore, you can make these fields say whatever you would like. However, we recommend that you generally follow the expected content and rules expected of the header as some tools use the metadata here to identify/classify the game.
+These settings are mostly related to the ROM header, occupying the space between 0x100 and 0x200 within a Mega Drive ROM or the IP of a Mega CD game. The header is, for the most part, not actually used by the hardware and existed only as a requirement by Sega. Therefore, you can have these fields contain whatever you would like. However, we recommend that you follow the rules expected of the header as some tools use the metadata found here to identify/classify the game.
 
 Unless otherwise specified, all text values should be standard ASCII. Please refer to the official Mega Drive documentation (or the many websites that cover the topic) for more information about the ROM header fields.
 
@@ -186,13 +192,13 @@ Its primary use was for Japanese game titles using Japanese characters. Official
 
 **Maximum of 48 bytes.**
  
-Be very careful when using non-ASCII encoding (such as Shift-JIS) as these may be multi-byte per character. Which means a single character may consume two (or more) bytes. Ensure that your text *data* fits within 48 bytes, and do not rely on character count only.
+Be very careful when using non-ASCII encoding (such as Shift-JIS) as these may contain multi-byte characters. Which means a single character may consume two (or more) bytes. Ensure that your text *data* fits within 48 bytes, and do not rely on character count only.
 
 If unspecified, uses the value of `PROJECT_NAME`.
 
 #### `HEADER_VOL_ID`
 
-The is the name of the volume (the file system). This is different from the volume identifier within the ISO9660 Primary Volume Descriptor, but it would 
+The is the name of the volume (the file system). This is different from the volume identifier within the ISO9660 Primary Volume Descriptor.
 
 **Masimum of 11 characters.**
 
@@ -200,7 +206,7 @@ If unspecified, uses the value of `PROJECT_ID`.
 
 #### `HEADER_SYS_ID`
 
-This is the name of the "developers operating system filename" (per official documentation). This does not need to refer to an actual filename, and many games simply use this as a "short name" for the game.
+This is the name of the "developers operating system filename" (per official documentation), though this description is somewhat nebulous. This does not need to refer to an actual filename, and many games simply use this as a "short name" for the game, while others used it for the name of their game's "engine" or system.
 
 **Masimum of 11 characters.**
 
@@ -267,8 +273,6 @@ We have aimed to make Megadev as flexible and un-opinionated as possible: for de
 
 This section will go over the basics of a Megadev project, compiling that project, and using the library.
 
-[[the only requirment is the boot sector setup and makefile compliance]]
-
 ## Supported Languages
 
 Megadev supports C (with GCC extensions) and M68000 ASM. These can be mixed freely.
@@ -279,19 +283,25 @@ We do not officially support C++ as we do not feel it brings anything that would
 
 We may explore support for clang (i.e. llvm) sometime in the future.
 
-## MEGADEV Library
+## Headers and Utilities
 
-Megadev brings with it a collection of headers and macros to provide common functionality on the hardware. 
+Megadev brings with it a collection of headers, macros and static functions to provide easy access to functionality on the hardware.
+
+In particular, these headers provide access to the system calls on both the Main and Sub side  The calls for the Sub CPU, which deal primarily with CD access, are well-documented in the official Sega documentation. The Main side calls, however, do not have any documentation and we only know of their presence by reverse engineering. (Interestingly, many Japanese games use these "undocumented" system calls, so it may have been a case of simply not providing some documentation in English. We do not have any official documentation in Japanese to confirm this.)
+
+Megadev provides C wrappers for these system calls on both CPUs, with comments. Please refer to the official Sega documentation for the Sub CPU system calls, and to `main_bios.md` for the Main CPU calls.
 
 ### Filename Schema
 
+Include files are located in the `lib` subdirectory in the Megadev installation. Files within this directory have a specific pattern to their naming to indicate how/where they can be used.
+
 #### Main/Sub Specific files
 
-Functionality specific to either side (Main/Sub) is kept within a subdirectory within the library. Intuitively, code for the Main CPU (or other Megadrive specific components) is in `main/` and for the Sub CPU (or other Mega CD specific components) in `sub/`.
+Functionality specific to either side (Main/Sub) is kept within a subdirectory `main` and `sub` subdirectories of `lib`. Functionality that is main/sub agnostic is stored in the root of `lib`.
 
-It is very important to prefix included files with this subdirectory as some files have the same filename.
+It is very important to prefix included files with these subdirectories as some files have the same filename.
 
-For example:
+For example, code meant for the Main CPU side may have:
 
 ```
 #include <main/memmap.h>
@@ -300,45 +310,44 @@ For example:
 #include <types.h>
 ```
 
-Here we include the memory layout specific to the Main side, the wrappers for the Main BIOS calls, and VDP utilities. All of these are prefixed with `main/` as they are specific to that side. Notice that `types.h` does not have a prefix as it can be used by both sides.
+While the Sub CPU may have:
 
-If you are doing Megadrive only development, only the `main/` side files will be used.
+```
+#include <sub/memmap.h>
+#include <sub/bios.h>
+#include <sub/bram.h>
+#include <types.h>
+```
 
-#### Macros
+#### Macros (.macros.s)
 
 Assembly files that have the `.macros.s` suffix contain only macros and can thus be included multiple times without worry of symbol duplication.
 
 The choice for what code was written as a macro and what was written as a subroutine is based on our judgement of how small the code is and how often it will be used. Code that initializes some hardware will probably be a subroutine as it will rarely be called; a short piece of code that sets up te VDP port for a transfer, for example, will be a macro.
 
-#### Definitions
+#### Definitions (.def.h)
 
-Files with the `.def.h` contain only C style `#define` directives. They contain bit positions, memory addresses and other constant values, usualy for interacting with hardware.
+Files with the `.def.h` contain only C style `#define` directives. They contain bit positions, memory addresses and other constant values, usually for interacting with hardware.
 
 They are used in both C and ASM development. Header guards are in place so they can be included multiple places.
-
-### Mega CD BIOS Calls
-
-The Mega CD has a number of system calls available to developers thanks to its internal ROM, for both the Main and Sub CPUs. The calls for the Sub CPU, which deal primarily with CD access, are well-documented in the official Sega documentation. The Main side calls, however, do not have any documentation and we only know of their presence by reverse engineering. (Interestingly, many Japanese games use these "undocumented" system calls, so it may have been a case of simply not providing some documentation in English. We do not have any official documentation in Japanese to confirm this.)
-
-Megadev provides C wrappers for these system calls on both CPUs, with comments. Please refer to the official Sega documentation for the Sub CPU system calls, and to main_bios.md for the Main CPU calls.
 
 ## Modules (MMD/SMD)
 
 (This applies to Mega CD development only.)
 
-There are many ways that the Mega CD could be used when it comes to loading code from disc and running it, but a common paradigm is to use modules. These are essentially self-contained programs, with all the code and graphics and other resources it needs.
+There are many ways that the Mega CD could be used when it comes to loading and executing code from disc, but a common paradigm is to use modules. These are essentially self-contained programs, with all the code and graphics and other resources it needs.
 
 The basic concept is to have a small memory-resident kernel that manages the whole program at a very low level, including the loading and unloading of modules. A module can represent any one piece of your game: the title screen, one level of the game, the credits sequence, and so on.
 
 Megadev provides tools for creating and loading modules easily. Please see `modules.md` for more details.
 
-(Note also that modules are optional. You are free to come up with your own design for file loading.)
+(Note also that modules are optional. You are free to come up with your own program architecture.)
 
 ## CD-ROM Access Framework
 
 (This applies to Mega CD development only.)
 
-Accessing data on the disc is done via commands provided by the BIOS on the Sub CPU side. The system in place is somewhat complex, as instead of using filenames, a start/end sector must be specified. Moreover, the transfer process is multi step, involving setting the destination in the CDC Mode register in the Gate Array and using the CDC BIOS calls to start the transfer and monitor its status.
+Accessing data on the disc is done via commands provided by the BIOS on the Sub CPU side. The process is somewhat complex, as loading is accomplished by specifying a range of sectors on the disc to read instead of using filenames. Moreover, the transfer process is multi step, involving setting the destination in the CDC Mode register, using the CDC BIOS calls to start the transfer, and then monitoring the transfer status.
 
 The access framework provided within Megadev simplifies this process by simply specifying a filename and an output buffer. Please see `cdrom.md` for more details about how to use it.
 
@@ -348,43 +357,45 @@ The access framework provided within Megadev simplifies this process by simply s
 
 (This applies to Mega CD development only.)
 
-The boot sector on the CD contains the software header, the IP (Initial Program), and the SP (System Program). These are the first pieces of code in your game for each CPU: the IP on the Main side and the SP on the Sub side.
+The boot sector on the CD contains the software header, the IP (Initial Program), and the SP (System Program). These are the first pieces of codein your game to run on each CPU: the IP on the Main side and the SP on the Sub side.
 
 A key piece of making your game bootable is the inclusion of the security code. This is a small chunk of code and data that *must* appear at the start of the IP. It is responsible for calling the "Produced By or Under License From..." screen displayed before the game loads. The BIOS stores a byte-for-byte copy of this code and it is checked before running the disc to ensure that it is valid Mega CD software.
 
-Megadev will automatically create the boot sector as long as you have `ip.s` and `sp.s` files in your project. This is the only requirement for a Megadev project aside from the `config.h`/`Makefile` mentioned above.
+Megadev will automatically create the boot sector as long as you have `ip.s` and `sp.s` files in your project. This is the only requirement for a Megadev project aside from the makefile requirements mentioned above.
 
 Though it is technically possible to create the boot sector from C source, we highly recommend leaving them as ASM as they are very low level and must be fast and predictable. We highly recommend using an IP/SP from one of the example projects as a base and modify them as necessary.
 
-
-
 # Mega CD Development
+
+It turns out strapping an additional pieces of hardware with a completely independent processor and RAM on to a system increases the complexity of development dramatically. If you are already familiar with Mega Drive development, you will find Mega CD programming to be notably different in regards to your game's architecture.
+
+This section will highlight some key technical points to consider when developing for the Mega CD.
 
 ## Exception Vectors
 
 Since both the Main and Sub CPUs are booted by the internal ROM, the system exception vector table is set by these programs. The system table is confgured such that any actionable exceptions are "forwarded" to a jump table with user-defined values.
 
-On the Main side, this table begins at 0xFFFD00. This is located near the top of Work RAM and this should generally be considered the limit of Work RAM usage. It is not a 1:1 mapping of the execption vector list as some entries are missing, most notably the interrupt vectors except for levels 2, 4, and 6 (the EXT, HBLANK and VBLANK interrupts, respectively), as the other levels are not used by the system.
+On the Main side, this table begins at 0xFFFD00. It is not a 1:1 mapping of the execption vector list as some entries are missing (most notably all interrupt vectors *except for levels 2 (EXT port), 4 (HBLANK), and 6 (VBLANK)*, as the other levels are not used by the system). Error vectors and TRAP vectors are also available, as well as the reset vector.
 
-Entries within this table are user-defined, and you will almost certainly change at least the VBLANK vector to handle this important interrupt. Error vectors and TRAP vectors are also available, as well as the reset vector.
+On the Sub side, this table begins at 0x5F40, and like the Main side, contains jumps for most (but not all) exception vectors.
 
-As expected from a jump table, each vector is prefixed with a JMP instruction to redirect to the handler. It is possible to change this instruction to any two byte opcode, though there is very little reason to do so. Perhaps the only use case here is to change the JMP to an RTE for unimplemented exception handlers. Should you wish to change the instruction, you will need to subtract 2 from the memory pointer for the entry.
+Entries within these tables are user-defined, and you will almost certainly change at least the Main side VBLANK vector to handle that important interrupt.
+
+As expected from a jump table, each address is prefixed with a JMP instruction to redirect to the handler. It is possible to change this instruction to any two byte opcode, though there is very little reason to do so. Perhaps the only use case here is to change the JMP to an RTE for unimplemented exception handlers. Should you wish to change the instruction, you will need to subtract 2 from the memory pointer for the entry.
 
 ## Main Side Stack Pointer
 
-Officially, the space from 0xFFFD00 to 0xFFFFFF is reserved for system use and unavailable to the user, aside from changing exception vectors (see the Exception Vectors section above). Thus, 0xFFFD00 is the safe "end" of Work RAM available to the user and the address used for the stack pointer. The official documentation sets aside 256 bytes, from 0xFFFC00 to 0xFFFD00 as the stack.
+Officially, the space from 0xFFFD00 to 0xFFFFFF is reserved for system use and is unavailable to the user, aside from changing exception vectors (see the Exception Vectors section above). Thus, 0xFFFD00 is the safe "end" of Work RAM available to the user and the address used for the stack pointer. The official documentation sets aside 256 bytes, from 0xFFFC00 to 0xFFFD00 as the stack.
 
 However, within this reserved system space, only the exception vector jump table is of dire importance. The jump table ends at 0xFFFDB4, and from there, most of the variables used by the Boot ROM are stored. The space used by these variables ends at 0xFFFE58 (this may vary by revision), and from there to the end of Work RAM, it appears to be unused space.
 
-What this means is, if you are not using the Main side BIOS library *at all*, then the entire space from the end of the jump table (0xFFFDB4) to the end of Work RAM is free to use. That is 588 bytes of space, more than double the 256 bytes allotted officialy. In this case, setting your stack pointer to 0 is acceptable and you can utilize lower Work RAM more fully, all the way up to 0xFFFD00.
+What this means is, if you are not using the Main side BIOS library *at all*, then the entire space from the end of the jump table (0xFFFDB4) to the end of Work RAM is free to use. That is 588 bytes of space, more than double the 256 bytes allotted officialy for the stack. In this case, setting your stack pointer to 0 is acceptable and you can utilize the lower portion Work RAM more fully, all the way up to 0xFFFD00.
 
 Even if you are using the Main BIOS with its memory usage ending around 0xFFFE58, that is still 424 bytes of stack space, far more than the official allotment. You can perhaps get more if the BIOS calls you make do not use the space towards the end of the reserved block.
 
-In summary, it's probably safe to set your stack pointer to 0 to gain some extra stack space rather than leaving it at 0xFFFC00 as it is from boot, especially if you are coding in C as your stack frames may be unnecessarily large at times. If you do see strange issues, check that your stack isn't getting too deep and interfering with/being damaged by memory space used by BIOS.
+In summary, it's probably safe to set your stack pointer to 0 to gain some extra stack space rather than leaving it at 0xFFFC00 as it is from boot, especially if you are coding in C and your stack frames may be unnecessarily large at times. If you do see strange issues, check that your stack isn't getting too deep and interfering with/being damaged by memory space used by BIOS.
 
-In all cases, the space from 0xFFFD00 to 0xFFFDB4 *must be preserved as the exception jump table*.
-
----
+**In all cases, the space from 0xFFFD00 to 0xFFFDB4 must be preserved as the exception jump table.**
 
 ### The Kernel
 
@@ -392,7 +403,7 @@ Unlike a cartridge based Mega Drive game, where the entire program and all its d
 
 This is basically the concept of an operating system kernel: the core code that remains loaded into memory for the entire duration of the system's uptime. It manages the loading and execution of user programs as well as providing services and hardware interfaces to those programs. While we certainly won't need something as complex as the kind of kernel you would find in a PC operating system, having an ever-present supervisor program is the best way to design your Mega CD project.
 
-Our kernel will have the largest scope, maintaining the global state of the entire program, and that state determines the flow of the program. For example: the system has booted, and we're at the kernel entry. We set the global state ID to 1 for 'intro screen' and enter our main loop. For state ID 1, we load `intro.mmd` into memory and jump to it. It fades in a couple nice logos, sets the global state to 2 for the title screen, then exits, and we're now back in the kernel. The kernel loops again and sees that we're in state ID 2 now, so it loads and executes the title screen. From there, the user selects 1P Start or 2P Versus or Options, setting either state 3, 4 or 5 respectively. After making the selection, it exits, and we're back in the kernel, which loads the appropriate file for the state. And so on. At the most basic level, the kernel will keep track of "where we are" in the program as a whole and load/run the appropriate file for that state.
+The kernel will have the largest scope, maintaining the global state of the entire program, and that state determines the flow of the program. For example: the system has booted, and we're at the kernel entry. We set the global state ID to 1 for 'intro screen' and enter our main loop. For state ID 1, we load the intro module into memory and jump to it. It fades in a couple nice logos, sets the global state to 2 for the title screen, then exits, and we're now back in the kernel. The kernel loops again and sees that we're in state ID 2 now, so it loads and executes the title screen. From there, the user selects 1P Start or 2P Versus or Options, setting either state 3, 4 or 5 respectively. After making the selection, it exits, and we're back in the kernel, which loads the appropriate file for the state. And so on. At the most basic level, the kernel will keep track of "where we are" in the program as a whole and load/run the appropriate file for that state.
 
 Since the kernel is loaded in memory at all times, it can also provide funcionality to the transitory modules making up most of the program. For example, maybe our game uses lots of text, so why not put the font and the print routines inside the kernel. That way we don't need to compile that code/data into each module, reducing data redundancy, code size and (most importantly) load times. Another good use case for keeping data resident is a fancy loading screen graphic. Re-loading the loading screen from disc each time we load a file is a bit silly and we're just adding additional wait time due to another disc access. Instead we can keep our fancy loading graphics in memory and the kernel can display them when making a load call. 
 
@@ -404,12 +415,12 @@ Earlier we said that the Mega Drive has no operating system, that it is a devoid
 
 On the Sub CPU side, we have the BIOS calls which are used for data I/O (namely, CD-ROM and Backup RAM access) and for controlling some miscaellaneous Mega CD specific hardware components. These calls are documented in the official Sega docs and Megadev provides definitions, structures and wrappers to help you use them in your code. You will definitely be using these in your Sub CPU kernel.
 
-On the Main CPU side, we have what we refer to as the Boot ROM library (abbreviated as `bootlib` throughout Megadev). This is a set of functions that provide a wide range of general functionality useful to Mega Drive games, such as VDP DMA operations, controller input reads, palette and sprite list caches, and much more. The catch is that some of these functions place certain expectations on your program structure and use precious Work RAM space. Moreover, these calls are not documented and our understanding of their use is based on reverse engineering.
+On the Main CPU side, we have what we refer to as the Boot ROM library. This is a set of functions that provide a wide range of general functionality useful to Mega Drive games, such as VDP DMA operations, controller input reads, palette and sprite list caches, and much more. The catch is that some of these functions place certain expectations on your program structure and use precious Work RAM space. Moreover, these calls are not documented and our understanding of their use is based on reverse engineering.
 
-While the Sub CPU BIOS calls are required and a basic part of Mega CD development, the Main CPU Boot ROM library is entirely optional to use. While helpful, some of the components of the library will affect your program architecture more fundamentall than others, and you should carefully examine how the pieces you wish to use will be integrated. Refer to bootrom.md for an in-depth look at this library of functions.
-
+While the Sub CPU BIOS calls are required and a basic part of Mega CD development, the Main CPU Boot ROM library is entirely optional to use. While helpful, some of the components of the library will affect your program architecture more fundamentally than others, and you should carefully examine how the pieces you wish to use will be integrated. Refer to `main_bios.md` for an in-depth look at this library of functions.
 
 ### Memory Planning
+
 As we have discussed, there is no hardware delineation of read-only (ROM) and storage (RAM) for your Mega CD program. As stated in the main readme:
 
 > The memory layout of a standard Mega Drive cartridge game is relatively simple, with a large contiguous block of address space (32 Megabits!) available for the program. Things are not so simple with the Mega CD, however. We have three seperate memory blocks (Word RAM, PRG RAM and Work RAM), all of which are extremely small in comparison (2, 4, and 0.5 Megabits, respectively).
@@ -419,6 +430,7 @@ As part of your program design, you must consider how those memory banks will be
 While this adds a layer of complexity in your planning, it also offers some flexibility: the layouts are not required to be static and can be changed as needed. For example, maybe one module has lots of graphics data for something like a cutscene, but doesn't have much logic. It will need lots of ROM space but not much RAM. And maybe the next module will have actual gameplay, which will need a fair bit more RAM to keep track the game state. You can tailor the memory layout to each module as necessary.
 
 #### Work RAM layout
+
 The memory block to which you will need to pay particular attention is the Main CPU Work RAM. It is the smallest of the banks but arguably the most important. This is from where the "outermost" pieces of code will execute, which is to say the kernel. The size may be further restricted depending on how much of the Boot ROM library you choose to use. For that reason, we'll take a closer look at Work RAM.
 
 Here is its default layout, with no user programs or Boot ROM library usage:
@@ -513,8 +525,8 @@ Retro consoles like the Mega Drive/CD do not use such execution containers. Ther
 Statically allocated variables are linked in the .data memory segment, so it is possible to copy this data as the first action in your program to manually do initialization. Indeed, this is on our to-do list for Megadev, but as it is not currently implemented be careful with global variable initialization.
 
 ### Integer Types
-　・
-We highly recommend *not* using the `int` type for integers. Instead, use the sized types (`char`, `short`, `long`) or better yet their typedefs (`s8`/`u8`, `s16`/`u16`, `s32`/`u32`). With gcc-m68k, int is four bytes in size, which may be a waste of space depending on the operation you are trying to perform. Memory usage should always be optimized.
+
+We recommend *not* using the `int` type for integers. Instead, use the sized types (`char`, `short`, `long`) or better yet their typedefs (`s8`/`u8`, `s16`/`u16`, `s32`/`u32`). With gcc-m68k, int is four bytes in size, which may be a waste of space depending on the operation you are trying to perform. Memory usage should always be optimized.
 
 ### Fractional Types
 

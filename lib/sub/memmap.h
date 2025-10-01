@@ -34,6 +34,4 @@
 #define DMAADDR_PCM(addr)				(((addr) & 0x03FF) >> 3)
 #define DMAADDR_PRGRAM(addr)		((addr) >> 3)
 
-#define SP_INT2 (*((void volatile *(*) )(USERCALL2 + 2)))
-
 #endif

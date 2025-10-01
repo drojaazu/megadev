@@ -229,7 +229,7 @@ static inline u16 vdpptr_to(vdp_ptr vdp_addr)
  */
 #define vdp_ptr(addr)                                                     \
 	(__builtin_constant_p(addr)                                             \
-		 ? (unsigned) ((((addr) & 0x3FFF) << 16) + (((addr) & 0xC000) >> 14)) \
+		 ? (unsigned) ((((addr) & 0x3FFF) << 16) | (((addr) & 0xC000) >> 14)) \
 		 : to_vdpptr(addr))
 
 // the below is causing weird breakage when compiling...

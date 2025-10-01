@@ -24,6 +24,15 @@ SECTIONS
     _TEXT_LENGTH = ABSOLUTE(. - _TEXT_ORIGIN);
   } > IP
 
+  .ram_bss :
+  {
+    _BSS_ORIGIN = .;
+    *(.bss*)
+    . = ALIGN(4);
+    _BSS_LENGTH = ABSOLUTE(. - _BSS_ORIGIN);
+    _BSS_LENGTH_LOOPSZ = ABSOLUTE(_BSS_LENGTH) >> 2;
+  } > IP
+
   .data : AT ( ADDR(.text) + SIZEOF(.text) )
   {
     _RAM_ORIGIN = .;
@@ -33,13 +42,6 @@ SECTIONS
     _RAM_DATA_LENGTH = ABSOLUTE(. - _RAM_DATA_ORIGIN) >> 2;
   } > IP
 
-  .bss :
-  {
-    _BSS_ORIGIN = .;
-    *(.bss*)
-    . = ALIGN(4);
-    _BSS_LENGTH = ABSOLUTE(. - _BSS_ORIGIN);
-  } > IP
   _RAM_LENGTH = _RAM_DATA_LENGTH + _BSS_LENGTH >> 2;
 
 }
