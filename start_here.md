@@ -65,7 +65,7 @@ As a note, we use such terms as "kilo" and "mega" when referring to base 2 value
 If possible, make sure your source files do not match those included in the Megadev library. If you do, you will need to specify the path to your source file, e.g.
 
 ```
-src/string.s
+src/str_util.s
 ```
 
 ## make Targets

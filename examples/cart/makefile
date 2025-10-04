@@ -81,4 +81,4 @@ $(PROJECT_ID).cart: \
 	main/io.macros.s \
 	main.c \
 	res.s \
-	string.s
+	str_util.s

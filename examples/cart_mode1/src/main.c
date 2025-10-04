@@ -4,7 +4,6 @@
 #include "main/memmap.h"
 #include "main/vdp.h"
 #include "memory.h"
-#include "string.h"
 #include "system.h"
 
 extern u8			 res_sysfont_1bpp_chr;
@@ -239,8 +238,8 @@ __attribute__((interrupt)) void INT2_EXT()
 					do
 					{
 						asm("nop");
-					} while ((io_sctrl2 & SCTRL_TX_FULL) != 0);
-					io_txdata2 = *((u8 *) addr++);
+					} while ((*io_sctrl2 & SCTRL_TX_FULL) != 0);
+					*io_txdata2 = *((u8 *) addr++);
 					--length;
 				}
 				break;
@@ -286,8 +285,8 @@ void main()
 
 	// initialize serial comm on port 2
 	// 4800bps, serial in/out mode, ext interrupt enable
-	io_sctrl2 = SCTRL_SERIAL_ENABLE | SCTRL_BAUD_4800 | SCTRL_RX_INT_ENABLE;
-	io_ctrl2 = 0x7F;
+	*io_sctrl2 = SCTRL_SERIAL_ENABLE | SCTRL_BAUD_4800 | SCTRL_RX_INT_ENABLE;
+	*io_ctrl2 = 0x7F;
 	bios_vdp_regs[0x0B] |= 0x08;
 	vdp_ctrl_16 = bios_vdp_regs[0x0B];
 
@@ -344,23 +343,23 @@ void main()
 	do
 	{
 		asm("nop");
-	} while ((io_sctrl2 & SCTRL_TX_FULL) != 0);
-	io_txdata2 = 'o';
+	} while ((*io_sctrl2 & SCTRL_TX_FULL) != 0);
+	*io_txdata2 = 'o';
 	do
 	{
 		asm("nop");
-	} while ((io_sctrl2 & SCTRL_TX_FULL) != 0);
-	io_txdata2 = 'k';
+	} while ((*io_sctrl2 & SCTRL_TX_FULL) != 0);
+	*io_txdata2 = 'k';
 	do
 	{
 		asm("nop");
-	} while ((io_sctrl2 & SCTRL_TX_FULL) != 0);
-	io_txdata2 = '1';
+	} while ((*io_sctrl2 & SCTRL_TX_FULL) != 0);
+	*io_txdata2 = '1';
 	do
 	{
 		asm("nop");
-	} while ((io_sctrl2 & SCTRL_TX_FULL) != 0);
-	io_txdata2 = '3';
+	} while ((*io_sctrl2 & SCTRL_TX_FULL) != 0);
+	*io_txdata2 = '3';
 
 	do
 	{

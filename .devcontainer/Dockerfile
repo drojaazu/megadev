@@ -1,52 +1,38 @@
-FROM alpine:latest AS base
+ARG OS_VERSION=13
+
+FROM debian:${OS_VERSION}-slim AS base
 RUN \
-	apk add --no-cache \
-		alpine-sdk \
+	apt-get update -y && \
+	apt-get install -y \
 		git \
-		bash \
-		wget \
-		clang16-extra-tools \
+		make \
+		binutils-m68k-linux-gnu \
+		gcc-m68k-linux-gnu \
+		libnewlib-dev \
+		genisoimage \
 		xxd \
-		xz \
-		cdrkit
+		clang-format-19 \
+		&& \
+	apt-get clean && \
+	rm -rf /var/lib/apt/lists/* && \
+	update-alternatives \
+				--install   /usr/bin/clang-format          clang-format          /usr/bin/clang-format-19 100 && \
+	update-alternatives \
+				--install   /usr/bin/clang-format-diff     clang-format-diff     /usr/bin/clang-format-diff-19 100
 
-FROM base AS build
-
-ARG RELEASE_BINUTILS=binutils-2.45
-ARG RELEASE_GCC=gcc-15.2.0
-
-WORKDIR /build
-RUN \
-	wget https://ftpmirror.gnu.org/gnu/binutils/${RELEASE_BINUTILS}.tar.xz && \
-	wget https://ftpmirror.gnu.org/gnu/gcc/${RELEASE_GCC}/${RELEASE_GCC}.tar.xz && \
-	tar -xf ${RELEASE_BINUTILS}.tar.xz && \
-	tar -xf ${RELEASE_GCC}.tar.xz && \
-	cd ${RELEASE_GCC} && \
-	./contrib/download_prerequisites
-
-WORKDIR /build/binutils
-RUN \
-	../${RELEASE_BINUTILS}/configure --prefix=/usr --program-prefix=m68k-linux-gnu- --target=m68k-elf --disable-nls --disable-multilib --enable-lto && \
-	make -j $(nproc --all) && \
-	make install
-
-WORKDIR /build/gcc
-RUN \
-	../${RELEASE_GCC}/configure --prefix=/usr --program-prefix=m68k-linux-gnu- --target=m68k-elf --with-arch=m68k --with-cpu=m68000 --enable-languages=c --disable-nls --disable-multilib --disable-libssp --enable-lto --without-headers && \
-	make -j $(nproc --all) && \
-	make install
-
-FROM build AS dev_container
+FROM base AS devcontainer
 
 ARG MEGADEV_PATH=/opt/megadev
 
 RUN \
-	adduser -D megadev && \
+	useradd -ms /bin/bash megadev && \
 	git clone https://github.com/drojaazu/megadev.git ${MEGADEV_PATH} && \
 	chown -R megadev:megadev ${MEGADEV_PATH} && \
 	printf "    __  __________________    ____  _______    __\n   /  |/  / ____/ ____/   |  / __ \\/ ____/ |  / /\n  / /|_/ / __/ / / __/ /| | / / / / __/  | | / / \n / /  / / /___/ /_/ / ___ |/ /_/ / /___  | |/ /  \n/_/  /_/_____/\\____/_/  |_/_____/_____/  |___/   \n    Sega Mega Drive/Mega CD development kit\n" > /etc/motd \
 		&& \
-	echo "cat /etc/motd\n" >> /etc/bash/bashrc
+	echo "unset PROMPT_COMMAND" >> /home/megadev/.bashrc && \
+	echo "PS1='\[\033[01;34m\]\w\[\033[00m\]# \[\]'" >> /home/megadev/.bashrc && \
+	echo "cat /etc/motd" >> /home/megadev/.bashrc
 
 USER megadev
 WORKDIR /home/megadev
@@ -55,4 +41,4 @@ ENV CC=/usr/bin/m68k-linux-gnu-gcc
 ENV M68K_PREFIX=m68k-linux-gnu-
 ENV MEGADEV_PATH=${MEGADEV_PATH}
 
-CMD ["/bin/sh"]
+CMD ["bash"]

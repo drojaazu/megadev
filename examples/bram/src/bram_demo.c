@@ -4,7 +4,7 @@
 #include <main/memmap.h>
 #include <main/mmd.h>
 #include <main/vdp.h>
-#include <printval.h>
+#include <str_util.h>
 #include <system.h>
 #include <types.h>
 
@@ -39,13 +39,13 @@ static void bram_init()
 
 	bios_print("Total Size: \xff", print_xy(1, 2));
 
-	printval_u16_c(bram_size, val_buffer);
+	hextoa16(bram_size, val_buffer);
 
 	bios_print(val_buffer, print_xy(13, 3));
 
 	bios_print("Status: \xff", print_xy(1, 3));
 
-	printval_u16_c(status, val_buffer);
+	hextoa16(status, val_buffer);
 
 	bios_print(val_buffer, print_xy(13, 2));
 
@@ -84,11 +84,11 @@ static void brmstat()
 	SUB_ACK
 
 	bios_print("File count: \xff", print_xy(1, 3));
-	printval_u16_c(filecount, val_buffer);
+	hextoa16(filecount, val_buffer);
 	bios_print(val_buffer, print_xy(13, 3));
 
 	bios_print("Free blocks: \xff", print_xy(1, 4));
-	printval_u16_c(free, val_buffer);
+	hextoa16(free, val_buffer);
 	bios_print(val_buffer, print_xy(13, 4));
 }
 
@@ -116,11 +116,11 @@ static bool brmserch()
 		bios_print("File BRMEX found\xff", print_xy(1, 2));
 
 		bios_print(" File size: \xff", print_xy(1, 3));
-		printval_u16_c(filesize, val_buffer);
+		hextoa16(filesize, val_buffer);
 		bios_print(val_buffer, print_xy(13, 3));
 
 		bios_print(" Protected? \xff", print_xy(1, 4));
-		printval_u16_c(is_protected, val_buffer);
+		hextoa16(is_protected, val_buffer);
 		bios_print(val_buffer, print_xy(13, 4));
 		return true;
 	}
@@ -168,7 +168,7 @@ static void brmwrite()
 			writeval -= 0x100;
 		}
 
-		printval_u16_c(writeval, val_buffer);
+		hextoa16(writeval, val_buffer);
 		bios_print(val_buffer, print_xy(23, 2));
 	} while (! (bios_joy1_hit & PAD_START));
 
@@ -231,7 +231,7 @@ static void brmread()
 
 	bios_print("Value read: \xff", print_xy(1, 9));
 
-	printval_u16_c(readval, val_buffer);
+	hextoa16(readval, val_buffer);
 
 	bios_print(val_buffer, print_xy(12, 9));
 }
@@ -296,7 +296,7 @@ void brmdir()
 		filename = (char *) (word_ram + (file_idx * 16));
 		filename[11] = 0xFF;
 		bios_print(filename, print_xy(1, curr_y));
-		printval_u16_c(*(u16 *) (word_ram + (file_idx * 16) + 14), val_buffer);
+		hextoa16(*(u16 *) (word_ram + (file_idx * 16) + 14), val_buffer);
 		bios_print(val_buffer, print_xy(16, curr_y));
 		++curr_y;
 		++file_idx;

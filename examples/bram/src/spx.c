@@ -2,7 +2,6 @@
 #include <sub/cdrom.h>
 #include <sub/gate_arr.h>
 #include <sub/memmap.h>
-#include <string.h>
 
 void load_ipx();
 

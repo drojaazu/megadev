@@ -3,7 +3,7 @@
  * @brief Simple exception handler for Mega CD games
  * @details Intended for the Main CPU
  *
- * @note printval.s is expected to be compiled into the final assembly in which
+ * @note str_util.s is expected to be compiled into the final assembly in which
  * this is used!
  */
 
@@ -172,7 +172,7 @@ SUB handle_exception
   // pc val
   move.l  (pc_val), d0
   lea     str_cache, a0
-  jbsr    printval_u32
+  jbsr    hextoa32
   move.w  #0x0806, d0
   jbsr    nmtbl_xy_pos
   lea     str_cache, a1
@@ -187,7 +187,7 @@ SUB handle_exception
   // sr val
   move.w  (sr_val), d0
   lea     str_cache, a0
-  jbsr    printval_u16
+  jbsr    hextoa16
   move.w  #0x0807, d0
   jbsr    nmtbl_xy_pos
   lea     str_cache, a1
@@ -202,7 +202,7 @@ SUB handle_exception
   // op val
   move.w  (op_val), d0
   lea     str_cache, a0
-  jbsr    printval_u16
+  jbsr    hextoa16
   move.w  #0x0808, d0
   jbsr    nmtbl_xy_pos
   lea     str_cache, a1
@@ -217,7 +217,7 @@ SUB handle_exception
   // addr val
   move.l  (addr_val), d0
   lea     str_cache, a0
-  jbsr    printval_u32
+  jbsr    hextoa32
   move.w  #0x0809, d0
   jbsr    nmtbl_xy_pos
   lea     str_cache, a1

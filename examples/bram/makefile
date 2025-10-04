@@ -87,7 +87,6 @@ clean:
 $(DISC_PATH)/bramdemo.mmd: \
 	bram_demo_layout.s \
 	main/ipx_init.s \
-	printval.s \
 	bram_demo.c
 
 $(DISC_PATH)/spx.smd: \

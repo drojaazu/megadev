@@ -10,9 +10,10 @@
 
 #include "types.h"
 
-/*
-				CPU opcode wrappers
-*/
+typedef struct {
+  s16 quot;
+  s16 rem;
+} div_t;
 
 /**
  * @brief Performs unsigned multiplication using MULU
@@ -27,7 +28,7 @@ static inline u32 mulu(u16 multiplicand, u16 multiplier)
 /**
  * @brief Performs signed multiplication using MULS
  */
-static inline s32 muls(s16 multiplicand, s16 multiplier)
+static inline s32 mul(s16 multiplicand, s16 multiplier)
 {
 	s32 product = multiplier;
 	asm("muls.w %1, %0" : "+d"(product) : "d"(multiplicand) : "cc");
@@ -37,68 +38,27 @@ static inline s32 muls(s16 multiplicand, s16 multiplier)
 /**
  * @brief Performs unsigned division using DIVU
  */
-static inline u16 divu(u32 dividend, u16 divisor)
+static inline div_t divu(u32 dividend, u16 divisor)
 {
-	u32 quotient = dividend;
-	asm("divu.w %1, %0" : "+d"(quotient) : "d"(divisor) : "cc");
-	return quotient;
+	div_t out;
+	u32 result = dividend;
+	asm("divu.w %1, %0" : "+d"(result) : "d"(divisor) : "cc");
+	out.quot = result & 0x0000ffff;
+	out.quot = (result & 0xffff0000) >> 16;
+	return out;
 }
 
 /**
  * @brief Performs signed division using DIVS
  */
-static inline s16 divs(s32 dividend, s16 divisor)
+static inline div_t div(s32 dividend, s16 divisor)
 {
-	s32 quotient = dividend;
-	asm("divs.w %1, %0" : "+d"(quotient) : "d"(divisor) : "cc");
-	return quotient;
-}
-
-/**
- * @brief Performs unsigned division using DIVU and returns the remainder
- */
-static inline u16 modu(u32 dividend, u16 divisor)
-{
-	u32 modulus = dividend;
-	asm(
-		"\
-		divu.w %1, %0 \n\
-		swap %0 \n\
-		"
-		: "+d"(modulus)
-		: "d"(divisor)
-		: "cc");
-	return (u16) modulus;
-}
-
-/**
- * @brief Performs signed division using DIVS and returns the remainder
- */
-static inline s16 mods(s32 dividend, s16 divisor)
-{
-	s32 modulus = dividend;
-	asm(
-		"\
-		divs.w %1, %0 \n\
-		swap %0 \n\
-		"
-		: "+d"(modulus)
-		: "d"(divisor)
-		: "cc");
-	return (s16) modulus;
-}
-
-/**
- * @brief Performs unsigned division using DIVU and returns the remainder and
- * quotient in one 32 bit value
- *
- * @return u32: Quotient in lower word, remainder in upper word
- */
-static inline u32 divu_full(u32 dividend, u16 divisor)
-{
-	u32 remainder_quotient = dividend;
-	asm("divu.w %1, %0" : "+d"(remainder_quotient) : "d"(divisor) : "cc");
-	return remainder_quotient;
+	div_t out;
+	u32 result = dividend;
+	asm("divu.w %1, %0" : "+d"(result) : "d"(divisor) : "cc");
+	out.quot = result & 0x0000ffff;
+	out.quot = (result & 0xffff0000) >> 16;
+	return out;
 }
 
 /**

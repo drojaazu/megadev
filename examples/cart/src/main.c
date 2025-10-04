@@ -3,8 +3,7 @@
 #include <main/memmap.h>
 #include <main/vdp.h>
 #include <memory.h>
-#include <printval.h>
-#include <string.h>
+#include <str_util.h>
 #include <system.h>
 
 volatile u8 p1_hold, p1_single, p1_prev;

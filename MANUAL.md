@@ -506,7 +506,7 @@ Writing your code in C rather than raw assembly can make development much easier
 
 The equivalent of the standard library when developing for the Mega CD is the Boot ROM library. This provides a number of helpful tools, but it does not provide any of the equivalent headers you may be used to seeing (string.h, stdlib.h, stdio.h, etc). Megadev provides headers for the internal Boot ROM library system calls, as well as some additional helper functions and macros, but use of the internal library has caveats relating to memory usage of which you should be aware (see bios.md).
 
-Development for a "bare metal" embedded system like the Megadrive/Mega CD requires a paradigm shift away from PC development. Here, there is no console so there is no printf. There is no OS kernel managing memory, so there is no malloc/free. Anything you want to happen, you will need to write yourself (see design.md).
+Development for a "bare metal" embedded system like the Megadrive/Mega CD requires a mental shift from the paradigm of modern development. Here, there is no console so there is no printf. There is no OS kernel managing memory, so there is no malloc/free. Anything you want to happen, you will need to write yourself (see design.md).
 
 It is theoretically possible to use newlib, a reimplementation of much of the C standard library for embedded systems. However, we feel this is a bit of overkill for something like the Mega Drive/CD system and thus have not done any integration testing with it. You are free to attempt this yourself, of course, and we welcome a report of your experience with it.
 
