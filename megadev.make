@@ -120,15 +120,15 @@ LD_FLAGS+= \
 	-nostdlib -z noexecstack
 
 define msg_info
-	@echo -e "${BOLD}- ${CYAN}$(1)${CLEAR}"
+	@printf "${BOLD}- ${CYAN}$(1)${CLEAR}\n"
 endef
 
 define msg_warning
-	@echo -e "${BOLD}! ${RED}$(1)${CLEAR}"
+	@printf "${BOLD}! ${RED}$(1)${CLEAR}\n"
 endef
 
 define msg_done
-	@echo -e "${BOLD}* ${GREEN}$(1)${CLEAR}"
+	@printf "${BOLD}* ${GREEN}$(1)${CLEAR}\n"
 endef
 
 # this is used to trigger an ISO rebuild if there are any file changes in the disc dir

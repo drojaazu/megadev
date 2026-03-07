@@ -117,4 +117,11 @@ static inline void memcpy32(u32 const * src, u32 * dest, u32 length)
 		: "cc");
 }
 
+void strcpy(char* dest, const char* src) {
+    while ((*dest = *src) != '\0') {
+        dest++;
+        src++;
+    }
+}
+
 #endif

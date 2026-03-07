@@ -7,7 +7,7 @@
 #include <main/main.macro.s>
 #include <macros.s>
 #include <system.macros.s>
-#include "bridge.h"
+#include "shared.h"
 
 /*
   Please see the ip.s file in the ipx_spx project for details about the process below.

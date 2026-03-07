@@ -25,10 +25,10 @@
 /**
  * @todo These need to be made user-defined
  */
-#define EXT_CTRL	 IO_CTRL3
-#define EXT_SCTRL	 IO_SCTRL3
-#define EXT_RXDATA IO_RXDATA3
-#define EXT_TXDATA IO_TXDATA3
+#define EXT_CTRL	 IO_CTRL2
+#define EXT_SCTRL	 IO_SCTRL2
+#define EXT_RXDATA IO_RXDATA2
+#define EXT_TXDATA IO_TXDATA2
 
 /*
 	External comm port speed

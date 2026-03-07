@@ -13,7 +13,6 @@
 			"extensions": [
 				"ms-vscode.cpptools",
 				"alefragnani.bookmarks",
-				"xaver.clang-format",
 				"ms-vscode.hexeditor"
 			],
 			"settings": {

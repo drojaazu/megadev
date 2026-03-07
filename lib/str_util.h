@@ -67,4 +67,24 @@ static inline void hextoa32(register u32 value, register char * const string)
 	}
 }
 
+static bool strcmp(char const * str1, char const * str2)
+{
+	while (*str1 && (*str1 == *str2))
+	{
+		str1++;
+		str2++;
+	}
+	return (*(const unsigned char *) str1 - *(const unsigned char *) str2) == 0;
+}
+
+static bool strcmpt(char const * str1, char const * str2, char terminator)
+{
+	while (*str1 != terminator && (*str1 == *str2))
+	{
+		str1++;
+		str2++;
+	}
+	return (*(const unsigned char *) str1 - *(const unsigned char *) str2) == 0;
+}
+
 #endif

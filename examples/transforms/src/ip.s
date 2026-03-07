@@ -9,7 +9,7 @@
 #include <macros.s>
 #include <system.macros.s>
 #include "mmd_layout.s"
-#include "bridge.h"
+#include "shared.h"
 
   // First, disable all interrupts while we do some basic init
   DISABLE_INTERRUPTS

@@ -72,9 +72,14 @@
  * A0 ptr to jump table
  * BREAK A2
  * NOTES
- * expects the user header to begin with MAIN
- * also checks for SYS, SUB, or DAT, but these must appear beginning the 8th
- * byte (it looks like there is no tangible difference between these) the flag
+ * Expects the user header to begin with string "MAIN"
+ * Other valid strings include:
+ *   "SYS"
+ *   "SUB"
+ *   "DAT"
+ * but these must appear beginning at the 8th byte (as if they were filename
+ * extensions); it seems there is no tangible difference between these
+ * the flag
  * (the last byte, normally zero the filename) It looks like if the flag is
  * non-zero, it calls the start address as a subroutine (JSR) and checks for
  * carry clear (BCC) on return; on carry clear, it skips the jump table
@@ -665,10 +670,16 @@
  * values to set the CDC mode
  *
  * @details
+ * d1.w  FEDCBA9876543210
+ *                   ||||
+ *                   |||+--> CD Mode 2
+ *                   ||+---> CD-DA mode
+ *                   |+----> transfer error block with data
+ *                   +-----> re-read last data
  *   These are the allowed bit fields
  *   Bit
  *    0     CD Mode 2
- *    1    bios_cdda mode
+ *    1     CD-DA Mode
  *    2     Transfer error block with data
  *    3     Re-read last data
  */

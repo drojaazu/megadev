@@ -70,13 +70,15 @@
  * @brief Read data from Backup RAM
  * @clobber d0-d1/a0-a1
  *
- * @param[in] A0.l Pointer to filename
+ * @param[in] A0.l Pointer to filename (11 bytes)
  * @param[in] A1.l Pointer to write buffer
  * @param[out] CC Read okay
  * @param[out] CS Error
  * @param[out] D0.w Size in blocks
  * @param[out] D1.b Mode
- * @details Mode
+ * 
+ * @details
+ * Mode
  *     0: Normal
  *  0xFF: Data protected
  *
@@ -93,21 +95,21 @@
  * @param[in] D1.l Zero (see note)
  * @param[out] CC Write successful
  * @param[out] CS Write failed
- * @details File info structure
+ * 
+ * @details
+ * File info structure (14 bytes)
  *   filename.b[11]
- *           mode.b  0x00: normal
- *                   0xFF: encoded (with protect function)
- *      data_size.w  size of data in blocks (see note)
+ *       mode.b  0x00: normal
+ *               0xFF: encoded (with protect function)
+ *  data_size.w  size of data in blocks (see note)
  *
- * @note The size of a block of data is dependent on the data mode. When set to
+ * @note
+ * The size of a block of data is dependent on the data mode. When set to
  * normal (0), a block is 0x40 bytes in size; when set to encoded (0xFF), a
  * block is 0x20 bytes in size.
  *
- * @note Per Tech Bulletin #1, D1 should be set to 0 when calling this routine.
- *
- * @todo According to results from BRMDIR, it looks like some commercial game
- * save filenames terminate with 0xFF instead of 0. Need to check if this is
- * significant or just an alternate terminator supported by the BIOS.
+ * @note
+ * Per Tech Bulletin #1, D1 should be set to 0 when calling this routine.
  */
 #define BRMWRITE 0x0004
 

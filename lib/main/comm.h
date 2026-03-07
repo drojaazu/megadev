@@ -76,7 +76,7 @@ static inline void ext_tx(register u8 tx_data)
   move.b   %c[tx], (%c[ext_tx_data]) \n\
 	"
 		: [scratch_a] "=&a"(scratch_a)
-		: [tx] "=d"(tx_data),
+		: [tx] "d"(tx_data),
 			[sctrl_tx_full] "i"(SCTRL_TX_FULL),
 			[ext_sctrl] "i"(EXT_SCTRL),
 			[ext_tx_data] "i"(EXT_TXDATA)
