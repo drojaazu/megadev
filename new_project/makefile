@@ -1,40 +1,126 @@
 ################################################################################
 # MEGADEV - Development framework for Sega Mega CD hardware
 # https://github.com/drojaazu/megadev
-################################################################################`
+################################################################################
 
-# This will be used for filename output
-PROJECT_ID=helloworld
+## Settings assigned with ?= will only be set if they are not already set from
+## the command line.
+## As such, you can specify alternate values, e.g.:
+## make REGION=EU VIDEO=PAL all
 
-## Directory paths are relative to the location of the makefile
-## (which should be the root of your project directory)
+## Project ID
+# ASCII text only; maximum of 11 characters
+# *** REQUIRED!***
+PROJECT_ID:=ipx_spx
 
-# Source code path
-# (relative to the location of the project makefile)
+## Build Target
+# Determines for which hardware this project is intended
+# Valid values: MEGADRIVE, MEGACD
+# *** REQUIRED!***
+TARGET:=MEGACD
+
+## Project Name
+# ASCII text only; maximum of 48 characters
+PROJECT_NAME:="IPX SPX EXAMPLE"
+
+HEADER_SOFTWARE_ID="MEGADEV DEMO"
+
+## Hardware Region
+# This is *very important* for Mega CD builds as it determines which security code to use. It can be changed at compile
+# time by setting the variable when running make.
+REGION?=US
+
+## Video Output
+# Specifies the default video output for this game. It can be changed at compile time by setting the variable when
+# running make.
+# Valid values: NTSC, PAL
+VIDEO?=NTSC
+
+## The following directory paths are relative to the location of this makefile``
+## (which should ideally be in the root of your project directory)
+
+## Source code path
+# This is the path to all code that will be referenced or directly copmiled.
+# *** REQUIRED!***
 SRC_PATH:=src
 
 # Resources path
-# This is where graphics, audio and any other non-executable content should be
-# stored.
+# This is where graphics, audio and any other non-executable content should be stored.
+# *** REQUIRED!***
 RES_PATH:=res
 
-# Output path
-# This will be the location of the final output Mega CD ISO and MD ROMs
-OUT_PATH:=out
+# Build path
+# This is where compile time build artifacts will be stored, including symbol maps
+# *** REQUIRED!***
+BUILD_PATH:=build
 
-# Optional compiler flags
-# Here you can add any additional compiler flags
-OPT_FLAGS?=-O1 -fconserve-stack
+DISC_PATH:=disc
 
+# Additional C compiler flags
+CC_FLAGS?=-O1 -fconserve-stack -fomit-frame-pointer -fno-gcse
+
+# Additional assembler flags
+AS_FLAGS?=
+
+# Additional linker flags
+LD_FLAGS?=
 
 # Path to the Megadev directory
+# *** REQUIRED!***
 MEGADEV_PATH?=/opt/megadev
 
-# Don't change this line!
+# Include the Megadev parent makefile
+# *** REQUIRED!***
 include $(MEGADEV_PATH)/megadev.make
 
-# Add your own output files and dependencies below. See the examples directory for some... well, examples.
+.PHONY: init all clean
 
-disc: \
-	init \
-	disc.iso
+init:
+	@mkdir -p $(SRC_PATH)
+	@mkdir -p $(RES_PATH)
+	@mkdir -p $(BUILD_PATH)
+	@mkdir -p $(DISC_PATH)
+
+all: \
+	$(DISC_PATH)/ipx.mmd \
+	$(DISC_PATH)/spx.smd \
+	$(DISC_PATH)/ex1.mmd \
+	$(DISC_PATH)/ex2.mmd \
+	$(DISC_PATH)/ex3.mmd \
+	$(PROJECT_ID).iso
+
+clean:
+	@rm -f $(PROJECT_ID).iso $(DISC_PATH)/*.mmd $(DISC_PATH)/*.smd $(BUILD_PATH)/* > /dev/null 2>&1
+
+$(DISC_PATH)/ipx.mmd: \
+	ipx_layout.s \
+	main/ipx_init.s \
+	ipx.c \
+	io.macros.s
+
+$(DISC_PATH)/ex1.mmd: \
+	shared_mmd_layout.s \
+	std_init.s \
+	ex1.c \
+	ex1_res.s \
+	$(DISC_PATH)/ipx.mmd
+
+$(DISC_PATH)/ex2.mmd: \
+	shared_mmd_layout.s \
+	std_init.s \
+	ex2.c \
+	ex2_res.s \
+	$(DISC_PATH)/ipx.mmd
+
+$(DISC_PATH)/ex3.mmd: \
+	shared_mmd_layout.s \
+	std_init.s \
+	ex3.c \
+	ex3_res.s \
+	$(DISC_PATH)/ipx.mmd
+
+$(DISC_PATH)/spx.smd: \
+	spx_layout.s \
+	std_init.s \
+	spx.c \
+	$(BUILD_PATH)/sp.bin
