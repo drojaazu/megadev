@@ -16,9 +16,9 @@ typedef u16 volatile * ga_reg;
 /**
  * @sa GAREG_COMFLAGS
  */
-#define GA_COMFLAGS_MAIN ((volatile u8 *) GAREG_COMFLAGS)
+#define ga_comflags_main ((volatile u8 *) GAREG_COMFLAGS)
 
-#define GA_COMFLAGS_SUB ((volatile const u8 *) GAREG_COMFLAGS + 1)
+#define ga_comflags_sub ((volatile const u8 *) GAREG_COMFLAGS + 1)
 
 /**
  * @copydoc GAREG_RESET
@@ -117,49 +117,49 @@ typedef u16 volatile * ga_reg;
  * @copydoc GAREG_COMSTAT0
  *
  */
-#define GA_COMSTAT0 ((ga_reg) GAREG_COMSTAT0)
+#define gareg_comstat0 ((ga_reg) GAREG_COMSTAT0)
 
 /**
  * @copydoc GAREG_COMSTAT1
  *
  */
-#define GA_COMSTAT1 ((ga_reg) GAREG_COMSTAT1)
+#define gareg_comstat1 ((ga_reg) GAREG_COMSTAT1)
 
 /**
  * @copydoc GAREG_COMSTAT2
  *
  */
-#define GA_COMSTAT2 ((ga_reg) GAREG_COMSTAT2)
+#define gareg_comstat2 ((ga_reg) GAREG_COMSTAT2)
 
 /**
  * @copydoc GAREG_COMSTAT3
  *
  */
-#define GA_COMSTAT3 ((ga_reg) GAREG_COMSTAT3)
+#define gareg_comstat3 ((ga_reg) GAREG_COMSTAT3)
 
 /**
  * @copydoc GAREG_COMSTAT4
  *
  */
-#define GA_COMSTAT4 ((ga_reg) GAREG_COMSTAT4)
+#define gareg_comstat4 ((ga_reg) GAREG_COMSTAT4)
 
 /**
  * @copydoc GAREG_COMSTAT5
  *
  */
-#define GA_COMSTAT5 ((ga_reg) GAREG_COMSTAT5)
+#define gareg_comstat5 ((ga_reg) GAREG_COMSTAT5)
 
 /**
  * @copydoc GAREG_COMSTAT6
  *
  */
-#define GA_COMSTAT6 ((ga_reg) GAREG_COMSTAT6)
+#define gareg_comstat6 ((ga_reg) GAREG_COMSTAT6)
 
 /**
  * @copydoc GAREG_COMSTAT7
  *
  */
-#define GA_COMSTAT7 ((ga_reg) GAREG_COMSTAT7)
+#define gareg_comstat7 ((ga_reg) GAREG_COMSTAT7)
 
 /**
  * @fn wait_2m
@@ -167,13 +167,13 @@ typedef u16 volatile * ga_reg;
  */
 static inline void wait_2m()
 {
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 1:btst     #%c[ga_ret_bit], %c[gareg_memmmode] \n\
   beq      1b \n\
 		"
-		:
-		: [ga_ret_bit] "i"(GA_RET_BIT), [gareg_memmmode] "i"(GAREG_MEMMODE + 1));
+    :
+    : [ga_ret_bit] "i"(GA_RET_BIT), [gareg_memmmode] "i"(GAREG_MEMMODE + 1));
 }
 
 /**
@@ -182,14 +182,14 @@ static inline void wait_2m()
  */
 static inline void grant_2m()
 {
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 1:bset     #%c[ga_dmna_bit], %c[gareg_memmmode] \n\
   btst     #%c[ga_dmna_bit], %c[gareg_memmmode] \n\
   beq      1b \n\
 		"
-		:
-		: [ga_dmna_bit] "i"(GA_DMNA_BIT), [gareg_memmmode] "i"(GAREG_MEMMODE + 1));
+    :
+    : [ga_dmna_bit] "i"(GA_DMNA_BIT), [gareg_memmmode] "i"(GAREG_MEMMODE + 1));
 }
 
 /**
@@ -198,10 +198,10 @@ static inline void grant_2m()
  */
 static inline void clear_comm_regs()
 {
-	register u32 scratch_d, scratch_a;
+  register u32 scratch_d, scratch_a;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   lea (%c[comcmd0]), %[scratch_a] \n\
   moveq    #0, %[scratch_d] \n\
   move.b   %[scratch_d], -2(%[scratch_a]) \n\
@@ -210,8 +210,8 @@ static inline void clear_comm_regs()
   move.l   %[scratch_d], (%[scratch_a])+ \n\
   move.l   %[scratch_d], (%[scratch_a])+ \n\
 		"
-		: [scratch_d] "=&d"(scratch_d), [scratch_a] "=&a"(scratch_a)
-		: [comcmd0] "i"(GAREG_COMCMD0));
+    : [scratch_d] "=&d"(scratch_d), [scratch_a] "=&a"(scratch_a)
+    : [comcmd0] "i"(GAREG_COMCMD0));
 }
 
 /**
@@ -220,8 +220,8 @@ static inline void clear_comm_regs()
  */
 static inline void reset_ga()
 {
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   move.w   #0xFF00, %c[memmode] \n\
   move.b   #0x3, %c[reset] \n\
   nop \n\
@@ -229,9 +229,9 @@ static inline void reset_ga()
   move.b   #0x2, %c[reset] \n\
   move.b   #0x0, %c[reset] \n\
 		"
-		:
-		: [memmode] "i"(GAREG_MEMMODE), [reset] "i"(GAREG_RESET + 1)
-		:);
+    :
+    : [memmode] "i"(GAREG_MEMMODE), [reset] "i"(GAREG_RESET + 1)
+    :);
 }
 
 #endif

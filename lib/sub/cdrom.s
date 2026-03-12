@@ -20,7 +20,7 @@
  * @fn load_file_prg_dma
  * @brief Convenience sub to load a file to PRG RAM via DMA
  * @param[in] A0.l Pointer to filename string
- * @note Be sure to set the destination in the _GAREG_DMAADDR register
+ * @note Be sure to set the destination in the GAREG_DMAADDR register
  * beforehand
  */
 load_file_prg_dma:

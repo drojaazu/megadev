@@ -24,7 +24,7 @@ typedef struct
 } trace_entry;
 
 trace_entry (*trace_table)[IMG_HEIGHT] =
-  (trace_entry(*)[IMG_HEIGHT])(WORD_RAM_2M + TRACE_TABLE);
+  (trace_entry (*)[IMG_HEIGHT])(WORD_RAM_2M + TRACE_TABLE);
 
 extern void sp_fatal();
 
@@ -79,7 +79,7 @@ void main()
 
     // not reaching here?
     asm(".global test_label3\ntest_label3:");
-    *GA_COMSTAT0 = *gareg_comcmd0;
+    *gareg_comstat0 = *gareg_comcmd0;
     do
     {
       asm("nop");
@@ -92,7 +92,7 @@ void main()
       command = *gareg_comcmd0;
     } while (command != 0);
 
-    *GA_COMSTAT0 = 0;
+    *gareg_comstat0 = 0;
 
   } while (1);
 }

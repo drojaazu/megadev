@@ -47,7 +47,7 @@ void main()
 
     // not reaching here?
     asm(".global test_label3\ntest_label3:");
-    *GA_COMSTAT0 = *gareg_comcmd0;
+    *gareg_comstat0 = *gareg_comcmd0;
     do
     {
       asm("nop");
@@ -60,7 +60,7 @@ void main()
       command = *gareg_comcmd0;
     } while (command != 0);
 
-    *GA_COMSTAT0 = 0;
+    *gareg_comstat0 = 0;
 
   } while (1);
 }
