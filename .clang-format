@@ -1,13 +1,26 @@
-Language: Cpp
+Language: C
 BasedOnStyle: LLVM
 
-AlignAfterOpenBracket: DontAlign
-AlignEscapedNewlines: DontAlign
+AlignAfterOpenBracket: AlwaysBreak
+AlignEscapedNewlines: LeftWithLastLine
+AlignConsecutiveBitFields:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: false
+AlignConsecutiveDeclarations:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: false
+AlignConsecutiveMacros:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: false
 AlignOperands: Align
 AlignTrailingComments: true
 AllowAllArgumentsOnNextLine: true
 AllowAllConstructorInitializersOnNextLine: true
 AlignArrayOfStructures: None
+AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortBlocksOnASingleLine: false
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: Empty
@@ -20,10 +33,8 @@ BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: AfterColon
 BinPackArguments: false
 BinPackParameters: false
-ColumnLimit: 120
+ColumnLimit: 80
 ContinuationIndentWidth: 2
-Cpp11BracedListStyle: true
-Language: Cpp
 MaxEmptyLinesToKeep: 1
 IndentCaseLabels: true
 PackConstructorInitializers: Never
@@ -33,7 +44,6 @@ SortIncludes: true
 SpaceAfterCStyleCast: true
 SpaceAfterLogicalNot: true
 SpaceAroundPointerQualifiers: Both
-SpaceBeforeAssignmentOperators: true
 SpaceBeforeCpp11BracedList: true
 SpaceBeforeCtorInitializerColon: true
 SpaceBeforeInheritanceColon: true
@@ -43,6 +53,5 @@ SpacesInAngles: false
 SpacesInCStyleCastParentheses: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
-Standard: Cpp11
 TabWidth: 2
-UseTab: Always
+UseTab: Never

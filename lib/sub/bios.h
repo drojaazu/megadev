@@ -1,397 +1,408 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file bios.h
- * @brief C wrappers for _CDBIOS calls
+ * @file sub/bios.h
+ * @brief Sub CPU side system library
  */
 
-#ifndef MEGADEV__SUB_BIOS_H
-#define MEGADEV__SUB_BIOS_H
+#ifndef MEGADEV__SUBBIOS_H
+#define MEGADEV__SUBBIOS_H
 
-#include "sub/bios_def.h"
-#include "sub/memmap_def.h"
+#include "sub/bios.def.h"
+#include "sub/memmap.def.h"
 #include "types.h"
 
+static inline void bios_waitvsync()
+{
+	asm volatile(
+		"\
+		jsr %p0"
+		:
+		: "i"(WAITVSYNC)
+		: "cc");
+}
+
 /**
- * @fn bios_mscstop
+ * @fn bios_msc_stop
  * @brief Stops playing CD audio if it is playing
- * @sa _BIOS_MSCSTOP
+ * @sa BIOS_MSC_STOP
  * @ingroup bios_cdda
  */
-static inline void bios_mscstop()
+static inline void bios_msc_stop()
 {
-	register u16 D0 asm("d0") = _BIOS_MSCSTOP;
+	register u16 D0 asm("d0") = BIOS_MSC_STOP;
 
 	asm volatile(
 		"\
 		jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc", "a0", "a1");
 }
 
 /**
- * @fn bios_mscpauseon
+ * @fn bios_msc_pauseon
  * @brief Pauses the drive when a track is playing
- * @sa _BIOS_MSCPAUSEON
+ * @sa BIOS_MSC_PAUSEON
  * @ingroup bios_cdda
  *
  * @note If the drive is left paused it will stop after a programmable delay
  * (see @ref _CDBPAUSE)
  */
-static inline void bios_mscpauseon()
+static inline void bios_msc_pauseon()
 {
-	register u16 D0 asm("d0") = _BIOS_MSCPAUSEON;
+	register u16 D0 asm("d0") = BIOS_MSC_PAUSEON;
 
 	asm volatile(
 		"\
 		jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc", "a0", "a1");
 }
 
 /**
- * @fn bios_mscpauseoff
+ * @fn bios_msc_pauseoff
  * @brief Resumes playing a track after a pause
- * @sa _BIOS_MSCPAUSEOFF
+ * @sa BIOS_MSC_PAUSEOFF
  * @ingroup bios_cdda
  *
  * @note If the drive has timed out and stopped, the BIOS will seek to the pause
  * time (with the attendant delay) and resume playing
  */
-static inline void bios_mscpauseoff()
+static inline void bios_msc_pauseoff()
 {
-	register u16 D0 asm("d0") = _BIOS_MSCPAUSEOFF;
+	register u16 D0 asm("d0") = BIOS_MSC_PAUSEOFF;
 
 	asm volatile(
 		"\
 		jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc", "a0", "a1");
 };
 
 /**
- * @fn bios_mscscanff
+ * @fn bios_msc_scanff
  * @brief Starts playing from the current position in fast forward
- * @sa _BIOS_MSCSCANFF
+ * @sa BIOS_MSC_SCANFF
  * @ingroup bios_cdda
  */
-static inline void bios_mscscanff()
+static inline void bios_msc_scanff()
 {
-	register u16 D0 asm("d0") = _BIOS_MSCSCANFF;
+	register u16 D0 asm("d0") = BIOS_MSC_SCANFF;
 
 	asm volatile(
 		"\
 		jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc", "a0", "a1");
 };
 
 /**
- * @fn bios_mscscanfr
+ * @fn bios_msc_scanfr
  * @brief Starts playing from the current position in fast reverse
- * @sa _BIOS_MSCSCANFR
+ * @sa BIOS_MSC_SCANFR
  * @ingroup bios_cdda
  */
-static inline void bios_mscscanfr()
+static inline void bios_msc_scanfr()
 {
-	register u16 D0 asm("d0") = _BIOS_MSCSCANFR;
+	register u16 D0 asm("d0") = BIOS_MSC_SCANFR;
 
 	asm volatile(
 		"\
 		jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc", "a0", "a1");
 };
 
 /**
- * @fn bios_mscscanoff
+ * @fn bios_msc_scanoff
  * @brief Returns to normal play mode
- * @sa _BIOS_MSCSCANOFF
+ * @sa BIOS_MSC_SCANOFF
  * @ingroup bios_cdda
  *
  * @note If the drive was paused before the scan was initiated, it will be
  * returned to pause.
  */
-static inline void bios_mscscanoff()
+static inline void bios_msc_scanoff()
 {
-	register u16 D0 asm("d0") = _BIOS_MSCSCANOFF;
+	register u16 D0 asm("d0") = BIOS_MSC_SCANOFF;
 
 	asm volatile(
 		"\
 		jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc", "a0", "a1");
 };
 
 /**
- * @fn bios_rompauseon
- * @brief Stops reading data into the CDC and pauses
- * @sa _BIOS_ROMPAUSEON
- * @ingroup bios_cdrom
+ * @fn bios_msc_play
+ * @brief Starts CD audio playback at the specified track & continues playing
+ * through subsequent tracks
+ * @sa BIOS_MSC_PLAY
+ * @ingroup bios_cdda
  */
-static inline void bios_rompauseon()
+static inline void bios_msc_play(u16 const * track_number)
 {
-	register u16 D0 asm("d0") = _BIOS_ROMPAUSEON;
+	register u16 D0 asm("d0") = BIOS_MSC_PLAY;
+	register u32 A0 asm("a0") = (u32) track_number;
 
 	asm volatile(
 		"\
-		jsr %p1"
-		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
-		: "cc", "a0", "a1");
+		jsr %p2"
+		: "+d"(D0), "+a"(A0)
+		: "i"(CDBIOS), "d"(D0), "a"(A0)
+		: "cc", "a1");
 };
 
 /**
- * @fn bios_rompauseoff
- * @brief Resumes reading data into the CDC from the current logical sector
- * @sa _BIOS_ROMPAUSEOFF
- * @ingroup bios_cdrom
+ * @fn bios_msc_play1
+ * @brief Plays the specified track once then pauses
+ * @sa BIOS_MSC_PLAY1
+ * @ingroup bios_cdda
  */
-static inline void bios_rompauseoff()
+static inline void bios_msc_play1(u16 const * track_number)
 {
-	register u16 D0 asm("d0") = _BIOS_ROMPAUSEOFF;
+	register u16 D0 asm("d0") = BIOS_MSC_PLAY1;
+	register u32 A0 asm("a0") = (u32) track_number;
 
 	asm volatile(
 		"\
-		jsr %p1"
-		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
-		: "cc", "a0", "a1");
+		jsr %p2"
+		: "+d"(D0), "+a"(A0)
+		: "i"(CDBIOS), "d"(D0), "a"(A0)
+		: "cc", "a1");
 };
 
 /**
- * @fn bios_drvopen
+ * @fn bios_msc_playr
+ * @brief Plays the specified track on repeat
+ * @sa BIOS_MSC_PLAYR
+ * @ingroup bios_cdda
+ */
+static inline void bios_msc_playr(u16 const * track_number)
+{
+	register u16 D0 asm("d0") = BIOS_MSC_PLAYR;
+	register u32 A0 asm("a0") = (u32) track_number;
+
+	asm volatile(
+		"\
+		jsr %p2"
+		: "+d"(D0), "+a"(A0)
+		: "i"(CDBIOS), "d"(D0), "a"(A0)
+		: "cc", "a1");
+};
+
+/**
+ * @fn bios_msc_playt
+ * @brief Starts playing from the specified timecode
+ * @sa BIOS_MSC_PLAYT
+ * @ingroup bios_cdda
+ */
+static inline void bios_msc_playt(u32 const * timecode)
+{
+	register u16 D0 asm("d0") = BIOS_MSC_PLAYT;
+	register u32 A0 asm("a0") = (u32) timecode;
+
+	asm volatile(
+		"\
+		jsr %p2"
+		: "+d"(D0), "+a"(A0)
+		: "i"(CDBIOS), "d"(D0), "a"(A0)
+		: "cc", "a1");
+};
+
+/**
+ * @fn bios_msc_seek
+ * @brief Seeks to the beginning of the specified track and pauses
+ * @sa BIOS_MSC_SEEK
+ * @ingroup bios_cdda
+ */
+static inline void bios_msc_seek(u16 const * track_number)
+{
+	register u16 D0 asm("d0") = BIOS_MSC_SEEK;
+	register u32 A0 asm("a0") = (u32) track_number;
+
+	asm volatile(
+		"\
+		jsr %p2"
+		: "+d"(D0), "+a"(A0)
+		: "i"(CDBIOS), "d"(D0), "a"(A0)
+		: "cc", "a1");
+};
+
+/**
+ * @fn bios_msc_seekt
+ * @brief Seeks to a specified timecode
+ * @sa BIOS_MSC_SEEKT
+ * @ingroup bios_cdda
+ */
+static inline void bios_msc_seekt(u32 const * timecode)
+{
+	register u16 D0 asm("d0") = BIOS_MSC_SEEKT;
+	register u32 A0 asm("a0") = (u32) timecode;
+
+	asm volatile(
+		"\
+		jsr %p2"
+		: "+d"(D0), "+a"(A0)
+		: "i"(CDBIOS), "d"(D0), "a"(A0)
+		: "cc", "a1");
+};
+
+/**
+ * @def bios_msc_seek1
+ * @brief Seek to the beginning of the selected track and pause; when BIOS
+ * detects a pause state, the track is played once
+ * @sa BIOS_MSC_SEEK1
+ * @ingroup bios_cdda
+ */
+static inline void bios_msc_seek1(u16 const * track_number)
+{
+	register u16 D0 asm("d0") = BIOS_MSC_SEEK1;
+	register u32 A0 asm("a0") = (u32) track_number;
+
+	asm volatile(
+		"\
+		jsr %p2"
+		: "+d"(D0), "+a"(A0)
+		: "i"(CDBIOS), "d"(D0), "a"(A0)
+		: "cc", "a1");
+};
+
+/**
+ * @fn bios_drv_open
  * @brief Opens the CD drive door
  * @ingroup sub_bios
- * @sa _BIOS_DRVOPEN
+ * @sa BIOS_DRV_OPEN
  *
  * @note This is only applicable to Mega CD Model 1 hardware.
  */
-static inline void bios_drvopen()
+static inline void bios_drv_open()
 {
-	register u16 D0 asm("d0") = _BIOS_DRVOPEN;
+	register u16 D0 asm("d0") = BIOS_DRV_OPEN;
 
 	asm volatile(
 		"\
 		jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc", "a0", "a1");
 };
 
-typedef struct DrvinitParams
+typedef struct DriveInitParams
 {
 	u8 toc_track_number;
 	u8 last_track;
-} DrvinitParams;
+} DriveInitParams;
 
 /**
- * @fn bios_drvinit
+ * @fn bios_drv_init
  * @brief Closes the disk tray and reads the TOC from the CD
- * @sa _BIOS_DRVINIT
+ * @sa BIOS_DRV_INIT
  * @ingroup sub_bios
  *
  * @details
- * Pauses for 2 seconds after reading the TOC. Waits for a DRVOPEN request if
+ * Pauses for 2 seconds after reading the TOC. Waits for a DRV_OPEN request if
  * there is no disk in the drive.
  */
-static inline void bios_drvinit (struct DrvinitParams const * drvinit_param)
+static inline void
+bios_drv_init(struct DriveInitParams const * drive_init_params)
 {
-	register u16 D0 asm("d0") = _BIOS_DRVINIT;
-	register u32 a0_drvinit_param asm("a0") = (u32) drvinit_param;
+	register u16 D0 asm("d0") = BIOS_DRV_INIT;
+	register u32 a0_drv_init_param asm("a0") = (u32) drive_init_params;
 
 	asm volatile(
 		"\
 		jsr %p2"
-		: "+d"(D0), "+a"(a0_drvinit_param)
-		: "i"(_CDBIOS), "d"(D0), "a"(a0_drvinit_param)
+		: "+d"(D0), "+a"(a0_drv_init_param)
+		: "i"(CDBIOS), "d"(D0), "a"(a0_drv_init_param)
 		: "cc", "a1");
 };
 
 /**
- * @fn bios_mscplay
- * @brief Starts CD audio playback at the specified track & continues playing
- * through subsequent tracks
- * @sa _BIOS_MSCPLAY
- * @ingroup bios_cdda
+ * @fn bios_rom_pauseon
+ * @brief Stops reading data into the CDC and pauses
+ * @sa BIOS_ROM_PAUSEON
+ * @ingroup bios_cdrom
  */
-static inline void bios_mscplay (u16 const * track_number)
+static inline void bios_rom_pauseon()
 {
-	register u16 D0 asm("d0") = _BIOS_MSCPLAY;
-	register u32 A0 asm("a0") = (u32) track_number;
+	register u16 D0 asm("d0") = BIOS_ROM_PAUSEON;
 
 	asm volatile(
 		"\
-		jsr %p2"
-		: "+d"(D0), "+a"(A0)
-		: "i"(_CDBIOS), "d"(D0), "a"(A0)
-		: "cc", "a1");
+		jsr %p1"
+		: "+d"(D0)
+		: "i"(CDBIOS), "d"(D0)
+		: "cc", "a0", "a1");
 };
 
 /**
- * @fn bios_mscplay1
- * @brief Plays the specified track once then pauses
- * @sa _BIOS_MSCPLAY1
- * @ingroup bios_cdda
+ * @fn bios_rom_pauseoff
+ * @brief Resumes reading data into the CDC from the current logical sector
+ * @sa BIOS_ROM_PAUSEOFF
+ * @ingroup bios_cdrom
  */
-static inline void bios_mscplay1 (u16 const * track_number)
+static inline void bios_rom_pauseoff()
 {
-	register u16 D0 asm("d0") = _BIOS_MSCPLAY1;
-	register u32 A0 asm("a0") = (u32) track_number;
+	register u16 D0 asm("d0") = BIOS_ROM_PAUSEOFF;
 
 	asm volatile(
 		"\
-		jsr %p2"
-		: "+d"(D0), "+a"(A0)
-		: "i"(_CDBIOS), "d"(D0), "a"(A0)
-		: "cc", "a1");
+		jsr %p1"
+		: "+d"(D0)
+		: "i"(CDBIOS), "d"(D0)
+		: "cc", "a0", "a1");
 };
 
 /**
- * @fn bios_mscplayr
- * @brief Plays the specified track on repeat
- * @sa _BIOS_MSCPLAYR
- * @ingroup bios_cdda
- */
-static inline void bios_mscplayr (u16 const * track_number)
-{
-	register u16 D0 asm("d0") = _BIOS_MSCPLAYR;
-	register u32 A0 asm("a0") = (u32) track_number;
-
-	asm volatile(
-		"\
-		jsr %p2"
-		: "+d"(D0), "+a"(A0)
-		: "i"(_CDBIOS), "d"(D0), "a"(A0)
-		: "cc", "a1");
-};
-
-/**
- * @fn bios_mscplayt
- * @brief Starts playing from the specified timecode
- * @sa _BIOS_MSCPLAYT
- * @ingroup bios_cdda
- */
-static inline void bios_mscplayt (u32 const * timecode)
-{
-	register u16 D0 asm("d0") = _BIOS_MSCPLAYT;
-	register u32 A0 asm("a0") = (u32) timecode;
-
-	asm volatile(
-		"\
-		jsr %p2"
-		: "+d"(D0), "+a"(A0)
-		: "i"(_CDBIOS), "d"(D0), "a"(A0)
-		: "cc", "a1");
-};
-
-/**
- * @fn bios_mscseek
- * @brief Seeks to the beginning of the specified track and pauses
- * @sa _BIOS_MSCSEEK
- * @ingroup bios_cdda
- */
-static inline void bios_mscseek (u16 const * track_number)
-{
-	register u16 D0 asm("d0") = _BIOS_MSCSEEK;
-	register u32 A0 asm("a0") = (u32) track_number;
-
-	asm volatile(
-		"\
-		jsr %p2"
-		: "+d"(D0), "+a"(A0)
-		: "i"(_CDBIOS), "d"(D0), "a"(A0)
-		: "cc", "a1");
-};
-
-/**
- * @fn bios_mscseekt
- * @brief Seeks to a specified timecode
- * @sa _BIOS_MSCSEEKT
- * @ingroup bios_cdda
- */
-static inline void bios_mscseekt (u32 const * timecode)
-{
-	register u16 D0 asm("d0") = _BIOS_MSCSEEKT;
-	register u32 A0 asm("a0") = (u32) timecode;
-
-	asm volatile(
-		"\
-		jsr %p2"
-		: "+d"(D0), "+a"(A0)
-		: "i"(_CDBIOS), "d"(D0), "a"(A0)
-		: "cc", "a1");
-};
-
-/**
- * @fn bios_romread
+ * @fn bios_rom_read
  * @brief Begins reading data from the CDROM at the designated logical sector
- * @sa _BIOS_ROMREAD
+ * @sa BIOS_ROM_READ
  * @ingroup bios_cdrom
  *
  * @details
- * Executes a CDCSTART to begin the read, but does not stop
+ * Executes a CDC_START to begin the read, but does not stop
  * automatically.
  *
  * @note
- * ROMREAD actually pre-seeks by 2 sectors, but doesn't start passing data
+ * ROM_READ actually pre-seeks by 2 sectors, but doesn't start passing data
  * to the CDC until the desired sector is reached.
  */
-static inline void bios_romread (u32 const * sector_number)
+static inline void bios_rom_read(u32 const * sector_number)
 {
-	register u16 D0 asm("d0") = _BIOS_ROMREAD;
+	register u16 D0 asm("d0") = BIOS_ROM_READ;
 	register u32 A0 asm("a0") = (u32) sector_number;
 
 	asm volatile(
 		"\
 		jsr %p2"
 		: "+d"(D0), "+a"(A0)
-		: "i"(_CDBIOS), "d"(D0), "a"(A0)
+		: "i"(CDBIOS), "d"(D0), "a"(A0)
 		: "cc", "a1");
 };
 
 /**
- * @def bios_romseek
+ * @def bios_rom_seek
  * @brief Seeks to the designated logical sector and pauses
- * @sa _BIOS_ROMSEEK
+ * @sa BIOS_ROM_SEEK
  * @ingroup bios_cdrom
  */
-static inline void bios_romseek (u32 const * sector_number)
+static inline void bios_rom_seek(u32 const * sector_number)
 {
-	register u16 D0 asm("d0") = _BIOS_ROMSEEK;
+	register u16 D0 asm("d0") = BIOS_ROM_SEEK;
 	register u32 A0 asm("a0") = (u32) sector_number;
 
 	asm volatile(
 		"\
 		jsr %p2"
 		: "+d"(D0), "+a"(A0)
-		: "i"(_CDBIOS), "d"(D0), "a"(A0)
-		: "cc", "a1");
-};
-
-/**
- * @def bios_mscseek1
- * @brief Seek to the beginning of the selected track and pause; when BIOS
- * detects a pause state, the track is played once
- * @sa _BIOS_MSCSEEK1
- * @ingroup bios_cdda
- */
-static inline void bios_mscseek1 (u16 const * track_number)
-{
-	register u16 D0 asm("d0") = _BIOS_MSCSEEK1;
-	register u32 A0 asm("a0") = (u32) track_number;
-
-	asm volatile(
-		"\
-		jsr %p2"
-		: "+d"(D0), "+a"(A0)
-		: "i"(_CDBIOS), "d"(D0), "a"(A0)
+		: "i"(CDBIOS), "d"(D0), "a"(A0)
 		: "cc", "a1");
 };
 
@@ -402,95 +413,105 @@ struct RomreadParams
 };
 
 /**
- * @def _BIOS_ROMREADN
- * @brief Same function as @ref bios_romread but stops after reading the
+ * @def BIOS_ROM_READN
+ * @brief Same function as @ref bios_rom_read but stops after reading the
  * requested number of sectors
  * @ingroup bios_cdrom
  *
 
  */
-static inline void bios_romreadn (struct RomreadParams const * param)
+static inline void bios_rom_readn(struct RomreadParams const * param)
 {
-	register u16 D0 asm("d0") = _BIOS_ROMREADN;
+	register u16 D0 asm("d0") = BIOS_ROM_READN;
 	register u32 A0 asm("a0") = (u32) param;
 
 	asm volatile(
 		"\
 		jsr %p2"
 		: "+d"(D0), "+a"(A0)
-		: "i"(_CDBIOS), "d"(D0), "a"(A0)
+		: "i"(CDBIOS), "d"(D0), "a"(A0)
 		: "cc", "a1");
 };
 
 /**
- * @def _BIOS_ROMREADE
+ * @def BIOS_ROM_READE
  * @ingroup bios_cdrom
- * @brief Same as @ref bios_romread, but reads between two logical sectors
+ * @brief Same as @ref bios_rom_read, but reads between two logical sectors
  */
-static inline void bios_romreade (struct RomreadParams const * param)
+static inline void bios_rom_reade(struct RomreadParams const * param)
 {
-	register u16 D0 asm("d0") = _BIOS_ROMREADE;
+	register u16 D0 asm("d0") = BIOS_ROM_READE;
 	register u32 A0 asm("a0") = (u32) param;
 
 	asm volatile(
 		"\
 		jsr %p2"
 		: "+d"(D0), "+a"(A0)
-		: "i"(_CDBIOS), "d"(D0), "a"(A0)
+		: "i"(CDBIOS), "d"(D0), "a"(A0)
 		: "cc", "a1");
 };
 
 /**
- * @def bios_cdbchk
+ * @def bios_cdb_chk
  * @brief Query the BIOS on the status of the last command
- * @sa _BIOS_CDBCHK
+ * @sa BIOS_CDB_CHK
+ *
+ * @param[out] CC On clear, command is complete
  */
-static inline void bios_cdbchk()
+static inline bool bios_cdb_chk()
 {
-	register u16 D0 asm("d0") = _BIOS_CDBCHK;
+	register u16 D0 asm("d0") = BIOS_CDB_CHK;
 
-	asm volatile(
+	asm goto(
 		"\
-		jsr %p1"
-		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
-		: "cc");
+		jsr %p0 \n\
+		bcc %l[cmd_complete] \n\
+		"
+		:
+		: "i"(CDBIOS), "d"(D0)
+		: "cc"
+		: cmd_complete);
+
+	return false;
+
+cmd_complete:
+	return true;
 };
 
-struct cdbstat
+struct BiosStatus
 {
 	u16 bios_status;
 	u16 led;
-	u8 cdd_status[20];
+	u8	cdd_status[20];
 	u32 volume;
 	u32 header;
 };
 
 /**
- * @def _BIOS_CDBSTAT
+ * @def BIOS_CDB_STAT
  * @brief Retrieve CD BIOS status
  *
  * Please refer to the BIOS manual for details about the returned data
  */
-static inline struct cdbstat const * bios_cdbstat()
+static inline struct BiosStatus const * bios_cdb_stat()
 {
-	register u16 D0 asm("d0") = _BIOS_CDBSTAT;
+	register u16 D0 asm("d0") = BIOS_CDB_STAT;
 	register u32 A0 asm("a0");
 
 	asm volatile(
 		"\
 		jsr %p2"
 		: "+d"(D0), "=a"(A0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc", "d1");
 
-	return (struct cdbstat *) A0;
+	return (struct BiosStatus *) A0;
 }
 
 /**
- * @def _BIOS_FDRSET
+ * @def BIOS_FDR_SET
  * @brief Sets the audio volume
- * @sa _BIOS_FDRSET
+ * @sa BIOS_FDR_SET
  * @ingroup bios_fader
  *
  * @details Setting the upper bit of the value changes the master volume
@@ -503,24 +524,24 @@ static inline struct cdbstat const * bios_cdbstat()
  * @note There is a delay of up to 13ms before the volume begins to change
  * and another 23ms for the new volume level to take effect.
  */
-static inline void bios_fdrset (u16 const volume)
+static inline void bios_fdr_set(u16 const volume)
 {
-	register u16 D0 asm("d0") = _BIOS_FDRSET;
+	register u16			 D0 asm("d0") = BIOS_FDR_SET;
 	register u16 const D1 asm("d1") = volume;
 
 	asm volatile(
 		"\
 		jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0), "d"(D1)
+		: "i"(CDBIOS), "d"(D0), "d"(D1)
 		: "cc");
 };
 
 /**
- * @def bios_fdrchg
+ * @def bios_fdr_chg
  * @brief  Ramps the audio volume from its current level to a new level at
  * the requested rate
- * @sa _BIOS_FDRCHG
+ * @sa BIOS_FDR_CHG
  * @ingroup bios_fader
 
  * @details The input is two 16 bit values
@@ -532,91 +553,91 @@ static inline void bios_fdrset (u16 const volume)
  *
  * @note There is a delay of up to 13ms before the volume begins to change.
  */
-static inline void bios_fdrchg (u32 const volume)
+static inline void bios_fdr_chg(u32 const volume)
 {
-	register u16 D0 asm("d0") = _BIOS_FDRCHG;
+	register u16 D0 asm("d0") = BIOS_FDR_CHG;
 	register u32 D1 asm("d1") = volume;
 
 	asm volatile(
 		"\
 		jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0), "d"(D1)
+		: "i"(CDBIOS), "d"(D0), "d"(D1)
 		: "cc");
 };
 
 /**
- * @sa _BIOS_CDCSTART
+ * @sa BIOS_CDC_START
  */
-static inline void bios_cdcstart()
+static inline void bios_cdc_start()
 {
-	register u16 D0 asm("d0") = _BIOS_CDCSTART;
+	register u16 D0 asm("d0") = BIOS_CDC_START;
 
 	asm volatile(
 		"\
 		jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc", "d1");
 };
 
 /**
- * @sa _BIOS_CDCSTOP
+ * @sa BIOS_CDC_STOP
  */
-static inline void bios_cdcstop()
+static inline void bios_cdc_stop()
 {
-	register u16 D0 asm("d0") = _BIOS_CDCSTOP;
+	register u16 D0 asm("d0") = BIOS_CDC_STOP;
 
 	asm volatile(
 		"\
 jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc");
 };
 
 /**
- * @fn bios_cdcstat
- * @sa _BIOS_CDCSTAT
+ * @fn bios_cdc_stat
+ * @sa BIOS_CDC_STAT
  */
-static inline void bios_cdcstat()
+static inline void bios_cdc_stat()
 {
-	register u16 D0 asm("d0") = _BIOS_CDCSTAT;
+	register u16 D0 asm("d0") = BIOS_CDC_STAT;
 
 	asm volatile(
 		"\
 jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc", "d1");
 };
 
 /**
- * @sa _BIOS_CDCREAD
+ * @sa BIOS_CDCREAD
  */
 // headaches with asm goto and output operands... we'll come back to this later.
 /*
 static inline bool bios_cdcread() {
-	register u16 D0 asm("d0") = _BIOS_CDCREAD;
+	register u16 D0 asm("d0") = BIOS_CDCREAD;
 
-	asm goto(R"(jsr %p1)"
-					 : "+d"(D0)
-					 : "i"(_CDBIOS), "d"(D0)
-					 : "cc", "d1");
+				asm goto(R"(jsr %p1)"
+																				 : "+d"(D0)
+																				 : "i"(CDBIOS), "d"(D0)
+																				 : "cc", "d1");
 
-	return false;
+				return false;
 
 sector_ready:
-	return true;
+				return true;
 };
 */
 
 /**
- * @sa _BIOS_CDCTRN
+ * @sa BIOS_CDC_TRN
  */
-static inline void bios_cdctrn (u8 * sector_dest, u8 * header_dest)
+static inline void bios_cdc_trn(u8 * sector_dest, u8 * header_dest)
 {
-	register u16 D0 asm("d0") = _BIOS_CDCTRN;
+	register u16	D0 asm("d0") = BIOS_CDC_TRN;
 	register u8 * a0_sector_dest asm("a0") = sector_dest;
 	register u8 * a1_header_dest asm("a1") = header_dest;
 
@@ -624,22 +645,22 @@ static inline void bios_cdctrn (u8 * sector_dest, u8 * header_dest)
 		"\
 jsr %p3"
 		: "+d"(D0), "+a"(a0_sector_dest), "+a"(a1_header_dest)
-		: "i"(_CDBIOS), "d"(D0), "a"(a0_sector_dest), "a"(a1_header_dest)
+		: "i"(CDBIOS), "d"(D0), "a"(a0_sector_dest), "a"(a1_header_dest)
 		: "cc", "d1");
 };
 
 /**
- * @sa _BIOS_CDCACK
+ * @sa BIOS_CDC_ACK
  */
-static inline void bios_cdcack()
+static inline void bios_cdc_ack()
 {
-	register u16 D0 asm("d0") = _BIOS_CDCACK;
+	register u16 D0 asm("d0") = BIOS_CDC_ACK;
 
 	asm volatile(
 		"\
 jsr %p1"
 		: "+d"(D0)
-		: "i"(_CDBIOS), "d"(D0)
+		: "i"(CDBIOS), "d"(D0)
 		: "cc");
 };
 

@@ -1,8 +1,8 @@
-#include "sub/gatearr_def.h"
-#include "sub/macros.s"
-#include "sub/cdrom_macros.s"
-#include "sub/cdrom_def.h"
-#include "macros.s"
+#include <sub/gate_arr.def.h>
+#include <sub/sub.macro.s>
+#include <sub/cdrom.macro.s>
+#include <sub/cdrom.def.h>
+#include <macros.s>
 
 .section .text
 /*
@@ -29,24 +29,24 @@ GLABEL sp_int2
 	interrupts (INT2) have been enabled.
 */
 GLABEL sp_init
-	// it's important to drvinit/cdbstat here even if bios already did it
+	// it's important to drv_init/cdb_stat here even if bios already did it
 	// otherwise there may be issues with CD audio track playback
-	lea drvinit_tracklist, a0
-	CDBIOS #_BIOS_DRVINIT
+	lea drv_init_tracklist, a0
+	BIOSCALL #BIOS_DRV_INIT
 	// loop until done reading the disc TOC
-1:CDBIOS #_BIOS_CDBSTAT
-	andi.b	#0xf0, (_CDSTAT).w
+1:BIOSCALL #BIOS_CDB_STAT
+	andi.b	#0xF0, (CDSTAT).w
 	bne			1b
   CLEAR_COMM_REGS
 	// Put Word RAM into 2M mode and assert control of it
-	andi.w	#~(MSK_GA_RET | MSK_GA_MODE), _GA_MEMMODE
+	andi.w	#~(GA_RET | GA_MODE), GAREG_MEMMODE
 	// This sets up the CD-ROM access loop with initial settings. It only needs
 	// to be called once, here in sp_init
 	INIT_ACC_LOOP
 	rts
 
-drvinit_tracklist:
-	.byte 1, 0xff
+drv_init_tracklist:
+	.byte 1, 0xFF
 
 /*
   sp_main
@@ -58,15 +58,15 @@ GLABEL sp_main
   // when loading data instead of needing sector offsets
 	// We place the load dir command in the access_op variable and wait for the
 	// loop to finish
-	move.w  #ACC_OP_LOAD_DIR, access_op
+	move.w  #CDROM_LOAD_FILE_LIST, access_op
 	WAIT_FOR_ACC_OP
-	cmpi.w	#RESULT_OK, d0
+	cmpi.w	#CDROM_RESULT_OK, d0
 	bne			sp_fatal
 
   // We'll repoint stack to the end of the first bank of PRG-RAM to free up RAM
 	// a little bit (since at this point, as we're about to enter the main loop,
 	// we're not returning to anything)
-	lea			_PRGRAM_1M_1, sp
+	lea			PRG_RAM_BANK2, sp
 
   /*
 	  The architecture of the command loop is like so: we constantly poll COMCMD0
@@ -77,12 +77,12 @@ GLABEL sp_main
 		monitoring COMCMD0/1
 	*/
 command_loop:
-  move.w	_GA_COMCMD0, d0
+  move.w	GAREG_COMCMD0, d0
 	beq			command_loop
-	cmp.w		_GA_COMCMD0, d0
+	cmp.w		GAREG_COMCMD0, d0
 	bne			command_loop
 	#move.w	d0, d1
-	move.w  _GA_COMCMD1, d1
+	move.w  GAREG_COMCMD1, d1
 	add.w		d0, d0
 	move.w	command_tbl(pc,d0.w), d0
 	jsr			command_tbl(pc,d0.w)
@@ -94,12 +94,12 @@ command_loop:
 	Main CPU the work is done and get the comm registers back in "sync."
 */
 command_complete_sync:
-	move.w	_GA_COMCMD0, _GA_COMSTAT0
-1:move.w	_GA_COMCMD0, d0
+	move.w	GAREG_COMCMD0, GAREG_COMSTAT0
+1:move.w	GAREG_COMCMD0, d0
 	bne			1b
-	move.w	_GA_COMCMD0, d0
+	move.w	GAREG_COMCMD0, d0
 	bne			1b
-	move.w	#0, _GA_COMSTAT0
+	move.w	#0, GAREG_COMSTAT0
 	rts
 
 /*
@@ -124,11 +124,11 @@ cmd01_load_mmd:
 	move.w  mmd_file_tbl(pc,d1.w), d1
 	lea			mmd_file_tbl(pc,d1.w), a0
 	WAIT_2M
-	lea			_WRDRAM_2M, a1
+	lea			WORD_RAM_2M, a1
 	// load_file_ is a convenience function to get a file loaded. The filename is
 	// A0 and the destination buffer is in A1
 	jbsr		load_file_sub
-	cmpi.w  #RESULT_OK, d0  // check final status
+	cmpi.w  #CDROM_RESULT_OK, d0  // check final status
   bne     sp_fatal  // had an error, drop everything and freak out
 	GRANT_2M
 	bra		command_complete_sync
@@ -144,8 +144,8 @@ cmd02_play_cdda:
 	add.w d1, d1
 	lea	cd_track(pc,d1.w), a0
 	move.w	#0x400, d1
-	CDBIOS #_BIOS_FDRSET
-	CDBIOS #_BIOS_MSCPLAYR
+	BIOSCALL #BIOS_FDR_SET
+	BIOSCALL #BIOS_MSC_PLAYR
 	bra			command_complete_sync
 cd_track:
 	.word 2
@@ -162,8 +162,8 @@ GLABEL sp_user
 sp_fatal:
 	// make both LEDs blink (which is normally disallowed but Sega QA isn't
 	// here to boss us around)
-	moveq		#_LED_ERROR, d1
-	CDBIOS #_BIOS_LEDSET
+	moveq		#BIOS_LED_ERROR, d1
+	BIOSCALL #BIOS_LEDSET
 0:nop
 	nop
 	bra 0b

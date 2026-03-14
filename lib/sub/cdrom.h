@@ -8,7 +8,8 @@
 #ifndef MEGADEV__SUB_CDROM_H
 #define MEGADEV__SUB_CDROM_H
 
-#include "sub/cdrom_def.h"
+#include "sub/bios.h"
+#include "sub/cdrom.def.h"
 #include "sub/memmap.h"
 #include "types.h"
 
@@ -16,7 +17,7 @@
  * @var filebuff
  * @brief Pointer to the buffer to store the output file
  * @details This is only used with the Sub CPU Direct Load operation!
- * For the DMA operations, use the GA_DMAADDR register to specify a
+ * For the DMA operations, use the ga_dmaaddr register to specify a
  * destination buffer.
  */
 extern u8 * filebuff;
@@ -52,53 +53,53 @@ extern volatile u32 filesize;
  * @fn load_file
  * @brief
  */
-static inline u32 load_file (
-	u16 const access_operation, char const * load_filename, u8 * buffer)
+static inline u32
+load_file(u16 const access_operation, char const * load_filename, u8 * buffer)
 {
-	access_op = access_operation;
-	if (access_op == 0)
-		return RESULT_OK;
+  access_op = access_operation;
+  if (access_op == 0)
+    return CDROM_RESULT_OK;
 
-	filename = load_filename;
-	filebuff = buffer;
+  filename = load_filename;
+  filebuff = buffer;
 
-	do
-	{
-		bios_waitvsync();
-	} while (access_op != ACC_OP_IDLE);
+  do
+  {
+    bios_waitvsync();
+  } while (access_op != CDROM_IDLE);
 
-	if (access_op_result == RESULT_OK)
-		return filesize;
-	else
-		return 0;
+  if (access_op_result == CDROM_RESULT_OK)
+    return filesize;
+  else
+    return 0;
 }
 
 typedef struct FileInfo
 {
-	char const filename[14]; // FILENAME.EXT;1
-	u32 offset;							 // in SECTORS
-	u32 size;								 // in BYTES
+  char const filename[14]; // FILENAME.EXT;1
+  u32        offset;       // in SECTORS
+  u32        size;         // in BYTES
 } FileInfo;
 
 // TODO file info struct!
-static inline FileInfo * find_file_c (char const * filename)
+static inline FileInfo * find_file_c(char const * filename)
 {
-	register u32 a0_filename asm("a0") = (u32) filename;
-	register u32 a0_fileinfo asm("a0");
+  register u32 a0_filename asm("a0") = (u32) filename;
+  register u32 a0_fileinfo asm("a0");
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 			jsr find_file \n\
 			bcc 1f \n\
 			rts \n\
 		1:lea 0,a0 \n\
 			rts \n\
 		"
-		: "+a"(a0_fileinfo)
-		: "a"(a0_filename)
-		: "d0", "d1", "a2");
+    : "+a"(a0_fileinfo)
+    : "a"(a0_filename)
+    : "d0", "d1", "a2");
 
-	return (FileInfo *) a0_fileinfo;
+  return (FileInfo *) a0_fileinfo;
 }
 
 #endif

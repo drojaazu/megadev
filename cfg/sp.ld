@@ -11,38 +11,37 @@ MEMORY
 		Default size is 0x4000 (16KB) which is enough to include the 4KB directory
 		cache and 2KB sector buffer used by the CD-ROM access, with space to spare.
   */
-  SP (wx): ORIGIN = 0x6000, LENGTH = (DEFINED(SP_LENGTH) ? SP_LENGTH : 0x4000)
+  SP (rx): ORIGIN = 0x6000, LENGTH = (DEFINED(SP_LENGTH) ? SP_LENGTH : 0x4000)
 }
 
 SECTIONS
 {
-  .text :
+  .text (READONLY) :
   {
-		_sp_org = .;
-    _sp_text_org = .;
+		_TEXT_ORIGIN = .;
     *(.header*)
     *(.text*)
     *(.rodata*)
-		_sp_text_end = .;
-    _sp_text_len = ABSOLUTE(. - _sp_text_org);
+    _TEXT_LENGTH = ABSOLUTE(. - _TEXT_ORIGIN);
   } > SP
 
   .data : AT ( ADDR(.text) + SIZEOF(.text) )
   {
-    _sp_data_org = .;
+    _RAM_ORIGIN = .;
+    _RAM_DATA_ORIGIN = .;
     *(.data*)
-		_sp_data_end = .;
-    _sp_data_len = ABSOLUTE(. - _sp_data_org);
+		. = ALIGN(4);
+    _RAM_DATA_LENGTH = ABSOLUTE(. - _RAM_DATA_ORIGIN) >> 2;
   } > SP
 
   .bss :
   {
-    _sp_bss_org = .;
+    _BSS_ORIGIN = .;
     *(.bss*)
-		_sp_bss_end = .;
-    _sp_bss_len = ABSOLUTE(. - _sp_bss_org);
+    . = ALIGN(4);
+    _BSS_LENGTH = ABSOLUTE(. - _BSS_ORIGIN);
   } > SP
-	_sp_end = .;
-	_sp_ram_len = _sp_data_len + _sp_bss_len;
+  _RAM_LENGTH = _RAM_DATA_LENGTH + _BSS_LENGTH;
+
 
 }

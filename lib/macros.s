@@ -8,7 +8,9 @@
 #ifndef MACROS_S
 #define MACROS_S
 
-.macro FUNC name, align=2
+#include <system.macros.s>
+
+.macro SUB name, align=2
   //.section .text.asm.\name
   .global  \name
   .type   \name, @function
@@ -33,7 +35,7 @@
 .macro FILE path, label, align=2
   LOCAL file_end
   LOCAL file_start
-  GLABEL \label
+  GLABEL \label \align
   GLABEL \label\()_size
   .long file_end - file_start
 file_start:
@@ -41,13 +43,12 @@ file_start:
 file_end:
 .endm
 
-.macro INTERRUPT_DISABLE
-  ori #0x700, sr
+.macro FILE_NOSIZE path, label, align=2
+  GLABEL \label \align
+  .incbin \path
 .endm
 
-.macro INTERRUPT_ENABLE
-  andi #0xF8FF, sr
-.endm
+
 
 /**
  * @brief Convert a value to binary coded decimal
@@ -57,44 +58,12 @@ file_end:
  */
 .macro HEX2BCD
 	ext.l	d0
-	divu.w	#0xa, d0
+	divu.w	#0xA, d0
 	move.b	d0, d1
 	lsl.b	#4, d1
 	swap	d0
 	move	#0, ccr /* why?*/
 	abcd	d1, d0
-.endm
-
-/**
- * @brief Push a value on to the stack
- * @param reg Register holding the value to push
- */
-.macro PUSH reg
-	move.l \reg, -(sp)
-.endm
-
-/**
- * @brief Pop a value from the stack
- * @param reg Register to hold the popped value
- */
-.macro POP reg
-	move.l  (sp)+, \reg
-.endm
-
-/**
- * @brief Push multiple values on to the stack
- * @param regs Register list
- */
-.macro PUSHM regs
-	movem.l \regs, -(sp)
-.endm
-
-/**
- * @brief Pop multiple values from the stack
- * @param regs Register list
- */
-.macro POPM regs
-	movem.l (sp)+, \regs
 .endm
 
 /*

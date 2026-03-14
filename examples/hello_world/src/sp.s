@@ -4,26 +4,26 @@
 	Check out one of the other examples for something more substantial.
 */
 
-#include "macros.s"
-#include "sub/bios_def.h"
-#include "sub/macros.s"
+#include <macros.s>
+#include <sub/bios.def.h>
+#include <sub/sub.macro.s>
 
 .section .text
 
 GLABEL sp_init
-	// it's important to drvinit/cdbstat here even if bios already did it
+	// it's important to drv_init/cdb_stat here even if bios already did it
 	// otherwise there may be issues with CD audio track playback
-	lea drvinit_tracklist, a0
-	CDBIOS #_BIOS_DRVINIT
+	lea drv_init_tracklist, a0
+	BIOSCALL #BIOS_DRV_INIT
 	// loop until done reading the disc TOC
-1:CDBIOS #_BIOS_CDBSTAT
-	andi.b	#0xf0, (_CDSTAT).w
+1:BIOSCALL #BIOS_CDB_STAT
+	andi.b	#0xF0, (CDSTAT).w
 	bne			1b
 	CLEAR_COMM_REGS
   rts
 
-drvinit_tracklist:
-	.byte 1, 0xff
+drv_init_tracklist:
+	.byte 1, 0xFF
 
 GLABEL sp_int2
 GLABEL sp_main

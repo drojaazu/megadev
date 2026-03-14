@@ -1,74 +1,76 @@
-#include "ipx.h"
-#include "main/bootlib.h"
-#include "main/gatearr.h"
-#include "main/io_def.h"
-#include "main/memmap.h"
-#include "main/mmd_exec.h"
-#include "main/vdp.h"
-#include "system.h"
-
-u8 global_mode;
+#include "shared.h"
+#include <fixed.h>
+#include <main/bios.h>
+#include <main/gate_arr.h>
+#include <main/io.def.h>
+#include <main/memmap.h>
+#include <main/vdp.h>
+#include <system.h>
+#include <types.h>
 
 void play_pcm()
 {
-	*GA_COMCMD0 = 0x10;
+  *gareg_comcmd0 = CMD_PLAY_PCM;
 
-	blib_print ("Playing...\xff",
-		(VDPPTR (NMT_POS_PLANE (1, 2, _BLIB_PLANEA_ADDR)) | VRAM_W));
+  bios_print(
+    "Playing...\xff",
+    (vdp_ptr(BIOS_VDP_DEFAULT_PLANEA + PLANE_POS(1, 2, Width64)) | VRAM_W));
 
-	// wait for the playing flag to clear
-	while (*GA_COMFLAGS_SUB & 0x80)
-		;
+  // wait for the playing flag to clear
+  while (*ga_comflags_sub & 0x80)
+    ;
 
-	while (*GA_COMSTAT0 == 0)
-		;
-	*GA_COMCMD0 = 0;
-	while (*GA_COMSTAT0 != 0)
-		;
+  while (*gareg_comstat0 == 0)
+    ;
+  *gareg_comcmd0 = 0;
+  while (*gareg_comstat0 != 0)
+    ;
 
-	blib_print ("Done      \xff",
-		(VDPPTR (NMT_POS_PLANE (1, 2, _BLIB_PLANEA_ADDR)) | VRAM_W));
+  bios_print(
+    "Done      \xff",
+    (vdp_ptr(BIOS_VDP_DEFAULT_PLANEA + PLANE_POS(1, 2, Width64)) | VRAM_W));
 }
 
 void load_pcm()
 {
-	blib_print ("Loading...\xff",
-		(VDPPTR (NMT_POS_PLANE (1, 2, _BLIB_PLANEA_ADDR)) | VRAM_W));
-	*GA_COMCMD0 = 2;
-	while (*GA_COMSTAT0 == 0)
-		;
-	*GA_COMCMD0 = 0;
-	while (*GA_COMSTAT0 != 0)
-		;
+  bios_print(
+    "Loading...\xff",
+    (vdp_ptr(BIOS_VDP_DEFAULT_PLANEA + PLANE_POS(1, 2, Width64)) | VRAM_W));
+  *gareg_comcmd0 = CMD_LOAD_PRGRAM;
+  while (*gareg_comstat0 == 0)
+    ;
+  *gareg_comcmd0 = 0;
+  while (*gareg_comstat0 != 0)
+    ;
 
-	play_pcm();
+  play_pcm();
 }
 
 void main()
 {
-	// basic setup stuff we've covered elsewhere
-	MLEVEL6_VECTOR = (void *(*) ) _BLIB_VINT_HANDLER;
-	enable_interrupts();
-	blib_load_font_defaults();
-	BLIB_PALETTE[1] = 0xeee;
-	BLIB_VDP_UPDATE_FLAGS |= PAL_UPDATE_MSK;
+  bios_load_font_defaults();
+  bios_palette[1] = 0xEEE;
+  bios_vdp_update_flags |= BIOS_VDPUPDATE_COPY_PALETTE_FLAG;
+  bios_vint_wait_default();
 
-	blib_print ("PCM Audio Playback\xff",
-		(VDPPTR (NMT_POS_PLANE (1, 1, _BLIB_PLANEA_ADDR)) | VRAM_W));
+  bios_print(
+    "PCM Audio Playback\xff",
+    (vdp_ptr(BIOS_VDP_DEFAULT_PLANEA + PLANE_POS(1, 1, Width64)) | VRAM_W));
 
-	load_pcm();
+  load_pcm();
 
-	blib_print ("Press A to replay\xff",
-		(VDPPTR (NMT_POS_PLANE (1, 4, _BLIB_PLANEA_ADDR)) | VRAM_W));
+  bios_print(
+    "Press A to replay\xff",
+    (vdp_ptr(BIOS_VDP_DEFAULT_PLANEA + PLANE_POS(1, 4, Width64)) | VRAM_W));
 
-	// main loop
-	while (true)
-	{
-		blib_vint_wait_default();
+  // main loop
+  while (true)
+  {
+    bios_vint_wait_default();
 
-		if ((BLIB_JOY1_PRESS & PAD_A_MSK))
-		{
-			play_pcm();
-		}
-	}
+    if ((bios_joy1_hit & PAD_A))
+    {
+      play_pcm();
+    }
+  }
 }
