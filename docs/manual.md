@@ -1,22 +1,3 @@
-
-Documentation
-
-- readme
-- bootlib
-- cdrom - include information about file loading without the wrapper (move by offset, load into CDC in loop, etc); re-evaluate some of teh naming the whole CDROM access wrapper subsystem
-- dev_in_c - touch up in general, especially the stack usage section
-- disc
-- ip_sp
-- modules
-- program design
-- start here
-
-
-Merge everything into one manual...
-
----
-
-
 # [ M E G A D E V ]
 
 *AV INTELLIGENT TERMINAL WITH OPTICAL DISC DRIVE*
