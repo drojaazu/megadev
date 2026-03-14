@@ -1,49 +1,52 @@
 OUTPUT_ARCH(m68k)
 
 /* Sub CPU Module (SMD)
-	Does not contain a header, but does specify ROM and RAM regions
+  Does not contain a header, but does specify ROM and RAM regions
 */
 
 MEMORY
 {
-	MODULE_ROM (wx): ORIGIN = MODULE_ROM_ORIGIN, LENGTH = MODULE_ROM_LENGTH
-	MODULE_RAM (w): ORIGIN = MODULE_RAM_ORIGIN, LENGTH = MODULE_RAM_LENGTH
+  MODULE_ROM (rx): ORIGIN = MODULE_ROM_ORIGIN, LENGTH = MODULE_ROM_LENGTH
+  MODULE_RAM (rw): ORIGIN = MODULE_RAM_ORIGIN, LENGTH = MODULE_RAM_LENGTH
 }
 
 SECTIONS
 {
-	ENTRY(main)
-  .text MODULE_ROM_ORIGIN : 
+  ENTRY(main)
+  .rom MODULE_ROM_ORIGIN : 
   {
-    _mod_rom_org = .;
-		*(.init)
-		_mod_text_org = .;
+    _INIT_ORIGIN = .;
+    *(.init)
+    . = ALIGN(4);
+    _INIT_LENGTH = ABSOLUTE(. - _INIT_ORIGIN);
+    _TEXT_ORIGIN = .;
     *(.text*)
-		_mod_text_end = .;
-		_mod_text_len = ABSOLUTE(. - _mod_text_org);
+    . = ALIGN(4);
+    _TEXT_LENGTH = ABSOLUTE(. - _TEXT_ORIGIN);
+    _RODATA_ORIGIN = .;
     *(.rodata*)
-		/* Align to 4 since moving data by longs is more efficient */
-		. = ALIGN(4);
-		_mod_rom_end = .;
-		_mod_rom_len = ABSOLUTE(. - _mod_rom_org);
+    . = ALIGN(4);
+    _RODATA_LENGTH = ABSOLUTE(. - _RODATA_ORIGIN);
+    _ROM_LENGTH = ABSOLUTE(. - _INIT_ORIGIN);
+    _ROM_LENGTH_LOOPSZ = ABSOLUTE(_ROM_LENGTH) >> 2;
+    _ROM_DATA_ORIGIN = .;
   } > MODULE_ROM
 
-  .data MODULE_RAM_ORIGIN : AT ( ADDR(.text) + SIZEOF(.text) )
+  .ram_bss MODULE_RAM_ORIGIN :
   {
-		_mod_ram_org = .;
-		_mod_data_org = .;
-		*(.data*)
-		_mod_data_end = .;
-		_mod_data_len = ABSOLUTE(. - _mod_data_org);
+    _BSS_ORIGIN = .;
+    *(.bss*)
+    . = ALIGN(4);
+    _BSS_LENGTH = ABSOLUTE(. - _BSS_ORIGIN);
+    _BSS_LENGTH_LOOPSZ = ABSOLUTE(_BSS_LENGTH) >> 2;
   } > MODULE_RAM
 
-	.bss :
-	{
-		_mod_bss_org = .;
-		*(.bss*)
-		_mod_bss_end = .;
-		_mod_bss_len = ABSOLUTE(. - _mod_bss_org);
-	} > MODULE_RAM
-	_mod_ram_len = _mod_data_len + _mod_bss_len;
-
+  .ram_data : AT ( ADDR(.rom) + SIZEOF(.rom) )
+  {
+    _RAM_DATA_ORIGIN = .;
+    *(.data*)
+    . = ALIGN(4);
+    _RAM_DATA_LENGTH = ABSOLUTE(. - _RAM_DATA_ORIGIN);
+    _RAM_DATA_LENGTH_LOOPSZ = ABSOLUTE(_RAM_DATA_LENGTH) >> 2;
+  } > MODULE_RAM
 }

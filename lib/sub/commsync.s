@@ -2,7 +2,7 @@
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
  * @file commsync.s
- * @brief Gate Array comm register sync for use with _BLIB_COMM_SYNC in the
+ * @brief Gate Array comm register sync for use with BIOS_COMM_SYNC in the
  * Boot ROM library (EXPERIMENTAL)
  * 
  * This still needs a fair amount of research...
@@ -14,15 +14,15 @@
 .section .text
 
 #include "macros.s"
-#include "memmap_def.h"
+#include "memmap.def.h"
 
-FUNC comm_sync
-	lea _GA_COMFLAGS+1, a0
-	btst #0, _GA_COMFLAGS
+SUB comm_sync
+	lea GAREG_COMFLAGS+1, a0
+	btst #0, GAREG_COMFLAGS
 	beq 2f
 	bset #0, (a0)
 	lea _COMCMD0, a2
-	lea _GA_COMCMD0, a1
+	lea GAREG_COMCMD0, a1
 	move.l (a1)+, (a2)+
 	move.l (a1)+, (a2)+
 	move.l (a1)+, (a2)+

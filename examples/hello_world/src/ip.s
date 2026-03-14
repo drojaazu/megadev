@@ -1,96 +1,93 @@
 
-// Boot security block - This must be at the top of your IP!
-#include "sec_check.s"
-
 .section .text
+
+#include <macros.s>
+#include <system.macros.s>
+#include <main/memmap.def.h>
+#include <main/bios.def.h>
+#include <main/vdp.macros.s>
+#include <main/gate_arr.def.h>
+#include <main/vdp.def.h>
+#include <main/io.def.h>
 
 /*
   Very simple Hello World example
   We'll load the BIOS font and display some text
 */
 
-#include "macros.s"
-#include "main/memmap_def.h"
-#include "main/bootlib_def.h"
-#include "main/vdp_macros.s"
-#include "main/gatearr_def.h"
-#include "main/vdp_def.h"
-#include "main/io_def.h"
-
-ip_entry:
   // First, disable all interrupts while we get things set up
-  ori #0x700,sr
+  DISABLE_INTERRUPTS
 
-  /*
-    Something we need to do very early on is start informing the Sub CPU of 
-    vblank interrupts. The VINT handler built into the Boot ROM takes care of
-    this, so let's go ahead and point the VINT vector (interrupt level 6) to
-    the built in handler.
-  */
-  move.l	#_BLIB_VINT_HANDLER, (_MLEVEL6 + 2)
+  // clear Work RAM so there are no nasty surprises in memory (such as leftovers
+  // from the "Produced by or Under License From" screen)
+  moveq    #0, d0
+  move.l   #_BSS_LENGTH, d1
+  lea      _BSS_ORIGIN, a0
+  bra 1f
+0:move.l   d0, (a0)+
+1:dbra     d1, 0b
 
-  move.b #0, (_GA_COMFLAGS)
+  jbsr     BIOS_LOAD_DEFAULT_VDPREGS
+  jbsr     BIOS_CLEAR_VRAM
+  jbsr     BIOS_CLEAR_COMM
 
-  // We'll also use the Boot ROM VDP defaults
-  // (these defaults include disabling the display)
-  jbsr _BLIB_LOAD_VDPREGS_DEFAULT
-  
-  // Clear all of VRAM to give a fresh start
-  jbsr _BLIB_CLEAR_VRAM
+  move     #0, (BIOS_VINT_HANDLER_FLAGS)
+  move.l   #BIOS_VINT_HANDLER, (EXVEC_LEVEL6)
 
   /*
     Now we'll load the internal Boot ROM font into the VDP with the default
     settings
   */
-  jbsr _BLIB_LOAD_FONT_DEFAULTS
+  jbsr BIOS_LOAD_FONT_DEFAULTS
   
   // The font uses palette entry #1, so we'll manually set that to white
-  move.l #0xC0020000, (_VDP_CTRL)
-  move.w #0x0EEE, (_VDP_DATA)
+  move.l   #0xC0020000, (VDP_CTRL)
+  move.w   #0x0EEE, (VDP_DATA)
 
   // Call our utility function to get the x/y position of a tile
-  move.w #0x0205, d0
-  jbsr nmtbl_xy_pos
+  move.w   #0x0205, d0
+  jbsr     plane_xy_pos
 
   lea str_hello, a1
-  jbsr _BLIB_PRINT
+  jbsr     BIOS_PRINT
 
-  // And finally enable the display
-  jbsr _BLIB_VDP_DISP_ENABLE
+  // we can finally turn the display output back on now that everything is
+  // prepared
+  jbsr     BIOS_VDP_DISP_ENABLE
 
   // and restore interrupts
-  andi #0xF8FF,sr
+  ENABLE_INTERRUPTS
 
 loop:
-  jbsr _BLIB_VINT_HANDLER_WAIT_DEFAULT
+  jbsr     BIOS_VINT_WAIT_DEFAULT
   // Inputs are updated as part of the default vint wait subroutine
   // so we can assume the input value is current
-  and.b #PAD_START_MSK, _BLIB_JOY1_PRESS
-	beq loop
+  and.b    #PAD_START, BIOS_JOY1_HIT
+	beq      loop
 	
-  jmp _BLIB_RESET
+  jmp      BIOS_RESET
 
-FUNC nmtbl_xy_pos
-1:move.w (_BLIB_PLANE_WIDTH), d1  // d1 - tiles per row 
-  move.w d0, d2  // d0 - x/y offset (upper/lower bytes of the word)
-  lsr.w #8, d2  // d2 has x pos
-  and.w #0xff, d0  // filter d0 so it only has y pos
-  mulu d1, d0
+SUB plane_xy_pos
+1:move.w   (BIOS_PLANE_WIDTH_CACHE), d1  // d1 - tiles per row 
+  move.w   d0, d2  // d0 - x/y offset (upper/lower bytes of the word)
+  lsr.w    #8, d2  // d2 has x pos
+  and.w    #0xFF, d0  // filter d0 so it only has y pos
+  mulu     d1, d0
   // d0 is now y pos * tiles per row
   // add x pos
-  add.b d2, d0
+  add.b    d2, d0
   // multiply by 2 for tilemap entry size
-  lsl.l #1, d0
+  lsl.l    #1, d0
   // TODO: make this dynamic
-  add.w #0xc000, d0
+  add.w    #0xC000, d0
 
-  // convert the address in d0 to vdpptr format
+  // convert the address in d0 to vdp_ptr format
   TO_VDPPTR
   // and set the VRAM write operation flags
-  or.l #VRAM_W, d0
+  or.l     #VRAM_W, d0
   rts
 
 .section .rodata
 str_hello:
 .ascii "Hello World!\xff"
-.align 2
+

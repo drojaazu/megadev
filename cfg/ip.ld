@@ -10,36 +10,38 @@ MEMORY
 
 		Default size is 0xE00, the full size allowed within the boot sector.
   */
-  IP (wx): ORIGIN = 0xFF0000, LENGTH = (DEFINED(IP_LENGTH) ? IP_LENGTH : 0xE00)
+  IP (rwx): ORIGIN = 0xFF0000, LENGTH = (DEFINED(IP_LENGTH) ? IP_LENGTH : 0xE00)
 }
 
 SECTIONS
 {
-  .text :
+  .text (READONLY) :
   {
-		_ip_org = .;
-    _ip_text_org = .;
+		_TEXT_ORIGIN = .;
+    *(.security*)
     *(.text*)
     *(.rodata*)
-		_ip_text_end = .;
-    _ip_text_len = ABSOLUTE(. - _ip_text_org);
+    _TEXT_LENGTH = ABSOLUTE(. - _TEXT_ORIGIN);
   } > IP
 
-  .data  : AT ( ADDR(.text) + SIZEOF(.text) )
+  .ram_bss :
   {
-    _ip_data_org = .;
-    *(.data*)
-		_ip_data_end = .;
-    _ip_data_len = ABSOLUTE(. - _ip_data_org);
-  } > IP
-
-  .bss :
-  {
-    _ip_bss_org = .;
+    _BSS_ORIGIN = .;
     *(.bss*)
-		_ip_bss_end = .;
-    _ip_bss_len = ABSOLUTE(. - _ip_bss_org);
+    . = ALIGN(4);
+    _BSS_LENGTH = ABSOLUTE(. - _BSS_ORIGIN);
+    _BSS_LENGTH_LOOPSZ = ABSOLUTE(_BSS_LENGTH) >> 2;
   } > IP
-	_ip_end = .;
+
+  .data : AT ( ADDR(.text) + SIZEOF(.text) )
+  {
+    _RAM_ORIGIN = .;
+    _RAM_DATA_ORIGIN = .;
+    *(.data*)
+    . = ALIGN(4);
+    _RAM_DATA_LENGTH = ABSOLUTE(. - _RAM_DATA_ORIGIN) >> 2;
+  } > IP
+
+  _RAM_LENGTH = _RAM_DATA_LENGTH + _BSS_LENGTH >> 2;
 
 }

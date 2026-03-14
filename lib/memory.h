@@ -13,22 +13,22 @@
 #ifndef MEGADEV__MEMORY_H
 #define MEGADEV__MEMORY_H
 
-#include "types.h"
+#include <types.h>
 
 /**
  * @fn memset8
  * @brief Set a range of memory to an 8-bit value
  */
-static inline void memset8 (u8 value, u8 * dest, u32 length)
+static inline void memset8(u8 value, void * dest, u32 length)
 {
 	--length;
-	asm (
+	asm volatile(
 		"\
-		1:move.b %2, (%0)+ \n\
-			dbf 1b, %1 \n\
+1:move.b %[value], (%[dest])+ \n\
+  dbf %[length], 1b \n\
 		"
-		: "+a"(dest), "+d"(length)
-		: "d"(value)
+		: [dest] "+a"(dest), [length] "+d"(length)
+		: [value] "d"(value)
 		: "cc");
 }
 
@@ -36,16 +36,16 @@ static inline void memset8 (u8 value, u8 * dest, u32 length)
  * @fn memset16
  * @brief Set a range of memory to a 16-bit value
  */
-static inline void memset16 (u16 value, u8 * dest, u32 length)
+static inline void memset16(u16 value, void * dest, u32 length)
 {
 	--length;
-	asm (
+	asm volatile(
 		"\
-	1:move.w %0, (%1)+ \n\
-		dbf 1b, %2 \n\
+1:move.w %[value], (%[dest])+ \n\
+  dbf %[length], 1b \n\
 		"
-		:
-		: "d"(value), "a"(dest), "d"(length)
+		: [dest] "+a"(dest), [length] "+d"(length)
+		: [value] "d"(value)
 		: "cc");
 }
 
@@ -53,16 +53,16 @@ static inline void memset16 (u16 value, u8 * dest, u32 length)
  * @fn memset32
  * @brief Set a range of memory to a 32-bit value
  */
-static inline void memset32 (u16 value, u8 * dest, u32 length)
+static inline void memset32(u32 value, void * dest, u32 length)
 {
 	--length;
-	asm (
+	asm volatile(
 		"\
-	1:move.l %0, (%1)+ \n\
-		dbf 1b, %2 \n\
+1:move.l %[value], (%[dest])+ \n\
+  dbf %[length], 1b \n\
 		"
-		:
-		: "d"(value), "a"(dest), "d"(length)
+		: [dest] "+a"(dest), [length] "+d"(length)
+		: [value] "d"(value)
 		: "cc");
 }
 
@@ -70,16 +70,16 @@ static inline void memset32 (u16 value, u8 * dest, u32 length)
  * @fn memset8
  * @brief Copy a range of 8bit memory values
  */
-static inline void memcpy8 (u8 * src, u8 * dest, u32 length)
+static inline void memcpy8(u8 * src, u8 * dest, u32 length)
 {
 	--length;
-	asm (
+	asm volatile(
 		"\
-	1:move.b (%0)+, (%1)+ \n\
-		dbf 1b, %2 \n\
+1:move.b (%[src])+, (%[dest])+ \n\
+  dbf %[length], 1b \n\
 		"
+		: [src] "+a"(src), [dest] "+a"(dest), [length] "+d"(length)
 		:
-		: "a"(src), "a"(dest), "d"(length)
 		: "cc");
 }
 
@@ -87,16 +87,16 @@ static inline void memcpy8 (u8 * src, u8 * dest, u32 length)
  * @fn memset16
  * @brief Copy a range of 16bit memory values
  */
-static inline void memcpy16 (u16 * src, u16 * dest, u32 length)
+static inline void memcpy16(u16 const * src, u16 * dest, u32 length)
 {
 	--length;
-	asm (
+	asm volatile(
 		"\
-	1:move.w (%0)+, (%1)+ \n\
-		dbf 1b, %2 \n\
+1:move.w (%[src])+, (%[dest])+ \n\
+  dbf %[length], 1b \n\
 		"
+		: [src] "+a"(src), [dest] "+a"(dest), [length] "+d"(length)
 		:
-		: "a"(src), "a"(dest), "d"(length)
 		: "cc");
 }
 
@@ -104,17 +104,24 @@ static inline void memcpy16 (u16 * src, u16 * dest, u32 length)
  * @fn memset32
  * @brief Copy a range of 32bit memory values
  */
-static inline void memcpy32 (u32 * src, u32 * dest, u32 length)
+static inline void memcpy32(u32 const * src, u32 * dest, u32 length)
 {
 	--length;
-	asm (
+	asm volatile(
 		"\
-	1:move.l (%0)+, (%1)+ \n\
-		dbf 1b, %2 \n\
+1:move.l (%[src])+, (%[dest])+ \n\
+  dbf %[length], 1b \n\
 		"
+		: [src] "+a"(src), [dest] "+a"(dest), [length] "+d"(length)
 		:
-		: "a"(src), "a"(dest), "d"(length)
 		: "cc");
+}
+
+void strcpy(char* dest, const char* src) {
+    while ((*dest = *src) != '\0') {
+        dest++;
+        src++;
+    }
 }
 
 #endif

@@ -8,12 +8,12 @@
 #ifndef MEGADEV__SUB_BRAM_H
 #define MEGADEV__SUB_BRAM_H
 
-#include "sub/bram_def.h"
-#include "sub/memmap_def.h"
 #include "types.h"
+#include <sub/bram.def.h>
+#include <sub/memmap.def.h>
 
-u8 bram_WRKRAM[0x640];
-u8 bram_string_ram[12];
+u8 bram_work_buff[0x640];
+u8 bram_string_buff[12];
 
 enum BramStatus
 {
@@ -29,12 +29,10 @@ enum BramStatus
  */
 typedef struct BrminitRes
 {
-	u16 bram_size;
+	u16							bram_size;
 	enum BramStatus status;
-	char * strings;
+	char *					strings;
 } BrminitRes;
-
-BrminitRes init_info;
 
 /**
  * @def bram_brminit
@@ -46,10 +44,10 @@ BrminitRes init_info;
  * fourth status, representing a non-failure. The BramStatus enum reflects the C
  * version status.
  */
-static inline BrminitRes * bram_brminit()
+static inline void bram_brminit(BrminitRes * init_status)
 {
-	register u32 a0_bram_WRKRAM asm("a0") = (u32) bram_WRKRAM;
-	register u32 a1_bram_string_ram asm("a1") = (u32) bram_string_ram;
+	register u32 a0_bram_work_buff asm("a0") = (u32) bram_work_buff;
+	register u32 a1_bram_string_buff asm("a1") = (u32) bram_string_buff;
 	register u16 d0_fcode asm("d0") = BRMINIT;
 
 	register u16 d0_bram_size asm("d0");
@@ -63,14 +61,15 @@ static inline BrminitRes * bram_brminit()
 		2: \n\
 		"
 		: "=d"(d0_bram_size), "=d"(d1_bram_status)
-		: "i"(_BURAM), "d"(d0_fcode), "a"(a0_bram_WRKRAM), "a"(a1_bram_string_ram)
+		: "i"(BURAM),
+			"d"(d0_fcode),
+			"a"(a0_bram_work_buff),
+			"a"(a1_bram_string_buff)
 		: "cc");
 
-	init_info.bram_size = d0_bram_size;
-	init_info.status = (enum BramStatus) d1_bram_status;
-	init_info.strings = (char *) a1_bram_string_ram;
-
-	return &init_info;
+	init_status->bram_size = d0_bram_size;
+	init_status->status = (enum BramStatus) d1_bram_status;
+	init_status->strings = (char *) a1_bram_string_buff;
 }
 
 /**
@@ -92,7 +91,7 @@ BrmstatRes brmstat_results;
 static inline BrmstatRes * bram_brmstat()
 {
 	register u16 d0_fcode asm("d0") = BRMSTAT;
-	register u32 a1_bram_string_ram asm("a1") = (u32) bram_string_ram;
+	register u32 a1_bram_string_buff asm("a1") = (u32) bram_string_buff;
 
 	register u16 d0_free asm("d0");
 	register u16 d1_filecount asm("d1");
@@ -102,7 +101,7 @@ static inline BrmstatRes * bram_brmstat()
 		jsr %p2 \n\
 		"
 		: "=d"(d0_free), "=d"(d1_filecount)
-		: "i"(_BURAM), "d"(d0_fcode), "a"(a1_bram_string_ram));
+		: "i"(BURAM), "d"(d0_fcode), "a"(a1_bram_string_buff));
 
 	brmstat_results.free = d0_free;
 	brmstat_results.filecount = d1_filecount;
@@ -112,8 +111,8 @@ static inline BrmstatRes * bram_brmstat()
 
 typedef struct BrmserchRes
 {
-	u16 filesize;
-	u16 mode;
+	u16	 filesize;
+	u16	 mode;
 	u8 * dataptr;
 } BrmserchRes;
 
@@ -125,11 +124,11 @@ BrmserchRes brmserch_results;
  */
 static inline BrmserchRes * bram_brmserch(char const * filename)
 {
-	register u16 d0_fcode asm("d0") = BRMSERCH;
+	register u16					d0_fcode asm("d0") = BRMSERCH;
 	register void const * a0_filename asm("a0") = filename;
 
-	register u16 d0_filesize asm("d0");
-	register u16 d1_filemode asm("d1");
+	register u16		d0_filesize asm("d0");
+	register u16		d1_filemode asm("d1");
 	register void * a0_dataptr asm("a0");
 
 	// if the file is not found, we'll return null
@@ -143,7 +142,7 @@ static inline BrmserchRes * bram_brmserch(char const * filename)
 		2: \n\
 		"
 		: "=d"(d0_filesize), "=d"(d1_filemode), "=a"(a0_dataptr)
-		: "i"(_BURAM), "d"(d0_fcode), "a"(a0_filename)
+		: "i"(BURAM), "d"(d0_fcode), "a"(a0_filename)
 		: "a1", "cc");
 
 	if (a0_dataptr == NULL)
@@ -158,8 +157,8 @@ static inline BrmserchRes * bram_brmserch(char const * filename)
 typedef struct BrmreadRes
 {
 	bool success;
-	u16 filesize;
-	u8 mode;
+	u16	 filesize;
+	u8	 mode;
 } BrmreadRes;
 
 BrmreadRes brmread_results;
@@ -175,19 +174,19 @@ static inline BrmreadRes * bram_brmread(char const * filename, u8 * buffer)
 	register u32 a1_buffer asm("a1") = (u32) buffer;
 
 	register u16 d0_size asm("d0");
-	register u8 d1_mode asm("d1");
+	register u8	 d1_mode asm("d1");
 
 	asm(
 		"\
 		jsr %p2 \n\
 		bcc 2f \n\
-		move.w #0xffff, d0 \n\
+		move.w #0xFFFF, d0 \n\
 	2: \n\
 	"
 		: "=d"(d0_size), "=d"(d1_mode)
-		: "i"(_BURAM), "d"(d0_fcode), "a"(a0_filename), "a"(a1_buffer));
+		: "i"(BURAM), "d"(d0_fcode), "a"(a0_filename), "a"(a1_buffer));
 
-	if (d0_size == 0xffff)
+	if (d0_size == 0xFFFF)
 	{
 		brmread_results.success = false;
 	}
@@ -204,8 +203,8 @@ static inline BrmreadRes * bram_brmread(char const * filename, u8 * buffer)
 typedef struct BramFileInfo
 {
 	char const filename[11];
-	u8 mode;
-	u16 blocksize;
+	u8				 mode;
+	u16				 blocksize;
 } BramFileInfo;
 
 /**
@@ -225,7 +224,7 @@ static inline bool bram_brmwrite(BramFileInfo const * params, u8 const * data)
 		2: \n\
 		"
 		:
-		: "i"(_BURAM), "d"(d0_fcode), "a"(a0_params), "a"(a1_data)
+		: "i"(BURAM), "d"(d0_fcode), "a"(a0_params), "a"(a1_data)
 		: "d1", "cc"
 		: failed);
 
@@ -249,7 +248,7 @@ static inline bool bram_brmdel(char const (*filename)[11])
 			bcs %l[failed] \n\
 		"
 		:
-		: "i"(_BURAM), "d"(D0), "a"(A0)
+		: "i"(BURAM), "d"(D0), "a"(A0)
 		: "d1", "a1", "cc"
 		: failed);
 
@@ -262,7 +261,8 @@ failed:
 /**
  * @sa BRMDIR
  */
-static inline bool bram_brmdir(char const * filename, u8 * dirbuffer, u16 const fileskip, u16 const dirsize)
+static inline bool bram_brmdir(
+	char const * filename, u8 * dirbuffer, u16 const fileskip, u16 const dirsize)
 {
 	register u16 d0_fcode asm("d0") = BRMDIR;
 	register u32 a0_filename asm("a0") = (u32) filename;
@@ -275,7 +275,11 @@ static inline bool bram_brmdir(char const * filename, u8 * dirbuffer, u16 const 
 			bcs %l[too_large] \n\
 		"
 		:
-		: "i"(_BURAM), "d"(d0_fcode), "d"(d1_params), "a"(a0_filename), "a"(a1_dirbuffer)
+		: "i"(BURAM),
+			"d"(d0_fcode),
+			"d"(d1_params),
+			"a"(a0_filename),
+			"a"(a1_dirbuffer)
 		: "cc"
 		: too_large);
 
@@ -298,7 +302,7 @@ static inline bool bram_brmformat()
 			bcs %l[failed] \n\
 		"
 		:
-		: "i"(_BURAM), "d"(D0)
+		: "i"(BURAM), "d"(D0)
 		: "d1", "a0", "a1", "cc"
 		: failed);
 
@@ -332,7 +336,7 @@ static inline enum BrmverifyStatus bram_brmverify(BramFileInfo const * params)
 		1: \n\
 		"
 		: "=d"(d0_result)
-		: "i"(_BURAM), "d"(d0_fcode), "a"(A0)
+		: "i"(BURAM), "d"(d0_fcode), "a"(A0)
 		: "a1");
 
 	return d0_result;

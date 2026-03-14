@@ -1,6 +1,6 @@
 # Doxyfile 1.8.13
 DOXYFILE_ENCODING	= UTF-8
-PROJECT_NAME			= megadev
+PROJECT_ID			= megadev
 PROJECT_NUMBER		= 1
 PROJECT_BRIEF			= "A Sega Mega CD development framework"
 OUTPUT_DIRECTORY	= docs
@@ -11,7 +11,12 @@ GENERATE_HTML			= YES
 RECURSIVE         = YES
 EXTRACT_STATIC		= YES
 MARKDOWN_SUPPORT	= YES
-
-INPUT							= README.md disc.md design.md cdrom.md bootrom.md modules.md ip_sp.md lib
+ENABLE_PREPROCESSING = YES
+MACRO_EXPANSION      = YES
+EXPAND_ONLY_PREDEF   = YES
+PREDEFINED           = "TARGET=MEGACD"
+INPUT							= README.md bios.md cdrom.md dev_in_c.md disc.md modules.md ip_sp.md program_design.md start_here.md lib
 FILE_PATTERNS			= *.h *.s *.c *.md
-ALIASES += "clobber=@warning REGISTER CLOBBERS: " 
+ALIASES += clobber="\warning REGISTER CLOBBERS: "
+ALIASES += aliases="^^Aliases: \ref "
+ALIASES += aliasof="^^Alias of \ref "
