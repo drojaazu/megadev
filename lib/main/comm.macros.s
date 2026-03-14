@@ -5,8 +5,8 @@
  * @brief Serial communications utilities
  */
 
-#ifndef MEGADEV___MACROS_COMM_S
-#define MEGADEV___MACROS_COMM_S
+#ifndef MEGADEV___COMM_MACROS_S
+#define MEGADEV___COMM_MACROS_S
 
 #include "macros.s"
 #include "main/io.def.h"

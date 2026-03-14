@@ -5,8 +5,8 @@
  * @brief C wrappers for Main CPU side Gate Array registers
  */
 
-#ifndef MEGADEV__MAIN_GATE_ARRAY_H
-#define MEGADEV__MAIN_GATE_ARRAY_H
+#ifndef MEGADEV__MAIN_GATE_ARR_H
+#define MEGADEV__MAIN_GATE_ARR_H
 
 #include "main/gate_arr.def.h"
 #include <types.h>
@@ -25,9 +25,6 @@ typedef u16 volatile * ga_reg;
  *
  */
 #define ga_reset ((ga_reg) GAREG_RESET)
-
-#define GA_RESET_SRES (1 << 0)
-#define GA_RESET_SBRQ (1 << 1)
 
 /**
  * @copydoc GAREG_MEMMODE

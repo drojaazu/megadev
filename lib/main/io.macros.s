@@ -5,8 +5,8 @@
  * @brief I/O utilities
  */
 
-#ifndef MEGADEV__MAIN_IO_S
-#define MEGADEV__MAIN_IO_S
+#ifndef MEGADEV__MAIN_IO_MACROS_S
+#define MEGADEV__MAIN_IO_MACROS_S
 
 #include "main/io.def.h"
 

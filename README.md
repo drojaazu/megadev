@@ -8,8 +8,14 @@ Megadev is intended for those who already have some experience with C or M68k as
 
 Please refer to [docs/manual.md](docs/manual.md) for installation and usage information.
 
+# DISCLAIMER
+
+**SEGA, Mega Drive, Mega CD and all related names, logos, trademarks and other indicia are the sole property of SEGA CORPORATION and its parent organization SEGA SAMMY HOLDINGS INC. Any use of these names or marks is for purely illustrative purposes within the boundaries of common-sense fair use.**
+
+**Megadev is not affiliated with, endorsed by, or connected in any way with SEGA CORPORATION. The Megadev project is distributed free of charge under a permissive license and is developed as an unofficial, non-profit fan project.**
+
 # Special Thanks
 
  - plutiedev, Chilly Willy, Nemesis and all the other gurus whose research has been integral to Megadev and the homebrew scene as a whole.
- - @instantSonic for being the impetus that started this project. Happy New Year!
+ - instantSonic for being the impetus that started this project. Happy New Year!
  - UCC Black can coffee, without which my productivity would be near zero.
