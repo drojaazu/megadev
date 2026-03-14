@@ -1,10 +1,5 @@
-# gfx
-This is an example of using some of the graphics routines within the Boot ROM library.
+# transforms
 
-The ship can be moved with P1 Joypad.
+This is an example of the scaling, zoom, and rotation capabilities of the Mega CD's graphics processor.
 
-## Credits
-The graphics used in the background and for the ship come from these resources:
-
-https://opengameart.org/content/cyberpunk-street-environment
-https://opengameart.org/content/warped-fast-ship
+P1 still will scroll the field. Hold the A button to resize the field.

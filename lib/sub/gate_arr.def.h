@@ -97,7 +97,7 @@
  */
 #define GAREG_MEMMODE 0xFF8002
 
-#define BIT_GAREG_RET	 0
+#define BIT_GAREG_RET  0
 #define BIT_GAREG_DMNA 1
 #define BIT_GAREG_MODE 2
 
@@ -168,7 +168,7 @@
  */
 
 /**
- * @def _GAREG_CDCRS1
+ * @def GAREG_CDCRS1
  * @brief CDC Registers #2
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cdcregs2
@@ -181,7 +181,7 @@
  * @param CD CDC register data
  * \n Details for this register can be found in the LC89510 manual
  */
-#define _GAREG_CDCRS1 0xFF8006
+#define GAREG_CDCRS1 0xFF8006
 
 /**
  * @defgroup ga_reg_sub_cdcdata Sub CPU / Gate Array / Registers / CDC Host Data
@@ -210,7 +210,7 @@
  */
 
 /**
- * @def _GAREG_DMAADDR
+ * @def GAREG_DMAADDR
  * @brief CDC DMA Address
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_dmaaddr
@@ -229,7 +229,7 @@
  *
  * Unused bits will be read as 0.
  */
-#define _GAREG_DMAADDR 0xFF800A
+#define GAREG_DMAADDR 0xFF800A
 
 /**
  * @defgroup ga_reg_sub_stopwatch Sub CPU / Gate Array / Registers / Stopwatch
@@ -392,7 +392,7 @@
 
 /**
  * @def _GAREG_INT3TIMER
- * @sa GA_COMSTAT7
+ * @sa gareg_comstat7
  * @ingroup ga_regs_sub
  */
 #define _GAREG_INT3TIMER 0xFF8030
@@ -570,10 +570,10 @@
  * offset relative to the start of Word RAM divided by 4. What the raw location
  * needs to be a multiple of depends on the sizes you have set:
 
-		16x16px stamps, 256x256px stamp map: Multiples of 0x200
-		32x32px stamps, 256x256px stamp map: Multiples of 0x80
-		16x16px stamps, 4096x4096px stamp map: Multiples of 0x20000
-		32x32px stamps, 4096x4096px stamp map: Multiples of 0x8000
+    16x16px stamps, 256x256px stamp map: Multiples of 0x200
+    32x32px stamps, 256x256px stamp map: Multiples of 0x80
+    16x16px stamps, 4096x4096px stamp map: Multiples of 0x20000
+    32x32px stamps, 4096x4096px stamp map: Multiples of 0x8000
 
  */
 #define _GAREG_STAMPMAPBASE 0xFF805A
@@ -651,26 +651,26 @@
 // these aren't right...
 // TODO clean these up
 #define BIT_CDC_MAINREAD 2
-#define BIT_CDC_SUBREAD	 3
-#define BIT_CDC_PCMDMA	 4
-#define BIT_CDC_PRAMDMA	 5
-#define BIT_CDC_WRAMDMA	 7
+#define BIT_CDC_SUBREAD  3
+#define BIT_CDC_PCMDMA   4
+#define BIT_CDC_PRAMDMA  5
+#define BIT_CDC_WRAMDMA  7
 
-#define CDCMODE_CABITS			 0x000F
-#define CDCMODE_DDBITS			 0x0700
-#define MSK_CDCMODE_DD0			 1 << BIT_CDCMODE_DD0
-#define MSK_CDCMODE_DSR			 1 << BIT_CDCMODE_DSR
-#define MSK_CDCMODE_EDT			 1 << BIT_CDCMODE_EDT
+#define CDCMODE_CABITS       0x000F
+#define CDCMODE_DDBITS       0x0700
+#define MSK_CDCMODE_DD0      1 << BIT_CDCMODE_DD0
+#define MSK_CDCMODE_DSR      1 << BIT_CDCMODE_DSR
+#define MSK_CDCMODE_EDT      1 << BIT_CDCMODE_EDT
 #define MSK_CDCMODE_MAINREAD 1 << BIT_CDC_MAINREAD
-#define MSK_CDCMODE_SUBREAD	 1 << BIT_CDC_SUBREAD
-#define MSK_CDCMODE_PCMDMA	 1 << BIT_CDC_PCMDMA
-#define MSK_CDCMODE_PRAMDMA	 1 << BIT_CDC_PRAMDMA
-#define MSK_CDCMODE_WRAMDMA	 1 << BIT_CDC_WRAMDMA
+#define MSK_CDCMODE_SUBREAD  1 << BIT_CDC_SUBREAD
+#define MSK_CDCMODE_PCMDMA   1 << BIT_CDC_PCMDMA
+#define MSK_CDCMODE_PRAMDMA  1 << BIT_CDC_PRAMDMA
+#define MSK_CDCMODE_WRAMDMA  1 << BIT_CDC_WRAMDMA
 
 #define CDC_DEST_MAINREAD 2
-#define CDC_DEST_SUBREAD	3
-#define CDC_DEST_PCMDMA		4
-#define CDC_DEST_PRAMDMA	5
-#define CDC_DEST_WRAMDMA	7
+#define CDC_DEST_SUBREAD  3
+#define CDC_DEST_PCMDMA   4
+#define CDC_DEST_PRAMDMA  5
+#define CDC_DEST_WRAMDMA  7
 
 #endif

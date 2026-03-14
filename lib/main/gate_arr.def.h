@@ -5,8 +5,8 @@
  * @brief Main CPU side Gate Array registers
  */
 
-#ifndef MEGADEV__GATE_ARRAY_DEF_H
-#define MEGADEV__GATE_ARRAY_DEF_H
+#ifndef MEGADEV__GATE_ARR_DEF_H
+#define MEGADEV__GATE_ARR_DEF_H
 
 /**
  * @defgroup ga_regs_main Main CPU / Gate Array / Registers

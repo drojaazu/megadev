@@ -7,8 +7,8 @@
  * this is used!
  */
 
-#ifndef MEGADEV__MAIN_EXCEPTION_S
-#define MEGADEV__MAIN_EXCEPTION_S
+#ifndef MEGADEV__MAIN_CD_EXCEPTION_S
+#define MEGADEV__MAIN_CD_EXCEPTION_S
 
 #include "macros.s"
 #include "main/bios.def.h"

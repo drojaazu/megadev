@@ -19,18 +19,19 @@ typedef u16 volatile * ga_reg;
 
 #define ga_cdcmode ((ga_reg) GAREG_CDCMODE)
 
-#define GA_CDCRS1 ((ga_reg) _GAREG_CDCRS1)
+#define ga_cdcrs1 ((ga_reg) GAREG_CDCRS1)
 
 #define ga_cdchostdata ((ga_reg) GAREG_CDCHOSTDATA)
 
-#define GA_DMAADDR ((ga_reg) _GAREG_DMAADDR)
+#define ga_dmaaddr ((ga_reg) GAREG_DMAADDR)
 
 #define ga_stopwatch ((ga_reg) GAREG_STOPWATCH)
 
 #define ga_comflags ((ga_reg const) GAREG_COMFLAGS)
 
-#define GA_COMFLAGS_MAIN ((volatile const u8 *) GAREG_COMFLAGS)
-#define GA_COMFLAGS_SUB	 ((volatile u8 *) GAREG_COMFLAGS + 1)
+#define ga_comflags_main ((volatile const u8 *) GAREG_COMFLAGS)
+
+#define ga_comflags_sub ((volatile u8 *) GAREG_COMFLAGS + 1)
 
 #define gareg_comcmd0 ((ga_reg const) GAREG_COMCMD0)
 
@@ -105,84 +106,84 @@ typedef u16 volatile * ga_reg;
 #define gareg_comcmd7 ((ga_reg const) GAREG_COMCMD7)
 
 /**
- * @def GA_COMSTAT0
+ * @def gareg_comstat0
  * @brief GA Reg 10 - Comm. status (Sub -> Main)
  * @ingroup gatearray_sub
  * @sa GAREG_COMSTAT0
  *
  * @details RW: 16 bit data
  */
-#define GA_COMSTAT0 ((ga_reg) GAREG_COMSTAT0)
+#define gareg_comstat0 ((ga_reg) GAREG_COMSTAT0)
 
 /**
- * @def GA_COMSTAT1
+ * @def gareg_comstat1
  * @brief GA Reg 11 - Comm. status (Sub -> Main)
  * @ingroup gatearray_sub
  * @sa GAREG_COMSTAT1
  *
  * @details RW: 16 bit data
  */
-#define GA_COMSTAT1 ((ga_reg) GAREG_COMSTAT1)
+#define gareg_comstat1 ((ga_reg) GAREG_COMSTAT1)
 
 /**
- * @def GA_COMSTAT2
+ * @def gareg_comstat2
  * @brief GA Reg 12 - Comm. status (Sub -> Main)
  * @ingroup gatearray_sub
  * @sa GAREG_COMSTAT2
  *
  * @details RW: 16 bit data
  */
-#define GA_COMSTAT2 ((ga_reg) GAREG_COMSTAT2)
+#define gareg_comstat2 ((ga_reg) GAREG_COMSTAT2)
 
 /**
- * @def GA_COMSTAT3
+ * @def gareg_comstat3
  * @brief GA Reg 13 - Comm. status (Sub -> Main)
  * @ingroup gatearray_sub
  * @sa GAREG_COMSTAT3
  *
  * @details RW: 16 bit data
  */
-#define GA_COMSTAT3 ((ga_reg) GAREG_COMSTAT3)
+#define gareg_comstat3 ((ga_reg) GAREG_COMSTAT3)
 
 /**
- * @def GA_COMSTAT4
+ * @def gareg_comstat4
  * @brief GA Reg 14 - Comm. status (Sub -> Main)
  * @ingroup gatearray_sub
  * @sa GAREG_COMSTAT4
  *
  * @details RW: 16 bit data
  */
-#define GA_COMSTAT4 ((ga_reg) GAREG_COMSTAT4)
+#define gareg_comstat4 ((ga_reg) GAREG_COMSTAT4)
 
 /**
- * @def GA_COMSTAT5
+ * @def gareg_comstat5
  * @brief GA Reg 15 - Comm. status (Sub -> Main)
  * @ingroup gatearray_sub
  * @sa GAREG_COMSTAT5
  *
  * @details RW: 16 bit data
  */
-#define GA_COMSTAT5 ((ga_reg) GAREG_COMSTAT5)
+#define gareg_comstat5 ((ga_reg) GAREG_COMSTAT5)
 
 /**
- * @def GA_COMSTAT6
+ * @def gareg_comstat6
  * @brief GA Reg 16 - Comm. status (Sub -> Main)
  * @ingroup gatearray_sub
  * @sa GAREG_COMSTAT6
  *
  * @details RW: 16 bit data
  */
-#define GA_COMSTAT6 ((ga_reg) GAREG_COMSTAT6)
+#define gareg_comstat6 ((ga_reg) GAREG_COMSTAT6)
 
 /**
- * @def GA_COMSTAT7
+ * @def gareg_comstat7
  * @brief GA Reg 17 - Comm. status (Sub -> Main)
  * @ingroup gatearray_sub
  * @sa GAREG_COMSTAT7
  *
  * @details RW: 16 bit data
  */
-#define GA_COMSTAT7 ((ga_reg) GAREG_COMSTAT7)
+#define gareg_comstat7 ((ga_reg) GAREG_COMSTAT7)
 
 /**
  * @def GA_INT3TIMER
@@ -570,13 +571,13 @@ typedef u16 volatile * ga_reg;
  */
 static inline void wait_2m()
 {
-	asm(
-		"\
+  asm(
+    "\
 		1:btst %0, %p1 \n\
 			beq 1b \n\
 		"
-		:
-		: "i"(BIT_GAREG_DMNA), "i"(GAREG_MEMMODE + 1));
+    :
+    : "i"(BIT_GAREG_DMNA), "i"(GAREG_MEMMODE + 1));
 }
 
 /**
@@ -585,14 +586,14 @@ static inline void wait_2m()
  */
 static inline void grant_2m()
 {
-	asm(
-		"\
+  asm(
+    "\
 		1:bset %0, %p1 \n\
 			btst %0, %p1 \n\
 			beq 1b \n\
 		"
-		:
-		: "i"(BIT_GAREG_RET), "i"(GAREG_MEMMODE + 1));
+    :
+    : "i"(BIT_GAREG_RET), "i"(GAREG_MEMMODE + 1));
 }
 
 /**
@@ -601,14 +602,14 @@ static inline void grant_2m()
  */
 static inline void set_1m()
 {
-	asm(
-		"\
+  asm(
+    "\
 		1:bset %0, %p1 \n\
 			btst %0, %p1 \n\
 			beq 1b \n\
 		"
-		:
-		: "i"(BIT_GAREG_MODE), "i"(GAREG_MEMMODE + 1));
+    :
+    : "i"(BIT_GAREG_MODE), "i"(GAREG_MEMMODE + 1));
 }
 
 /**
@@ -617,14 +618,14 @@ static inline void set_1m()
  */
 static inline void set_2m()
 {
-	asm(
-		"\
+  asm(
+    "\
 		1:bclr %0, %p1 \n\
 			btst %0, %p1 \n\
 			bne 1b \n\
 		"
-		:
-		: "i"(BIT_GAREG_MODE), "i"(GAREG_MEMMODE + 1));
+    :
+    : "i"(BIT_GAREG_MODE), "i"(GAREG_MEMMODE + 1));
 }
 
 /**
@@ -633,8 +634,8 @@ static inline void set_2m()
  */
 static inline void clear_comm_regs()
 {
-	asm(
-		"\
+  asm(
+    "\
 		lea %p0, a0 \n\
 		moveq #0, d0 \n\
 		move.b d0, -0x11(a0) \n\
@@ -643,9 +644,9 @@ static inline void clear_comm_regs()
 		move.l d0, (a0)+ \n\
 		move.l d0, (a0)+ \n\
 		"
-		:
-		: "i"(GAREG_COMSTAT0)
-		: "d0", "a0");
+    :
+    : "i"(GAREG_COMSTAT0)
+    : "d0", "a0");
 }
 
 #endif

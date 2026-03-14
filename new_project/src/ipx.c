@@ -168,7 +168,7 @@ void main()
       // the NOP is so GCC doesn't optimize the loop away
       // though since comstat is marked volatile it should be fine...
       asm("nop");
-    } while (*GA_COMSTAT0 == 0);
+    } while (*gareg_comstat0 == 0);
 
     // reset the command to none (0) once we have the acknowledgment
     *gareg_comcmd0 = 0;
@@ -177,7 +177,7 @@ void main()
     do
     {
       asm("nop");
-    } while (*GA_COMSTAT0 != 0);
+    } while (*gareg_comstat0 != 0);
 
     wait_2m();
 

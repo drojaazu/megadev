@@ -70,17 +70,17 @@ __attribute__((section(".init"))) void main()
         // default VINT handler in the Main Boot ROM Library; see the
         // Predefined Comm Flag Semantics section of bootrom.md for more
         // info)
-        *GA_COMFLAGS_SUB |= 0x80;
+        *ga_comflags_sub |= 0x80;
         // pcm_playback((u8 *)PRG_RAM_BANK3, 0x39BC1);
         // pcm_playback((u8 *)PRG_RAM_BANK3, 0x40000);
         PCM_PLAYBACK_C((u8 *) PRG_RAM_BANK3, 0x40000);
         *((volatile u8 *) _PCM_CDISABLE) = 0xFF;
 
-        *GA_COMFLAGS_SUB &= ~0x80;
+        *ga_comflags_sub &= ~0x80;
         break;
     }
 
-    *GA_COMSTAT0 = *gareg_comcmd0;
+    *gareg_comstat0 = *gareg_comcmd0;
     do
     {
       asm("nop");
@@ -93,7 +93,7 @@ __attribute__((section(".init"))) void main()
       command = *gareg_comcmd0;
     } while (command != 0);
 
-    *GA_COMSTAT0 = 0;
+    *gareg_comstat0 = 0;
 
   } while (1);
 }

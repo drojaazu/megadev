@@ -8,11 +8,11 @@
 #include <system.h>
 #include <types.h>
 
-#define SUB_WAIT               \
-  do                           \
-  {                            \
-    asm("nop");                \
-  } while (*GA_COMSTAT0 == 0);
+#define SUB_WAIT                  \
+  do                              \
+  {                               \
+    asm("nop");                   \
+  } while (*gareg_comstat0 == 0);
 
 #define SUB_ACK *gareg_comcmd0 = 0;
 
@@ -32,8 +32,8 @@ static void bram_init()
   // bram_size is the total space on the unit, returned as the number of
   // 4KB (0x1000 byte) blocks. So we multiplay by 0x1000 to get the 'actual'
   // total space available
-  int bram_size = (*GA_COMSTAT1) * 0x1000;
-  int status = *GA_COMSTAT2;
+  int bram_size = (*gareg_comstat1) * 0x1000;
+  int status = *gareg_comstat2;
 
   SUB_ACK
 
@@ -78,8 +78,8 @@ static void brmstat()
   // bram_size is the total space on the unit, returned as the number of
   // 4KB (0x1000 byte) blocks. So we multiplay by 0x1000 to get the 'actual'
   // total space available
-  u16 filecount = *GA_COMSTAT1;
-  u16 free = *GA_COMSTAT2;
+  u16 filecount = *gareg_comstat1;
+  u16 free = *gareg_comstat2;
 
   SUB_ACK
 
@@ -100,9 +100,9 @@ static bool brmserch()
 
   SUB_WAIT
 
-  u16 found = *GA_COMSTAT1;
-  u16 filesize = *GA_COMSTAT2;
-  u16 is_protected = *GA_COMSTAT3;
+  u16 found = *gareg_comstat1;
+  u16 filesize = *gareg_comstat2;
+  u16 is_protected = *gareg_comstat3;
 
   SUB_ACK
 
@@ -180,7 +180,7 @@ static void brmwrite()
 
   SUB_WAIT
 
-  int success = *GA_COMSTAT1;
+  int success = *gareg_comstat1;
 
   SUB_ACK
 
@@ -211,9 +211,9 @@ static void brmread()
 
   SUB_WAIT
 
-  int success = *GA_COMSTAT1;
-  int size = *GA_COMSTAT2;
-  int mode = *GA_COMSTAT3;
+  int success = *gareg_comstat1;
+  int size = *gareg_comstat2;
+  int mode = *gareg_comstat3;
 
   SUB_ACK
 
@@ -246,7 +246,7 @@ void brmdel()
 
   SUB_WAIT
 
-  int success = *GA_COMSTAT1;
+  int success = *gareg_comstat1;
 
   SUB_ACK
 
@@ -272,7 +272,7 @@ void brmdir()
 
   SUB_WAIT
 
-  int success = *GA_COMSTAT1;
+  int success = *gareg_comstat1;
 
   SUB_ACK
 
