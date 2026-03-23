@@ -51,7 +51,7 @@ REGION?=US
 VIDEO?=NTSC
 VRAM_SIZE?=VRAM_64K
 PROJECT_NAME?=$(PROJECT_ID)
-PROJECT_NAME_JP?=$(PROJECT_NAME)
+PROJECT_NAME_DOMESTIC?=$(PROJECT_NAME)
 ifeq ($(REGION),US)
 	HEADER_HARDWARE_ID?="SEGA GENESIS"
 else
@@ -104,7 +104,7 @@ CC_FLAGS+= \
 	-DVIDEO=$(VIDEO) \
 	-DVRAM_SIZE=$(VRAM_SIZE) \
 	-DPROJECT_NAME=$(PROJECT_NAME) \
-	-DPROJECT_NAME_JP=$(PROJECT_NAME_JP) \
+	-DPROJECT_NAME_DOMESTIC=$(PROJECT_NAME_DOMESTIC) \
 	-DHEADER_COPYRIGHT=$(HEADER_COPYRIGHT) \
 	-DHEADER_VOL_ID=$(HEADER_VOL_ID) \
 	-DHEADER_SYS_ID=$(HEADER_SYS_ID) \
@@ -194,8 +194,8 @@ $(BUILD_PATH)/%.s.o: %.s
 	@$(OBJCPY) -O binary $(OUT_MOD_ELF) $@
 
 %.cart:
-	@echo "rom elf in: $^"
-	@echo "rom elf out: $@"
+	@echo "cart in: $^"
+	@echo "cart out: $@"
 	$(call msg_info,Building cart ROM $(notdir $@))
 	$(eval BUILD_SRC:=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o, $(filter %.c %.h %.s, $^)))))
 	@echo BUILD SRC: $(BUILD_SRC)
