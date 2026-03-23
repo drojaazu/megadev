@@ -285,7 +285,7 @@ A module can represent a single "piece" of your game: the title screen, one leve
 
 Megadev provides tools for creating and loading modules easily. Please see `docs/modules.md` for more details.
 
-As with other Megadive components, the use of modules is optional. You are free to come up with your own software execution architecture.
+As with other Megadev components, the use of modules is optional. You are free to come up with your own software execution architecture.
 
 ## CD-ROM Access Framework
 
@@ -295,7 +295,7 @@ At the hardware level, accessing data on the disc is done via Sub CPU BIOS calls
 
 Megadev provides a simplified framework for disc file access, accomplished by simply specifying a filename and an output buffer. Please see `docs/cdrom.md` for more details about how to use it.
 
-As with other Megadive components, the use of the CD-ROM header is optional. You are free to write your own disc access system if you wish.
+As with other Megadev components, the use of the CD-ROM header is optional. You are free to write your own disc access system if you wish.
 
 ## Boot Sector Generation
 
