@@ -23,8 +23,8 @@
  * documented and useful and have wrappers in this header.
  */
 
-#ifndef MEGADEV__MAIN_BOOTLIB_H
-#define MEGADEV__MAIN_BOOTLIB_H
+#ifndef MEGADEV__MAIN__BIOS_H
+#define MEGADEV__MAIN__BIOS_H
 
 #include "fixed.h"
 #include "main/bios.def.h"
@@ -33,55 +33,55 @@
 
 struct SpriteMapping
 {
-	s8 relpos_y;
-	u8					 : 4;
-	u8	width		 : 2;
-	u8	height	 : 2;
-	u8	priority : 1;
-	u8	pal_line : 2;
-	u8	v_flip	 : 1;
-	u8	h_flip	 : 1;
-	u16 chridx	 : 11;
-	s8	relpos_x;
-	s8	mirrored_relpos_x;
+  s8 relpos_y;
+  u8           : 4;
+  u8  width    : 2;
+  u8  height   : 2;
+  u8  priority : 1;
+  u8  pal_line : 2;
+  u8  v_flip   : 1;
+  u8  h_flip   : 1;
+  u16 chridx   : 11;
+  s8  relpos_x;
+  s8  mirrored_relpos_x;
 } __attribute__((__packed__));
 
 typedef struct SpriteLayout
 {
-	u8 mapping_count;
-	// this byte is a bit of a mystery: it is copied to 0x19 of the Entity
-	// and if the h flip flag is set, it will add +1 to the value in the object.
-	// It does not have any effect on the object and its purpose is unknown
-	u8									 unknown;
-	struct SpriteMapping mappings[];
+  u8 mapping_count;
+  // this byte is a bit of a mystery: it is copied to 0x19 of the Entity
+  // and if the h flip flag is set, it will add +1 to the value in the object.
+  // It does not have any effect on the object and its purpose is unknown
+  u8                   unknown;
+  struct SpriteMapping mappings[];
 } SpriteLayout;
 
 // BIOS defined Entity display flags
 #define ENTITY_HFLIP 1 << 7
-#define ENTITY_HIDE	 1 << 1
+#define ENTITY_HIDE  1 << 1
 
 // size: 26 bytes
 typedef struct
 {
-	u16 enable				: 1;
-	u16 jmptbl_offset : 15;
-	// uses the display flags defined above; the rest of the bits are user
-	// definable
-	u8 display_flags;
-	// this byte is not used by blib, so presumably it can be used however
-	// you'd like
-	u8													user;
-	struct SpriteLayout const * layout;
+  u16 enable        : 1;
+  u16 jmptbl_offset : 15;
+  // uses the display flags defined above; the rest of the bits are user
+  // definable
+  u8 display_flags;
+  // this byte is not used by blib, so presumably it can be used however
+  // you'd like
+  u8                          user;
+  struct SpriteLayout const * layout;
 
-	f32 pos_x;
-	f32 pos_y;
-	f32 move_x;
-	f32 move_y;
-	// this byte is ORed on to the byte starting with the priority
-	// bit in the SpriteMapping struct
-	u8 sprite_flags;
-	// the second byte of the SpriteLayout header is copied here
-	u8 unknown;
+  f32 pos_x;
+  f32 pos_y;
+  f32 move_x;
+  f32 move_y;
+  // this byte is ORed on to the byte starting with the priority
+  // bit in the SpriteMapping struct
+  u8 sprite_flags;
+  // the second byte of the SpriteLayout header is copied here
+  u8 unknown;
 } Entity;
 
 /**
@@ -93,9 +93,9 @@ typedef struct
  */
 typedef struct Palette
 {
-	u8	cram_offset;
-	u8	length; // length in words (i.e. color entries) MINUS ONE
-	s16 colors[];
+  u8  cram_offset;
+  u8  length; // length in words (i.e. color entries) MINUS ONE
+  s16 colors[];
 } Palette;
 
 /**
@@ -418,12 +418,12 @@ typedef struct Palette
  */
 static inline void bios_entry()
 {
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_ENTRY));
+    "
+    :
+    : "i"(BIOS_ENTRY));
 }
 
 /**
@@ -442,12 +442,12 @@ static inline void bios_entry()
  */
 static inline void bios_reset()
 {
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_RESET));
+    "
+    :
+    : "i"(BIOS_RESET));
 }
 
 /**
@@ -461,12 +461,12 @@ static inline void bios_reset()
  */
 static inline void bios_init()
 {
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_INIT));
+    "
+    :
+    : "i"(BIOS_INIT));
 }
 
 /**
@@ -479,12 +479,12 @@ static inline void bios_init()
  */
 static inline void bios_init_sp()
 {
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_INIT_SP));
+    "
+    :
+    : "i"(BIOS_INIT_SP));
 }
 
 /**
@@ -498,12 +498,12 @@ static inline void bios_init_sp()
  */
 static inline void bios_vint_handler()
 {
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_VINT_HANDLER));
+    "
+    :
+    : "i"(BIOS_VINT_HANDLER));
 }
 
 /**
@@ -519,14 +519,14 @@ static inline void bios_vint_handler()
  */
 static inline void bios_set_hint(void * hint_handler)
 {
-	register u32 A1 asm("a1") = (u32) hint_handler;
-	asm volatile(
-		"\
+  register u32 A1 asm("a1") = (u32) hint_handler;
+  asm volatile(
+    "\
   jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_SET_HINT), "a"(A1)
-		: "cc");
+    "
+    :
+    : "i"(BIOS_SET_HINT), "a"(A1)
+    : "cc");
 }
 
 /**
@@ -536,22 +536,22 @@ static inline void bios_set_hint(void * hint_handler)
  */
 static inline void bios_read_joypad()
 {
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   move.l a6, -(sp) \n\
   jsr %c0 \n\
   move.l (sp)+, a6 \n\
-		"
-		:
-		: "i"(BIOS_READ_JOYPAD)
-		: "d6", "d7", "a5");
+    "
+    :
+    : "i"(BIOS_READ_JOYPAD)
+    : "d6", "d7", "a5");
 }
 
 typedef enum ControllerType
 {
-	Joypad = CONTROLLER_JOYPAD,
-	MegaMouse = CONTROLLER_MEGAMOUSE,
-	MultiTap = CONTROLLER_MULTITAP
+  Joypad = CONTROLLER_JOYPAD,
+  MegaMouse = CONTROLLER_MEGAMOUSE,
+  MultiTap = CONTROLLER_MULTITAP
 } ControllerType;
 
 /**
@@ -566,17 +566,17 @@ typedef enum ControllerType
  */
 static inline u8 bios_detect_controller(u8 * io_data_port)
 {
-	register u32 A6 asm("a6") = (u32) io_data_port;
-	register u8	 D6 asm("d6");
-	asm volatile(
-		"\
+  register u32 A6 asm("a6") = (u32) io_data_port;
+  register u8  D6 asm("d6");
+  asm volatile(
+    "\
   jsr %c0 \n\
-		"
-		: "=d"(D6)
-		: "i"(BIOS_DETECT_CONTROLLER), "a"(A6)
-		: "cc");
+    "
+    : "=d"(D6)
+    : "i"(BIOS_DETECT_CONTROLLER), "a"(A6)
+    : "cc");
 
-	return D6;
+  return D6;
 }
 
 /**
@@ -591,15 +591,15 @@ static inline u8 bios_detect_controller(u8 * io_data_port)
  */
 static inline void bios_clear_vram()
 {
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   move.l a6, -(sp) \n\
   jsr %c0 \n\
   move.l (sp)+, a6 \n\
-		"
-		:
-		: "i"(BIOS_CLEAR_VRAM)
-		: "d0", "d1", "d2", "d3");
+    "
+    :
+    : "i"(BIOS_CLEAR_VRAM)
+    : "d0", "d1", "d2", "d3");
 }
 
 /**
@@ -611,15 +611,15 @@ static inline void bios_clear_vram()
  */
 static inline void bios_clear_tables()
 {
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   move.l a6, -(sp) \n\
   jsr %c0 \n\
   move.l (sp)+, a6 \n\
-		"
-		:
-		: "i"(BIOS_CLEAR_TABLES)
-		: "d0", "d1", "d2", "d3");
+    "
+    :
+    : "i"(BIOS_CLEAR_TABLES)
+    : "d0", "d1", "d2", "d3");
 }
 
 /**
@@ -629,13 +629,13 @@ static inline void bios_clear_tables()
  */
 static inline void bios_clear_vsram()
 {
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_CLEAR_VSRAM)
-		: "d0", "d1", "d2");
+    "
+    :
+    : "i"(BIOS_CLEAR_VSRAM)
+    : "d0", "d1", "d2");
 }
 
 /**
@@ -643,50 +643,50 @@ static inline void bios_clear_vsram()
  * @brief Loads the Boot ROM default VDP register defaults
  * @ingroup bios_vdp
  * @details
-		0x8004
-			- HINT disabled
-			- 9-bit (standard) color mode
-		0x8124
-			- Mega Drive graphics mode
-			- NTSC (is almost certainly set to PAL on such hardware)
-			- VINT enabled
-			- Disable display
-		0x9011
-			- Plane size: 64x64 cells (512x512 pixels)
-		0x8B00
-			- Scroll mode: full screen
-		0x8C81
-			- 40 cell (320px) width
-		0x8328
-			- Window nametable: 0xA000
-		0x8230
-			- Plane A nametable: 0xC000
-		0x8407
-			- Plane B nametable: 0xE000
-		0x855C
-			- Sprite table: 0xB800
-		0x8D2F
-			- Horiz Scroll table: 0xBC00
-		0x8700
-			- Background color 0
-		0x8A00
-			- HINT scanline count: 0
-		0x8F02
-			- Auto-increment 2
-		0x9100
-			- Window plane X position: 0
-		0x9200
-			- Window plane Y position: 0
+    0x8004
+      - HINT disabled
+      - 9-bit (standard) color mode
+    0x8124
+      - Mega Drive graphics mode
+      - NTSC (is almost certainly set to PAL on such hardware)
+      - VINT enabled
+      - Disable display
+    0x9011
+      - Plane size: 64x64 cells (512x512 pixels)
+    0x8B00
+      - Scroll mode: full screen
+    0x8C81
+      - 40 cell (320px) width
+    0x8328
+      - Window nametable: 0xA000
+    0x8230
+      - Plane A nametable: 0xC000
+    0x8407
+      - Plane B nametable: 0xE000
+    0x855C
+      - Sprite table: 0xB800
+    0x8D2F
+      - Horiz Scroll table: 0xBC00
+    0x8700
+      - Background color 0
+    0x8A00
+      - HINT scanline count: 0
+    0x8F02
+      - Auto-increment 2
+    0x9100
+      - Window plane X position: 0
+    0x9200
+      - Window plane Y position: 0
  */
 static inline void bios_load_vdpregs_default()
 {
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_LOAD_DEFAULT_VDPREGS)
-		: "d0", "d1", "a1", "a2");
+    "
+    :
+    : "i"(BIOS_LOAD_DEFAULT_VDPREGS)
+    : "d0", "d1", "a1", "a2");
 }
 
 /**
@@ -701,15 +701,15 @@ static inline void bios_load_vdpregs_default()
  */
 static inline void bios_load_vdpregs(vdp_reg const * vdp_reg_data)
 {
-	register u32 A1 asm("a1") = (u32) vdp_reg_data;
+  register u32 A1 asm("a1") = (u32) vdp_reg_data;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   jsr %p1 \n\
-		"
-		: "+a"(A1)
-		: "i"(BIOS_LOAD_VDPREGS), "a"(A1)
-		: "cc", "d0", "d1", "a2");
+    "
+    : "+a"(A1)
+    : "i"(BIOS_LOAD_VDPREGS), "a"(A1)
+    : "cc", "d0", "d1", "a2");
 }
 
 /**
@@ -722,15 +722,15 @@ static inline void bios_load_vdpregs(vdp_reg const * vdp_reg_data)
  */
 static inline void bios_vdp_fill(u32 vdp_ptr, u16 length, u16 value)
 {
-	register u32 D0 asm("d0") = vdp_ptr;
-	register u16 D1 asm("d1") = length;
-	register u16 D2 asm("d2") = value;
-	asm volatile(
-		"\
+  register u32 D0 asm("d0") = vdp_ptr;
+  register u16 D1 asm("d1") = length;
+  register u16 D2 asm("d2") = value;
+  asm volatile(
+    "\
   jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_VDP_FILL), "d"(D0), "d"(D1), "d"(D2));
+    "
+    :
+    : "i"(BIOS_VDP_FILL), "d"(D0), "d"(D1), "d"(D2));
 }
 
 /**
@@ -743,15 +743,15 @@ static inline void bios_vdp_fill(u32 vdp_ptr, u16 length, u16 value)
  */
 static inline void bios_vdp_fill_clear(u32 vdp_ptr, u16 length)
 {
-	register u32 D0 asm("d0") = vdp_ptr;
-	register u16 D1 asm("d1") = length;
-	asm volatile(
-		"\
+  register u32 D0 asm("d0") = vdp_ptr;
+  register u16 D1 asm("d1") = length;
+  asm volatile(
+    "\
   jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_VDP_FILL_CLEAR), "d"(D0), "d"(D1)
-		: "d2");
+    "
+    :
+    : "i"(BIOS_VDP_FILL_CLEAR), "d"(D0), "d"(D1)
+    : "d2");
 }
 
 /**
@@ -762,17 +762,17 @@ static inline void bios_vdp_fill_clear(u32 vdp_ptr, u16 length)
  */
 static inline void bios_dma_fill_clear(u32 vdp_ptr, u16 length)
 {
-	register u32 D0 asm("d0") = vdp_ptr;
-	register u16 D1 asm("d1") = length;
-	asm volatile(
-		"\
+  register u32 D0 asm("d0") = vdp_ptr;
+  register u16 D1 asm("d1") = length;
+  asm volatile(
+    "\
   move.l a6, -(sp) \n\
   jsr %c0 \n\
   move.l (sp)+, a6 \n\
-		"
-		:
-		: "i"(BIOS_DMA_FILL_CLEAR), "d"(D0), "d"(D1)
-		: "d2", "d3");
+    "
+    :
+    : "i"(BIOS_DMA_FILL_CLEAR), "d"(D0), "d"(D1)
+    : "d2", "d3");
 }
 
 /**
@@ -783,18 +783,18 @@ static inline void bios_dma_fill_clear(u32 vdp_ptr, u16 length)
  */
 static inline void bios_dma_fill(u32 vdp_ptr, u16 length, u16 value)
 {
-	register u32 D0 asm("d0") = vdp_ptr;
-	register u16 D1 asm("d1") = length;
-	register u16 D2 asm("d2") = value;
-	asm volatile(
-		"\
+  register u32 D0 asm("d0") = vdp_ptr;
+  register u16 D1 asm("d1") = length;
+  register u16 D2 asm("d2") = value;
+  asm volatile(
+    "\
   move.l a6, -(sp) \n\
   jsr %c0 \n\
   move.l (sp)+, a6 \n\
-		"
-		:
-		: "i"(BIOS_DMA_FILL), "d"(D0), "d"(D1), "d"(D2)
-		: "d3");
+    "
+    :
+    : "i"(BIOS_DMA_FILL), "d"(D0), "d"(D1), "d"(D2)
+    : "d3");
 }
 
 /**
@@ -807,20 +807,20 @@ static inline void bios_dma_fill(u32 vdp_ptr, u16 length, u16 value)
  * nametable entry format.
  */
 static inline void bios_load_map(
-	u32 const vdp_ptr, u16 const width, u16 const height, void const * map)
+  u32 const vdp_ptr, u16 const width, u16 const height, void const * map)
 {
-	register u32 D0 asm("d0") = vdp_ptr;
-	register u16 D1 asm("d1") = width;
-	register u16 D2 asm("d2") = height;
-	register u32 A1 asm("a1") = (u32) map;
+  register u32 D0 asm("d0") = vdp_ptr;
+  register u16 D1 asm("d1") = width;
+  register u16 D2 asm("d2") = height;
+  register u32 A1 asm("a1") = (u32) map;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   jsr %p1 \n\
-		"
-		: "+d"(D2)
-		: "i"(BIOS_LOAD_MAP), "d"(D0), "d"(D1), "d"(D2), "a"(A1)
-		: "d3", "a5", "cc");
+    "
+    : "+d"(D2)
+    : "i"(BIOS_LOAD_MAP), "d"(D0), "d"(D1), "d"(D2), "a"(A1)
+    : "d3", "a5", "cc");
 }
 
 /**
@@ -846,15 +846,15 @@ static inline void bios_load_map(
  */
 static inline void bios_set_hint_workram(void * hint_handler)
 {
-	register u32 A1 asm("a1") = (u32) hint_handler;
+  register u32 A1 asm("a1") = (u32) hint_handler;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 			jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_SET_HINT_WORK_RAM), "a"(A1)
-		: "cc");
+    "
+    :
+    : "i"(BIOS_SET_HINT_WORK_RAM), "a"(A1)
+    : "cc");
 }
 
 /**
@@ -866,13 +866,13 @@ static inline void bios_set_hint_workram(void * hint_handler)
  */
 static inline void bios_disable_hint()
 {
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_DISABLE_HINT)
-		: "cc");
+    "
+    :
+    : "i"(BIOS_DISABLE_HINT)
+    : "cc");
 }
 
 /**
@@ -881,13 +881,13 @@ static inline void bios_disable_hint()
  */
 static inline void bios_gfx_decomp(u8 const * data)
 {
-	register u32 a1_data asm("a1") = (u32) data;
-	asm volatile(
-		"\
+  register u32 a1_data asm("a1") = (u32) data;
+  asm volatile(
+    "\
 			jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_GFX_DECOMP), "a"(a1_data));
+    "
+    :
+    : "i"(BIOS_GFX_DECOMP), "a"(a1_data));
 }
 
 /**
@@ -896,12 +896,12 @@ static inline void bios_gfx_decomp(u8 const * data)
  */
 static inline void bios_vdp_disp_enable()
 {
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 			jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_VDP_DISP_ENABLE));
+    "
+    :
+    : "i"(BIOS_VDP_DISP_ENABLE));
 }
 
 /**
@@ -910,12 +910,12 @@ static inline void bios_vdp_disp_enable()
  */
 static inline void bios_vdp_disp_disable()
 {
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 			jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_VDP_DISP_DISABLE));
+    "
+    :
+    : "i"(BIOS_VDP_DISP_DISABLE));
 }
 
 /**
@@ -933,13 +933,13 @@ static inline void bios_vdp_disp_disable()
  */
 static inline void bios_vint_wait_default()
 {
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 			jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_VINT_WAIT_DEFAULT)
-		: "d0");
+    "
+    :
+    : "i"(BIOS_VINT_WAIT_DEFAULT)
+    : "d0");
 }
 
 /**
@@ -954,13 +954,13 @@ static inline void bios_vint_wait_default()
  */
 static inline void bios_vint_wait(u8 flags)
 {
-	register u8 D0 asm("d0") = flags;
-	asm volatile(
-		"\
+  register u8 D0 asm("d0") = flags;
+  asm volatile(
+    "\
 			jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_VINT_WAIT), "d"(D0));
+    "
+    :
+    : "i"(BIOS_VINT_WAIT), "d"(D0));
 }
 
 /**
@@ -979,23 +979,23 @@ static inline void bios_vint_wait(u8 flags)
  */
 static inline bool bios_pal_fadeout(u8 palette_index, u8 length)
 {
-	register u16 D0 asm("d0") = (u16) (palette_index << 1);
-	register u16 D1 asm("d1") = (u16) length;
+  register u16 D0 asm("d0") = (u16) (palette_index << 1);
+  register u16 D1 asm("d1") = (u16) length;
 
-	asm goto(
-		"\
+  asm goto(
+    "\
   		jsr %c0 \n\
 			beq %l[fade_complete] \n\
-		"
-		:
-		: "i"(BIOS_PAL_FADEOUT), "d"(D0), "d"(D1)
-		: "cc"
-		: fade_complete);
+    "
+    :
+    : "i"(BIOS_PAL_FADEOUT), "d"(D0), "d"(D1)
+    : "cc"
+    : fade_complete);
 
-	return false;
+  return false;
 
 fade_complete:
-	return true;
+  return true;
 }
 
 /**
@@ -1009,13 +1009,13 @@ fade_complete:
  */
 static inline void bios_load_font_defaults()
 {
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 			jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_LOAD_FONT_DEFAULTS)
-		: "d0", "d1", "d2", "d3", "d4", "a1", "a5");
+    "
+    :
+    : "i"(BIOS_LOAD_FONT_DEFAULTS)
+    : "d0", "d1", "d2", "d3", "d4", "a1", "a5");
 };
 
 /**
@@ -1024,20 +1024,20 @@ static inline void bios_load_font_defaults()
  * @ingroup bios_misc
  */
 static inline void bios_load_1bpp_tiles(
-	void * chr_data, u16 tile_count, vdp_cmd dest, u32 color_pattern)
+  void * chr_data, u16 tile_count, vdp_cmd dest, u32 color_pattern)
 {
-	register u32 D0 asm("d0") = dest;
-	register u32 D1 asm("d1") = color_pattern;
-	register u16 D2 asm("d2") = tile_count;
-	register u32 A1 asm("a1") = (u32) chr_data;
+  register u32 D0 asm("d0") = dest;
+  register u32 D1 asm("d1") = color_pattern;
+  register u16 D2 asm("d2") = tile_count;
+  register u32 A1 asm("a1") = (u32) chr_data;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 			jsr %p2 \n\
-		"
-		: "+d"(D2), "+a"(A1)
-		: "i"(BIOS_LOAD_1BPP_TILES), "a"(A1), "d"(D0), "d"(D1), "d"(D2)
-		: "d3", "d4", "a5");
+    "
+    : "+d"(D2), "+a"(A1)
+    : "i"(BIOS_LOAD_1BPP_TILES), "a"(A1), "d"(D0), "d"(D1), "d"(D2)
+    : "d3", "d4", "a5");
 };
 
 /**
@@ -1057,33 +1057,33 @@ static inline void bios_load_1bpp_tiles(
  */
 static inline void bios_input_repeat_delay(u8 * input, bool use_2p)
 {
-	register u32 A1 asm("a1") = (u32) input;
-	register u16 D0 asm("d0") = (u16) use_2p;
+  register u32 A1 asm("a1") = (u32) input;
+  register u16 D0 asm("d0") = (u16) use_2p;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 			jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_INPUT_REPEAT_DELAY), "a"(A1), "d"(D0)
-		: "cc", "d1", "a5");
+    "
+    :
+    : "i"(BIOS_INPUT_REPEAT_DELAY), "a"(A1), "d"(D0)
+    : "cc", "d1", "a5");
 }
 
 static inline void
 bios_load_stamp_tilemap(u16 width, u16 height, vdp_ptr dest, u16 chridx)
 {
-	register u32 D0 asm("d0") = (u32) dest;
-	register u16 D1 asm("d1") = width;
-	register u16 D2 asm("d2") = height;
-	register u16 D3 asm("d3") = chridx;
+  register u32 D0 asm("d0") = (u32) dest;
+  register u16 D1 asm("d1") = width;
+  register u16 D2 asm("d2") = height;
+  register u16 D3 asm("d3") = chridx;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 			jsr %c3 \n\
-		"
-		: "+d"(D0), "+d"(D2), "+d"(D3)
-		: "i"(BIOS_LOAD_STAMP_MAP), "d"(D0), "d"(D1), "d"(D2), "d"(D3)
-		: "cc", "d4", "d5", "d6", "a5");
+    "
+    : "+d"(D0), "+d"(D2), "+d"(D3)
+    : "i"(BIOS_LOAD_STAMP_MAP), "d"(D0), "d"(D1), "d"(D2), "d"(D3)
+    : "cc", "d4", "d5", "d6", "a5");
 }
 
 /**
@@ -1096,13 +1096,13 @@ bios_load_stamp_tilemap(u16 width, u16 height, vdp_ptr dest, u16 chridx)
  */
 static inline void bios_clear_comm()
 {
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 			jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_CLEAR_COMM)
-		: "d0", "a6");
+    "
+    :
+    : "i"(BIOS_CLEAR_COMM)
+    : "d0", "a6");
 }
 
 /**
@@ -1121,16 +1121,16 @@ static inline void bios_clear_comm()
  */
 static inline void bios_print(char const * string, vdp_cmd pos)
 {
-	register u32 A1 asm("a1") = (u32) string;
-	register u32 D0 asm("d0") = pos;
+  register u32 A1 asm("a1") = (u32) string;
+  register u32 D0 asm("d0") = pos;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 			jsr %p1 \n\
-		"
-		: "+a"(A1)
-		: "i"(BIOS_PRINT), "a"(A1), "d"(D0)
-		: "d1", "d2", "a5");
+    "
+    : "+a"(A1)
+    : "i"(BIOS_PRINT), "a"(A1), "d"(D0)
+    : "d1", "d2", "a5");
 };
 
 /**
@@ -1145,20 +1145,20 @@ static inline void bios_print(char const * string, vdp_cmd pos)
 static inline void
 bios_plane_fill(vdp_cmd pos, u16 width, u16 height, u16 value)
 {
-	register u32 D0 asm("d0") = pos;
-	register u32 D1 asm("d1") = width;
-	register u32 D2 asm("d2") = height;
-	register u32 D3 asm("d3") = value;
+  register u32 D0 asm("d0") = pos;
+  register u32 D1 asm("d1") = width;
+  register u32 D2 asm("d2") = height;
+  register u32 D3 asm("d3") = value;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
     	move.l a6, -(sp) \n\
     	jsr %p1 \n\
     	move.l (sp)+, a6 \n\
   	"
-		: "+d"(D2)
-		: "i"(BIOS_PLANE_FILL), "d"(D0), "d"(D1), "d"(D2), "d"(D3)
-		: "cc", "d5", "a5");
+    : "+d"(D2)
+    : "i"(BIOS_PLANE_FILL), "d"(D0), "d"(D1), "d"(D2), "d"(D3)
+    : "cc", "d5", "a5");
 };
 
 /**
@@ -1171,19 +1171,19 @@ bios_plane_fill(vdp_cmd pos, u16 width, u16 height, u16 value)
  */
 static inline void bios_dma_xfer(vdp_cmd dest, u8 const * source, u16 length)
 {
-	register u32 D0 asm("d0") = dest;
-	register u32 D1 asm("d1") = (u32) source;
-	register u16 D2 asm("d2") = length;
+  register u32 D0 asm("d0") = dest;
+  register u32 D1 asm("d1") = (u32) source;
+  register u16 D2 asm("d2") = length;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   		move.l a6, -(sp) \n\
   		jsr %c0 \n\
   		move.l (sp)+, a6 \n\
-		"
-		:
-		: "i"(BIOS_DMA_XFER), "d"(D0), "d"(D1), "d"(D2)
-		: "d3");
+    "
+    :
+    : "i"(BIOS_DMA_XFER), "d"(D0), "d"(D1), "d"(D2)
+    : "d3");
 };
 
 /**
@@ -1199,21 +1199,21 @@ static inline void bios_dma_xfer(vdp_cmd dest, u8 const * source, u16 length)
  * data to the data port. This subroutine takes care of that extra step.
  */
 static inline void bios_dma_xfer_word_ram(
-	vdp_cmd const dest, void const * source, u16 const length)
+  vdp_cmd const dest, void const * source, u16 const length)
 {
-	register u32 D0 asm("d0") = dest;
-	register u32 D1 asm("d1") = (u32) source;
-	register u16 D2 asm("d2") = length;
+  register u32 D0 asm("d0") = dest;
+  register u32 D1 asm("d1") = (u32) source;
+  register u16 D2 asm("d2") = length;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   move.l a6, -(sp) \n\
   jsr %c0 \n\
   move.l (sp)+, a6 \n\
-		"
-		:
-		: "i"(BIOS_DMA_XFER_WORD_RAM), "d"(D0), "d"(D1), "d"(D2)
-		: "cc", "d3");
+    "
+    :
+    : "i"(BIOS_DMA_XFER_WORD_RAM), "d"(D0), "d"(D1), "d"(D2)
+    : "cc", "d3");
 };
 
 /**
@@ -1226,19 +1226,19 @@ static inline void bios_dma_xfer_word_ram(
  */
 static inline void bios_dma_copy(u32 vdpptr_dest, u16 source, u16 length)
 {
-	register u32 D0 asm("d0") = vdpptr_dest;
-	register u16 D1 asm("d1") = source;
-	register u16 D2 asm("d2") = length;
+  register u32 D0 asm("d0") = vdpptr_dest;
+  register u16 D1 asm("d1") = source;
+  register u16 D2 asm("d2") = length;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   move.l a6, -(sp) \n\
   jsr %c0 \n\
   move.l (sp)+, a6 \n\
-		"
-		:
-		: "i"(BIOS_DMA_COPY), "d"(D0), "d"(D1), "d"(D2)
-		: "d3");
+    "
+    :
+    : "i"(BIOS_DMA_COPY), "d"(D0), "d"(D1), "d"(D2)
+    : "d3");
 };
 
 /**
@@ -1252,13 +1252,13 @@ static inline void bios_dma_copy(u32 vdpptr_dest, u16 source, u16 length)
  */
 static inline void bios_copy_sprlist()
 {
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 			jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_COPY_SPRLIST)
-		: "d4", "a4");
+    "
+    :
+    : "i"(BIOS_COPY_SPRLIST)
+    : "d4", "a4");
 };
 
 /**
@@ -1270,17 +1270,17 @@ static inline void bios_copy_sprlist()
  */
 static inline void bios_clear_ram(void * address, u32 long_count)
 {
-	register u32 A0 asm("a0") = (u32) address;
-	register u32 D7 asm("d7") = long_count;
+  register u32 A0 asm("a0") = (u32) address;
+  register u32 D7 asm("d7") = long_count;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 			move.l a6, -(sp) \n\
 			jsr %c0 \n\
 			move.l (sp)+, a6 \n\
-		"
-		:
-		: "i"(BIOS_CLEAR_RAM), "d"(D7), "a"(A0));
+    "
+    :
+    : "i"(BIOS_CLEAR_RAM), "d"(D7), "a"(A0));
 };
 
 /**
@@ -1293,15 +1293,15 @@ static inline void bios_clear_ram(void * address, u32 long_count)
  */
 static inline void bios_load_pal(Palette const * pal_data)
 {
-	register u32 A1 asm("a1") = (u32) pal_data;
+  register u32 A1 asm("a1") = (u32) pal_data;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 			jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_LOAD_PAL), "a"(A1)
-		: "d0");
+    "
+    :
+    : "i"(BIOS_LOAD_PAL), "a"(A1)
+    : "d0");
 };
 
 /**
@@ -1312,15 +1312,15 @@ static inline void bios_load_pal(Palette const * pal_data)
  */
 static inline void bios_load_pal_update(Palette const * pal_data)
 {
-	register u32 A1 asm("a1") = (u32) pal_data;
+  register u32 A1 asm("a1") = (u32) pal_data;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 			jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_LOAD_PAL_UPDATE), "a"(A1)
-		: "d0");
+    "
+    :
+    : "i"(BIOS_LOAD_PAL_UPDATE), "a"(A1)
+    : "d0");
 };
 
 /**
@@ -1332,13 +1332,13 @@ static inline void bios_load_pal_update(Palette const * pal_data)
  */
 static inline void bios_copy_pal()
 {
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 			jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_COPY_PAL)
-		: "cc", "a4", "d4");
+    "
+    :
+    : "i"(BIOS_COPY_PAL)
+    : "cc", "a4", "d4");
 };
 
 /**
@@ -1351,23 +1351,23 @@ static inline void bios_copy_pal()
  * @ingroup bios_vdp
  */
 static inline void bios_process_entities(
-	Entity const * obj_array,
-	Sprite const * sprtbl_cache,
-	u16 const			 obj_count,
-	u16 const			 obj_size)
+  Entity const * obj_array,
+  Sprite const * sprtbl_cache,
+  u16 const      obj_count,
+  u16 const      obj_size)
 {
-	register u32 A0 asm("a0") = (u32) obj_array;
-	register u32 A1 asm("a1") = (u32) sprtbl_cache;
-	register u16 D0 asm("d0") = (u16) obj_count;
-	register u16 D1 asm("d1") = (u16) obj_size;
+  register u32 A0 asm("a0") = (u32) obj_array;
+  register u32 A1 asm("a1") = (u32) sprtbl_cache;
+  register u16 D0 asm("d0") = (u16) obj_count;
+  register u16 D1 asm("d1") = (u16) obj_size;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   jsr %c2 \n\
-		"
-		: "+a"(A0), "+a"(A1)
-		: "i"(BIOS_PROCESS_ENTITIES), "a"(A0), "a"(A1), "d"(D0), "d"(D1)
-		: "d2", "d3", "d4", "d6", "a2");
+    "
+    : "+a"(A0), "+a"(A1)
+    : "i"(BIOS_PROCESS_ENTITIES), "a"(A0), "a"(A1), "d"(D0), "d"(D1)
+    : "d2", "d3", "d4", "d6", "a2");
 };
 
 /**
@@ -1386,19 +1386,19 @@ static inline void bios_process_entities(
  */
 static inline u16 bios_prng_mod(u16 const modulo)
 {
-	// TODO can we use the same variable here for in/out?
-	register u16 d0_modulo asm("d0") = modulo;
-	register u16 d0_random asm("d0");
+  // TODO can we use the same variable here for in/out?
+  register u16 d0_modulo asm("d0") = modulo;
+  register u16 d0_random asm("d0");
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   jsr %p1 \n\
-		"
-		: "+d"(d0_random)
-		: "i"(BIOS_PRNG_MOD), "d"(d0_modulo)
-		: "d1");
+    "
+    : "+d"(d0_random)
+    : "i"(BIOS_PRNG_MOD), "d"(d0_modulo)
+    : "d1");
 
-	return d0_random;
+  return d0_random;
 };
 
 /**
@@ -1410,13 +1410,13 @@ static inline u16 bios_prng_mod(u16 const modulo)
  */
 static inline void bios_prng()
 {
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_PRNG)
-		: "d0");
+    "
+    :
+    : "i"(BIOS_PRNG)
+    : "d0");
 };
 
 /**
@@ -1429,15 +1429,15 @@ static inline void bios_prng()
  */
 static inline void bios_set_fadein_pal(Palette const * palette)
 {
-	register u32 a1_bios_palette asm("a1") = (u32) palette;
-	register u32 a1_change asm("a1");
+  register u32 a1_bios_palette asm("a1") = (u32) palette;
+  register u32 a1_change asm("a1");
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   jsr %p1 \n\
-		"
-		: "=a"(a1_change)
-		: "i"(BIOS_SET_FADEIN_PAL), "a"(a1_bios_palette));
+    "
+    : "=a"(a1_change)
+    : "i"(BIOS_SET_FADEIN_PAL), "a"(a1_bios_palette));
 };
 
 /**
@@ -1458,12 +1458,12 @@ static inline void bios_set_fadein_pal(Palette const * palette)
  */
 static inline void bios_pal_fadein()
 {
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   jsr %c0 \n\
-		"
-		:
-		: "i"(BIOS_PAL_FADEIN));
+    "
+    :
+    : "i"(BIOS_PAL_FADEIN));
 }
 
 /**
@@ -1471,9 +1471,9 @@ static inline void bios_pal_fadein()
  */
 typedef struct DmaTransfer
 {
-	u16 length;
-	u32 vdp_ptr;
-	u32 source;
+  u16 length;
+  u32 vdp_ptr;
+  u32 source;
 } DmaTransfer;
 
 /**
@@ -1491,18 +1491,18 @@ typedef struct DmaTransfer
  */
 static inline void bios_dma_queue(DmaTransfer const * queue)
 {
-	register u32 a1_queue asm("a1") = (u32) queue;
-	register u32 a1_change asm("a1");
+  register u32 a1_queue asm("a1") = (u32) queue;
+  register u32 a1_change asm("a1");
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   move.l a6, -(sp) \n\
   jsr %p1 \n\
   move.l (sp)+, a6 \n\
-		"
-		: "=a"(a1_change)
-		: "i"(BIOS_DMA_QUEUE), "a"(a1_queue)
-		: "d0", "d1", "d2", "d3");
+    "
+    : "=a"(a1_change)
+    : "i"(BIOS_DMA_QUEUE), "a"(a1_queue)
+    : "d0", "d1", "d2", "d3");
 }
 
 #endif
