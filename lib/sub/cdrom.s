@@ -316,7 +316,7 @@ load_data_begin:
   BIOSCALL   #BIOS_ROM_READN                 // begin the data read
 
   move.w   #0x258, read_timeout
-1:bsr      accloop_reentry  /*take a break here and come back next VINT*/
+1:bsr      accloop_reentry  /*take a break here and come back next VBLANK*/
 2:BIOSCALL   #BIOS_CDC_STAT            /*check CDC status since our read call*/
   bcc      3f              /*we have a sector read to be read*/
   subq.w   #1, read_timeout  /*count down read timeout & try again*/
@@ -424,7 +424,7 @@ load_data_dma_begin:
   BIOSCALL   #BIOS_ROM_READN    // begin the data read
 
   move.w   #0x258, read_timeout // set up for reading
-1:bsr      accloop_reentry    // take a break here and come back next VINT
+1:bsr      accloop_reentry    // take a break here and come back next VBLANK
 2:BIOSCALL   #BIOS_CDC_STAT               // check on the CDC on the status of our data
   bcc      3f                // sector is ready! jump down
   subq.w   #1, read_timeout  // not ready yet,count down read timeout

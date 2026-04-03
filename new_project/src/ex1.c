@@ -28,7 +28,7 @@ void main()
 
   do
   {
-    bios_vint_wait_default();
+    bios_vblank_wait_default();
     // process_particles is defined in the ipx
     process_particles();
   } while (! (bios_joy1_hit & PAD_START));

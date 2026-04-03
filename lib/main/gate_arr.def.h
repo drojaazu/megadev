@@ -241,15 +241,15 @@
 #define GA_CDC_DEST_WORD 0b111
 
 /**
- * @defgroup ga_reg_main_hintvect Main CPU / Gate Array / Registers / HINT
+ * @defgroup ga_reg_main_hblankvect Main CPU / Gate Array / Registers / HBLANK
  * Vector
  */
 
 /**
- * @def GAREG_HINTVECT
- * @brief HINT Vector
+ * @def GAREG_HBLANKVECT
+ * @brief HBLANK Vector
  * @ingroup ga_regs_main
- * @ingroup ga_reg_main_hintvect
+ * @ingroup ga_reg_main_hblankvect
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -257,13 +257,13 @@
  * |HIBF|HIBE|HIBD|HIBC|HIBB|HIBA|HIB9|HIB8|HIB7|HIB6|HIB5|HIB4|HIB3|HIB2|HIB1|HIB0|
  *
  * @param [width] 16 bit
- * @param HIB Specifies the lower word of the HINT (Level 4) interrupt vector
+ * @param HIB Specifies the lower word of the HBLANK (Level 4) interrupt vector
  *      The upper word is specied at the standard location (0x70), the value
  *      of which is 0x00FF by the Boot ROM.
  *
  * @warning Bit level opcodes (BTST, BCLR, BSET) are undefined for this register
  */
-#define GAREG_HINTVECT 0xA12006
+#define GAREG_HBLANKVECT 0xA12006
 
 /**
  * @defgroup ga_reg_main_cdcdata Main CPU / Gate Array / Registers / CDC Host

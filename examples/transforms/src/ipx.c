@@ -11,7 +11,7 @@
 #include <types.h>
 #include <xform.h>
 
-void vint_user()
+void vblank_user()
 {
   bios_copy_pal();
   bios_copy_sprlist();
@@ -24,7 +24,7 @@ s16 trace_x = to_xform_pos(0.0), trace_y = to_xform_pos(0.0),
 __attribute__((noreturn)) void main()
 {
 
-  *bios_vint_user = vint_user;
+  *bios_vblank_user = vblank_user;
   grant_2m();
 
   memset8(0, (u8 *) &bios_sprlist, sizeof(bios_sprlist));
@@ -40,7 +40,7 @@ __attribute__((noreturn)) void main()
 
   do
   {
-    bios_vint_wait(0);
+    bios_vblank_wait(0);
     if (bios_joy1_hold & PAD_RIGHT)
     {
       if (bios_joy1_hold & PAD_A)
@@ -121,7 +121,7 @@ __attribute__((noreturn)) void main()
 
     wait_2m();
 
-    bios_vint_wait_default();
+    bios_vblank_wait_default();
     bios_dma_xfer_word_ram(
       tiles, (void const *) (WORD_RAM + 0x30000), (32 * 32 * 32) / 2);
 

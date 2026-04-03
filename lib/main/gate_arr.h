@@ -39,10 +39,10 @@ typedef u16 volatile * ga_reg;
 #define ga_cdcmode ((ga_reg) GAREG_CDCMODE)
 
 /**
- * @copydoc GAREG_HINTVECT
+ * @copydoc GAREG_HBLANKVECT
  *
  */
-#define ga_hintvect ((ga_reg) GAREG_HINTVECT)
+#define ga_hblankvect ((ga_reg) GAREG_HBLANKVECT)
 
 /**
  * @copydoc GAREG_CDCHOSTDATA

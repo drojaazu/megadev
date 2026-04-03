@@ -144,12 +144,12 @@
 #define VDPSTAT_SPR_LIMIT (1 << 6)
 
 /**
- * @def VDPSTAT_VINT_TRIGGERED
+ * @def VDPSTAT_VBLANK_TRIGGERED
  * @brief VDP Control Port / VDP Status / VBLANK Interrupt Triggered Flag
  * @ingroup vdp_port
  *
  */
-#define VDPSTAT_VINT_TRIGGERED (1 << 7)
+#define VDPSTAT_VBLANK_TRIGGERED (1 << 7)
 
 /**
  * @def VDPSTAT_FIFO_FULL
@@ -233,7 +233,7 @@
  *
  * @param L [@ref VDP_LEFT_COL_BLANK] Blank leftmost 8 pixels to background
  * color
- * @param IE1 [@ref VDP_HINT_ENABLE] Enable HBLANK interrupts
+ * @param IE1 [@ref VDP_HBLANK_ENABLE] Enable HBLANK interrupts
  * @param CM [@ref VDP_HICOLOR_ENABLE]
  * \n 1: normal 9-bit color mode (512 colour)
  * \n 0: low 3-bit color mode (8 colors)
@@ -283,13 +283,13 @@
 #define VDP_HICOLOR_ENABLE (1 << 2)
 
 /**
- * @def VDP_HINT_ENABLE
+ * @def VDP_HBLANK_ENABLE
  * @brief Enable HBLANK Interrupts
  * @ingroup vdp_regs
  * @ingroup vdp_reg00
  *
  */
-#define VDP_HINT_ENABLE (1 << 4)
+#define VDP_HBLANK_ENABLE (1 << 4)
 
 /**
  * @def VDP_LEFT_COL_BLANK
@@ -318,8 +318,8 @@
  * @param DE [@ref VDP_DISPLAY_ENABLE]
  * \n 1: enable display
  * \n 0: fill display with background colour
- * @param IE0 [@ref VDP_VINT_ENABLE]
- * \n Enable VBLANK interrupts (VINT)
+ * @param IE0 [@ref VDP_VBLANK_ENABLE]
+ * \n Enable VBLANK interrupts (VBLANK)
  * @param M1 [@ref VDP_DMA_ENABLE]
  * \n 1: enable DMA operations
  * \n 0: ignore DMA operations
@@ -367,12 +367,12 @@
 #define VDP_DMA_ENABLE (1 << 4)
 
 /**
- * @def VDP_VINT_ENABLE
+ * @def VDP_VBLANK_ENABLE
  * @brief Enable VBLANK Interrupts
  * @ingroup vdp_regs
  * @ingroup vdp_reg01
  */
-#define VDP_VINT_ENABLE (1 << 5)
+#define VDP_VBLANK_ENABLE (1 << 5)
 
 /**
  * @def VDP_DISPLAY_ENABLE
@@ -653,17 +653,17 @@
  *
  * @param H Scanlines between HBLANK interrupts
  *
- * @aliases VDPREG_HINT_COUNT
+ * @aliases VDPREG_HBLANK_COUNT
  */
 #define VDPREG0A 0x8A00
 
 /**
- * @def VDPREG_HINT_COUNT
+ * @def VDPREG_HBLANK_COUNT
  * @ingroup vdp_regs
  * @ingroup vdp_reg0A
  * @aliasof VDPREG0A
  */
-#define VDPREG_HINT_COUNT VDPREG0A
+#define VDPREG_HBLANK_COUNT VDPREG0A
 
 /**
  * @defgroup vdp_reg0B Main CPU / VDP / Register 0B (Mode Register 3)
@@ -1297,9 +1297,9 @@
 // some simple colors for quick reference
 #define COLOR_BLACK 0b000000000000
 #define COLOR_WHITE 0b111011101110
-#define COLOR_BLUE	0b111000000000
+#define COLOR_BLUE  0b111000000000
 #define COLOR_GREEN 0b000011100000
-#define COLOR_RED		0b000000001110
+#define COLOR_RED   0b000000001110
 
 /**
  * @def VRAMPTR

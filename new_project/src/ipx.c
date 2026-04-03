@@ -111,7 +111,7 @@ void process_particles()
   }
 }
 
-void vint_user()
+void vblank_user()
 {
   bios_copy_sprlist();
 }
@@ -123,13 +123,13 @@ void main()
 {
 
   /*
-    The function pointer stored in bios_vint_user is called on every VBLANK
-    interrupt when using the built-in handler in BIOS (BIOS_VINT_HANDLER, which
-    we set up in the IP). This is intended for VBLANK interval operations
-    specific to your program. Note that the BIOS_VINT_USERCALL_FLAG flag must be
-    set on bios_vint_handler_flags
+    The function pointer stored in bios_vblank_user is called on every VBLANK
+    interrupt when using the built-in handler in BIOS (BIOS_VBLANK_HANDLER,
+    which we set up in the IP). This is intended for VBLANK interval operations
+    specific to your program. Note that the BIOS_VBLANK_USERCALL_FLAG flag must
+    be set on bios_vblank_handler_flags
   */
-  *bios_vint_user = vint_user;
+  *bios_vblank_user = vblank_user;
 
   next_module = FILE_EX1_MMD;
 

@@ -137,13 +137,13 @@ static void brmwrite()
 
   do
   {
-    bios_vint_wait_default();
+    bios_vblank_wait_default();
 
     // this is a great opportunity to show off the bios_input_delay function
     // in the boot rom library
     // to use it, we need to specify a byte which will hold the input value
     // and use that byte to compare for input instead of the standard memory
-    // location; it will need to be called in a loop along with the vint
+    // location; it will need to be called in a loop along with the vblank
     // wait
 
     // now we get a nice, smooth value change when holding up or down instead
@@ -322,7 +322,7 @@ void main()
 
   do
   {
-    bios_vint_wait_default();
+    bios_vblank_wait_default();
   } while (! (bios_joy1_hit & PAD_START));
 
   s8 menupos = 0;
@@ -342,7 +342,7 @@ void main()
 
     do
     {
-      bios_vint_wait_default();
+      bios_vblank_wait_default();
       for (int clearloop = 3; clearloop < 10; ++clearloop)
       {
         vdp_ctrl_32 = print_xy(1, clearloop);
@@ -395,7 +395,7 @@ void main()
 
     do
     {
-      bios_vint_wait_default();
+      bios_vblank_wait_default();
     } while (! (bios_joy1_hit & PAD_START));
 
   } while (1);

@@ -17,7 +17,7 @@
   sp_int2
   The CD-ROM access code works in a loop. PROCESS_ACC_LOOP is the "pump" that
 	keeps that loop flowing. We will need to call it on every INT2, which is sent
-	from the Main CPU on every vblank (VINT).
+	from the Main CPU on every vblank (VBLANK).
 */
 GLABEL sp_int2
   PROCESS_ACC_LOOP

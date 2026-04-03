@@ -67,7 +67,7 @@ __attribute__((section(".init"))) void main()
         // we use the highest bit of the comflags to inform main that the
         // audio is playing
         // (be careful about setting low bits on COMFLAGS when using the
-        // default VINT handler in the Main Boot ROM Library; see the
+        // default VBLANK handler in the Main Boot ROM Library; see the
         // Predefined Comm Flag Semantics section of bootrom.md for more
         // info)
         *ga_comflags_sub |= 0x80;

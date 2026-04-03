@@ -54,11 +54,11 @@ Megadev uses the MMD format which originates from Sonic CD. These are binaries w
     0x02.l Runtime location
     0x06.w Module size (in longs)
     0x08.l Pointer to main routine
-    0x0C.l Pointer to HINT handler
-    0x10.l Pointer to VINT handler
+    0x0C.l Pointer to HBLANK handler
+    0x10.l Pointer to VBLANK handler
     0x14 to 0x100 Padding
 
-The most important entry here is the pointer to the main routine. After the module is loaded and set up, the code will jump to (not call) this routine. You can also specify a new HINT/VINT handler to be installed before the jump to main, though these are optional. All three of these values are automatically determined via the link script, which look for the main routine as a global function called `main` and the interrupt the handlers as global functions called `hint` and `vint`.
+The most important entry here is the pointer to the main routine. After the module is loaded and set up, the code will jump to (not call) this routine. You can also specify a new HBLANK/VBLANK handler to be installed before the jump to main, though these are optional. All three of these values are automatically determined via the link script, which look for the main routine as a global function called `main` and the interrupt the handlers as global functions called `hblank` and `vblank`.
 
 The runtime location entry specifies the address from which the code will be executed. The MMD loader will first copy the binary portion of the module (i.e. everything after the header) to this address before calling main. If this value is zero, the code will not be moved and will execute in place wherever it is located. This destination address is specified by a global symbol called MMD_DEST. (Note that if this value is zero, so that the module is executed where it was initially loaded, you will need to account for the 0x100 header when determining the ROM origin. See the notes in the previous section.)
 
@@ -68,7 +68,7 @@ There is only one bit in the flags value, bit #6, which will return Word RAM con
 
 This is followed by padding up to offset 0x100. This is not strictly necessary and we only do so because that's what Sonic CD does. You are free to extend into it with your own metadata (it would be a perfect place for identification text during debugging or for hidden "easter egg" text). You can reduce or remove it entirely if you wish, but you will need to modify the MMD loader code (in mmd.macros.s) and the .header section in the module LD script (module_mmd.ld) to account for the start of the module's binary section.
 
-In summary, for a valid MMD module, you must specify an entry point by having a global function called `main` and you must specify a runtime address with a global symbol called MMD_DEST. You can also optionally specify a new HINT/VINT handler by having a global function called `hint` and `vint`, respectively, within your module code, and can also optionally specify optional flags with a global symbol called MMD_FLAGS.
+In summary, for a valid MMD module, you must specify an entry point by having a global function called `main` and you must specify a runtime address with a global symbol called MMD_DEST. You can also optionally specify a new HBLANK/VBLANK handler by having a global function called `hblank` and `vblank`, respectively, within your module code, and can also optionally specify optional flags with a global symbol called MMD_FLAGS.
 
 Let's look at a couple theoretical examples. Say we have a module we want to run from Main side's Work RAM. We already have a memory resident bit of code in Work RAM taking up the first 0x400 bytes, so we want this module to run from 0xFF0400. The runtime location (set in the MMD_DEST global symbol) will be 0xFF0400. The MMD loader will automatically move the binary portion of the module from Word RAM to 0xFF0400 and then jump to it.
 
@@ -192,6 +192,6 @@ You can optimize memory usage by only using certain pieces of the Boot ROM tools
 
 Though the Mega CD manuals describe Word RAM as primarily for data exchange between Sub and Main, you can run code from here with no problem. Sonic CD does this with its module architecture. In fact, it's the easiest way of running simple games.
 
-However, keep in mind that there may be unforeseen issues with this, primarily with interrupt handlers. Consider what happens if you set your VBLANK handler inside your module running in Word RAM, and then you go to load another module. What happens when you grant the Word RAM back to the Sub CPU, but your VINT is still pointing to that function in Word RAM? It's now no longer accessible, resulting in the VINT call failing and the Sub CPU not receiving INT2 (at best) or the whole system crashing due to reading invalid opcodes (at worst).
+However, keep in mind that there may be unforeseen issues with this, primarily with interrupt handlers. Consider what happens if you set your VBLANK handler inside your module running in Word RAM, and then you go to load another module. What happens when you grant the Word RAM back to the Sub CPU, but your VBLANK is still pointing to that function in Word RAM? It's now no longer accessible, resulting in the VBLANK call failing and the Sub CPU not receiving INT2 (at best) or the whole system crashing due to reading invalid opcodes (at worst).
 
 For that reason, make sure your interrupt handlers are in memory that won't be disrupted easily, or make sure that they have been repointed to such memory before making changes to Word RAM. If you are using a program kernel paradigm or a resident module, consider keeping your interrupt handlers there.

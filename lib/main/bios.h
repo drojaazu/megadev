@@ -105,7 +105,7 @@ typedef struct Palette
  * @ingroup bios_cmp
  */
 // TODO test this
-#define bios_work_buffer (*(u8[0x200]) BIOS_WORK_BUFFER)
+#define bios_work_buffer (*(s8[0x200]) BIOS_WORK_BUFFER)
 // #define bios_work_buffer ((u8 *) BIOS_WORK_BUFFER)
 
 // TODO check that the LEN/SZ's in this section can be replaced with sizeof()
@@ -172,11 +172,12 @@ typedef struct Palette
 #define bios_pal4 (*((s16(*)[16]) BIOS_PAL4))
 
 /**
- * @def void* bios_vint_user
- * @brief Pointer to the VINT_USER routine used in the Boot ROM VINT handler.
- * @sa BIOS_VINT_USER
+ * @def void* bios_vblank_user
+ * @brief Pointer to the VBLANK_USER routine used in the Boot ROM VBLANK
+ * handler.
+ * @sa BIOS_VBLANK_USER
  */
-#define bios_vint_user ((volatile void *(*) ) BIOS_VINT_USER)
+#define bios_vblank_user ((void(* volatile *)) BIOS_VBLANK_USER)
 
 /**
  * @def* bios_vdp_regs
@@ -287,30 +288,30 @@ typedef struct Palette
 #define bios_joy2_repeat_delay (*((volatile u8 *) BIOS_JOY2_REPEAT_DELAY))
 
 /**
- * @def bios_vint_handler_flags
- * @sa BIOS_VINT_HANDLER_FLAGS
+ * @def bios_vblank_handler_flags
+ * @sa BIOS_VBLANK_HANDLER_FLAGS
  * @ingroup bios_int
  *
  * @details
- * Used by the Boot ROM VINT/VINT_WAIT routines for graphics updates
+ * Used by the Boot ROM VBLANK/VBLANK_WAIT routines for graphics updates
  * during vblank.
  *
  * Bit 0 - Copy sprite list to VDP
- * Bit 1 - Call VINT_USER vector during vblank
+ * Bit 1 - Call VBLANK_USER vector during vblank
  */
-#define bios_vint_handler_flags (*((u8 *) BIOS_VINT_HANDLER_FLAGS))
+#define bios_vblank_handler_flags (*((u8 *) BIOS_VBLANK_HANDLER_FLAGS))
 
 /**
- * @def bios_vint_counter
- * @brief Incremented by 1 on each vertical blank (VINT)
- * @sa BIOS_VINT_COUNTER
+ * @def bios_vblank_counter
+ * @brief Incremented by 1 on each vertical blank (VBLANK)
+ * @sa BIOS_VBLANK_COUNTER
  * @ingroup bios_int
  */
-#define bios_vint_counter (*((volatile u8 *) BIOS_VINT_COUNTER))
+#define bios_vblank_counter (*((volatile u8 *) BIOS_VBLANK_COUNTER))
 
 /**
- * @def bios_vint_skip_gfx
- * @sa BIOS_VINT_FAST_FLAG
+ * @def bios_vblank_skip_gfx
+ * @sa BIOS_VBLANK_FAST_FLAG
  * @ingroup bios_int
  *
  * @details Skips these operations during vblank:
@@ -318,7 +319,7 @@ typedef struct Palette
  *
  * Will still perform IO updates, though
  */
-#define bios_vint_skip_gfx (*((u8 *) BIOS_VINT_FAST_FLAG))
+#define bios_vblank_skip_gfx (*((u8 *) BIOS_VBLANK_FAST_FLAG))
 
 /**
  * @def bios_vdp_update_flags
@@ -488,44 +489,44 @@ static inline void bios_init_sp()
 }
 
 /**
- * @fn bios_vint_handler
+ * @fn bios_vblank_handler
  * @brief Vertical Blank interrupt handler
  * @ingroup bios_int
  *
  * @details Copies GA comm registers to the RAM
- * mirrors, sends INT2 (VINT ocurred) to Sub CPU, updates VDP palette from
- * RAM, calls VINT_USER, updates IO (controllers)
+ * mirrors, sends INT2 (VBLANK ocurred) to Sub CPU, updates VDP palette from
+ * RAM, calls VBLANK_USER, updates IO (controllers)
  */
-static inline void bios_vint_handler()
+static inline void bios_vblank_handler()
 {
   asm volatile(
     "\
   jsr %c0 \n\
     "
     :
-    : "i"(BIOS_VINT_HANDLER));
+    : "i"(BIOS_VBLANK_HANDLER));
 }
 
 /**
- * @fn bios_set_hint
- * @brief Sets the HINT vector
+ * @fn bios_set_hblank
+ * @brief Sets the HBLANK vector
  * @ingroup bios_int
  *
- * @details Sets the HINT vector in the system jump table, and sets the Gate
- * Array HINT register to the system jump table entry, and enables the interrupt
- * on the VDP
+ * @details Sets the HBLANK vector in the system jump table, and sets the Gate
+ * Array HBLANK register to the system jump table entry, and enables the
+ * interrupt on the VDP
  *
  * @note The VDP register cache will be updated
  */
-static inline void bios_set_hint(void * hint_handler)
+static inline void bios_set_hblank(void * hblank_handler)
 {
-  register u32 A1 asm("a1") = (u32) hint_handler;
+  register u32 A1 asm("a1") = (u32) hblank_handler;
   asm volatile(
     "\
   jsr %c0 \n\
     "
     :
-    : "i"(BIOS_SET_HINT), "a"(A1)
+    : "i"(BIOS_SET_HBLANK), "a"(A1)
     : "cc");
 }
 
@@ -644,12 +645,12 @@ static inline void bios_clear_vsram()
  * @ingroup bios_vdp
  * @details
     0x8004
-      - HINT disabled
+      - HBLANK disabled
       - 9-bit (standard) color mode
     0x8124
       - Mega Drive graphics mode
       - NTSC (is almost certainly set to PAL on such hardware)
-      - VINT enabled
+      - VBLANK enabled
       - Disable display
     0x9011
       - Plane size: 64x64 cells (512x512 pixels)
@@ -670,7 +671,7 @@ static inline void bios_clear_vsram()
     0x8700
       - Background color 0
     0x8A00
-      - HINT scanline count: 0
+      - HBLANK scanline count: 0
     0x8F02
       - Auto-increment 2
     0x9100
@@ -824,54 +825,54 @@ static inline void bios_load_map(
 }
 
 /**
- * @fn bios_set_hint_workram
- * @brief Sets the HINT vector for a Work RAM destination
- * @sa BIOS_SET_HINT_WORK_RAM
+ * @fn bios_set_hblank_workram
+ * @brief Sets the HBLANK vector for a Work RAM destination
+ * @sa BIOS_SET_HBLANK_WORK_RAM
  * @ingroup bios_int
  *
  * @details
  * Sets the specified vector in the system jump table, and sets the
- * Gate Array HINT register to the specified vector, and enables the interrupt
+ * Gate Array HBLANK register to the specified vector, and enables the interrupt
  * on the VDP.
  *
- * This is functionally identical to @ref bios_set_hint, however this version
- * sets the GA HINT register directly to the specified vector. Since the GA
+ * This is functionally identical to @ref bios_set_hblank, however this version
+ * sets the GA HBLANK register directly to the specified vector. Since the GA
  * register is only 16 bits, it uses only the lower word of the address and
  * expects the routine to be locaed in Work RAM, i.e. 0xFFxxxx. This means if
- * the specified HINT routine is located elsewhere (such as Word RAM), you must
- * use @ref bios_set_hint instead.
+ * the specified HBLANK routine is located elsewhere (such as Word RAM), you
+ * must use @ref bios_set_hblank instead.
  *
  * @details
  * The VDP register buffer (BIOS_VDPREG_CACHE) is updated with this call.
  */
-static inline void bios_set_hint_workram(void * hint_handler)
+static inline void bios_set_hblank_workram(void * hblank_handler)
 {
-  register u32 A1 asm("a1") = (u32) hint_handler;
+  register u32 A1 asm("a1") = (u32) hblank_handler;
 
   asm volatile(
     "\
 			jsr %c0 \n\
     "
     :
-    : "i"(BIOS_SET_HINT_WORK_RAM), "a"(A1)
+    : "i"(BIOS_SET_HBLANK_WORK_RAM), "a"(A1)
     : "cc");
 }
 
 /**
- * @fn bios_disable_hint
+ * @fn bios_disable_hblank
  * @brief Disables horizontal interrupts on the VDP
  * @ingroup bios_int
  *
  * @details The VDP register buffer (VDP_REGS) is updated with this call.
  */
-static inline void bios_disable_hint()
+static inline void bios_disable_hblank()
 {
   asm volatile(
     "\
   jsr %c0 \n\
     "
     :
-    : "i"(BIOS_DISABLE_HINT)
+    : "i"(BIOS_DISABLE_HBLANK)
     : "cc");
 }
 
@@ -919,40 +920,40 @@ static inline void bios_vdp_disp_disable()
 }
 
 /**
- * @fn bios_vint_wait_default
+ * @fn bios_vblank_wait_default
  * @brief Wait for VBLANK interrupt with default flags
  * @ingroup bios_int
- * @sa BIOS_VINT_WAIT_DEFAULT
+ * @sa BIOS_VBLANK_WAIT_DEFAULT
  *
- * @details This will set the default VINT flags (copy sprite list & call
- * VINT_USER) before waiting for VINT
+ * @details This will set the default VBLANK flags (copy sprite list & call
+ * VBLANK_USER) before waiting for VBLANK
  *
  * @note This will also make a call to _PRNG
  *
- * @warning This will enable all interrupts before waiting for the VINT!
+ * @warning This will enable all interrupts before waiting for the VBLANK!
  */
-static inline void bios_vint_wait_default()
+static inline void bios_vblank_wait_default()
 {
   asm volatile(
     "\
 			jsr %c0 \n\
     "
     :
-    : "i"(BIOS_VINT_WAIT_DEFAULT)
+    : "i"(BIOS_VBLANK_WAIT_DEFAULT)
     : "d0");
 }
 
 /**
- * @fn bios_vint_wait
+ * @fn bios_vblank_wait
  * @brief Wait for VBLANK interrupt
  * @ingroup bios_int
- * @sa BIOS_VINT_WAIT
+ * @sa BIOS_VBLANK_WAIT
  *
  * @note This will also make a call to _PRNG
  *
- * @warning This will enable all interrupts before waiting for the VINT!
+ * @warning This will enable all interrupts before waiting for the VBLANK!
  */
-static inline void bios_vint_wait(u8 flags)
+static inline void bios_vblank_wait(u8 flags)
 {
   register u8 D0 asm("d0") = flags;
   asm volatile(
@@ -960,7 +961,7 @@ static inline void bios_vint_wait(u8 flags)
 			jsr %c0 \n\
     "
     :
-    : "i"(BIOS_VINT_WAIT), "d"(D0));
+    : "i"(BIOS_VBLANK_WAIT), "d"(D0));
 }
 
 /**
@@ -1247,8 +1248,8 @@ static inline void bios_dma_copy(u32 vdpptr_dest, u16 source, u16 length)
  * @ingroup bios_vdp
  *
  * @details This uses the default Boot ROM VRAM layout (i.e. sprite list at
- * 0xB800) Will only perform the copy of bit 0 of VINT_FLAGS is set (so this is
- * likely intended to be called from VINT, probably VINT_USER)
+ * 0xB800) Will only perform the copy of bit 0 of VBLANK_FLAGS is set (so this
+ * is likely intended to be called from VBLANK, probably VBLANK_USER)
  */
 static inline void bios_copy_sprlist()
 {

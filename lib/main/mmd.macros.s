@@ -29,7 +29,7 @@
   move.w   6(a0), d0  //size of MMD Data in d7
 0:move.l   (a1)+, (a2)+   //copy MMD Data to destination
   dbf      d0, 0b
-1:move.l   12(a0), d0  //set HINT vector if provided
+1:move.l   12(a0), d0  //set HBLANK vector if provided
   beq      2f
   move.l   d0, EXVEC_LEVEL4
 2:move.l   16(a0), d0

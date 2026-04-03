@@ -36,8 +36,8 @@ SECTIONS
     LONG(MMD_DEST)
     SHORT(((_ROM_LENGTH + _RAM_DATA_LENGTH) >> 2) - 1)  /* counted in longs, minus 1 for the dbf loop */
     LONG(DEFINED(init) ? init : main)
-    LONG(DEFINED(hint) ? hint : 0)
-    LONG(DEFINED(vint) ? vint : 0)
+    LONG(DEFINED(hblank) ? hblank : 0)
+    LONG(DEFINED(vblank) ? vblank : 0)
     . = 0x100;
   }
 

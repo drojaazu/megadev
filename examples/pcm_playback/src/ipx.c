@@ -51,7 +51,7 @@ void main()
   bios_load_font_defaults();
   bios_palette[1] = 0xEEE;
   bios_vdp_update_flags |= BIOS_VDPUPDATE_COPY_PALETTE_FLAG;
-  bios_vint_wait_default();
+  bios_vblank_wait_default();
 
   bios_print(
     "PCM Audio Playback\xff",
@@ -66,7 +66,7 @@ void main()
   // main loop
   while (true)
   {
-    bios_vint_wait_default();
+    bios_vblank_wait_default();
 
     if ((bios_joy1_hit & PAD_A))
     {
