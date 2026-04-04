@@ -38,9 +38,9 @@ volatile bool vblank_done;
 u32           vblank_counter;
 u8            vblank_flags;
 
-#define vblank_skip_updates   (1 << 0)
-#define vblank_update_cram    (1 << 1)
-#define vblank_update_vdpregs (1 << 2)
+#define vblank_skip_updates    (1 << 0)
+#define vblank_update_cram     (1 << 1)
+#define vblank_update_vdp_regs (1 << 2)
 
 __attribute__((interrupt)) void INT6_VBLANK()
 {
@@ -49,7 +49,7 @@ __attribute__((interrupt)) void INT6_VBLANK()
     goto vblank_done;
   if (vblank_flags & vblank_update_cram)
     update_cram();
-  if (vblank_flags & vblank_update_vdpregs)
+  if (vblank_flags & vblank_update_vdp_regs)
     update_vdp_regs();
 
 vblank_done:
@@ -104,24 +104,24 @@ void clear_vram()
 #endif
 
 u16 const default_vdp_regs[] = {
-  VDPREG_MODE1 | VDP_HICOLOR_ENABLE,
-  VDPREG_MODE2 | VDP_MD_DISPLAY_MODE | VDP_VBLANK_ENABLE | VIDEO_SIGNAL |
+  VDP_REG_MODE1 | VDP_HICOLOR_ENABLE,
+  VDP_REG_MODE2 | VDP_MD_DISPLAY_MODE | VDP_VBLANK_ENABLE | VIDEO_SIGNAL |
     VDP_DISPLAY_ENABLE,
-  VDPREG_PLA_ADDR | (PLANE_A_ADDR / 0x400),
-  VDPREG_WIN_ADDR | (0xa00 / 0x400),
-  VDPREG_PLB_ADDR | (PLANE_B_ADDR / 0x2000),
-  VDPREG_SPR_ADDR | (0xb800 / 0x200),
-  VDPREG_SPR_ADDR2,
-  VDPREG_BGCOLOR,
-  VDPREG_HBLANK_COUNT,
-  VDPREG_MODE3 | VDP_EXTINT_ENABLE,
-  VDPREG_MODE4 | VDP_MASK_WIDTH_40CELL,
-  VDPREG_HS_ADDR | (0xbc00 / 0x400),
-  VDPREG_PL_ADDR2,
-  VDPREG_AUTOINC | 2,
-  VDPREG_PL_SIZE | VDP_PL_32x32,
-  VDPREG_WIN_HPOS,
-  VDPREG_WIN_VPOS};
+  VDP_REG_PLA_ADDR | (PLANE_A_ADDR / 0x400),
+  VDP_REG_WIN_ADDR | (0xa00 / 0x400),
+  VDP_REG_PLB_ADDR | (PLANE_B_ADDR / 0x2000),
+  VDP_REG_SPR_ADDR | (0xb800 / 0x200),
+  VDP_REG_SPR_ADDR2,
+  VDP_REG_BGCOLOR,
+  VDP_REG_HBLANK_COUNT,
+  VDP_REG_MODE3 | VDP_EXTINT_ENABLE,
+  VDP_REG_MODE4 | VDP_MASK_WIDTH_40CELL,
+  VDP_REG_HS_ADDR | (0xbc00 / 0x400),
+  VDP_REG_PL_ADDR2,
+  VDP_REG_AUTOINC | 2,
+  VDP_REG_PL_SIZE | VDP_PL_32x32,
+  VDP_REG_WIN_HPOS,
+  VDP_REG_WIN_VPOS};
 
 #define plane_xy(x, y)                                        \
   (vdp_ptr(PLANE_POS(x, y, Width32) + PLANE_A_ADDR) | VRAM_W)
@@ -144,7 +144,7 @@ void main()
   memcpy16(default_vdp_regs, vdp_regs, 18);
   update_vdp_regs();
 
-  // note: seems to be important to set up vdpregs first, then clear vram
+  // note: seems to be important to set up vdp_regs first, then clear vram
   clear_vram();
 
   cram[0] = 0x0000;

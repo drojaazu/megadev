@@ -186,14 +186,14 @@ typedef struct Palette
  *
  * @details Buffer of all VDP registers (except DMA regs), making up 19
  * entries. You will need to keep these updated manually unless you use
- * BIOS_LOAD_VDPREGS
+ * BIOS_LOAD_VDP_REGS
  *
  * Size: 16bit * 19 = 0x26 bytes
  *
- * @sa BIOS_VDPREG_CACHE
+ * @sa BIOS_VDP_REG_CACHE
  */
-// #define bios_vdp_regs (*((volatile u16(*)[19]) BIOS_VDPREG_CACHE))
-#define bios_vdp_regs ((volatile u16 *) BIOS_VDPREG_CACHE)
+// #define bios_vdp_regs (*((volatile u16(*)[19]) BIOS_VDP_REG_CACHE))
+#define bios_vdp_regs ((volatile u16 *) BIOS_VDP_REG_CACHE)
 
 /**
  * @def bios_comflags_main
@@ -640,7 +640,7 @@ static inline void bios_clear_vsram()
 }
 
 /**
- * @fn bios_load_vdpregs_default
+ * @fn bios_load_vdp_regs_default
  * @brief Loads the Boot ROM default VDP register defaults
  * @ingroup bios_vdp
  * @details
@@ -679,19 +679,19 @@ static inline void bios_clear_vsram()
     0x9200
       - Window plane Y position: 0
  */
-static inline void bios_load_vdpregs_default()
+static inline void bios_load_vdp_regs_default()
 {
   asm volatile(
     "\
   jsr %c0 \n\
     "
     :
-    : "i"(BIOS_LOAD_DEFAULT_VDPREGS)
+    : "i"(BIOS_LOAD_DEFAULT_VDP_REGS)
     : "d0", "d1", "a1", "a2");
 }
 
 /**
- * @fn bios_load_vdpregs
+ * @fn bios_load_vdp_regs
  * @brief Load values into multiple VDP registers
  * @ingroup bios_vdp
  *
@@ -700,7 +700,7 @@ static inline void bios_load_vdpregs_default()
  * (e.g. 80, 81, etc) and the lower byte is
  * the value, with the list terminated by 0.
  */
-static inline void bios_load_vdpregs(vdp_reg const * vdp_reg_data)
+static inline void bios_load_vdp_regs(vdp_reg const * vdp_reg_data)
 {
   register u32 A1 asm("a1") = (u32) vdp_reg_data;
 
@@ -709,7 +709,7 @@ static inline void bios_load_vdpregs(vdp_reg const * vdp_reg_data)
   jsr %p1 \n\
     "
     : "+a"(A1)
-    : "i"(BIOS_LOAD_VDPREGS), "a"(A1)
+    : "i"(BIOS_LOAD_VDP_REGS), "a"(A1)
     : "cc", "d0", "d1", "a2");
 }
 
@@ -843,7 +843,7 @@ static inline void bios_load_map(
  * must use @ref bios_set_hblank instead.
  *
  * @details
- * The VDP register buffer (BIOS_VDPREG_CACHE) is updated with this call.
+ * The VDP register buffer (BIOS_VDP_REG_CACHE) is updated with this call.
  */
 static inline void bios_set_hblank_workram(void * hblank_handler)
 {

@@ -23,7 +23,7 @@
 0:move.l   d0, (a0)+
 1:dbra     d1, 0b
 
-  jbsr     BIOS_LOAD_DEFAULT_VDPREGS
+  jbsr     BIOS_LOAD_DEFAULT_VDP_REGS
   jbsr     BIOS_CLEAR_VRAM
   jbsr     BIOS_CLEAR_COMM
 
