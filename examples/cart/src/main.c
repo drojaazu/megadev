@@ -8,7 +8,7 @@
 volatile u8 p1_hold, p1_single, p1_prev;
 volatile u8 p2_hold, p2_single, p2_prev;
 
-void update_inputs()
+void read_inputs()
 {
   p1_hold = ~read_input_joypad(io_data1);
   p2_hold = ~read_input_joypad(io_data2);
@@ -36,10 +36,23 @@ __attribute__((interrupt)) void INT4_HBLANK()
 
 volatile bool vblank_done;
 u32           vblank_counter;
+u8            vblank_flags;
+
+#define vblank_skip_updates   (1 << 0)
+#define vblank_update_cram    (1 << 1)
+#define vblank_update_vdpregs (1 << 2)
 
 __attribute__((interrupt)) void INT6_VBLANK()
 {
-  update_inputs();
+  read_inputs();
+  if (vblank_flags & vblank_skip_updates)
+    goto vblank_done;
+  if (vblank_flags & vblank_update_cram)
+    update_cram();
+  if (vblank_flags & vblank_update_vdpregs)
+    update_vdp_regs();
+
+vblank_done:
   ++vblank_counter;
   vblank_done = true;
   return;
@@ -92,7 +105,7 @@ void clear_vram()
 
 u16 const default_vdp_regs[] = {
   VDPREG_MODE1 | VDP_HICOLOR_ENABLE,
-  VDPREG_MODE2 | VDP_MD_DISPLAY_MODE | VDP_VINT_ENABLE | VIDEO_SIGNAL |
+  VDPREG_MODE2 | VDP_MD_DISPLAY_MODE | VDP_VBLANK_ENABLE | VIDEO_SIGNAL |
     VDP_DISPLAY_ENABLE,
   VDPREG_PLA_ADDR | (PLANE_A_ADDR / 0x400),
   VDPREG_WIN_ADDR | (0xa00 / 0x400),
@@ -100,9 +113,9 @@ u16 const default_vdp_regs[] = {
   VDPREG_SPR_ADDR | (0xb800 / 0x200),
   VDPREG_SPR_ADDR2,
   VDPREG_BGCOLOR,
-  VDPREG_HINT_COUNT,
+  VDPREG_HBLANK_COUNT,
   VDPREG_MODE3 | VDP_EXTINT_ENABLE,
-  VDPREG_MODE4 | VDP_WIDTH_40CELL,
+  VDPREG_MODE4 | VDP_MASK_WIDTH_40CELL,
   VDPREG_HS_ADDR | (0xbc00 / 0x400),
   VDPREG_PL_ADDR2,
   VDPREG_AUTOINC | 2,
@@ -113,7 +126,7 @@ u16 const default_vdp_regs[] = {
 #define plane_xy(x, y)                                        \
   (vdp_ptr(PLANE_POS(x, y, Width32) + PLANE_A_ADDR) | VRAM_W)
 
-void print(char const * string, vdp_ptr pos)
+void print(char const * string, vdp_addr pos)
 {
   vdp_ctrl_32 = pos;
   while (*string != 0)
