@@ -93,11 +93,11 @@
 #define BIOS_VBLANK_USER 0xFFFDAA
 
 /**
- * @def BIOS_VDPREG_CACHE
+ * @def BIOS_VDP_REG_CACHE
  * @ingroup bios_vdp
  * @sa bios_vdp_regs
  */
-#define BIOS_VDPREG_CACHE 0xFFFDB4
+#define BIOS_VDP_REG_CACHE 0xFFFDB4
 
 /**
  * @def BIOS_COMMFLAGS_MAIN_CACHE
@@ -593,7 +593,7 @@
 #endif
 
 /**
- * @def BIOS_LOAD_DEFAULT_VDPREGS
+ * @def BIOS_LOAD_DEFAULT_VDP_REGS
  * @clobber d0-d1/a1-a2
  * @ingroup bios_vdp
  * @details
@@ -633,21 +633,21 @@
       - Window plane Y position: 0
  */
 #if TARGET == MEGACD_MODE1
-#define BIOS_LOAD_DEFAULT_VDPREGS 0x4002AC
+#define BIOS_LOAD_DEFAULT_VDP_REGS 0x4002AC
 #else
-#define BIOS_LOAD_DEFAULT_VDPREGS 0x0002AC
+#define BIOS_LOAD_DEFAULT_VDP_REGS 0x0002AC
 #endif
 
 /**
- * @sa bios_load_vdpregs
+ * @sa bios_load_vdp_regs
  * @param[in] A1.l Pointer to register data
  * @clobber d0-d1/a2
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
-#define BIOS_LOAD_VDPREGS 0x4002B0
+#define BIOS_LOAD_VDP_REGS 0x4002B0
 #else
-#define BIOS_LOAD_VDPREGS 0x0002B0
+#define BIOS_LOAD_VDP_REGS 0x0002B0
 #endif
 
 /**

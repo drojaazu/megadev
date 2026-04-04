@@ -23,8 +23,8 @@
 
   // Next, begin to initialiaze video output (the VDP)
   // We will use the default VDP settings provided by the Main BIOS
-  // See the comments for BIOS_LOAD_DEFAULT_VDPREGS for details on what those settings are.
-  jbsr     BIOS_LOAD_DEFAULT_VDPREGS
+  // See the comments for BIOS_LOAD_DEFAULT_VDP_REGS for details on what those settings are.
+  jbsr     BIOS_LOAD_DEFAULT_VDP_REGS
 
   // Clear out VRAM in case there's any junk left over after the system startup graphics
   // (note: this does not clear CRAM!)

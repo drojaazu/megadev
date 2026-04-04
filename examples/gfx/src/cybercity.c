@@ -55,7 +55,7 @@ __attribute__((noreturn)) void main()
   // turn off the display while we init
   bios_vdp_disp_disable();
   // boot rom defaults are fine...
-  bios_load_vdpregs_default();
+  bios_load_vdp_regs_default();
 
   // We use the PlaneWidthTiles enum to assign the value in *tiles*, which is
   // more intuitive than the count in nametable entries, which is what it
@@ -64,9 +64,9 @@ __attribute__((noreturn)) void main()
 
   // The load VDP regs Boot ROM routines expect a zero terminated array of
   // raw register values
-  // See the documentation on BIOS_LOAD_VDPREGS for more
-  vdp_reg const vdp_planewidth_reg[] = {VDPREG_PL_SIZE | VDP_PL_32x64, 0};
-  bios_load_vdpregs(vdp_planewidth_reg);
+  // See the documentation on BIOS_LOAD_VDP_REGS for more
+  vdp_reg const vdp_planewidth_reg[] = {VDP_REG_PL_SIZE | VDP_PL_32x64, 0};
+  bios_load_vdp_regs(vdp_planewidth_reg);
 
   // load the palettes
   // In general, use the to_vdp_addr macro for converting a VRAM address to the

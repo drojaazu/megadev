@@ -262,13 +262,13 @@ However, a number of Main BIOS library routines expect the VRAM to have a specif
 
 This is a pretty standard layout that would work well for many applications, but your usage may vary throughout your program. It is possible to change this layout so long as the the blocks specifically used by a certain call are in their expected location. For example, the sprite list update calls expect the sprite table to be at 0xB800, but it doesn't address anything else in VRAM, and thus the rest of the layout can be different so long as the sprite table is at 0xB800. For each call that expects this layout, we will mark which blocks are used/affected.
 
-This layout is set when using the default VDP register values in `BIOS_LOAD_DEFAULT_VDPREGS`. 
+This layout is set when using the default VDP register values in `BIOS_LOAD_DEFAULT_VDP_REGS`. 
 
 ## VDP Register Cache Component
 
 Since the value of VDP registers cannot be read (except for the Status register), we must maintain a mirror of those values in RAM for reference in order to preserve settings when making bitwise changes. For example, when performing a DMA operation, we must first set bit #4 on Mode Register 2. Since we cannot do a bitwise operation and must set the whole register at once, we need to know the current value so we do not alter any other bit level settings.
 
-The cache is an array of 18 words (36 bytes), one for each of the first 18 registers. (The DMA register values are not maintained, as they need to be set on each DMA operation anyway.) It is defined as `BIOS_VDPREG_CACHE` within Megadev.
+The cache is an array of 18 words (36 bytes), one for each of the first 18 registers. (The DMA register values are not maintained, as they need to be set on each DMA operation anyway.) It is defined as `BIOS_VDP_REG_CACHE` within Megadev.
 
 ## Plane Width Cache Component
 
@@ -276,7 +276,7 @@ The width and height of planes can be adjusted in VDP Register 0x10 to one of th
 
 All of the nametable (tilemap) related functions use the plane width cache, which is a byte value defined as `BIOS_VDP_DEFAULT_PLANE_WIDTH`. Note that this value is the width *in bytes* rather than tiles. At two bytes per entry, this means the value should simply be double the width in tiles. I.E.: 32 tiles = 64 byte width, 64 tiles = 128 byte width, 128 tiles = 256 byte width.
 
-Also note that this value must be manually updated whenever changing the width setting in VDP Register 0x10! The only exception to this is when using `BIOS_LOAD_DEFAULT_VDPREGS` which will update the plane width cache to match the default registers.
+Also note that this value must be manually updated whenever changing the width setting in VDP Register 0x10! The only exception to this is when using `BIOS_LOAD_DEFAULT_VDP_REGS` which will update the plane width cache to match the default registers.
 
 ## DMA Component
 
@@ -470,7 +470,7 @@ Clears the nametables (tile mappings) and sprite table. Note that it only clears
 ### `BIOS_CLEAR_VSRAM`
 Clears VSRAM.
 
-### `BIOS_LOAD_DEFAULT_VDPREGS`
+### `BIOS_LOAD_DEFAULT_VDP_REGS`
 Components: Fixed VRAM Layout (All), VDP Register Cache, Plane Width Cache
 
 Loads the Main BIOS default VDP settings to the cache and to the registers. Also updates the `BIOS_VDP_DEFAULT_PLANE_WIDTH` cached value.
@@ -527,7 +527,7 @@ Here is the default VDP data loaded by the function, in the order in which it ap
   Window plane Y position
   - 0
 
-### `BIOS_LOAD_VDPREGS`
+### `BIOS_LOAD_VDP_REGS`
 
 Components: VDP Reg Cache
 
