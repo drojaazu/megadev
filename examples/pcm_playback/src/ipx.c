@@ -53,7 +53,7 @@ void main()
 {
   bios_load_font_defaults();
   bios_palette[1] = 0xEEE;
-  bios_vdp_update_flags |= BIOS_FLAG_COPY_PALETTE;
+  bios_vdp_update_flags |= BIOS_MASK_COPY_PALETTE;
   bios_vblank_wait_default();
 
   bios_print(

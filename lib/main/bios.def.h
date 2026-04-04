@@ -303,14 +303,14 @@
  * @brief
  * @note For use with @ref BIOS_VBLANK_HANDLER_FLAGS
  */
-#define BIOS_FLAG_COPY_SPRLIST (1 << BIOS_BIT_COPY_SPRLIST)
+#define BIOS_MASK_COPY_SPRLIST (1 << BIOS_BIT_COPY_SPRLIST)
 
 /**
  * @def BIOS_VBLANK_USERCALL_FLAG
  * @brief
  * @note For use with @ref BIOS_VBLANK_HANDLER_FLAGS
  */
-#define BIOS_FLAG_DO_USERCALL (1 << BIOS_BIT_DO_USERCALL)
+#define BIOS_MASK_DO_USERCALL (1 << BIOS_BIT_DO_USERCALL)
 
 /**
  * @def BIOS_VBLANK_COUNTER
@@ -336,11 +336,11 @@
 #define BIOS_BIT_COPY_PALETTE 1
 
 /**
- * @def BIOS_FLAG_COPY_PALETTE
+ * @def BIOS_MASK_COPY_PALETTE
  * @brief VDP Update Flags / Update Palette
  * @ingroup bios_vdp
  */
-#define BIOS_FLAG_COPY_PALETTE (1 << BIOS_BIT_COPY_PALETTE)
+#define BIOS_MASK_COPY_PALETTE (1 << BIOS_BIT_COPY_PALETTE)
 
 /**
  * @def BIOS_RANDOM
