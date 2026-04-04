@@ -81,7 +81,7 @@ SUB plane_xy_pos
   // TODO: make this dynamic
   add.w    #0xC000, d0
 
-  // convert the address in d0 to vdp_ptr format
+  // convert the address in d0 to vdp_addr format
   TO_VDPPTR
   // and set the VRAM write operation flags
   or.l     #VRAM_W, d0

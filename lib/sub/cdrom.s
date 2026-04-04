@@ -20,7 +20,7 @@
  * @fn load_file_prg_dma
  * @brief Convenience sub to load a file to PRG RAM via DMA
  * @param[in] A0.l Pointer to filename string
- * @note Be sure to set the destination in the GAREG_DMAADDR register
+ * @note Be sure to set the destination in the GA_REG_DMAADDR register
  * beforehand
  */
 load_file_prg_dma:
@@ -296,7 +296,7 @@ load_data_sub:
   move.w  #0x1E, read_retry_count
 
 load_data_begin:
-  move.b  cdc_dev_dest, (GAREG_CDCMODE)
+  move.b  cdc_dev_dest, (GA_REG_CDCMODE)
   lea     cdread_sector_start, a0 // point to sector struct for BIOS_ROM_READN
 
   /*
@@ -336,7 +336,7 @@ load_data_begin:
   bge      load_data_begin
   bra      load_data_failure
 5:move.w   #0x7FF, d0        /*wait for Data Set Ready flag from CDC*/
-  btst     #BIT_CDCMODE_DSR-8, (GAREG_CDCMODE).l
+  btst     #GA_BIT_CDCMODE_DSR-8, (GA_REG_CDCMODE).l
   dbne     d0, 5b
   bne      6f
   subq.w   #1, read_retry_count  /*no response from CDC in time, retry*/
@@ -373,7 +373,7 @@ load_data_begin:
   bgt      2b          /*and loop back if there are still frames pending*/
   move.w   #CDROM_RESULT_OK, access_op_result  /*indicate we completed successfully*/
 load_data_end:
-  move.b   cdc_dev_dest, GAREG_CDCMODE
+  move.b   cdc_dev_dest, GA_REG_CDCMODE
   movea.l  return_ptr, a0  /*return to the original call site*/
   jmp      (a0)
 load_data_failure:
@@ -384,7 +384,7 @@ load_data_failure:
 load_data_maincpudest:
   move.w   #6, read_timeout
 1:bsr      accloop_reentry
-  btst     #7, GAREG_CDCMODE  /*check EDT*/
+  btst     #7, GA_REG_CDCMODE  /*check EDT*/
   bne      9b
   subq.w   #1, read_timeout
   bge      1b
@@ -404,7 +404,7 @@ load_data_dma:
   move.w   #0x1E, read_retry_count
 
 load_data_dma_begin:
-  move.b   cdc_dev_dest, (GAREG_CDCMODE)
+  move.b   cdc_dev_dest, (GA_REG_CDCMODE)
   lea      cdread_sector_start, a0  // point to sector struct for BIOS_ROM_READN
 
   /*
@@ -448,7 +448,7 @@ load_data_dma_begin:
 6:move.w   #6, read_timeout  // next we want the signal from the CDC that 
   													 // everything is done
 7:bsr      accloop_reentry   // give it some time...
-  btst     #BIT_CDCMODE_EDT-8, GAREG_CDCMODE  // check that the EDT bit is set
+  btst     #GA_BIT_CDCMODE_EDT-8, GA_REG_CDCMODE  // check that the EDT bit is set
   beq      0f               // not set yet, retry
   move.b   (cdc_frame_check), d0  // CDC is done, let's prepare for next frame
   moveq    #1, d1                 // grab the error check value
@@ -472,7 +472,7 @@ load_data_dma_begin:
   bgt      2b                 // loop back if there are still frames pending
   move.w   #CDROM_RESULT_OK, access_op_result  // all data loaded!
 load_data_dma_return:
-  move.b   cdc_dev_dest, GAREG_CDCMODE // write the dest. again to reset DMA
+  move.b   cdc_dev_dest, GA_REG_CDCMODE // write the dest. again to reset DMA
   movea.l  return_ptr, a0          // return to the original call site
   jmp      (a0)
 load_data_dma_failure:

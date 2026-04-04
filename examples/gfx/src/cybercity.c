@@ -31,7 +31,7 @@ void vblank_user()
 
 void (*spr_funcs[2])() = {null_func, null_func};
 
-const vdp_cmd vdpptr_scroll = vdp_ptr((BIOS_VDP_DEFAULT_HSCROLL)) | VRAM_W;
+const vdp_cmd vdpptr_scroll = to_vdp_addr((BIOS_VDP_DEFAULT_HSCROLL)) | VRAM_W;
 
 /*
   We mark this is as noreturn since this is an infinite loop that will
@@ -69,15 +69,15 @@ __attribute__((noreturn)) void main()
   bios_load_vdpregs(vdp_planewidth_reg);
 
   // load the palettes
-  // In general, use the vdp_ptr macro for converting a VRAM address to the
+  // In general, use the to_vdp_addr macro for converting a VRAM address to the
   // VDP compatible format. It is written so that constant values will be
   // calculated at compile time, and variables will be calculated at runtime
   // with the optimized conversion code
-  bios_dma_xfer_word_ram((vdp_ptr(0) | CRAM_W), res_cybercity_pal, 32 >> 1);
-  bios_dma_xfer_word_ram((vdp_ptr(32) | CRAM_W), res_ship_pal, 32 >> 1);
+  bios_dma_xfer_word_ram((to_vdp_addr(0) | CRAM_W), res_cybercity_pal, 32 >> 1);
+  bios_dma_xfer_word_ram((to_vdp_addr(32) | CRAM_W), res_ship_pal, 32 >> 1);
 
   // bios_gfx_decomp requires that we set the VDP address first
-  vdp_ctrl_32 = vdp_ptr(VRAMPTR(1)) | VRAM_W;
+  vdp_ctrl_32 = to_vdp_addr(vram_addr_from_tileidx(1)) | VRAM_W;
   bios_gfx_decomp(res_cybercity_bldg_cmp_nem);
 
   // first word of Nemesis compression is the tile count, with the msb
@@ -85,21 +85,24 @@ __attribute__((noreturn)) void main()
   // next free tile +1 to account for the blank 0 tile
   u16 free_tile = ((*(u16 *) res_cybercity_bldg_cmp_nem) & 0x7FFF) + 1;
 
-  vdp_ctrl_32 = vdp_ptr(VRAMPTR(free_tile)) | VRAM_W;
+  vdp_ctrl_32 = to_vdp_addr(vram_addr_from_tileidx(free_tile)) | VRAM_W;
   bios_gfx_decomp(res_cybercity_farbg_cmp_nem);
 
   free_tile += ((*(u16 *) res_cybercity_farbg_cmp_nem) & 0x7FFF);
 
   bios_dma_xfer_word_ram(
-    vdp_ptr(VRAMPTR(free_tile)) | VRAM_W, res_ship_chr, 1920 >> 1);
+    to_vdp_addr(vram_addr_from_tileidx(free_tile)) | VRAM_W,
+    res_ship_chr,
+    1920 >> 1);
 
   bios_load_map(
-    vdp_ptr(BIOS_VDP_DEFAULT_PLANEA + PLANE_POS(0, 2, Width32)) | VRAM_W,
+    to_vdp_addr(BIOS_VDP_DEFAULT_PLANEA + VDP_PLANE_POS(0, 2, Width32)) |
+      VRAM_W,
     res_cybercity_bldg_map[0] - 1,
     res_cybercity_bldg_map[1] - 1,
     res_cybercity_bldg_map + 2);
   bios_load_map(
-    vdp_ptr(BIOS_VDP_DEFAULT_PLANEB) | VRAM_W,
+    to_vdp_addr(BIOS_VDP_DEFAULT_PLANEB) | VRAM_W,
     res_cybercity_farbg_map[0] - 1,
     res_cybercity_farbg_map[1] - 1,
     res_cybercity_farbg_map + 2);
@@ -113,7 +116,7 @@ __attribute__((noreturn)) void main()
 
   do
   {
-    bios_vblank_handler_flags = BIOS_VBLANK_COPY_SPRLIST_FLAG;
+    bios_vblank_handler_flags = BIOS_FLAG_COPY_SPRLIST;
     bios_vblank_wait_default();
 
     bios_process_entities(&sprobj_ship, bios_sprlist, 0, 0x1A);

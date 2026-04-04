@@ -84,88 +84,88 @@
 #define VSRAM_W 0x40000010
 
 /**
- * @def VDPSTAT_PAL_HARDWARE
+ * @def VDPSTAT_FLAG_PAL_HARDWARE
  * @brief VDP Control Port / VDP Status / PAL Hardware Flag
  *
  */
-#define VDPSTAT_PAL_HARDWARE (1 << 0)
+#define VDPSTAT_FLAG_PAL_HARDWARE (1 << 0)
 
 /**
- * @def VDPSTAT_DMA_IN_PROGRESS
+ * @def VDPSTAT_FLAG_DMA_IN_PROGRESS
  * @brief VDP Control Port / VDP Status / DMA In Progress Flag
  * @ingroup vdp_port
  *
  */
-#define VDPSTAT_DMA_IN_PROGRESS (1 << 1)
+#define VDPSTAT_FLAG_DMA_IN_PROGRESS (1 << 1)
 
 /**
- * @def VDPSTAT_HBLANK_IN_PROGRESS
+ * @def VDPSTAT_FLAG_HBLANK_IN_PROGRESS
  * @brief VDP Control Port / VDP Status / HBLANK In Progress Flag
  * @ingroup vdp_port
  *
  */
-#define VDPSTAT_HBLANK_IN_PROGRESS (1 << 2)
+#define VDPSTAT_FLAG_HBLANK_IN_PROGRESS (1 << 2)
 
 /**
- * @def VDPSTAT_VBLANK_IN_PROGRESS
+ * @def VDPSTAT_FLAG_VBLANK_IN_PROGRESS
  * @brief VDP Control Port / VDP Status / VBLANK In Progress Flag
  * @ingroup vdp_port
  *
  */
-#define VDPSTAT_VBLANK_IN_PROGRESS (1 << 3)
+#define VDPSTAT_FLAG_VBLANK_IN_PROGRESS (1 << 3)
 
 /**
- * @def VDPSTAT_ODD_FRAME
+ * @def VDPSTAT_FLAG_ODD_FRAME
  * @brief VDP Control Port / VDP Status / Odd Frame Flag
  * @ingroup vdp_port
  *
  */
-#define VDPSTAT_ODD_FRAME (1 << 4)
+#define VDPSTAT_FLAG_ODD_FRAME (1 << 4)
 
 /**
- * @def VDPSTAT_SPR_COLLISION
+ * @def VDPSTAT_FLAG_SPR_COLLISION
  * @brief VDP Control Port / VDP Status / Sprite Collision Flag
  *
- * @details Note: The VDPSTAT_SPR_COLLISION flag is a holdover from the
+ * @details Note: The VDPSTAT_FLAG_SPR_COLLISION flag is a holdover from the
  * TMS9918, which could only show 4 sprites on a scanline. Since the Mega
  * Drive can show up to 20 sprites per scanline (16 in 32-cell mode), and
  * there's no indication as to which sprites overlapped, this flag is
  * generally considered to be useless.
  *
  */
-#define VDPSTAT_SPR_COLLISION (1 << 5)
+#define VDPSTAT_FLAG_SPR_COLLISION (1 << 5)
 
 /**
- * @def VDPSTAT_SPR_LIMIT
+ * @def VDPSTAT_FLAG_SPR_LIMIT
  * @brief VDP Control Port / VDP Status / Sprite Limit Flag
  * @ingroup vdp_port
  *
  */
-#define VDPSTAT_SPR_LIMIT (1 << 6)
+#define VDPSTAT_FLAG_SPR_LIMIT (1 << 6)
 
 /**
- * @def VDPSTAT_VBLANK_TRIGGERED
+ * @def VDPSTAT_FLAG_VBLANK_TRIGGERED
  * @brief VDP Control Port / VDP Status / VBLANK Interrupt Triggered Flag
  * @ingroup vdp_port
  *
  */
-#define VDPSTAT_VBLANK_TRIGGERED (1 << 7)
+#define VDPSTAT_FLAG_VBLANK_TRIGGERED (1 << 7)
 
 /**
- * @def VDPSTAT_FIFO_FULL
+ * @def VDPSTAT_FLAG_FIFO_FULL
  * @brief VDP Control Port / VDP Status / FIFO Full Flag
  * @ingroup vdp_port
  *
  */
-#define VDPSTAT_FIFO_FULL (1 << 8)
+#define VDPSTAT_FLAG_FIFO_FULL (1 << 8)
 
 /**
- * @def VDPSTAT_FIFO_EMPTY
+ * @def VDPSTAT_FLAG_FIFO_EMPTY
  * @brief VDP Control Port / VDP Status / FIFO Empty Flag
  * @ingroup vdp_port
  *
  */
-#define VDPSTAT_FIFO_EMPTY (1 << 9)
+#define VDPSTAT_FLAG_FIFO_EMPTY (1 << 9)
 
 /**
  * @def VDP_DATA
@@ -768,12 +768,12 @@
  * @param HSY (No documentation.)
  * @param EP External pixel bus enable
  * @param SH Enable shadow/highlight mode
- * \n [@ref VDP_SHADOW_HIGHLIGHT]
+ * \n [@ref VDP_FLAG_SHADOW_HIGHLIGHT]
  * @param LS Interlace mode
- * \n 00: No interlace [@ref VDP_INTERLACE_NONE]
- * \n 01: Interlace normal resolution [@ref VDP_INTERLACE_NORMAL]
- * \n 10: No interlace [@ref VDP_INTERLACE_NONE]
- * \n 11: Interlace double resolution [@ref VDP_INTERLACE_DOUBLE]
+ * \n 00: No interlace [@ref VDP_FLAG_INTERLACE_NONE]
+ * \n 01: Interlace normal resolution [@ref VDP_FLAG_INTERLACE_NORMAL]
+ * \n 10: No interlace [@ref VDP_FLAG_INTERLACE_NONE]
+ * \n 11: Interlace double resolution [@ref VDP_FLAG_INTERLACE_DOUBLE]
  *
  * @aliases VDPREG_MODE4
  */
@@ -788,44 +788,44 @@
 #define VDPREG_MODE4 VDPREG0C
 
 /**
- * @def VDP_WIDTH_40CELL
+ * @def VDP_FLAG_WIDTH_40CELL
  * @ingroup vdp_regs
  * @ingroup vdp_reg0C
  * @brief Screen Width / 40 Cell
  */
-#define VDP_WIDTH_40CELL ((1 << 0) | (1 << 7))
+#define VDP_FLAG_WIDTH_40CELL ((1 << 0) | (1 << 7))
 
 /**
- * @def VDP_SHADOW_HIGHLIGHT
+ * @def VDP_FLAG_SHADOW_HIGHLIGHT
  * @ingroup vdp_regs
  * @ingroup vdp_reg0C
  * @brief Enable Shadow/Highlight Mode
  */
-#define VDP_SHADOW_HIGHLIGHT (1 << 3)
+#define VDP_FLAG_SHADOW_HIGHLIGHT (1 << 3)
 
 /**
- * @def VDP_INTERLACE_NONE
+ * @def VDP_FLAG_INTERLACE_NONE
  * @ingroup vdp_regs
  * @ingroup vdp_reg0C
  * @brief Interlace Mode / None
  */
-#define VDP_INTERLACE_NONE (0b00 << 1)
+#define VDP_FLAG_INTERLACE_NONE (0b00 << 1)
 
 /**
- * @def VDP_INTERLACE_NORMAL
+ * @def VDP_FLAG_INTERLACE_NORMAL
  * @ingroup vdp_regs
  * @ingroup vdp_reg0C
  * @brief Interlace Mode / Normal
  */
-#define VDP_INTERLACE_NORMAL (0b10 << 1)
+#define VDP_FLAG_INTERLACE_NORMAL (0b10 << 1)
 
 /**
- * @def VDP_INTERLACE_DOUBLE
+ * @def VDP_FLAG_INTERLACE_DOUBLE
  * @ingroup vdp_regs
  * @ingroup vdp_reg0C
  * @brief Interlace Mode / Double
  */
-#define VDP_INTERLACE_DOUBLE (0b11 << 1)
+#define VDP_FLAG_INTERLACE_DOUBLE (0b11 << 1)
 
 /**
  * @defgroup vdp_reg0D Main CPU / VDP / Register 0D (Horizontal Scroll Data VRAM
@@ -1306,13 +1306,13 @@
  * @brief Returns VRAM address for the given tile index
  * (assuming tile data begins at 0 in VRAM)
  */
-#define VRAMPTR(tileidx) ((tileidx) << 5)
+#define vram_addr_from_tileidx(tile_idx) ((tile_idx) << 5)
 
 /**
  * @def TILEIDX
  * @brief Returns tile index for the given VRAM address
  * (assuming tile data begins at 0 in VRAM)
  */
-#define TILEIDX(vram_ptr) ((vram_ptr) >> 5)
+#define tileidx_from_vram_addr(vram_addr) ((vram_addr) >> 5)
 
 #endif

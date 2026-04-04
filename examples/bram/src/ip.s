@@ -33,11 +33,11 @@
   ENABLE_INTERRUPTS
 
   GRANT_2M
-  move.w	#0xFE, GAREG_COMCMD0	//send the load IPX command to sub
-0:tst.w		GAREG_COMSTAT0				//wait for response on status reg #0
+  move.w	#0xFE, GA_REG_COMCMD0	//send the load IPX command to sub
+0:tst.w		GA_REG_COMSTAT0				//wait for response on status reg #0
   beq			0b
-  move.w	#0, GAREG_COMCMD0			//send ack
-1:tst.w		GAREG_COMSTAT0				//wait for response (wait for 0 from Sub)
+  move.w	#0, GA_REG_COMCMD0			//send ack
+1:tst.w		GA_REG_COMSTAT0				//wait for response (wait for 0 from Sub)
   bne			1b
   WAIT_2M
 

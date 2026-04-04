@@ -30,7 +30,7 @@ GLABEL sp_init
   bne      1b
   CLEAR_COMM_REGS
   // Put Word RAM into 2M mode and assert control of it
-  andi.w   #~(GA_RET | GA_MODE), GAREG_MEMMODE
+  andi.w   #~(GA_MASK_RETURN_2M | GA_MASK_WORDRAM_LAYOUT), GA_REG_MEMMODE
   // This sets up the CD-ROM access loop with initial settings. It only needs
   // to be called once, here in sp_init
   INIT_ACC_LOOP
@@ -83,7 +83,7 @@ spx_filename:
 // was a problem
 GLABEL sp_fatal
   // move the "fatal error" code to comstat0 so the Main CPU knows what's up
-  move.w #0xFF, GAREG_COMSTAT0
+  move.w #0xFF, GA_REG_COMSTAT0
   // make both LEDs blink (which is normally disallowed but Sega QA isn't
   // here to boss us around)
   moveq	#BIOS_LED_ERROR, d1

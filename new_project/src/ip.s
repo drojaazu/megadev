@@ -64,12 +64,12 @@
   //   - Wait for Word RAM ownership
   //   - Enjoy your freshly transferred data
   GRANT_2M
-  move.w   #FILE_IPX_MMD, GAREG_COMCMD1
-  move.w   #CMD_LOAD_FILE, GAREG_COMCMD0	//send the load IPX command to sub
-0:tst.w    GAREG_COMSTAT0				//wait for response on status reg #0
+  move.w   #FILE_IPX_MMD, GA_REG_COMCMD1
+  move.w   #CMD_LOAD_FILE, GA_REG_COMCMD0	//send the load IPX command to sub
+0:tst.w    GA_REG_COMSTAT0				//wait for response on status reg #0
   beq      0b
-  move.w   #0, GAREG_COMCMD0			//send ack
-1:tst.w    GAREG_COMSTAT0				//wait for response (wait for 0 from Sub)
+  move.w   #0, GA_REG_COMCMD0			//send ack
+1:tst.w    GA_REG_COMSTAT0				//wait for response (wait for 0 from Sub)
   bne      1b
   WAIT_2M
 

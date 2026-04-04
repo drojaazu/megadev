@@ -33,12 +33,12 @@
   ENABLE_INTERRUPTS
 
   GRANT_2M
-  move.w   #FILE_IPX_MMD, GAREG_COMCMD1
-  move.w   #CMD_LOAD_WORDRAM, GAREG_COMCMD0
-0:tst.w    GAREG_COMSTAT0
+  move.w   #FILE_IPX_MMD, GA_REG_COMCMD1
+  move.w   #CMD_LOAD_WORDRAM, GA_REG_COMCMD0
+0:tst.w    GA_REG_COMSTAT0
   beq      0b
-  move.w   #0, GAREG_COMCMD0
-1:tst.w    GAREG_COMSTAT0
+  move.w   #0, GA_REG_COMCMD0
+1:tst.w    GA_REG_COMSTAT0
   bne      1b
   WAIT_2M
 

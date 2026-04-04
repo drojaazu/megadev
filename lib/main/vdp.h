@@ -12,19 +12,19 @@
 #include "types.h"
 
 /**
- * @typedef vram_ptr
- * @brief Semantic typedef for a VRAM address not in VDP Control Port format
+ * @typedef vram_addr
+ * @brief Semantic typedef for a VRAM address *not* in VDP Control Port format
  *
  */
-typedef u16 vram_ptr;
+typedef u16 vram_addr;
 
 /**
- * @typedef vdp_ptr
- * @brief Semantic typedef for a VRAM address, formatted for use on the VDP
+ * @typedef vdp_addr
+ * @brief Semantic typedef for a VRAM address formatted for use on the VDP
  *        Control port (32-bit).
  *
  */
-typedef u32 vdp_ptr;
+typedef u32 vdp_addr;
 
 /**
  * @typedef vdp_cmd
@@ -44,31 +44,31 @@ typedef u16 vdp_reg;
 
 typedef struct Sprite
 {
-	u16					 : 6;
-	u16 pos_y		 : 10;
-	u8					 : 4;
-	u8 width		 : 2;
-	u8 height		 : 2;
-	u8					 : 1;
-	u8	next		 : 7;
-	u8	priority : 1;
-	u8	palette	 : 2;
-	u8	v_flip	 : 1;
-	u8	h_flip	 : 1;
-	u16 tile		 : 11;
-	u8					 : 7;
-	u16 pos_x		 : 9;
+  u16          : 6;
+  u16 pos_y    : 10;
+  u8           : 4;
+  u8 width     : 2;
+  u8 height    : 2;
+  u8           : 1;
+  u8  next     : 7;
+  u8  priority : 1;
+  u8  palette  : 2;
+  u8  v_flip   : 1;
+  u8  h_flip   : 1;
+  u16 tile     : 11;
+  u8           : 7;
+  u16 pos_x    : 9;
 } Sprite;
 
 typedef union SpriteEx
 {
-	u32		 as_u32[2];
-	u16		 as_u16[4];
-	u8		 as_u8[8];
-	s32		 as_s32[2];
-	s16		 as_s16[4];
-	s8		 as_s8[8];
-	Sprite as_struct;
+  u32    as_u32[2];
+  u16    as_u16[4];
+  u8     as_u8[8];
+  s32    as_s32[2];
+  s16    as_s16[4];
+  s8     as_s8[8];
+  Sprite as_struct;
 } SpriteEx;
 
 /**
@@ -149,128 +149,133 @@ typedef union SpriteEx
  * @enum PlaneWidth
  * @brief Helper for working with plane widths specified in tiles by specifying
  * width in bytes
- * @note Use with PLANE_POS helper below
+ * @note Use with VDP_PLANE_POS helper below
  */
 typedef enum PlaneWidth
 {
-	Width32 = 64,
-	Width64 = 128,
-	Width128 = 256
+  Width32 = 64,
+  Width64 = 128,
+  Width128 = 256
 } PlaneWidth;
 
 /**
- * @def PLANE_POS
+ * @def VDP_PLANE_POS
  * @brief Generates the nametable offset for a tile at pos x/y for a given plane
  * width
  * @param x horizontal position in the tilemap
  * @param y vertical position in the tilemap
  * @param width width of the the plane (in bytes, so tile width * 2)
  */
-#define PLANE_POS(x, y, width) (((y) * (width)) + ((x) << 1))
+#define VDP_PLANE_POS(x, y, width) (((y) * (width)) + ((x) << 1))
 
 /**
- * @fn to_vdpptr
+ * @fn to_vdp_addr_runtime
  * @brief Converts a 16 bit VRAM address into VDP format at runtime
+ * @note Consider using the @ref to_vdp_addr macro instead to use compile time
+ * evaluation if available
  */
-static inline vdp_ptr to_vdpptr(u16 addr)
+static inline vdp_addr to_vdp_addr_runtime(u16 addr)
 {
-	vdp_ptr vdp_ptr = (u32) addr;
+  vdp_addr vdp_addr = (u32) addr;
 
-	// clang-format off
+  // clang-format off
 	asm(
 		"\
-  lsl.l    #2, %[vdp_ptr] \n\
-  lsr.w    #2, %[vdp_ptr] \n\
-  swap     %[vdp_ptr] \n\
+  lsl.l    #2, %[vdp_addr] \n\
+  lsr.w    #2, %[vdp_addr] \n\
+  swap     %[vdp_addr] \n\
 		"
 		:
-			[vdp_ptr] "+d"(vdp_ptr)
+			[vdp_addr] "+d"(vdp_addr)
 		:
 		:
 			"cc"
 	);
-	// clang-format on
+  // clang-format on
 
-	return vdp_ptr;
+  return vdp_addr;
 }
 
 /**
- * @fn vdpptr_to
+ * @fn to_vram_addr_runtime
  * @brief Converts a VDP format address to a 16 bit VRAM address at runtime
  */
-static inline u16 vdpptr_to(vdp_ptr vdp_addr)
+static inline u16 to_vram_addr_runtime(vdp_addr vdp_addr)
 {
-	u32 vram_ptr = vdp_addr;
+  u32 vram_addr = vdp_addr;
 
-	// clang-format off
+  // clang-format off
 	asm(
 		"\
-  #andi.l  #0x3FFF000C, %[vram_ptr] \
-  ror.w    #2, %[vram_ptr] \
-  lsr.l    #8, %[vram_ptr] \
-  lsr.l    #6, %[vram_ptr] \
-  ror.w    #2, %[vram_ptr] \
+  #andi.l  #0x3FFF000C, %[vram_addr] \
+  ror.w    #2, %[vram_addr] \
+  lsr.l    #8, %[vram_addr] \
+  lsr.l    #6, %[vram_addr] \
+  ror.w    #2, %[vram_addr] \
 		"
 		:
-			[vram_ptr] "+d"(vram_ptr)
+			[vram_addr] "+d"(vram_addr)
 		:
 		:
 			"cc"
 	);
-	// clang-format on
+  // clang-format on
 
-	return (u16) vram_ptr;
+  return (u16) vram_addr;
 }
 
 /**
- * @def vdp_cmd
+ * @def to_vdp_addr
  * @brief Converts a 16 bit VRAM address into VDP format at compile time if
  * possible
  */
-#define vdp_ptr(addr)                                                     \
-	(__builtin_constant_p(addr)                                             \
-		 ? (unsigned) ((((addr) & 0x3FFF) << 16) | (((addr) & 0xC000) >> 14)) \
-		 : to_vdpptr(addr))
+#define to_vdp_addr(vram_addr)                      \
+  (__builtin_constant_p(vram_addr)                  \
+     ? (unsigned) ((((vram_addr) & 0x3FFF) << 16) | \
+                   (((vram_addr) & 0xC000) >> 14))  \
+     : to_vdp_addr_runtime(vram_addr))
+
+// TODO: create similar macro for to_vram_addr
 
 // the below is causing weird breakage when compiling...
 /*
 void vdp_dma_fill(
-	vdp_cmd		dest,
-	u16 const count,
-	u8 const	value)
+  vdp_cmd		dest,
+  u16 const count,
+  u8 const	value)
 {
-	register u32 scratch_d, scratch_a;
+  register u32 scratch_d, scratch_a;
 
-	// clang-format off
-	asm volatile(
-		"\
-	lea      (%c[vdp_ctrlport]).l, %[scratch_a] \n\
-	move.l   #0x00940000, %[scratch_d] \n\
-	move.w   %[count].w, %[scratch_d].w \n\
-	lsl.l    #0x8, %[scratch_d] \n\
-	move.w   #0x9300, %[scratch_d].w \n\
-	move.b   %[count].b, %[scratch_d].b \n\
-	move.l   %[scratch_d], (%[scratch_a]) \n\
-	move.w   #0x9780, (%[scratch_a]) \n\
-	ori.l    #0x40000080, %[dest] \n\
-	move.l   %[dest], (%[scratch_a]) \n\
-	move.b   %[value].b, (-0x4,%[scratch_a]) \n\
+  // clang-format off
+  asm volatile(
+    "\
+  lea      (%c[vdp_ctrlport]).l, %[scratch_a] \n\
+  move.l   #0x00940000, %[scratch_d] \n\
+  move.w   %[count].w, %[scratch_d].w \n\
+  lsl.l    #0x8, %[scratch_d] \n\
+  move.w   #0x9300, %[scratch_d].w \n\
+  move.b   %[count].b, %[scratch_d].b \n\
+  move.l   %[scratch_d], (%[scratch_a]) \n\
+  move.w   #0x9780, (%[scratch_a]) \n\
+  ori.l    #0x40000080, %[dest] \n\
+  move.l   %[dest], (%[scratch_a]) \n\
+  move.b   %[value].b, (-0x4,%[scratch_a]) \n\
 0:move.w   (%[scratch_a]), %[scratch_d].w \n\
-	btst.l   0x1, %[scratch_d] \n\
-	bne.b    0b \n\
-		"
-		:
-			[scratch_d] "=&d"(scratch_d),
-			[scratch_a] "=&a"(scratch_a)
-		:
-			[vdp_ctrlport] "i"(VDP_CTRL),
-			[dest] "d"(dest),
-			[count] "d"(count),
-			[value] "d"(value)
-		:
-			"cc"
-	);
-	// clang-format on
+  btst.l   0x1, %[scratch_d] \n\
+  bne.b    0b \n\
+    "
+    :
+      [scratch_d] "=&d"(scratch_d),
+      [scratch_a] "=&a"(scratch_a)
+    :
+      [vdp_ctrlport] "i"(VDP_CTRL),
+      [dest] "d"(dest),
+      [count] "d"(count),
+      [value] "d"(value)
+    :
+      "cc"
+  );
+  // clang-format on
 }
 */
 
@@ -280,11 +285,11 @@ void vdp_dma_fill(
  * @warning Setting/clearing the DMA Enable bit on VDP Mode Register 2 is the
  * responsibility of the user
  */
-void vdp_dma_transfer(u8 const * source, vdp_cmd dest, u16 const length)
+void vdp_dma_transfer(char const * source, vdp_cmd dest, u16 const length)
 {
-	register u32 scratch_d, scratch_a;
+  register u32 scratch_d, scratch_a;
 
-	// clang-format off
+  // clang-format off
 	asm volatile(
 		"\
   lea      (%c[vdp_ctrlport]).l, %[scratch_a] \n\
@@ -323,7 +328,7 @@ void vdp_dma_transfer(u8 const * source, vdp_cmd dest, u16 const length)
 		:
 			"cc"
 	);
-	// clang-format on
+  // clang-format on
 }
 
 #endif

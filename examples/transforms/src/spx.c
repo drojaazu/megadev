@@ -48,16 +48,16 @@ void main()
 
     do
     {
-      command = *gareg_comcmd0;
+      command = *ga_reg_comcmd0;
     } while (command == 0);
 
-    if (command != *gareg_comcmd0)
+    if (command != *ga_reg_comcmd0)
       continue;
 
-    param1 = *gareg_comcmd1;
-    param2 = *gareg_comcmd2;
-    param3 = *gareg_comcmd3;
-    param4 = *gareg_comcmd4;
+    param1 = *ga_reg_comcmd1;
+    param2 = *ga_reg_comcmd2;
+    param3 = *ga_reg_comcmd3;
+    param4 = *ga_reg_comcmd4;
 
     switch (command)
     {
@@ -79,20 +79,20 @@ void main()
 
     // not reaching here?
     asm(".global test_label3\ntest_label3:");
-    *gareg_comstat0 = *gareg_comcmd0;
+    *ga_reg_comstat0 = *ga_reg_comcmd0;
     do
     {
       asm("nop");
-      command = *gareg_comcmd0;
+      command = *ga_reg_comcmd0;
     } while (command != 0);
 
     do
     {
       asm("nop");
-      command = *gareg_comcmd0;
+      command = *ga_reg_comcmd0;
     } while (command != 0);
 
-    *gareg_comstat0 = 0;
+    *ga_reg_comstat0 = 0;
 
   } while (1);
 }
@@ -126,22 +126,22 @@ void redraw(s16 trace_x, s16 trace_y, s16 trace_dx, s16 trace_dy)
 {
   wait_2m();
   load_gfx();
-  // GA_STAMPSIZE
-  // GA_STAMPMAPBASE
-  // GA_IMGBUFVSIZE
-  // GA_IMGBUFSTART
-  // GA_IMGBUFOFFSET
-  // GA_IMGBUFHDOTSIZE
-  // GA_IMGBUFVDOTSIZE
-  // GA_TRACEVECTBASE
+  // ga_reg_stampsize
+  // ga_reg_stampmapbase
+  // ga_reg_imgbufvsize
+  // ga_reg_imgbufstart
+  // ga_reg_imgbufoffset
+  // ga_reg_imgbufhdotsize
+  // ga_reg_imgbufvdotsize
+  // ga_reg_tracevectbase
 
-  GA_STAMPMAPBASE = (u16) ((STAMP_MAP) / 4);
-  GA_IMGBUFSTART = (u16) ((IMG_BUFFER) / 4);
-  GA_STAMPSIZE = _GAREG_STAMPSIZE_REPEAT | _GAREG_STAMPSIZE_32x32_STAMP;
-  GA_IMGBUFVDOTSIZE = IMG_HEIGHT;
-  GA_IMGBUFHDOTSIZE = IMG_WIDTH;
-  GA_IMGBUFVSIZE = (IMG_HEIGHT / 8) - 1;
-  GA_IMGBUFOFFSET = 0;
+  ga_reg_stampmapbase = (u16) ((STAMP_MAP) / 4);
+  ga_reg_imgbufstart = (u16) ((IMG_BUFFER) / 4);
+  ga_reg_stampsize = GA_MASK_STAMPSIZE_REPEAT | GA_MASK_STAMPSIZE_32x32_STAMP;
+  ga_reg_imgbufvdotsize = IMG_HEIGHT;
+  ga_reg_imgbufhdotsize = IMG_WIDTH;
+  ga_reg_imgbufvsize = (IMG_HEIGHT / 8) - 1;
+  ga_reg_imgbufoffset = 0;
 
   for (u16 trace_table_line = 0; trace_table_line < IMG_HEIGHT;
        ++trace_table_line)
@@ -152,9 +152,9 @@ void redraw(s16 trace_x, s16 trace_y, s16 trace_dx, s16 trace_dy)
     (*trace_table)[trace_table_line].delta_y = trace_dy;
   }
 
-  GA_TRACEVECTBASE = (u16) (TRACE_TABLE / 4);
+  ga_reg_tracevectbase = (u16) (TRACE_TABLE / 4);
 
-  while (GA_STAMPSIZE & 0x8000)
+  while (ga_reg_stampsize & 0x8000)
   {
     asm("nop");
   }

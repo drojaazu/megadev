@@ -5,8 +5,8 @@
  * @brief Main CPU side system library vectors & memory definitions
  */
 
-#ifndef MEGADEV__MAINBIOS_DEF_H
-#define MEGADEV__MAINBIOS_DEF_H
+#ifndef MEGADEV__MAIN_BIOS_DEF_H
+#define MEGADEV__MAIN_BIOS_DEF_H
 
 /**
  * @defgroup bios_vdp Main CPU / BIOS / VDP
@@ -295,22 +295,22 @@
  */
 #define BIOS_VBLANK_HANDLER_FLAGS 0xFFFE26
 
-#define BIOS_VBLANK_COPY_SPRLIST_BIT 0
-#define BIOS_VBLANK_USERCALL_BIT     1
+#define BIOS_BIT_COPY_SPRLIST 0
+#define BIOS_BIT_DO_USERCALL  1
 
 /**
  * @def BIOS_VBLANK_COPY_SPRLIST_FLAG
  * @brief
  * @note For use with @ref BIOS_VBLANK_HANDLER_FLAGS
  */
-#define BIOS_VBLANK_COPY_SPRLIST_FLAG (1 << BIOS_VBLANK_COPY_SPRLIST_BIT)
+#define BIOS_FLAG_COPY_SPRLIST (1 << BIOS_BIT_COPY_SPRLIST)
 
 /**
  * @def BIOS_VBLANK_USERCALL_FLAG
  * @brief
  * @note For use with @ref BIOS_VBLANK_HANDLER_FLAGS
  */
-#define BIOS_VBLANK_USERCALL_FLAG (1 << BIOS_VBLANK_USERCALL_BIT)
+#define BIOS_FLAG_DO_USERCALL (1 << BIOS_BIT_DO_USERCALL)
 
 /**
  * @def BIOS_VBLANK_COUNTER
@@ -333,14 +333,14 @@
  */
 #define BIOS_VDP_UPDATE_FLAGS 0xFFFE29
 
-#define BIOS_VDPUPDATE_COPY_PALETTE_BIT 0
+#define BIOS_BIT_COPY_PALETTE 1
 
 /**
- * @def BIOS_VDPUPDATE_COPY_PALETTE_FLAG
+ * @def BIOS_FLAG_COPY_PALETTE
  * @brief VDP Update Flags / Update Palette
  * @ingroup bios_vdp
  */
-#define BIOS_VDPUPDATE_COPY_PALETTE_FLAG (1 << BIOS_VDPUPDATE_COPY_PALETTE_BIT)
+#define BIOS_FLAG_COPY_PALETTE (1 << BIOS_BIT_COPY_PALETTE)
 
 /**
  * @def BIOS_RANDOM
@@ -666,7 +666,7 @@
 
 /**
  * @sa bios_vdp_fill_clear
- * @param[in] D0.l Address (vdp_ptr)
+ * @param[in] D0.l Address (vdp_addr)
  * @param[in] D1.w Length (in words)
  * @ingroup bios_vdp
  * @clobber d0-d2
@@ -1089,7 +1089,7 @@
 /**
  * @def BIOS_LOAD_STAMP_MAP
  * @brief Load map for a vertically-oriented contiguous group of tiles
- * @param[in] D0.l Destination VRAM address (vdp_ptr)
+ * @param[in] D0.l Destination VRAM address (vdp_addr)
  * @param[in] D1.w Map width - 1
  * @param[in] D2.w Map height - 1
  * @param[in] D3.w Initial tile index
@@ -1236,7 +1236,7 @@
 /**
  * @def BIOS_LOAD_MAP_HORIZ
  * @brief Load map for a horizontally-oriented contiguous group of tiles
- * @param[in] D0.l Destination VRAM address (vdp_ptr)
+ * @param[in] D0.l Destination VRAM address (vdp_addr)
  * @param[in] D1.w Map width
  * @param[in] D2.w Map height
  * @param[in] D3.w Initial tile index
@@ -1255,7 +1255,7 @@
  * GROUP: bios_vdp
  *
  * IN:
- *  d0.l - Destination vdp_ptr
+ *  d0.l - Destination vdp_addr
  *  d1.w - Map width
  *  d2.w - Map height
  *  d3.w - ?
