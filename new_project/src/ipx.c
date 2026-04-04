@@ -143,7 +143,7 @@ void main()
 
   // The font uses palette entry #1, so we'll manually set that to white
   bios_palette[1] = 0xEEE;
-  bios_vdp_update_flags |= BIOS_FLAG_COPY_PALETTE;
+  bios_vdp_update_flags |= BIOS_MASK_COPY_PALETTE;
 
   do
   {

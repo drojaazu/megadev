@@ -116,7 +116,7 @@ __attribute__((noreturn)) void main()
 
   do
   {
-    bios_vblank_handler_flags = BIOS_FLAG_COPY_SPRLIST;
+    bios_vblank_handler_flags = BIOS_MASK_COPY_SPRLIST;
     bios_vblank_wait_default();
 
     bios_process_entities(&sprobj_ship, bios_sprlist, 0, 0x1A);

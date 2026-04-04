@@ -308,7 +308,7 @@ void main()
   // setup boot rom library font
   bios_load_font_defaults();
   bios_palette[1] = 0xEEE;
-  bios_vdp_update_flags |= BIOS_FLAG_COPY_PALETTE;
+  bios_vdp_update_flags |= BIOS_MASK_COPY_PALETTE;
 
   // print strings end in 0xFF, so let's set up the value buffer so we don't
   // have to mess with it later
