@@ -285,7 +285,7 @@ A module can represent a single "piece" of your game: the title screen, one leve
 
 Megadev provides tools for creating and loading modules easily. Please see `docs/modules.md` for more details.
 
-As with other Megadive components, the use of modules is optional. You are free to come up with your own software execution architecture.
+As with other Megadev components, the use of modules is optional. You are free to come up with your own software execution architecture.
 
 ## CD-ROM Access Framework
 
@@ -295,7 +295,7 @@ At the hardware level, accessing data on the disc is done via Sub CPU BIOS calls
 
 Megadev provides a simplified framework for disc file access, accomplished by simply specifying a filename and an output buffer. Please see `docs/cdrom.md` for more details about how to use it.
 
-As with other Megadive components, the use of the CD-ROM header is optional. You are free to write your own disc access system if you wish.
+As with other Megadev components, the use of the CD-ROM header is optional. You are free to write your own disc access system if you wish.
 
 ## Boot Sector Generation
 
@@ -350,6 +350,18 @@ The choice for what code was written as a macro and what was written as a subrou
 Files with the `.def.h` contain only C style `#define` directives. They contain bit positions, memory addresses and other constant values, usually for interacting with hardware.
 
 They are used in both C and ASM development. Header guards are in place so they can be included multiple places.
+
+### Namespaces
+
+Functions and values related to a larger group of functionality will have a common prefix with an underscore followed up by the name of the component. For example, calls and variables related to the graphics processor are prefixed with `VDP`, such as `vdp_ctrl` or `VDP_MASK_DISPLAY_DISABLE`.
+
+There are occasional exceptions to this namespace rule, namely when a macro provides some generally useful functionality and doesn't benefit by having a more complex name.
+
+### Bitwise Definition Naming
+
+There are many hardware registers that make use of bit-level settings. Such settings are given helpful names as `#define` directives with the `.def.h` files. Each setting has two defines: one for the bit index (for use in ASM commands such as `btst`) and one as a mask (to be used in logic operations).
+
+For example, the gate array has a Main side register `memmmode` with a DMNA flag. This flag can be referenced by index with `GA_BIT_DMNA` or as a mask with `GA_MASK_DMNA`.
 
 # Further Reading
 

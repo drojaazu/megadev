@@ -36,8 +36,8 @@ SECTIONS
 		LONG(MMD_DEST)
 		SHORT(_mod_rom_len >> 2)
 		LONG(main)
-		LONG(DEFINED(hint) ? hint : 0)
-		LONG(DEFINED(vint) ? vint : 0)
+		LONG(DEFINED(hblank) ? hblank : 0)
+		LONG(DEFINED(vblank) ? vblank : 0)
 		. = 0x100;
 	}
 

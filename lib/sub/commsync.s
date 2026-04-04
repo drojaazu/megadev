@@ -17,12 +17,12 @@
 #include "memmap.def.h"
 
 SUB comm_sync
-	lea GAREG_COMFLAGS+1, a0
-	btst #0, GAREG_COMFLAGS
+	lea GA_REG_COMFLAGS+1, a0
+	btst #0, GA_REG_COMFLAGS
 	beq 2f
 	bset #0, (a0)
 	lea _COMCMD0, a2
-	lea GAREG_COMCMD0, a1
+	lea GA_REG_COMCMD0, a1
 	move.l (a1)+, (a2)+
 	move.l (a1)+, (a2)+
 	move.l (a1)+, (a2)+

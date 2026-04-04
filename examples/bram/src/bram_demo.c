@@ -8,16 +8,16 @@
 #include <system.h>
 #include <types.h>
 
-#define SUB_WAIT                  \
-  do                              \
-  {                               \
-    asm("nop");                   \
-  } while (*gareg_comstat0 == 0);
+#define SUB_WAIT                   \
+  do                               \
+  {                                \
+    asm("nop");                    \
+  } while (*ga_reg_comstat0 == 0);
 
-#define SUB_ACK *gareg_comcmd0 = 0;
+#define SUB_ACK *ga_reg_comcmd0 = 0;
 
-#define print_xy(x, y)                                                   \
-  (vdp_ptr(BIOS_VDP_DEFAULT_PLANEA + PLANE_POS(x, y, Width64)) | VRAM_W)
+#define print_xy(x, y) \
+  (to_vdp_addr(BIOS_VDP_DEFAULT_PLANEA + VDP_PLANE_POS(x, y, Width64)) | VRAM_W)
 
 char val_buffer[5];
 
@@ -25,15 +25,15 @@ static void bram_init()
 {
   bios_print("Performing BRMINIT...\xff", print_xy(1, 1));
 
-  *gareg_comcmd0 = 2;
+  *ga_reg_comcmd0 = 2;
 
   SUB_WAIT
 
   // bram_size is the total space on the unit, returned as the number of
   // 4KB (0x1000 byte) blocks. So we multiplay by 0x1000 to get the 'actual'
   // total space available
-  int bram_size = (*gareg_comstat1) * 0x1000;
-  int status = *gareg_comstat2;
+  int bram_size = (*ga_reg_comstat1) * 0x1000;
+  int status = *ga_reg_comstat2;
 
   SUB_ACK
 
@@ -71,15 +71,15 @@ static void brmstat()
   bios_clear_tables();
   bios_print("Performing BRMSTAT...\xff", print_xy(1, 1));
 
-  *gareg_comcmd0 = 6;
+  *ga_reg_comcmd0 = 6;
 
   SUB_WAIT
 
   // bram_size is the total space on the unit, returned as the number of
   // 4KB (0x1000 byte) blocks. So we multiplay by 0x1000 to get the 'actual'
   // total space available
-  u16 filecount = *gareg_comstat1;
-  u16 free = *gareg_comstat2;
+  u16 filecount = *ga_reg_comstat1;
+  u16 free = *ga_reg_comstat2;
 
   SUB_ACK
 
@@ -96,13 +96,13 @@ static bool brmserch()
 {
   bios_print("Performing BRMSERCH...\xff", print_xy(1, 1));
 
-  *gareg_comcmd0 = 3;
+  *ga_reg_comcmd0 = 3;
 
   SUB_WAIT
 
-  u16 found = *gareg_comstat1;
-  u16 filesize = *gareg_comstat2;
-  u16 is_protected = *gareg_comstat3;
+  u16 found = *ga_reg_comstat1;
+  u16 filesize = *ga_reg_comstat2;
+  u16 is_protected = *ga_reg_comstat3;
 
   SUB_ACK
 
@@ -137,13 +137,13 @@ static void brmwrite()
 
   do
   {
-    bios_vint_wait_default();
+    bios_vblank_wait_default();
 
     // this is a great opportunity to show off the bios_input_delay function
     // in the boot rom library
     // to use it, we need to specify a byte which will hold the input value
     // and use that byte to compare for input instead of the standard memory
-    // location; it will need to be called in a loop along with the vint
+    // location; it will need to be called in a loop along with the vblank
     // wait
 
     // now we get a nice, smooth value change when holding up or down instead
@@ -176,11 +176,11 @@ static void brmwrite()
 
   grant_2m();
 
-  *gareg_comcmd0 = 5;
+  *ga_reg_comcmd0 = 5;
 
   SUB_WAIT
 
-  int success = *gareg_comstat1;
+  int success = *ga_reg_comstat1;
 
   SUB_ACK
 
@@ -207,13 +207,13 @@ static void brmread()
 
   grant_2m();
 
-  *gareg_comcmd0 = 4;
+  *ga_reg_comcmd0 = 4;
 
   SUB_WAIT
 
-  int success = *gareg_comstat1;
-  int size = *gareg_comstat2;
-  int mode = *gareg_comstat3;
+  int success = *ga_reg_comstat1;
+  int size = *ga_reg_comstat2;
+  int mode = *ga_reg_comstat3;
 
   SUB_ACK
 
@@ -242,11 +242,11 @@ void brmdel()
 
   bios_print("Performing BRMDEL...\xff", print_xy(1, 1));
 
-  *gareg_comcmd0 = 7;
+  *ga_reg_comcmd0 = 7;
 
   SUB_WAIT
 
-  int success = *gareg_comstat1;
+  int success = *ga_reg_comstat1;
 
   SUB_ACK
 
@@ -268,11 +268,11 @@ void brmdir()
 
   grant_2m();
 
-  *gareg_comcmd0 = 8;
+  *ga_reg_comcmd0 = 8;
 
   SUB_WAIT
 
-  int success = *gareg_comstat1;
+  int success = *ga_reg_comstat1;
 
   SUB_ACK
 
@@ -308,7 +308,7 @@ void main()
   // setup boot rom library font
   bios_load_font_defaults();
   bios_palette[1] = 0xEEE;
-  bios_vdp_update_flags |= BIOS_VDPUPDATE_COPY_PALETTE_FLAG;
+  bios_vdp_update_flags |= BIOS_FLAG_COPY_PALETTE;
 
   // print strings end in 0xFF, so let's set up the value buffer so we don't
   // have to mess with it later
@@ -322,7 +322,7 @@ void main()
 
   do
   {
-    bios_vint_wait_default();
+    bios_vblank_wait_default();
   } while (! (bios_joy1_hit & PAD_START));
 
   s8 menupos = 0;
@@ -342,7 +342,7 @@ void main()
 
     do
     {
-      bios_vint_wait_default();
+      bios_vblank_wait_default();
       for (int clearloop = 3; clearloop < 10; ++clearloop)
       {
         vdp_ctrl_32 = print_xy(1, clearloop);
@@ -395,7 +395,7 @@ void main()
 
     do
     {
-      bios_vint_wait_default();
+      bios_vblank_wait_default();
     } while (! (bios_joy1_hit & PAD_START));
 
   } while (1);

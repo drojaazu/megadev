@@ -111,7 +111,7 @@ void process_particles()
   }
 }
 
-void vint_user()
+void vblank_user()
 {
   bios_copy_sprlist();
 }
@@ -123,13 +123,13 @@ void main()
 {
 
   /*
-    The function pointer stored in bios_vint_user is called on every VBLANK
-    interrupt when using the built-in handler in BIOS (BIOS_VINT_HANDLER, which
-    we set up in the IP). This is intended for VBLANK interval operations
-    specific to your program. Note that the BIOS_VINT_USERCALL_FLAG flag must be
-    set on bios_vint_handler_flags
+    The function pointer stored in bios_vblank_user is called on every VBLANK
+    interrupt when using the built-in handler in BIOS (BIOS_VBLANK_HANDLER,
+    which we set up in the IP). This is intended for VBLANK interval operations
+    specific to your program. Note that the BIOS_VBLANK_USERCALL_FLAG flag must
+    be set on bios_vblank_handler_flags
   */
-  *bios_vint_user = vint_user;
+  *bios_vblank_user = vblank_user;
 
   next_module = FILE_EX1_MMD;
 
@@ -143,7 +143,7 @@ void main()
 
   // The font uses palette entry #1, so we'll manually set that to white
   bios_palette[1] = 0xEEE;
-  bios_vdp_update_flags |= BIOS_VDPUPDATE_COPY_PALETTE_FLAG;
+  bios_vdp_update_flags |= BIOS_FLAG_COPY_PALETTE;
 
   do
   {
@@ -156,10 +156,10 @@ void main()
     // and the argument will be the ID for that file, which is defined in
     // the SPX
     // Set the argument first
-    *gareg_comcmd1 = next_module;
+    *ga_reg_comcmd1 = next_module;
 
     // then set the command
-    *gareg_comcmd0 = CMD_LOAD_FILE;
+    *ga_reg_comcmd0 = CMD_LOAD_FILE;
 
     // wait for acknowledgment from the Sub CPU that the command was
     // received and will be acted on
@@ -168,16 +168,16 @@ void main()
       // the NOP is so GCC doesn't optimize the loop away
       // though since comstat is marked volatile it should be fine...
       asm("nop");
-    } while (*gareg_comstat0 == 0);
+    } while (*ga_reg_comstat0 == 0);
 
     // reset the command to none (0) once we have the acknowledgment
-    *gareg_comcmd0 = 0;
+    *ga_reg_comcmd0 = 0;
 
     // the Sub CPU side work will be complete when COMSTAT0 returns to 0
     do
     {
       asm("nop");
-    } while (*gareg_comstat0 != 0);
+    } while (*ga_reg_comstat0 != 0);
 
     wait_2m();
 

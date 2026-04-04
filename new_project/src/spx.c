@@ -23,13 +23,13 @@ void main()
 
     do
     {
-      command = *gareg_comcmd0;
+      command = *ga_reg_comcmd0;
     } while (command == 0);
 
-    if (command != *gareg_comcmd0)
+    if (command != *ga_reg_comcmd0)
       continue;
 
-    param1 = *gareg_comcmd1;
+    param1 = *ga_reg_comcmd1;
 
     switch (command)
     {
@@ -47,20 +47,20 @@ void main()
 
     // not reaching here?
     asm(".global test_label3\ntest_label3:");
-    *gareg_comstat0 = *gareg_comcmd0;
+    *ga_reg_comstat0 = *ga_reg_comcmd0;
     do
     {
       asm("nop");
-      command = *gareg_comcmd0;
+      command = *ga_reg_comcmd0;
     } while (command != 0);
 
     do
     {
       asm("nop");
-      command = *gareg_comcmd0;
+      command = *ga_reg_comcmd0;
     } while (command != 0);
 
-    *gareg_comstat0 = 0;
+    *ga_reg_comstat0 = 0;
 
   } while (1);
 }

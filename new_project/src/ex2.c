@@ -17,18 +17,21 @@ void main()
   disable_interrupts();
   bios_load_pal_update(&res_snow_pal);
   bios_dma_xfer_word_ram(
-    vdp_ptr(VRAMPTR(0x80)), &res_snow_chr, res_snow_chr_sz >> 1);
+    to_vdp_addr(vram_addr_from_tileidx(0x80)),
+    &res_snow_chr,
+    res_snow_chr_sz >> 1);
   enable_interrupts();
 
   bios_print(
     "Module 2\xff",
-    (vdp_ptr(PLANE_POS(1, 1, Width64) + BIOS_VDP_DEFAULT_PLANEA) | VRAM_W));
+    (to_vdp_addr(VDP_PLANE_POS(1, 1, Width64) + BIOS_VDP_DEFAULT_PLANEA) |
+     VRAM_W));
 
   init_particles(0x81, 0x82, 0, 0, 0, 0, 45, 1, 2, 1);
 
   do
   {
-    bios_vint_wait_default();
+    bios_vblank_wait_default();
     process_particles();
   } while (! (bios_joy1_hit & PAD_START));
 

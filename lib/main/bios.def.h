@@ -5,8 +5,8 @@
  * @brief Main CPU side system library vectors & memory definitions
  */
 
-#ifndef MEGADEV__MAINBIOS_DEF_H
-#define MEGADEV__MAINBIOS_DEF_H
+#ifndef MEGADEV__MAIN_BIOS_DEF_H
+#define MEGADEV__MAIN_BIOS_DEF_H
 
 /**
  * @defgroup bios_vdp Main CPU / BIOS / VDP
@@ -86,11 +86,11 @@
 #define BIOS_PAL4 0xFFFBE0
 
 /**
- * @def BIOS_VINT_USER
+ * @def BIOS_VBLANK_USER
  * @ingroup bios_int
- * @sa bios_vint_user
+ * @sa bios_vblank_user
  */
-#define BIOS_VINT_USER 0xFFFDAA
+#define BIOS_VBLANK_USER 0xFFFDAA
 
 /**
  * @def BIOS_VDPREG_CACHE
@@ -289,43 +289,43 @@
 #define BIOS_JOY2_REPEAT_DELAY 0xFFFE25
 
 /**
- * @def BIOS_VINT_HANDLER_FLAGS
+ * @def BIOS_VBLANK_HANDLER_FLAGS
  * @ingroup bios_int
- * @sa bios_vint_handler_flags
+ * @sa bios_vblank_handler_flags
  */
-#define BIOS_VINT_HANDLER_FLAGS 0xFFFE26
+#define BIOS_VBLANK_HANDLER_FLAGS 0xFFFE26
 
-#define BIOS_VINT_COPY_SPRLIST_BIT 0
-#define BIOS_VINT_USERCALL_BIT		 1
+#define BIOS_BIT_COPY_SPRLIST 0
+#define BIOS_BIT_DO_USERCALL  1
 
 /**
- * @def BIOS_VINT_COPY_SPRLIST_FLAG
+ * @def BIOS_VBLANK_COPY_SPRLIST_FLAG
  * @brief
- * @note For use with @ref BIOS_VINT_HANDLER_FLAGS
+ * @note For use with @ref BIOS_VBLANK_HANDLER_FLAGS
  */
-#define BIOS_VINT_COPY_SPRLIST_FLAG (1 << BIOS_VINT_COPY_SPRLIST_BIT)
+#define BIOS_FLAG_COPY_SPRLIST (1 << BIOS_BIT_COPY_SPRLIST)
 
 /**
- * @def BIOS_VINT_USERCALL_FLAG
+ * @def BIOS_VBLANK_USERCALL_FLAG
  * @brief
- * @note For use with @ref BIOS_VINT_HANDLER_FLAGS
+ * @note For use with @ref BIOS_VBLANK_HANDLER_FLAGS
  */
-#define BIOS_VINT_USERCALL_FLAG (1 << BIOS_VINT_USERCALL_BIT)
+#define BIOS_FLAG_DO_USERCALL (1 << BIOS_BIT_DO_USERCALL)
 
 /**
- * @def BIOS_VINT_COUNTER
+ * @def BIOS_VBLANK_COUNTER
  * @ingroup bios_int
- * @sa bios_vint_counter
+ * @sa bios_vblank_counter
  */
-#define BIOS_VINT_COUNTER 0xFFFE27
+#define BIOS_VBLANK_COUNTER 0xFFFE27
 
 /**
- * @def BIOS_VINT_FAST_FLAG
- * @brief When set to non-zero, the BIOS VINT handler will skip the color
+ * @def BIOS_VBLANK_FAST_FLAG
+ * @brief When set to non-zero, the BIOS VBLANK handler will skip the color
  * palette copy and the user call
  * @ingroup bios_int
  */
-#define BIOS_VINT_FAST_FLAG 0xFFFE28
+#define BIOS_VBLANK_FAST_FLAG 0xFFFE28
 
 /**
  * @def BIOS_VDP_UPDATE_FLAGS
@@ -333,14 +333,14 @@
  */
 #define BIOS_VDP_UPDATE_FLAGS 0xFFFE29
 
-#define BIOS_VDPUPDATE_COPY_PALETTE_BIT 0
+#define BIOS_BIT_COPY_PALETTE 1
 
 /**
- * @def BIOS_VDPUPDATE_COPY_PALETTE_FLAG
+ * @def BIOS_FLAG_COPY_PALETTE
  * @brief VDP Update Flags / Update Palette
  * @ingroup bios_vdp
  */
-#define BIOS_VDPUPDATE_COPY_PALETTE_FLAG (1 << BIOS_VDPUPDATE_COPY_PALETTE_BIT)
+#define BIOS_FLAG_COPY_PALETTE (1 << BIOS_BIT_COPY_PALETTE)
 
 /**
  * @def BIOS_RANDOM
@@ -482,33 +482,33 @@
 #endif
 
 /**
- * @sa bios_vint_handler
+ * @sa bios_vblank_handler
  * @ingroup bios_int
  */
 #if TARGET == MEGACD_MODE1
-#define BIOS_VINT_HANDLER 0x400290
+#define BIOS_VBLANK_HANDLER 0x400290
 #else
-#define BIOS_VINT_HANDLER 0x000290
+#define BIOS_VBLANK_HANDLER 0x000290
 #endif
 
 /*
- * There are two functions for setting the HINT vector. Both are almost
- * identical but for one minor difference: HINT2 will set the address in A1
- * to both the Main CPU vector and the Gate Array vector (ga_hintvect), while
- * HINT1 sets A1 to the Main vector but sets the GA vector to the address of
+ * There are two functions for setting the HBLANK vector. Both are almost
+ * identical but for one minor difference: HBLANK2 will set the address in A1
+ * to both the Main CPU vector and the Gate Array vector (ga_hblankvect), while
+ * HBLANK1 sets A1 to the Main vector but sets the GA vector to the address of
  * the Main vector, i.e. 0xFFFD0C. It's unclear what this difference entails.
  */
 
 /**
- * @sa bios_set_hint
- * @param[in] A1.l Pointer to HINT handler subroutine
+ * @sa bios_set_hblank
+ * @param[in] A1.l Pointer to HBLANK handler subroutine
  * @clobber None
  * @ingroup bios_int
  */
 #if TARGET == MEGACD_MODE1
-#define BIOS_SET_HINT 0x400294
+#define BIOS_SET_HBLANK 0x400294
 #else
-#define BIOS_SET_HINT 0x000294
+#define BIOS_SET_HBLANK 0x000294
 #endif
 
 /**
@@ -597,40 +597,40 @@
  * @clobber d0-d1/a1-a2
  * @ingroup bios_vdp
  * @details
-		0x8004
-			- HINT disabled
-			- 9-bit (standard) color mode
-		0x8124
-			- Mega Drive graphics mode
-			- NTSC (is almost certainly set to PAL on such hardware)
-			- VINT enabled
-			- Disable display
-		0x9011
-			- Plane size: 512x512 cells
-		0x8B00
-			- Scroll mode: full screen
-		0x8C81
-			- 40 cell (320px) width
-		0x8328
-			- Window nametable: 0xA000
-		0x8230
-			- Plane A nametable: 0xC000
-		0x8407
-			- Plane B nametable: 0xE000
-		0x855C
-			- Sprite table: 0xB800
-		0x8D2F
-			- Horiz Scroll table: 0xBC00
-		0x8700
-			- Background color 0
-		0x8A00
-			- HINT scanline count: 0
-		0x8F02
-			- Auto-increment 2
-		0x9100
-			- Window plane X position: 0
-		0x9200
-			- Window plane Y position: 0
+    0x8004
+      - HBLANK disabled
+      - 9-bit (standard) color mode
+    0x8124
+      - Mega Drive graphics mode
+      - NTSC (is almost certainly set to PAL on such hardware)
+      - VBLANK enabled
+      - Disable display
+    0x9011
+      - Plane size: 512x512 cells
+    0x8B00
+      - Scroll mode: full screen
+    0x8C81
+      - 40 cell (320px) width
+    0x8328
+      - Window nametable: 0xA000
+    0x8230
+      - Plane A nametable: 0xC000
+    0x8407
+      - Plane B nametable: 0xE000
+    0x855C
+      - Sprite table: 0xB800
+    0x8D2F
+      - Horiz Scroll table: 0xBC00
+    0x8700
+      - Background color 0
+    0x8A00
+      - HBLANK scanline count: 0
+    0x8F02
+      - Auto-increment 2
+    0x9100
+      - Window plane X position: 0
+    0x9200
+      - Window plane Y position: 0
  */
 #if TARGET == MEGACD_MODE1
 #define BIOS_LOAD_DEFAULT_VDPREGS 0x4002AC
@@ -666,7 +666,7 @@
 
 /**
  * @sa bios_vdp_fill_clear
- * @param[in] D0.l Address (vdp_ptr)
+ * @param[in] D0.l Address (vdp_addr)
  * @param[in] D1.w Length (in words)
  * @ingroup bios_vdp
  * @clobber d0-d2
@@ -922,23 +922,23 @@
 #endif
 
 /**
- * @sa bios_vint_wait
+ * @sa bios_vblank_wait
  * @clobber d0
  */
 #if TARGET == MEGACD_MODE1
-#define BIOS_VINT_WAIT 0x400304
+#define BIOS_VBLANK_WAIT 0x400304
 #else
-#define BIOS_VINT_WAIT 0x000304
+#define BIOS_VBLANK_WAIT 0x000304
 #endif
 
 /**
- * @sa bios_vint_wait_default
+ * @sa bios_vblank_wait_default
  * @clobber d0
  */
 #if TARGET == MEGACD_MODE1
-#define BIOS_VINT_WAIT_DEFAULT 0x400308
+#define BIOS_VBLANK_WAIT_DEFAULT 0x400308
 #else
-#define BIOS_VINT_WAIT_DEFAULT 0x000308
+#define BIOS_VBLANK_WAIT_DEFAULT 0x000308
 #endif
 
 /**
@@ -979,25 +979,25 @@
 #endif
 
 /**
- * @def BIOS_SET_HINT_WORK_RAM
- * @sa bios_set_hint_workram
- * @param[in] A1.l Pointer to HINT function
+ * @def BIOS_SET_HBLANK_WORK_RAM
+ * @sa bios_set_hblank_workram
+ * @param[in] A1.l Pointer to HBLANK function
  *
  *
  */
 #if TARGET == MEGACD_MODE1
-#define BIOS_SET_HINT_WORK_RAM 0x400314
+#define BIOS_SET_HBLANK_WORK_RAM 0x400314
 #else
-#define BIOS_SET_HINT_WORK_RAM 0x000314
+#define BIOS_SET_HBLANK_WORK_RAM 0x000314
 #endif
 
 /**
- * @sa bios_disable_hint
+ * @sa bios_disable_hblank
  */
 #if TARGET == MEGACD_MODE1
-#define BIOS_DISABLE_HINT 0x400318
+#define BIOS_DISABLE_HBLANK 0x400318
 #else
-#define BIOS_DISABLE_HINT 0x000318
+#define BIOS_DISABLE_HBLANK 0x000318
 #endif
 
 /**
@@ -1089,7 +1089,7 @@
 /**
  * @def BIOS_LOAD_STAMP_MAP
  * @brief Load map for a vertically-oriented contiguous group of tiles
- * @param[in] D0.l Destination VRAM address (vdp_ptr)
+ * @param[in] D0.l Destination VRAM address (vdp_addr)
  * @param[in] D1.w Map width - 1
  * @param[in] D2.w Map height - 1
  * @param[in] D3.w Initial tile index
@@ -1218,9 +1218,9 @@
 #endif
 
 /**
- * @def BIOS_SET_VINT
- * @brief Set a new VINT subroutine
- * @param[in] A1.l Pointed to VINT subroutinte
+ * @def BIOS_SET_VBLANK
+ * @brief Set a new VBLANK subroutine
+ * @param[in] A1.l Pointed to VBLANK subroutinte
  * @ingroup bios_int
  *
  * @note This is relatively useless as a subroutine. It simply moves
@@ -1228,15 +1228,15 @@
  * the stack push/extra cycles from the jsr.
  */
 #if TARGET == MEGACD_MODE1
-#define BIOS_SET_VINT 0x400368
+#define BIOS_SET_VBLANK 0x400368
 #else
-#define BIOS_SET_VINT 0x000368
+#define BIOS_SET_VBLANK 0x000368
 #endif
 
 /**
  * @def BIOS_LOAD_MAP_HORIZ
  * @brief Load map for a horizontally-oriented contiguous group of tiles
- * @param[in] D0.l Destination VRAM address (vdp_ptr)
+ * @param[in] D0.l Destination VRAM address (vdp_addr)
  * @param[in] D1.w Map width
  * @param[in] D2.w Map height
  * @param[in] D3.w Initial tile index
@@ -1255,7 +1255,7 @@
  * GROUP: bios_vdp
  *
  * IN:
- *  d0.l - Destination vdp_ptr
+ *  d0.l - Destination vdp_addr
  *  d1.w - Map width
  *  d2.w - Map height
  *  d3.w - ?

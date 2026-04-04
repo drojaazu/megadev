@@ -27,18 +27,18 @@
   jbsr     BIOS_CLEAR_VRAM
   jbsr     BIOS_CLEAR_COMM
 
-  move     #0, (BIOS_VINT_HANDLER_FLAGS)
-  move.l   #BIOS_VINT_HANDLER, (EXVEC_LEVEL6)
+  move     #0, (BIOS_VBLANK_HANDLER_FLAGS)
+  move.l   #BIOS_VBLANK_HANDLER, (EXVEC_LEVEL6)
 
   ENABLE_INTERRUPTS
 
   GRANT_2M
-  move.w   #FILE_IPX_MMD, GAREG_COMCMD1
-  move.w   #CMD_LOAD_WORDRAM, GAREG_COMCMD0
-0:tst.w    GAREG_COMSTAT0
+  move.w   #FILE_IPX_MMD, GA_REG_COMCMD1
+  move.w   #CMD_LOAD_WORDRAM, GA_REG_COMCMD0
+0:tst.w    GA_REG_COMSTAT0
   beq      0b
-  move.w   #0, GAREG_COMCMD0
-1:tst.w    GAREG_COMSTAT0
+  move.w   #0, GA_REG_COMCMD0
+1:tst.w    GA_REG_COMSTAT0
   bne      1b
   WAIT_2M
 

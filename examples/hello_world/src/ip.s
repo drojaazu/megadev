@@ -31,8 +31,8 @@
   jbsr     BIOS_CLEAR_VRAM
   jbsr     BIOS_CLEAR_COMM
 
-  move     #0, (BIOS_VINT_HANDLER_FLAGS)
-  move.l   #BIOS_VINT_HANDLER, (EXVEC_LEVEL6)
+  move     #0, (BIOS_VBLANK_HANDLER_FLAGS)
+  move.l   #BIOS_VBLANK_HANDLER, (EXVEC_LEVEL6)
 
   /*
     Now we'll load the internal Boot ROM font into the VDP with the default
@@ -59,8 +59,8 @@
   ENABLE_INTERRUPTS
 
 loop:
-  jbsr     BIOS_VINT_WAIT_DEFAULT
-  // Inputs are updated as part of the default vint wait subroutine
+  jbsr     BIOS_VBLANK_WAIT_DEFAULT
+  // Inputs are updated as part of the default vblank wait subroutine
   // so we can assume the input value is current
   and.b    #PAD_START, BIOS_JOY1_HIT
 	beq      loop
@@ -81,7 +81,7 @@ SUB plane_xy_pos
   // TODO: make this dynamic
   add.w    #0xC000, d0
 
-  // convert the address in d0 to vdp_ptr format
+  // convert the address in d0 to vdp_addr format
   TO_VDPPTR
   // and set the VRAM write operation flags
   or.l     #VRAM_W, d0
