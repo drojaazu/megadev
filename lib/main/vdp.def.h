@@ -84,6 +84,46 @@
 #define VSRAM_W 0x40000010
 
 /**
+ * @def DMA_VRAM
+ * @ingroup vdp_port
+ * @brief VDP Control Port / Address Mode / VRAM DMA Transfer
+ * @sa VDP_CTRL
+ */
+#define DMA_VRAM (VRAM_W | 0x80)
+
+/**
+ * @def DMA_CRAM
+ * @ingroup vdp_port
+ * @brief VDP Control Port / Address Mode / CRAM DMA Transfer
+ * @sa VDP_CTRL
+ */
+#define DMA_CRAM (CRAM_W | 0x80)
+
+/**
+ * @def DMA_VSRAM
+ * @ingroup vdp_port
+ * @brief VDP Control Port / Address Mode / VSRAM DMA Transfer
+ * @sa VDP_CTRL
+ */
+#define DMA_VSRAM (VSRAM_W | 0x80)
+
+/**
+ * @def DMA_COPY
+ * @ingroup vdp_port
+ * @brief VDP Control Port / Address Mode / VRAM to VRAM copy
+ * @sa VDP_CTRL
+ */
+#define DMA_COPY 0xC0
+
+/**
+ * @def DMA_FILL
+ * @ingroup vdp_port
+ * @brief VDP Control Port / Address Mode / VRAM fill
+ * @sa VDP_CTRL
+ */
+#define DMA_FILL 0x80
+
+/**
  * @def VDPSTAT_MASK_PAL_HARDWARE
  * @brief VDP Control Port / VDP Status / PAL Hardware Flag
  *

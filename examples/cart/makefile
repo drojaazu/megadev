@@ -83,4 +83,5 @@ clean:
 $(PROJECT_ID).cart: \
 	init.s \
 	main.c \
+	sine.s \
 	res.s 

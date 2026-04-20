@@ -35,9 +35,9 @@
 .macro FILE path, label, align=2
   LOCAL file_end
   LOCAL file_start
-  GLABEL \label \align
   GLABEL \label\()_size
   .long file_end - file_start
+  GLABEL \label \align
 file_start:
   .incbin \path
 file_end:

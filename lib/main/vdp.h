@@ -44,20 +44,20 @@ typedef u16 vdp_reg;
 
 typedef struct Sprite
 {
-  u16          : 6;
-  u16 pos_y    : 10;
-  u8           : 4;
-  u8 width     : 2;
-  u8 height    : 2;
-  u8           : 1;
-  u8  next     : 7;
-  u8  priority : 1;
-  u8  palette  : 2;
-  u8  v_flip   : 1;
-  u8  h_flip   : 1;
-  u16 tile     : 11;
-  u8           : 7;
-  u16 pos_x    : 9;
+  s16          : 6;
+  s16 pos_y    : 10;
+  s16          : 4;
+  s16 width    : 2;
+  s16 height   : 2;
+  s16          : 1;
+  s16 next     : 7;
+  s16 priority : 1;
+  s16 palette  : 2;
+  s16 v_flip   : 1;
+  s16 h_flip   : 1;
+  s16 tile     : 11;
+  s16          : 7;
+  s16 pos_x    : 9;
 } Sprite;
 
 typedef union SpriteEx
@@ -236,6 +236,8 @@ static inline u16 to_vram_addr_runtime(vdp_addr vdp_addr)
      : to_vdp_addr_runtime(vram_addr))
 
 // TODO: create similar macro for to_vram_addr
+
+#define tile_offset(tile_index) (tile_index << 5)
 
 // the below is causing weird breakage when compiling...
 /*
