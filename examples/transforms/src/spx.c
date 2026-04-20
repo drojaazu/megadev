@@ -8,12 +8,12 @@
 #include <system.h>
 #include <xform.h>
 
-#define STAMP_DATA  0x0
-#define STAMP_MAP   0x10000
-#define TRACE_TABLE 0x20000
-#define IMG_BUFFER  0x30000
-#define IMG_WIDTH   256
-#define IMG_HEIGHT  256
+#define STAMP_DATA_OFFSET  0x0
+#define STAMP_MAP_OFFSET   0x10000
+#define TRACE_TABLE_OFFSET 0x20000
+#define IMG_BUFFER_OFFSET  0x30000
+#define IMG_WIDTH          256
+#define IMG_HEIGHT         256
 
 typedef struct
 {
@@ -24,7 +24,7 @@ typedef struct
 } trace_entry;
 
 trace_entry (*trace_table)[IMG_HEIGHT] =
-  (trace_entry (*)[IMG_HEIGHT])(WORD_RAM_2M + TRACE_TABLE);
+  (trace_entry (*)[IMG_HEIGHT])(WORD_RAM_2M + TRACE_TABLE_OFFSET);
 
 extern void sp_fatal();
 
@@ -100,26 +100,26 @@ void main()
 void load_gfx()
 {
   memcpy16(
-    (u16 const *) &res_stamp01.data,
-    (u16 *) (WORD_RAM_2M + STAMP_DATA + (4 * 4 * 32 * 1)),
-    res_stamp01.size / 2);
+    (u16 const *) &res_stamp01,
+    (u16 *) (WORD_RAM_2M + STAMP_DATA_OFFSET + (4 * 4 * 32 * 1)),
+    res_stamp01_size / 2);
   memcpy16(
-    (u16 const *) &res_stamp02.data,
-    (u16 *) (WORD_RAM_2M + STAMP_DATA + (4 * 4 * 32 * 2)),
-    res_stamp02.size / 2);
+    (u16 const *) &res_stamp02,
+    (u16 *) (WORD_RAM_2M + STAMP_DATA_OFFSET + (4 * 4 * 32 * 2)),
+    res_stamp02_size / 2);
   memcpy16(
-    (u16 const *) &res_stamp03.data,
-    (u16 *) (WORD_RAM_2M + STAMP_DATA + (4 * 4 * 32 * 3)),
-    res_stamp03.size / 2);
+    (u16 const *) &res_stamp03,
+    (u16 *) (WORD_RAM_2M + STAMP_DATA_OFFSET + (4 * 4 * 32 * 3)),
+    res_stamp03_size / 2);
   memcpy16(
-    (u16 const *) &res_stamp04.data,
-    (u16 *) (WORD_RAM_2M + STAMP_DATA + (4 * 4 * 32 * 4)),
-    res_stamp04.size / 2);
+    (u16 const *) &res_stamp04,
+    (u16 *) (WORD_RAM_2M + STAMP_DATA_OFFSET + (4 * 4 * 32 * 4)),
+    res_stamp04_size / 2);
 
   memcpy16(
-    (u16 const *) &res_stamp_map.data,
-    (u16 *) (WORD_RAM_2M + STAMP_MAP),
-    res_stamp_map.size / 2);
+    (u16 const *) &res_stamp_map,
+    (u16 *) (WORD_RAM_2M + STAMP_MAP_OFFSET),
+    res_stamp_map_size / 2);
 }
 
 void redraw(s16 trace_x, s16 trace_y, s16 trace_dx, s16 trace_dy)
@@ -135,8 +135,8 @@ void redraw(s16 trace_x, s16 trace_y, s16 trace_dx, s16 trace_dy)
   // ga_reg_imgbufvdotsize
   // ga_reg_tracevectbase
 
-  ga_reg_stampmapbase = (u16) ((STAMP_MAP) / 4);
-  ga_reg_imgbufstart = (u16) ((IMG_BUFFER) / 4);
+  ga_reg_stampmapbase = (u16) (STAMP_MAP_OFFSET / 4);
+  ga_reg_imgbufstart = (u16) (IMG_BUFFER_OFFSET / 4);
   ga_reg_stampsize = GA_MASK_STAMPSIZE_REPEAT | GA_MASK_STAMPSIZE_32x32_STAMP;
   ga_reg_imgbufvdotsize = IMG_HEIGHT;
   ga_reg_imgbufhdotsize = IMG_WIDTH;
@@ -152,7 +152,7 @@ void redraw(s16 trace_x, s16 trace_y, s16 trace_dx, s16 trace_dy)
     (*trace_table)[trace_table_line].delta_y = trace_dy;
   }
 
-  ga_reg_tracevectbase = (u16) (TRACE_TABLE / 4);
+  ga_reg_tracevectbase = (u16) (TRACE_TABLE_OFFSET / 4);
 
   while (ga_reg_stampsize & 0x8000)
   {
