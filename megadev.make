@@ -194,8 +194,8 @@ $(BUILD_PATH)/%.s.o: %.s
 	@$(OBJCPY) -O binary $(OUT_MOD_ELF) $@
 
 %.cart:
-	@echo "rom elf in: $^"
-	@echo "rom elf out: $@"
+	@echo "cart in: $^"
+	@echo "cart out: $@"
 	$(call msg_info,Building cart ROM $(notdir $@))
 	$(eval BUILD_SRC:=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o, $(filter %.c %.h %.s, $^)))))
 	@echo BUILD SRC: $(BUILD_SRC)

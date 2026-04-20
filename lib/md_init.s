@@ -53,7 +53,4 @@ skip_init:
   ENABLE_INTERRUPTS
   jbra main
 
-.align 2
-.global EX_NULL
-EX_NULL:
-  rte
+

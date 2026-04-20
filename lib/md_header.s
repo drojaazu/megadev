@@ -12,26 +12,29 @@
 #define XSTR(x) #x
 
 .org 0x100
-HardwareType:  .ascii STR(HEADER_HARDWARE_ID)
+.ascii STR(HEADER_HARDWARE_ID)
 .org 0x110, 0x20
-Copyright:     .ascii STR(HEADER_COPYRIGHT)
+.ascii STR(HEADER_COPYRIGHT)
 .org 0x120, 0x20
-TitleDomestic: .ascii STR(PROJECT_NAME_DOMESTIC)
+.ascii STR(PROJECT_NAME_DOMESTIC)
 .org 0x150, 0x20
-TitleIntl:     .ascii STR(PROJECT_NAME)
+.ascii STR(PROJECT_NAME)
 .org 0x180, 0x20
-SoftwareID:    .ascii STR(HEADER_SOFTWARE_ID)
+.ascii STR(HEADER_SOFTWARE_ID)
 .org 0x18E, 0x20
-Checksum:      .word  0
+# TODO calculate checksum
+.word  0
 .org 0x190
-Devices:       .ascii "J"
+.ascii "J"
 .org 0x1A0, 0x20
-RomRangeStart: .long 0x0
-RomRangeEnd:   .long 0x3FFFFF
-ExtraMemory:   .ascii "            "
-//                     ############
-Modem:         .ascii "            "
-//                     ############
+.long 0x0
+# TODO fill out proper rom start/rom end
+.long 0x3FFFFF
+# TODO add variables for Extra Memory and Modem
+.ascii "            "
+//      ############
+.ascii "            "
+//      ############
 .fill 40
-Region:       .ascii STR(HEADER_REGION)
+.ascii STR(HEADER_REGION)
 .fill 13
