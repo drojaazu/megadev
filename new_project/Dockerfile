@@ -28,7 +28,7 @@ RUN \
 	useradd -ms /bin/bash megadev && \
 	git clone https://github.com/drojaazu/megadev.git ${MEGADEV_PATH} && \
 	chown -R megadev:megadev ${MEGADEV_PATH} && \
-	printf "    __  __________________    ____  _______    __\n   /  |/  / ____/ ____/   |  / __ \\/ ____/ |  / /\n  / /|_/ / __/ / / __/ /| | / / / / __/  | | / / \n / /  / / /___/ /_/ / ___ |/ /_/ / /___  | |/ /  \n/_/  /_/_____/\\____/_/  |_/_____/_____/  |___/   \n    Sega Mega Drive/Mega CD development kit\n" > /etc/motd \
+	printf "    __  __________________    ____  _______    __\n   /  |/  / ____/ ____/   |  / __ \\/ ____/ |  / /\n  / /|_/ / __/ / / __/ /| | / / / / __/  | | / / \n / /  / / /___/ /_/ / ___ |/ /_/ / /___  | |/ /  \n/_/  /_/_____/\\____/_/  |_/_____/_____/  |___/   \n    Sega Mega Drive/Mega CD development kit\n\n" > /etc/motd \
 		&& \
 	echo "unset PROMPT_COMMAND" >> /home/megadev/.bashrc && \
 	echo "PS1='\[\033[01;34m\]\w\[\033[00m\] # \[\]'" >> /home/megadev/.bashrc && \

@@ -12,7 +12,7 @@
 
 /**
  * Kickstarts the load process by setting initial mode
- * This should be called in sp_init before VINT has been enabled
+ * This should be called in sp_init before VBLANK has been enabled
  */
 .macro INIT_ACC_LOOP
   move.l  #access_op_idle, acc_loop_jump

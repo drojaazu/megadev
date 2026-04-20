@@ -22,17 +22,17 @@
 
 /**
  * Default bit mappings for joypad inputs when using the "standard" format of
- * SACBRLDU. This format is used the Mega CD's Bootlib as well as the
- * read_input_joypad function in Megadev.
+ * SACBRLDU. This format is used the Mega CD's Main BIOS IO calls as well as
+ * the read_input_joypad function in Megadev.
  */
-#define PAD_UP		(1 << 0)
-#define PAD_DOWN	(1 << 1)
-#define PAD_LEFT	(1 << 2)
+#define PAD_UP    (1 << 0)
+#define PAD_DOWN  (1 << 1)
+#define PAD_LEFT  (1 << 2)
 #define PAD_RIGHT (1 << 3)
-#define PAD_A			(1 << 6)
-#define PAD_B			(1 << 4)
-#define PAD_C			(1 << 5)
-#define PAD_ABC		(PAD_A | PAD_B | PAD_C)
+#define PAD_A     (1 << 6)
+#define PAD_B     (1 << 4)
+#define PAD_C     (1 << 5)
+#define PAD_ABC   (PAD_A | PAD_B | PAD_C)
 #define PAD_START (1 << 7)
 
 /**

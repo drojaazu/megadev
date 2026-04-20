@@ -221,21 +221,21 @@ Such calls will be marked as "Broken" along with notes about them. They should, 
 
 # Component Reference
 
-## VINT Component
+## VBLANK Component
 
-The vertical blanking interrupt is very important to developing on the Mega Drive (and any CRT based retro game system). This is the period in which the electron beam inside the CRT is returning to the upper left position after reaching the end of displaying all the rows of a single frame. It is during this time when much of the game logic and data I/O is processed.
+The vertical blanking interrupt (VBLANK or VINT) is very important to developing on the Mega Drive (and any CRT based retro game system). This is the period in which the electron beam inside the CRT is returning to the upper left position after reaching the end of displaying all the rows of a single frame. It is during this time when much of the game logic and data I/O is processed.
 
-The Main BIOS provides generic VINT wait and handling routines. The handler takes care of a number of common tasks: sync GA comm registers to/from cache, copy the palette cache to CRAM, and update controller inputs. The wait routine takes care of random number generation.
+The Main BIOS provides generic VBLANK wait and handling routines. The handler takes care of a number of common tasks: sync GA comm registers to/from cache, copy the palette cache to CRAM, and update controller inputs. The wait routine takes care of random number generation.
 
-The VINT component is useful but requires a full commitment to using the Main BIOS library due to how many other components it uses. You should familiarize yourself with the components it uses and design your program around them if you want to use the VINT routines. Or rather, if you decide to use most of the Main BIOS library functionality to begin with, the VINT handler help tie it all together.
+The VBLANK component is useful but requires a full commitment to using the Main BIOS library due to how many other components it uses. You should familiarize yourself with the components it uses and design your program around them if you want to use the VBLANK routines. Or rather, if you decide to use most of the Main BIOS library functionality to begin with, the VBLANK handler help tie it all together.
 
-The VINT handler also calls `BIOS_VINT_USER` which points to a user-defined function that performs your game-specific logic during the VBLANK interval.
+The VBLANK handler also calls `BIOS_VBLANK_USER` which points to a user-defined function that performs your game-specific logic during the VBLANK interval.
 
-The VINT handler also uses `BIOS_VINT_HANDLER_FLAGS` which acts as both the "VBLANK occured" indicator and as a set of update flags. Only two bits are used by the handler: bit 0, which will copy the sprite list cache to VRAM when set, and bit 1, which will call `BIOS_VINT_USER` when set. The value is always reset to zero at the end of the handler code, so the wait routines check that this value is zero to indicate a VBLANK has completed. Note that, although it uses bit 0 of `BIOS_VINT_HANDLER_FLAGS`, `BIOS_COPY_SPRLIST` is not actually called in the VINT routine. You will need to include a call to that routine in your `BIOS_VINT_USER` function.
+The VBLANK handler also uses `BIOS_VBLANK_HANDLER_FLAGS` which acts as both the "VBLANK occured" indicator and as a set of update flags. Only two bits are used by the handler: bit 0, which will copy the sprite list cache to VRAM when set, and bit 1, which will call `BIOS_VBLANK_USER` when set. The value is always reset to zero at the end of the handler code, so the wait routines check that this value is zero to indicate a VBLANK has completed. Note that, although it uses bit 0 of `BIOS_VBLANK_HANDLER_FLAGS`, `BIOS_COPY_SPRLIST` is not actually called in the VBLANK routine. You will need to include a call to that routine in your `BIOS_VBLANK_USER` function.
 
-There are two VBLANK wait routines which are mostly identical. These calls enter a tight loop waiting for VINT_FLAGS to be reset to 0 (which will be set when VBLANK occurs), and will update the random number generator on each iteration. The only difference between the two is that `BIOS_VINT_WAIT_DEFAULT` will set both VINT Update flags (copy sprite list and call `BIOS_VINT_USER`), while `BIOS_VINT_WAIT` will not set any flags beforehand.
+There are two VBLANK wait routines which are mostly identical. These calls enter a tight loop waiting for VBLANK_FLAGS to be reset to 0 (which will be set when VBLANK occurs), and will update the random number generator on each iteration. The only difference between the two is that `BIOS_VBLANK_WAIT_DEFAULT` will set both VBLANK Update flags (copy sprite list and call `BIOS_VBLANK_USER`), while `BIOS_VBLANK_WAIT` will not set any flags beforehand.
 
-Please see the `gfx` example project which uses the VINT component.
+Please see the `gfx` example project which uses the VBLANK component.
 
 ## Fixed VRAM Layout Component
 
@@ -262,13 +262,13 @@ However, a number of Main BIOS library routines expect the VRAM to have a specif
 
 This is a pretty standard layout that would work well for many applications, but your usage may vary throughout your program. It is possible to change this layout so long as the the blocks specifically used by a certain call are in their expected location. For example, the sprite list update calls expect the sprite table to be at 0xB800, but it doesn't address anything else in VRAM, and thus the rest of the layout can be different so long as the sprite table is at 0xB800. For each call that expects this layout, we will mark which blocks are used/affected.
 
-This layout is set when using the default VDP register values in `BIOS_LOAD_DEFAULT_VDPREGS`. 
+This layout is set when using the default VDP register values in `BIOS_LOAD_DEFAULT_VDP_REGS`. 
 
 ## VDP Register Cache Component
 
 Since the value of VDP registers cannot be read (except for the Status register), we must maintain a mirror of those values in RAM for reference in order to preserve settings when making bitwise changes. For example, when performing a DMA operation, we must first set bit #4 on Mode Register 2. Since we cannot do a bitwise operation and must set the whole register at once, we need to know the current value so we do not alter any other bit level settings.
 
-The cache is an array of 18 words (36 bytes), one for each of the first 18 registers. (The DMA register values are not maintained, as they need to be set on each DMA operation anyway.) It is defined as `BIOS_VDPREG_CACHE` within Megadev.
+The cache is an array of 18 words (36 bytes), one for each of the first 18 registers. (The DMA register values are not maintained, as they need to be set on each DMA operation anyway.) It is defined as `BIOS_VDP_REG_CACHE` within Megadev.
 
 ## Plane Width Cache Component
 
@@ -276,7 +276,7 @@ The width and height of planes can be adjusted in VDP Register 0x10 to one of th
 
 All of the nametable (tilemap) related functions use the plane width cache, which is a byte value defined as `BIOS_VDP_DEFAULT_PLANE_WIDTH`. Note that this value is the width *in bytes* rather than tiles. At two bytes per entry, this means the value should simply be double the width in tiles. I.E.: 32 tiles = 64 byte width, 64 tiles = 128 byte width, 128 tiles = 256 byte width.
 
-Also note that this value must be manually updated whenever changing the width setting in VDP Register 0x10! The only exception to this is when using `BIOS_LOAD_DEFAULT_VDPREGS` which will update the plane width cache to match the default registers.
+Also note that this value must be manually updated whenever changing the width setting in VDP Register 0x10! The only exception to this is when using `BIOS_LOAD_DEFAULT_VDP_REGS` which will update the plane width cache to match the default registers.
 
 ## DMA Component
 
@@ -362,7 +362,7 @@ The ga_comflags register is intended to keep the two CPUs in sync by informing e
 
 There are a few Main BIOS library functions that use these flags, however, which inherently assigns meaning to those bits. The problem here is that we don't know what those meanings are due to a lack of documentation. We can only guess based on the context in which they appear as we reverse engineer the code. This includes understanding not just the library calls that use these bits, but what must be done on the Sub CPU side to correctly read, set and clear bits in response. Thankfully, the built in software (namely the CD player) uses these calls, meaning we have usage examples on the Sub CPU side to look at. Moreover, of the retail games identified so far that use the Main BIOS library, most of them make use of these calls and exhibit a similarity in their implementation (to the point of being nearly identical) that suggests they were built from example code.
 
-At this point, we are still investigating and have only a rough idea of what the flags represent. Therefore, we do not recommend using the functions marked as using the Predefined Comm Flag Semantics component. However, **if you plan to use the built-in vblank handler (BIOS_VINT_HANDLER), keep in mind that it includes a call to one of these subroutines. Please see the notes for BIOS_COMM_SYNC.**
+At this point, we are still investigating and have only a rough idea of what the flags represent. Therefore, we do not recommend using the functions marked as using the Predefined Comm Flag Semantics component. However, **if you plan to use the built-in vblank handler (BIOS_VBLANK_HANDLER), keep in mind that it includes a call to one of these subroutines. Please see the notes for BIOS_COMM_SYNC.**
 
 NOTES:
 A fresh look at this suggests that bit 0 SET indicates that the comm registers have been updated and that a fresh copy to the local cache of the opposite CPU should be made, and that bit 1 SET indicates the the CPU is ready for the copy (and inversely, that bit 1 CLEAR indicates the CPU is busy (registers comms have not yet fully propagated?) and that a copy should not yet be made).
@@ -385,33 +385,33 @@ A fresh look at this suggests that bit 0 SET indicates that the comm registers h
 
 ## Interrupts Group
 
-### `BIOS_VINT_HANDLER`
+### `BIOS_VBLANK_HANDLER`
 
-Components: VINT, GA Comm, Sprite Table Cache, Palette Cache, Input
+Components: VBLANK, GA Comm, Sprite Table Cache, Palette Cache, Input
 
-A generic VINT handler. Calls `BIOS_COMM_SYNC`, `BIOS_COPY_PAL` and `BIOS_READ_JOYPAD` on each iteration. If bit 1 of `BIOS_VINT_HANDLER_FLAGS` is set, `BIOS_VINT_USER` will also be called. `BIOS_VINT_USER` points to a user-defined routine with game-specific logic to be run during VBLANK. We recommend including a call to `BIOS_COPY_SPRLIST` in your VINT_USER routine.
+A generic VBLANK handler. Calls `BIOS_COMM_SYNC`, `BIOS_COPY_PAL` and `BIOS_READ_JOYPAD` on each iteration. If bit 1 of `BIOS_VBLANK_HANDLER_FLAGS` is set, `BIOS_VBLANK_USER` will also be called. `BIOS_VBLANK_USER` points to a user-defined routine with game-specific logic to be run during VBLANK. We recommend including a call to `BIOS_COPY_SPRLIST` in your VBLANK_USER routine.
 
-`BIOS_VINT_HANDLER` increments the `BIOS_VINT_COUNTER` variable by 1 on each iteration. It also uses the `_SKIP_GFX_UPDATES` variable. When this value is non-zero, it will skip the call to `BIOS_COPY_PAL` and `BIOS_VINT_USER` and skip the `BIOS_VINT_COUNTER` increment.
+`BIOS_VBLANK_HANDLER` increments the `BIOS_VBLANK_COUNTER` variable by 1 on each iteration. It also uses the `_SKIP_GFX_UPDATES` variable. When this value is non-zero, it will skip the call to `BIOS_COPY_PAL` and `BIOS_VBLANK_USER` and skip the `BIOS_VBLANK_COUNTER` increment.
 
-### `BIOS_SET_VINT`
+### `BIOS_SET_VBLANK`
 
 (Tiny)
 
-Sets the specified pointer as the VINT vector.
+Sets the specified pointer as the VBLANK vector.
 
-### `BIOS_VINT_WAIT`
+### `BIOS_VBLANK_WAIT`
 
-Sets the specified value to `BIOS_VINT_HANDLER_FLAGS` and waits for the next VBLANK occurance, which resets `BIOS_VINT_HANDLER_FLAGS` to zero. This means `BIOS_VINT_HANDLER_FLAGS` must be set to a non-zero value in order to actually wait for a VBLANK occurance. If you want to wait for VBLANK without triggering a sprite list or palette copy, simply set an unused bit.
+Sets the specified value to `BIOS_VBLANK_HANDLER_FLAGS` and waits for the next VBLANK occurance, which resets `BIOS_VBLANK_HANDLER_FLAGS` to zero. This means `BIOS_VBLANK_HANDLER_FLAGS` must be set to a non-zero value in order to actually wait for a VBLANK occurance. If you want to wait for VBLANK without triggering a sprite list or palette copy, simply set an unused bit.
 
-### `BIOS_VINT_WAIT_DEFAULT`
+### `BIOS_VBLANK_WAIT_DEFAULT`
 
-A wrapper for `BIOS_VINT_WAIT` that sets `BIOS_VINT_HANDLER_FLAGS` to 3 (bit 0 and 1 set) before waiting. This would be useful if you do not implement any extra `BIOS_VINT_HANDLER_FLAGS` and only use the two used by the library. In any other case, you should stick to `BIOS_VINT_WAIT` as it allows you to specify flags.
+A wrapper for `BIOS_VBLANK_WAIT` that sets `BIOS_VBLANK_HANDLER_FLAGS` to 3 (bit 0 and 1 set) before waiting. This would be useful if you do not implement any extra `BIOS_VBLANK_HANDLER_FLAGS` and only use the two used by the library. In any other case, you should stick to `BIOS_VBLANK_WAIT` as it allows you to specify flags.
 
-### `BIOS_SET_HINT`
+### `BIOS_SET_HBLANK`
 
-### `BIOS_SET_HINT_WORK_RAM`
+### `BIOS_SET_HBLANK_WORK_RAM`
 
-### `BIOS_DISABLE_HINT`
+### `BIOS_DISABLE_HBLANK`
 
 ### `BIOS_TRIGGER_IFL2`
 
@@ -470,7 +470,7 @@ Clears the nametables (tile mappings) and sprite table. Note that it only clears
 ### `BIOS_CLEAR_VSRAM`
 Clears VSRAM.
 
-### `BIOS_LOAD_DEFAULT_VDPREGS`
+### `BIOS_LOAD_DEFAULT_VDP_REGS`
 Components: Fixed VRAM Layout (All), VDP Register Cache, Plane Width Cache
 
 Loads the Main BIOS default VDP settings to the cache and to the registers. Also updates the `BIOS_VDP_DEFAULT_PLANE_WIDTH` cached value.
@@ -479,13 +479,13 @@ Here is the default VDP data loaded by the function, in the order in which it ap
 
 0x8004
   Mode Register 1
-  - HINT disabled
+  - HBLANK disabled
   - Normal color mode
 0x8124
   Mode Register 2
   - Mega Drive graphics mode
   - NTSC (TODO: confirm that this is different per region (it probably is))
-  - Vertical blank interrupt (VINT) enabled
+  - Vertical blank interrupt (VBLANK) enabled
   - Disable display
 0x9011
   Plane Size
@@ -515,7 +515,7 @@ Here is the default VDP data loaded by the function, in the order in which it ap
   Background color
   - 0
 0x8A00
-  Horizontal interrupt (HINT) counter
+  Horizontal interrupt (HBLANK) counter
   - 0
 0x8F02
   VRAM auto-increment
@@ -527,7 +527,7 @@ Here is the default VDP data loaded by the function, in the order in which it ap
   Window plane Y position
   - 0
 
-### `BIOS_LOAD_VDPREGS`
+### `BIOS_LOAD_VDP_REGS`
 
 Components: VDP Reg Cache
 
@@ -604,7 +604,7 @@ Display an entity. Please see the Entities section.
 
 ### `BIOS_COPY_SPRLIST`
 
-Components: Sprite Cache, VDP Register Cache, VINT Flags
+Components: Sprite Cache, VDP Register Cache, VBLANK Flags
 
 Copies the sprite cache to the sprite table in VRAM.
 
@@ -616,7 +616,7 @@ It is a form of compression as, logically, 1bpp graphics only use 1/4 of the spa
 
 Of course, this is not strictly limited to fonts and you can use the routine however you'd like to convert 1bpp graphics to Mega Drive 4bpp tiles.
 
-The function takes a pointer to the 1bpp data, a vdp_ptr formatted VRAM destination, the number of tiles and the color definition. The color definition requires some explanation. It is a 32 bit value that acts as a mapping for each possible pair of 1 bit values. The full value is divided into four bytes visualized like so:
+The function takes a pointer to the 1bpp data, a vdp_addr formatted VRAM destination, the number of tiles and the color definition. The color definition requires some explanation. It is a 32 bit value that acts as a mapping for each possible pair of 1 bit values. The full value is divided into four bytes visualized like so:
 
     00'0X'X0'XX
 
@@ -695,7 +695,7 @@ IFL2 is set on each call regardless, but the COMCMD/COMSTAT sync is dependent on
 
 As mentioned in the Predefined Comm Flag Semantics component description, we recommend not using this function until we have a better understanding of the flags system on both CPUs.
 
-Note that if you are using `BIOS_VINT_HANDLER` for your vblank handler, `BIOS_COMM_SYNC` is called as part of that subroutine, which is important as it takes care of the IFL2 bit. The best way to keep things flowing smoothly is to ensure bit 0 is always unset on the Sub side COMFLAGS. This will ensure that the COMCMD/COMSTAT sync is skipped and that a stuck loop is avoided.
+Note that if you are using `BIOS_VBLANK_HANDLER` for your vblank handler, `BIOS_COMM_SYNC` is called as part of that subroutine, which is important as it takes care of the IFL2 bit. The best way to keep things flowing smoothly is to ensure bit 0 is always unset on the Sub side COMFLAGS. This will ensure that the COMCMD/COMSTAT sync is skipped and that a stuck loop is avoided.
 
 ### `BIOS_UK_COMM_CDINFO`
 
@@ -739,7 +739,7 @@ Although this does not use the Predefined Comm Flag Semantics component directly
 
 ### `BIOS_SET_IFL2`
 
-Sets the IFL2 bit on ga_memmode to trigger INT2 on the Sub side. Should be called during VBLANK only.
+Sets the IFL2 bit on ga_reg_memmode to trigger INT2 on the Sub side. Should be called during VBLANK only.
 
 ## Misc - Components
 

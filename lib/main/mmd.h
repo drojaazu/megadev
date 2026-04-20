@@ -14,12 +14,12 @@
 
 static inline void const * init_mmd()
 {
-	register void const * mmd_entry;
-	register u32					scratch_d0, scratch_a0, scratch_a1;
+  register void const * mmd_entry;
+  register u32          scratch_d0, scratch_a0, scratch_a1;
 
-	wait_2m();
+  wait_2m();
 
-	// clang-format off
+  // clang-format off
 	asm volatile(
 		"\
   move.l   2(%[wrdram]), %[scratch_d0] \n\
@@ -37,8 +37,8 @@ static inline void const * init_mmd()
   move.l   %[scratch_d0], %c[mlevel6]+2 \n\
 3:btst     #6, (%[wrdram]) \n\
   beq      4f \n\
-6:bset     #%c[ga_dmna_bit], %c[gareg_memmode]+1 \n\
-  btst     #%c[ga_dmna_bit], %c[gareg_memmode]+1 \n\
+6:bset     #%c[ga_dmna], %c[ga_memmode]+1 \n\
+  btst     #%c[ga_dmna], %c[ga_memmode]+1 \n\
   beq      6b \n\
 4: movea.l 8(%[wrdram]), %[mmd_entry] \n\
 	"
@@ -51,13 +51,13 @@ static inline void const * init_mmd()
 			[wrdram] "a"(WORD_RAM),
 			[mlevel4] "i"(EXVEC_LEVEL4),
 			[mlevel6] "i"(EXVEC_LEVEL6),
-			[ga_dmna_bit] "i"(GA_DMNA_BIT),
-			[gareg_memmode] "i"(GAREG_MEMMODE)
+			[ga_dmna] "i"(GA_BIT_DMNA),
+			[ga_memmode] "i"(GA_REG_MEMMODE)
 		:
 			"cc");
-	// clang-format on
+  // clang-format on
 
-	return mmd_entry;
+  return mmd_entry;
 }
 
 #endif

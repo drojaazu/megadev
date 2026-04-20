@@ -17,7 +17,7 @@
   sp_int2
   The CD-ROM access code works in a loop. PROCESS_ACC_LOOP is the "pump" that
 	keeps that loop flowing. We will need to call it on every INT2, which is sent
-	from the Main CPU on every vblank (VINT).
+	from the Main CPU on every vblank (VBLANK).
 */
 GLABEL sp_int2
   PROCESS_ACC_LOOP
@@ -39,7 +39,7 @@ GLABEL sp_init
 	bne			1b
   CLEAR_COMM_REGS
 	// Put Word RAM into 2M mode and assert control of it
-	andi.w	#~(GA_RET | GA_MODE), GAREG_MEMMODE
+	andi.w	#~(GA_MASK_RETURN_2M | GA_MASK_WORDRAM_LAYOUT), GA_REG_MEMMODE
 	// This sets up the CD-ROM access loop with initial settings. It only needs
 	// to be called once, here in sp_init
 	INIT_ACC_LOOP
@@ -77,16 +77,16 @@ GLABEL sp_main
 		monitoring COMCMD0/1
 	*/
 command_loop:
-  move.w	GAREG_COMCMD0, d0
+  move.w	GA_REG_COMCMD0, d0
 	beq			command_loop
-	cmp.w		GAREG_COMCMD0, d0
+	cmp.w		GA_REG_COMCMD0, d0
 	bne			command_loop
 	#move.w	d0, d1
-	move.w  GAREG_COMCMD1, d1
+	move.w  GA_REG_COMCMD1, d1
 	add.w		d0, d0
 	move.w	command_tbl(pc,d0.w), d0
 	jsr			command_tbl(pc,d0.w)
-	//bclr		#INT1_GFX_BIT, GA_INTMASK+1
+	//bclr		#INT1_GFX_BIT, ga_reg_intmask+1
 	jra			command_loop
 
 /*
@@ -94,12 +94,12 @@ command_loop:
 	Main CPU the work is done and get the comm registers back in "sync."
 */
 command_complete_sync:
-	move.w	GAREG_COMCMD0, GAREG_COMSTAT0
-1:move.w	GAREG_COMCMD0, d0
+	move.w	GA_REG_COMCMD0, GA_REG_COMSTAT0
+1:move.w	GA_REG_COMCMD0, d0
 	bne			1b
-	move.w	GAREG_COMCMD0, d0
+	move.w	GA_REG_COMCMD0, d0
 	bne			1b
-	move.w	#0, GAREG_COMSTAT0
+	move.w	#0, GA_REG_COMSTAT0
 	rts
 
 /*

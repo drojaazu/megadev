@@ -23,21 +23,21 @@
 0:move.l   d0, (a0)+
 1:dbra     d1, 0b
 
-  jbsr     BIOS_LOAD_DEFAULT_VDPREGS
+  jbsr     BIOS_LOAD_DEFAULT_VDP_REGS
   jbsr     BIOS_CLEAR_VRAM
   jbsr     BIOS_CLEAR_COMM
 
-  move     #0, (BIOS_VINT_HANDLER_FLAGS)
-  move.l   #BIOS_VINT_HANDLER, (EXVEC_LEVEL6)
+  move     #0, (BIOS_VBLANK_HANDLER_FLAGS)
+  move.l   #BIOS_VBLANK_HANDLER, (EXVEC_LEVEL6)
 
   ENABLE_INTERRUPTS
 
   GRANT_2M
-  move.w	#0xFE, GAREG_COMCMD0	//send the load IPX command to sub
-0:tst.w		GAREG_COMSTAT0				//wait for response on status reg #0
+  move.w	#0xFE, GA_REG_COMCMD0	//send the load IPX command to sub
+0:tst.w		GA_REG_COMSTAT0				//wait for response on status reg #0
   beq			0b
-  move.w	#0, GAREG_COMCMD0			//send ack
-1:tst.w		GAREG_COMSTAT0				//wait for response (wait for 0 from Sub)
+  move.w	#0, GA_REG_COMCMD0			//send ack
+1:tst.w		GA_REG_COMSTAT0				//wait for response (wait for 0 from Sub)
   bne			1b
   WAIT_2M
 

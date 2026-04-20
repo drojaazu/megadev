@@ -5,8 +5,8 @@
  * @brief Sub CPU side system library vectors & memory definitions
  */
 
-#ifndef MEGADEV__SUBBIOS_DEF_H
-#define MEGADEV__SUBBIOS_DEF_H
+#ifndef MEGADEV__SUB_BIOS_DEF_H
+#define MEGADEV__SUB_BIOS_DEF_H
 
 /**
  * @defgroup bios_cdda Sub CPU / BIOS / CD-DA
@@ -100,25 +100,25 @@
  * @def USERCALL0
  */
 #define USERCALL0 0x005F28
-#define SP_INIT		USERALL0
+#define SP_INIT   USERALL0
 
 /**
  * @def USERCALL1
  */
 #define USERCALL1 0x005F2E
-#define SP_MAIN		USERCALL1
+#define SP_MAIN   USERCALL1
 
 /**
  * @def USERCALL2
  */
 #define USERCALL2 0x005F34
-#define SP_INT2		USERCALL2
+#define SP_INT2   USERCALL2
 
 /**
  * @def USERCALL3
  */
 #define USERCALL3 0x005F3A
-#define SP_USER		USERCALL3
+#define SP_USER   USERCALL3
 
 /**
  * @def CDBIOS
@@ -222,7 +222,7 @@
  * @details Takes a pointer to two bytes (initialization params):
  *  byte 1 - track number from which to read TOC (normally 0x01); if bit 7 of
  *           this value is set, BIOS will start to play the first track
-						 automatically
+             automatically
  *  byte 2 - last track to read (0xFF will read all tracks)
  */
 #define BIOS_DRV_INIT 0x0010
@@ -649,14 +649,14 @@
  */
 #define BIOS_LEDSET 0x0095
 
-#define BIOS_LED_READY	 0
-#define BIOS_LED_DISCIN	 1
-#define BIOS_LED_ACCESS	 2
+#define BIOS_LED_READY   0
+#define BIOS_LED_DISCIN  1
+#define BIOS_LED_ACCESS  2
 #define BIOS_LED_STANDBY 3
-#define BIOS_LED_ERROR	 4
-#define BIOS_LED_MODE5	 5
-#define BIOS_LED_MODE6	 6
-#define BIOS_LED_MODE7	 7
+#define BIOS_LED_ERROR   4
+#define BIOS_LED_MODE5   5
+#define BIOS_LED_MODE6   6
+#define BIOS_LED_MODE7   7
 
 /**
  * @def BIOS_CDCSETMODE
