@@ -102,8 +102,8 @@ __attribute__((noreturn)) void main()
     *ga_reg_comcmd2 = trace_y;
     *ga_reg_comcmd3 = trace_dx;
     *ga_reg_comcmd4 = trace_dy;
+    
     *ga_reg_comcmd0 = CMD_REDRAW;
-
     do
     {
       // the NOP is so GCC doesn't optimize the loop away
@@ -122,6 +122,7 @@ __attribute__((noreturn)) void main()
     wait_2m();
 
     bios_vblank_wait_default();
+
     bios_dma_xfer_word_ram(
       tiles, (void const *) (WORD_RAM + 0x30000), (32 * 32 * 32) / 2);
 

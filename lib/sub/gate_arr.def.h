@@ -110,13 +110,13 @@
 #define GA_MASK_RETURN_2M (1 << BIT_GA_REG_RET)
 
 /**
- * @def MSK_GA_REG_DMNA
+ * @def GA_MASK_DMNA
  * @brief GA Reg 01 - Main CPU no Word RAM access flag bitmask
  * @sa ga_reg_memmode
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_memmode
  */
-#define MSK_GA_REG_DMNA (1 << BIT_GA_REG_DMNA)
+#define GA_MASK_DMNA (1 << BIT_GA_REG_DMNA)
 
 /**
  * @def GA_MASK_WORDRAM_LAYOUT
