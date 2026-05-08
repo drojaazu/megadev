@@ -15,9 +15,9 @@ MEMORY
 
 SECTIONS
 {
-  .text (READONLY) :
+  .text (READONLY) : SUBALIGN(2)
   {
-		_TEXT_ORIGIN = .;
+    _TEXT_ORIGIN = .;
     *(.security*)
     *(.text*)
     *(.rodata*)
