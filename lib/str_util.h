@@ -5,8 +5,8 @@
  * @brief C wrappers for hex string conversion functions
  */
 
-#ifndef MEGADEV__MAIN_PRINTVAL_H
-#define MEGADEV__MAIN_PRINTVAL_H
+#ifndef MEGADEV__MAIN_STR_UTIL_H
+#define MEGADEV__MAIN_STR_UTIL_H
 
 #include "types.h"
 
@@ -67,7 +67,8 @@ static inline void hextoa32(register u32 value, register char * const string)
   }
 }
 
-static inline bool strcmp(char const * str1, char const * str2)
+static inline bool
+strcmp(register char const * str1, register char const * str2)
 {
   while (*str1 && (*str1 == *str2))
   {
