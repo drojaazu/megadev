@@ -10,6 +10,7 @@
 #include "ipx_layout.s"
 #include "shared.h"
 
+ip_entry:
   // First, disable all interrupts while we do some basic init
   DISABLE_INTERRUPTS
   
