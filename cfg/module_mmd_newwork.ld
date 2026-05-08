@@ -30,7 +30,7 @@ MEMORY
 SECTIONS
 {
 	ENTRY(main)
-	.header :
+	.header : SUBALIGN(2)
 	{
 		SHORT(DEFINED(MMD_FLAGS) ? MMD_FLAGS : 0)
 		LONG(MMD_DEST)
@@ -41,7 +41,7 @@ SECTIONS
 		. = 0x100;
 	}
 
-	MODULE_ROM_ORIGIN : AT ( ADDR(.header) + SIZEOF(.header) )
+	MODULE_ROM_ORIGIN : AT ( ADDR(.header) + SIZEOF(.header) ) SUBALIGN(2)
   {
 		MODULE_ROM_INIT_ORIGIN = .;
 		*(.init)
@@ -57,7 +57,7 @@ SECTIONS
 		MODULE_ROM_LENGTH = (. - MODULE_ROM_INIT_ORIGIN);
   } > MODULE_ROM
 
-  .data MODULE_RAM_ORIGIN : AT ( ADDR(.header) + SIZEOF(.header) + SIZEOF(.text) )
+  .data MODULE_RAM_ORIGIN : AT ( ADDR(.header) + SIZEOF(.header) + SIZEOF(.text) ) SUBALIGN(2)
   {
 		_mod_ram_org = .;
 		_mod_data_org = .;
@@ -66,7 +66,7 @@ SECTIONS
 		_mod_data_len = ABSOLUTE(. - _mod_data_org);
   } > MODULE_RAM
 
-	.bss :
+	.bss : SUBALIGN(2)
 	{
 		_mod_bss_org = .;
 		*(.bss*)

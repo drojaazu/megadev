@@ -13,7 +13,7 @@ MEMORY
 SECTIONS
 {
   ENTRY(main)
-  .rom MODULE_ROM_ORIGIN : 
+  .rom MODULE_ROM_ORIGIN : SUBALIGN(2)
   {
     _INIT_ORIGIN = .;
     *(.init)
@@ -32,7 +32,7 @@ SECTIONS
     _ROM_DATA_ORIGIN = .;
   } > MODULE_ROM
 
-  .ram_bss MODULE_RAM_ORIGIN :
+  .ram_bss MODULE_RAM_ORIGIN : SUBALIGN(2)
   {
     _BSS_ORIGIN = .;
     *(.bss*)
@@ -41,7 +41,7 @@ SECTIONS
     _BSS_LENGTH_LOOPSZ = ABSOLUTE(_BSS_LENGTH) >> 2;
   } > MODULE_RAM
 
-  .ram_data : AT ( ADDR(.rom) + SIZEOF(.rom) )
+  .ram_data : AT ( ADDR(.rom) + SIZEOF(.rom) ) SUBALIGN(2)
   {
     _RAM_DATA_ORIGIN = .;
     *(.data*)
