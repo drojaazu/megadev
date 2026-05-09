@@ -21,18 +21,18 @@ dc.l ERR_VIOLATION     // Privilege violation
 dc.l EXEXVEC_TRACE          // Trace exception
 dc.l EX_LINE_1010      // Line A instruction
 dc.l EX_LINE_1111      // Line F instruction
-dc.l EX_NULL           // Unassigned, do not use
-dc.l EX_NULL           // Unassigned, do not use
-dc.l EX_NULL           // Unassigned, do not use
+dc.l ex_null           // Unassigned, do not use
+dc.l ex_null           // Unassigned, do not use
+dc.l ex_null           // Unassigned, do not use
 dc.l EX_UNINITIALIZED  // Uninitialized vector
-dc.l EX_NULL           // Unassigned, do not use
-dc.l EX_NULL           // Unassigned, do not use
-dc.l EX_NULL           // Unassigned, do not use
-dc.l EX_NULL           // Unassigned, do not use
-dc.l EX_NULL           // Unassigned, do not use
-dc.l EX_NULL           // Unassigned, do not use
-dc.l EX_NULL           // Unassigned, do not use
-dc.l EX_NULL           // Unassigned, do not use
+dc.l ex_null           // Unassigned, do not use
+dc.l ex_null           // Unassigned, do not use
+dc.l ex_null           // Unassigned, do not use
+dc.l ex_null           // Unassigned, do not use
+dc.l ex_null           // Unassigned, do not use
+dc.l ex_null           // Unassigned, do not use
+dc.l ex_null           // Unassigned, do not use
+dc.l ex_null           // Unassigned, do not use
 dc.l EX_SPURIOUS       // Spurious
 dc.l INT1              // Interrupt Level 1
 dc.l INT2_EXT          // Interrupt Level 2 (Mega Drive I/O interrupt)
@@ -58,5 +58,5 @@ dc.l TRAP_D            // TRAP instruction
 dc.l TRAP_E            // TRAP instruction
 dc.l TRAP_F            // TRAP instruction
 // Remaining vectors are unassigned, do not use
-dc.l EX_NULL, EX_NULL, EX_NULL, EX_NULL, EX_NULL, EX_NULL, EX_NULL, EX_NULL
-dc.l EX_NULL, EX_NULL, EX_NULL, 	EX_NULL, EX_NULL, EX_NULL, EX_NULL, EX_NULL
+dc.l ex_null, ex_null, ex_null, ex_null, ex_null, ex_null, ex_null, ex_null
+dc.l ex_null, ex_null, ex_null, 	ex_null, ex_null, ex_null, ex_null, ex_null

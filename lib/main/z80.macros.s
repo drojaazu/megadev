@@ -14,7 +14,7 @@
 .section .text
 
 .altmacro
-.macro Z80_BUS_REQUEST
+.macro Z80_REQUEST_BUS
 LOCAL loop
 	move.w #Z80_BUS_REQUEST, Z80_REG_BUSREQ
 loop:
@@ -22,11 +22,11 @@ loop:
 	bne.s	loop
 .endm
 
-.macro Z80_BUS_RELEASE
+.macro Z80_RELEASE_BUS
 	move.w  #Z80_BUS_RELEASE, Z80_REG_BUSREQ
 .endm
 
-.macro Z80_CPU_RESET
+.macro Z80_RESET_CPU
 	move.w  #Z80_RESET_ASSERT, (Z80_REG_RESET)
 	.rept 8
 	nop
