@@ -29,12 +29,12 @@ https://www.retrodev.com/segacd.html
 .org 0
 .ascii STR(HEADER_DISC_ID)   // Disc Type (must be one of the allowed values!)
 .org 0x10, 0x20
-.asciz STR(HEADER_VOL_ID)    // Volume Name
+.ascii STR(HEADER_VOL_ID)    // Volume Name
 .org 0x1C, 0x20
 .word 0x0100                 // Volume Version (BCD)
 .word 0x0001                 // Type ()
 .org 0x20
-.asciz STR(HEADER_SYS_ID)    // System Name
+.ascii STR(HEADER_SYS_ID)    // System Name
 .org 0x2C, 0x20
 .word 0x0100                 // System Version (BCD)
 .word 0                      // Always zero
