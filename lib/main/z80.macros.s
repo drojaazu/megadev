@@ -16,22 +16,22 @@
 .altmacro
 .macro Z80_BUS_REQUEST
 LOCAL loop
-	move.w #0x100, _Z80_BUSREQ
+	move.w #Z80_BUS_REQUEST, Z80_REG_BUSREQ
 loop:
-	btst #0,  _Z80_BUSREQ
+	btst #Z80_BIT_STATUS,  Z80_REG_BUSREQ
 	bne.s	loop
 .endm
 
 .macro Z80_BUS_RELEASE
-	move.w  #0, _Z80_BUSREQ
+	move.w  #Z80_BUS_RELEASE, Z80_REG_BUSREQ
 .endm
 
 .macro Z80_CPU_RESET
-	move.w  #0x000, (_Z80_RESET)
+	move.w  #Z80_RESET_ASSERT, (Z80_REG_RESET)
 	.rept 8
 	nop
 	.endr
-	move.w  #0x100, (_Z80_RESET)
+	move.w  #Z80_RESET_RELEASE, (Z80_REG_RESET)
 .endm
 
 /**
@@ -46,18 +46,18 @@ loop:
 .macro Z80_INIT
 LOCAL status_wait
 LOCAL copy
-  move.w   #_Z80_REQUEST_BUS, (_Z80_BUSREQ)
-  move.w   #_Z80_RELEASE_RESET, (_Z80_RESET)
+  move.w   #Z80_BUS_REQUEST, (Z80_REG_BUSREQ)
+  move.w   #Z80_RESET_RELEASE, (Z80_REG_RESET)
 status_wait:
-  btst     #_Z80_STATUS_BIT, (_Z80_BUSREQ)
+  btst     #Z80_BIT_STATUS, (Z80_REG_BUSREQ)
   bne.s    status_wait
-  lea      (_Z80_RAM), a1
+  lea      (Z80_RAM), a1
 copy:
   move.b  (a0)+,(a1)+
   dbf	    d7, copy
-  move.w   #_Z80_ASSERT_RESET, (_Z80_RESET)
-  move.w   #_Z80_RELEASE_BUS, (_Z80_BUSREQ)
-  move.w   #_Z80_RELEASE_RESET, (_Z80_RESET)
+  move.w   #Z80_RESET_ASSERT, (Z80_REG_RESET)
+  move.w   #Z80_BUS_RELEASE, (Z80_REG_BUSREQ)
+  move.w   #Z80_RESET_RELEASE, (Z80_REG_RESET)
 .endm
 
 #endif

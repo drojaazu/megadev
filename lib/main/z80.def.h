@@ -14,21 +14,21 @@
  * @defgroup z80 Main CPU / Z80
  */
 
-#define _Z80_RAM 0xA00000
+#define Z80_RAM 0xA00000
 
-#define _Z80_RAM_SIZE 0x2000
+#define Z80_RAM_SIZE 0x2000
 
-#define _Z80_FM1_SEL 0xA04000
+#define Z80_FM1_SEL 0xA04000
 
-#define _Z80_FM1_DATA 0xA04001
+#define Z80_FM1_DATA 0xA04001
 
-#define _Z80_FM2_SEL 0xA04002
+#define Z80_FM2_SEL 0xA04002
 
-#define _Z80_FM2_DATA 0xA04003
+#define Z80_FM2_DATA 0xA04003
 
-#define _Z80_BANK 0xA06000
+#define Z80_BANK 0xA06000
 
-#define _Z80_PSG 0xA07F11
+#define Z80_PSG 0xA07F11
 
 /*
 Z80 Control Registers
@@ -49,60 +49,58 @@ it's memory, the Z80 may be let go from reset by writing #$0100 to $A11200.
 */
 
 /**
- * @def _Z80_BUSREQ
- * @brief Z80 Bus Request Vector
+ * @def Z80_REG_BUSREQ
+ * @brief Z80 Bus Request / Register
  * @ingroup z80
  */
-#define _Z80_BUSREQ 0xA11100
+#define Z80_REG_BUSREQ 0xA11100
 
 /**
- * @def _Z80_REQUEST_BUS
+ * @def Z80_BUS_REQUEST
  * @ingroup z80
- * @brief Request Main CPU control of the Z80 data bus
- * @details Use with @ref Z80_BUSREQ
+ * @brief Z80 Bus Request / Request control of Z80 data bus
+ * @details Use with @ref z80_reg_busreq
  */
-#define _Z80_REQUEST_BUS 0x0100
+#define Z80_BUS_REQUEST 0x0100
 
 /**
- * @def _Z80_RELEASE_BUS
+ * @def Z80_BUS_RELEASE
  * @ingroup z80
- * @brief Release control of the Z80 data bus
- * @details Use with @ref Z80_BUSREQ
+ * @brief Z80 Bus Request / Release control of Z80 data bus
+ * @details Use with @ref z80_reg_busreq
  */
-#define _Z80_RELEASE_BUS 0x0000
-
-#define _Z80_STATUS_BIT 0
+#define Z80_BUS_RELEASE 0x0000
 
 /**
- * @def _Z80_STATUS
+ * @def Z80_BIT_STATUS
  * @ingroup z80
  * @brief Z80 Bus Request / Z80 CPU Status
- * @details Use with @ref Z80_BUSREQ.
+ * @details Read from @ref Z80_REG_BUSREQ
  * @return Bit set: Z80 CPU is operating / Bit clear: Z80 CPU is stopped
  */
-#define _Z80_STATUS (1 << _Z80_STATUS_BIT)
+#define Z80_BIT_STATUS 0
 
 /**
- * @def _Z80_RESET
- * @brief Z80 Reset Vector
+ * @def Z80_REG_RESET
  * @ingroup z80
+ * @brief Z80 Reset / Register
  */
-#define _Z80_RESET 0xA11200
+#define Z80_REG_RESET 0xA11200
 
 /**
- * @def _Z80_ASSERT_RESET
+ * @def Z80_RESET_ASSERT
  * @ingroup z80
- * @brief Assert reset of Z80 CPU
- * @details Use with @ref Z80_RESET
+ * @brief Z80 Reset / Assert reset of Z80
+ * @details Use with @ref Z80_REG_RESET
  */
-#define _Z80_ASSERT_RESET 0x0000
+#define Z80_RESET_ASSERT 0x0000
 
 /**
- * @def _Z80_RELEASE_RESET
+ * @def Z80_RESET_RELEASE
  * @ingroup z80
- * @brief Release reset of Z80 CPU
- * @details Use with @ref Z80_RESET
+ * @brief Z80 Reset / Release reset of Z80
+ * @details Use with @ref Z80_REG_RESET
  */
-#define _Z80_RELEASE_RESET 0x0100
+#define Z80_RESET_RELEASE 0x0100
 
 #endif
