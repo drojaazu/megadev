@@ -28,7 +28,7 @@ MEMORY
 SECTIONS
 {
 	ENTRY(main)
-	.text 0x000000 :
+	.text 0x000000 : SUBALIGN(2)
   {
     _rom_org = .;
 		_text_org = .;
@@ -40,7 +40,7 @@ SECTIONS
 		_rom_len = ABSOLUTE(. - _rom_org);
   } > rom
 
-  .data 0xFF0000 :
+  .data 0xFF0000 : SUBALIGN(2)
   {
 		_ram_org = .;
 		_data_org = .;
@@ -49,7 +49,7 @@ SECTIONS
 		_data_len = ABSOLUTE(. - _data_org);
   } > ram
 
-	.bss :
+	.bss : SUBALIGN(2)
 	{
 		_bss_org = .;
 		*(.bss*)

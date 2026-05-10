@@ -1,7 +1,7 @@
 
 .section .text
 
-#include <main/main.def.h>
+#include <main/memmap.def.h>
 #include <main/bios.def.h>
 #include <main/gate_arr.macros.s>
 #include <main/gate_arr.def.h>

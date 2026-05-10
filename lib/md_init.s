@@ -53,4 +53,5 @@ skip_init:
   ENABLE_INTERRUPTS
   jbra main
 
-
+ex_null:
+  rte

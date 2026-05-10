@@ -1,7 +1,7 @@
 
 .section .text
 
-#include <main/main.def.h>
+#include <main/memmap.def.h>
 #include <main/gate_arr.macros.s>
 #include <main/bios.def.h>
 #include <main/main.macro.s>
@@ -10,6 +10,7 @@
 #include "ipx_layout.s"
 #include "shared.h"
 
+ip_entry:
   // First, disable all interrupts while we do some basic init
   DISABLE_INTERRUPTS
   

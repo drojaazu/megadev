@@ -237,7 +237,7 @@ static inline u16 to_vram_addr_runtime(vdp_addr vdp_addr)
 
 // TODO: create similar macro for to_vram_addr
 
-#define tile_offset(tile_index) (tile_index << 5)
+#define tile_offset(tile_index) ((tile_index) << 5)
 
 // the below is causing weird breakage when compiling...
 /*

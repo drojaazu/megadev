@@ -127,6 +127,6 @@ __attribute__((noreturn)) void main()
       tiles, (void const *) (WORD_RAM + 0x30000), (32 * 32 * 32) / 2);
 
     bios_load_stamp_tilemap(
-      31, 31, to_vdp_addr((BIOS_VDP_DEFAULT_PLANEB)) | VRAM_W, 0x80);
+      31, 31, to_vdp_addr(BIOS_VDP_DEFAULT_PLANEB) | VRAM_W, 0x80);
   } while (1);
 }

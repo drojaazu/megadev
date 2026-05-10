@@ -171,9 +171,11 @@ void main()
   vdp_regs[1] |= VDP_DMA_ENABLE;
   vdp_ctrl = vdp_regs[1];
   vdp_dma_transfer(
-    res_basic_font, to_vdp_addr(tile_offset(0x20)), (res_basic_font_size << 1));
+    res_basic_font.data,
+    to_vdp_addr(tile_offset(0x20)),
+    (res_basic_font.size << 1));
   vdp_dma_transfer(
-    res_letters, to_vdp_addr(tile_offset(0x60)), (res_letters_size << 1));
+    res_letters.data, to_vdp_addr(tile_offset(0x60)), (res_letters.size << 1));
   vdp_regs[1] &= ~VDP_DMA_ENABLE;
   vdp_ctrl = vdp_regs[1];
 

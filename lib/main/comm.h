@@ -20,21 +20,21 @@
  */
 static inline void init_ext_port()
 {
-	disable_interrupts();
-	z80_bus_request();
-	asm volatile(
-		"\
+  disable_interrupts();
+  z80_request_bus();
+  asm volatile(
+    "\
   move.b   #%c[sctrl_settings], %c[ext_sctrl] \n\
   move.b   #0x7F, %c[ext_ctrl] \n\
 	"
-		:
-		: [sctrl_settings] "i"(
-				SCTRL_SERIAL_ENABLE | SCTRL_RX_INT_ENABLE | EXT_BAUD),
-			[ext_sctrl] "i"(EXT_SCTRL),
-			[ext_ctrl] "i"(EXT_CTRL)
-		:);
-	z80_bus_release();
-	enable_interrupts();
+    :
+    : [sctrl_settings] "i"(
+        SCTRL_SERIAL_ENABLE | SCTRL_RX_INT_ENABLE | EXT_BAUD),
+      [ext_sctrl] "i"(EXT_SCTRL),
+      [ext_ctrl] "i"(EXT_CTRL)
+    :);
+  z80_release_bus();
+  enable_interrupts();
 }
 
 /**
@@ -42,23 +42,23 @@ static inline void init_ext_port()
  */
 static inline u8 ext_rx()
 {
-	register u8	 rx_data;
-	register u32 scratch_a;
+  register u8  rx_data;
+  register u32 scratch_a;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   lea      %c[ext_sctrl], (%[scratch_a]) \n\
 0:btst     #%c[sctrl_rx_ready], (%[scratch_a]) \n\
   beq      0b \n\
   move.b   (%c[ext_rx_data]), %[rx] \n\
 	"
-		: [rx] "=d"(rx_data), [scratch_a] "=&a"(scratch_a)
-		: [sctrl_rx_ready] "i"(SCTRL_RX_READY),
-			[ext_sctrl] "i"(EXT_SCTRL),
-			[ext_rx_data] "i"(EXT_RXDATA)
-		:);
+    : [rx] "=d"(rx_data), [scratch_a] "=&a"(scratch_a)
+    : [sctrl_rx_ready] "i"(SCTRL_RX_READY),
+      [ext_sctrl] "i"(EXT_SCTRL),
+      [ext_rx_data] "i"(EXT_RXDATA)
+    :);
 
-	return rx_data;
+  return rx_data;
 }
 
 /**
@@ -66,21 +66,21 @@ static inline u8 ext_rx()
  */
 static inline void ext_tx(register u8 tx_data)
 {
-	register u32 scratch_a;
+  register u32 scratch_a;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   lea      %c[ext_sctrl], (%[scratch_a]) \n\
 0:btst     #%c[sctrl_tx_full], (%[scratch_a])	\n\
   bne      0b \n\
   move.b   %c[tx], (%c[ext_tx_data]) \n\
 	"
-		: [scratch_a] "=&a"(scratch_a)
-		: [tx] "d"(tx_data),
-			[sctrl_tx_full] "i"(SCTRL_TX_FULL),
-			[ext_sctrl] "i"(EXT_SCTRL),
-			[ext_tx_data] "i"(EXT_TXDATA)
-		:);
+    : [scratch_a] "=&a"(scratch_a)
+    : [tx] "d"(tx_data),
+      [sctrl_tx_full] "i"(SCTRL_TX_FULL),
+      [ext_sctrl] "i"(EXT_SCTRL),
+      [ext_tx_data] "i"(EXT_TXDATA)
+    :);
 }
 
 #endif

@@ -15,16 +15,16 @@ MEMORY
 
 SECTIONS
 {
-  .text (READONLY) :
+  .text (READONLY) : SUBALIGN(2)
   {
-		_TEXT_ORIGIN = .;
+    _TEXT_ORIGIN = .;
     *(.security*)
     *(.text*)
     *(.rodata*)
     _TEXT_LENGTH = ABSOLUTE(. - _TEXT_ORIGIN);
   } > IP
 
-  .ram_bss :
+  .ram_bss : SUBALIGN(2)
   {
     _BSS_ORIGIN = .;
     *(.bss*)
@@ -33,7 +33,7 @@ SECTIONS
     _BSS_LENGTH_LOOPSZ = ABSOLUTE(_BSS_LENGTH) >> 2;
   } > IP
 
-  .data : AT ( ADDR(.text) + SIZEOF(.text) )
+  .data : AT ( ADDR(.text) + SIZEOF(.text) ) SUBALIGN(2)
   {
     _RAM_ORIGIN = .;
     _RAM_DATA_ORIGIN = .;

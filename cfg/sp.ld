@@ -16,7 +16,7 @@ MEMORY
 
 SECTIONS
 {
-  .text (READONLY) :
+  .text (READONLY) : SUBALIGN(2)
   {
 		_TEXT_ORIGIN = .;
     *(.header*)
@@ -25,7 +25,7 @@ SECTIONS
     _TEXT_LENGTH = ABSOLUTE(. - _TEXT_ORIGIN);
   } > SP
 
-  .data : AT ( ADDR(.text) + SIZEOF(.text) )
+  .data : AT ( ADDR(.text) + SIZEOF(.text) ) SUBALIGN(2)
   {
     _RAM_ORIGIN = .;
     _RAM_DATA_ORIGIN = .;
@@ -34,7 +34,7 @@ SECTIONS
     _RAM_DATA_LENGTH = ABSOLUTE(. - _RAM_DATA_ORIGIN) >> 2;
   } > SP
 
-  .bss :
+  .bss : SUBALIGN(2)
   {
     _BSS_ORIGIN = .;
     *(.bss*)
@@ -42,6 +42,5 @@ SECTIONS
     _BSS_LENGTH = ABSOLUTE(. - _BSS_ORIGIN);
   } > SP
   _RAM_LENGTH = _RAM_DATA_LENGTH + _BSS_LENGTH;
-
 
 }

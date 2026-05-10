@@ -11,7 +11,7 @@
 ## Project ID
 # ASCII text only; maximum of 11 characters
 # *** REQUIRED!***
-PROJECT_ID:=ipx_spx
+PROJECT_ID:=new_project
 
 ## Build Target
 # Determines for which hardware this project is intended
@@ -21,7 +21,7 @@ TARGET:=MEGACD
 
 ## Project Name
 # ASCII text only; maximum of 48 characters
-PROJECT_NAME:="IPX SPX EXAMPLE"
+PROJECT_NAME:="SIMPLE MEGADEV EXAMPLE"
 
 HEADER_SOFTWARE_ID="MEGADEV DEMO"
 
