@@ -100,26 +100,26 @@ void main()
 void load_gfx()
 {
   memcpy16(
-    (u16 const *) &res_stamp01,
+    (u16 const *) &res_stamp01.data,
     (u16 *) (WORD_RAM_2M + STAMP_DATA_OFFSET + (4 * 4 * 32 * 1)),
-    res_stamp01_size / 2);
+    res_stamp01.size / 2);
   memcpy16(
-    (u16 const *) &res_stamp02,
+    (u16 const *) &res_stamp02.data,
     (u16 *) (WORD_RAM_2M + STAMP_DATA_OFFSET + (4 * 4 * 32 * 2)),
-    res_stamp02_size / 2);
+    res_stamp02.size / 2);
   memcpy16(
-    (u16 const *) &res_stamp03,
+    (u16 const *) &res_stamp03.data,
     (u16 *) (WORD_RAM_2M + STAMP_DATA_OFFSET + (4 * 4 * 32 * 3)),
-    res_stamp03_size / 2);
+    res_stamp03.size / 2);
   memcpy16(
-    (u16 const *) &res_stamp04,
+    (u16 const *) &res_stamp04.data,
     (u16 *) (WORD_RAM_2M + STAMP_DATA_OFFSET + (4 * 4 * 32 * 4)),
-    res_stamp04_size / 2);
+    res_stamp04.size / 2);
 
   memcpy16(
-    (u16 const *) &res_stamp_map,
+    (u16 const *) &res_stamp_map.data,
     (u16 *) (WORD_RAM_2M + STAMP_MAP_OFFSET),
-    res_stamp_map_size / 2);
+    res_stamp_map.size / 2);
 }
 
 void redraw(s16 trace_x, s16 trace_y, s16 trace_dx, s16 trace_dy)
