@@ -185,7 +185,7 @@
 
 /**
  * @def GA_REG_CDCMODE
- * @brief CDC Mode
+ * @brief CDC Mode and Data Destination
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cdcmode
  *
@@ -198,7 +198,7 @@
  * @param EDT End of data transfer
  * [read] All data from the CDC has been transferred
  * @param DSR Data set ready
- * [read] Data from the CDC is present in the CDC Host Data register
+ * [read] Data from the CDC is present in the Host Data register
  * @param DD Device destination
  * [read/write] Specifies the destination for CDC data transfer:
  *   |DD2|DD1|DD0|Destination|

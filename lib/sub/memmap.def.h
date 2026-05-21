@@ -61,37 +61,61 @@
  */
 #define WORD_RAM_1M 0x0C0000 /*word RAM base in 1M bit mode*/
 
-#define EXVEC_ADDRERR	 0x005F40
-#define EXVEC_ILLEGAL	 0x005F46
-#define EXVEC_ZERODIV	 0x005F4C
-#define EXVEC_CHK			 0x005F52
-#define EXVEC_TRAPV		 0x005F58
-#define EXVEC_PRIVERR	 0x005F5E
-#define EXVEC_TRACE		 0x005F64
+/**
+ * @def USERCALL0
+ */
+#define USERCALL0 0x005F28
+#define SP_INIT   USERALL0
+
+/**
+ * @def USERCALL1
+ */
+#define USERCALL1 0x005F2E
+#define SP_MAIN   USERCALL1
+
+/**
+ * @def USERCALL2
+ */
+#define USERCALL2 0x005F34
+#define SP_INT2   USERCALL2
+
+/**
+ * @def USERCALL3
+ */
+#define USERCALL3 0x005F3A
+#define SP_USER   USERCALL3
+
+#define EXVEC_ADDRERR  0x005F40
+#define EXVEC_ILLEGAL  0x005F46
+#define EXVEC_ZERODIV  0x005F4C
+#define EXVEC_CHK      0x005F52
+#define EXVEC_TRAPV    0x005F58
+#define EXVEC_PRIVERR  0x005F5E
+#define EXVEC_TRACE    0x005F64
 #define EXVEC_LINE1010 0x005F6A
 #define EXVEC_LINE1111 0x005F70
-#define EXVEC_LEVEL1	 0x005F76 /* Graphics operation complete */
-#define EXVEC_LEVEL2	 0x005F7C /* INT 2 from Main CPU */
-#define EXVEC_LEVEL3	 0x005F82 /* GA Timer Interrupt */
-#define EXVEC_LEVEL4	 0x005F88 /* CDD complete */
-#define EXVEC_LEVEL5	 0x005F8E /* CDC complete */
-#define EXVEC_LEVEL6	 0x005F94 /* Subcode buffer full */
-#define EXVEC_LEVEL7	 0x005F9A
-#define EXVEC_TRAP0		 0x005FA0
-#define EXVEC_TRAP1		 0x005FA6
-#define EXVEC_TRAP2		 0x005FAC
-#define EXVEC_TRAP3		 0x005FB2
-#define EXVEC_TRAP4		 0x005FB8
-#define EXVEC_TRAP5		 0x005FBE
-#define EXVEC_TRAP6		 0x005FC4
-#define EXVEC_TRAP7		 0x005FCA
-#define EXVEC_TRAP8		 0x005FD0
-#define EXVEC_TRAP9		 0x005FD6
-#define EXVEC_TRAPA		 0x005FDC
-#define EXVEC_TRAPB		 0x005FE2
-#define EXVEC_TRAPC		 0x005FE8
-#define EXVEC_TRAPD		 0x005FEE
-#define EXVEC_TRAPE		 0x005FF4
-#define EXVEC_TRAPF		 0x005FFA
+#define EXVEC_LEVEL1   0x005F76 /* Graphics operation complete */
+#define EXVEC_LEVEL2   0x005F7C /* INT 2 from Main CPU */
+#define EXVEC_LEVEL3   0x005F82 /* GA Timer Interrupt */
+#define EXVEC_LEVEL4   0x005F88 /* CDD complete */
+#define EXVEC_LEVEL5   0x005F8E /* CDC complete */
+#define EXVEC_LEVEL6   0x005F94 /* Subcode buffer full */
+#define EXVEC_LEVEL7   0x005F9A
+#define EXVEC_TRAP0    0x005FA0
+#define EXVEC_TRAP1    0x005FA6
+#define EXVEC_TRAP2    0x005FAC
+#define EXVEC_TRAP3    0x005FB2
+#define EXVEC_TRAP4    0x005FB8
+#define EXVEC_TRAP5    0x005FBE
+#define EXVEC_TRAP6    0x005FC4
+#define EXVEC_TRAP7    0x005FCA
+#define EXVEC_TRAP8    0x005FD0
+#define EXVEC_TRAP9    0x005FD6
+#define EXVEC_TRAPA    0x005FDC
+#define EXVEC_TRAPB    0x005FE2
+#define EXVEC_TRAPC    0x005FE8
+#define EXVEC_TRAPD    0x005FEE
+#define EXVEC_TRAPE    0x005FF4
+#define EXVEC_TRAPF    0x005FFA
 
 #endif

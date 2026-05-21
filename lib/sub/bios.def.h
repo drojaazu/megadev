@@ -2,46 +2,47 @@
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
  * @file sub/bios.def.h
- * @brief Sub CPU side system library vectors & memory definitions
+ * @brief Sub CPU side system library (BIOS) vectors & memory definitions
  */
 
 #ifndef MEGADEV__SUB_BIOS_DEF_H
 #define MEGADEV__SUB_BIOS_DEF_H
 
 /**
- * @defgroup bios_cdda Sub CPU / BIOS / CD-DA
+ * @defgroup sub_bios Sub CPU / BIOS
  */
 
 /**
- * @defgroup bios_cdrom Sub CPU / BIOS / CD-ROM
+ * @defgroup sub_bios_cdda Sub CPU / BIOS / CD Audio (CD-DA) Functions
  */
 
 /**
- * @defgroup bios_cdb Sub CPU / BIOS / CDB
+ * @defgroup sub_bios_cdrom Sub CPU / BIOS / CD-ROM Access Functions
  */
 
 /**
- * @defgroup bios_cdc Sub CPU / BIOS / CDC
+ * @defgroup sub_bios_cdc Sub CPU / BIOS / CD-ROM Data Controller (CDC)
+ * Functions
  */
 
 /**
- * @defgroup bios_fader Sub CPU / BIOS / Fader
+ * @defgroup sub_bios_fader Sub CPU / BIOS / Audio Fader Functions
  */
 
 /**
- * @defgroup bios_subcode Sub CPU / BIOS / Subcode data
+ * @defgroup bios_subcode Sub CPU / BIOS / Subcode Data Access Functions
  */
 
 /**
- * @defgroup bios_bram Sub CPU / BIOS / Backup RAM
+ * @defgroup sub_bios_bram Sub CPU / BIOS / Backup RAM Functions
  */
 
 /**
- * @defgroup bios_misc Sub CPU / BIOS / Misc
+ * @defgroup sub_bios_misc Sub CPU / BIOS / Other BIOS Functions
  */
 
 /**
- * @defgroup bios_unknown Sub CPU / BIOS / Undocumented calls
+ * @defgroup sub_bios_unknown Sub CPU / BIOS / Undocumented calls
  */
 
 /**
@@ -59,7 +60,7 @@
  */
 #define USERMODE 0x005EA6
 
-/*
+/**
  * @def CDSTAT
  * @brief Contains the status after calling @ref _CDB_STAT
  */
@@ -97,124 +98,25 @@
 #define WAITVSYNC 0x005F10
 
 /**
- * @def USERCALL0
- */
-#define USERCALL0 0x005F28
-#define SP_INIT   USERALL0
-
-/**
- * @def USERCALL1
- */
-#define USERCALL1 0x005F2E
-#define SP_MAIN   USERCALL1
-
-/**
- * @def USERCALL2
- */
-#define USERCALL2 0x005F34
-#define SP_INT2   USERCALL2
-
-/**
- * @def USERCALL3
- */
-#define USERCALL3 0x005F3A
-#define SP_USER   USERCALL3
-
-/**
- * @def CDBIOS
+ * @def CDBIOS_VECTOR
  * @brief General system calls vector
+ * @ingroup sub_bios
  */
-#define CDBIOS 0x005F22
+#define CDBIOS_VECTOR 0x005F22
 
 /**
- * @def BIOS_UNKNOWN00
- * @brief Unknown; present in jump table but needs to be researched
- * @ingroup bios_unknown
- */
-#define BIOS_UNKNOWN00 0x0000
-
-/**
- * @def BIOS_UNKNOWN01
- * @brief Unknown; present in jump table but needs to be researched
- * @ingroup bios_unknown
- */
-#define BIOS_UNKNOWN01 0x0001
-
-/**
- * @def BIOS_MSC_STOP
- * @sa bios_msc_stop
- * @ingroup bios_cdda
+ * @def CDB_DRIVE_OPEN
+ * @sa bios_drive_open
+ * @alias DRV_OPEN
+ * @ingroup sub_bios_misc
  * @clobber d0-d1/a0-a1
  */
-#define BIOS_MSC_STOP 0x0002
+#define CDB_DRIVE_OPEN 0x000A
 
 /**
- * @def BIOS_MSC_PAUSEON
- * @sa bios_msc_pauseon
- * @ingroup bios_cdda
- * @clobber d0-d1/a0-a1
- */
-#define BIOS_MSC_PAUSEON 0x0003
-
-/**
- * @def BIOS_MSC_PAUSEOFF
- * @sa bios_msc_pauseoff
- * @ingroup bios_cdda
- * @clobber d0-d1/a0-a1
- */
-#define BIOS_MSC_PAUSEOFF 0x0004
-
-/**
- * @def BIOS_MSC_SCANFF
- * @sa bios_msc_scanff
- * @ingroup bios_cdda
- * @clobber d0-d1/a0-a1
- */
-#define BIOS_MSC_SCANFF 0x0005
-
-/**
- * @def BIOS_MSC_SCANFR
- * @sa bios_msc_scanfr
- * @ingroup bios_cdda
- * @clobber d0-d1/a0-a1
- */
-#define BIOS_MSC_SCANFR 0x0006
-
-/**
- * @def BIOS_MSC_SCANOFF
- * @sa bios_msc_scanoff
- * @ingroup bios_cdda
- * @clobber d0-d1/a0-a1
- */
-#define BIOS_MSC_SCANOFF 0x0007
-
-/**
- * @def BIOS_ROM_PAUSEON
- * @sa bios_rom_pauseon
- * @ingroup bios_cdrom
- * @clobber d0-d1/a0-a1
- */
-#define BIOS_ROM_PAUSEON 0x0008
-
-/**
- * @def BIOS_ROM_PAUSEOFF
- * @sa bios_rom_pauseoff
- * @ingroup bios_cdrom
- * @clobber d0-d1/a0-a1
- */
-#define BIOS_ROM_PAUSEOFF 0x0009
-
-/**
- * @def BIOS_DRV_OPEN
- * @sa bios_drv_open
- * @ingroup bios_misc
- * @clobber d0-d1/a0-a1
- */
-#define BIOS_DRV_OPEN 0x000A
-
-/**
- * @def BIOS_DRV_INIT
- * @sa bios_drv_init
+ * @def CDB_DRIVE_INIT
+ * @sa bios_drive_init
+ * @alias DRV_INIT
  * @clobber d0-d1/a1
  *
  * @param[in] A0.l Pointer to initilization parameters
@@ -225,161 +127,25 @@
              automatically
  *  byte 2 - last track to read (0xFF will read all tracks)
  */
-#define BIOS_DRV_INIT 0x0010
+#define CDB_DRIVE_INIT 0x0010
 
 /**
- * @def BIOS_UNKNOWN11
- * @brief Unknown; present in jump table but needs to be researched
- * @ingroup bios_unknown
- */
-#define BIOS_UNKNOWN11 0x0011
-
-/**
- * @def BIOS_UNKNOWN12
- * @brief Unknown; present in jump table but needs to be researched
- * @ingroup bios_unknown
- */
-#define BIOS_UNKNOWN12 0x0012
-
-/**
- * @def BIOS_MSC_PLAY
- * @sa bios_msc_play
- * @clobber d0-d1/a0-a1
- * @ingroup bios_cdda
- *
- * @param[in] A0.l Pointer to track number (16 bit)
- */
-#define BIOS_MSC_PLAY 0x0011
-
-/**
- * @def BIOS_MSC_PLAY1
- * @sa bios_msc_play1
- * @clobber d0-d1/a0-a1
- * @ingroup bios_cdda
- *
- * @param[in] A0.l Pointer to track number (16 bit)
- */
-#define BIOS_MSC_PLAY1 0x0012
-
-/**
- * @def BIOS_MSC_PLAYR
- * @sa bios_msc_playr
- * @clobber d0-d1/a0-a1
- * @ingroup bios_cdda
- *
- * @param[in] A0.l Pointer to track number (16 bit)
- */
-#define BIOS_MSC_PLAYR 0x0013
-
-/**
- * @def BIOS_MSC_PLAYT
- * @sa bios_msc_playt
- * @clobber d0-d1/a0-a1
- * @ingroup bios_cdda
- *
- * @param[in] A0.l Pointer to BCD time code in the format mm:ss:ff:00
- *   (32 bit)
- */
-#define BIOS_MSC_PLAYT 0x0014
-
-/**
- * @def BIOS_MSC_SEEK
- * @sa bios_msc_seek
- * @clobber d0-d1/a0-a1
- * @ingroup bios_cdda
- *
- * @param[in] A0.l Pointer to track number (16 bit)
- */
-#define BIOS_MSC_SEEK 0x0015
-
-/**
- * @def BIOS_MSC_SEEKT
- * @sa bios_msc_seekt
- * @clobber d0-d1/a0-a1
- * @ingroup bios_cdda
- *
- * @param[in] A0.l Pointer to BCD time code in the format mm:ss:ff:00
- *   (32 bit)
- */
-#define BIOS_MSC_SEEKT 0x0016
-
-/**
- * @def BIOS_ROM_READ
- * @sa bios_rom_read
- * @clobber d0-d1/a0-a1
- * @ingroup bios_cdrom
- *
- * @param[in] A0.l Pointer to the logical sector number (32 bit)
- */
-#define BIOS_ROM_READ 0x0017
-
-/**
- * @def BIOS_ROM_SEEK
- * @sa bios_rom_seek
- * @clobber d0-d1/a0-a1
- * @ingroup bios_cdrom
- *
- * @param[in] A0.l Pointer to the logical sector number (32 bit)
- */
-#define BIOS_ROM_SEEK 0x0018
-
-/**
- * @def BIOS_MSC_SEEK1
- * @sa bios_msc_seek1
- * @clobber d0-d1/a0-a1
- * @ingroup bios_cdda
- *
- * @param[in] A0.l Pointer to track number (16 bit)
- */
-#define BIOS_MSC_SEEK1 0x0019
-
-/**
- * @def BIOS_ROM_READN
- * @sa bios_rom_readn
- * @clobber d0-d1/a0-a1
- * @ingroup bios_cdrom
- *
- * @param[in] A0.l Pointer to a sector read info structure
- *
- * @details
- * The structure is made up of two 32 bit values:
- *   dc.l 0x00000001   // First sector to read
- *   dc.l 0x00001234   // Number of sectors to read
- */
-#define BIOS_ROM_READN 0x0020
-
-/**
- * @def BIOS_ROM_READE
- * @sa bios_rom_reade
- * @clobber d0-d1/a0-a1
- * @ingroup bios_cdrom
- *
- * @param[in] A0.l Pointer to a sector read info structure
- *
- * @details The structure is made up of two 32 bit values:
- *   dc.l 0x00000001   // First sector to read
- *   dc.l 0x00001234   // Number of logical sectors to read
- * OUT:
- *  none
- */
-#define BIOS_ROM_READE 0x0021
-
-/**
- * @def BIOS_CDB_CHK
+ * @def CDB_CHECK_STATUS
  * @sa bios_cdb_chk
+ * @alias CDB_CHK
  * @clobber d0
- * @ingroup bios_cdb
+ * @ingroup sub_bios_misc
  *
  * @param[out] CC Command complete
  * @param[out] CS BIOS is busy
  */
-#define BIOS_CDB_CHK 0x0080
+#define CDB_CHECK_STATUS 0x0080
 
 /**
- * @def BIOS_CDB_STAT
- * @sa bios_cdb_stat
+ * @def CDB_GET_STATUS
+ * @sa bios_get_status
  * @clobber d0-d1/a0
- * @ingroup bios_cdb
+ * @ingroup sub_bios_misc
  *
  * @param[out] A0.l Pointer to status info structure
  *
@@ -387,13 +153,257 @@
  * Documentation says A1 is clobbered as well, but we don't see any
  * sign of that in the disassemblies checked so far
  */
-#define BIOS_CDB_STAT 0x0081
+#define CDB_GET_STATUS 0x0081
 
 /**
- * @def BIOS_CDBTOCWRITE
+ * @def CDB_AUDIO_PLAY
+ * @sa bios_audio_play
+ * @alias MSC_PLAY
+ * @clobber d0-d1/a0-a1
+ * @ingroup sub_bios_cdda
+ *
+ * @param[in] A0.l Pointer to track number (16 bit)
+ */
+#define CDB_AUDIO_PLAY 0x0011
+
+/**
+ * @def CDB_AUDIO_PLAY_ONCE
+ * @sa bios_audio_play_once
+ * @alias MSC_PLAY1
+ * @clobber d0-d1/a0-a1
+ * @ingroup sub_bios_cdda
+ *
+ * @param[in] A0.l Pointer to track number (16 bit)
+ */
+#define CDB_AUDIO_PLAY_ONCE 0x0012
+
+/**
+ * @def CDB_AUDIO_PLAY_REPEAT
+ * @sa bios_audio_play_repeat
+ * @alias MSC_PLAYR
+ * @clobber d0-d1/a0-a1
+ * @ingroup sub_bios_cdda
+ *
+ * @param[in] A0.l Pointer to track number (16 bit)
+ */
+#define CDB_AUDIO_PLAY_REPEAT 0x0013
+
+/**
+ * @def CDB_AUDIO_PLAY_FROM
+ * @sa bios_audio_play_from
+ * @alias MSC_PLAYT
+ * @clobber d0-d1/a0-a1
+ * @ingroup sub_bios_cdda
+ *
+ * @param[in] A0.l Pointer to BCD time code in the format mm:ss:ff:00
+ *   (32 bit)
+ */
+#define CDB_AUDIO_PLAY_FROM 0x0014
+
+/**
+ * @def CDB_AUDIO_SEEK
+ * @sa bios_audio_seek
+ * @alias MSC_SEEK
+ * @clobber d0-d1/a0-a1
+ * @ingroup sub_bios_cdda
+ *
+ * @param[in] A0.l Pointer to track number (16 bit)
+ */
+#define CDB_AUDIO_SEEK 0x0015
+
+/**
+ * @def CDB_AUDIO_SEEK_ONCE
+ * @sa bios_audio_seek_once
+ * @alias MSC_SEEK1
+ * @clobber d0-d1/a0-a1
+ * @ingroup sub_bios_cdda
+ *
+ * @param[in] A0.l Pointer to track number (16 bit)
+ */
+#define CDB_AUDIO_SEEK_ONCE 0x0019
+
+/**
+ * @def CDB_AUDIO_SEEK_FROM
+ * @sa bios_audio_seek_from
+ * @alias MSC_SEEKT
+ * @clobber d0-d1/a0-a1
+ * @ingroup sub_bios_cdda
+ *
+ * @param[in] A0.l Pointer to BCD time code in the format mm:ss:ff:00
+ *   (32 bit)
+ */
+#define CDB_AUDIO_SEEK_FROM 0x0016
+
+/**
+ * @def CDB_AUDIO_STOP
+ * @sa bios_audio_stop
+ * @alias MSC_STOP
+ * @ingroup sub_bios_cdda
+ * @clobber d0-d1/a0-a1
+ */
+#define CDB_AUDIO_STOP 0x0002
+
+/**
+ * @def CDB_AUDIO_PAUSE_ON
+ * @sa bios_audio_pause_on
+ * @alias MSC_PAUSEON
+ * @ingroup sub_bios_cdda
+ * @clobber d0-d1/a0-a1
+ */
+#define CDB_AUDIO_PAUSE_ON 0x0003
+
+/**
+ * @def CDB_AUDIO_PAUSE_OFF
+ * @sa bios_msc_pauseoff
+ * @alias MSC_PAUSEOFF
+ * @ingroup sub_bios_cdda
+ * @clobber d0-d1/a0-a1
+ */
+#define CDB_AUDIO_PAUSE_OFF 0x0004
+
+/**
+ * @def CDB_AUDIO_SCAN_FF
+ * @sa bios_audio_scan_ff
+ * @alias MSC_SCANFF
+ * @ingroup sub_bios_cdda
+ * @clobber d0-d1/a0-a1
+ */
+#define CDB_AUDIO_SCAN_FF 0x0005
+
+/**
+ * @def CDB_AUDIO_SCAN_FR
+ * @sa bios_audio_scan_fr
+ * @alias MSC_SCANFR
+ * @ingroup sub_bios_cdda
+ * @clobber d0-d1/a0-a1
+ */
+#define CDB_AUDIO_SCAN_FR 0x0006
+
+/**
+ * @def CDB_AUDIO_SCAN_OFF
+ * @sa bios_audio_scan_off
+ * @alias MSC_SCANOFF
+ * @ingroup sub_bios_cdda
+ * @clobber d0-d1/a0-a1
+ */
+#define CDB_AUDIO_SCAN_OFF 0x0007
+
+/**
+ * @def CDB_ROM_READ
+ * @sa bios_cdrom_read
+ * @clobber d0-d1/a0-a1
+ * @ingroup sub_bios_cdrom
+ *
+ * @param[in] A0.l Pointer to the logical sector number (32 bit)
+ */
+#define CDB_ROM_READ 0x0017
+
+/**
+ * @def CDB_ROM_READ_COUNT
+ * @sa bios_cdrom_read_count
+ * @clobber d0-d1/a0-a1
+ * @ingroup sub_bios_cdrom
+ *
+ * @param[in] A0.l Pointer to a sector read info structure
+ *
+ * @details
+ * The structure is made up of two 32 bit values:
+ *   dc.l 0x00000001   // Logical start sector
+ *   dc.l 0x00001234   // Number of sectors to read
+ *
+ * CDC_START is automatically executed. After all sectors are read, CDC_STOP is
+ * automatically executed.
+ */
+#define CDB_ROM_READ_COUNT 0x0020
+
+/**
+ * @def CDB_ROM_READ_RANGE
+ * @sa bios_cdrom_read_range
+ * @clobber d0-d1/a0-a1
+ * @ingroup sub_bios_cdrom
+ *
+ * @param[in] A0.l Pointer to a sector read info structure
+ *
+ * OUT:
+ *  none
+ *
+ * @details
+ * The structure is made up of two 32 bit values:
+ *   dc.l 0x00000001   // Logical start sector
+ *   dc.l 0x00001234   // Logical end sector
+ *
+ * CDC_START is automatically executed. After all sectors are read, CDC_STOP is
+ * automatically executed.
+ */
+#define CDB_ROM_READ_RANGE 0x0021
+
+/**
+ * @def CDB_ROM_PAUSE_ON
+ * @sa bios_cdrom_pause_on
+ * @alias ROM_PAUSEON
+ * @ingroup sub_bios_cdrom
+ * @clobber d0-d1/a0-a1
+ */
+#define CDB_ROM_PAUSE_ON 0x0008
+
+/**
+ * @def CDB_ROM_PAUSE_OFF
+ * @sa bios_cdrom_pause_off
+ * @alias ROM_PAUSEOFF
+ * @ingroup sub_bios_cdrom
+ * @clobber d0-d1/a0-a1
+ */
+#define CDB_ROM_PAUSE_OFF 0x0009
+
+/**
+ * @def CDB_ROM_SEEK
+ * @sa bios_cdrom_seek
+ * @clobber d0-d1/a0-a1
+ * @ingroup sub_bios_cdrom
+ *
+ * @param[in] A0.l Pointer to the logical sector number (32 bit)
+ */
+#define CDB_ROM_SEEK 0x0018
+
+/**
+ * @def CDB_FADER_SET
+ * @sa bios_fader_set
+ * @clobber d0-d1/a0
+ * @ingroup sub_bios_fader
+ *
+ * @param[in] D1.w Volume
+ */
+#define CDB_FADER_SET 0x0085
+
+/**
+ * @def CDB_FADER_CHANGE
+ * @sa bios_fdr_chg
+ * @clobber d0-d1/a0
+ * @ingroup sub_bios_fader
+ *
+ * @param[in] D1.l Volume & Ramp
+ */
+#define CDB_FADER_CHANGE 0x0086
+
+/**
+ * @def CDB_PAUSE_TIMEOUT
+ * @brief Sets the time that the drive spins down from pause to standby
+ * @clobber d0-d1/a0-a1
+ * @ingroup sub_bios_misc
+ *
+ * @param[in] D1.w Pause time (in ticks of 1/75 second)
+ *
+ * @details Normal ranges for this delay time are 0x1194 - 0xFFFE. A delay of
+ * 0xFFFF prevents the drive from stopping, but can damage the drive if used
+ * improperly.
+ */
+#define CDB_PAUSE_TIMEOUT 0x0084
+
+/**
+ * @def CDB_CDBTOCWRITE
  * @brief Writes data to disc TOC stored in memory
  * @clobber d0-d1/a0-a1
- * @ingroup bios_cdb
+ * @ingroup sub_bios_misc
  *
  * @param[in] A0.l Pointer to TOC data
  *
@@ -403,13 +413,13 @@
  * whether the track is CD-ROM or CD-DA. Please refer to the BIOS manual
  * for more information.
  */
-#define BIOS_CDBTOCWRITE 0x0082
+#define CDB_TOC_WRITE 0x0082
 
 /**
- * @def BIOS_CDBTOCREAD
+ * @def CDB_CDBTOCREAD
  * @brief Reads the TOC entry for a given track
  * @clobber d0-d1/a0-a1
- * @ingroup bios_cdb
+ * @ingroup sub_bios_misc
  *
  * @param[in] D1.w Track number
  * @param[out] D0.l Track start timecode (BCD, low byte is track number)
@@ -417,106 +427,72 @@
  *
  * @note The low byte of D0 will be 0 on error.
  */
-#define BIOS_CDBTOCREAD 0x0083
+#define CDB_TOC_READ 0x0083
 
 /**
- * @def BIOS_CDBPAUSE
- * @brief Sets the time that the drive spins down from pause to standby
- * @clobber d0-d1/a0-a1
- * @ingroup bios_cdb
- *
- * @param[in] D1.w Pause time (in ticks of 1/75 second)
- *
- * @details Normal ranges for this delay time are 0x1194 - 0xFFFE. A delay of
- * 0xFFFF prevents the drive from stopping, but can damage the drive if used
- * improperly.
- */
-#define BIOS_CDBPAUSE 0x0084
-
-/**
- * @def BIOS_FDR_SET
- * @sa bios_fdr_set
- * @clobber d0-d1/a0
- * @ingroup bios_fader
- *
- * @param[in] D1.w Volume
- */
-#define BIOS_FDR_SET 0x0085
-
-/**
- * @def BIOS_FDR_CHG
- * @sa bios_fdr_chg
- * @clobber d0-d1/a0
- * @ingroup bios_fader
- *
- * @param[in] D1.l Volume & Ramp
- */
-#define BIOS_FDR_CHG 0x0086
-
-/**
- * @def BIOS_CDC_START
+ * @def CDB_CDC_START
  * @brief Starts reading data from the current logical sector into the CDC
  * @clobber d0-d1/a0
- * @ingroup bios_cdc
+ * @ingroup sub_bios_cdc
  *
  * @note The BIOS pre-seeks by 2 to 4 sectors and data read actually begins
  * before the requested sector. It is up to the caller to identify the correct
  * starting sector (usually by checking the time codes in the headers as
  * they are read from the CDC buffer).
  */
-#define BIOS_CDC_START 0x0087
+#define CDB_CDC_START 0x0087
 
 /**
- * @def BIOS_CDC_STARTP
+ * @def CDB_CDC_STARTP
  * @brief No official documentation on this call; needs to be researched
- * @ingroup bios_unknown
+ * @ingroup sub_bios_unknown
  */
-#define BIOS_CDC_STARTP 0x0088
+#define CDB_CDC_STARTP 0x0088
 
 /**
- * @def BIOS_CDC_STOP
+ * @def CDB_CDC_STOP
  * @brief Stop reading data into the CDC buffer
  * @clobber d0/a0
- * @ingroup bios_cdc
+ * @ingroup sub_bios_cdc
  *
  * @note If a sector is being read when CDC_STOP is called, it is discarded.
  */
-#define BIOS_CDC_STOP 0x0089
+#define CDB_CDC_STOP 0x0089
 
 /**
- * @def BIOS_CDC_STAT
+ * @def CDB_CDC_STATUS
  * @brief Query the status of the CDC buffer
  * @clobber d0-d1/a0
- * @ingroup bios_cdc
+ * @ingroup sub_bios_cdc
  *
  * @param[out] CC Sector available for read
  * @param[out] CS Sector not ready
  */
-#define BIOS_CDC_STAT 0x008A
+#define CDB_CDC_STATUS 0x008A
 
 /**
- * @def BIOS_CDCREAD
+ * @def CDB_CDCREAD
  * @brief Reads sector of data in preparation for transfer
  * @clobber d0-d1/a0
- * @ingroup bios_cdc
+ * @ingroup sub_bios_cdc
  *
  * @param[out] CC Sector ready for transfer
  * @param[out] CS Sector not ready
  * @param[out] D0.l Sector header timecode (BCD)
  * @details The low byte of D0 is the sector mode:
- *   00 -bios_cdda
- *   01 -bios_cdrom mode 1
- *   02 -bios_cdrom mode 2
+ *   00 -sub_bios_cdda
+ *   01 -sub_bios_cdrom mode 1
+ *   02 -sub_bios_cdrom mode 2
  *
  * @note Be sure to set the device destination register BEFORE calling CDCREAD!
  */
-#define BIOS_CDCREAD 0x008B
+#define CDB_CDCREAD 0x008B
 
 /**
- * @def BIOS_CDC_TRN
+ * @def CDB_CDC_TRANSFER
  * @brief Transfer one sector of data from the CDC to Sub CPU RAM
  * @clobber d0-d1/a0
- * @ingroup bios_cdc
+ * @ingroup sub_bios_cdc
  *
  * @param[in] A0.l Pointer to sector destination buffer (0x920 bytes)
  * @param[in] A1.l Pointer to header destination buffer (4 bytes)
@@ -527,28 +503,28 @@
  *
  * @note The device destination must be set to Sub CPU read beforehand!
  */
-#define BIOS_CDC_TRN 0x008C
+#define CDB_CDC_TRANSFER 0x008C
 
 /**
- * @def BIOS_CDC_ACK
+ * @def CDB_CDC_ACK
  * @brief Informs the CDC that the current sector has been read and that the
  * caller is ready for the next sector
  * @clobber d0
- * @ingroup bios_cdc
+ * @ingroup sub_bios_cdc
  */
-#define BIOS_CDC_ACK 0x008D
+#define CDB_CDC_ACK 0x008D
 
 /**
- * @def BIOS_SCDINIT
+ * @def CDB_SUBCODE_INIT
  * @brief Initializes the BIOS for subcode reads
  * @ingroup bios_subcode
  *
  * @param[in] A0.l Pointer to work buffer (at least 0x750 bytes)
  */
-#define BIOS_SCDINIT 0x008E
+#define CDB_SUBCODE_INIT 0x008E
 
 /**
- * @def BIOS_SCDSTART
+ * @def CDB_SUBCODE_READ_ENABLE
  * @brief Enables reading subcode data by the CDC
  * @clobber d0-d1/a0-a1
  * @ingroup bios_subcode
@@ -561,18 +537,18 @@
  *    2: PQ------
  *    3: PQRSTUVW
  */
-#define BIOS_SCDSTART 0x008F
+#define CDB_SUBCODE_READ_ENABLE 0x008F
 
 /**
- * @def BIOS_SCDSTOP
+ * @def CDB_SUBCODE_READ_DISABLE
  * @brief Disables reading subcode data by the CDC
  * @clobber d0-d1/a0-a1
  * @ingroup bios_subcode
  */
-#define BIOS_SCDSTOP 0x0090
+#define CDB_SUBCODE_READ_DISABLE 0x0090
 
 /**
- * @def BIOS_SCDSTAT
+ * @def CDB_SUBCODE_STATUS
  * @brief Check subcode error status
  * @clobber d0-d1/a0-a1
  * @ingroup bios_subcode
@@ -581,10 +557,10 @@
  * @param[out] D1.l erroverrun / errpacketbufful / errqcodefufful /
  * errpackfufful
  */
-#define BIOS_SCDSTAT 0x0091
+#define CDB_SUBCODE_STATUS 0x0091
 
 /**
- * @def BIOS_SCDREAD
+ * @def CDB_SCDREAD
  * @brief Reads R through W subcode channels
  * @clobber d0-d1/a1
  * @ingroup bios_subcode
@@ -595,10 +571,10 @@
  * @param[out] A0.l Address of next Q code buffer (A0.l + 24)
  *
  */
-#define BIOS_SCDREAD 0x0092
+#define CDB_SCDREAD 0x0092
 
 /**
- * @def BIOS_SCDPQ
+ * @def CDB_SCDPQ
  * @brief Gets P & Q codes from subcode
  * @clobber d0-d1/a1
  * @ingroup bios_subcode
@@ -609,10 +585,10 @@
  * @param[out] A0.l Address of next Q code buffer (A0.l + 12)
  *
  */
-#define BIOS_SCDPQ 0x0093
+#define CDB_SCDPQ 0x0093
 
 /**
- * @def BIOS_SCDPQL
+ * @def CDB_SCDPQL
  * @brief Gets the last P & Q codes
  * @clobber d0-d1/a1
  * @ingroup bios_subcode
@@ -623,13 +599,13 @@
  * @param[out] A0.l Address of next Q code buffer (A0.l + 12)
  *
  */
-#define BIOS_SCDPQL 0x0094
+#define CDB_SCDPQL 0x0094
 
 /**
- * @def BIOS_LEDSET
+ * @def CDB_LEDSET
  * @brief Controls the status LEDs on the front of the CD unit
  * @clobber d0-d1/a0-a1
- * @ingroup bios_misc
+ * @ingroup sub_bios_misc
  *
  * @param[in] D1.w Status code
  *
@@ -659,10 +635,10 @@
 #define BIOS_LED_MODE7   7
 
 /**
- * @def BIOS_CDCSETMODE
+ * @def CDB_CDCSETMODE
  * @brief Sets the mode in which the CD should be read
  * @clobber UNKNOWN (TODO)
- * @ingroup bios_cdc
+ * @ingroup sub_bios_cdc
  *
  * @param[in] D1.w Mode bit flags
  *
@@ -683,7 +659,7 @@
  *    2     Transfer error block with data
  *    3     Re-read last data
  */
-#define BIOS_CDCSETMODE 0x0096
+#define CDB_CDCSETMODE 0x0096
 
 /**
  * @def BIOS_CDC_MODE0
@@ -704,19 +680,47 @@
 #define BIOS_CDC_MODE2 1
 
 /**
- * @def BIOS_WONDERREQ
+ * @def CDB_WONDERREQ
  * @brief No documentation; research needed. Presumably exclusive to the
  *   WonderMega hardware
- * @ingroup bios_unknown
+ * @ingroup sub_bios_unknown
  */
-#define BIOS_WONDERREQ 0x0097
+#define CDB_WONDERREQ 0x0097
 
 /**
- * @def BIOS_WONDERCHK
+ * @def CDB_WONDERCHK
  * @brief No documentation; research needed. Presumably exclusive to the
  *   WonderMega hardware
- * @ingroup bios_unknown
+ * @ingroup sub_bios_unknown
  */
-#define BIOS_WONDERCHK 0x0098
+#define CDB_WONDERCHK 0x0098
+
+/**
+ * @def CDB_UNKNOWN00
+ * @brief Unknown; present in jump table but needs to be researched
+ * @ingroup sub_bios_unknown
+ */
+#define CDB_UNKNOWN00 0x0000
+
+/**
+ * @def CDB_UNKNOWN01
+ * @brief Unknown; present in jump table but needs to be researched
+ * @ingroup sub_bios_unknown
+ */
+#define CDB_UNKNOWN01 0x0001
+
+/**
+ * @def CDB_UNKNOWN11
+ * @brief Unknown; present in jump table but needs to be researched
+ * @ingroup sub_bios_unknown
+ */
+#define CDB_UNKNOWN11 0x0011
+
+/**
+ * @def CDB_UNKNOWN12
+ * @brief Unknown; present in jump table but needs to be researched
+ * @ingroup sub_bios_unknown
+ */
+#define CDB_UNKNOWN12 0x0012
 
 #endif

@@ -23,16 +23,7 @@
 	jsr     BURAM
 .endm
 
-/**
- * @macro BIOSCALL
- * @param fcode BIOS function code
- * @brief Call the specified internal BIOS function
- * @clobber d0
- */
-.macro BIOSCALL fcode
-	move.w  \fcode, d0
-	jsr     CDBIOS
-.endm
+
 
 /**
  * @macro CDBOOT

@@ -33,7 +33,7 @@
  */
 
 /**
- * @defgroup bios_misc Main CPU / BIOS / Misc
+ * @defgroup sub_bios_misc Main CPU / BIOS / Misc
  */
 
 /**
@@ -344,14 +344,14 @@
 
 /**
  * @def BIOS_RANDOM
- * @ingroup bios_misc
+ * @ingroup sub_bios_misc
  * @sa bios_random
  */
 #define BIOS_RANDOM 0xFFFE2A
 
 /**
  * @def BIOS_FONT_TILE_BASE
- * @ingroup bios_misc
+ * @ingroup sub_bios_misc
  * @sa bios_font_tile_base
  */
 #define BIOS_FONT_TILE_BASE 0xFFFE2C
@@ -1039,7 +1039,7 @@
  * @param[in] D0.l VRAM destination (vdp_cmd)
  * @param[in] D1.l Color bit map
  * @clobber d2-d4/a1/a5
- * @ingroup bios_misc
+ * @ingroup sub_bios_misc
  *
  * @details
  * See the notes in @ref BIOS_LOAD_1BPP_TILES for more info about the color bit
@@ -1292,7 +1292,7 @@
  * @brief Convert a byte value to BCD
  * @param[in] D1.b Hex value
  * @param[out] D1.b BCD value
- * @ingroup bios_misc
+ * @ingroup sub_bios_misc
  */
 #if TARGET == MEGACD_MODE1
 #define BIOS_TO_BCD_BYTE 0x40037C
@@ -1305,7 +1305,7 @@
  * @brief Convert a word value to BCD
  * @param[in] D1.w Hex value
  * @param[out] D1.w BCD value
- * @ingroup bios_misc
+ * @ingroup sub_bios_misc
  */
 #if TARGET == MEGACD_MODE1
 #define BIOS_TO_BCD 0x400380

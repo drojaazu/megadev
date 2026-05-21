@@ -332,7 +332,7 @@ typedef struct Palette
  * @def bios_random
  * @brief Contains a random 16 bit value
  * @sa BIOS_RANDOM
- * @ingroup bios_misc
+ * @ingroup sub_bios_misc
  *
  * @note
  * You must make a call to @ref BIOS_PRNG on each vblank in order to
@@ -343,7 +343,7 @@ typedef struct Palette
 /**
  * @def bios_font_tile_base
  * @sa BIOS_FONT_TILE_BASE
- * @ingroup bios_misc
+ * @ingroup sub_bios_misc
  *
  * @details
  * The value added to each character byte when calling _PRINT_STRING.
@@ -1002,7 +1002,7 @@ fade_complete:
 /**
  * @fn bios_load_font_defaults
  * @brief Load the internal 1bpp ASCII font with default settings
- * @ingroup bios_misc
+ * @ingroup sub_bios_misc
  *
  * @details
  * This will place the tiles starting at index 0x20, making it compatible with
@@ -1022,7 +1022,7 @@ static inline void bios_load_font_defaults()
 /**
  * @fn bios_load_1bpp_tiles
  * @brief Load the 1bpp graphics into VDP
- * @ingroup bios_misc
+ * @ingroup sub_bios_misc
  */
 static inline void bios_load_1bpp_tiles(
   void * chr_data, u16 tile_count, vdp_cmd dest, u32 color_pattern)
@@ -1109,7 +1109,7 @@ static inline void bios_clear_comm()
 /**
  * @fn bios_print
  * @brief Displays an ASCII string
- * @ingroup bios_misc
+ * @ingroup sub_bios_misc
  *
  * @param[in] A1.l Pointer to string
  * @param[in] D0.l VRAM destination (vdp_addr)
@@ -1267,7 +1267,7 @@ static inline void bios_copy_sprlist()
  * @brief Clear a region of memory
  * @param[in] A0.l Pointer to memory region
  * @param[in] D7.l Size to clear (in longs) MINUS 1
- * @ingroup bios_misc
+ * @ingroup sub_bios_misc
  */
 static inline void bios_clear_ram(void * address, u32 long_count)
 {
@@ -1376,7 +1376,7 @@ static inline void bios_process_entities(
  * @brief Generate a new random number limited with the given modulus
  * @param[in] D0.w Modulus
  * @param[out] D0.w Random number between 0 and modulus
- * @ingroup bios_misc
+ * @ingroup sub_bios_misc
  *
  * @details The modulus can be used to specify an upper boundary of the random
  * number. To specify a minimum boundary, the modulus should be set like so:
@@ -1405,7 +1405,7 @@ static inline u16 bios_prng_mod(u16 const modulo)
 /**
  * @fn bios_prng
  * @brief Generate a new random number
- * @ingroup bios_misc
+ * @ingroup sub_bios_misc
  *
  * @details The number will be stored in bios_random
  */

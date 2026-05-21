@@ -29,9 +29,4 @@
  */
 #define word_ram_1m ((volatile char *) WORD_RAM_1M)
 
-#define DMAADDR_WORDRAM1M(addr) (((addr) & 0x3FFF) >> 3)
-#define DMAADDR_WORDRAM2M(addr) (((addr) & 0x7FFF) >> 3)
-#define DMAADDR_PCM(addr)       (((addr) & 0x03FF) >> 3)
-#define DMAADDR_PRGRAM(addr)    ((addr) >> 3)
-
 #endif
