@@ -2,21 +2,26 @@
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
  * @file bram.def.h
- * @brief Function codes for the _BURAM vector
+ * @brief Backup RAM (BRAM) definitions
  */
 
-#ifndef MEGADEV__SUB_BRAM_DEF_H
-#define MEGADEV__SUB_BRAM_DEF_H
+#pragma once
 
 /**
- * @def BURAM
+ * @defgroup sub_bram Sub CPU / Backup RAM
+ */
+
+/**
+ * @def BRAM_CALL_VECTOR
  * @brief Backup RAM system calls vector
  */
-#define BURAM 0x005F16
+#define BRAM_CALL_VECTOR 0x005F16
 
 /**
- * @def BRMINIT
+ * @def BRAM_INIT
+ * @alias BRMINIT
  * @brief Prepares to read/write from Backup RAM
+ * @ingroup sub_bram
  * @clobber d0-d1/a0
  *
  * @param[in] A0.l Pointer to work RAM buffer (0x640 bytes)
@@ -32,11 +37,13 @@
  * @param[out] A1.l Pointer to display strings
  *
  */
-#define BRMINIT 0x0000
+#define BRAM_INIT 0x0000
 
 /**
- * @def BRMSTAT
+ * @def BRAM_USAGE
+ * @alias BRMSTAT
  * @brief Returns Backup RAM usage
+ * @ingroup sub_bram
  * @clobber None
  *
  * @param[in] A1.l Pointer to display string buffer (12 bytes)
@@ -44,11 +51,13 @@
  * @param[out] D1.w Number of files in directory
  *
  */
-#define BRMSTAT 0x0001
+#define BRAM_USAGE 0x0001
 
 /**
- * @def BRMSERCH
+ * @def BRAM_FILE_SEARCH
+ * @alias BRMSERCH
  * @brief Search for the requested file in Backup RAM
+ * @ingroup sub_bram
  * @clobber d0-d1/a0-a1
  *
  * @param[in] A0.l Pointer to filename
@@ -63,11 +72,13 @@
  *
  * @note The filenames are 11 ASCII characters terminated with 0
  */
-#define BRMSERCH 0x0002
+#define BRAM_FILE_SEARCH 0x0002
 
 /**
- * @def BRMREAD
+ * @def BRAM_FILE_READ
+ * @alias BRMREAD
  * @brief Read data from Backup RAM
+ * @ingroup sub_bram
  * @clobber d0-d1/a0-a1
  *
  * @param[in] A0.l Pointer to filename (11 bytes)
@@ -76,18 +87,20 @@
  * @param[out] CS Error
  * @param[out] D0.w Size in blocks
  * @param[out] D1.b Mode
- * 
+ *
  * @details
  * Mode
  *     0: Normal
  *  0xFF: Data protected
  *
  */
-#define BRMREAD 0x0003
+#define BRAM_FILE_READ 0x0003
 
 /**
- * @def BRMWRITE
+ * @def BRAM_FILE_WRITE
+ * @alias BRMWRITE
  * @brief Write data to Backup RAM
+ * @ingroup sub_bram
  * @clobber d0-d1/a0-a1
  *
  * @param[in] A0.l Pointer to file info structure
@@ -95,7 +108,7 @@
  * @param[in] D1.l Zero (see note)
  * @param[out] CC Write successful
  * @param[out] CS Write failed
- * 
+ *
  * @details
  * File info structure (14 bytes)
  *   filename.b[11]
@@ -111,34 +124,40 @@
  * @note
  * Per Tech Bulletin #1, D1 should be set to 0 when calling this routine.
  */
-#define BRMWRITE 0x0004
+#define BRAM_FILE_WRITE 0x0004
 
 /**
- * @def BRMDEL
+ * @def BRAM_FILE_DELETE
+ * @alias BRMDEL
  * @brief Deletes data in Backup RAM
+ * @ingroup sub_bram
  * @clobber d0-d1/a0-a1
  *
  * @param[in] A0.l Pointer to filename
  * @param[out] CC Delete success
  * @param[out] CS Delete failed
  */
-#define BRMDEL 0x0005
+#define BRAM_FILE_DELETE 0x0005
 
 /**
- * @def BRMFORMAT
+ * @def BRAM_FORMAT
+ * @alias BRMFORMAT
  * @brief Formats the Backup RAM
+ * @ingroup sub_bram
  * @clobber d0-d1/a0-a1
  *
  * @param[out] CC Format success
  * @param[out] CS Format failed
  *
- * @note Call BRMINIT before calling this function!
+ * @note Call @ref BRAM_INIT before calling this function!
  */
-#define BRMFORMAT 0x0006
+#define BRAM_FORMAT 0x0006
 
 /**
- * @def BRMDIR
+ * @def BRAM_DIR
+ * @alias BRMDIR
  * @brief Reads Backup RAM directory
+ * @ingroup sub_bram
  * @clobber d0-d1/a0-a1
  *
  * @param[in] A0.l Pointer to file pattern
@@ -162,11 +181,13 @@
  * should be 'SONIC*'. The value does not need to fill the full 11 bytes and can
  * terminate immediately after the asterisk.
  */
-#define BRMDIR 0x0007
+#define BRAM_DIR 0x0007
 
 /**
- * @def BRMVERIFY
+ * @def BRAM_VERIFY
+ * @alias BRMVERIFY
  * @brief Verify data written to Backup RAM
+ * @ingroup sub_bram
  * @clobber d0-d1/a0-a1
  *
  * @param[in] A0.l Pointer to file info structure
@@ -184,9 +205,16 @@
  *     block_size.w  0x00: 1 block = 0x40 bytes
  *                   0xFF: 1 block = 0x20 bytes
  */
-#define BRMVERIFY 0x0008
+#define BRAM_VERIFY 0x0008
 
-#define BRM__UNKNOWN0 0x0009
-#define BRM__UNKNOWN1 0x000A
+/**
+ * @def BRAM_UNKNOWN09
+ * @brief Unknown; present in jump table but needs to be researched
+ */
+#define BRAM_UNKNOWN09 0x0009
 
-#endif
+/**
+ * @def BRAM_UNKNOWN0A
+ * @brief Unknown; present in jump table but needs to be researched
+ */
+#define BRAM_UNKNOWN0A 0x000A

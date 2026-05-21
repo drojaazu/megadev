@@ -1,40 +1,11 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file sub.macro.s
- * Sub CPU Gate Array and misc. utilities for use with the Sub CPU
+ * @file gate_arr.macros.s
+ * @brief Macros for Sub CPU side Gate Array registers
  */
 
-#ifndef MEGADEV__SUB_MACROS_S
-#define MEGADEV__SUB_MACROS_S
-
-#include <sub/memmap.def.h>
-#include <sub/gate_arr.def.h>
-#include <sub/bios.def.h>
-
-/**
- * @macro BURAM
- * @param fcode BRAM function code
- * @brief Call the specified internal Backup RAM function
- * @clobber d0
- */
-.macro BURAM fcode
-	move.w  \fcode, d0
-	jsr     BURAM
-.endm
-
-
-
-/**
- * @macro CDBOOT
- * @param fcode CD Boot function code
- * @brief Call the specified internal CD Boot function
- * @clobber d0
- */
-.macro CDBOOT fcode
-	move.w  \fcode, d0
-	jsr     CDBOOT
-.endm
+#pragma once
 
 /**
  * CLEAR_COMM_REGS
@@ -78,4 +49,3 @@ loop:
 	beq     loop
 .endm
 
-#endif

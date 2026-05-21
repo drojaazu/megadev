@@ -2,11 +2,10 @@
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
  * @file sub/bios.def.h
- * @brief Sub CPU side system library (BIOS) vectors & memory definitions
+ * @brief Sub CPU side system library (BIOS) definitions
  */
 
-#ifndef MEGADEV__SUB_BIOS_DEF_H
-#define MEGADEV__SUB_BIOS_DEF_H
+#pragma once
 
 /**
  * @defgroup sub_bios Sub CPU / BIOS
@@ -98,16 +97,16 @@
 #define WAITVSYNC 0x005F10
 
 /**
- * @def CDBIOS_VECTOR
+ * @def BIOS_CALL_VECTOR
  * @brief General system calls vector
  * @ingroup sub_bios
  */
-#define CDBIOS_VECTOR 0x005F22
+#define BIOS_CALL_VECTOR 0x005F22
 
 /**
  * @def CDB_DRIVE_OPEN
- * @sa bios_drive_open
  * @alias DRV_OPEN
+ * @sa bios_drive_open
  * @ingroup sub_bios_misc
  * @clobber d0-d1/a0-a1
  */
@@ -722,5 +721,3 @@
  * @ingroup sub_bios_unknown
  */
 #define CDB_UNKNOWN12 0x0012
-
-#endif

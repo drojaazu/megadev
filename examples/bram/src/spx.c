@@ -11,7 +11,7 @@ char const * filenames[3];
 
 BramFileInfo const file_info = {"BRMEX", 0, 1};
 
-BrminitRes brminit_info;
+BramInitResult brminit_info;
 
 __attribute__((section(".init"))) void main()
 {
@@ -60,7 +60,7 @@ __attribute__((section(".init"))) void main()
 
         // the filename must fill up 11 bytes followed by a 0 terminator
         // for a total of 12 bytes
-        BrmserchRes * search = bram_brmserch(file_info.filename);
+        BramSearchResult * search = bram_brmserch(file_info.filename);
         // null means file was not found
         if (search == NULL)
         {
@@ -80,18 +80,18 @@ __attribute__((section(".init"))) void main()
 
         wait_2m();
 
-        BrmreadRes * read =
-          bram_brmread(file_info.filename, (u8 *) WORD_RAM_2M);
+        BramReadResult read;
+        bram_file_read(file_info.filename, (u8 *) WORD_RAM_2M, &read);
 
-        if (! read->success)
+        if (! read.success)
         {
           *ga_reg_comstat1 = 0xFFFF;
         }
         else
         {
           *ga_reg_comstat1 = 0;
-          *ga_reg_comstat2 = read->filesize;
-          *ga_reg_comstat3 = read->mode;
+          *ga_reg_comstat2 = read.filesize;
+          *ga_reg_comstat3 = read.mode;
         }
 
         grant_2m();
@@ -101,7 +101,7 @@ __attribute__((section(".init"))) void main()
       case 5:
         wait_2m();
 
-        if (! bram_brmwrite(&file_info, (u8 *) WORD_RAM_2M))
+        if (! bram_file_write(&file_info, (u8 *) WORD_RAM_2M))
         {
           *ga_reg_comstat1 = 0xFFFF;
         }
@@ -111,15 +111,16 @@ __attribute__((section(".init"))) void main()
       // bram stats
       case 6:
         asm("nop");
-        BrmstatRes * stats = bram_brmstat();
-        *ga_reg_comstat1 = stats->filecount;
-        *ga_reg_comstat2 = stats->free;
+        BramUsageResult usage;
+        bram_get_usage(&usage);
+        *ga_reg_comstat1 = usage.filecount;
+        *ga_reg_comstat2 = usage.free;
         break;
 
       // brmdel
       case 7:
         asm("nop");
-        if (bram_brmdel(&file_info.filename))
+        if (bram_file_delete(&file_info.filename))
           *ga_reg_comstat1 = 0;
         else
           *ga_reg_comstat1 = 0xFFFF;
@@ -131,7 +132,7 @@ __attribute__((section(".init"))) void main()
 
         wait_2m();
 
-        if (! bram_brmdir("*\0", (u8 *) WORD_RAM_2M, 0, 0x100))
+        if (! bram_dir("*\0", (u8 *) WORD_RAM_2M, 0, 0x100))
           *ga_reg_comstat1 = 0xFFFF;
         else
           *ga_reg_comstat0 = 0;
