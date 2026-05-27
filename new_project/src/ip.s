@@ -2,11 +2,11 @@
 .section .text
 
 #include <main/memmap.def.h>
-#include <main/gate_arr.macros.s>
+#include <main/gate_arr.macro.s>
 #include <main/bios.def.h>
 #include <main/main.macro.s>
 #include <macros.s>
-#include <system.macros.s>
+#include <system.macro.s>
 #include "ipx_layout.s"
 #include "shared.h"
 

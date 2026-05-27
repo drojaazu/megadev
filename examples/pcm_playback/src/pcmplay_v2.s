@@ -1,5 +1,5 @@
 #include <macros.s>
-#include <system.macros.s>
+#include <system.macro.s>
 #include <sub/memmap.def.h>
 #include <sub/pcm.def.h>
 

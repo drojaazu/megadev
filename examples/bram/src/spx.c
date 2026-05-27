@@ -48,7 +48,7 @@ __attribute__((section(".init"))) void main()
       case 2:
         asm("nop");
 
-        bram_brminit(&brminit_info);
+        bram_init(&brminit_info);
         *ga_reg_comstat1 = brminit_info.bram_size;
         *ga_reg_comstat2 = (u16) brminit_info.status;
 
@@ -60,17 +60,18 @@ __attribute__((section(".init"))) void main()
 
         // the filename must fill up 11 bytes followed by a 0 terminator
         // for a total of 12 bytes
-        BramSearchResult * search = bram_brmserch(file_info.filename);
+        BramSearchResult result;
+        bool file_found = bram_file_search(file_info.filename, &result);
         // null means file was not found
-        if (search == NULL)
+        if (! file_found)
         {
           *ga_reg_comstat1 = 0xFFFF;
         }
         else
         {
           *ga_reg_comstat1 = 0;
-          *ga_reg_comstat2 = search->filesize;
-          *ga_reg_comstat3 = search->mode;
+          *ga_reg_comstat2 = result.file_size;
+          *ga_reg_comstat3 = result.file_mode;
         }
 
         break;
@@ -81,17 +82,19 @@ __attribute__((section(".init"))) void main()
         wait_2m();
 
         BramReadResult read;
-        bram_file_read(file_info.filename, (u8 *) WORD_RAM_2M, &read);
 
-        if (! read.success)
+        bool success =
+          bram_file_read(file_info.filename, (u8 *) WORD_RAM_2M, &read);
+
+        if (! success)
         {
           *ga_reg_comstat1 = 0xFFFF;
         }
         else
         {
           *ga_reg_comstat1 = 0;
-          *ga_reg_comstat2 = read.filesize;
-          *ga_reg_comstat3 = read.mode;
+          *ga_reg_comstat2 = read.file_size;
+          *ga_reg_comstat3 = read.file_mode;
         }
 
         grant_2m();
@@ -120,7 +123,7 @@ __attribute__((section(".init"))) void main()
       // brmdel
       case 7:
         asm("nop");
-        if (bram_file_delete(&file_info.filename))
+        if (bram_file_delete(file_info.filename))
           *ga_reg_comstat1 = 0;
         else
           *ga_reg_comstat1 = 0xFFFF;
@@ -131,6 +134,7 @@ __attribute__((section(".init"))) void main()
         asm("nop");
 
         wait_2m();
+        bram_init(&brminit_info);
 
         if (! bram_dir("*\0", (u8 *) WORD_RAM_2M, 0, 0x100))
           *ga_reg_comstat1 = 0xFFFF;

@@ -8,7 +8,7 @@
 #ifndef MACROS_S
 #define MACROS_S
 
-#include <system.macros.s>
+#include <system.macro.s>
 
 .macro SUB name, align=2
   //.section .text.asm.\name

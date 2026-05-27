@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file comm.macros.s
+ * @file comm.macro.s
  * @brief Serial communications utilities
  */
 

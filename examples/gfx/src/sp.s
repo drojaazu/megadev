@@ -29,12 +29,12 @@ GLABEL sp_int2
 	interrupts (INT2) have been enabled.
 */
 GLABEL sp_init
-	// it's important to drv_init/cdb_stat here even if bios already did it
+	// it's important to drv_init/BIOS_stat here even if bios already did it
 	// otherwise there may be issues with CD audio track playback
 	lea drv_init_tracklist, a0
 	BIOSCALL #BIOS_DRV_INIT
 	// loop until done reading the disc TOC
-1:BIOSCALL #BIOS_CDB_STAT
+1:BIOSCALL #BIOS_STAT
 	andi.b	#0xF0, (CDSTAT).w
 	bne			1b
   CLEAR_COMM_REGS

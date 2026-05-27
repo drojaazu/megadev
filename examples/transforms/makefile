@@ -87,7 +87,7 @@ $(DISC_PATH)/ipx.mmd: \
 	main/ipx_init.s \
 	ipx.res.s \
 	ipx.c \
-	main/io.macros.s
+	main/io.macro.s
 
 $(DISC_PATH)/spx.smd: \
 	spx_layout.s \

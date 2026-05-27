@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file bram.macros.s
+ * @file bram.macro.s
  * @brief Macros for Backup RAM usage
  */
 

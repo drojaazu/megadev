@@ -33,10 +33,10 @@ typedef u16 volatile * ga_reg;
 #define ga_reg_memmode ((ga_reg) GA_REG_MEMMODE)
 
 /**
- * @copydoc GA_REG_CDCMODE
+ * @copydoc GA_REG_CDC_MODE
  *
  */
-#define ga_reg_cdcmode ((ga_reg) GA_REG_CDCMODE)
+#define ga_reg_cdcmode ((ga_reg) GA_REG_CDC_MODE)
 
 /**
  * @copydoc GA_REG_HBLANKVECT
@@ -45,10 +45,10 @@ typedef u16 volatile * ga_reg;
 #define ga_reg_hblankvect ((ga_reg) GA_REG_HBLANKVECT)
 
 /**
- * @copydoc GA_REG_CDCHOSTDATA
+ * @copydoc GA_REG_CDC_DATA
  *
  */
-#define ga_reg_cdchostdata ((ga_reg) GA_REG_CDCHOSTDATA)
+#define ga_reg_cdchostdata ((ga_reg) GA_REG_CDC_DATA)
 
 /**
  * @copydoc GA_REG_STOPWATCH

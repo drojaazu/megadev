@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file gate_arr.macros.s
+ * @file gate_arr.macro.s
  * @brief Macros for Sub CPU side Gate Array registers
  */
 

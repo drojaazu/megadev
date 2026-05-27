@@ -5,8 +5,7 @@
  * @brief CD-ROM file access definitions
  */
 
-#ifndef MEGADEV__SUB_CDROM_DEF_H
-#define MEGADEV__SUB_CDROM_DEF_H
+#pragma once
 
 /*
  * Access Operations
@@ -53,8 +52,8 @@
 #define CDROM_LOAD_PCM_DMA 5
 
 /*
-	CD-ROM Access Operation Result
-	These values indicate the final disposition of an access operation
+  CD-ROM Access Operation Result
+  These values indicate the final disposition of an access operation
 */
 
 /**
@@ -80,5 +79,3 @@
  * @brief Filename not found on load attempt
  */
 #define CDROM_RESULT_NOT_FOUND 0xFFFE
-
-#endif

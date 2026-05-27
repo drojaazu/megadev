@@ -1,38 +1,45 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file cdboot.def.h
- * @brief Function codes for the _CDBOOT vector
+ * @file boot.def.h
+ * @brief CD boot process definitions
  */
 
-#ifndef MEGADEV__SUB_CDBOOT_DEF_H
-#define MEGADEV__SUB_CDBOOT_DEF_H
+#pragma once
 
 /**
- * @def CDBOOT
- * @brief CD Boot system calls vector
+ * @defgroup sub_boot Sub CPU / CD Boot
  */
-#define CDBOOT 0x005F1C
 
 /**
- * @def CBTINIT
+ * @def BOOT_CALL_VECTOR
+ * @brief CD boot system calls vector
+ * @ingroup sub_boot
+ */
+#define BOOT_CALL_VECTOR 0x005F1C
+
+/**
+ * @def BOOT_INIT
  * @brief Initializes the CD boot system
+ * @ingroup sub_boot
  * @clobber d0-d1/a0-a1
  */
-#define CBTINIT 0x0000
+#define BOOT_INIT 0x0000
 
 /**
- * @def CBTINT
+ * @def BOOT_INT_HANDLER
  * @brief Calls the routine to manage interrupts
+ * @ingroup sub_boot
  * @clobber d0-d1/a0-a1
  *
  * @note Should be called every 16.6 msec
  */
-#define CBTINT 0x0001
+#define BOOT_INT_HANDLER 0x0001
 
 /**
- * @def CBTOPENDISC
+ * @def BOOT_OPEN_DISC
  * @brief Opens the drive tray
+ * @ingroup sub_boot
  * @clobber d0-d1/a0-a1
  *
  * @param[out] CC OK
@@ -43,22 +50,24 @@
  * @note Returns BUSY only when interrupts are being handled by CBTINT.
  *
  */
-#define CBTOPENDISC 0x0002
+#define BOOT_OPEN_DISC 0x0002
 
 /**
- * @def CBTOPENSTAT
+ * @def BOOT_OPEN_DISC_STATUS
  * @brief Checks the status of the open tray request
+ * @ingroup sub_boot
  * @clobber d0-d1/a0-a1
  *
  * @param[out] CC COMPLETE
  * @param[out] CS BUSY
  *
  */
-#define CBTOPENSTAT 0x0003
+#define BOOT_OPEN_DISC_STATUS 0x0003
 
 /**
- * @def CBTCHKDISC
+ * @def BOOT_CHECK_DISC
  * @brief Begins disc boot
+ * @ingroup sub_boot
  * @clobber d0-d1/a0-a1
  *
  * @param[in] A0.l Pointer to work RAM (0x800 bytes)
@@ -68,17 +77,17 @@
  * @note Returns BUSY only when interrupts are being handled by CBTINT.
  *
  */
-#define CBTCHKDISC 0x0004
+#define BOOT_CHECK_DISC 0x0004
 
-#define DISC_NOTREADY 0xFF
-#define DISC_NODISC		0x00
-#define DISC_MUSIC		0x01
-#define DISC_CDROM		0x02
-#define DISC_MIXED		0x03
-#define DISC_SYSTEM		0x04
-#define DISC_DATA			0x05
-#define DISC_BOOT			0x06
-#define DISC_GAME			0x07
+#define BOOT_DISC_NOTREADY 0xFF
+#define BOOT_DISC_NODISC   0x00
+#define BOOT_DISC_MUSIC    0x01
+#define BOOT_DISC_CDROM    0x02
+#define BOOT_DISC_MIXED    0x03
+#define BOOT_DISC_SYSTEM   0x04
+#define BOOT_DISC_DATA     0x05
+#define BOOT_DISC_BOOT     0x06
+#define BOOT_DISC_GAME     0x07
 
 /**
  * @def CBTCHKSTAT
@@ -90,11 +99,12 @@
  * @param[out] D0.w Disc type
  *
  */
-#define CBTCHKSTAT 0x0005
+#define BOOT_CHECK_DISC_STATUS 0x0005
 
 /**
  * @def CBTIPDISC
- * @brief No official documentation; needs research
+ * @brief Preent in 32X CD example source but no official documentation
+ * available; needs research
  *
  * Presumably loads IP from disc
  */
@@ -102,7 +112,8 @@
 
 /**
  * @def CBTIPSTAT
- * @brief No official documentation; needs research
+ * @brief Preent in 32X CD example source but no official documentation
+ * available; needs research
  *
  * Presumably checks on IP load status
  */
@@ -110,7 +121,8 @@
 
 /**
  * @def CBTSPDISC
- * @brief No official documentation; needs research
+ * @brief Preent in 32X CD example source but no official documentation
+ * available; needs research
  *
  * Presumably loads SP from disc
  */
@@ -118,10 +130,9 @@
 
 /**
  * @def CBTSPSTAT
- * @brief No official documentation; needs research
+ * @brief Preent in 32X CD example source but no official documentation
+ * available; needs research
  *
  * Presumably checks on SP load status
  */
 #define CBTSPSTAT 0x0009
-
-#endif

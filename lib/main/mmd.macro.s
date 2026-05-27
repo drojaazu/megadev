@@ -1,16 +1,16 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file mmd.macros.s
+ * @file mmd.macro.s
  */
 
 #ifndef MEGADEV__MAIN_INIT_MMD_S
 #define MEGADEV__MAIN_INIT_MMD_S
 
-#include "macros.s"
+#include <macro.s>
 #include <main/memmap.def.h>
 #include <main/gate_arr.def.h>
-#include <main/gate_arr.macros.s>
+#include <main/gate_arr.macro.s>
 
 /**
  * @fn INIT_MMD

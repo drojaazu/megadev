@@ -5,8 +5,7 @@
  * @brief C wrappers for Sub CPU side Gate Array registers
  */
 
-#ifndef MEGADEV__SUB_GATEARR_H
-#define MEGADEV__SUB_GATEARR_H
+#pragma once
 
 #include "gate_arr.def.h"
 #include <types.h>
@@ -17,13 +16,13 @@ typedef u16 volatile * ga_reg;
 
 #define ga_reg_memmode ((ga_reg) GA_REG_MEMMODE)
 
-#define ga_reg_cdcmode ((ga_reg) GA_REG_CDCMODE)
+#define ga_reg_cdcmode ((ga_reg) GA_REG_CDC_MODE)
 
-#define ga_reg_cdcrs1 ((ga_reg) GA_REG_CDCRS1)
+#define ga_reg_cdcrs1 ((ga_reg) GA_REG_CDC_REG)
 
-#define ga_reg_cdchostdata ((ga_reg) GA_REG_CDCHOSTDATA)
+#define ga_reg_cdchostdata ((ga_reg) GA_REG_CDC_DATA)
 
-#define ga_reg_dmaaddr ((ga_reg) GA_REG_DMAADDR)
+#define ga_reg_dmaaddr ((ga_reg) GA_REG_DMA_DEST)
 
 #define DMAADDR_WORDRAM1M(addr) (((addr) & 0x3FFF) >> 3)
 #define DMAADDR_WORDRAM2M(addr) (((addr) & 0x7FFF) >> 3)
@@ -582,7 +581,7 @@ static inline void wait_2m()
 			beq 1b \n\
 		"
     :
-    : "i"(BIT_GA_REG_DMNA), "i"(GA_REG_MEMMODE + 1));
+    : "i"(GA_BIT_DMNA), "i"(GA_REG_MEMMODE + 1));
 }
 
 /**
@@ -598,7 +597,7 @@ static inline void grant_2m()
 			beq 1b \n\
 		"
     :
-    : "i"(BIT_GA_REG_RET), "i"(GA_REG_MEMMODE + 1));
+    : "i"(GA_BIT_RETURN_2M), "i"(GA_REG_MEMMODE + 1));
 }
 
 /**
@@ -614,7 +613,7 @@ static inline void set_1m()
 			beq 1b \n\
 		"
     :
-    : "i"(BIT_GA_REG_MODE), "i"(GA_REG_MEMMODE + 1));
+    : "i"(GA_BIT_WORDRAM_LAYOUT), "i"(GA_REG_MEMMODE + 1));
 }
 
 /**
@@ -630,7 +629,7 @@ static inline void set_2m()
 			bne 1b \n\
 		"
     :
-    : "i"(BIT_GA_REG_MODE), "i"(GA_REG_MEMMODE + 1));
+    : "i"(GA_BIT_WORDRAM_LAYOUT), "i"(GA_REG_MEMMODE + 1));
 }
 
 /**
@@ -653,5 +652,3 @@ static inline void clear_comm_regs()
     : "i"(GA_REG_COMSTAT0)
     : "d0", "a0");
 }
-
-#endif

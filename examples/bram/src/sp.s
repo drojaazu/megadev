@@ -1,9 +1,11 @@
 #include <sub/memmap.def.h>
-#include <sub/sub.macro.s>
+#include <sub/bios.def.h>
+#include <sub/bios.macro.s>
+#include <sub/gate_arr.def.h>
+#include <sub/gate_arr.macro.s>
 #include <sub/cdrom.def.h>
 #include <sub/cdrom.macro.s>
-#include <sub/gate_arr.def.h>
-#include <macros.s>
+#include <macro.s>
 
 .section .text
 
@@ -20,12 +22,12 @@
   interrupts (INT2) have been enabled.
 */
 GLABEL sp_init
-  // it's important to drv_init/cdb_stat here even if bios already did it
+  // it's important to drv_init/BIOS_stat here even if bios already did it
   // otherwise there may be issues with CD audio track playback
   lea drv_init_tracklist, a0
-  BIOSCALL #BIOS_DRV_INIT
+  BIOS_CALL #BIOS_DRIVE_INIT
   // loop until done reading the disc TOC
-1:BIOSCALL #BIOS_CDB_STAT
+1:BIOS_CALL #BIOS_GET_STATUS
   andi.b   #0xF0, (CDSTAT).w
   bne      1b
   CLEAR_COMM_REGS
@@ -87,7 +89,7 @@ GLABEL sp_fatal
   // make both LEDs blink (which is normally disallowed but Sega QA isn't
   // here to boss us around)
   moveq	#BIOS_LED_ERROR, d1
-  BIOSCALL #BIOS_LEDSET
+  BIOS_CALL #BIOS_LEDSET
 0:nop
   nop
   bra 0b

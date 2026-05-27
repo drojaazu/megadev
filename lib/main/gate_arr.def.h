@@ -184,7 +184,7 @@
  */
 
 /**
- * @def GA_REG_CDCMODE
+ * @def GA_REG_CDC_MODE
  * @brief CDC Mode and Data Destination
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cdcmode
@@ -210,7 +210,7 @@
  *
  *   All other values for DD are invalid.
  */
-#define GA_REG_CDCMODE 0xA12004
+#define GA_REG_CDC_MODE 0xA12004
 
 /**
  * @def GA_MASK_CDC_DEST_MAIN
@@ -271,7 +271,7 @@
  */
 
 /**
- * @def GA_REG_CDCHOSTDATA
+ * @def GA_REG_CDC_DATA
  * @brief CDC Host Data
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cdcdata
@@ -286,7 +286,7 @@
  *
  * @warning Bit level opcodes (BTST, BCLR, BSET) are undefined for this register
  */
-#define GA_REG_CDCHOSTDATA 0xA12008
+#define GA_REG_CDC_DATA 0xA12008
 
 /**
  * @defgroup ga_reg_main_stopwatch Main CPU / Gate Array / Registers / Stopwatch

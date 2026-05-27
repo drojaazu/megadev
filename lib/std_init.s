@@ -6,8 +6,8 @@
  */
 
 #include <macros.s>
-#include <system.macros.s>
-#include <init.macros.s>
+#include <system.macro.s>
+#include <init.macro.s>
 
 .section .init
 

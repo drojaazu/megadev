@@ -5,8 +5,7 @@
  * @brief C wrappers for CD-ROM file access
  */
 
-#ifndef MEGADEV__SUB_CDROM_H
-#define MEGADEV__SUB_CDROM_H
+#pragma once
 
 #include "sub/bios.h"
 #include "sub/cdrom.def.h"
@@ -101,5 +100,3 @@ static inline FileInfo * find_file_c(char const * filename)
 
   return (FileInfo *) a0_fileinfo;
 }
-
-#endif

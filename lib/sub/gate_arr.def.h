@@ -5,220 +5,274 @@
  * @brief Sub CPU side Gate Array registers
  */
 
-#ifndef MEGADEV__SUB_GATEARR_DEF_H
-#define MEGADEV__SUB_GATEARR_DEF_H
+#pragma once
 
+// clang-format off
 /**
- * @defgroup ga_regs_sub Sub CPU / Gate Array / Registers
+ * @defgroup sub__garegs Sub CPU / Gate Array
  */
 
 /**
- * @defgroup ga_reg_sub_subctrl Sub CPU / Gate Array / Registers / Sub CPU &
- * Hardware Control
+ * @defgroup sub__garegs__sysctrl Sub CPU / Gate Array / CPU and RAM Control
+ * @ingroup sub__garegs
  */
+
+/**
+ * @defgroup sub__garegs__cdc Sub CPU / Gate Array / CDC Operation
+ * @ingroup sub__garegs
+ */
+
+/**
+ * @defgroup sub__garegs__cdd Sub CPU / Gate Array / CDD Operation
+ * @ingroup sub__garegs
+ */
+
+/**
+ * @defgroup sub__garegs__led Sub CPU / Gate Array / LED Operation
+ * @ingroup sub__garegs
+ */
+
+ /**
+ * @defgroup sub__garegs__comm Sub CPU / Gate Array / CPU Communication
+ * @ingroup sub__garegs
+ */
+
+ /**
+ * @defgroup sub__garegs__font Sub CPU / Gate Array / Font Generator
+ * @ingroup sub__garegs
+ */
+
+ /**
+ * @defgroup sub__garegs__gfx Sub CPU / Gate Array / Graphics Transforms
+ * @ingroup sub__garegs
+ */
+
+  /**
+ * @defgroup sub__garegs__subcode Sub CPU / Gate Array / Disc Subcode
+ * @ingroup sub__garegs
+ */
+
+ /**
+ * @defgroup sub__garegs__misc Sub CPU / Gate Array / Misc
+ * @ingroup sub__garegs
+ */
+// clang-format on
 
 /**
  * @def GA_REG_RESET
- * @brief Sub CPU & Hardware Control
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_subctrl
+ * @brief CPU Reset / LED Control / ROM Version
+ * @ingroup sub__garegs__sysctrl
+ * @ingroup ga_reg_sub_led
+ * @ingroup ga_reg_sub_misc
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
  * | ||||||LEDG|LEDR|Ver3|Ver2|Ver1|Ver0| |||RES0|
  *
- * @param RES0 Sub CPU reset / Version / LED Control
- * \n [write] 0: Reset / 1: No effect
- * \n [read] 0: Reset in progress / 1: Reset
- * possible
- * @param LEDR Red LED control
- * \n 0: off
- * \n 1: on
- * @param LEDG Green LED control
- * \n 0: off
- * \n 1: On
- * @param Ver ROM Version
- * [read] ROM Version
+ * @param[r] RES0 CPU Reset
+ * \n Reset time is 100ms.
+ * - 0: Reset in progress
+ * - 1: Reset complete / Reset possible
+ * @param[w] RES0 CPU Reset
+ * - 0: Request CPU Reset
+ * - 1: No effect
+ * @param[rw] LEDR Red LED control
+ * - 0: Off
+ * - 1: On
+ * @param[rw] LEDG Green LED control
+ * - 0: Off
+ * - 1: On
+ * @param[r] Ver ROM Version
  */
 #define GA_REG_RESET 0xFF8000
 
-/**
- * @def GA_LED_R
- * @brief Red LED Control
- * @sa ga_reg_reset
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_subctrl
- */
-#define GA_LED_R (1 << 0)
+#define GA_BIT_LED_R 0
+#define GA_BIT_LED_G 1
 
 /**
- * @def GA_LED_G
+ * @def GA_MASK_LED_R
+ * @brief Red LED Control
+ * @sa ga_reg_reset
+ * @ingroup ga_reg_sub_led
+ */
+#define GA_MASK_LED_R (1 << GA_BIT_LED_R)
+
+/**
+ * @def GA_MASK_LED_G
  * @brief Green LED Control
  * @sa ga_reg_reset
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_subctrl
+ * @ingroup ga_reg_sub_led
  */
-#define GA_LED_G (1 << 1)
+#define GA_MASK_LED_G (1 << GA_BIT_LED_G)
 
 /**
  * @def GA_MASK_VERSION
  * @brief ROM Version
  * @sa ga_reg_reset
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_subctrl
+ * @ingroup ga_reg_sub_misc
  */
 #define GA_MASK_VERSION (0b1111 << 4)
 
 /**
- * @defgroup ga_reg_sub_memmode Sub CPU / Gate Array / Registers / Memory Mode
- */
-
-/**
  * @def GA_REG_MEMMODE
- * @brief GA Reg 01 - Word RAM Memory Mode / RAM Write Protect / Priority Mode
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_memmode
+ * @brief Word RAM Control / PRG RAM Write Protect Status / Priority Mode
+ * @ingroup sub__garegs__sysctrl
  *
  * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * |WP7|WP6|WP5|WP4|WP3|WP2|WP1|WP0| |||PM1|PM0|MODE|DMNA|RET|
+ * | | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | |WP7|WP6|WP5|WP4|WP3|WP2|WP1|WP0| | | |PM1|PM0|MODE|DMNA|RET|
+ * |R|◯|◯|◯|◯|◯|◯|◯|◯| | | |◯|◯|◯|◯|◯|
+ * |W|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙| | | |◯|◯|◯|🗙|◯|
  *
- * @param WP Write protect Sub CPU RAM
- * @param PM Priority Mode
- * @param MODE Word RAM layout
- * \n 0: 2M
- * \n 1: 1M
- * @param DMNA Main CPU will not access Word RAM
- * @param RET In 2M mode: Give Word RAM control to Main CPU;
- * In 1M mode: Change 1M block ownership
+ * @param WP Write protect Sub CPU RAM [ro]
  *
+ * @param PM Priority Mode [rw]
+ *    \n See official Mega CD manual for details
+ *
+ * @param MODE Word RAM layout [rw]
+ *    \n Read:
+ *    - 0: 2M
+ *    - 1: 1M
+ *    .
+ *    Write:
+ *    - 0: 2M
+ *    - 1: 1M
+ *    .
+ * @param DMNA Main CPU will not access Word RAM [r]
+ *
+ * @param RET Word RAM control
+ *    - 2M mode: Give Word RAM control to Main CPU
+ *    - 1M mode: Swap 1M block ownership
+ *
+ * @sa GA_MASK_RETURN_2M
  */
 #define GA_REG_MEMMODE 0xFF8002
 
-#define BIT_GA_REG_RET  0
-#define BIT_GA_REG_DMNA 1
-#define BIT_GA_REG_MODE 2
+#define GA_BIT_RETURN_2M      0
+#define GA_BIT_DMNA           1
+#define GA_BIT_WORDRAM_LAYOUT 2
 
 /**
  * @def GA_MASK_RETURN_2M
  * @brief GA Reg 01 - Change Word RAM ownership bitmask
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_memmode
+ * @ingroup sub__garegs__sysctrl
  */
-#define GA_MASK_RETURN_2M (1 << BIT_GA_REG_RET)
+#define GA_MASK_RETURN_2M (1 << GA_BIT_RETURN_2M)
 
 /**
  * @def GA_MASK_DMNA
  * @brief GA Reg 01 - Main CPU no Word RAM access flag bitmask
- * @sa ga_reg_memmode
- * @ingroup ga_regs_sub
+ * @sa sub__garegs__sysctrl
  * @ingroup ga_reg_sub_memmode
  */
-#define GA_MASK_DMNA (1 << BIT_GA_REG_DMNA)
+#define GA_MASK_DMNA (1 << GA_BIT_DMNA)
 
 /**
  * @def GA_MASK_WORDRAM_LAYOUT
  * @brief GA Reg 01 - Word RAM layout bitmask
- * @sa ga_reg_memmode
- * @ingroup ga_regs_sub
+ * @sa sub__garegs__sysctrl
  * @ingroup ga_reg_sub_memmode
  */
-#define GA_MASK_WORDRAM_LAYOUT (1 << BIT_GA_REG_MODE)
+#define GA_MASK_WORDRAM_LAYOUT (1 << GA_BIT_WORDRAM_LAYOUT)
 
 /**
- * @defgroup ga_reg_sub_cdcmode Sub CPU / Gate Array / Registers / CDC Mode &
- * CDC Registers #1
- */
-
-/**
- * @def GA_REG_CDCMODE
- * @brief CDC Mode & CDC Registers #1
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cdcmode
+ * @def GA_REG_CDC_MODE
+ * @brief CDC Mode and Registers #1
+ * @ingroup sub__garegs__cdc
  *
  * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * |EDT|DSR| |||DD2|DD1|DD0| ||||CA3|CA2|CA1|CA0|
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | |EDT|DSR|UBR| | |DD2|DD1|DD0| | | | |CA3|CA2|CA1|CA0|
+ * |R|◯︎|◯|◯| | |◯|◯|◯| | | | |◯|◯|◯|◯|
+ * |W|🗙|🗙|🗙| | |◯|◯|◯| | | | |◯|◯|◯|◯|
  *
- * @param CA CDC register address
- * @details RW: Details for this register can be found in the LC89510 manual
- * @param DSR Data set ready
- * @details R: Data from the CDC is present in the CDC Host Data register
- * @param EDT End of data transfer
- * @details R: All data from the CDC has been transferred
- * @param DD Device destination
- * @details RW: Specifies the destination for CDC data transfer, as defined
- * below: |DD2|DD1|DD0|Destination|
+ * @param CA CDC register address [rw]
+ *    \n Details for this register can be found in the LC89510 manual
+ *
+ * @param DSR Data set ready [ro]
+ *    \n Data from the CDC is present in the CDC Host Data register
+ *
+ * @param UBR Upper byte ready [ro]
+ *    \n Indicates the upper byte has been sent from the CDC. Cleared when
+ the lower byte is sent.`
+ *
+ * @param EDT End of data transfer [ro]
+ *
+ * @param DD Device destination [rw]
+ *    \n Specifies the destination for CDC data transfer, as defined
+ * here:
+ *   |DD2|DD1|DD0|Destination|
  *   |:|:|:|:|
  *   |0|1|0|Main CPU|
  *   |0|1|1|Sub CPU|
  *   |1|0|0|PCM DMA|
+ *   |1|0|1|PRG RAM DMA|
  *   |1|1|1|In 2M Mode: Word RAM \n In 1M Mode: Sub CPU controlled Word RAM|
  *
  *   All other values for DD are invalid.
  */
-#define GA_REG_CDCMODE 0xFF8004
+#define GA_REG_CDC_MODE 0xFF8004
+
+#define GA_MASK_CDC_REGS1 (0b1111 << 0)
+
+#define GA_MASK_CDC_DEST (0b111 << 8)
+
+#define GA_MASK_CDC_MAIN_READ (0b010 << 8)
+#define GA_MASK_CDC_SUB_READ  (0b011 << 8)
+#define GA_MASK_CDC_PCM_DMA   (0b100 << 8)
+#define GA_MASK_CDC_PRAM_DMA  (0b101 << 8)
+#define GA_MASK_CDC_WRAM_DMA  (0b111 << 8)
 
 /**
- * @defgroup ga_reg_sub_cdcregs2 Sub CPU / Gate Array / Registers / CDC
- * Registers #1
- */
-
-/**
- * @def GA_REG_CDCRS1
+ * @def GA_REG_CDC_REG
  * @brief CDC Registers #2
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cdcregs2
+ * @ingroup sub__garegs__cdc
  *
  * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * | ||||||||CD7|CD6|CD5|CD4|CD3|CD2|CD1|CD0|
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | | | | | | | | | |CD7|CD6|CD5|CD4|CD3|CD2|CD1|CD0|
+ * |R| | | | | | | | |◯|◯|◯|◯|◯|◯|◯|◯|
+ * |W| | | | | | | | |◯|◯|◯|◯|◯|◯|◯|◯|
  *
  * @param CD CDC register data
  * \n Details for this register can be found in the LC89510 manual
  */
-#define GA_REG_CDCRS1 0xFF8006
+#define GA_REG_CDC_REG 0xFF8006
 
+// clang-format off
 /**
- * @defgroup ga_reg_sub_cdcdata Sub CPU / Gate Array / Registers / CDC Host Data
- */
-
-/**
- * @def GA_REG_CDCHOSTDATA
+ * @def GA_REG_CDC_DATA
  * @brief CDC Host Data
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cdcdata
+ * @ingroup sub__garegs__cdc
  *
  * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * |HD15|HD14|HD13|HD12|HD11|HD10|HD09|HD08|HD07|HD06|HD05|HD04|HD03|HD02|HD01|HD00|
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | |HD15|HD14|HD13|HD12|HD11|HD10|HD09|HD08|HD07|HD06|HD05|HD04|HD03|HD02|HD01|HD00|
+ * |R|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|
+ * |W|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|
  *
  * @param HD CDC read data
  * [read] 2 bytes of data read by the CDC and ready to be transferred to
  * Main or Sub CPU memory
  */
-#define GA_REG_CDCHOSTDATA 0xFF8008
+// clang-format on
+#define GA_REG_CDC_DATA 0xFF8008
 
 /**
- * @defgroup ga_reg_sub_dmaaddr Sub CPU / Gate Array / Registers / CDC DMA
- * Address
- */
-
-/**
- * @def GA_REG_DMAADDR
- * @brief CDC DMA Address
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_dmaaddr
+ * @def GA_REG_DMA_DEST
+ * @brief CDC DMA Destination
+ * @ingroup sub__garegs__cdc
  *
- * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * |A18|A17|A16|A15|A14|A13|A12|A11|A10|A09|A08|A07|A06|A05|A04|A03|
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | |A18|A17|A16|A15|A14|A13|A12|A11|A10|A09|A08|A07|A06|A05|A04|A03|
+ * |R|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|
+ * |W|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|
  *
  * @param A DMA destination address
  * \n Specifies the address for CDC DMA transfer
@@ -229,22 +283,19 @@
  *
  * Unused bits will be read as 0.
  */
-#define GA_REG_DMAADDR 0xFF800A
-
-/**
- * @defgroup ga_reg_sub_stopwatch Sub CPU / Gate Array / Registers / Stopwatch
- */
+#define GA_REG_DMA_DEST 0xFF800A
 
 /**
  * @def GA_REG_STOPWATCH
  * @brief Stopwatch
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_stopwatch
+ * @ingroup sub__garegs__misc
  *
  * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * | ||||SW11|SW10|SW09|SW08|SW07|SW06|SW05|SW04|SW03|SW02|SW01|SW00|
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | | | | | |SW11|SW10|SW09|SW08|SW07|SW06|SW05|SW04|SW03|SW02|SW01|SW00|
+ * |R| | | | |◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|
+ * |W| | | | |◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|
  *
  * @param SW CDC read data
  * @details R: Read current value / W: Reset the clock (0 only)
@@ -254,20 +305,16 @@
 #define GA_REG_STOPWATCH 0xFF800C
 
 /**
- * @defgroup ga_reg_sub_cpucomm Sub CPU / Gate Array / Registers / CPU
- * Communication
- */
-
-/**
  * @def GA_REG_COMFLAGS
  * @brief Main/Sub CPU communication flags
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup sub__garegs__comm
  *
  * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
  * |CFM7|CFM6|CFM5|CFM4|CFM3|CFM2|CFM1|CFM0|CFS7|CFS6|CFS5|CFS4|CFS3|CFS2|CFS1|CFS0|
+ * |R|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|
+ * |W|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|◯|◯|◯|◯|◯|◯|◯|◯|
  *
  * CFM: Comm flags for Main CPU
  * CFS: Comm flags for Sub CPU
@@ -277,8 +324,7 @@
 /**
  * @def GA_REG_COMCMD0
  * @brief Comm Command 0 (Main -> Sub)
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup sub__garegs__comm
  *
  * @details R: 16 bit data
  */
@@ -287,120 +333,107 @@
 /**
  * @def GA_REG_COMCMD1
  * @brief Comm Command  (Main -> Sub)
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup sub__garegs__comm
  */
 #define GA_REG_COMCMD1 0xFF8012
 
 /**
  * @def GA_REG_COMCMD2
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup sub__garegs__comm
  */
 #define GA_REG_COMCMD2 0xFF8014
 
 /**
  * @def GA_REG_COMCMD3
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup sub__garegs__comm
  */
 #define GA_REG_COMCMD3 0xFF8016
 
 /**
  * @def GA_REG_COMCMD4
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup sub__garegs__comm
  */
 #define GA_REG_COMCMD4 0xFF8018
 
 /**
  * @def GA_REG_COMCMD5
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup sub__garegs__comm
  */
 #define GA_REG_COMCMD5 0xFF801A
 
 /**
  * @def GA_REG_COMCMD6
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup sub__garegs__comm
  */
 #define GA_REG_COMCMD6 0xFF801C
 
 /**
  * @def GA_REG_COMCMD7
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup sub__garegs__comm
  */
 #define GA_REG_COMCMD7 0xFF801E
 
 /**
  * @def GA_REG_COMSTAT0
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup sub__garegs__comm
  */
 #define GA_REG_COMSTAT0 0xFF8020
 
 /**
  * @def GA_REG_COMSTAT1
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup sub__garegs__comm
  */
 #define GA_REG_COMSTAT1 0xFF8022
 
 /**
  * @def GA_REG_COMSTAT2
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup sub__garegs__comm
  */
 #define GA_REG_COMSTAT2 0xFF8024
 
 /**
  * @def GA_REG_COMSTAT3
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup sub__garegs__comm
  */
 #define GA_REG_COMSTAT3 0xFF8026
 
 /**
  * @def GA_REG_COMSTAT4
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup sub__garegs__comm
  */
 #define GA_REG_COMSTAT4 0xFF8028
 
 /**
  * @def GA_REG_COMSTAT5
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup sub__garegs__comm
  */
 #define GA_REG_COMSTAT5 0xFF802A
 
 /**
  * @def GA_REG_COMSTAT6
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup sub__garegs__comm
  */
 #define GA_REG_COMSTAT6 0xFF802C
 
 /**
  * @def GA_REG_COMSTAT7
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup sub__garegs__comm
  */
 #define GA_REG_COMSTAT7 0xFF802E
 
 /**
  * @def GA_REG_INT3TIMER
+ * @brief timer, 30.72us lsb, 0->INT3
+ * @ingroup sub__garegs__misc
  * @sa ga_reg_comstat7
- * @ingroup ga_regs_sub
  */
 #define GA_REG_INT3TIMER 0xFF8030
 
 /**
  * @def GA_REG_INTMASK
+ * @brief interrupt control
+ * @ingroup sub__garegs__misc
  * @sa ga_reg_intmask
- * @ingroup ga_regs_sub
  */
 #define GA_REG_INTMASK 0xFF8032
 
@@ -420,119 +453,135 @@
 
 /**
  * @def GA_REG_CDFADER
+ * @brief fader control / spindle speed
+ * @ingroup sub__garegs__misc
  * @sa ga_reg_cdfader
- * @ingroup ga_regs_sub
  */
 #define GA_REG_CDFADER 0xFF8034
 
 /**
  * @def GA_REG_CDDCTRL
+ * @brief CDD control
+ * @ingroup sub__garegs__cdd
  * @sa ga_reg_cddctrl
- * @ingroup ga_regs_sub
  */
 #define GA_REG_CDDCTRL 0xFF8036
 
 /**
  * @def GA_REG_CDDCOMM0
+ * @brief CDD communication
+ * @ingroup sub__garegs__cdd
  * @sa ga_reg_cddcomm0
- * @ingroup ga_regs_sub
  */
 #define GA_REG_CDDCOMM0 0xFF8038
 
 /**
  * @def GA_REG_CDDCOMM1
+ * @brief CDD communication
+ * @ingroup sub__garegs__cdd
  * @sa ga_reg_cddcomm1
- * @ingroup ga_regs_sub
  */
 #define GA_REG_CDDCOMM1 0xFF803A
 
 /**
  * @def GA_REG_CDDCOMM2
+ * @brief CDD communication
+ * @ingroup sub__garegs__cdd
  * @sa ga_reg_cddcomm2
- * @ingroup ga_regs_sub
  */
 #define GA_REG_CDDCOMM2 0xFF803C
 
 /**
  * @def GA_REG_CDDCOMM3
- * @sa ga_reg_cddcomm2
- * @ingroup ga_regs_sub
+ * @brief CDD communication
+ * @ingroup sub__garegs__cdd
+ * @sa ga_reg_cddcomm3
  */
 #define GA_REG_CDDCOMM3 0xFF803E
 
 /**
  * @def GA_REG_CDDCOMM4
+ * @brief CDD communication
+ * @ingroup sub__garegs__cdd
  * @sa ga_reg_cddcomm4
- * @ingroup ga_regs_sub
  */
 #define GA_REG_CDDCOMM4 0xFF8040
 
 /**
  * @def GA_REG_CDDCOMM5
+ * @brief CDD communication
+ * @ingroup sub__garegs__cdd
  * @sa ga_reg_cddcomm5
- * @ingroup ga_regs_sub
  */
 #define GA_REG_CDDCOMM5 0xFF8042
 
 /**
  * @def GA_REG_CDDCOMM6
+ * @brief CDD communication
+ * @ingroup sub__garegs__cdd
  * @sa ga_reg_cddcomm6
- * @ingroup ga_regs_sub
  */
 #define GA_REG_CDDCOMM6 0xFF8044
 
 /**
  * @def GA_REG_CDDCOMM7
+ * @brief CDD communication
+ * @ingroup sub__garegs__cdd
  * @sa ga_reg_cddcomm7
- * @ingroup ga_regs_sub
  */
 #define GA_REG_CDDCOMM7 0xFF8046
 
 /**
  * @def GA_REG_CDDCOMM8
+ * @brief CDD communication
+ * @ingroup sub__garegs__cdd
  * @sa ga_reg_cddcomm8
- * @ingroup ga_regs_sub
  */
 #define GA_REG_CDDCOMM8 0xFF8048
 
 /**
  * @def GA_REG_CDDCOMM9
+ * @brief CDD communication
+ * @ingroup sub__garegs__cdd
  * @sa ga_reg_cddcomm9
- * @ingroup ga_regs_sub
  */
 #define GA_REG_CDDCOMM9 0xFF804A
 
 /**
  * @def GA_REG_FONTCOLOR
+ * @brief source color values
+ * @ingroup sub__garegs__font
  * @sa ga_reg_fontcolor
- * @ingroup ga_regs_sub
  */
 #define GA_REG_FONTCOLOR 0xFF804C
 
 /**
  * @def GA_REG_FONTBITS
+ * @brief font data
+ * @ingroup sub__garegs__font
  * @sa ga_reg_fontbits
- * @ingroup ga_regs_sub
  */
 #define GA_REG_FONTBITS 0xFF804E
 
 /**
  * @def GA_REG_FONTDATA
+ * @brief read only
+ * @ingroup sub__garegs__font
  * @sa ga_reg_fontdata
- * @ingroup ga_regs_sub
  */
 #define GA_REG_FONTDATA 0xFF8050
 
 /**
  * @def GA_REG_STAMPSIZE
  * @brief Stamp data sizes
- * @ingroup ga_regs_sub
- * @ingroup gfx_xform
+ * @ingroup sub__garegs__gfx
  *
  * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * |GRON|||||||||||||SMS|STS|RPT|
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | |GRON| | | | | | | | | | | | |SMS|STS|RPT|
+ * |R|◯| | | | | | | | | | | | |◯|◯|◯|
+ * |W|🗙| | | | | | | | | | | | |◯|◯|◯|
  *
  * @param RPT Repeat
  * @details RW:
@@ -546,7 +595,7 @@
 /**
  * @def GA_REG_STAMPSIZE
  * @sa ga_reg_stampsize
- * @ingroup ga_regs_sub
+ * @ingroup sub__garegs__gfx
  */
 #define GA_REG_STAMPSIZE 0xFF8058
 
@@ -561,7 +610,7 @@
 /**
  * @def GA_REG_STAMPMAPBASE
  * @sa ga_reg_stampmapbase
- * @ingroup ga_regs_sub
+ * @ingroup sub__garegs__gfx
  * @note The location of the stamp map in Word RAM. The value you put in is the
  * offset relative to the start of Word RAM divided by 4. What the raw location
  * needs to be a multiple of depends on the sizes you have set:
@@ -577,96 +626,62 @@
 /**
  * @def GA_REG_IMGBUFVSIZE
  * @sa ga_reg_imgbufvsize
- * @ingroup ga_regs_sub
+ * @ingroup sub__garegs__gfx
  */
 #define GA_REG_IMGBUFVSIZE 0xFF805C
 
 /**
  * @def GA_REG_IMGBUFSTART
  * @sa ga_reg_imgbufstart
- * @ingroup ga_regs_sub
+ * @ingroup sub__garegs__gfx
  */
 #define GA_REG_IMGBUFSTART 0xFF805E
 
 /**
  * @def GA_REG_IMGBUFOFFSET
  * @sa ga_reg_imgbufoffset
- * @ingroup ga_regs_sub
+ * @ingroup sub__garegs__gfx
  */
 #define GA_REG_IMGBUFOFFSET 0xFF8060
 
 /**
  * @def GA_REG_IMGBUFHDOTSIZE
  * @sa ga_reg_imgbufhdotsize
- * @ingroup ga_regs_sub
+ * @ingroup sub__garegs__gfx
  */
 #define GA_REG_IMGBUFHDOTSIZE 0xFF8062
 
 /**
  * @def GA_REG_IMGBUFVDOTSIZE
  * @sa ga_reg_imgbufvdotsize
- * @ingroup ga_regs_sub
+ * @ingroup sub__garegs__gfx
  */
 #define GA_REG_IMGBUFVDOTSIZE 0xFF8064
 
 /**
  * @def GA_REG_TRACEVECTBASE
  * @sa ga_reg_tracevectbase
- * @ingroup ga_regs_sub
+ * @ingroup sub__garegs__gfx
  */
 #define GA_REG_TRACEVECTBASE 0xFF8066
 
 /**
  * @def GA_REG_SUBCODEADDR
  * @sa ga_reg_subcodeaddr
- * @ingroup ga_regs_sub
+ * @ingroup sub__garegs__subcode
  */
 #define GA_REG_SUBCODEADDR 0xFF8068
 
 /**
  * @def GA_REG_SUBCODEBUF
  * @sa ga_reg_subcodebuf
- * @ingroup ga_regs_sub
+ * @ingroup sub__garegs__subcode
  */
 #define GA_REG_SUBCODEBUF 0xFF8100
 
 /**
  * @def GA_REG_SUBCODEBUFIMG
  * @sa ga_reg_subcodebufimg
- * @ingroup ga_regs_sub
+ * @ingroup sub__garegs__subcode
  */
 #define GA_REG_SUBCODEBUFIMG 0xFF8180
-
-/**
- * ga_reg_cdcmode bit/mask settings
- */
-#define GA_BIT_CDCMODE_DD0 5
-#define GA_BIT_CDCMODE_DSR 6
-#define GA_BIT_CDCMODE_EDT 7
-
-// these aren't right...
-// TODO clean these up
-#define GA_BIT_CDC_MAINREAD 2
-#define GA_BIT_CDC_SUBREAD  3
-#define GA_BIT_CDC_PCMDMA   4
-#define GA_BIT_CDC_PRAMDMA  5
-#define GA_BIT_CDC_WRAMDMA  7
-
-#define CDCMODE_CABITS           0x000F
-#define CDCMODE_DDBITS           0x0700
-#define GA_MASK_CDCMODE_DD0      1 << GA_BIT_CDCMODE_DD0
-#define GA_MASK_CDCMODE_DSR      1 << GA_BIT_CDCMODE_DSR
-#define GA_MASK_CDCMODE_EDT      1 << GA_BIT_CDCMODE_EDT
-#define GA_MASK_CDCMODE_MAINREAD 1 << GA_BIT_CDC_MAINREAD
-#define GA_MASK_CDCMODE_SUBREAD  1 << GA_BIT_CDC_SUBREAD
-#define GA_MASK_CDCMODE_PCMDMA   1 << GA_BIT_CDC_PCMDMA
-#define GA_MASK_CDCMODE_PRAMDMA  1 << GA_BIT_CDC_PRAMDMA
-#define GA_MASK_CDCMODE_WRAMDMA  1 << GA_BIT_CDC_WRAMDMA
-
-#define CDC_DEST_MAINREAD 2
-#define CDC_DEST_SUBREAD  3
-#define CDC_DEST_PCMDMA   4
-#define CDC_DEST_PRAMDMA  5
-#define CDC_DEST_WRAMDMA  7
-
-#endif

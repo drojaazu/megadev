@@ -47,7 +47,7 @@
 /**
  * @def TMSS_BANK_SWITCH
  * @brief Used by the internal TMSS ROM to enable the cartridge
- * @note This should never be needed in standard development as is only present
+ * @note This should never be needed in standard development and is only present
  * for reference
  */
 #define TMSS_BANK_SWITCH 0x0A14001

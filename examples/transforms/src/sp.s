@@ -37,13 +37,13 @@ GLABEL sp_init
 1:dbra     d1, 0b
 
   /*
-    Per the documentation and disassemblies, drv_init/cdb_stat should be called here
+    Per the documentation and disassemblies, drv_init/BIOS_stat should be called here
     even though already did it, otherwise there may be issues with CD audio track playback
   */
   lea drv_init_tracklist, a0
   BIOSCALL   #BIOS_DRV_INIT
   // loop until done reading the disc TOC
-1:BIOSCALL   #BIOS_CDB_STAT
+1:BIOSCALL   #BIOS_STAT
   andi.b   #0xF0, (CDSTAT).w
   bne      1b
   CLEAR_COMM_REGS

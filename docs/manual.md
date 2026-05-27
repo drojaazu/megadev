@@ -339,9 +339,9 @@ While the Sub CPU may have:
 #include <types.h>
 ```
 
-### Macros (.macros.s)
+### Macros (.macro.s)
 
-Assembly files that have the `.macros.s` suffix contain only macros and can thus be included multiple times without worry of symbol duplication.
+Assembly files that have the `.macro.s` suffix contain only macros and can thus be included multiple times without worry of symbol duplication.
 
 The choice for what code was written as a macro and what was written as a subroutine is based on our judgement of how small the code is and how often it will be used. Code that initializes some hardware will probably be a subroutine as it will rarely be called; but a short piece of code that sets up te VDP port for a transfer, for example, will be a macro.
 

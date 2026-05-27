@@ -24,10 +24,10 @@ u8 bram_string_buff[12];
 
 typedef enum BramFormat
 {
-  SegaFormatted = 3,
   NoRam = 0,
   Unformatted = 1,
-  OtherFormat = 2
+  OtherFormat = 2,
+  SegaFormatted = 3,
 } BramFormat;
 
 /**
@@ -36,14 +36,17 @@ typedef enum BramFormat
  */
 typedef struct BramInitResult
 {
-  u16             bram_size;
-  enum BramFormat status;
-  char *          strings;
+  u16        bram_size;
+  char *     strings;
+  BramFormat status : 8;
 } BramInitResult;
 
 /**
  * @fn bram_init
+ * @brief Initializes the backup RAM subsystem for use; should be called before
+ * doing any reads/writes
  * @sa BRAM_INIT
+ * @alias BRMINIT
  *
  * @note
  * The return status is normally only valid when there is an error, and
@@ -51,6 +54,7 @@ typedef struct BramInitResult
  * things easier to work with in C, we convert the carry flag status into a
  * fourth status, representing a non-failure. The BramStatus enum reflects the C
  * version status.
+ *
  */
 static inline void bram_init(BramInitResult * init_result)
 {
@@ -76,7 +80,7 @@ static inline void bram_init(BramInitResult * init_result)
     : "cc");
 
   init_result->bram_size = _bram_size;
-  init_result->status = (enum BramStatus) _bram_status;
+  init_result->status = (BramFormat) _bram_status;
   init_result->strings = (char *) _bram_string_buff;
 }
 
@@ -91,10 +95,13 @@ typedef struct BramUsageResult
 } BramUsageResult;
 
 /**
- * @def bram_get_status
+ * @fn bram_get_usage
+ * @brief Get backup RAM file count and space free
  * @sa BRAM_USAGE
+ * @alias BRMSTAT
+ *
  */
-static inline void bram_get_usage(BramUsageResult * status_result)
+static inline void bram_get_usage(BramUsageResult * usage_result)
 {
   register u16 _BRAM_USAGE asm("d0") = BRAM_USAGE;
   register u32 _bram_string_buff asm("a1") = (u32) bram_string_buff;
@@ -109,94 +116,120 @@ static inline void bram_get_usage(BramUsageResult * status_result)
     : "=d"(_free), "=d"(_filecount)
     : "i"(BRAM_CALL_VECTOR), "d"(_BRAM_USAGE), "a"(_bram_string_buff));
 
-  status_result->free = _free;
-  status_result->filecount = _filecount;
+  usage_result->free = _free;
+  usage_result->filecount = _filecount;
 }
+
+typedef enum BramFileMode
+{
+  Normal = 0,
+  Protected = -1,
+} BramFileMode;
 
 typedef struct BramSearchResult
 {
-  u16  filesize;
-  u16  mode;
-  u8 * dataptr;
+  u16          file_size;
+  u8 *         dataptr;
+  BramFileMode file_mode : 8;
 } BramSearchResult;
 
 /**
- * @def bram_file_search
+ * @fn bram_file_search
+ * @brief Check that a file exists in backup RAM
+ * @param[in] filename zero-terminated string, max of 11 characters
+ * @param[out] search_result holds file metadata if found; null if not found
  * @sa BRAM_FILE_SEARCH
+ * @alias BRMSERCH
+ *
  */
-static inline void
+static inline bool
 bram_file_search(char const * filename, BramSearchResult * search_result)
 {
   register u16 _BRAM_FILE_SEARCH asm("d0") = BRAM_FILE_SEARCH;
   register u32 _file_name asm("a0") = (u32) filename;
 
   register u16    _file_size asm("d0");
-  register u16    _file_mode asm("d1");
+  register u8     _file_mode asm("d1");
   register void * _dataptr asm("a0");
 
-  // if the file is not found, we'll return null
-  // the user should check that the dataptr member of the struct
-  // is not null to determine the file was found
+  bool fail_flag;
+
+  /*
+   The method we were using for wrapping asm calls that return their status
+   via the carry flag in C was to use the "asm goto" variant and test
+   for/jump to the fail state as the last opcode, and otherwise dropping
+   into the success state.
+
+   While this works in theory, it fails because GCC does not support asm
+   goto when outputs are specified. At least not for the m68k target.
+
+   Binding outputs to registers as we had initially done here circumvents
+   the need for specifying output variables to some extent, but since
+   the compiler does not "know" that the registers holding output values
+   were updated, it may assume their value has not changed and things will
+   break.
+
+   One solution online suggests using the Scc opcode to set a flag in RAM
+   based on the CCR and then test against that in C after the fact, removing
+   the need for a goto. While the addition of slow memory access is not
+   ideal, the calls with this "issue" are not likely to appear in tight
+   loops or timing critial use cases, and thus this seems to be the least
+   worst path forward
+  */
+
   asm(
-    "\
-			jsr %p3 \n\
-			bcc 2f \n\
-			lea 0, a0 \n\
-		2: \n\
-		"
-    : "=d"(_file_size), "=d"(_file_mode), "=a"(_dataptr)
+    "jsr %p4 \n"
+    "scs %3 \n"
+    : "=d"(_file_size), "=d"(_file_mode), "=a"(_dataptr), "=d"(fail_flag)
     : "i"(BRAM_CALL_VECTOR), "d"(_BRAM_FILE_SEARCH), "a"(_file_name)
     : "a1", "cc");
 
-  if (_dataptr == NULL)
-    return NULL;
+  if (fail_flag)
+    return false;
 
   search_result->dataptr = (u8 *) _dataptr;
-  search_result->filesize = _file_size;
-  search_result->mode = _file_mode;
+  search_result->file_size = _file_size;
+  search_result->file_mode = _file_mode;
+  return true;
 }
 
 typedef struct BramReadResult
 {
-  bool success;
-  u16  filesize;
-  u8   mode;
+  u16          file_size;
+  BramFileMode file_mode : 8;
 } BramReadResult;
 
 /**
- * @def bram_file_read
+ * @fn bram_file_read
  * @sa BRAM_FILE_READ
+ * @alias BRMREAD
  */
-static inline void
+static inline bool
 bram_file_read(char const * filename, u8 * buffer, BramReadResult * read_result)
 {
-  register u16 d0_fcode asm("d0") = BRAM_FILE_READ;
-  register u32 a0_filename asm("a0") = (u32) filename;
-  register u32 a1_buffer asm("a1") = (u32) buffer;
+  register u16 _BRAM_FILE_READ asm("d0") = BRAM_FILE_READ;
+  register u32 _filename asm("a0") = (u32) filename;
+  register u32 _buffer asm("a1") = (u32) buffer;
 
-  register u16 d0_size asm("d0");
-  register u8  d1_mode asm("d1");
+  register u16 _file_size asm("d0");
+  register u8  _file_mode asm("d1");
 
+  bool fail_flag;
+
+  // see comment in bram_file_search, which also applies here
   asm(
-    "\
-		jsr %p2 \n\
-		bcc 2f \n\
-		move.w #0xFFFF, d0 \n\
-	2: \n\
-	"
-    : "=d"(d0_size), "=d"(d1_mode)
-    : "i"(BRAM_CALL_VECTOR), "d"(d0_fcode), "a"(a0_filename), "a"(a1_buffer));
+    "jsr %p3 \n"
+    "scs %2 \n"
+    : "=d"(_file_size), "=d"(_file_mode), "=d"(fail_flag)
+    : "i"(BRAM_CALL_VECTOR), "d"(_BRAM_FILE_READ), "a"(_filename), "a"(_buffer)
+    : "cc");
 
-  if (d0_size == 0xFFFF)
-  {
-    read_result->success = false;
-  }
-  else
-  {
-    read_result->success = true;
-    read_result->filesize = d0_size;
-    read_result->mode = d1_mode;
-  }
+  if (fail_flag)
+    return false;
+
+  read_result->file_size = _file_size;
+  read_result->file_mode = _file_mode;
+  return true;
 }
 
 typedef struct BramFileInfo
@@ -209,34 +242,42 @@ typedef struct BramFileInfo
 /**
  * @fn bram_file_write
  * @sa BRAM_FILE_WRITE
+ * @alias BRMWRITE
+ *
  */
-static inline bool bram_file_write(BramFileInfo const * params, u8 const * data)
+static inline bool
+bram_file_write(BramFileInfo const * file_info, u8 const * file_data)
 {
   register u16 _BRAM_FILE_WRITE asm("d0") = BRAM_FILE_WRITE;
-  register u32 a0_params asm("a0") = (u32) params;
-  register u32 a1_data asm("a1") = (u32) data;
+  register u32 _file_info asm("a0") = (u32) file_info;
+  register u32 _file_data asm("a1") = (u32) file_data;
 
   asm goto(
     "\
 			moveq #0, d1 \n\
 			jsr %p0 \n\
-			bcs %l[failed] \n\
+			bcs %l[failure] \n\
 		2: \n\
 		"
     :
-    : "i"(BRAM_CALL_VECTOR), "d"(_BRAM_FILE_WRITE), "a"(a0_params), "a"(a1_data)
+    : "i"(BRAM_CALL_VECTOR),
+      "d"(_BRAM_FILE_WRITE),
+      "a"(_file_info),
+      "a"(_file_data)
     : "d1", "cc"
-    : failed);
+    : failure);
 
   return true;
 
-failed:
+failure:
   return false;
 }
 
 /**
  * @fn bram_file_delete
  * @sa BRAM_FILE_DELETE
+ * @alias BRMDEL
+ *
  */
 static inline bool bram_file_delete(char const * filename)
 {
@@ -246,22 +287,23 @@ static inline bool bram_file_delete(char const * filename)
   asm goto(
     "\
 			jsr %p0 \n\
-			bcs %l[failed] \n\
+			bcs %l[failure] \n\
 		"
     :
     : "i"(BRAM_CALL_VECTOR), "d"(_BRAM_FILE_DELETE), "a"(A0)
     : "d1", "a1", "cc"
-    : failed);
+    : failure);
 
   return true;
 
-failed:
+failure:
   return false;
 }
 
 /**
  * @fn bram_dir
  * @sa BRAM_DIR
+ * @alias BRMDIR
  */
 static inline bool bram_dir(
   char const * filename, u8 * dirbuffer, u16 const fileskip, u16 const dirsize)
@@ -293,7 +335,8 @@ too_large:
 
 /**
  * @fn bram_format
- * @sa BRMFORMAT
+ * @sa BRAM_FORMAT
+ * @alias BRMFORMAT
  */
 static inline bool bram_format()
 {
@@ -324,7 +367,9 @@ typedef enum BramVerifyStatus
 
 /**
  * @fn bram_verify
- * @sa BRMVERIFY
+ * @sa BRAM_VERIFY
+ * @alias BRMVERIFY
+ *
  */
 static inline BramVerifyStatus bram_verify(BramFileInfo const * file_info)
 {
