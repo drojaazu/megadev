@@ -10,34 +10,42 @@
 #include "gate_arr.def.h"
 #include <types.h>
 
-typedef u16 volatile * ga_reg;
+typedef u16 volatile * ga_reg16;
 
-#define ga_reg_reset ((ga_reg) GA_REG_RESET)
+typedef u8 volatile * ga_reg8;
 
-#define ga_reg_memmode ((ga_reg) GA_REG_MEMMODE)
+#define ga_reg_reset    ((ga_reg16) GA_REG_RESET)
+#define ga_reg_reset_hi ((ga_reg8) GA_REG_RESET_HI)
+#define ga_reg_reset_lo ((ga_reg8) GA_REG_RESET_LO)
 
-#define ga_reg_cdcmode ((ga_reg) GA_REG_CDC_MODE)
+#define ga_reg_memmode    ((ga_reg16) GA_REG_MEMMODE)
+#define ga_reg_memmode_hi ((ga_reg8) GA_REG_MEMMODE_HI)
+#define ga_reg_memmode_lo ((ga_reg8) GA_REG_MEMMODE_LO)
 
-#define ga_reg_cdcrs1 ((ga_reg) GA_REG_CDC_REG)
+#define ga_reg_cdcmode    ((ga_reg16) GA_REG_CDC_MODE)
+#define ga_reg_cdcmode_hi ((ga_reg8) GA_REG_CDC_MODE_HI)
+#define ga_reg_cdcmode_lo ((ga_reg8) GA_REG_CDC_MODE_LO)
 
-#define ga_reg_cdchostdata ((ga_reg) GA_REG_CDC_DATA)
+#define ga_reg_cdc_reg ((ga_reg16) GA_REG_CDC_REG)
 
-#define ga_reg_dmaaddr ((ga_reg) GA_REG_DMA_DEST)
+#define ga_reg_cdchostdata ((ga_reg16) GA_REG_CDC_DATA)
+
+#define ga_reg_dmaaddr ((ga_reg16) GA_REG_DMA_DEST)
 
 #define DMAADDR_WORDRAM1M(addr) (((addr) & 0x3FFF) >> 3)
 #define DMAADDR_WORDRAM2M(addr) (((addr) & 0x7FFF) >> 3)
 #define DMAADDR_PCM(addr)       (((addr) & 0x03FF) >> 3)
 #define DMAADDR_PRGRAM(addr)    ((addr) >> 3)
 
-#define ga_reg_stopwatch ((ga_reg) GA_REG_STOPWATCH)
+#define ga_reg_stopwatch ((ga_reg16) GA_REG_STOPWATCH)
 
-#define ga_reg_comflags ((ga_reg const) GA_REG_COMFLAGS)
+#define ga_reg_comflags ((ga_reg16 const) GA_REG_COMFLAGS)
 
 #define ga_reg_comflags_main ((volatile const u8 *) GA_REG_COMFLAGS)
 
 #define ga_reg_comflags_sub ((volatile u8 *) GA_REG_COMFLAGS + 1)
 
-#define ga_reg_comcmd0 ((ga_reg const) GA_REG_COMCMD0)
+#define ga_reg_comcmd0 ((ga_reg16 const) GA_REG_COMCMD0)
 
 /**
  * @def ga_reg_comcmd1
@@ -47,7 +55,7 @@ typedef u16 volatile * ga_reg;
  *
  * @details R: 16 bit data
  */
-#define ga_reg_comcmd1 ((ga_reg const) GA_REG_COMCMD1)
+#define ga_reg_comcmd1 ((ga_reg16 const) GA_REG_COMCMD1)
 
 /**
  * @def ga_reg_comcmd2
@@ -57,7 +65,7 @@ typedef u16 volatile * ga_reg;
  *
  * @details R: 16 bit data
  */
-#define ga_reg_comcmd2 ((ga_reg const) GA_REG_COMCMD2)
+#define ga_reg_comcmd2 ((ga_reg16 const) GA_REG_COMCMD2)
 
 /**
  * @def ga_reg_comcmd3
@@ -67,7 +75,7 @@ typedef u16 volatile * ga_reg;
  *
  * @details R: 16 bit data
  */
-#define ga_reg_comcmd3 ((ga_reg const) GA_REG_COMCMD3)
+#define ga_reg_comcmd3 ((ga_reg16 const) GA_REG_COMCMD3)
 
 /**
  * @def ga_reg_comcmd4
@@ -77,7 +85,7 @@ typedef u16 volatile * ga_reg;
  *
  * @details R: 16 bit data
  */
-#define ga_reg_comcmd4 ((ga_reg const) GA_REG_COMCMD4)
+#define ga_reg_comcmd4 ((ga_reg16 const) GA_REG_COMCMD4)
 
 /**
  * @def ga_reg_comcmd5
@@ -87,7 +95,7 @@ typedef u16 volatile * ga_reg;
  *
  * @details R: 16 bit data
  */
-#define ga_reg_comcmd5 ((ga_reg const) GA_REG_COMCMD5)
+#define ga_reg_comcmd5 ((ga_reg16 const) GA_REG_COMCMD5)
 
 /**
  * @def ga_reg_comcmd6
@@ -97,7 +105,7 @@ typedef u16 volatile * ga_reg;
  *
  * @details R: 16 bit data
  */
-#define ga_reg_comcmd6 ((ga_reg const) GA_REG_COMCMD6)
+#define ga_reg_comcmd6 ((ga_reg16 const) GA_REG_COMCMD6)
 
 /**
  * @def ga_reg_comcmd7
@@ -107,7 +115,7 @@ typedef u16 volatile * ga_reg;
  *
  * @details R: 16 bit data
  */
-#define ga_reg_comcmd7 ((ga_reg const) GA_REG_COMCMD7)
+#define ga_reg_comcmd7 ((ga_reg16 const) GA_REG_COMCMD7)
 
 /**
  * @def ga_reg_comstat0
@@ -117,7 +125,7 @@ typedef u16 volatile * ga_reg;
  *
  * @details RW: 16 bit data
  */
-#define ga_reg_comstat0 ((ga_reg) GA_REG_COMSTAT0)
+#define ga_reg_comstat0 ((ga_reg16) GA_REG_COMSTAT0)
 
 /**
  * @def ga_reg_comstat1
@@ -127,7 +135,7 @@ typedef u16 volatile * ga_reg;
  *
  * @details RW: 16 bit data
  */
-#define ga_reg_comstat1 ((ga_reg) GA_REG_COMSTAT1)
+#define ga_reg_comstat1 ((ga_reg16) GA_REG_COMSTAT1)
 
 /**
  * @def ga_reg_comstat2
@@ -137,7 +145,7 @@ typedef u16 volatile * ga_reg;
  *
  * @details RW: 16 bit data
  */
-#define ga_reg_comstat2 ((ga_reg) GA_REG_COMSTAT2)
+#define ga_reg_comstat2 ((ga_reg16) GA_REG_COMSTAT2)
 
 /**
  * @def ga_reg_comstat3
@@ -147,7 +155,7 @@ typedef u16 volatile * ga_reg;
  *
  * @details RW: 16 bit data
  */
-#define ga_reg_comstat3 ((ga_reg) GA_REG_COMSTAT3)
+#define ga_reg_comstat3 ((ga_reg16) GA_REG_COMSTAT3)
 
 /**
  * @def ga_reg_comstat4
@@ -157,7 +165,7 @@ typedef u16 volatile * ga_reg;
  *
  * @details RW: 16 bit data
  */
-#define ga_reg_comstat4 ((ga_reg) GA_REG_COMSTAT4)
+#define ga_reg_comstat4 ((ga_reg16) GA_REG_COMSTAT4)
 
 /**
  * @def ga_reg_comstat5
@@ -167,7 +175,7 @@ typedef u16 volatile * ga_reg;
  *
  * @details RW: 16 bit data
  */
-#define ga_reg_comstat5 ((ga_reg) GA_REG_COMSTAT5)
+#define ga_reg_comstat5 ((ga_reg16) GA_REG_COMSTAT5)
 
 /**
  * @def ga_reg_comstat6
@@ -177,7 +185,7 @@ typedef u16 volatile * ga_reg;
  *
  * @details RW: 16 bit data
  */
-#define ga_reg_comstat6 ((ga_reg) GA_REG_COMSTAT6)
+#define ga_reg_comstat6 ((ga_reg16) GA_REG_COMSTAT6)
 
 /**
  * @def ga_reg_comstat7
@@ -187,7 +195,7 @@ typedef u16 volatile * ga_reg;
  *
  * @details RW: 16 bit data
  */
-#define ga_reg_comstat7 ((ga_reg) GA_REG_COMSTAT7)
+#define ga_reg_comstat7 ((ga_reg16) GA_REG_COMSTAT7)
 
 /**
  * @def ga_reg_int3timer
@@ -211,7 +219,7 @@ typedef u16 volatile * ga_reg;
  * This does not seem to properly reflected in emulators, but initial tests on
  * hardware show it to be accurate
  */
-#define ga_reg_int3timer ((ga_reg) GA_REG_INT3TIMER)
+#define ga_reg_int3timer ((ga_reg16) GA_REG_INT3TIMER)
 
 /**
  * @def ga_reg_intmask
@@ -236,7 +244,7 @@ typedef u16 volatile * ga_reg;
  *   5: CDC
  *   6: SUBCODE
  */
-#define ga_reg_intmask ((ga_reg) GA_REG_INTMASK)
+#define ga_reg_intmask ((ga_reg16) GA_REG_INTMASK)
 
 /**
  * @def ga_reg_cdfader
@@ -264,7 +272,7 @@ typedef u16 volatile * ga_reg;
  * for direct access from user applications. Consider using the FDR_SET and
  * FDR_CHG BIOS functions.
  */
-#define ga_reg_cdfader ((ga_reg) GA_REG_CDFADER)
+#define ga_reg_cdfader ((ga_reg16) GA_REG_CDFADER)
 
 /**
  * @def ga_reg_cddctrl
@@ -297,7 +305,7 @@ typedef u16 volatile * ga_reg;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_reg_cddctrl ((ga_reg) GA_REG_CDDCTRL)
+#define ga_reg_cddctrl ((ga_reg16) GA_REG_CDDCTRL)
 
 /**
  * @def ga_reg_cddcomm0
@@ -311,7 +319,7 @@ typedef u16 volatile * ga_reg;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_reg_cddcomm0 ((ga_reg) GA_REG_CDDCOMM0)
+#define ga_reg_cddcomm0 ((ga_reg16) GA_REG_CDDCOMM0)
 
 /**
  * @def ga_reg_cddcomm1
@@ -325,7 +333,7 @@ typedef u16 volatile * ga_reg;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_reg_cddcomm1 ((ga_reg) GA_REG_CDDCOMM1)
+#define ga_reg_cddcomm1 ((ga_reg16) GA_REG_CDDCOMM1)
 
 /**
  * @def ga_reg_cddcomm2
@@ -339,7 +347,7 @@ typedef u16 volatile * ga_reg;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_reg_cddcomm2 ((ga_reg) GA_REG_CDDCOMM2)
+#define ga_reg_cddcomm2 ((ga_reg16) GA_REG_CDDCOMM2)
 
 /**
  * @def ga_reg_cddcomm3
@@ -353,7 +361,7 @@ typedef u16 volatile * ga_reg;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_reg_cddcomm3 ((ga_reg) GA_REG_CDDCOMM3)
+#define ga_reg_cddcomm3 ((ga_reg16) GA_REG_CDDCOMM3)
 
 /**
  * @def ga_reg_cddcomm4
@@ -367,7 +375,7 @@ typedef u16 volatile * ga_reg;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_reg_cddcomm4 ((ga_reg) GA_REG_CDDCOMM4)
+#define ga_reg_cddcomm4 ((ga_reg16) GA_REG_CDDCOMM4)
 
 /**
  * @def ga_reg_cddcomm5
@@ -381,7 +389,7 @@ typedef u16 volatile * ga_reg;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_reg_cddcomm5 ((ga_reg) GA_REG_CDDCOMM5)
+#define ga_reg_cddcomm5 ((ga_reg16) GA_REG_CDDCOMM5)
 
 /**
  * @def ga_reg_cddcomm6
@@ -395,7 +403,7 @@ typedef u16 volatile * ga_reg;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_reg_cddcomm6 ((ga_reg) GA_REG_CDDCOMM6)
+#define ga_reg_cddcomm6 ((ga_reg16) GA_REG_CDDCOMM6)
 
 /**
  * @def ga_reg_cddcomm7
@@ -409,7 +417,7 @@ typedef u16 volatile * ga_reg;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_reg_cddcomm7 ((ga_reg) GA_REG_CDDCOMM7)
+#define ga_reg_cddcomm7 ((ga_reg16) GA_REG_CDDCOMM7)
 
 /**
  * @def ga_reg_cddcomm8
@@ -423,7 +431,7 @@ typedef u16 volatile * ga_reg;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_reg_cddcomm8 ((ga_reg) GA_REG_CDDCOMM8)
+#define ga_reg_cddcomm8 ((ga_reg16) GA_REG_CDDCOMM8)
 
 /**
  * @def ga_reg_cddcomm9
@@ -437,12 +445,12 @@ typedef u16 volatile * ga_reg;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_reg_cddcomm9 ((ga_reg) GA_REG_CDDCOMM9)
+#define ga_reg_cddcomm9 ((ga_reg16) GA_REG_CDDCOMM9)
 
 /**
  * @def ga_reg_fontcolor
  * @brief GA Reg 26 - Font Color
- * @sa GA_REG_FONTCOLOR
+ * @sa GA_REG_FONT_COLOR
  * @ingroup gatearray_sub
  *
  * @details
@@ -456,15 +464,15 @@ typedef u16 volatile * ga_reg;
  * SC10-13: Source Color Data for font bits set to 1
  * @details RW: Palette entry
  */
-#define ga_reg_fontcolor ((ga_reg) GA_REG_FONTCOLOR)
+#define ga_reg_fontcolor ((ga_reg16) GA_REG_FONT_COLOR)
 
 /**
  * @def ga_reg_fontbits
  * @brief GA Reg 27 - 1bpp Font Data
- * @sa GA_REG_FONTBITS
+ * @sa GA_REG_FONT_1BPP
  * @ingroup gatearray_sub
  */
-#define ga_reg_fontbits ((ga_reg) GA_REG_FONTBITS)
+#define ga_reg_fontbits ((ga_reg16) GA_REG_FONT_1BPP)
 
 /**
  * @def ga_reg_fontdata
@@ -476,7 +484,7 @@ typedef u16 volatile * ga_reg;
  * This register is a group of four 16-bit values which represent
  * the 4bpp VDP tile data converted from the 1bpp data in @ref ga_reg_fontbits
  */
-#define ga_reg_fontdata ((ga_reg) GA_REG_FONTDATA)
+#define ga_reg_fontdata ((ga_reg16) GA_REG_FONTDATA)
 
 /**
  * @def ga_reg_stampsize
@@ -484,7 +492,7 @@ typedef u16 volatile * ga_reg;
  * @sa GA_REG_STAMPSIZE
  * @ingroup gatearray_sub
  */
-#define ga_reg_stampsize (*((ga_reg) GA_REG_STAMPSIZE))
+#define ga_reg_stampsize (*((ga_reg16) GA_REG_STAMPSIZE))
 
 /**
  * @def ga_reg_stampmapbase
@@ -492,7 +500,7 @@ typedef u16 volatile * ga_reg;
  * @sa GA_REG_STAMPMAPBASE
  * @ingroup gatearray_sub
  */
-#define ga_reg_stampmapbase (*((ga_reg) GA_REG_STAMPMAPBASE))
+#define ga_reg_stampmapbase (*((ga_reg16) GA_REG_STAMPMAPBASE))
 
 /**
  * @def ga_reg_imgbufvsize
@@ -500,7 +508,7 @@ typedef u16 volatile * ga_reg;
  * @sa GA_REG_IMGBUFVSIZE
  * @ingroup gatearray_sub
  */
-#define ga_reg_imgbufvsize (*((ga_reg) GA_REG_IMGBUFVSIZE))
+#define ga_reg_imgbufvsize (*((ga_reg16) GA_REG_IMGBUFVSIZE))
 
 /**
  * @def ga_reg_imgbufstart
@@ -508,7 +516,7 @@ typedef u16 volatile * ga_reg;
  * @sa GA_REG_IMGBUFSTART
  * @ingroup gatearray_sub
  */
-#define ga_reg_imgbufstart (*((ga_reg) GA_REG_IMGBUFSTART))
+#define ga_reg_imgbufstart (*((ga_reg16) GA_REG_IMGBUFSTART))
 
 /**
  * @def ga_reg_imgbufoffset
@@ -516,7 +524,7 @@ typedef u16 volatile * ga_reg;
  * @sa GA_REG_IMGBUFOFFSET
  * @ingroup gatearray_sub
  */
-#define ga_reg_imgbufoffset (*((ga_reg) GA_REG_IMGBUFOFFSET))
+#define ga_reg_imgbufoffset (*((ga_reg16) GA_REG_IMGBUFOFFSET))
 
 /**
  * @def ga_reg_imgbufhdotsize
@@ -524,7 +532,7 @@ typedef u16 volatile * ga_reg;
  * @sa GA_REG_IMGBUFHDOTSIZE
  * @ingroup gatearray_sub
  */
-#define ga_reg_imgbufhdotsize (*((ga_reg) GA_REG_IMGBUFHDOTSIZE))
+#define ga_reg_imgbufhdotsize (*((ga_reg16) GA_REG_IMGBUFHDOTSIZE))
 
 /**
  * @def ga_reg_imgbufvdotsize
@@ -532,7 +540,7 @@ typedef u16 volatile * ga_reg;
  * @sa GA_REG_IMGBUFVDOTSIZE
  * @ingroup gatearray_sub
  */
-#define ga_reg_imgbufvdotsize (*((ga_reg) GA_REG_IMGBUFVDOTSIZE))
+#define ga_reg_imgbufvdotsize (*((ga_reg16) GA_REG_IMGBUFVDOTSIZE))
 
 /**
  * @def ga_reg_tracevectbase
@@ -540,7 +548,7 @@ typedef u16 volatile * ga_reg;
  * @sa GA_REG_TRACEVECTBASE
  * @ingroup gatearray_sub
  */
-#define ga_reg_tracevectbase (*((ga_reg) GA_REG_TRACEVECTBASE))
+#define ga_reg_tracevectbase (*((ga_reg16) GA_REG_TRACEVECTBASE))
 
 /**
  * @def ga_reg_subcodeaddr
@@ -548,7 +556,7 @@ typedef u16 volatile * ga_reg;
  * @sa GA_REG_SUBCODEADDR
  * @ingroup gatearray_sub
  */
-#define ga_reg_subcodeaddr ((ga_reg) GA_REG_SUBCODEADDR)
+#define ga_reg_subcodeaddr ((ga_reg16) GA_REG_SUBCODEADDR)
 
 /**
  * @def ga_reg_subcodebuf
@@ -559,7 +567,7 @@ typedef u16 volatile * ga_reg;
  * @details
  * Size: 64 x 16-bit words (128 bytes)
  */
-#define ga_reg_subcodebuf ((ga_reg) GA_REG_SUBCODEBUF)
+#define ga_reg_subcodebuf ((ga_reg16) GA_REG_SUBCODEBUF)
 
 /**
  * @def ga_reg_subcodebufimg
@@ -567,7 +575,7 @@ typedef u16 volatile * ga_reg;
  * @sa GA_REG_SUBCODEBUFIMG
  * @ingroup gatearray_sub
  */
-#define ga_reg_subcodebufimg ((ga_reg) GA_REG_SUBCODEBUFIMG)
+#define ga_reg_subcodebufimg ((ga_reg16) GA_REG_SUBCODEBUFIMG)
 
 /**
  * @fn wait_2m

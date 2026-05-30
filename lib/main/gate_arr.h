@@ -11,7 +11,7 @@
 #include "main/gate_arr.def.h"
 #include <types.h>
 
-typedef u16 volatile * ga_reg;
+typedef u16 volatile * ga_reg16;
 
 /**
  * @sa GA_REG_COMFLAGS
@@ -24,139 +24,139 @@ typedef u16 volatile * ga_reg;
  * @copydoc GA_REG_RESET
  *
  */
-#define ga_reg_reset ((ga_reg) GA_REG_RESET)
+#define ga_reg_reset ((ga_reg16) GA_REG_RESET)
 
 /**
  * @copydoc GA_REG_MEMMODE
  *
  */
-#define ga_reg_memmode ((ga_reg) GA_REG_MEMMODE)
+#define ga_reg_memmode ((ga_reg16) GA_REG_MEMMODE)
 
 /**
  * @copydoc GA_REG_CDC_MODE
  *
  */
-#define ga_reg_cdcmode ((ga_reg) GA_REG_CDC_MODE)
+#define ga_reg_cdcmode ((ga_reg16) GA_REG_CDC_MODE)
 
 /**
  * @copydoc GA_REG_HBLANKVECT
  *
  */
-#define ga_reg_hblankvect ((ga_reg) GA_REG_HBLANKVECT)
+#define ga_reg_hblankvect ((ga_reg16) GA_REG_HBLANKVECT)
 
 /**
  * @copydoc GA_REG_CDC_DATA
  *
  */
-#define ga_reg_cdchostdata ((ga_reg) GA_REG_CDC_DATA)
+#define ga_reg_cdchostdata ((ga_reg16) GA_REG_CDC_DATA)
 
 /**
  * @copydoc GA_REG_STOPWATCH
  *
  */
-#define ga_reg_stopwatch ((ga_reg) GA_REG_STOPWATCH)
+#define ga_reg_stopwatch ((ga_reg16) GA_REG_STOPWATCH)
 
 /**
  * @copydoc GA_REG_COMFLAGS
  *
  */
-#define ga_reg_comflags ((ga_reg) GA_REG_COMFLAGS)
+#define ga_reg_comflags ((ga_reg16) GA_REG_COMFLAGS)
 
 /**
  * @copydoc GA_REG_GA_REG_COMCMD0
  *
  */
-#define ga_reg_comcmd0 ((ga_reg) GA_REG_COMCMD0)
+#define ga_reg_comcmd0 ((ga_reg16) GA_REG_COMCMD0)
 
 /**
  * @copydoc GA_REG_COMCMD1
  *
  */
-#define ga_reg_comcmd1 ((ga_reg) GA_REG_COMCMD1)
+#define ga_reg_comcmd1 ((ga_reg16) GA_REG_COMCMD1)
 
 /**
  * @copydoc GA_REG_COMCMD2
  *
  */
-#define ga_reg_comcmd2 ((ga_reg) GA_REG_COMCMD2)
+#define ga_reg_comcmd2 ((ga_reg16) GA_REG_COMCMD2)
 
 /**
  * @copydoc GA_REG_COMCMD3
  *
  */
-#define ga_reg_comcmd3 ((ga_reg) GA_REG_COMCMD3)
+#define ga_reg_comcmd3 ((ga_reg16) GA_REG_COMCMD3)
 
 /**
  * @copydoc GA_REG_COMCMD4
  *
  */
-#define ga_reg_comcmd4 ((ga_reg) GA_REG_COMCMD4)
+#define ga_reg_comcmd4 ((ga_reg16) GA_REG_COMCMD4)
 
 /**
  * @copydoc GA_REG_COMCMD5
  *
  */
-#define ga_reg_comcmd5 ((ga_reg) GA_REG_COMCMD5)
+#define ga_reg_comcmd5 ((ga_reg16) GA_REG_COMCMD5)
 
 /**
  * @copydoc GA_REG_COMCMD6
  *
  */
-#define ga_reg_comcmd6 ((ga_reg) GA_REG_COMCMD6)
+#define ga_reg_comcmd6 ((ga_reg16) GA_REG_COMCMD6)
 
 /**
  * @copydoc GA_REG_COMCMD7
  *
  */
-#define ga_reg_comcmd7 ((ga_reg) GA_REG_COMCMD7)
+#define ga_reg_comcmd7 ((ga_reg16) GA_REG_COMCMD7)
 
 /**
  * @copydoc GA_REG_COMSTAT0
  *
  */
-#define ga_reg_comstat0 ((ga_reg) GA_REG_COMSTAT0)
+#define ga_reg_comstat0 ((ga_reg16) GA_REG_COMSTAT0)
 
 /**
  * @copydoc GA_REG_COMSTAT1
  *
  */
-#define ga_reg_comstat1 ((ga_reg) GA_REG_COMSTAT1)
+#define ga_reg_comstat1 ((ga_reg16) GA_REG_COMSTAT1)
 
 /**
  * @copydoc GA_REG_COMSTAT2
  *
  */
-#define ga_reg_comstat2 ((ga_reg) GA_REG_COMSTAT2)
+#define ga_reg_comstat2 ((ga_reg16) GA_REG_COMSTAT2)
 
 /**
  * @copydoc GA_REG_COMSTAT3
  *
  */
-#define ga_reg_comstat3 ((ga_reg) GA_REG_COMSTAT3)
+#define ga_reg_comstat3 ((ga_reg16) GA_REG_COMSTAT3)
 
 /**
  * @copydoc GA_REG_COMSTAT4
  *
  */
-#define ga_reg_comstat4 ((ga_reg) GA_REG_COMSTAT4)
+#define ga_reg_comstat4 ((ga_reg16) GA_REG_COMSTAT4)
 
 /**
  * @copydoc GA_REG_COMSTAT5
  *
  */
-#define ga_reg_comstat5 ((ga_reg) GA_REG_COMSTAT5)
+#define ga_reg_comstat5 ((ga_reg16) GA_REG_COMSTAT5)
 
 /**
  * @copydoc GA_REG_COMSTAT6
  *
  */
-#define ga_reg_comstat6 ((ga_reg) GA_REG_COMSTAT6)
+#define ga_reg_comstat6 ((ga_reg16) GA_REG_COMSTAT6)
 
 /**
  * @copydoc GA_REG_COMSTAT7
  *
  */
-#define ga_reg_comstat7 ((ga_reg) GA_REG_COMSTAT7)
+#define ga_reg_comstat7 ((ga_reg16) GA_REG_COMSTAT7)
 
 /**
  * @fn wait_2m
