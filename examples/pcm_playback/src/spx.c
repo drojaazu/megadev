@@ -42,7 +42,7 @@ __attribute__((section(".init"))) void main()
 
     switch (command)
     {
-      case CMD_LOAD_WORDRAM:
+      case CMD_LOAD_WDRAM:
         load_file(CDROM_LOAD_CDC, filenames[param1], (u8 *) WORD_RAM_2M);
         grant_2m();
         if (access_op_result != CDROM_RESULT_OK)

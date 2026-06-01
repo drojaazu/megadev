@@ -20,7 +20,7 @@
  * @fn load_file_prg_dma
  * @brief Convenience sub to load a file to PRG RAM via DMA
  * @param[in] A0.l Pointer to filename string
- * @note Be sure to set the destination in the GA_REG_DMA_DEST register
+ * @note Be sure to set the destination in the GA_REG_DMA_ADDRESS register
  * beforehand
  */
 load_file_prg_dma:
@@ -150,7 +150,7 @@ op_jmptbl:
  * @brief Load a file to Word RAM via DMA
  */ 
 access_op_load_dma_word:
-  move.b  #GA_MASK_CDC_WRAM_DMA, cdc_dev_dest
+  move.b  #GA_CDC_DEST_WDRAM_DMA, cdc_dev_dest
   move.l  #load_data_dma, (load_method_ptr)
   jbra    load_process
 
@@ -159,7 +159,7 @@ access_op_load_dma_word:
  * @brief Load a file to a Sub CPU address space
  */
 access_op_load_sub:
-  move.b  #GA_MASK_CDC_SUB_READ, cdc_dev_dest
+  move.b  #GA_CDC_DEST_SUB, cdc_dev_dest
   move.l  #load_data_sub, (load_method_ptr)
   jbra    load_process
 
@@ -168,7 +168,7 @@ access_op_load_sub:
  * @brief Load a file to PRG RAM via DMA
  */
 access_op_load_dma_prg:
-  move.b  #GA_MASK_CDC_PRAM_DMA, cdc_dev_dest
+  move.b  #GA_CDC_DEST_SUB_DMA, cdc_dev_dest
   move.l  #load_data_dma, (load_method_ptr)
   jbra    load_process
 
@@ -177,7 +177,7 @@ access_op_load_dma_prg:
  * @brief Load a file to PCM Wave Data memory via DMA
  */
 access_op_load_dma_pcm:
-  move.b  #GA_MASK_CDC_PCM_DMA, cdc_dev_dest
+  move.b  #GA_CDC_DEST_PCM_DMA, cdc_dev_dest
   move.l  #load_data_dma, (load_method_ptr)
 
 /**
@@ -217,7 +217,7 @@ load_proc_notfound:
  * @brief Load and cache the root directory entries (filename, offset, size)
  */
 access_op_load_dir:
-  move.b  #GA_MASK_CDC_SUB_READ, cdc_dev_dest                 // set CDC data destination
+  move.b  #GA_CDC_DEST_SUB, cdc_dev_dest                 // set CDC data destination
 
   // part 1 - load primary volume descriptor
   move.l  #0x10, cdread_sector_start       // primary VD is at sector 0x10
@@ -342,7 +342,7 @@ load_data_begin:
   subq.w   #1, read_retry_count  /*no response from CDC in time, retry*/
   bge      load_data_begin
   bra      load_data_failure
-6:cmpi.b   #GA_MASK_CDC_MAIN_READ, cdc_dev_dest  /*is this a main CPU read?*/
+6:cmpi.b   #GA_CDC_DEST_MAIN, cdc_dev_dest  /*is this a main CPU read?*/
   beq      load_data_maincpudest    /*if so, jump down; main cpu can't use BIOS_CDC_TRANSFER*/
   movea.l  (filebuff), a0  /*setup BIOS_CDC_TRANSFER pointers*/
   lea      cdc_read_timecode, a1

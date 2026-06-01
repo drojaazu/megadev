@@ -139,42 +139,42 @@
 #define GA_REG_MEMMODE 0xA12002
 
 /**
- * @def GA_BIT_RETURN_2M
+ * @def GA_CEDE_WDRAM2M_BIT
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_memmode
  */
-#define GA_BIT_RETURN_2M 0
+#define GA_CEDE_WDRAM2M_BIT 0
 
 /**
- * @def GA_MASK_RETURN_2M
+ * @def GA_CEDE_WDRAM2M
  * @brief Give Word RAM control to Main CPU
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_memmode
  */
-#define GA_MASK_RETURN_2M (1 << GA_BIT_RETURN_2M)
+#define GA_CEDE_WDRAM2M (1 << GA_CEDE_WDRAM2M_BIT)
 
 /**
- * @def GA_BIT_DMNA
+ * @def GA_ACQUIRE_WDRAM2M_BIT
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_memmode
  */
-#define GA_BIT_DMNA 1
+#define GA_ACQUIRE_WDRAM2M_BIT 1
 
 /**
- * @def GA_MASK_DMNA
+ * @def GA_ACQUIRE_WDRAM2M
  * @brief Main CPU will not access Word RAM
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_memmode
  */
-#define GA_MASK_DMNA (1 << GA_BIT_DMNA)
+#define GA_ACQUIRE_WDRAM2M (1 << GA_ACQUIRE_WDRAM2M_BIT)
 
 /**
- * @def GA_MASK_WORDRAM_LAYOUT
+ * @def GA_WDRAM2M_MODE
  * @brief Word RAM layout
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_memmode
  */
-#define GA_MASK_WORDRAM_LAYOUT (1 << 2)
+#define GA_WDRAM2M_MODE (1 << 2)
 
 #define MEMMODE_BK0_MSK (0b11 << 6)
 #define MEMMODE_WP0_MSK 0xFF
@@ -318,7 +318,7 @@
  */
 
 /**
- * @def GA_REG_COMFLAGS
+ * @def GA_REG_COMM_FLAGS
  * @brief CPU Communication Flags
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -332,10 +332,10 @@
  * @param CFM Comm flags for Main CPU
  * @param CFS Comm flags for Sub CPU
  */
-#define GA_REG_COMFLAGS 0xA1200E
+#define GA_REG_COMM_FLAGS 0xA1200E
 
 /**
- * @def GA_REG_COMCMD0
+ * @def GA_REG_COMM_CMD0
  * @brief Comm Command 0 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -343,10 +343,10 @@
  * @param [width] 8 bit/16 bit
  * @param CMD Communication data
  */
-#define GA_REG_COMCMD0 0xA12010
+#define GA_REG_COMM_CMD0 0xA12010
 
 /**
- * @def GA_REG_COMCMD1
+ * @def GA_REG_COMM_CMD1
  * @brief Comm Command 1 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -354,10 +354,10 @@
  * @param [width] 8 bit/16 bit
  * @param CMD Communication data
  */
-#define GA_REG_COMCMD1 0xA12012
+#define GA_REG_COMM_CMD1 0xA12012
 
 /**
- * @def GA_REG_COMCMD2
+ * @def GA_REG_COMM_CMD2
  * @brief Comm Command 2 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -365,10 +365,10 @@
  * @param [width] 8 bit/16 bit
  * @param CMD Communication data
  */
-#define GA_REG_COMCMD2 0xA12014
+#define GA_REG_COMM_CMD2 0xA12014
 
 /**
- * @def GA_REG_COMCMD3
+ * @def GA_REG_COMM_CMD3
  * @brief Comm Command 3 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -376,10 +376,10 @@
  * @param [width] 8 bit/16 bit
  * @param CMD Communication data
  */
-#define GA_REG_COMCMD3 0xA12016
+#define GA_REG_COMM_CMD3 0xA12016
 
 /**
- * @def GA_REG_COMCMD4
+ * @def GA_REG_COMM_CMD4
  * @brief Comm Command 4 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -387,10 +387,10 @@
  * @param [width] 8 bit/16 bit
  * @param CMD Communication data
  */
-#define GA_REG_COMCMD4 0xA12018
+#define GA_REG_COMM_CMD4 0xA12018
 
 /**
- * @def GA_REG_COMCMD5
+ * @def GA_REG_COMM_CMD5
  * @brief Comm Command 5 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -398,10 +398,10 @@
  * @param [width] 8 bit/16 bit
  * @param CMD Communication data
  */
-#define GA_REG_COMCMD5 0xA1201A
+#define GA_REG_COMM_CMD5 0xA1201A
 
 /**
- * @def GA_REG_COMCMD6
+ * @def GA_REG_COMM_CMD6
  * @brief Comm Command 6 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -409,10 +409,10 @@
  * @param [width] 8 bit/16 bit
  * @param CMD Communication data
  */
-#define GA_REG_COMCMD6 0xA1201C
+#define GA_REG_COMM_CMD6 0xA1201C
 
 /**
- * @def GA_REG_COMCMD7
+ * @def GA_REG_COMM_CMD7
  * @brief Comm Command 7 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -420,10 +420,10 @@
  * @param [width] 8 bit/16 bit
  * @param CMD Communication data
  */
-#define GA_REG_COMCMD7 0xA1201E
+#define GA_REG_COMM_CMD7 0xA1201E
 
 /**
- * @def GA_REG_COMSTAT0
+ * @def GA_REG_COMM_STAT0
  * @brief Comm Status 0 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -431,10 +431,10 @@
  * @param [width] 8 bit/16 bit
  * @param STAT Comm Status
  */
-#define GA_REG_COMSTAT0 0xA12020
+#define GA_REG_COMM_STAT0 0xA12020
 
 /**
- * @def GA_REG_COMSTAT1
+ * @def GA_REG_COMM_STAT1
  * @brief Comm Status 1 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -442,10 +442,10 @@
  * @param [width] 8 bit/16 bit
  * @param STAT Comm Status
  */
-#define GA_REG_COMSTAT1 0xA12022
+#define GA_REG_COMM_STAT1 0xA12022
 
 /**
- * @def GA_REG_COMSTAT2
+ * @def GA_REG_COMM_STAT2
  * @brief Comm Status 2 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -453,10 +453,10 @@
  * @param [width] 8 bit/16 bit
  * @param STAT Comm Status
  */
-#define GA_REG_COMSTAT2 0xA12024
+#define GA_REG_COMM_STAT2 0xA12024
 
 /**
- * @def GA_REG_COMSTAT3
+ * @def GA_REG_COMM_STAT3
  * @brief Comm Status 3 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -464,10 +464,10 @@
  * @param [width] 8 bit/16 bit
  * @param STAT Comm Status
  */
-#define GA_REG_COMSTAT3 0xA12026
+#define GA_REG_COMM_STAT3 0xA12026
 
 /**
- * @def GA_REG_COMSTAT4
+ * @def GA_REG_COMM_STAT4
  * @brief Comm Status 4 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -475,10 +475,10 @@
  * @param [width] 8 bit/16 bit
  * @param STAT Comm Status
  */
-#define GA_REG_COMSTAT4 0xA12028
+#define GA_REG_COMM_STAT4 0xA12028
 
 /**
- * @def GA_REG_COMSTAT5
+ * @def GA_REG_COMM_STAT5
  * @brief Comm Status 5 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -486,10 +486,10 @@
  * @param [width] 8 bit/16 bit
  * @param STAT Comm Status
  */
-#define GA_REG_COMSTAT5 0xA1202A
+#define GA_REG_COMM_STAT5 0xA1202A
 
 /**
- * @def GA_REG_COMSTAT6
+ * @def GA_REG_COMM_STAT6
  * @brief Comm Status 6 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -497,10 +497,10 @@
  * @param [width] 8 bit/16 bit
  * @param STAT Comm Status
  */
-#define GA_REG_COMSTAT6 0xA1202C
+#define GA_REG_COMM_STAT6 0xA1202C
 
 /**
- * @def GA_REG_COMSTAT7
+ * @def GA_REG_COMM_STAT7
  * @brief Comm Status 7 (Main -> Sub)
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cpucomm
@@ -508,6 +508,6 @@
  * @param [width] 8 bit/16 bit
  * @param STAT Comm Status
  */
-#define GA_REG_COMSTAT7 0xA1202E
+#define GA_REG_COMM_STAT7 0xA1202E
 
 #endif

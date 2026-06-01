@@ -30,177 +30,177 @@ typedef u8 volatile * ga_reg8;
 
 #define ga_reg_cdchostdata ((ga_reg16) GA_REG_CDC_DATA)
 
-#define ga_reg_dmaaddr ((ga_reg16) GA_REG_DMA_DEST)
+#define ga_reg_dmaaddr ((ga_reg16) GA_REG_DMA_ADDRESS)
 
-#define DMAADDR_WORDRAM1M(addr) (((addr) & 0x3FFF) >> 3)
-#define DMAADDR_WORDRAM2M(addr) (((addr) & 0x7FFF) >> 3)
-#define DMAADDR_PCM(addr)       (((addr) & 0x03FF) >> 3)
-#define DMAADDR_PRGRAM(addr)    ((addr) >> 3)
+#define DMAADDR_WDRAM1M(addr) (((addr) & 0x3FFF) >> 3)
+#define DMAADDR_WDRAM2M(addr) (((addr) & 0x7FFF) >> 3)
+#define DMAADDR_PCM(addr)     (((addr) & 0x03FF) >> 3)
+#define DMAADDR_PRGRAM(addr)  ((addr) >> 3)
 
 #define ga_reg_stopwatch ((ga_reg16) GA_REG_STOPWATCH)
 
-#define ga_reg_comflags ((ga_reg16 const) GA_REG_COMFLAGS)
+#define ga_reg_comflags ((ga_reg16 const) GA_REG_COMM_FLAGS)
 
-#define ga_reg_comflags_main ((volatile const u8 *) GA_REG_COMFLAGS)
+#define ga_reg_comflags_main ((volatile const u8 *) GA_REG_COMM_FLAGS)
 
-#define ga_reg_comflags_sub ((volatile u8 *) GA_REG_COMFLAGS + 1)
+#define ga_reg_comflags_sub ((volatile u8 *) GA_REG_COMM_FLAGS + 1)
 
-#define ga_reg_comcmd0 ((ga_reg16 const) GA_REG_COMCMD0)
+#define ga_reg_comcmd0 ((ga_reg16 const) GA_REG_COMM_CMD0)
 
 /**
  * @def ga_reg_comcmd1
  * @brief GA Reg 09 - Comm. command (Main -> Sub)
  * @ingroup gatearray_sub
- * @sa GA_REG_COMCMD1
+ * @sa GA_REG_COMM_CMD1
  *
  * @details R: 16 bit data
  */
-#define ga_reg_comcmd1 ((ga_reg16 const) GA_REG_COMCMD1)
+#define ga_reg_comcmd1 ((ga_reg16 const) GA_REG_COMM_CMD1)
 
 /**
  * @def ga_reg_comcmd2
  * @brief GA Reg 0A - Comm. command (Main -> Sub)
  * @ingroup gatearray_sub
- * @sa GA_REG_COMCMD2
+ * @sa GA_REG_COMM_CMD2
  *
  * @details R: 16 bit data
  */
-#define ga_reg_comcmd2 ((ga_reg16 const) GA_REG_COMCMD2)
+#define ga_reg_comcmd2 ((ga_reg16 const) GA_REG_COMM_CMD2)
 
 /**
  * @def ga_reg_comcmd3
  * @brief GA Reg 0B - Comm. command (Main -> Sub)
  * @ingroup gatearray_sub
- * @sa GA_REG_COMCMD3
+ * @sa GA_REG_COMM_CMD3
  *
  * @details R: 16 bit data
  */
-#define ga_reg_comcmd3 ((ga_reg16 const) GA_REG_COMCMD3)
+#define ga_reg_comcmd3 ((ga_reg16 const) GA_REG_COMM_CMD3)
 
 /**
  * @def ga_reg_comcmd4
  * @brief GA Reg 0C - Comm. command (Main -> Sub)
  * @ingroup gatearray_sub
- * @sa GA_REG_COMCMD4
+ * @sa GA_REG_COMM_CMD4
  *
  * @details R: 16 bit data
  */
-#define ga_reg_comcmd4 ((ga_reg16 const) GA_REG_COMCMD4)
+#define ga_reg_comcmd4 ((ga_reg16 const) GA_REG_COMM_CMD4)
 
 /**
  * @def ga_reg_comcmd5
  * @brief GA Reg 0D - Comm. command (Main -> Sub)
  * @ingroup gatearray_sub
- * @sa GA_REG_COMCMD5
+ * @sa GA_REG_COMM_CMD5
  *
  * @details R: 16 bit data
  */
-#define ga_reg_comcmd5 ((ga_reg16 const) GA_REG_COMCMD5)
+#define ga_reg_comcmd5 ((ga_reg16 const) GA_REG_COMM_CMD5)
 
 /**
  * @def ga_reg_comcmd6
  * @brief GA Reg 0E - Comm. command (Main -> Sub)
  * @ingroup gatearray_sub
- * @sa GA_REG_COMCMD6
+ * @sa GA_REG_COMM_CMD6
  *
  * @details R: 16 bit data
  */
-#define ga_reg_comcmd6 ((ga_reg16 const) GA_REG_COMCMD6)
+#define ga_reg_comcmd6 ((ga_reg16 const) GA_REG_COMM_CMD6)
 
 /**
  * @def ga_reg_comcmd7
  * @brief GA Reg 0F - Comm. command (Main -> Sub)
  * @ingroup gatearray_sub
- * @sa GA_REG_COMCMD7
+ * @sa GA_REG_COMM_CMD7
  *
  * @details R: 16 bit data
  */
-#define ga_reg_comcmd7 ((ga_reg16 const) GA_REG_COMCMD7)
+#define ga_reg_comcmd7 ((ga_reg16 const) GA_REG_COMM_CMD7)
 
 /**
  * @def ga_reg_comstat0
  * @brief GA Reg 10 - Comm. status (Sub -> Main)
  * @ingroup gatearray_sub
- * @sa GA_REG_COMSTAT0
+ * @sa GA_REG_COMM_STAT0
  *
  * @details RW: 16 bit data
  */
-#define ga_reg_comstat0 ((ga_reg16) GA_REG_COMSTAT0)
+#define ga_reg_comstat0 ((ga_reg16) GA_REG_COMM_STAT0)
 
 /**
  * @def ga_reg_comstat1
  * @brief GA Reg 11 - Comm. status (Sub -> Main)
  * @ingroup gatearray_sub
- * @sa GA_REG_COMSTAT1
+ * @sa GA_REG_COMM_STAT1
  *
  * @details RW: 16 bit data
  */
-#define ga_reg_comstat1 ((ga_reg16) GA_REG_COMSTAT1)
+#define ga_reg_comstat1 ((ga_reg16) GA_REG_COMM_STAT1)
 
 /**
  * @def ga_reg_comstat2
  * @brief GA Reg 12 - Comm. status (Sub -> Main)
  * @ingroup gatearray_sub
- * @sa GA_REG_COMSTAT2
+ * @sa GA_REG_COMM_STAT2
  *
  * @details RW: 16 bit data
  */
-#define ga_reg_comstat2 ((ga_reg16) GA_REG_COMSTAT2)
+#define ga_reg_comstat2 ((ga_reg16) GA_REG_COMM_STAT2)
 
 /**
  * @def ga_reg_comstat3
  * @brief GA Reg 13 - Comm. status (Sub -> Main)
  * @ingroup gatearray_sub
- * @sa GA_REG_COMSTAT3
+ * @sa GA_REG_COMM_STAT3
  *
  * @details RW: 16 bit data
  */
-#define ga_reg_comstat3 ((ga_reg16) GA_REG_COMSTAT3)
+#define ga_reg_comstat3 ((ga_reg16) GA_REG_COMM_STAT3)
 
 /**
  * @def ga_reg_comstat4
  * @brief GA Reg 14 - Comm. status (Sub -> Main)
  * @ingroup gatearray_sub
- * @sa GA_REG_COMSTAT4
+ * @sa GA_REG_COMM_STAT4
  *
  * @details RW: 16 bit data
  */
-#define ga_reg_comstat4 ((ga_reg16) GA_REG_COMSTAT4)
+#define ga_reg_comstat4 ((ga_reg16) GA_REG_COMM_STAT4)
 
 /**
  * @def ga_reg_comstat5
  * @brief GA Reg 15 - Comm. status (Sub -> Main)
  * @ingroup gatearray_sub
- * @sa GA_REG_COMSTAT5
+ * @sa GA_REG_COMM_STAT5
  *
  * @details RW: 16 bit data
  */
-#define ga_reg_comstat5 ((ga_reg16) GA_REG_COMSTAT5)
+#define ga_reg_comstat5 ((ga_reg16) GA_REG_COMM_STAT5)
 
 /**
  * @def ga_reg_comstat6
  * @brief GA Reg 16 - Comm. status (Sub -> Main)
  * @ingroup gatearray_sub
- * @sa GA_REG_COMSTAT6
+ * @sa GA_REG_COMM_STAT6
  *
  * @details RW: 16 bit data
  */
-#define ga_reg_comstat6 ((ga_reg16) GA_REG_COMSTAT6)
+#define ga_reg_comstat6 ((ga_reg16) GA_REG_COMM_STAT6)
 
 /**
  * @def ga_reg_comstat7
  * @brief GA Reg 17 - Comm. status (Sub -> Main)
  * @ingroup gatearray_sub
- * @sa GA_REG_COMSTAT7
+ * @sa GA_REG_COMM_STAT7
  *
  * @details RW: 16 bit data
  */
-#define ga_reg_comstat7 ((ga_reg16) GA_REG_COMSTAT7)
+#define ga_reg_comstat7 ((ga_reg16) GA_REG_COMM_STAT7)
 
 /**
- * @def ga_reg_int3timer
+ * @def GA_INT3timer
  * @brief GA Reg 18 - Timer with interrupt
- * @sa GA_REG_INT3TIMER
+ * @sa GA_INT3_TIMER
  * @ingroup gatearray_sub
  *
  * @details
@@ -219,12 +219,12 @@ typedef u8 volatile * ga_reg8;
  * This does not seem to properly reflected in emulators, but initial tests on
  * hardware show it to be accurate
  */
-#define ga_reg_int3timer ((ga_reg16) GA_REG_INT3TIMER)
+#define GA_INT3timer ((ga_reg16) GA_INT3_TIMER)
 
 /**
- * @def ga_reg_intmask
+ * @def GA_INTmask
  * @brief GA Reg 19 - Interrupt mask control
- * @sa GA_REG_INTMASK
+ * @sa GA_INT_MASK
  * @ingroup gatearray_sub
  *
  * @details
@@ -244,12 +244,12 @@ typedef u8 volatile * ga_reg8;
  *   5: CDC
  *   6: SUBCODE
  */
-#define ga_reg_intmask ((ga_reg16) GA_REG_INTMASK)
+#define GA_INTmask ((ga_reg16) GA_INT_MASK)
 
 /**
- * @def ga_reg_cdfader
+ * @def GA_REG_FADER
  * @brief GA Reg 1A - CD Audio Fader
- * @sa GA_REG_CDFADER
+ * @sa GA_REG_FADER
  * @ingroup gatearray_sub
  *
  * @details
@@ -272,7 +272,7 @@ typedef u8 volatile * ga_reg8;
  * for direct access from user applications. Consider using the FDR_SET and
  * FDR_CHG BIOS functions.
  */
-#define ga_reg_cdfader ((ga_reg16) GA_REG_CDFADER)
+#define GA_REG_FADER ((ga_reg16) GA_REG_FADER)
 
 /**
  * @def ga_reg_cddctrl
@@ -589,7 +589,7 @@ static inline void wait_2m()
 			beq 1b \n\
 		"
     :
-    : "i"(GA_BIT_DMNA), "i"(GA_REG_MEMMODE + 1));
+    : "i"(GA_ACQUIRE_WDRAM2M_BIT), "i"(GA_REG_MEMMODE + 1));
 }
 
 /**
@@ -605,7 +605,7 @@ static inline void grant_2m()
 			beq 1b \n\
 		"
     :
-    : "i"(GA_BIT_RETURN_2M), "i"(GA_REG_MEMMODE + 1));
+    : "i"(GA_CEDE_WDRAM2M_BIT), "i"(GA_REG_MEMMODE + 1));
 }
 
 /**
@@ -621,7 +621,7 @@ static inline void set_1m()
 			beq 1b \n\
 		"
     :
-    : "i"(GA_BIT_WORDRAM_LAYOUT), "i"(GA_REG_MEMMODE + 1));
+    : "i"(GA_WDRAM_MODE_BIT), "i"(GA_REG_MEMMODE + 1));
 }
 
 /**
@@ -637,7 +637,7 @@ static inline void set_2m()
 			bne 1b \n\
 		"
     :
-    : "i"(GA_BIT_WORDRAM_LAYOUT), "i"(GA_REG_MEMMODE + 1));
+    : "i"(GA_WDRAM_MODE_BIT), "i"(GA_REG_MEMMODE + 1));
 }
 
 /**
@@ -657,6 +657,6 @@ static inline void clear_comm_regs()
 		move.l d0, (a0)+ \n\
 		"
     :
-    : "i"(GA_REG_COMSTAT0)
+    : "i"(GA_REG_COMM_STAT0)
     : "d0", "a0");
 }

@@ -14,11 +14,11 @@
 typedef u16 volatile * ga_reg16;
 
 /**
- * @sa GA_REG_COMFLAGS
+ * @sa GA_REG_COMM_FLAGS
  */
-#define ga_reg_comflags_main ((volatile u8 *) GA_REG_COMFLAGS)
+#define ga_reg_comflags_main ((volatile u8 *) GA_REG_COMM_FLAGS)
 
-#define ga_reg_comflags_sub ((volatile const u8 *) GA_REG_COMFLAGS + 1)
+#define ga_reg_comflags_sub ((volatile const u8 *) GA_REG_COMM_FLAGS + 1)
 
 /**
  * @copydoc GA_REG_RESET
@@ -57,106 +57,106 @@ typedef u16 volatile * ga_reg16;
 #define ga_reg_stopwatch ((ga_reg16) GA_REG_STOPWATCH)
 
 /**
- * @copydoc GA_REG_COMFLAGS
+ * @copydoc GA_REG_COMM_FLAGS
  *
  */
-#define ga_reg_comflags ((ga_reg16) GA_REG_COMFLAGS)
+#define ga_reg_comflags ((ga_reg16) GA_REG_COMM_FLAGS)
 
 /**
- * @copydoc GA_REG_GA_REG_COMCMD0
+ * @copydoc GA_REG_GA_REG_COMM_CMD0
  *
  */
-#define ga_reg_comcmd0 ((ga_reg16) GA_REG_COMCMD0)
+#define ga_reg_comcmd0 ((ga_reg16) GA_REG_COMM_CMD0)
 
 /**
- * @copydoc GA_REG_COMCMD1
+ * @copydoc GA_REG_COMM_CMD1
  *
  */
-#define ga_reg_comcmd1 ((ga_reg16) GA_REG_COMCMD1)
+#define ga_reg_comcmd1 ((ga_reg16) GA_REG_COMM_CMD1)
 
 /**
- * @copydoc GA_REG_COMCMD2
+ * @copydoc GA_REG_COMM_CMD2
  *
  */
-#define ga_reg_comcmd2 ((ga_reg16) GA_REG_COMCMD2)
+#define ga_reg_comcmd2 ((ga_reg16) GA_REG_COMM_CMD2)
 
 /**
- * @copydoc GA_REG_COMCMD3
+ * @copydoc GA_REG_COMM_CMD3
  *
  */
-#define ga_reg_comcmd3 ((ga_reg16) GA_REG_COMCMD3)
+#define ga_reg_comcmd3 ((ga_reg16) GA_REG_COMM_CMD3)
 
 /**
- * @copydoc GA_REG_COMCMD4
+ * @copydoc GA_REG_COMM_CMD4
  *
  */
-#define ga_reg_comcmd4 ((ga_reg16) GA_REG_COMCMD4)
+#define ga_reg_comcmd4 ((ga_reg16) GA_REG_COMM_CMD4)
 
 /**
- * @copydoc GA_REG_COMCMD5
+ * @copydoc GA_REG_COMM_CMD5
  *
  */
-#define ga_reg_comcmd5 ((ga_reg16) GA_REG_COMCMD5)
+#define ga_reg_comcmd5 ((ga_reg16) GA_REG_COMM_CMD5)
 
 /**
- * @copydoc GA_REG_COMCMD6
+ * @copydoc GA_REG_COMM_CMD6
  *
  */
-#define ga_reg_comcmd6 ((ga_reg16) GA_REG_COMCMD6)
+#define ga_reg_comcmd6 ((ga_reg16) GA_REG_COMM_CMD6)
 
 /**
- * @copydoc GA_REG_COMCMD7
+ * @copydoc GA_REG_COMM_CMD7
  *
  */
-#define ga_reg_comcmd7 ((ga_reg16) GA_REG_COMCMD7)
+#define ga_reg_comcmd7 ((ga_reg16) GA_REG_COMM_CMD7)
 
 /**
- * @copydoc GA_REG_COMSTAT0
+ * @copydoc GA_REG_COMM_STAT0
  *
  */
-#define ga_reg_comstat0 ((ga_reg16) GA_REG_COMSTAT0)
+#define ga_reg_comstat0 ((ga_reg16) GA_REG_COMM_STAT0)
 
 /**
- * @copydoc GA_REG_COMSTAT1
+ * @copydoc GA_REG_COMM_STAT1
  *
  */
-#define ga_reg_comstat1 ((ga_reg16) GA_REG_COMSTAT1)
+#define ga_reg_comstat1 ((ga_reg16) GA_REG_COMM_STAT1)
 
 /**
- * @copydoc GA_REG_COMSTAT2
+ * @copydoc GA_REG_COMM_STAT2
  *
  */
-#define ga_reg_comstat2 ((ga_reg16) GA_REG_COMSTAT2)
+#define ga_reg_comstat2 ((ga_reg16) GA_REG_COMM_STAT2)
 
 /**
- * @copydoc GA_REG_COMSTAT3
+ * @copydoc GA_REG_COMM_STAT3
  *
  */
-#define ga_reg_comstat3 ((ga_reg16) GA_REG_COMSTAT3)
+#define ga_reg_comstat3 ((ga_reg16) GA_REG_COMM_STAT3)
 
 /**
- * @copydoc GA_REG_COMSTAT4
+ * @copydoc GA_REG_COMM_STAT4
  *
  */
-#define ga_reg_comstat4 ((ga_reg16) GA_REG_COMSTAT4)
+#define ga_reg_comstat4 ((ga_reg16) GA_REG_COMM_STAT4)
 
 /**
- * @copydoc GA_REG_COMSTAT5
+ * @copydoc GA_REG_COMM_STAT5
  *
  */
-#define ga_reg_comstat5 ((ga_reg16) GA_REG_COMSTAT5)
+#define ga_reg_comstat5 ((ga_reg16) GA_REG_COMM_STAT5)
 
 /**
- * @copydoc GA_REG_COMSTAT6
+ * @copydoc GA_REG_COMM_STAT6
  *
  */
-#define ga_reg_comstat6 ((ga_reg16) GA_REG_COMSTAT6)
+#define ga_reg_comstat6 ((ga_reg16) GA_REG_COMM_STAT6)
 
 /**
- * @copydoc GA_REG_COMSTAT7
+ * @copydoc GA_REG_COMM_STAT7
  *
  */
-#define ga_reg_comstat7 ((ga_reg16) GA_REG_COMSTAT7)
+#define ga_reg_comstat7 ((ga_reg16) GA_REG_COMM_STAT7)
 
 /**
  * @fn wait_2m
@@ -170,7 +170,7 @@ static inline void wait_2m()
   beq      1b \n\
 		"
     :
-    : [ga_ret_bit] "i"(GA_BIT_RETURN_2M),
+    : [ga_ret_bit] "i"(GA_CEDE_WDRAM2M_BIT),
       [ga_reg_memmmode] "i"(GA_REG_MEMMODE + 1));
 }
 
@@ -187,8 +187,8 @@ static inline void grant_2m()
   beq      1b \n\
 		"
     :
-    :
-    [ga_dmna_bit] "i"(GA_BIT_DMNA), [ga_reg_memmmode] "i"(GA_REG_MEMMODE + 1));
+    : [ga_dmna_bit] "i"(GA_ACQUIRE_WDRAM2M_BIT),
+      [ga_reg_memmmode] "i"(GA_REG_MEMMODE + 1));
 }
 
 /**
@@ -210,7 +210,7 @@ static inline void clear_comm_regs()
   move.l   %[scratch_d], (%[scratch_a])+ \n\
 		"
     : [scratch_d] "=&d"(scratch_d), [scratch_a] "=&a"(scratch_a)
-    : [comcmd0] "i"(GA_REG_COMCMD0));
+    : [comcmd0] "i"(GA_REG_COMM_CMD0));
 }
 
 /**

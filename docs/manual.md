@@ -361,7 +361,7 @@ There are occasional exceptions to this namespace rule, namely when a macro prov
 
 There are many hardware registers that make use of bit-level settings. Such settings are given helpful names as `#define` directives with the `.def.h` files. Each setting has two defines: one for the bit index (for use in ASM commands such as `btst`) and one as a mask (to be used in logic operations).
 
-For example, the gate array has a Main side register `memmmode` with a DMNA flag. This flag can be referenced by index with `GA_BIT_DMNA` or as a mask with `GA_MASK_DMNA`.
+For example, the gate array has a Main side register `memmmode` with a DMNA flag. This flag can be referenced by index with `GA_ACQUIRE_WDRAM2M_BIT` or as a mask with `GA_ACQUIRE_WDRAM2M`.
 
 # Further Reading
 

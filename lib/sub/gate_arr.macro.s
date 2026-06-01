@@ -13,7 +13,7 @@
  * BREAK: d0, a0
  */
 .macro CLEAR_COMM_REGS
-	lea GA_REG_COMSTAT0, a0
+	lea GA_REG_COMM_STAT0, a0
 	moveq   #0, d0
 	move.b  d0, -0x11(a0) // lower byte of comm flags
 	move.l  d0, (a0)+

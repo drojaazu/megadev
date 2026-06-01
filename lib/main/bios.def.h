@@ -979,16 +979,16 @@
 #endif
 
 /**
- * @def BIOS_SET_HBLANK_WORK_RAM
+ * @def BIOS_SET_HBLANK_WKRAM
  * @sa bios_set_hblank_workram
  * @param[in] A1.l Pointer to HBLANK function
  *
  *
  */
 #if TARGET == MEGACD_MODE1
-#define BIOS_SET_HBLANK_WORK_RAM 0x400314
+#define BIOS_SET_HBLANK_WKRAM 0x400314
 #else
-#define BIOS_SET_HBLANK_WORK_RAM 0x000314
+#define BIOS_SET_HBLANK_WKRAM 0x000314
 #endif
 
 /**

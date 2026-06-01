@@ -9,13 +9,17 @@ Reference information for the registers is already present in the source files (
 
 This document will go over some general information regarding gate array usage.
 
+# Definitions / Symbols
+
+All Megadev definitions and symbols related to the gate array are prefixed with `GA_`. Bit mask definitions are included for bit fields within most registers, where it is deemed useful. Bit offsets are also included for registers where bit level operations are allowed. In some cases, definition values are duplicated with different labels in order to indicate intention.
+
 # Bus Width
 
-All gate array registers are word sized (16 bit) and can be accessed as 16 bit values. Most registers also allow 8 bit access of the upper and lower bytes. Those that od not have byte sized access must only be accessed as words.
+All gate array registers are word sized (16 bit) and can be accessed as such. Most registers also allow 8 bit access of the upper and lower bytes. Those that do not allow byte sized access must only be accessed as words.
 
 It is important that you access these registers properly to prevent bus or address errors.
 
-In Megadev, for registers that allow 8 bit access, there will be additional definitions for the high and low bytes. For example:
+In Megadev, for registers that allow 8 bit access, there will be additional definitions for the high and low bytes with `_HI` and `_LO` suffixes, respectively. For example:
 
 ```
 #define GA_REG_RESET    0xFF8000
@@ -24,9 +28,9 @@ In Megadev, for registers that allow 8 bit access, there will be additional defi
 
 ```
 
-While the `_HI` variant is simply an alias for the register, we recommend using it to semantically indicate the intention of byte access rather than word access. Registers that do not have `_HI` or `_LO` variants can only be accessed by word width.
+While the `_HI` variant is simply an alias for the register, we recommend using it to semantically indicate the intention of byte access rather than word access. Registers only accessible at word width will not not have these variants.
 
-These variants are also present for C development, with explicit type casting:
+They are also present for C development, with explicit type casting:
 
 ```
 #define ga_reg_reset    ((ga_reg16) GA_REG_RESET)

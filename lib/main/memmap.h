@@ -32,7 +32,7 @@
  * @brief VBLANK system interrupt vector
  * @sa EXVEC_VBLANK
  */
-#define exvec_vblank ((void(* volatile *)) EXVEC_VBLANK)
+#define exvec_vblank ((void(* volatile *)) EXVEC_VBLANK)z
 
 /**
  * @def exvec_vblank

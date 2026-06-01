@@ -827,7 +827,7 @@ static inline void bios_load_map(
 /**
  * @fn bios_set_hblank_workram
  * @brief Sets the HBLANK vector for a Work RAM destination
- * @sa BIOS_SET_HBLANK_WORK_RAM
+ * @sa BIOS_SET_HBLANK_WKRAM
  * @ingroup bios_int
  *
  * @details
@@ -854,7 +854,7 @@ static inline void bios_set_hblank_workram(void * hblank_handler)
 			jsr %c0 \n\
     "
     :
-    : "i"(BIOS_SET_HBLANK_WORK_RAM), "a"(A1)
+    : "i"(BIOS_SET_HBLANK_WKRAM), "a"(A1)
     : "cc");
 }
 

@@ -54,12 +54,12 @@
   ENABLE_INTERRUPTS
 
   GRANT_2M  // give Word RAM to Sub
-  move.w   #FILE_IPX, GA_REG_COMCMD1  // send the param to sub
-  move.w   #CMD_LOAD_FILE, GA_REG_COMCMD0	//send the command to sub
-0:tst.w    GA_REG_COMSTAT0			//wait for response on status reg #0
+  move.w   #FILE_IPX, GA_REG_COMM_CMD1  // send the param to sub
+  move.w   #CMD_LOAD_FILE, GA_REG_COMM_CMD0	//send the command to sub
+0:tst.w    GA_REG_COMM_STAT0			//wait for response on status reg #0
   beq      0b
-  move.w   #0, GA_REG_COMCMD0	//send idle command
-1:tst.w    GA_REG_COMSTAT0			//wait for response (wait for 0 from Sub)
+  move.w   #0, GA_REG_COMM_CMD0	//send idle command
+1:tst.w    GA_REG_COMM_STAT0			//wait for response (wait for 0 from Sub)
   bne      1b
   WAIT_2M
 

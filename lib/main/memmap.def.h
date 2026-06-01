@@ -21,7 +21,7 @@
 /**
  * Work RAM
  */
-#define WORK_RAM 0xFF0000
+#define WKRAM 0xFF0000
 
 /**
  * @brief Base address of Word RAM in 2M mode
