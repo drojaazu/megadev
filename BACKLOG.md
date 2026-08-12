@@ -38,13 +38,13 @@ toolchain was available during the audit. VER-1 must land first so that fixes ca
 
 | ID | Sev | Status | Item |
 |---|---|---|---|
-| LIB-1 | S1 | open | KB-1, KB-2 — `mov.l` is not an M68k mnemonic. `lib/init.macros.s:27` is in `BASIC_INIT`, the startup path every module runs; `lib/math.h:75,77,103,105`. |
+| LIB-1 | S4 | **done** | ~~`mov.l` is not an M68k mnemonic~~ — **false positive**, GNU as accepts it as an alias for `move` (identical encoding, 0x22d8). Kept as style rule STYLE-1 and corrected in all 5 places. |
 | LIB-2 | S1 | open | KB-3 — `divu()`/`div()` assign `out.quot` twice and never set `out.rem`. `lib/math.h:46-47,59-60`. |
 | LIB-3 | S1 | open | KB-4 — `div()` documented as signed but emits `divu.w`. `lib/math.h:58`. |
 | LIB-4 | S1 | open | KB-8 — `int_to_f32` casts a value shifted left by 16 to `short`; always yields 0. `lib/fixed.h:34`. |
 | LIB-5 | S1 | open | KB-5 — non-static `strcpy` **definition** in `lib/memory.h:120`; multiple-definition link error. |
 | LIB-6 | S1 | open | KB-6 — tentative definitions `bram_work_buff`/`bram_string_buff` in `lib/sub/bram.h:15,16`. |
-| LIB-7 | S1 | open | KB-7 — `EXVECEXVEC_TRACE` botched find-and-replace, `lib/main/cd_exception.s:79`. |
+| LIB-7 | S2 | open | KB-7 — `EXVECEXVEC_TRACE` botched find-and-replace, `lib/main/cd_exception.s:79`. The file **assembles**; needs link-level verification to confirm. |
 | LIB-8 | S1 | open | KB-10 — illegal cast-to-array-type, `lib/main/bios.h:108`. |
 | LIB-9 | S1 | open | KB-9 — `time_mapping` is not valid C and has zero references; delete. `lib/main/io.h:94`. |
 | LIB-10 | S1 | open | KB-11 — `btst` given a mask instead of a bit index, in both the C and asm copies. Fix requires adding `_BIT` companions to `lib/main/io.def.h` (INV-6). |
@@ -52,6 +52,10 @@ toolchain was available during the audit. VER-1 must land first so that fixes ca
 | LIB-12 | S2 | open | `lib/memory.h` — every `memset*`/`memcpy*` uses a `dbf` loop with a **16-bit** counter. Lengths > 65536 silently truncate; length 0 wraps and loops 65536 times. Undocumented. Document or guard. |
 | BR-1 | S1 | open | KB-27 — the `macros.s` → `macro.s` rename is unpropagated across 39 files; **`feature_sub_bios_overhaul` does not build.** Must land atomically with its consumers. |
 | BR-2 | S1 | open | KB-20 … KB-26 — seven defects that exist only on `feature_sub_bios_overhaul`. See SPEC.md OD-5 for whether to fix on-branch or after merge. |
+| LIB-13 | S1 | open | KB-28 — `z80_init` is a non-static function definition in `lib/main/z80.h:78` (INV-9). Link-verified. Found by the gate, missed by the audit. Propagates to `comm.h`. |
+| LIB-14 | S2 | open | KB-29 — `lib/main/vdp.s:62,64,65,70,72` uses register size suffixes (`move.w d1.w, d3.w`) that GNU as rejects. Assemble-verified, 5 errors. No project references this file. |
+| LIB-15 | S2 | open | KB-30 — `lib/str_util.s:69` `.macro ATOI` is never closed with `.endm`; **the entire file fails to assemble**. Closes ARCH-6 too. No project references it. |
+| LIB-16 | S2 | open | KB-31 — `lib/sub/commsync.s:38-53` `.global _COMCMD0: .word 0` is invalid; 16 errors. Already deleted on `feature_sub_bios_overhaul` — confirm intent and delete on master. |
 | BR-3 | S2 | open | `examples/bram/src/bram_demo_init.s:27` includes `<init_data.s>`, which exists at **no ref** in the repo. Determine intent; restore or remove. |
 
 ## Architecture
