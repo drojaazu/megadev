@@ -5,8 +5,9 @@
 > It is not a tutorial (see [docs/manual.md](docs/manual.md)) and not a task list (see
 > [BACKLOG.md](BACKLOG.md)).
 >
-> **Status:** initial build-out, 2026-08-13. Sections marked *(unverified)* are assertions that have
-> not been mechanically checked; §7 records how confident we are in each hardware claim.
+> **Status:** 2026-08-13. §8 has been re-tested against m68k gcc 14.2.0 in the devcontainer; two
+> entries from the original by-inspection audit were false positives and are recorded as withdrawn.
+> §7 records how confident we are in each *hardware* claim, which no toolchain can settle.
 
 ---
 
@@ -89,6 +90,11 @@ Additional rules, all mechanically checkable:
   than a compile error. *(See KB-11.)*
 - **INV-8** — Every header MUST be self-contained: including it, and nothing else, into an empty
   translation unit must compile cleanly. Enforced by Tier 0.1 (§6).
+- **INV-9** — A header MUST NOT define storage or a non-`static` function. Two translation units
+  including it must link. Enforced by Tier 0.4 (§6). *(Currently violated by `lib/main/z80.h`
+  (`z80_init`), `lib/memory.h` (`strcpy`) and `lib/sub/bram.h` (five arrays).)*
+- **STYLE-1** — Use canonical M68k mnemonics. GNU `as` accepts `mov` as an alias for `move` — both
+  assemble to the identical encoding — but only `move` is written. Enforced by Tier 1.
 
 ### 2.2 Main / Sub separation
 
@@ -217,8 +223,8 @@ Megadev targets obsolete hardware, so "run the test suite" needs definition. Ver
 
 | Tier | What it proves | Status |
 |---|---|---|
-| **0 — Build gate** | The toolchain accepts the source. | **Implemented** on `feat/verification-gate`; not yet run against a real toolchain. |
-| **1 — Convention lint** | The rules in §2–§3 actually hold. | **Implemented and passing** on `feat/verification-gate`. |
+| **0 — Build gate** | The toolchain accepts the source. | **Implemented and run.** Headers 70 pass; ODR 34 pass / 5 fail; assembly 21 pass / 3 fail / 2 excluded. |
+| **1 — Convention lint** | The rules in §2–§3 actually hold. | **Implemented and passing** (16 baselined). |
 | **2 — On-target tests** | The code computes the right answers on a real 68000. | **Specified, not built.** |
 | **3 — Hardware validation** | Behaviour matches real Mega CD silicon. | Manual; tracked as provenance (§7). |
 
@@ -230,11 +236,28 @@ Three jobs, run inside the devcontainer image:
    header's `#include`, compiled `-m68000 -fsyntax-only -Wall -Wextra -Werror=infinite-recursion`.
    This requires each header to be classified **Main-valid / Sub-valid / both** — that classification
    is itself spec content and does not currently exist.
-2. **Assemble every** `.s` and `.macro.s` via `gcc -x assembler-with-cpp -c`.
+2. **Assemble every** `.s` and `.macro.s` via `gcc -x assembler-with-cpp -c`. Files that cannot
+   assemble standalone *by contract* are listed with their reason in `tools/check/asm-exclude.txt`;
+   everything else must assemble.
 3. **Full build** of every example and `new_project` through to final `.iso` / `.cart`.
+4. **One-definition-rule check.** Two translation units include the same header and are linked
+   together (`-fno-common`). See INV-9.
 
-Rationale: every defect in §8 is a compile-or-assemble failure. Tier 0 alone would have caught all of
-them, and none were caught, because the kit has never been built by anything but hand.
+> **What Tier 0.1 does NOT catch — measured, not assumed.**
+> On its first real run the per-header compile reported **70 passed, 0 failed**, while the library
+> demonstrably contains defects. A header compile cannot see:
+> - **macro defects**, because a macro that is never expanded is never parsed. `time_mapping`
+>   (`io.h:94`) and `bios_work_buffer` (`bios.h:108`) are both hard compile errors — but only in a
+>   TU that *uses* them.
+> - **inline-asm defects**, because the asm string of a `static inline` that is never instantiated
+>   is never handed to the assembler.
+> - **one-definition-rule defects**, which by construction need two TUs and a linker. This is why
+>   Tier 0.4 exists; it found 5 failures on its first run, one of which (`z80_init`) the manual
+>   audit had missed entirely.
+>
+> An earlier draft of this document claimed Tier 0 alone would have caught every defect in §8.
+> That was wrong. Tier 0 catches assembly-level and standalone-compile defects; **the macro,
+> semantic and cross-TU classes need Tier 0.4 and Tier 2.**
 
 ### Tier 1 — convention lint
 
@@ -294,23 +317,29 @@ Every hardware assertion carries one of: `HW` (verified on real hardware, model 
 
 ## 8. Known Broken
 
-Verified by inspection on 2026-08-13. **Not yet compile-verified** — no m68k toolchain was available
-on the machine used for the audit. Marked ✅ = present on `master`; ⚠️ = introduced on
+Catalogued by inspection on 2026-08-13, then **re-tested against m68k gcc 14.2.0** in the
+devcontainer the same day. Every ✅ row below is now backed by a compiler, linker or assembler
+diagnostic, not by reading. Marked ✅ = present on `master`; ⚠️ = introduced on
 `feature_sub_bios_overhaul` and not on master.
+
+**Two entries from the original inspection were wrong and have been withdrawn:**
+
+| Withdrawn | Why |
+|---|---|
+| ~~`mov.l` is not an M68k mnemonic~~ (was KB-1, KB-2) | **False positive.** GNU `as` accepts `mov` as an alias for `move`; `mov.l (a0)+,(a1)+` and `move.l (a0)+,(a1)+` both assemble to `0x22d8`. `BASIC_INIT` assembles cleanly. Retained only as a style rule (STYLE-1) at the maintainer's request, and now fixed. |
+| ~~`cd_exception.s` fails to assemble~~ (part of KB-7) | The file **assembles cleanly**. `EXVECEXVEC_TRACE` is emitted as an undefined symbol reference, so if it is genuinely undefined it fails at *link*, not assembly. Not yet link-verified — see KB-7 below. |
 
 | ID | Where | Defect | On master |
 |---|---|---|---|
-| KB-1 | `lib/init.macros.s:27` | `mov.l` is not an M68k mnemonic (line 19 correctly uses `move.l`). In `BASIC_INIT` — the startup path **every module runs**. | ✅ |
-| KB-2 | `lib/math.h:75,77,103,105` | same invalid `mov.l` | ✅ |
 | KB-3 | `lib/math.h:46-47, 59-60` | `out.quot` assigned twice; `out.rem` **never assigned**. `divu()` and `div()` both return the wrong quotient and an uninitialised remainder. | ✅ |
 | KB-4 | `lib/math.h:58` | `div()` documented as signed (DIVS) but emits `divu.w` | ✅ |
-| KB-5 | `lib/memory.h:120` | `void strcpy(...)` — non-static, non-inline function **definition** in a header; multiple-definition link error across TUs | ✅ |
-| KB-6 | `lib/sub/bram.h:15,16` | `bram_work_buff[0x640]`, `bram_string_buff[12]` — tentative definitions in a header; 1,612 bytes of BSS per TU, or a link failure under `-fno-common` | ✅ |
-| KB-7 | `lib/main/cd_exception.s:79` | `EXVECEXVEC_TRACE` — botched find-and-replace; undefined symbol | ✅ |
-| KB-8 | `lib/fixed.h:34` | `int_to_f32` casts a value shifted left by 16 to `short` — **always yields 0** | ✅ |
-| KB-9 | `lib/main/io.h:94` | `#define time_mapping ((u8)[0x100] TIME_MAPPING)` — not valid C in any reading; zero references repo-wide | ✅ |
-| KB-10 | `lib/main/bios.h:108` | `(*(s8[0x200]) BIOS_WORK_BUFFER)` — cast to array type is illegal C; the commented-out line 109 is the working version | ✅ |
-| KB-11 | `lib/main/comm.h:51,74` + `comm.macros.s:41,53` | `btst` given a **mask** (`SCTRL_TX_FULL (1 << 0)`, `io.def.h:206`; `SCTRL_RX_READY (1 << 1)`, `io.def.h:213`) where it needs a **bit index** — tests the wrong bit, in both the C and assembly copies. Root cause: `io.def.h` has no `_BIT` companions (INV-6). | ✅ |
+| KB-5 | `lib/memory.h:120` | **Link-verified.** `void strcpy(...)` — non-static function definition in a header; `multiple definition of 'strcpy'` when two TUs link. | ✅ |
+| KB-6 | `lib/sub/bram.h:15,16` | **Link-verified.** Tentative definitions in a header. **Five** duplicate symbols, not two: `bram_work_buff`, `bram_string_buff`, `brmstat_results`, `brmserch_results`, `brmread_results`. Fails under `-fno-common` (the GCC 10+ default). Propagates to `lib/sub/sub.h`. | ✅ |
+| KB-7 | `lib/main/cd_exception.s:79` | `EXVECEXVEC_TRACE` — botched find-and-replace. The file assembles; the symbol becomes an undefined reference, so this surfaces at **link**. Not yet link-verified. | ✅ |
+| KB-8 | `lib/fixed.h:34` | **Proven by `_Static_assert`**: `int_to_f32(1)` and `int_to_f32(5)` both evaluate to 0. Shifts left by 16 then casts to `short`. | ✅ |
+| KB-9 | `lib/main/io.h:94` | **Compile-verified**: `error: expected expression before '[' token` when expanded. Zero references repo-wide. | ✅ |
+| KB-10 | `lib/main/bios.h:108` | **Compile-verified**: `error: cast specifies array type` when expanded. The commented-out line 109 is the working version. | ✅ |
+| KB-11 | `lib/main/comm.h:51,74` + `comm.macros.s:41,53` | **Proven by `_Static_assert`**: `SCTRL_TX_FULL == 1` and `SCTRL_RX_READY == 2` — masks. Passed to `btst` they select bits 1 and 2 instead of bits 0 and 1, in both the C and assembly copies. Root cause: `io.def.h` has no `_BIT` companions (INV-6). | ✅ |
 | KB-12 | `lib/main/gate_arr.def.h` vs `lib/sub/gate_arr.def.h` | Same macro names, different values, non-matching include guards (INV-7) | ✅ |
 | KB-13 | `lib/str_util.s:19` vs `lib/str_util.h:26` | `hextoa8/16/32`: assembly writes an `0xFF` terminator, C writes **no terminator**. Same name, same documented contract, different behaviour. | ✅ |
 | KB-14 | `megadev.make:30-48` | `MEGADEV_PATH` is not sanity-checked; unset yields `LIB_PATH=/lib` | ✅ |
@@ -322,11 +351,19 @@ on the machine used for the audit. Marked ✅ = present on `master`; ⚠️ = in
 | KB-20 | `lib/main/memmap.h:35` | `#define exvec_vblank (...)z` — stray trailing `z`; any use is a syntax error | ⚠️ branch only |
 | KB-21 | `lib/sub/bios.h` | `bios_drive_init()` calls **itself** with an argument; should call `bios_drive_init_ex` | ⚠️ branch only |
 | KB-22 | `lib/sub/memmap.def.h` | `#define SP_INIT USERALL0` — typo for `USERCALL0` | ⚠️ branch only |
-| KB-23 | `lib/main/vdp.s:23,60` | `lea (vdp_ctrl).l` — `vdp_ctrl` is a **C macro**; the assembler has never seen it | ⚠️ branch only |
+
 | KB-24 | `lib/sub/gate_arr.macro.s:34,47,48` | references `BIT_GA_REG_DMNA` / `BIT_GA_REG_RET`, which exist nowhere | ⚠️ branch only |
 | KB-25 | `lib/main/comm.macro.s:23,26` | calls `Z80_DO_BUSREQ`/`Z80_DO_BUSRELEASE`; the macros are `Z80_REQUEST_BUS`/`Z80_RELEASE_BUS` | ⚠️ branch only |
 | KB-26 | `lib/sub/boot.macro.s` | `.macro CDBOOT` whose body is `jsr CDBOOT` — invokes itself | ⚠️ branch only |
 | KB-27 | 39 files on `feature_sub_bios_overhaul` | Rename `macros.s` → `macro.s` (commit `bd4d06c`) not propagated; `main.macro.s` and `sub.macro.s` deleted but still included. **The branch does not build.** | ⚠️ branch only |
+| KB-28 | `lib/main/z80.h:78` | **Link-verified — found by the gate, missed by the audit.** `z80_init` is a non-`static` function definition in a header (INV-9); `multiple definition of 'z80_init'` across two TUs. Propagates to `lib/main/comm.h`. | ✅ |
+| KB-29 | `lib/main/vdp.s:62,64,65,70,72` | **Assemble-verified.** `move.w d1.w, d3.w` and similar — register size suffixes GNU `as` rejects. 5 errors. **This is on `master`, not branch-only as first recorded.** No project references this file, so it has never been assembled. | ✅ |
+| KB-30 | `lib/str_util.s:69` | **Assemble-verified.** `.macro ATOI` is never closed with `.endm`: `Error: unexpected end of file in macro 'atoi' definition`. **The whole file therefore cannot assemble**, and no project references it. Also an INV-3 violation. | ✅ |
+| KB-31 | `lib/sub/commsync.s:38-53` | **Assemble-verified.** `.global _COMCMD0: .word 0` — a label definition cannot follow `.global` on one line; 16 errors. Already deleted on `feature_sub_bios_overhaul`. | ✅ |
+
+**A structural observation from the first gate run:** KB-29, KB-30 and KB-31 are all in files that no
+example or template references. The library contains assembly that has **never once been assembled**.
+That is the strongest available argument for Tier 0.2 as a standing gate rather than a one-off audit.
 
 That KB-20 … KB-27 exist *only* on the feature branch, and went unnoticed across five commits, is
 the argument for §6 in one line.
