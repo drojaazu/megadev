@@ -51,6 +51,10 @@
   /**
  * @defgroup sub_garegs_subcode Disc Subcode Data
  * @ingroup sub_garegs
+ * 
+ * @warning Official documentation indicates subcode registers should not be
+ * accessed by the user and that the related BIOS calls should be used instead.
+ * 
  */
 
  /**
@@ -90,18 +94,6 @@
 #define GA_REG_RESET 0xFF8000
 
 /**
- * @def GA_REG_RESET_HI
- * @ingroup sub_garegs_reg01
- */
-#define GA_REG_RESET_HI GA_REG_RESET
-
-/**
- * @def GA_REG_RESET_LO
- * @ingroup sub_garegs_reg01
- */
-#define GA_REG_RESET_LO (GA_REG_RESET + 1)
-
-/**
  * @def GA_SUB_RESET_BIT
  * @ingroup sub_garegs_reg01
  *
@@ -110,7 +102,16 @@
 
 /**
  * @def GA_SUB_RESET
+ * @brief Reset Sup CPU
  * @ingroup sub_garegs_reg01
+ * @alias RES
+ *
+ * @param Read
+ * - 0: CPU is being reset
+ * - 1: Reset complete, CPU operating
+ * @param Write
+ * - 0: Initiate CPU reset
+ * - 1: No effect
  *
  * @details
  * Reset time is 100ms.
@@ -128,9 +129,14 @@
  * @def GA_LED_R
  * @brief Red LED Control
  * @ingroup sub_garegs_reg01
+ * @alias LEDR
  *
- * @param 0 LED Off
- * @param 1 LED On
+ * @param Read
+ * - 0: Red LED is off
+ * - 1: Red LED is on
+ * @param Write
+ * - 0: Turn red LED off
+ * - 1: Turn red LED on
  */
 #define GA_LED_R (1 << GA_LED_R_BIT)
 
@@ -145,9 +151,14 @@
  * @def GA_LED_G
  * @brief Green LED Control
  * @ingroup sub_garegs_reg01
+ * @alias LEDG
  *
- * @param 0 LED Off
- * @param 1 LED On
+ * @param Read
+ * - 0: Green LED is off
+ * - 1: Green LED is on
+ * @param Write
+ * - 0: Turn green LED off
+ * - 1: Turn green LED on
  */
 #define GA_LED_G (1 << GA_LED_G_BIT)
 
@@ -155,6 +166,8 @@
  * @def GA_ROM_VER
  * @brief ROM Version
  * @ingroup sub_garegs_reg01
+ *
+ * @param Read ROM version
  */
 #define GA_ROM_VER (0b1111 << 4)
 
@@ -209,11 +222,26 @@
  */
 #define GA_CEDE_WDRAM2M_BIT 0
 
+// clang-format off
 /**
  * @def GA_CEDE_WDRAM2M
- * @brief Change Word RAM ownership bitmask
+ * @brief Change Word RAM ownership
  * @ingroup sub_garegs_reg02
+ * @alias RET
+ *
+ * @param Read
+ * - 0: Word RAM is not controlled by Main CPU
+ * - 1: Word RAM is controlled by Main CPU
+ * @param Write
+ * - 0: Assign Word RAM control to Sub CPU
+ * - 1: Assign Word RAM control to Main CPU
+ *
+ * @todo Regarding writing 0 in 2M mode: the "The Hardware" documentation has
+ * nothing to say (undefined). The "Development Manual" documentation indicates
+ * a write of 0 assigns to Sub CPU, though this seems redundant with DMNA. Need
+ * to research effects on actual hardware.
  */
+// clang-format on
 #define GA_CEDE_WDRAM2M (1 << GA_CEDE_WDRAM2M_BIT)
 
 /**
@@ -223,9 +251,18 @@
 #define GA_SWAP_WDRAM1M_BIT 0
 
 /**
- * @def GA_CEDE_WDRAM2M
+ * @def GA_SWAP_WDRAM1M
  * @brief Change Word RAM ownership bitmask
  * @ingroup sub_garegs_reg02
+ * @alias RET
+ *
+ * @param Read
+ * - 0: Main CPU controls Word RAM bank 0 and Sub CPU controls bank 1
+ * - 1: Main CPU controls Word RAM bank 1 and Sub CPU controls bank 0
+ * @param Write
+ * - 0: Assign Word RAM bank 0 to Main CPU and bank 1 to Sub CPU
+ * - 1: Assign Word RAM bank 1 to Main CPU and bank 0 to Sub CPU
+ *
  */
 #define GA_SWAP_WDRAM1M (1 << GA_SWAP_WDRAM1M_BIT)
 
@@ -239,6 +276,13 @@
  * @def GA_ACQUIRE_WDRAM2M
  * @brief Main CPU no Word RAM access flag bitmask
  * @ingroup sub_garegs_reg02
+ * @alias DMNA
+ *
+ * @param Read
+ * - 0 (Word RAM 2M mode): Word RAM controlled by Main CPU
+ * - 1 (Word RAM 2M mode): Word RAM control given to Sub CPU
+ * - 0 (Word RAM 1M mode): Word RAM bank control swap completed
+ * - 1 (Word RAM 1M mode): Word RAM bank control swap in progress
  */
 #define GA_ACQUIRE_WDRAM2M (1 << GA_ACQUIRE_WDRAM2M_BIT)
 
@@ -252,6 +296,14 @@
  * @def GA_WDRAM2M_MODE
  * @brief Word RAM layout bitmask
  * @ingroup sub_garegs_reg02
+ * @alias MODE
+ *
+ * @param Read
+ * - 0: Word RAM is in 2M mode
+ * - 1: Word RAM is in 1M mode
+ * @param Write
+ * - 0: Set Word RAM mode to 2M
+ * - 1: Set Word RAM mode to 1M
  */
 #define GA_WDRAM2M_MODE (1 << GA_WDRAM_MODE_BIT)
 
@@ -273,10 +325,10 @@
  * |\b W| | | | | |◯|◯|◯| | | | |◯|◯|◯|◯|
  *
  * @param GA_CDC_REGS1 CDC register address
- * @param GA_CDC_DESTINATION Device destination
+ * @param GA_DATA_DEST Device destination
  * @param UBR Upper byte ready
- * @param GA_CDC_DATA_READY Data set ready
- * @param GA_TRANSFER_COMPLETE End of data transfer
+ * @param GA_DATA_READY Data set ready
+ * @param GA_DATA_COMPLETE End of data transfer
  *
  */
 // clang-format on
@@ -309,25 +361,28 @@
 #define GA_CDC_REGS1 0b1111
 
 /**
- * @def GA_CDC_DESTINATION
- * @brief Sets the
- * @ingroup sub_garegs_reg03
+ * @def GA_DATA_DEST
+ * @brief Sets the CDC data transfer destination
+ * @ingroup sub_garegs_reg03\
+ * @alias DD
+ *
+ * @param Read Get data transfer destination
+ * @param Write Set data transfer destination
  *
  * @details
- * Specifies the destination for CDC data transfer, as defined
- * here:
- *   |DD2|DD1|DD0|Destination|
- *   |:|:|:|:|
- *   |0|1|0|Main CPU|
- *   |0|1|1|Sub CPU|
- *   |1|0|0|PCM DMA|
- *   |1|0|1|PRG RAM DMA|
- *   |1|1|1|In 2M Mode: Word RAM \n In 1M Mode: Sub CPU controlled Word RAM|
+ * Destination devices:
+ *   |DD2|DD1|DD0|Destination|Symbol|
+ *   |:|:|:|:|:|
+ *   |0|1|0|Main CPU| @ref GA_CDC_DEST_MAIN |
+ *   |0|1|1|Sub CPU| @ref GA_CDC_DEST_SUB |
+ *   |1|0|0|PCM DMA| @ref GA_CDC_DEST_PCM_DMA |
+ *   |1|0|1|PRG RAM DMA| @ref GA_CDC_DEST_SUB_DMA |
+ *   |1|1|1|Sub CPU controlled Word RAM| @ref GA_CDC_DEST_WDRAM_DMA |
  *
- *   All other values are invalid.
+ * All other values are invalid.
  *
  */
-#define GA_CDC_DESTINATION 0b111
+#define GA_DATA_DEST 0b111
 
 /**
  * @def GA_CDC_DEST_MAIN
@@ -360,28 +415,41 @@
 #define GA_CDC_DEST_WDRAM_DMA 0b111
 
 /**
- * @def GA_CDC_DATA_READY_BIT
+ * @def GA_DATA_READY_BIT
  * @ingroup sub_garegs_reg03
  */
-#define GA_CDC_DATA_READY_BIT 6
+#define GA_DATA_READY_BIT 6
 
 /**
- * @def GA_CDC_DATA_READY
+ * @def GA_DATA_READY
  * @ingroup sub_garegs_reg03
+ * @alias DSR
+ *
+ * @param Read
+ * - 0: Data not yet arrived from CDC / Data sent to destination from gate array
+ * - 1: Data has arrived in the gate array from the CDC
  */
-#define GA_CDC_DATA_READY (1 << GA_CDC_DATA_READY_BIT)
+#define GA_DATA_READY (1 << GA_DATA_READY_BIT)
 
 /**
- * @def GA_TRANSFER_COMPLETE_BIT
+ * @def GA_DATA_COMPLETE_BIT
  * @ingroup sub_garegs_reg03
  */
-#define GA_TRANSFER_COMPLETE_BIT 7
+#define GA_DATA_COMPLETE_BIT 7
 
 /**
- * @def GA_TRANSFER_COMPLETE
+ * @def GA_DATA_COMPLETE
  * @ingroup sub_garegs_reg03
+ *
+ * @param Read
+ * - 0: Data still pending from CDC
+ * - 1: All data from CDC has been sent
+ *
+ * @details
+ * Reset when a data transfer destination is set (see \ref GA_DATA_DEST) or when
+ * data transfer from the CDC begins.
  */
-#define GA_TRANSFER_COMPLETE (1 << GA_TRANSFER_COMPLETE_BIT)
+#define GA_DATA_COMPLETE (1 << GA_DATA_COMPLETE_BIT)
 
 #pragma endregion
 
@@ -438,17 +506,23 @@
  * \b GA_REG_CDC_DATA
  * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
  * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
- * | |\b REG_CDC_DATA||||||||||||||||
+ * | |\b CDC_DATA||||||||||||||||
  * |\b R|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|
  * |\b W|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|
  *
- * @param GA_REG_CDC_DATA CDC read data
+ * @param CDC_DATA CDC read data
  */
 
 /**
  * @def GA_REG_CDC_DATA
  * @brief CDC Host Data
  * @ingroup sub_garegs_reg05
+ *
+ * @warning Word access only; Read only; No bit level opcodes
+ *
+ * @details
+ * Contains the two accumulated bytes from the CDC before transfer to their
+ * destination.
  *
  */
 #define GA_REG_CDC_DATA 0xFF8008
@@ -476,13 +550,7 @@
  * @attention Write Only
  *
  * @param A DMA destination address
- * \n Specifies the address for CDC DMA transfer
- * - For PCM DMA: bits up to A12 are used
- * - For 1M Word RAM: bits up to A16 are used
- * - For 2M Word RAM: bits up to A17 are used
- * - For PRG-RAM: all bits are used
- *
- * Unused bits will be read as 0.
+
  *
  */
 
@@ -491,8 +559,25 @@
  * @brief CDC DMA Destination
  * @ingroup sub_garegs_reg06
  *
+ * @warning Word access only; Write only; No bit level opcodes
+ *
+ * @details
+ * Specifies the address for CDC DMA transfer
+ *
+ * - For PCM DMA: bits up to A12 are used
+ * - For 1M Word RAM: bits up to A16 are used
+ * - For 2M Word RAM: bits up to A17 are used
+ * - For PRG-RAM: all bits are used
+ *
+ * Unused bits will be read as 0.
+ *
  */
 #define GA_REG_DMA_ADDRESS 0xFF800A
+
+#define DMAADDR_WDRAM1M(addr) (((addr) & 0x3FFF) >> 3)
+#define DMAADDR_WDRAM2M(addr) (((addr) & 0x7FFF) >> 3)
+#define DMAADDR_PCM(addr)     (((addr) & 0x03FF) >> 3)
+#define DMAADDR_PRGRAM(addr)  ((addr) >> 3)
 
 #pragma endregion
 
@@ -512,19 +597,24 @@
  * |\b R| | | | |◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|
  * |\b W| | | | |◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|
  *
- * @note Word Access
+ * @note Word access only
  *
- * @param SW CDC read data
- * @details R: Read current value / W: Reset the clock (0 only)
- * This is a general use timer, though it is primarily used for CDD/CDC
- * timing. Each tick is 30.72 microseconds.
+ * @param SW Timer data
+
  */
 
 /**
  * @def GA_REG_STOPWATCH
  * @brief Stopwatch
  * @ingroup sub_garegs_reg07
+ * @alias SW
  *
+ * @param Read Current timer value (0 to 4095)
+ * @param Write Resets timer (see below)
+ *
+ * @details
+ * This is a general use timer, though it is primarily used for CDD/CDC
+ * timing. Each tick is 30.72 microseconds.
  */
 #define GA_REG_STOPWATCH 0xFF800C
 
@@ -555,6 +645,10 @@
  */
 #define GA_REG_COMM_FLAGS 0xFF800E
 
+#define GA_REG_COMM_FLAGS_HI GA_REG_COMM_FLAGS
+
+#define GA_REG_COMM_FLAGS_LO (GA_REG_COMM_FLAGS + 1)
+
 #pragma endregion
 
 #pragma region GA_REG_COMM_CMD
@@ -570,6 +664,7 @@
  * | |CMD||||||||||||||||
  * |\b R|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|
  * |\b W|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|
+ *
  */
 
 /**
@@ -577,7 +672,6 @@
  * @brief Comm Command 0 (Main -> Sub)
  * @ingroup sub_garegs_reg09
  *
- * @details R: 16 bit data
  */
 #define GA_REG_COMM_CMD0 0xFF8010
 
@@ -585,6 +679,7 @@
  * @def GA_REG_COMM_CMD1
  * @brief Comm Command  (Main -> Sub)
  * @ingroup sub_garegs_reg09
+ *
  */
 #define GA_REG_COMM_CMD1 0xFF8012
 
@@ -700,9 +795,12 @@
  * @details
  * | |7|6|5|4|3|2|1|0|7|6|5|4|3|2|1|0|
  * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
- * | | | | | | | |\b LEDG|\b LEDR|\b VER|||| | | |\b RES|
- * |\b R| | | | | | |◯|◯|◯|◯|◯|◯| | | |◯|
- * |\b W| | | | | | |◯|◯| | | | | | | |◯|
+ * | | | | | | | | | |\b TD||||||||
+ * |\b R| | | | | | | | |◯|◯|◯|◯|◯|◯|◯|◯|
+ * |\b W| | | | | | | | |◯|◯|◯|◯|◯|◯|◯|◯|
+ *
+ * @param TD Timer
+ *
  */
 
 /**
@@ -1117,11 +1215,6 @@
  * @ingroup sub_garegs_reg41
  *
  */
-/**
- * @def GA_REG_STAMPSIZE
- * @sa ga_reg_stampsize
- * @ingroup sub_garegs_gfx
- */
 #define GA_REG_STAMPSIZE 0xFF8058
 
 /**
@@ -1165,8 +1258,7 @@
 #pragma region GA_REG_STAMPMAPBASE
 
 /**
- * @def GA_REG_STAMPMAPBASE
- * @sa ga_reg_stampmapbase
+ * @defgroup sub_garegs_reg42 Reg. #42 - Stamp Map Base
  * @ingroup sub_garegs_gfx
  *
  * @warning Word access only; No bit level opcodes
@@ -1179,7 +1271,13 @@
     32x32px stamps, 256x256px stamp map: Multiples of 0x80
     16x16px stamps, 4096x4096px stamp map: Multiples of 0x20000
     32x32px stamps, 4096x4096px stamp map: Multiples of 0x8000
+ */
 
+/**
+ * @def GA_REG_STAMPMAPBASE
+ * @brief Stamp Map Base
+ * @ingroup sub_garegs_reg42
+ *
  */
 #define GA_REG_STAMPMAPBASE 0xFF805A
 
@@ -1188,11 +1286,17 @@
 #pragma region GA_REG_IMGBUFVSIZE
 
 /**
- * @def GA_REG_IMGBUFVSIZE
- * @sa ga_reg_imgbufvsize
+ * @defgroup sub_garegs_reg43 Reg. #43 - Image Buffer V Size
  * @ingroup sub_garegs_gfx
  *
  * @warning No bit level opcodes
+ *
+ */
+
+/**
+ * @def GA_REG_IMGBUFVSIZE
+ * @ingroup sub_garegs_reg43
+ *
  */
 #define GA_REG_IMGBUFVSIZE 0xFF805C
 
@@ -1201,11 +1305,17 @@
 #pragma region GA_REG_IMGBUFSTART
 
 /**
- * @def GA_REG_IMGBUFSTART
- * @sa ga_reg_imgbufstart
+ * @defgroup sub_garegs_reg44 Reg. #44 - Image Buffer Start
  * @ingroup sub_garegs_gfx
  *
  * @warning Word access only; No bit level opcodes
+ *
+ */
+
+/**
+ * @def GA_REG_IMGBUFSTART
+ * @ingroup sub_garegs_reg44
+ *
  */
 #define GA_REG_IMGBUFSTART 0xFF805E
 
@@ -1214,9 +1324,14 @@
 #pragma region GA_REG_IMGBUFOFFSET
 
 /**
- * @def GA_REG_IMGBUFOFFSET
- * @sa ga_reg_imgbufoffset
+ * @defgroup sub_garegs_reg45 Reg. #45 - Image Buffer Offset
  * @ingroup sub_garegs_gfx
+ *
+ */
+
+/**
+ * @def GA_REG_IMGBUFOFFSET
+ * @ingroup sub_garegs_reg45
  */
 #define GA_REG_IMGBUFOFFSET 0xFF8060
 
@@ -1225,11 +1340,16 @@
 #pragma region GA_REG_IMGBUFHDOTSIZE
 
 /**
- * @def GA_REG_IMGBUFHDOTSIZE
- * @sa ga_reg_imgbufhdotsize
+ * @defgroup sub_garegs_reg46 Reg. #46 - Image Buffer H Dot Size
  * @ingroup sub_garegs_gfx
  *
  * @warning Word access only; No bit level opcodes
+ *
+ */
+
+/**
+ * @def GA_REG_IMGBUFHDOTSIZE
+ * @ingroup sub_garegs_reg46
  */
 #define GA_REG_IMGBUFHDOTSIZE 0xFF8062
 
@@ -1238,11 +1358,16 @@
 #pragma region GA_REG_IMGBUFVDOTSIZE
 
 /**
- * @def GA_REG_IMGBUFVDOTSIZE
- * @sa ga_reg_imgbufvdotsize
+ * @defgroup sub_garegs_reg47 Reg. #47 - Image Buffer V Dot Size
  * @ingroup sub_garegs_gfx
  *
  * @warning Word access only; No bit level opcodes
+ *
+ */
+
+/**
+ * @def GA_REG_IMGBUFVDOTSIZE
+ * @ingroup sub_garegs_reg47
  */
 #define GA_REG_IMGBUFVDOTSIZE 0xFF8064
 
@@ -1251,11 +1376,16 @@
 #pragma region GA_REG_TRACEVECTBASE
 
 /**
- * @def GA_REG_TRACEVECTBASE
- * @sa ga_reg_tracevectbase
+ * @defgroup sub_garegs_reg48 Reg. #48 - Trace Vector Base
  * @ingroup sub_garegs_gfx
  *
  * @warning Word access only; No bit level opcodes
+ *
+ */
+
+/**
+ * @def GA_REG_TRACEVECTBASE
+ * @ingroup sub_garegs_reg48
  */
 #define GA_REG_TRACEVECTBASE 0xFF8066
 
@@ -1264,9 +1394,25 @@
 #pragma region GA_REG_SUBCODEADDR
 
 /**
- * @def GA_REG_SUBCODEADDR
- * @sa ga_reg_subcodeaddr
+ * @defgroup sub_garegs_reg49 Reg. #49 - Subcode Address
  * @ingroup sub_garegs_subcode
+ *
+ * @details
+ * \b GA_REG_SUBCODEADDR
+ * | |7|6|5|4|3|2|1|0|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | | | | | | | | | |SAOR|STA|||||| |
+ * |R| | | | | | | | |◯|◯|◯|◯|◯|◯|◯| |
+ * |W| | | | | | | | | | | | | | | | |
+ *
+ * @param STA Subcode top address
+ * @param SAOR Subcode address overrun
+ *
+ */
+
+/**
+ * @def GA_REG_SUBCODEADDR
+ * @ingroup sub_garegs_reg49
  */
 #define GA_REG_SUBCODEADDR 0xFF8068
 
@@ -1275,9 +1421,14 @@
 #pragma region GA_REG_SUBCODEBUF
 
 /**
- * @def GA_REG_SUBCODEBUF
- * @sa ga_reg_subcodebuf
+ * @defgroup sub_garegs_reg50 Reg. #50 - Subcode Buffer
  * @ingroup sub_garegs_subcode
+ *
+ */
+
+/**
+ * @def GA_REG_SUBCODEBUF
+ * @ingroup sub_garegs_reg50
  */
 #define GA_REG_SUBCODEBUF 0xFF8100
 
@@ -1286,9 +1437,14 @@
 #pragma region GA_REG_SUBCODEBUFIMG
 
 /**
- * @def GA_REG_SUBCODEBUFIMG
- * @sa ga_reg_subcodebufimg
+ * @defgroup sub_garegs_reg51 Reg. #51 - Subcode Buffer Image
  * @ingroup sub_garegs_subcode
+ *
+ */
+
+/**
+ * @def GA_REG_SUBCODEBUFIMG
+ * @ingroup sub_garegs_reg51
  */
 #define GA_REG_SUBCODEBUFIMG 0xFF8180
 

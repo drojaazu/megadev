@@ -40,13 +40,32 @@ They are also present for C development, with explicit type casting:
 
 # Bit Level Restrictions and Read/Write Access
 
-Bit level opcode (such as BTST, BCLR, Bcc, etc) usage is limited or restricted on some registers. Furthermore, some registers are read or write only. In either case, here too registers must be accessed properly to prevent system errors.
+Bit level opcode (such as BTST, BCLR, Bcc, etc) usage is limited or restricted on some registers. In such cases you will need to read the entire byte/word, perform any operations on the in-memory copy, then write the entire value back, if necessary. A warning is included 
 
-Registers that have limited
+Furthermore, some registers are explicitly read or write only. This is different from bitfields that have undefined states for reads/writes. For example, on the `GA_REG_RESET` registers, the `ROM_VER` field is valid for reads but not for writes, as illustrated in the Doxygen reference:
 
-| | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-| | | | | | | |**LEDG**|**LEDR**|**VER**|||| | | |**RES**|
-|**R**| | | | | | | |◯| | | | | |◯|◯|◯|
-|**W**| | | | | | | | | | | | | |◯|◯|◯|
+\b GA_REG_RESET
 
+| |7|6|5|4|3|2|1|0|7|6|5|4|3|2|1|0|
+|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+| | | | | | | |\b LED_G|\b LED_R|\b ROM_VER|||| | | |\b SUB_RESET|
+|\b R| | | | | | |◯|◯|◯|◯|◯|◯| | | |◯|
+|\b W| | | | | | |◯|◯| | | | | | | |◯|
+
+Writing to the `ROM_VER` field is not allowed, but it is also not likely to crash the program if it is done. Registers with undefined read/write operations will be noted with an `@note` tag.
+
+However, for registers that are explicitly marked as read or write only, doing so will likely cause a bus error or other exception. In such cases, the fields are marked with an X in Doxygen:
+
+\b GA_REG_CDC_DATA
+
+| |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+| |\b REG_CDC_DATA||||||||||||||||
+|\b R|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|
+|\b W|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|
+
+Such registers/fields will also be tagged with a more serious `@warning` indicator.
+
+# Restricted Registers
+
+Some registers (namely the CD Fader control 

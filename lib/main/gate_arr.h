@@ -48,7 +48,7 @@ typedef u16 volatile * ga_reg16;
  * @copydoc GA_REG_CDC_DATA
  *
  */
-#define ga_reg_cdchostdata ((ga_reg16) GA_REG_CDC_DATA)
+#define ga_reg_cdc_data ((ga_reg16) GA_REG_CDC_DATA)
 
 /**
  * @copydoc GA_REG_STOPWATCH
