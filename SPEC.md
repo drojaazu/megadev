@@ -1,0 +1,396 @@
+# MEGADEV — Project Specification
+
+> **Role of this document.** This is the normative reference for what Megadev must do, what rules its
+> code must follow, what is known to be broken, and which decisions have been made and by whom.
+> It is not a tutorial (see [docs/manual.md](docs/manual.md)) and not a task list (see
+> [BACKLOG.md](BACKLOG.md)).
+>
+> **Status:** initial build-out, 2026-08-13. Sections marked *(unverified)* are assertions that have
+> not been mechanically checked; §7 records how confident we are in each hardware claim.
+
+---
+
+## 1. Purpose & Scope
+
+Megadev is a development kit for the Sega Mega Drive and Sega Mega CD: headers, assembly routines,
+linker scripts, a build layer, documentation and examples, so that a project need not start from
+bare metal.
+
+**Audience.** Developers who already know C or M68k assembly and have some familiarity with embedded
+systems. Megadev is deliberately *less* friendly than SGDK. It favours flexibility for skilled
+developers and a small external-tool footprint over hand-holding.
+
+**Primary target.** The **Mega CD** is the reason this project exists and drives its complexity
+(dual CPU, Gate Array arbitration, Word RAM banking, a disc boot chain, module loading). Mega Drive
+cartridge support is real but secondary.
+
+### In scope
+
+- Mega CD disc projects (IP/SP boot chain, ISO mastering, MMD/SMD module system)
+- Mega Drive cartridge projects
+- C and M68k assembly, sharing one set of hardware definitions
+- Hardware definitions for VDP, Gate Array (Main and Sub views), PCM (RF5C164), CDC/CD-ROM,
+  Backup RAM, controller I/O, Z80 bus control
+- Wrappers for the Mega CD Sub BIOS and the (undocumented) Mega Drive Boot ROM system library
+
+### Explicitly out of scope / deferred
+
+| Item | Status |
+|---|---|
+| Z80 assembly toolchain integration | Deferred. `megadev.make:20` declares `Z80_AS:=sjasmplus` but it is never used. `docs/manual.md:272` calls it "on the roadmap". |
+| clang / LLVM as an alternative compiler | Deferred, speculative (`docs/manual.md:276`). |
+| Mode 1 (Mega CD hardware driven from a cartridge) | **Undefined.** Commit `48167ff` removed the Mode 1 example as having "no real progress". See §9 OD-2. |
+| Main-CPU-side CD-ROM read path | Not supported; `docs/cdrom.md` states it "is not well understood". |
+| C++ | **Declined**, not deferred. `docs/manual.md:274`: C++ is not felt to bring anything that would support embedded development better than native C. Users may retool the makefile themselves; this is unsupported. |
+| A C standard library | Never. Builds are `-nostdlib -fno-builtin`. See `docs/dev_in_c.md`. |
+
+---
+
+## 2. Normative Architecture
+
+### 2.1 The three-layer file scheme — the core invariant
+
+Every source file in `lib/` is compiled through the C preprocessor: `megadev.make:158` assembles
+with `gcc -x assembler-with-cpp`. That single fact is what makes the suffix scheme meaningful, and
+it produces the project's most important rule:
+
+> **INV-1 — `.def.h` files MUST contain only `#define` directives, `#include`s of other `.def.h`
+> files, include guards, and comments.**
+>
+> No typedefs, no structs, no C casts, no function declarations, no storage. A `.def.h` is included
+> by both C translation units and assembly sources; anything that is not legal in both languages
+> breaks the assembly side.
+
+| Suffix | Contents | Included by |
+|---|---|---|
+| `.def.h` | Addresses, bit positions, bitmasks, BIOS function codes. **Preprocessor-only.** | C **and** assembly |
+| `.h` | C only: typedefs, structs, typed pointer macros, `static inline` functions (usually wrapping inline asm). | C |
+| `.macro.s` | Assembly `.macro` definitions only. Emits no code, so it is safe to include repeatedly. | assembly |
+| `.s` | Code-emitting assembly. Defines `.global` symbols and is linked in. | assembly (assembled directly) |
+
+The intended pairing is `foo.def.h` (shared constants) → `foo.h` (C ergonomics) **and/or**
+`foo.macro.s` (assembly ergonomics), plus `foo.s` where a real subroutine is warranted.
+
+Additional rules, all mechanically checkable:
+
+- **INV-2** — A `.h` or `.macro.s` MUST include the `.def.h` it depends on rather than relying on
+  the caller's include order. *(Violated on `master` by `lib/main/vdp.macros.s`, which has no
+  `#include` at all; and on `feature_sub_bios_overhaul` by `lib/sub/gate_arr.macro.s`,
+  `lib/sub/bios.macro.s` and `lib/sub/boot.macro.s`.)*
+- **INV-3** — A `.macro.s` MUST NOT emit code, and a code-emitting `.s` MUST NOT define macros.
+  *(Currently violated by `lib/str_util.s:69`, which defines `.macro ATOI`.)*
+- **INV-4** — Every header MUST have an include guard whose name is derived from its path
+  (`MEGADEV__<PATH>_<NAME>_<SUFFIX>`), so that the Main and Sub views of the same peripheral cannot
+  collide. Choice of `#pragma once` vs `#ifndef` is settled in §9 OD-3.
+- **INV-5** — A `@file` doc tag MUST name the file it appears in.
+- **INV-6** — Where a constant is used as an operand to a bit-level opcode (`btst`, `bset`, `bclr`,
+  `bchg`), a `_BIT` companion giving the **bit index** MUST exist alongside the mask.
+  Masks and indices are not interchangeable, and conflating them is a silent wrong-bit bug rather
+  than a compile error. *(See KB-11.)*
+
+### 2.2 Main / Sub separation
+
+The Mega CD has two 68000s with separate address maps. The same peripheral appears at different
+addresses to each:
+
+| | Main CPU view | Sub CPU view |
+|---|---|---|
+| Gate Array base | `0xA12000` | `0xFF8000` |
+| Defined in | `lib/main/gate_arr.def.h` | `lib/sub/gate_arr.def.h` |
+
+> **INV-7 — Main-side and Sub-side definitions of the same peripheral MUST NOT share macro names.**
+
+This is currently **violated**, and it is the most serious structural defect in the library: both
+files define `GA_REG_RESET`, `GA_REG_MEMMODE`, `GA_REG_CDC_MODE`, `GA_REG_COMM_CMD0` and others with
+*different values*, and both `.h` files define `typedef u16 volatile * ga_reg16` plus overlapping
+`ga_reg_*` macros. Because their include guards differ, nothing prevents both from entering one
+translation unit; whichever is included first silently wins. See KB-12 and §9 OD-1.
+
+### 2.3 Module system (MMD / SMD)
+
+Modules are relocatable program/data blobs loaded from disc at runtime.
+
+- A Main-CPU module (`.mmd`) carries a **0x100-byte header emitted by the linker script**
+  (`cfg/module_mmd.ld:31-42`): flags, destination address, a longword copy count of
+  `((_ROM_LENGTH + _RAM_DATA_LENGTH) >> 2) - 1` (pre-decremented for a `dbf` loop), and entry,
+  hblank and vblank vectors.
+- A Sub-CPU module (`.smd`) has **no header** (`cfg/module_smd.ld`).
+- Layout is supplied by the project as `GLOBAL` symbols — `MODULE_ROM_ORIGIN`, `MODULE_ROM_LENGTH`,
+  `MODULE_RAM_ORIGIN`, `MODULE_RAM_LENGTH` — conventionally in a `*_layout.s` file.
+- Cross-module symbol resolution uses `ld -R <other.elf>`, which imports symbols without code, so a
+  transient module can call into a resident one.
+
+### 2.4 Mega CD boot chain
+
+1. The Boot ROM reads the disc header and the **security block**, which is region-specific
+   (`lib/security.c`) and **MUST be first in `.text`** (`cfg/ip.ld`).
+2. **IP** (Initial Program) is loaded to `0xFF0000` on the Main CPU. Size is user-definable via
+   `IP_LENGTH` but must fit the boot sector — **3.5 KB** (`cfg/ip.ld:8-9`).
+3. **SP** (System Program) is loaded to `0x6000` on the Sub CPU. Default `SP_LENGTH` is `0x4000`;
+   the boot-sector ceiling is **28 KB** (`cfg/sp.ld:8-9`).
+4. The SP must provide four entry points via its header jump table: `sp_init`, `sp_main`, `sp_int2`,
+   `sp_user` (`docs/boot.md`).
+5. `lib/cd_boot.s` `.incbin`s the built `ip.bin` and `sp.bin` and prepends the ASCII disc header;
+   `mkisofs -G boot.bin` splices the result into the generic boot area.
+
+Consequence: **every Mega CD project must provide `src/ip.s` and `src/sp.s`.**
+
+---
+
+## 3. Naming & API Conventions
+
+These are normative and are the basis for the Tier 1 lint (§6).
+
+- **Prefixes.** Hardware definitions carry a subsystem prefix: `GA_` (Gate Array), `VDP_`, `BIOS_`,
+  `BRAM_`, `BOOT_`, `PCM_`, `SCTRL_`/`EXT_` (I/O). No unprefixed globals.
+- **Case.** `UPPER_SNAKE_CASE` for `.def.h` constants and assembly macros; `lower_snake_case` for C
+  macros and functions; `PascalCase` for types.
+- **Bit constants.** `FOO_BIT` is a bit *index*; `FOO` is the corresponding *mask*, defined as
+  `(1 << FOO_BIT)`. Both forms exist wherever bit-level opcodes are used (INV-6).
+- **No libc shadowing.** Megadev MUST NOT define a name from the C standard library with different
+  semantics. *(Currently violated: `strcmp` returns `bool` (`lib/str_util.h:68`), `strcpy` returns
+  `void` (`lib/memory.h:120`), plus `abs`/`abs16` in `lib/math.h`.)*
+- **No reserved identifiers.** Leading-underscore names at file scope are reserved to the
+  implementation. *(Currently violated by `lib/sub/pcm.def.h:11-19`: `_PCM_ENV` etc.)*
+- **Umbrella headers** (`lib/main/main.h`, `lib/sub/sub.h`) MUST include every public header for
+  their CPU side. *(Currently violated: `main.h` omits `bios.h`, `comm.h`, `md_sys.h`, `mmd.h`;
+  `sub.h` omits `bios.h`.)*
+- **Doxygen.** Every public definition carries `@brief`. Assembly routines and macros that clobber
+  registers carry `@clobber`. Custom commands MUST be declared in `Doxyfile` `ALIASES` before use.
+  *(Currently violated: `@alias` is used 49 times and is not declared; `@macro`, `@in`, `@out`,
+  `@desc` are used in `.macro.s` files and are not Doxygen commands at all.)*
+- **Register-access macro form** — see §9 OD-4, unresolved.
+
+---
+
+## 4. Build Contract
+
+### What a project must provide
+
+Required (`megadev.make:30-48` errors if unset): `PROJECT_ID`, `TARGET`, `SRC_PATH`, `RES_PATH`,
+`BUILD_PATH`. Mega CD projects additionally need `DISC_PATH`, `src/ip.s` and `src/sp.s`.
+
+`MEGADEV_PATH` must point at the Megadev installation (`/opt/megadev` by convention).
+**It is not currently sanity-checked**, so an unset value silently yields `LIB_PATH=/lib` and
+confusing downstream failures — see KB-14.
+
+### Guarantees the build layer owes the user
+
+- **B-1** — `make` on a freshly cloned project produces a runnable image without manual steps.
+  **Currently false**: `build/` and `disc/` are gitignored and never created by `megadev.make`;
+  `make init` must be run first and is documented nowhere. See KB-15.
+- **B-2** — Editing a header rebuilds its dependents. **Currently false**: there is no dependency
+  tracking (`-MMD`/`-MP`) anywhere. `docs/modules.md:100` documents the workaround — `make clean`
+  before every `make`. This is daily friction for every user. See KB-16.
+- **B-3** — Builds are reproducible. **Currently false**: `HEADER_COPYRIGHT` embeds
+  `$(shell date +"%Y.%b")` (`megadev.make:61`), so identical source produces different output across
+  months; because `CC_FLAGS` is recursively expanded, that pipeline re-forks on every compile.
+- **B-4** — `make -j` is safe. **Currently false**: the ISO's disc-file prerequisites come from
+  `$(shell find ...)` evaluated at parse time (`megadev.make:136-137`), so on a first build the
+  not-yet-existing modules are not prerequisites of the ISO.
+- **B-5** — Two sources with the same basename in different directories do not collide. **Currently
+  false**: object names are `$(notdir)`-flattened into one `build/` directory. `lib/main/gate_arr.macro.s`
+  and `lib/sub/gate_arr.macro.s` are a live example of the hazard.
+
+B-1 through B-5 are the acceptance criteria for the build-system work in BACKLOG.md.
+
+---
+
+## 5. Versioning & Compatibility
+
+- Version of record is the `VERSION` file. It is currently referenced by nothing — not by
+  `megadev.make`, not by any header, and `Doxyfile` independently declares `PROJECT_NUMBER = 1`.
+- Tags MUST be `vMAJOR.MINOR.PATCH`, annotated. *(History is inconsistent: both `1.0.0` and `v1.0.0`
+  exist for the same release; `0.1.6`, `0.1.7` and `v1.2.0` are lightweight tags carrying no
+  message or date.)*
+- **Breaking API changes are permitted** and are released as a major version with a migration note
+  (§9 D3). Megadev has a small user base and correcting the naming and layering now is cheaper than
+  carrying it indefinitely.
+
+---
+
+## 6. Verification Policy
+
+Megadev targets obsolete hardware, so "run the test suite" needs definition. Verification is tiered.
+
+| Tier | What it proves | Status |
+|---|---|---|
+| **0 — Build gate** | The toolchain accepts the source. | **To implement (next).** |
+| **1 — Convention lint** | The rules in §2–§3 actually hold. | **To implement (next).** |
+| **2 — On-target tests** | The code computes the right answers on a real 68000. | **Specified, not built.** |
+| **3 — Hardware validation** | Behaviour matches real Mega CD silicon. | Manual; tracked as provenance (§7). |
+
+### Tier 0 — build gate
+
+Three jobs, run inside the devcontainer image:
+
+1. **Per-header compile.** One generated translation unit per `lib/**/*.h` containing only that
+   header's `#include`, compiled `-m68000 -fsyntax-only -Wall -Wextra -Werror=infinite-recursion`.
+   This requires each header to be classified **Main-valid / Sub-valid / both** — that classification
+   is itself spec content and does not currently exist.
+2. **Assemble every** `.s` and `.macro.s` via `gcc -x assembler-with-cpp -c`.
+3. **Full build** of every example and `new_project` through to final `.iso` / `.cart`.
+
+Rationale: every defect in §8 is a compile-or-assemble failure. Tier 0 alone would have caught all of
+them, and none were caught, because the kit has never been built by anything but hand.
+
+### Tier 1 — convention lint
+
+Mechanical checks of INV-1 (`.def.h` contains only `#define`/comments — the load-bearing one),
+INV-4 (guard name matches path), INV-5 (`@file` matches filename), `clang-format --dry-run --Werror`,
+and Doxygen with `WARN_AS_ERROR`.
+
+### Tier 2 — on-target tests (specified, not built)
+
+A `tests/` project built like any other Megadev project, run under a headless emulator
+(BlastEm or Genesis Plus GX; both have workable Mega CD support). Assertions run on target and report
+out-of-band: a result byte at a known RAM address, or over the existing serial-over-EXT-port channel
+(`lib/main/comm.h`) — the transport already exists. CI dumps the result after N frames; non-zero fails.
+
+**First target: differential C-vs-assembly tests.** Megadev implements the same routine twice — once
+as a C `static inline` and once as an assembly macro or subroutine — in at least twelve places
+(interrupt control, Z80 bus control, joypad read, Gate Array Word RAM handover, hex conversion, ...).
+These are *supposed* to be equivalent, and they have already silently diverged: `hextoa8` writes an
+`0xFF` terminator in `lib/str_util.s:26` and **no terminator at all** in `lib/str_util.h:26-32`.
+Running both and comparing is the correct instrument for this entire class of bug, and the ~550 lines
+of pure functions in `math.h`, `fixed.h`, `memory.h` and `str_util.*` are the natural first subjects —
+two of them are outright wrong today (KB-3, KB-8).
+
+### Tier 3 — hardware validation
+
+Cannot be automated. Tracked as provenance in §7: no claim is silently promoted from "assumed" to
+"true" without someone putting it on real hardware.
+
+---
+
+## 7. Hardware Claim Provenance
+
+Every hardware assertion carries one of: `HW` (verified on real hardware, model noted), `EMU`
+(emulator only), `DOC` (from Sega documentation or credible third-party research), `ASSUMED`.
+
+| Claim | Provenance | Source / note |
+|---|---|---|
+| Gate Array register map, Sub side | DOC | Sega BIOS manual + community research |
+| Gate Array register map, Main side | DOC | as above |
+| Sub BIOS function codes | DOC | Sega BIOS manual |
+| Main Boot ROM system library | **Partly ASSUMED** | Reverse-engineered; `docs/main_bios.md` has ~39 empty entries and self-describes as needing "better notes" |
+| Boot sector layout may be changed | **ASSUMED — open question** | `docs/boot.md:15`: "we need to test whether changing the boot sector layout will work on actual hardware" |
+| Writing 0 to Word RAM mode bits in 2M mode | **ASSUMED — open question** | `lib/sub/gate_arr.def.h:239` `@todo` requests hardware research |
+| Main-CPU CD-ROM read path | **UNKNOWN** | `docs/cdrom.md`: "not well understood" |
+| CDC DMA transfer speed / bus contention | **UNKNOWN** | `docs/cdrom.md`: speed advantages and bus issues "are unknown" |
+| BRAM cart bank/ID map | DOC | `lib/main/bramcart.def.h` — sourced from a spritesmind forum thread, unverified |
+| `HW_REV` is 3 bits | **SUSPECT** | `lib/main/md_sys.def.h:28` defines `(0b111 << 0)`; its own comment shows VER3..VER0 (4 bits). Gates the TMSS write in `md_init.s:32`. |
+
+---
+
+## 8. Known Broken
+
+Verified by inspection on 2026-08-13. **Not yet compile-verified** — no m68k toolchain was available
+on the machine used for the audit. Marked ✅ = present on `master`; ⚠️ = introduced on
+`feature_sub_bios_overhaul` and not on master.
+
+| ID | Where | Defect | On master |
+|---|---|---|---|
+| KB-1 | `lib/init.macros.s:27` | `mov.l` is not an M68k mnemonic (line 19 correctly uses `move.l`). In `BASIC_INIT` — the startup path **every module runs**. | ✅ |
+| KB-2 | `lib/math.h:75,77,103,105` | same invalid `mov.l` | ✅ |
+| KB-3 | `lib/math.h:46-47, 59-60` | `out.quot` assigned twice; `out.rem` **never assigned**. `divu()` and `div()` both return the wrong quotient and an uninitialised remainder. | ✅ |
+| KB-4 | `lib/math.h:58` | `div()` documented as signed (DIVS) but emits `divu.w` | ✅ |
+| KB-5 | `lib/memory.h:120` | `void strcpy(...)` — non-static, non-inline function **definition** in a header; multiple-definition link error across TUs | ✅ |
+| KB-6 | `lib/sub/bram.h:15,16` | `bram_work_buff[0x640]`, `bram_string_buff[12]` — tentative definitions in a header; 1,612 bytes of BSS per TU, or a link failure under `-fno-common` | ✅ |
+| KB-7 | `lib/main/cd_exception.s:79` | `EXVECEXVEC_TRACE` — botched find-and-replace; undefined symbol | ✅ |
+| KB-8 | `lib/fixed.h:34` | `int_to_f32` casts a value shifted left by 16 to `short` — **always yields 0** | ✅ |
+| KB-9 | `lib/main/io.h:94` | `#define time_mapping ((u8)[0x100] TIME_MAPPING)` — not valid C in any reading; zero references repo-wide | ✅ |
+| KB-10 | `lib/main/bios.h:108` | `(*(s8[0x200]) BIOS_WORK_BUFFER)` — cast to array type is illegal C; the commented-out line 109 is the working version | ✅ |
+| KB-11 | `lib/main/comm.h:51,74` + `comm.macros.s:41,53` | `btst` given a **mask** (`SCTRL_TX_FULL (1 << 0)`, `io.def.h:206`; `SCTRL_RX_READY (1 << 1)`, `io.def.h:213`) where it needs a **bit index** — tests the wrong bit, in both the C and assembly copies. Root cause: `io.def.h` has no `_BIT` companions (INV-6). | ✅ |
+| KB-12 | `lib/main/gate_arr.def.h` vs `lib/sub/gate_arr.def.h` | Same macro names, different values, non-matching include guards (INV-7) | ✅ |
+| KB-13 | `lib/str_util.s:19` vs `lib/str_util.h:26` | `hextoa8/16/32`: assembly writes an `0xFF` terminator, C writes **no terminator**. Same name, same documented contract, different behaviour. | ✅ |
+| KB-14 | `megadev.make:30-48` | `MEGADEV_PATH` is not sanity-checked; unset yields `LIB_PATH=/lib` | ✅ |
+| KB-15 | `megadev.make` | `build/`/`disc/` never created; `make init` required on a fresh clone and undocumented (violates B-1) | ✅ |
+| KB-16 | `megadev.make` | No header dependency tracking; `make clean` required after every edit (violates B-2) | ✅ |
+| KB-17 | `Doxyfile:18` | All 9 `.md` paths in `INPUT` are wrong (docs live in `docs/`); 3 named files (`bios.md`, `ip_sp.md`, `start_here.md`) exist nowhere; `*.s` is in `FILE_PATTERNS` with no `EXTENSION_MAPPING`, so **no assembly file produces any output**. | ✅ |
+| KB-18 | `examples/pcm_playback/disc/audio.pcm` | 262 KB **required** disc payload is gitignored, so a fresh clone silently builds a broken ISO | ✅ |
+| KB-19 | `docs/` | `bootrom.md` referenced 8×, `design.md` 2× — **neither file exists** | ✅ |
+| KB-20 | `lib/main/memmap.h:35` | `#define exvec_vblank (...)z` — stray trailing `z`; any use is a syntax error | ⚠️ branch only |
+| KB-21 | `lib/sub/bios.h` | `bios_drive_init()` calls **itself** with an argument; should call `bios_drive_init_ex` | ⚠️ branch only |
+| KB-22 | `lib/sub/memmap.def.h` | `#define SP_INIT USERALL0` — typo for `USERCALL0` | ⚠️ branch only |
+| KB-23 | `lib/main/vdp.s:23,60` | `lea (vdp_ctrl).l` — `vdp_ctrl` is a **C macro**; the assembler has never seen it | ⚠️ branch only |
+| KB-24 | `lib/sub/gate_arr.macro.s:34,47,48` | references `BIT_GA_REG_DMNA` / `BIT_GA_REG_RET`, which exist nowhere | ⚠️ branch only |
+| KB-25 | `lib/main/comm.macro.s:23,26` | calls `Z80_DO_BUSREQ`/`Z80_DO_BUSRELEASE`; the macros are `Z80_REQUEST_BUS`/`Z80_RELEASE_BUS` | ⚠️ branch only |
+| KB-26 | `lib/sub/boot.macro.s` | `.macro CDBOOT` whose body is `jsr CDBOOT` — invokes itself | ⚠️ branch only |
+| KB-27 | 39 files on `feature_sub_bios_overhaul` | Rename `macros.s` → `macro.s` (commit `bd4d06c`) not propagated; `main.macro.s` and `sub.macro.s` deleted but still included. **The branch does not build.** | ⚠️ branch only |
+
+That KB-20 … KB-27 exist *only* on the feature branch, and went unnoticed across five commits, is
+the argument for §6 in one line.
+
+---
+
+## 9. Decision Record
+
+Format: `Dn` = decided; `ODn` = open decision awaiting an owner.
+
+### D1 — SPEC.md scope *(Damian R, 2026-08-13)*
+SPEC.md holds specification, conventions, decisions and known-broken. The backlog lives separately in
+`BACKLOG.md`. **Why:** SPEC.md should be stable and readable; a backlog churns.
+
+### D2 — Backlog lives in a tracked `BACKLOG.md` only *(Damian R, 2026-08-13)*
+No GitHub Issues. **Why:** in-repo, works offline, and survives the project's multi-month dormant
+stretches. Trade-off accepted: no assignment, labels, or PR linkage.
+
+### D3 — Breaking API changes are permitted, released as a major version *(Damian R, 2026-08-13)*
+Fix the naming and layering properly and ship as **2.0.0** with a migration note. **Why:** small user
+base; a rename is already half-landed; this is the cheapest moment.
+
+### D4 — Verification Tier 0 + Tier 1 now; Tier 2 specified; Tier 3 as provenance *(Damian R, 2026-08-13)*
+**Why:** Tier 0 alone would have caught every defect in §8.
+
+### D5 — CI is GitHub Actions wrapping a local `make check` *(Damian R, 2026-08-13)*
+The Action is a thin wrapper so the local and CI paths cannot drift.
+
+### D6 — GitHub is the canonical remote *(Damian R, 2026-08-13)*
+`git@github.com:drojaazu/megadev.git`. The private remote `git@cloud.motoi.pro:megadev.git` was
+removed from this clone on 2026-08-13 after its **SSH host key changed** and connection was refused.
+The key change was *not* accepted — it needs human verification before that remote is trusted again.
+See BACKLOG.md OPS-1.
+
+### D7 — Macro files use the singular suffix `.macro.s` *(Damian R, in flight)*
+Rename begun in commit `bd4d06c` on `feature_sub_bios_overhaul`. `docs/manual.md:342` still documents
+the old plural `.macros.s`, which is correct for `master` and wrong for the branch. The rename is
+incomplete (KB-27) and must land atomically with its consumers.
+
+### OD-1 — How to resolve the Main/Sub Gate Array namespace collision *(open)*
+INV-7 is violated (KB-12). Options: prefix by CPU side (`GA_MAIN_*` / `GA_SUB_*`); rely solely on
+path-derived include guards plus a hard rule that a TU may include only one side; or generate both
+from one source with a base-address parameter. **The fact that would settle it:** whether any real
+project needs both views in one translation unit — Mode 1 (OD-2) is the case that would force it.
+Not settled unilaterally; affects the 2.0.0 API.
+
+### OD-2 — Is Mode 1 a supported target? *(open)*
+Currently undefined. `48167ff` removed the example. Four parallel abandoned branches
+(`md_cart`, `md_cart_dev`, `feature_carts`, `origin/md_cart`) suggest repeated unfinished attempts.
+This decision gates OD-1.
+
+### OD-3 — Include-guard style: `#pragma once` or `#ifndef` *(open)*
+Currently split: most of `lib/sub/` uses `#pragma once`, everything else uses `#ifndef`, and `sub/`
+is not internally consistent. `#ifndef` is what INV-4's path-derived naming needs in order to be
+lint-checkable and to make collisions visible; `#pragma once` is terser. Pick one and enforce it.
+
+### OD-4 — Register-access macro form: pointer or lvalue *(open)*
+`lib/sub/gate_arr.h` has both — `ga_reg_stopwatch` is a pointer, `ga_reg_stampsize` (same file) is a
+dereferenced lvalue. `main/vdp.h` is all-lvalue; `main/io.h` all-pointer. A caller cannot predict
+whether `foo` or `*foo` is correct. Pick one for 2.0.0.
+
+### OD-5 — Should the audit's branch-only defects be fixed on the branch or after merge? *(open)*
+KB-20 … KB-27 exist only on `feature_sub_bios_overhaul`. Fixing them there keeps the branch
+self-consistent; deferring keeps the branch's diff focused on documentation.
+
+---
+
+## 10. Change Discipline
+
+Adopted going forward, in response to 95 of 191 commits (49.7%) being titled `Checkpoint!`:
+
+- Commit messages state what changed and why. `Checkpoint!` is not a commit message; if a checkpoint
+  is genuinely needed mid-work, say what state it captures.
+- One concern per branch — a refactor and a logic change do not share a commit.
+- Every release gets a tag **and** an entry in the changelog.
+- Every item in §8 has an ID; when it is fixed, the fixing commit references that ID.
