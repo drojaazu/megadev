@@ -1,0 +1,9 @@
+# Assembly sources that cannot be assembled standalone, with the reason.
+#
+# These are NOT defects - they are files whose contract is something other than
+# "assemble me on my own". Anything not listed here must assemble cleanly.
+#
+# Format: <path relative to lib/>|<reason>
+
+cd_boot.s|Assembled only during a project build (megadev.make:230); .incbin's ip.bin and sp.bin, which do not exist until the IP and SP are linked.
+md_header.s|An include-only fragment despite the .s suffix - it is #include'd into a project's init.s (see examples/cart/src/init.s:2). Its .org directives are relative to the cartridge image and move backwards when assembled alone.

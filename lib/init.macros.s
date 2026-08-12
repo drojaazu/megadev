@@ -24,7 +24,7 @@
   lea      _ROM_DATA_ORIGIN, a0
   lea      _RAM_DATA_ORIGIN, a1
   bra      1f
-0:mov.l    (a0)+, (a1)+
+0:move.l    (a0)+, (a1)+
 1:dbf      d7, 0b
 .endm
 

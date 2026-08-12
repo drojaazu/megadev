@@ -1,0 +1,40 @@
+# [ M E G A D E V ]
+#
+# Verification gate. See SPEC.md section 6.
+#
+# This workflow is deliberately thin: it builds the devcontainer image and runs
+# `make check` inside it. All the logic lives in tools/check/, so what CI runs
+# and what you run locally cannot drift apart (SPEC.md D5).
+
+name: check
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: build gate
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build devcontainer image
+        run: docker build -f .devcontainer/Dockerfile -t megadev-check .
+
+      # The image declares USER megadev, but the bind-mounted checkout is owned
+      # by the runner. Run as the runner's uid/gid so the gate can write its
+      # scratch files and the examples' build/ and disc/ directories.
+      - name: Run verification gate
+        run: |
+          docker run --rm \
+            -v "$PWD:/opt/megadev" \
+            -w /opt/megadev \
+            -u "$(id -u):$(id -g)" \
+            -e HOME=/tmp \
+            -e MEGADEV_PATH=/opt/megadev \
+            megadev-check \
+            make check

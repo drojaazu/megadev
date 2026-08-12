@@ -72,9 +72,9 @@ static inline u16 divu_round(u32 dividend, u16 divisor)
 	u32 dummy2 = 0;
 	asm(
 		"\
-		mov.l %1, %3 \n\
+		move.l %1, %3 \n\
 		divu.w %1, %0 \n\
-		mov.l %0, %2 \n\
+		move.l %0, %2 \n\
 		swap %2 \n\
 		and #0xFFFF, %2 \n\
 		lsl.l #1, %2 \n\
@@ -100,9 +100,9 @@ static inline s16 divs_round(s32 dividend, s16 divisor)
 	s32 dummy2 = 0;
 	asm(
 		"\
-		mov.l %1, %3 \n\
+		move.l %1, %3 \n\
 		divs.w %1, %0 \n\
-		mov.l %0, %2 \n\
+		move.l %0, %2 \n\
 		swap %2 \n\
 		and #0xFFFF, %2 \n\
 		lsl.l #1, %2 \n\
