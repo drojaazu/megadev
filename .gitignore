@@ -1,3 +1,9 @@
 .vscode/
 work/
 *.code-workspace
+
+# generated Doxygen output
+docs/html/
+
+# verification gate scratch
+build-check/

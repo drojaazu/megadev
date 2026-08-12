@@ -107,7 +107,7 @@ This will ensure all source files are always rebuilt. We would certain like to a
 
 ## Memory Resident Modules
 
-It may be more efficient to keep a portion of program code or resources in memory as you load different modules throughout the lifetime of the game. For example, you can keep your small loading screen code/graphics in memory so it itself does not need to be re-loaded from disc each time. Or you can keep some useful global functions that are available to all your code, such as VDP utilities. Sonic CD does this by loading an extended IP (IPX) into Work RAM which acts as a small "master" program to load and run modules from Word RAM and provide some other utilities. Memory resident modules are the basis for the "program kernel" concept that is discussed in the `design.md` file.
+It may be more efficient to keep a portion of program code or resources in memory as you load different modules throughout the lifetime of the game. For example, you can keep your small loading screen code/graphics in memory so it itself does not need to be re-loaded from disc each time. Or you can keep some useful global functions that are available to all your code, such as VDP utilities. Sonic CD does this by loading an extended IP (IPX) into Work RAM which acts as a small "master" program to load and run modules from Word RAM and provide some other utilities. Memory resident modules are the basis for the "program kernel" concept that is discussed in the `program_design.md` file.
 
 A memory resident module is built with a def file just like any other module. However, the modules which depend on it must specify it as a reference. This is done by including the resident module's filename in the def file. The resident module data will NOT be included in the output module, but will only be used as a reference when linking.
 
@@ -123,11 +123,11 @@ There are two special cases for the IP and SP. Though they do not generate their
 
 Do not attempt to "chain" multiple resident modules together in a series of reliance. All resident modules must be fully built first so they can be referenced by later modules. If one resident module relies on another resident module, there is no way to guarantee which will be built first, and the build process may fail. You can, however, have multiple resident modules and even load them at the same time (provided their memory space does not overlap), so long as they do not reference each other.
 
-Ultimately, the best use of this feature is to keep things simple. The "program kernel" concept discussed in `design.md` is probably the best use case: one single resident binary per CPU that is loaded once early on and is present for the lifetime of the game.
+Ultimately, the best use of this feature is to keep things simple. The "program kernel" concept discussed in `program_design.md` is probably the best use case: one single resident binary per CPU that is loaded once early on and is present for the lifetime of the game.
 
 ## Boot ROM Considerations
 
-The Boot ROM is the Main CPU side code that resides within the internal Mega CD ROM. It contains the code for the built-in CD player and memory manager. It also contains a user-accessible "library" of utility functions. For more on that, please see `bootrom.md`.
+The Boot ROM is the Main CPU side code that resides within the internal Mega CD ROM. It contains the code for the built-in CD player and memory manager. It also contains a user-accessible "library" of utility functions. For more on that, please see `main_bios.md`.
 
 Although the functions provided by the Boot ROM are very helpful, you must be aware that some of them exclusively use a significant chunk of the already limited Work RAM. 
 
