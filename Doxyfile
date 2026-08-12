@@ -1,22 +1,55 @@
-# Doxyfile 1.8.13
-DOXYFILE_ENCODING	= UTF-8
-PROJECT_ID			= megadev
-PROJECT_NUMBER		= 1
-PROJECT_BRIEF			= "A Sega Mega CD development framework"
-OUTPUT_DIRECTORY	= docs
-TAB_SIZE					= 2
-USE_MDFILE_AS_MAINPAGE = ./README.md
-GENERATE_LATEX		= NO
-GENERATE_HTML			= YES
+# Doxyfile for MEGADEV
+#
+# Generate with: make docs   (or: doxygen Doxyfile)
+# Output lands in docs/html, which is gitignored.
+
+DOXYFILE_ENCODING = UTF-8
+
+PROJECT_NAME      = MEGADEV
+PROJECT_NUMBER    = 1.2.0
+PROJECT_BRIEF     = "A Sega Mega Drive and Mega CD development kit"
+
+OUTPUT_DIRECTORY  = docs
+TAB_SIZE          = 2
+
+USE_MDFILE_AS_MAINPAGE = README.md
+
+GENERATE_LATEX    = NO
+GENERATE_HTML     = YES
 RECURSIVE         = YES
-EXTRACT_STATIC		= YES
-MARKDOWN_SUPPORT	= YES
+EXTRACT_STATIC    = YES
+
 ENABLE_PREPROCESSING = YES
 MACRO_EXPANSION      = YES
 EXPAND_ONLY_PREDEF   = YES
 PREDEFINED           = "TARGET=MEGACD"
-INPUT							= README.md bios.md cdrom.md dev_in_c.md disc.md modules.md ip_sp.md program_design.md start_here.md lib
-FILE_PATTERNS			= *.h *.s *.c *.md
+
+# Prose docs live in docs/, not the repo root. Listing the directory picks up
+# every *.md; RECURSIVE would otherwise also sweep in our own generated HTML,
+# hence the EXCLUDE below.
+INPUT             = README.md SPEC.md BACKLOG.md docs lib
+
+EXCLUDE           = docs/html
+
+# Assembly is mapped to C so that the documentation blocks in .s and .macro.s
+# files (which carry @file, @brief, @fn, @def and @clobber) are parsed at all.
+# Doxygen cannot understand M68k mnemonics; it reads the comment blocks and
+# skips what it cannot parse.
+FILE_PATTERNS     = *.h *.s *.c *.md
+EXTENSION_MAPPING = s=C
+
+# Megadev-specific commands.
+# NOTE: every custom command used in the source MUST be declared here, or it
+# renders as literal text and Doxygen warns. See SPEC.md section 3.
 ALIASES += clobber="\warning REGISTER CLOBBERS: "
 ALIASES += aliases="^^Aliases: \ref "
 ALIASES += aliasof="^^Alias of \ref "
+
+# The hardware mnemonic a register or bit is known by in Sega documentation.
+ALIASES += alias="^^**Hardware alias:** "
+
+# Used by the assembly macro documentation blocks.
+ALIASES += macro="^^**Macro:** "
+ALIASES += in="^^**In:** "
+ALIASES += out="^^**Out:** "
+ALIASES += desc="\details "

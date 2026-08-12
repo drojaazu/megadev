@@ -130,7 +130,7 @@
 
 /**
  * @def CTRL_INT
- * @brief IO Control Port / INT2 on \TH enable.
+ * @brief IO Control Port / INT2 on TH enable.
  * @ingroup ioports_p
  */
 #define CTRL_INT (1 << 7)
