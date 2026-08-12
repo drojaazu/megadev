@@ -15,6 +15,20 @@ is no external issue tracker.
 Last swept: 2026-08-13. Sources: inline `TODO` markers (26 on `master`), prose in `docs/`, commit
 messages, and the 2026-08-13 audit.
 
+## Work in flight
+
+| Branch | Base | Contains | State |
+|---|---|---|---|
+| `docs/spec-and-backlog` | `master` | SPEC.md, BACKLOG.md, README index, `docs/html/` ignore | ready to merge |
+| `feat/verification-gate` | `master` | `make check`, `tools/check/*`, GitHub Actions workflow | lint verified; build gate needs a real toolchain run |
+| `fix/doxygen-config` | `master` | Doxyfile repair, two doc-tag typos | verified with doxygen 1.16.1 |
+| `fix/doc-cross-references` | `master` | `bootrom.md`/`design.md` link repair | verified |
+| `feature_sub_bios_overhaul` | `master` | in-flight inline-documentation overhaul | **does not build** (BR-1); resume after the above land |
+| `backup/feature_sub_bios_overhaul-2026-08-13` | — | backup pointer, plus tag `backup-sub-bios-overhaul-2026-08-13` | do not delete until the branch is pushed |
+
+None of these branches has been pushed to any remote. Offline backups (bundle, patch, original
+SPEC.md stub) are in `/mnt/motoi-s2/dev/megadev-backups/`.
+
 ---
 
 ## Correctness — verified defects
@@ -59,10 +73,10 @@ toolchain was available during the audit. VER-1 must land first so that fixes ca
 
 | ID | Sev | Status | Item |
 |---|---|---|---|
-| VER-1 | S1 | open | **Tier 0 build gate** (SPEC.md §6): per-header compile, assemble every `.s`/`.macro.s`, full build of all examples + `new_project`. Prerequisite for proving every LIB-* fix. Requires classifying each header Main-valid / Sub-valid / both. |
-| VER-2 | S2 | open | **Tier 1 convention lint**: INV-1 (`.def.h` is `#define`-only), INV-4 (guard name matches path), INV-5 (`@file` matches filename), `clang-format --dry-run --Werror`, Doxygen `WARN_AS_ERROR`. Blocked on DOC-1 for the Doxygen part. |
+| VER-1 | S1 | in-progress | **Tier 0 build gate** (SPEC.md §6): per-header compile, assemble every `.s`/`.macro.s`, full build of all examples + `new_project`. Prerequisite for proving every LIB-* fix. Requires classifying each header Main-valid / Sub-valid / both. |
+| VER-2 | S2 | in-progress | **Tier 1 convention lint**: INV-1 (`.def.h` is `#define`-only), INV-4 (guard name matches path), INV-5 (`@file` matches filename), `clang-format --dry-run --Werror`, Doxygen `WARN_AS_ERROR`. Blocked on DOC-1 for the Doxygen part. |
 | VER-3 | S2 | open | **Tier 2 on-target tests**: emulator harness + differential C-vs-asm tests over `math.h`, `fixed.h`, `memory.h`, `str_util.*`. Choose BlastEm or Genesis Plus GX; result protocol via RAM byte or the existing `comm.h` serial channel. |
-| VER-4 | S3 | open | GitHub Actions workflow wrapping `make check` (SPEC.md D5). |
+| VER-4 | S3 | in-progress | GitHub Actions workflow wrapping `make check` (SPEC.md D5). |
 | VER-5 | S3 | open | Pin the toolchain. `.devcontainer/Dockerfile` pins only `debian:13-slim` (mutable tag) and `clang-format-19`; gcc/binutils are whatever Debian ships. `etc/Dockerfile_alpine` *does* pin (`binutils-2.45`, `gcc-15.2.0`) — reconcile the two. |
 
 ## Build system
@@ -88,9 +102,9 @@ toolchain was available during the audit. VER-1 must land first so that fixes ca
 
 | ID | Sev | Status | Item |
 |---|---|---|---|
-| DOC-1 | S2 | open | KB-17 — `Doxyfile` is broken three ways: all 9 `.md` `INPUT` paths are wrong (docs live in `docs/`), 3 named files exist nowhere (`bios.md`, `ip_sp.md`, `start_here.md`), and `*.s` has no `EXTENSION_MAPPING` so **no assembly file produces output**. Also `PROJECT_ID` is not a valid tag (should be `PROJECT_NAME`) and `PROJECT_NUMBER = 1` contradicts `VERSION`. Blocks VER-2. |
-| DOC-2 | S2 | open | `@alias` is used 49 times but never declared in `Doxyfile` `ALIASES`; `@macro`, `@in`, `@out`, `@desc` are used throughout `.macro.s` files and are not Doxygen commands at all. |
-| DOC-3 | S2 | open | KB-19 — `bootrom.md` is referenced 8× and `design.md` 2×; **neither exists**. Pre-rename ghosts of `main_bios.md` / `program_design.md`. |
+| DOC-1 | S2 | **done** | KB-17 — `Doxyfile` is broken three ways: all 9 `.md` `INPUT` paths are wrong (docs live in `docs/`), 3 named files exist nowhere (`bios.md`, `ip_sp.md`, `start_here.md`), and `*.s` has no `EXTENSION_MAPPING` so **no assembly file produces output**. Also `PROJECT_ID` is not a valid tag (should be `PROJECT_NAME`) and `PROJECT_NUMBER = 1` contradicts `VERSION`. Blocks VER-2. |
+| DOC-2 | S2 | **done** | `@alias` is used 49 times but never declared in `Doxyfile` `ALIASES`; `@macro`, `@in`, `@out`, `@desc` are used throughout `.macro.s` files and are not Doxygen commands at all. |
+| DOC-3 | S2 | **done** | KB-19 — `bootrom.md` is referenced 8× and `design.md` 2×; **neither exists**. Pre-rename ghosts of `main_bios.md` / `program_design.md`. |
 | DOC-4 | S2 | open | `docs/gate_array.md` **ends mid-sentence** ("Some registers (namely the CD Fader control ") with no trailing newline; a second sentence dangles at line 43. |
 | DOC-5 | S3 | open | `docs/main_bios.md` has ~39 headings with no body, including all of System Group, Input Reads, Decompression, and 9 of 10 Unknown Functions. Its table of contents lists 3 entries for ~15 sections. |
 | DOC-6 | S3 | open | `docs/megacd_dev.md` and `docs/program_design.md` are ~65% the same document, including identical ASCII memory maps and identical typos. Merge or clearly split by purpose. |
@@ -106,7 +120,7 @@ toolchain was available during the audit. VER-1 must land first so that fixes ca
 | ID | Sev | Status | Item |
 |---|---|---|---|
 | OPS-1 | S2 | **needs owner** | **The SSH host key for `cloud.motoi.pro` has changed.** Connection was refused on 2026-08-13 (`SHA256:0QUYZWVWxGjdB3k65UVa8/3bKx0zopnl7iKL2PPx0n8`, offending entry `~/.ssh/known_hosts:8`). The key was **not** accepted. The remote was removed from this clone per SPEC.md D6. Verify the server was legitimately rebuilt before trusting it again; re-add with `git remote add origin git@cloud.motoi.pro:megadev.git`. |
-| OPS-2 | S3 | open | Add `docs/html/` to `.gitignore` — 385 generated files sit permanently in `git status`, one `git add .` from being committed. Commit `5013d70` removed the earlier exclusion. |
+| OPS-2 | S3 | **done** | Add `docs/html/` to `.gitignore` — 385 generated files sit permanently in `git status`, one `git add .` from being committed. Commit `5013d70` removed the earlier exclusion. |
 | OPS-3 | S3 | open | Prune stale branches: `temp` (idle 11 months), `md_cart_dev` (12 months), `md_cart` (2.5 years), `feature_serial_comm_example` (never merged), plus merged `feature_carts` and `release/*`. |
 | OPS-4 | S3 | open | Normalise git tags: `1.0.0` and `v1.0.0` duplicate the same release; `0.1.6`, `0.1.7`, `v1.2.0` are lightweight tags with no message or date; `v0.1.2b` is not valid semver. |
 | OPS-5 | S3 | open | `VERSION` is referenced by nothing — not `megadev.make`, no header, no ROM field. Either wire it into the build or drop it in favour of tags. |

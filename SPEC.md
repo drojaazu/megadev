@@ -87,6 +87,8 @@ Additional rules, all mechanically checkable:
   `bchg`), a `_BIT` companion giving the **bit index** MUST exist alongside the mask.
   Masks and indices are not interchangeable, and conflating them is a silent wrong-bit bug rather
   than a compile error. *(See KB-11.)*
+- **INV-8** — Every header MUST be self-contained: including it, and nothing else, into an empty
+  translation unit must compile cleanly. Enforced by Tier 0.1 (§6).
 
 ### 2.2 Main / Sub separation
 
@@ -215,8 +217,8 @@ Megadev targets obsolete hardware, so "run the test suite" needs definition. Ver
 
 | Tier | What it proves | Status |
 |---|---|---|
-| **0 — Build gate** | The toolchain accepts the source. | **To implement (next).** |
-| **1 — Convention lint** | The rules in §2–§3 actually hold. | **To implement (next).** |
+| **0 — Build gate** | The toolchain accepts the source. | **Implemented** on `feat/verification-gate`; not yet run against a real toolchain. |
+| **1 — Convention lint** | The rules in §2–§3 actually hold. | **Implemented and passing** on `feat/verification-gate`. |
 | **2 — On-target tests** | The code computes the right answers on a real 68000. | **Specified, not built.** |
 | **3 — Hardware validation** | Behaviour matches real Mega CD silicon. | Manual; tracked as provenance (§7). |
 
@@ -239,6 +241,13 @@ them, and none were caught, because the kit has never been built by anything but
 Mechanical checks of INV-1 (`.def.h` contains only `#define`/comments — the load-bearing one),
 INV-4 (guard name matches path), INV-5 (`@file` matches filename), `clang-format --dry-run --Werror`,
 and Doxygen with `WARN_AS_ERROR`.
+
+Because the library predates these rules, the lint uses a **baseline** of accepted existing
+violations (`tools/check/baseline.txt`, currently 16). Anything not in the baseline fails. The
+baseline should only ever shrink — that is the ratchet.
+
+Result of the first run: **INV-1 holds everywhere on `master`** — every `.def.h` really is
+preprocessor-only. The 16 accepted violations are 11 include-guard names and 5 wrong `@file` tags.
 
 ### Tier 2 — on-target tests (specified, not built)
 
