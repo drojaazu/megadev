@@ -78,7 +78,19 @@ if ((${#sources[@]} == 0)); then
 	exit 1
 fi
 
+EXCLUDE_FILE="$MEGADEV_ROOT/tools/check/asm-exclude.txt"
+
+excluded_reason() {
+	[[ -f $EXCLUDE_FILE ]] || return 1
+	grep -v '^#' "$EXCLUDE_FILE" | sed '/^$/d' \
+		| awk -F'|' -v want="$1" '$1 == want { print $2; found=1 } END { exit !found }'
+}
+
 for rel in "${sources[@]}"; do
+	if reason=$(excluded_reason "$rel"); then
+		skip_item "lib/$rel - $reason"
+		continue
+	fi
 	while read -r target; do
 		[[ -n $target ]] && check_asm "$rel" "$target"
 	done < <(targets_for "$rel")

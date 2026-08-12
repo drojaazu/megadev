@@ -19,7 +19,7 @@
 
 CHECK_DIR := tools/check
 
-.PHONY: all check check-headers check-asm check-examples lint format format-check docs clean-check help
+.PHONY: all check check-headers check-link check-asm check-examples lint format format-check docs clean-check help
 
 all: help
 
@@ -27,6 +27,7 @@ help:
 	@printf 'MEGADEV development targets:\n\n'
 	@printf '  check           run the full verification gate\n'
 	@printf '  check-headers   Tier 0.1 - per-header compile\n'
+	@printf '  check-link      Tier 0.4 - one-definition-rule across two TUs\n'
 	@printf '  check-asm       Tier 0.2 - assemble every .s\n'
 	@printf '  check-examples  Tier 0.3 - build examples and template\n'
 	@printf '  lint            Tier 1   - convention lint\n'
@@ -37,11 +38,14 @@ help:
 	@printf 'Run inside the devcontainer - these need the m68k toolchain.\n'
 
 # Ordered cheapest-first so an obvious breakage fails fast.
-check: lint check-headers check-asm check-examples
+check: lint check-headers check-link check-asm check-examples
 	@printf '\n\033[1;32mAll checks passed.\033[0m\n'
 
 check-headers:
 	@$(CHECK_DIR)/headers.sh
+
+check-link:
+	@$(CHECK_DIR)/link.sh
 
 check-asm:
 	@$(CHECK_DIR)/asm.sh

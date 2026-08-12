@@ -113,6 +113,25 @@ check_guard() {
 	fi
 }
 
+# --- STYLE-1: canonical M68k mnemonics -------------------------------------
+#
+# GNU as accepts `mov` as an alias for `move` (both assemble to the identical
+# encoding - verified: `mov.l (a0)+,(a1)+` and `move.l (a0)+,(a1)+` both emit
+# 0x22d8). It is still not the canonical mnemonic, and mixing the two within
+# one file is confusing. Applies to inline asm in .h files as well as .s.
+check_mnemonics() {
+	local f="$1" display="$2"
+	local hits
+	# `mov` may follow start-of-line, whitespace, a quote/backslash (inline asm
+	# strings) or a local label colon, as in `0:mov.l (a0)+,(a1)+`.
+	hits=$(grep -nE '(^|[[:space:]"\\:])mov\.[bwl][[:space:]]' "$f" \
+		| grep -vE '^[0-9]+:[[:space:]]*(\*|//|#[^0-9])' || true)
+	[[ -z $hits ]] && return
+	while IFS= read -r l; do
+		record STYLE-1 "$display" "use move, not mov -> ${l}"
+	done <<< "$hits"
+}
+
 # --- INV-5: @file tag names this file --------------------------------------
 check_file_tag() {
 	local f="$1" rel="$2" base tag
@@ -134,6 +153,9 @@ while IFS= read -r rel; do
 	esac
 	case "$rel" in
 		*.h) check_guard "$f" "$rel" "lib/$rel" ;;
+	esac
+	case "$rel" in
+		*.h|*.s) check_mnemonics "$f" "lib/$rel" ;;
 	esac
 	check_file_tag "$f" "lib/$rel"
 done < <(cd "$LIB_PATH" && find . \( -name '*.h' -o -name '*.s' -o -name '*.c' \) -type f -printf '%P\n' | sort)
