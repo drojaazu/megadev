@@ -557,7 +557,7 @@
  * of 0x400
  * @note ST7 is used with 128k VRAM only
  *
- * @asliases VDP_REG_SPR_ADDR
+ * @aliases VDP_REG_SPR_ADDR
  */
 #define VDP_REG05 0x8500
 
