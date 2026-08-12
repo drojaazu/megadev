@@ -223,7 +223,7 @@ Megadev targets obsolete hardware, so "run the test suite" needs definition. Ver
 
 | Tier | What it proves | Status |
 |---|---|---|
-| **0 — Build gate** | The toolchain accepts the source. | **Implemented and run.** Headers 70 pass; ODR 34 pass / 5 fail; assembly 21 pass / 3 fail / 2 excluded. |
+| **0 — Build gate** | The toolchain accepts the source. | **Implemented and run** (m68k gcc 14.2.0). Headers 70/70 pass; assembly 21 pass / 3 fail / 2 excluded; ODR 34 pass / 5 fail; **all 7 projects build**. |
 | **1 — Convention lint** | The rules in §2–§3 actually hold. | **Implemented and passing** (16 baselined). |
 | **2 — On-target tests** | The code computes the right answers on a real 68000. | **Specified, not built.** |
 | **3 — Hardware validation** | Behaviour matches real Mega CD silicon. | Manual; tracked as provenance (§7). |
