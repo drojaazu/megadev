@@ -128,6 +128,7 @@ toolchain was available during the audit. VER-1 must land first so that fixes ca
 | OPS-7 | S3 | open | 11 files mix tabs and spaces internally despite `.editorconfig` and `.clang-format`; neither is enforced. Closed by VER-2. |
 | OPS-8 | S4 | open | `lib/sub/sp_header.s:11` — the Sub CPU program header string is `.ascii "MAIN       "`. |
 | OPS-9 | S3 | open | `.vscode/` is gitignored, but `.devcontainer/devcontainer.json` and `.vscode/c_cpp_properties.json` both hardcode `/usr/bin/m68k-linux-gnu-gcc`. New contributors get no working IntelliSense config. |
+| OPS-10 | S4 | open | A stale `git stash` exists: `stash@{0}: WIP on out_path: bcd7db8`, an incomplete `OUT_PATH` → `BUILD_PATH` rename across 8 makefiles. It references `makefile.global` and `examples/ipx_spx/`, neither of which still exists, and the rename was evidently completed by other means since the tree now uses `BUILD_PATH`. Almost certainly obsolete — confirm and drop. |
 
 ## Features & research
 
