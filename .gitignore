@@ -1,3 +1,6 @@
 .vscode/
 work/
 *.code-workspace
+
+# verification gate scratch
+build-check/
