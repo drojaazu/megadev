@@ -1,3 +1,6 @@
 .vscode/
 work/
 *.code-workspace
+
+# generated Doxygen output
+docs/html/

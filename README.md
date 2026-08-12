@@ -8,6 +8,12 @@ Megadev is intended for those who already have some experience with C or M68k as
 
 Please refer to [docs/manual.md](docs/manual.md) for installation and usage information.
 
+## Project documentation
+
+ - [docs/manual.md](docs/manual.md) — installation and usage. **Start here.**
+ - [SPEC.md](SPEC.md) — what Megadev must do, the conventions its code follows, known defects, and the decision record.
+ - [BACKLOG.md](BACKLOG.md) — all open work, in one place.
+
 # DISCLAIMER
 
 **SEGA, Mega Drive, Mega CD and all related names, logos, trademarks and other indicia are the sole property of SEGA CORPORATION and its parent organization SEGA SAMMY HOLDINGS INC. Any use of these names or marks is for purely illustrative purposes within the boundaries of common-sense fair use.**
