@@ -21,13 +21,18 @@
  */
 static inline void memset8(u8 value, void * dest, u32 length)
 {
-  --length;
+  if (length == 0)
+    return;
+
+  u32 hi = --length;
   asm volatile(
     "\
+  swap %[hi] \n\
 1:move.b %[value], (%[dest])+ \n\
   dbra %[length], 1b \n\
+  dbra %[hi], 1b \n\
 		"
-    : [dest] "+a"(dest), [length] "+d"(length)
+    : [dest] "+a"(dest), [length] "+d"(length), [hi] "+d"(hi)
     : [value] "d"(value)
     : "cc");
 }
@@ -38,13 +43,18 @@ static inline void memset8(u8 value, void * dest, u32 length)
  */
 static inline void memset16(u16 value, void * dest, u32 length)
 {
-  --length;
+  if (length == 0)
+    return;
+
+  u32 hi = --length;
   asm volatile(
     "\
+  swap %[hi] \n\
 1:move.w %[value], (%[dest])+ \n\
   dbra %[length], 1b \n\
+  dbra %[hi], 1b \n\
 		"
-    : [dest] "+a"(dest), [length] "+d"(length)
+    : [dest] "+a"(dest), [length] "+d"(length), [hi] "+d"(hi)
     : [value] "d"(value)
     : "cc");
 }
@@ -55,13 +65,18 @@ static inline void memset16(u16 value, void * dest, u32 length)
  */
 static inline void memset32(u32 value, void * dest, u32 length)
 {
-  --length;
+  if (length == 0)
+    return;
+
+  u32 hi = --length;
   asm volatile(
     "\
+  swap %[hi] \n\
 1:move.l %[value], (%[dest])+ \n\
   dbra %[length], 1b \n\
+  dbra %[hi], 1b \n\
 		"
-    : [dest] "+a"(dest), [length] "+d"(length)
+    : [dest] "+a"(dest), [length] "+d"(length), [hi] "+d"(hi)
     : [value] "d"(value)
     : "cc");
 }
@@ -72,13 +87,18 @@ static inline void memset32(u32 value, void * dest, u32 length)
  */
 static inline void memcpy8(u8 * src, u8 * dest, u32 length)
 {
-  --length;
+  if (length == 0)
+    return;
+
+  u32 hi = --length;
   asm volatile(
     "\
+  swap %[hi] \n\
 1:move.b (%[src])+, (%[dest])+ \n\
   dbra %[length], 1b \n\
+  dbra %[hi], 1b \n\
 		"
-    : [src] "+a"(src), [dest] "+a"(dest), [length] "+d"(length)
+    : [src] "+a"(src), [dest] "+a"(dest), [length] "+d"(length), [hi] "+d"(hi)
     :
     : "cc");
 }
@@ -89,13 +109,18 @@ static inline void memcpy8(u8 * src, u8 * dest, u32 length)
  */
 static inline void memcpy16(u16 const * src, u16 * dest, u32 length)
 {
-  --length;
+  if (length == 0)
+    return;
+
+  u32 hi = --length;
   asm volatile(
     "\
+  swap %[hi] \n\
 1:move.w (%[src])+, (%[dest])+ \n\
   dbra %[length], 1b \n\
+  dbra %[hi], 1b \n\
 		"
-    : [src] "+a"(src), [dest] "+a"(dest), [length] "+d"(length)
+    : [src] "+a"(src), [dest] "+a"(dest), [length] "+d"(length), [hi] "+d"(hi)
     :
     : "cc");
 }
@@ -106,13 +131,18 @@ static inline void memcpy16(u16 const * src, u16 * dest, u32 length)
  */
 static inline void memcpy32(u32 const * src, u32 * dest, u32 length)
 {
-  --length;
+  if (length == 0)
+    return;
+
+  u32 hi = --length;
   asm volatile(
     "\
+  swap %[hi] \n\
 1:move.l (%[src])+, (%[dest])+ \n\
   dbra %[length], 1b \n\
+  dbra %[hi], 1b \n\
 		"
-    : [src] "+a"(src), [dest] "+a"(dest), [length] "+d"(length)
+    : [src] "+a"(src), [dest] "+a"(dest), [length] "+d"(length), [hi] "+d"(hi)
     :
     : "cc");
 }
