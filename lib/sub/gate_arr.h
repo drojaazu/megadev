@@ -449,7 +449,7 @@ typedef u8 volatile const * ga_reg8_ro;
  * @sa GA_REG_IMGBUFVSIZE
  * @ingroup gatearray_sub
  */
-#define ga_reg_imgbufvsize (*((ga_reg) GA_REG_IMGBUFVSIZE))
+#define ga_reg_imgbufvsize (*((ga_reg8) GA_REG_IMGBUFVSIZE))
 
 /**
  * @def ga_reg_imgbufstart
@@ -465,7 +465,7 @@ typedef u8 volatile const * ga_reg8_ro;
  * @sa GA_REG_IMGBUFOFFSET
  * @ingroup gatearray_sub
  */
-#define ga_reg_imgbufoffset (*((ga_reg) GA_REG_IMGBUFOFFSET))
+#define ga_reg_imgbufoffset (*((ga_reg8) GA_REG_IMGBUFOFFSET))
 
 /**
  * @def ga_reg_imgbufhdotsize

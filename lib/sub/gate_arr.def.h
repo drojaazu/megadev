@@ -1755,60 +1755,222 @@
 
 /**
  * @def GA_REG_IMGBUFVSIZE
+ * @brief Image buffer height, in cells
+ *
+ * @details
+ * The low byte of the hardware register at 0xFF805C; the high byte is unused.
+ *
+ * | |7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|
+ * | | | | |\b VCS4|\b VCS3|\b VCS2|\b VCS1|\b VCS0|
+ * |\b R| | | |◯|◯|◯|◯|◯|
+ * |\b W| | | |◯|◯|◯|◯|◯|
+ *
+ * @param VCS Vertical size in cells, 0 to 31.
+ * @warning **Store one less than the height you want.** The manual states it
+ * plainly: set the value to (actual value - 1). A buffer 8 cells tall is
+ * written as 7.
+ * @warning Bit operation instructions are not permitted here.
  * @sa ga_reg_imgbufvsize
- * @warning Bit operation instructions are not permitted here; read the
- * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_46
  */
-#define GA_REG_IMGBUFVSIZE 0xFF805C
+#define GA_REG_IMGBUFVSIZE 0xFF805D
+
+/**
+ * @def GA_IMGBUF_VCS_MASK
+ * @brief Image buffer height in cells, stored as height - 1
+ * @sa GA_REG_IMGBUFVSIZE
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_46
+ */
+#define GA_IMGBUF_VCS_POS 0
+#define GA_IMGBUF_VCS_WIDTH 5
+#define GA_IMGBUF_VCS_MASK FIELD_MASK(GA_IMGBUF_VCS_POS, GA_IMGBUF_VCS_WIDTH)
 
 /**
  * @def GA_REG_IMGBUFSTART
+ * @brief Where the image buffer sits in Word RAM
+ *
+ * @details
+ * Holds address bits A17 down to A05 in bits 15 down to 3, so the value is the
+ * Word RAM offset divided by 4 and the buffer must begin on a 32 byte boundary.
+ *
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | |\b A17|\b A16|\b A15|\b A14|\b A13|\b A12|\b A11|\b A10|\b A09|\b A08|\b A07|\b A06|\b A05| | | |
+ * |\b R|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯| | | |
+ * |\b W|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯| | | |
+ *
+ * @param A Image buffer base, bits 5-17.
+ * @warning Word access only. A byte access to this register can raise a bus
+ * error.
+ * @warning Bit operation instructions are not permitted here.
  * @sa ga_reg_imgbufstart
- * @warning Word access only. A byte access to this register can raise a
- * bus error.
- * @warning Bit operation instructions are not permitted here; read the
- * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_47
  */
 #define GA_REG_IMGBUFSTART 0xFF805E
 
 /**
  * @def GA_REG_IMGBUFOFFSET
- * @sa ga_reg_imgbufoffset
+ * @brief Where writing starts inside the first cell of the image buffer
+ *
+ * @details
+ * The low byte of the hardware register at 0xFF8060; the high byte is unused.
+ * Together with GA_REG_IMGBUFSTART this fixes the exact dot the hardware begins
+ * writing at: the start address picks the cell, this picks the dot within it.
+ *
+ * | |7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|
+ * | | | |\b LN2|\b LN1|\b LN0|\b DOT2|\b DOT1|\b DOT0|
+ * |\b R| | |◯|◯|◯|◯|◯|◯|
+ * |\b W| | |◯|◯|◯|◯|◯|◯|
+ *
+ * @param LN Line within the first cell, 0 to 7.
+ * @param DOT Dot within that line, 0 to 7.
+ * @sa ga_reg_imgbufoffset, GA_IMGBUF_LN_MASK, GA_IMGBUF_DOT_MASK
  * @ingroup ga_reg_sub_48
  */
-#define GA_REG_IMGBUFOFFSET 0xFF8060
+#define GA_REG_IMGBUFOFFSET 0xFF8061
+
+/**
+ * @def GA_IMGBUF_DOT_MASK
+ * @brief Starting dot within the first line
+ * @sa GA_REG_IMGBUFOFFSET
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_48
+ */
+#define GA_IMGBUF_DOT_POS 0
+#define GA_IMGBUF_DOT_WIDTH 3
+#define GA_IMGBUF_DOT_MASK FIELD_MASK(GA_IMGBUF_DOT_POS, GA_IMGBUF_DOT_WIDTH)
+
+/**
+ * @def GA_IMGBUF_LN_MASK
+ * @brief Starting line within the first cell
+ * @sa GA_REG_IMGBUFOFFSET
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_48
+ */
+#define GA_IMGBUF_LN_POS 3
+#define GA_IMGBUF_LN_WIDTH 3
+#define GA_IMGBUF_LN_MASK FIELD_MASK(GA_IMGBUF_LN_POS, GA_IMGBUF_LN_WIDTH)
 
 /**
  * @def GA_REG_IMGBUFHDOTSIZE
+ * @brief Image buffer width, in dots
+ *
+ * @details
+ * How many dots wide each written line is. Nine bits, so it spans both halves
+ * of the register and stays 16 bit.
+ *
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | | | | | | | | |\b HW08|\b HW07|\b HW06|\b HW05|\b HW04|\b HW03|\b HW02|\b HW01|\b HW00|
+ * |\b R| | | | | | | |◯|◯|◯|◯|◯|◯|◯|◯|◯|
+ * |\b W| | | | | | | |◯|◯|◯|◯|◯|◯|◯|◯|◯|
+ *
+ * @param HW Horizontal dots to write, 0 to 511.
+ * @note Where those dots land is set by GA_REG_IMGBUFSTART and
+ * GA_REG_IMGBUFOFFSET together.
+ * @warning Word access only. A byte access to this register can raise a bus
+ * error.
+ * @warning Bit operation instructions are not permitted here.
  * @sa ga_reg_imgbufhdotsize
- * @warning Word access only. A byte access to this register can raise a
- * bus error.
- * @warning Bit operation instructions are not permitted here; read the
- * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_49
  */
 #define GA_REG_IMGBUFHDOTSIZE 0xFF8062
 
 /**
+ * @def GA_IMGBUF_HW_MASK
+ * @brief Horizontal dots written per line
+ * @sa GA_REG_IMGBUFHDOTSIZE
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_49
+ */
+#define GA_IMGBUF_HW_POS 0
+#define GA_IMGBUF_HW_WIDTH 9
+#define GA_IMGBUF_HW_MASK FIELD_MASK(GA_IMGBUF_HW_POS, GA_IMGBUF_HW_WIDTH)
+
+/**
  * @def GA_REG_IMGBUFVDOTSIZE
+ * @brief Image buffer height, in dots -- and the operation's progress counter
+ *
+ * @details
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | | | | | | | | | |\b VW07|\b VW06|\b VW05|\b VW04|\b VW03|\b VW02|\b VW01|\b VW00|
+ * |\b R| | | | | | | | |◯|◯|◯|◯|◯|◯|◯|◯|
+ * |\b W| | | | | | | | |◯|◯|◯|◯|◯|◯|◯|◯|
+ *
+ * @param VW Vertical dots to write, 0 to 255.
+ * @warning **This register is destroyed by the operation it configures.** The
+ * hardware decrements it as the operation runs and it reads 0 once complete, so
+ * it must be written again before every graphics or numeric operation. Setting
+ * it once and reusing it will silently perform a zero-height operation the
+ * second time.
+ * @note The flip side is that it can be read during an operation as a
+ * remaining-lines counter.
+ * @note Where the dots land is set by GA_REG_IMGBUFSTART and
+ * GA_REG_IMGBUFOFFSET together.
+ * @warning Word access only. A byte access to this register can raise a bus
+ * error.
+ * @warning Bit operation instructions are not permitted here.
  * @sa ga_reg_imgbufvdotsize
- * @warning Word access only. A byte access to this register can raise a
- * bus error.
- * @warning Bit operation instructions are not permitted here; read the
- * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_50
  */
 #define GA_REG_IMGBUFVDOTSIZE 0xFF8064
 
 /**
+ * @def GA_IMGBUF_VW_MASK
+ * @brief Vertical dots remaining to write
+ * @sa GA_REG_IMGBUFVDOTSIZE
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_50
+ */
+#define GA_IMGBUF_VW_POS 0
+#define GA_IMGBUF_VW_WIDTH 8
+#define GA_IMGBUF_VW_MASK FIELD_MASK(GA_IMGBUF_VW_POS, GA_IMGBUF_VW_WIDTH)
+
+/**
  * @def GA_REG_TRACEVECTBASE
- * @sa ga_reg_tracevectbase
- * @warning Word access only. A byte access to this register can raise a
- * bus error.
- * @warning Bit operation instructions are not permitted here; read the
- * register, modify the copy, and write the whole value back.
+ * @brief Trace vector table address -- and the operation trigger
+ *
+ * @details
+ * Holds address bits A17 down to A03 in bits 15 down to 1, so the value is the
+ * Word RAM offset divided by 4 and the table must begin on an 8 byte boundary.
+ *
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | |\b A17|\b A16|\b A15|\b A14|\b A13|\b A12|\b A11|\b A10|\b A09|\b A08|\b A07|\b A06|\b A05|\b A04|\b A03| |
+ * |\b R|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|
+ * |\b W|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯| |
+ *
+ * @warning **Writing this register starts the operation.** It is the trigger,
+ * not merely a pointer, so every other rotation and scaling register must
+ * already hold its final value. Completion raises a level 1 interrupt, and
+ * GA_GRON_MASK reads 0.
+ *
+ * The pipeline it drives is: start position and deltas, through the stamp map,
+ * through the stamp generators, into the image buffer.
+ *
+ * ### The trace vector table
+ *
+ * Four words per output line, at the address written here:
+ *
+ * | Word | Contents | Format |
+ * |---|---|---|
+ * | 0 | X start | 13 integer bits, 3 fractional |
+ * | 1 | Y start | 13 integer bits, 3 fractional |
+ * | 2 | delta X per dot | sign bit, 4 integer bits, 11 fractional |
+ * | 3 | delta Y per dot | sign bit, 4 integer bits, 11 fractional |
+ *
+ * @warning The deltas are **sign and magnitude**, not two's complement: bit 15
+ * is the sign and the remaining bits are an unsigned magnitude. Negating a
+ * delta means toggling bit 15, not negating the word.
+ *
+ * @warning Write only, and word access only. A byte access to this register can
+ * raise a bus error.
+ * @warning Bit operation instructions are not permitted here.
+ * @sa ga_reg_tracevectbase, GA_REG_GFXSTAT
  * @ingroup ga_reg_sub_51
  */
 #define GA_REG_TRACEVECTBASE 0xFF8066
