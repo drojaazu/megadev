@@ -20,7 +20,7 @@
 
 CHECK := tools/check/check.py
 
-.PHONY: all check check-headers check-link check-asm check-projects lint test \
+.PHONY: all check check-headers check-asserts check-link check-asm check-projects lint test \
         baseline format format-check docs clean-check help
 
 all: help
@@ -29,6 +29,7 @@ help:
 	@printf 'MEGADEV development targets:\n\n'
 	@printf '  check           run the full verification gate\n'
 	@printf '  check-headers   Tier 0.1 - per-header compile\n'
+	@printf '  check-asserts   Tier 1.5 - compile-time semantic assertions\n'
 	@printf '  check-link      Tier 0.4 - one-definition-rule across two TUs\n'
 	@printf '  check-asm       Tier 0.2 - assemble every .s\n'
 	@printf '  check-projects  Tier 0.3 - build examples and template\n'
@@ -46,6 +47,9 @@ check:
 
 check-headers:
 	@$(CHECK) headers
+
+check-asserts:
+	@$(CHECK) asserts
 
 check-link:
 	@$(CHECK) link

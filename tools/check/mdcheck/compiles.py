@@ -8,6 +8,7 @@ from . import toolchain as tc
 from .report import Reporter, info
 
 EXCLUDE_FILE = Path(__file__).resolve().parents[1] / "asm-exclude.txt"
+ASSERTS_DIR = Path(__file__).resolve().parents[1] / "asserts"
 
 
 def _load_exclusions() -> dict[str, str]:
@@ -120,4 +121,34 @@ def link() -> int:
             rep.fail(item, stderr)
         else:
             rep.ok()
+    return rep.summarise()
+
+
+def asserts() -> int:
+    """Tier 1.5 - compile-time semantic assertions.
+
+    Tier 0.1 proves a macro parses; it says nothing about what the macro
+    evaluates to, because a macro that is never expanded is never checked.
+    These translation units expand the macros and assert the results with
+    _Static_assert, catching "compiles fine, computes garbage" without needing
+    hardware or an emulator.
+    """
+    info("Tier 1.5 - compile-time semantic assertions")
+    tc.require()
+    rep = Reporter("Assertions")
+
+    sources = sorted(ASSERTS_DIR.glob("*.c"))
+    if not sources:
+        rep.skip("no assertion sources found")
+        return rep.summarise()
+
+    for src in sources:
+        res = tc.run(
+            [tc.CC, *tc.C_FLAGS, "-DTARGET=MEGACD", "-fsyntax-only", "-x", "c", str(src)]
+        )
+        item = f"asserts/{src.name}"
+        if res.returncode != 0:
+            rep.fail(item, res.stderr)
+        else:
+            rep.ok(item, quiet=False)
     return rep.summarise()

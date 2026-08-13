@@ -20,12 +20,13 @@ TIERS = {
     "conventions": lambda a: conventions.run(write=a.write_baseline),
     "headers": lambda a: compiles.headers(),
     "link": lambda a: compiles.link(),
+    "asserts": lambda a: compiles.asserts(),
     "asm": lambda a: compiles.assemble(),
     "projects": lambda a: projects.run(),
 }
 
 # Cheapest first, so an obvious breakage fails fast.
-ALL_ORDER = ["conventions", "headers", "link", "asm", "projects"]
+ALL_ORDER = ["conventions", "headers", "asserts", "link", "asm", "projects"]
 
 
 def main() -> int:
