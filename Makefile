@@ -20,7 +20,7 @@
 
 CHECK := tools/check/check.py
 
-.PHONY: all check check-headers check-asserts check-link check-asm check-projects lint test \
+.PHONY: all check check-headers check-asserts check-link check-asm check-symbols check-projects lint test \
         baseline format format-check docs clean-check help
 
 all: help
@@ -32,6 +32,7 @@ help:
 	@printf '  check-asserts   Tier 1.5 - compile-time semantic assertions\n'
 	@printf '  check-link      Tier 0.4 - one-definition-rule across two TUs\n'
 	@printf '  check-asm       Tier 0.2 - assemble every .s\n'
+	@printf '  check-symbols   Tier 0.5 - symbol resolution across lib\n'
 	@printf '  check-projects  Tier 0.3 - build examples and template\n'
 	@printf '  lint            Tier 1   - convention lint\n'
 	@printf '  test            unit tests for the gate (no toolchain needed)\n'
@@ -56,6 +57,9 @@ check-link:
 
 check-asm:
 	@$(CHECK) asm
+
+check-symbols:
+	@$(CHECK) symbols
 
 check-projects:
 	@$(CHECK) projects

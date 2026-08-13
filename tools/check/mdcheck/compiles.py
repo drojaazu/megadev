@@ -9,6 +9,7 @@ from .report import Reporter, info
 
 EXCLUDE_FILE = Path(__file__).resolve().parents[1] / "asm-exclude.txt"
 ASSERTS_DIR = Path(__file__).resolve().parents[1] / "asserts"
+ALLOW_FILE = Path(__file__).resolve().parents[1] / "symbol-allow.txt"
 
 
 def _load_exclusions() -> dict[str, str]:
@@ -151,4 +152,78 @@ def asserts() -> int:
             rep.fail(item, res.stderr)
         else:
             rep.ok(item, quiet=False)
+    return rep.summarise()
+
+
+def _load_allowlist() -> dict[str, str]:
+    if not ALLOW_FILE.exists():
+        return {}
+    out = {}
+    for line in ALLOW_FILE.read_text().splitlines():
+        line = line.strip()
+        if line and not line.startswith("#") and "|" in line:
+            sym, reason = line.split("|", 1)
+            out[sym.strip()] = reason.strip()
+    return out
+
+
+def symbols() -> int:
+    """Tier 0.5 - cross-reference undefined symbols against what lib defines.
+
+    An undefined symbol is legal until final link, so neither the assemble tier
+    nor the ODR tier can see a typo'd or renamed symbol. This builds every lib
+    object, collects what they define and what they leave undefined, and
+    reports anything undefined that lib does not define and that is not a
+    documented external. This is how the doubled EXVEC_TRACE rename surfaced.
+    """
+    info("Tier 0.5 - symbol resolution")
+    tc.require()
+    tc.TMP.mkdir(parents=True, exist_ok=True)
+    rep = Reporter("Symbols")
+
+    exclusions = _load_exclusions()
+    objs: list[Path] = []
+
+    for rel in tc.lib_files(".s"):
+        if rel in exclusions:
+            continue
+        obj = tc.TMP / f"sym_{rel.replace('/', '_')}.o"
+        if tc.run([tc.CC, *tc.ASM_FLAGS, "-DTARGET=MEGACD", "-c",
+                   str(tc.LIB / rel), "-o", str(obj)]).returncode == 0:
+            objs.append(obj)
+    for rel in tc.lib_files(".c"):
+        obj = tc.TMP / f"sym_{rel.replace('/', '_')}.o"
+        if tc.run([tc.CC, *tc.C_FLAGS, "-DTARGET=MEGACD", "-c",
+                   str(tc.LIB / rel), "-o", str(obj)]).returncode == 0:
+            objs.append(obj)
+
+    if not objs:
+        rep.fail("symbol resolution", "no lib objects could be built")
+        return rep.summarise()
+
+    nm = f"{tc.M68K_PREFIX}nm"
+    defined = set()
+    for line in tc.run([nm, "--defined-only", *map(str, objs)]).stdout.splitlines():
+        parts = line.split()
+        if len(parts) >= 3:
+            defined.add(parts[2])
+
+    allow = _load_allowlist()
+    undefined: dict[str, set[str]] = {}
+    for obj in objs:
+        for line in tc.run([nm, "-u", str(obj)]).stdout.splitlines():
+            parts = line.split()
+            if len(parts) >= 2 and parts[0] == "U":
+                undefined.setdefault(parts[1], set()).add(obj.name)
+
+    unresolved = {s: o for s, o in undefined.items() if s not in defined and s not in allow}
+
+    for sym in sorted(unresolved):
+        rep.fail(
+            f"unresolved symbol: {sym}",
+            "referenced by " + ", ".join(sorted(unresolved[sym]))
+            + "\nNot defined anywhere in lib/ and not in tools/check/symbol-allow.txt."
+            + "\nEither it is a typo, or it is a genuine external - add it to the allowlist with a reason.",
+        )
+    rep.passed = len(defined)
     return rep.summarise()

@@ -1,0 +1,66 @@
+# Symbols that lib/ may legitimately leave undefined, with the reason.
+#
+# Tier 0.5 cross-references every undefined symbol in the lib objects against
+# every symbol lib defines. What remains must be supplied from outside lib --
+# by the project, or by the linker script. Anything NOT listed here is a typo
+# or a missing file: that is how the doubled EXVEC_TRACE rename was found, and
+# neither the assemble tier nor the link tier could see it, because an
+# undefined symbol is perfectly legal until final link.
+#
+# Format: <symbol>|<reason>
+
+# --- Exception vector table (lib/md_vectors.s) ---------------------------
+# The project supplies its own handlers; the table only references them.
+INIT_SSP|Initial supervisor stack pointer, supplied by the project
+INIT_PC|Initial program counter, supplied by the project
+ERR_BUS|Bus error handler, supplied by the project
+ERR_ADDRESS|Address error handler, supplied by the project
+ERR_ILLEGAL|Illegal instruction handler, supplied by the project
+ERR_ZERODIV|Divide by zero handler, supplied by the project
+ERR_VIOLATION|Privilege violation handler, supplied by the project
+EX_CHK|CHK instruction exception handler, supplied by the project
+EX_TRAPV|TRAPV instruction exception handler, supplied by the project
+EX_TRACE|Trace exception handler, supplied by the project
+EX_LINE_1010|Line 1010 emulator handler, supplied by the project
+EX_LINE_1111|Line 1111 emulator handler, supplied by the project
+EX_SPURIOUS|Spurious interrupt handler, supplied by the project
+EX_UNINITIALIZED|Uninitialised interrupt handler, supplied by the project
+INT1|Level 1 interrupt handler, supplied by the project
+INT2_EXT|Level 2 (EXT) interrupt handler, supplied by the project
+INT3|Level 3 interrupt handler, supplied by the project
+INT4_HBLANK|Level 4 (HBLANK) interrupt handler, supplied by the project
+INT5|Level 5 interrupt handler, supplied by the project
+INT6_VBLANK|Level 6 (VBLANK) interrupt handler, supplied by the project
+INT7|Level 7 interrupt handler, supplied by the project
+TRAP_0|TRAP #0 vector, supplied by the project
+TRAP_1|TRAP #1 vector, supplied by the project
+TRAP_2|TRAP #2 vector, supplied by the project
+TRAP_3|TRAP #3 vector, supplied by the project
+TRAP_4|TRAP #4 vector, supplied by the project
+TRAP_5|TRAP #5 vector, supplied by the project
+TRAP_6|TRAP #6 vector, supplied by the project
+TRAP_7|TRAP #7 vector, supplied by the project
+TRAP_8|TRAP #8 vector, supplied by the project
+TRAP_9|TRAP #9 vector, supplied by the project
+TRAP_A|TRAP #A vector, supplied by the project
+TRAP_B|TRAP #B vector, supplied by the project
+TRAP_C|TRAP #C vector, supplied by the project
+TRAP_D|TRAP #D vector, supplied by the project
+TRAP_E|TRAP #E vector, supplied by the project
+TRAP_F|TRAP #F vector, supplied by the project
+
+# --- Linker script symbols (cfg/*.ld) ------------------------------------
+_BSS_ORIGIN|Emitted by the linker script
+_BSS_LENGTH_LOOPSZ|Emitted by the linker script
+_RAM_DATA_ORIGIN|Emitted by the linker script
+_RAM_DATA_LENGTH_LOOPSZ|Emitted by the linker script
+_RAM_LENGTH|Emitted by the linker script
+_ROM_DATA_ORIGIN|Emitted by the linker script
+_TEXT_LENGTH|Emitted by the linker script
+
+# --- Project entry points ------------------------------------------------
+main|Main CPU entry point, supplied by the project
+sp_init|Sub CPU init entry, supplied by the project (see docs/boot.md)
+sp_main|Sub CPU main entry, supplied by the project
+sp_int2|Sub CPU INT2 handler, supplied by the project
+sp_user|Sub CPU user call entry, supplied by the project
