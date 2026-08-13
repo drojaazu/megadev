@@ -285,25 +285,38 @@
 
 /**
  * @def GA_REG_RESET
- * @brief Sub CPU & Hardware Control
+ * @brief Peripheral reset, drive LEDs and gate array version
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
  * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * | ||||||LEDG|LEDR|Ver3|Ver2|Ver1|Ver0| |||RES0|
+ * |  |  |  |  |  |  |LEDG|LEDR|VER3|VER2|VER1|VER0|  |  |  |RES0|
+ * |R |  |  |  |  |  |  | o| o| o| o| o| o|  |  |  | o|
+ * |W |  |  |  |  |  |  | o| o|  |  |  |  |  |  |  | o|
  *
- * @param RES0 Sub CPU reset / Version / LED Control
- * \n [write] 0: Reset / 1: No effect
- * \n [read] 0: Reset in progress / 1: Reset
- * possible
- * @param LEDR Red LED control
- * \n 0: off
- * \n 1: on
- * @param LEDG Green LED control
- * \n 0: off
- * \n 1: On
- * @param Ver ROM Version
- * [read] ROM Version
+ * @param RES0 Peripheral reset.
+ * \n [write] 0: reset the peripheral (1 is not used)
+ * \n [read] 0: the peripheral is being reset / 1: the peripheral is operable
+ * \n Roughly 100 ms after a reset the peripheral becomes operable and RES0
+ * becomes 1 of its own accord.
+ * @param VER0-3 Gate array chip version. Read only.
+ * @param LEDR Red LED. 1: on, 0: off. Lit during CD access.
+ * @param LEDG Green LED. 1: on, 0: off. Lit when the drive is ready.
+ *
+ * The two LEDs are read together as a drive state indicator, and the BIOS
+ * drives them:
+ *
+ * | Green | Red | Meaning |
+ * |---|---|---|
+ * | 1 | 0 | Ready. No disc, or waiting for the TOC to finish reading |
+ * | 1 | 0 | Ready. A disc is present and readable |
+ * | 1 | 1 | Disc access in progress |
+ * | either | 0 | Standby |
+ *
+ * Power-on and reset clear both LEDs. Any other combination requires a
+ * special system mode.
+ *
+ * @sa ga_reg_reset
  * @ingroup ga_reg_sub_00
  */
 #define GA_REG_RESET 0xFF8000
@@ -362,22 +375,36 @@
 
 /**
  * @def GA_REG_MEMMODE
- * @brief GA Reg 01 - Word RAM Memory Mode / RAM Write Protect / Priority Mode
+ * @brief Word RAM ownership and layout, PRG RAM write protection
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
  * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * |WP7|WP6|WP5|WP4|WP3|WP2|WP1|WP0| |||PM1|PM0|MODE|DMNA|RET|
+ * |WP7|WP6|WP5|WP4|WP3|WP2|WP1|WP0|  |  |  |PM1|PM0|MODE|DMNA|RET|
+ * |R | o| o| o| o| o| o| o| o|  |  |  | o| o| o| o| o|
+ * |W |  |  |  |  |  |  |  |  |  |  |  | o| o| o|  | o|
  *
- * @param WP Write protect Sub CPU RAM
- * @param PM Priority Mode
- * @param MODE Word RAM layout
- * \n 0: 2M
- * \n 1: 1M
- * @param DMNA Main CPU will not access Word RAM
- * @param RET In 2M mode: Give Word RAM control to Main CPU;
- * In 1M mode: Change 1M block ownership
+ * @param WP0-7 Write protect for the lower PRG RAM. Read only from this side.
+ * @param PM0-1 Priority mode, applied when the Sub CPU writes into Word RAM.
+ * \n 0,0: off - all stamp map data is written to the image buffer
+ * \n 0,1: underwrite - stamp data is written only where the buffer holds 0
+ * \n 1,0: overwrite - only non-zero stamp data is written
+ * \n 1,1: prohibited
+ * @param MODE Word RAM layout. 0: 2M, 1: 1M.
+ * @param DMNA Declaration of Main RAM No Access.
+ * \n In 2M mode, writing 1 returns Word RAM to the Sub CPU. Reading 0 means
+ * it has not been returned yet; 1 means it has.
+ * \n In 1M mode, reading 1 means the Main CPU has requested a bank swap, and
+ * reading 0 means the swap is complete. Setting RET also sets DMNA.
+ * @param RET The counterpart to DMNA.
+ * \n In 2M mode, writing 1 gives Word RAM to the Main CPU. Reading 0 means it
+ * has not been given up yet; 1 means it has.
  *
+ * @note DMNA and RET are the two halves of Word RAM handover: each declares
+ * the transfer in one direction, and the bit you write is not the bit you
+ * poll to confirm it.
+ *
+ * @sa ga_reg_memmode
  * @ingroup ga_reg_sub_01
  */
 #define GA_REG_MEMMODE 0xFF8002
@@ -465,7 +492,6 @@
  *
  *   All other values for DD are invalid.
  * @warning Of the bit operations, only BTST is permitted.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_sub_02
  */
 #define GA_REG_CDCMODE 0xFF8004
@@ -488,7 +514,6 @@
  * \n Details for this register can be found in the LC89510 manual
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_sub_03
  */
 #define GA_REG_CDCRS1 0xFF8006
@@ -510,10 +535,9 @@
  * [read] 2 bytes of data read by the CDC and ready to be transferred to
  * Main or Sub CPU memory
  * @warning Word access only. A byte access to this register can raise a
- * bus error. (Hardware Manual p.21)
+ * bus error.
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_sub_04
  */
 #define GA_REG_CDCHOSTDATA 0xFF8008
@@ -541,10 +565,9 @@
  *
  * Unused bits will be read as 0.
  * @warning Word access only. A byte access to this register can raise a
- * bus error. (Hardware Manual p.21)
+ * bus error.
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_sub_05
  */
 #define GA_REG_DMAADDR 0xFF800A
@@ -567,10 +590,9 @@
  * This is a general use timer, though it is primarily used for CDD/CDC
  * timing. Each tick is 30.72 microseconds.
  * @warning Word access only. A byte access to this register can raise a
- * bus error. (Hardware Manual p.21)
+ * bus error.
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_sub_06
  */
 #define GA_REG_STOPWATCH 0xFF800C
@@ -733,10 +755,9 @@
  * @def GA_REG_CDFADER
  * @sa ga_reg_cdfader
  * @warning Word access only. A byte access to this register can raise a
- * bus error. (Hardware Manual p.21)
+ * bus error.
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_sub_26
  */
 #define GA_REG_CDFADER 0xFF8034
@@ -746,7 +767,6 @@
  * @sa ga_reg_cddctrl
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_sub_27
  */
 #define GA_REG_CDDCTRL 0xFF8036
@@ -756,7 +776,6 @@
  * @sa ga_reg_cddcomm0
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_sub_28
  */
 #define GA_REG_CDDCOMM0 0xFF8038
@@ -766,7 +785,6 @@
  * @sa ga_reg_cddcomm1
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_sub_29
  */
 #define GA_REG_CDDCOMM1 0xFF803A
@@ -776,7 +794,6 @@
  * @sa ga_reg_cddcomm2
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_sub_30
  */
 #define GA_REG_CDDCOMM2 0xFF803C
@@ -786,7 +803,6 @@
  * @sa ga_reg_cddcomm2
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_sub_31
  */
 #define GA_REG_CDDCOMM3 0xFF803E
@@ -796,7 +812,6 @@
  * @sa ga_reg_cddcomm4
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_sub_32
  */
 #define GA_REG_CDDCOMM4 0xFF8040
@@ -806,7 +821,6 @@
  * @sa ga_reg_cddcomm5
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_sub_33
  */
 #define GA_REG_CDDCOMM5 0xFF8042
@@ -816,7 +830,6 @@
  * @sa ga_reg_cddcomm6
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_sub_34
  */
 #define GA_REG_CDDCOMM6 0xFF8044
@@ -826,7 +839,6 @@
  * @sa ga_reg_cddcomm7
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_sub_35
  */
 #define GA_REG_CDDCOMM7 0xFF8046
@@ -836,7 +848,6 @@
  * @sa ga_reg_cddcomm8
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_sub_36
  */
 #define GA_REG_CDDCOMM8 0xFF8048
@@ -846,7 +857,6 @@
  * @sa ga_reg_cddcomm9
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_sub_37
  */
 #define GA_REG_CDDCOMM9 0xFF804A
@@ -922,10 +932,9 @@
     16x16px stamps, 4096x4096px stamp map: Multiples of 0x20000
     32x32px stamps, 4096x4096px stamp map: Multiples of 0x8000
  * @warning Word access only. A byte access to this register can raise a
- * bus error. (Hardware Manual p.21)
+ * bus error.
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_sub_45
  */
 #define GA_REG_STAMPMAPBASE 0xFF805A
@@ -935,7 +944,6 @@
  * @sa ga_reg_imgbufvsize
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_sub_46
  */
 #define GA_REG_IMGBUFVSIZE 0xFF805C
@@ -944,10 +952,9 @@
  * @def GA_REG_IMGBUFSTART
  * @sa ga_reg_imgbufstart
  * @warning Word access only. A byte access to this register can raise a
- * bus error. (Hardware Manual p.21)
+ * bus error.
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_sub_47
  */
 #define GA_REG_IMGBUFSTART 0xFF805E
@@ -963,10 +970,9 @@
  * @def GA_REG_IMGBUFHDOTSIZE
  * @sa ga_reg_imgbufhdotsize
  * @warning Word access only. A byte access to this register can raise a
- * bus error. (Hardware Manual p.21)
+ * bus error.
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_sub_49
  */
 #define GA_REG_IMGBUFHDOTSIZE 0xFF8062
@@ -975,10 +981,9 @@
  * @def GA_REG_IMGBUFVDOTSIZE
  * @sa ga_reg_imgbufvdotsize
  * @warning Word access only. A byte access to this register can raise a
- * bus error. (Hardware Manual p.21)
+ * bus error.
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_sub_50
  */
 #define GA_REG_IMGBUFVDOTSIZE 0xFF8064
@@ -987,10 +992,9 @@
  * @def GA_REG_TRACEVECTBASE
  * @sa ga_reg_tracevectbase
  * @warning Word access only. A byte access to this register can raise a
- * bus error. (Hardware Manual p.21)
+ * bus error.
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_sub_51
  */
 #define GA_REG_TRACEVECTBASE 0xFF8066

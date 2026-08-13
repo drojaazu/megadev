@@ -168,7 +168,6 @@
  *
  * @note Only BTST bitwise operation allowed on this register
  * @warning Of the bit operations, only BTST is permitted.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_main_00
  */
 #define GA_REG_RESET 0xA12000
@@ -438,7 +437,7 @@
  *
  * @warning Bit level opcodes (BTST, BCLR, BSET) are undefined for this register
  * @warning Word access only. A byte access to this register can raise a
- * bus error. (Hardware Manual p.21)
+ * bus error.
  * @ingroup ga_reg_main_03
  */
 #define GA_REG_HBLANKVECT 0xA12006
@@ -462,10 +461,9 @@
  *
  * @warning Bit level opcodes (BTST, BCLR, BSET) are undefined for this register
  * @warning Word access only. A byte access to this register can raise a
- * bus error. (Hardware Manual p.21)
+ * bus error.
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_main_04
  */
 #define GA_REG_CDCHOSTDATA 0xA12008
@@ -490,10 +488,9 @@
  *
  * @warning Bit level opcodes (BTST, BCLR, BSET) are undefined for this register
  * @warning Word access only. A byte access to this register can raise a
- * bus error. (Hardware Manual p.21)
+ * bus error.
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
- * (Hardware Manual p.21)
  * @ingroup ga_reg_main_06
  */
 #define GA_REG_STOPWATCH 0xA1200C

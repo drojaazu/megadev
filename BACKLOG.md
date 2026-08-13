@@ -172,6 +172,7 @@ Items that can only be closed by testing on real hardware. See [SPEC.md §7](SPE
 
 | ID | Sev | Status | Item |
 |---|---|---|---|
+| HW-7 | S2 | open | **KB-34** — confirm the bit positions of `GA_LED_R`/`GA_LED_G`. Megadev has them at bits 0 and 1 of `GA_REG_RESET`; the Hardware Manual puts them at 9 and 8, with bit 0 being RES0 (peripheral reset). Either the values are wrong, or they are high-byte values with a misleading `@sa`. Unused today, so it is latent — but writing the LED via the word accessor would trip the reset bit. |
 | HW-1 | S2 | open | `docs/boot.md:15` — verify on real hardware whether the boot sector layout can be changed. **Source to read first:** *Mega-CD Disc Format Specifications* + BIOS Manual (see SPEC.md §7). |
 | HW-2 | S3 | open | `lib/sub/gate_arr.def.h` `@todo` — effects of writing 0 to the Word RAM mode bits in 2M mode. **The `@todo` names its own source:** *Mega-CD Hardware Manual - The Hardware*, which is in the library share (SPEC.md §7). |
 | HW-3 | S3 | open | `lib/main/md_sys.def.h:28` — `HW_REV` is 3 bits but its comment shows VER3..VER0 (4 bits). Gates the TMSS write in `md_init.s:32`. **Settle against the *Genesis Software Manual*.** |
