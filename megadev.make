@@ -192,6 +192,36 @@ endif
 # other (B-5). `sub/pcm.s` becomes `$(BUILD_PATH)/sub/pcm.s.o`.
 MODULE_OBJS = $(addprefix $(BUILD_PATH)/,$(addsuffix .o,$(filter %.c %.s,$1)))
 
+# Symbols that are a module's private BUILD METADATA, not part of its API.
+# Every module defines these for its own linker script, so importing them from
+# a resident module collides with the importing module's own copies -- which is
+# the only reason -z muldefs was ever needed. Stripping them from the symbol
+# reference ELF lets modules link cleanly, so duplicate symbols are once again
+# a real error rather than something suppressed wholesale.
+MODULE_PRIVATE_SYMS:= \
+	MMD_DEST \
+	MODULE_ROM_ORIGIN MODULE_ROM_LENGTH \
+	MODULE_RAM_ORIGIN MODULE_RAM_LENGTH \
+	_TEXT_ORIGIN _TEXT_LENGTH \
+	_ROM_LENGTH _ROM_LENGTH_LOOPSZ _ROM_DATA_ORIGIN \
+	_BSS_ORIGIN _BSS_LENGTH _BSS_LENGTH_LOOPSZ \
+	_RAM_DATA_ORIGIN _RAM_DATA_LENGTH _RAM_DATA_LENGTH_LOOPSZ \
+	_RODATA_ORIGIN _RODATA_LENGTH \
+	_INIT_ORIGIN _INIT_LENGTH \
+	main
+
+STRIP_PRIVATE_SYMS=$(foreach s,$(MODULE_PRIVATE_SYMS),--strip-symbol=$(s))
+
+# How to curate a resident module's symbols before a transient module links
+# against them. If the project provides $(SRC_PATH)/<module>.exports -- one
+# symbol name per line -- only those are offered, making the module's ABI
+# explicit. Otherwise the private build metadata above is stripped, which is
+# enough to make the link unambiguous.
+# $(1) = module output path, e.g. disc/ipx.mmd
+module_export_args = $(if $(wildcard $(SRC_PATH)/$(basename $(notdir $(1))).exports),\
+	--keep-global-symbols=$(SRC_PATH)/$(basename $(notdir $(1))).exports,\
+	$(STRIP_PRIVATE_SYMS))
+
 .DEFAULT_GOAL:=all
 
 $(BUILD_PATH)/%.c.o: %.c | $(BUILD_PATH)
@@ -208,14 +238,8 @@ $(BUILD_PATH)/%.s.o: %.s | $(BUILD_PATH)
 #	@echo "mmd elf in: $^"
 #	@echo "mmd elf out: $@"
 #	echo "making mmd elf with: $^ $@"
-#	$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_mmd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(symref)) -o $@
+#	$(LD) $(LD_FLAGS) -T $(CFG_PATH)/module_mmd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(symref)) -o $@
 
-# NOTE on -z muldefs below: modules that share a layout file define the same
-# MODULE_ROM_LENGTH etc. as the resident module they import symbols from with
-# -R, so the link genuinely does see duplicate definitions. Verified: removing
-# it fails new_project with "multiple definition of MODULE_ROM_LENGTH".
-# It is a blunt instrument -- it suppresses ALL duplicate-symbol errors, real
-# ones included. See BACKLOG MAKE-15.
 %.mmd: $$(call MODULE_OBJS,$$^)
 # @echo "mmd in: $^"
 # @echo "mmd out: $@"
@@ -224,9 +248,11 @@ $(BUILD_PATH)/%.s.o: %.s | $(BUILD_PATH)
 	$(eval BUILD_SRC:=$(filter %.o,$^))
 	$(eval BUILD_MOD:=$(filter %.mmd %.smd %.bin,$^))
 # @echo "build mod: $(BUILD_MOD)"
+	$(Q)$(foreach symref,$(BUILD_MOD),$(OBJCPY) $(call module_export_args,$(symref)) \
+		$(BUILD_PATH)/$(notdir $(symref)).elf $(BUILD_PATH)/$(notdir $(symref)).syms.elf &&) true
 	$(call msg_info,Linking module $(notdir $@))
 	$(eval OUT_MOD_ELF:=$(addprefix $(BUILD_PATH)/,$(addsuffix .elf,$(notdir $@))))
-	@$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_mmd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(addsuffix .elf,$(addprefix $(BUILD_PATH)/,$(notdir $(symref))))) -o $(OUT_MOD_ELF)
+	@$(LD) $(LD_FLAGS) -T $(CFG_PATH)/module_mmd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(addsuffix .syms.elf,$(addprefix $(BUILD_PATH)/,$(notdir $(symref))))) -o $(OUT_MOD_ELF)
 	@$(NM) -n $(OUT_MOD_ELF) > $(addsuffix .sym,$(OUT_MOD_ELF))
 	@$(OBJCPY) -O binary $(OUT_MOD_ELF) $@
 
@@ -238,9 +264,11 @@ $(BUILD_PATH)/%.s.o: %.s | $(BUILD_PATH)
 	$(eval BUILD_SRC:=$(filter %.o,$^))
 	$(eval BUILD_MOD:=$(filter %.mmd %.smd %.bin,$^))
 # @echo "build mod: $(BUILD_MOD)"
+	$(Q)$(foreach symref,$(BUILD_MOD),$(OBJCPY) $(call module_export_args,$(symref)) \
+		$(BUILD_PATH)/$(notdir $(symref)).elf $(BUILD_PATH)/$(notdir $(symref)).syms.elf &&) true
 	$(call msg_info,Linking module $(notdir $@))
 	$(eval OUT_MOD_ELF:=$(addprefix $(BUILD_PATH)/,$(addsuffix .elf,$(notdir $@))))
-	@$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_smd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(addsuffix .elf,$(addprefix $(BUILD_PATH)/,$(notdir $(symref))))) -o $(OUT_MOD_ELF)
+	@$(LD) $(LD_FLAGS) -T $(CFG_PATH)/module_smd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(addsuffix .syms.elf,$(addprefix $(BUILD_PATH)/,$(notdir $(symref))))) -o $(OUT_MOD_ELF)
 	@$(NM) -n $(OUT_MOD_ELF) > $(addsuffix .sym,$(OUT_MOD_ELF))
 	@$(OBJCPY) -O binary $(OUT_MOD_ELF) $@
 

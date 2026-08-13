@@ -97,6 +97,35 @@ For example, the title screen may be `title.mmd`, for which we will need `title.
 
 Those files will be compiled then linked together to create the final `title.mmd` on the disc.
 
+### Linking against a memory resident module
+
+A transient module calls into a resident one by importing its symbols at link
+time (`ld -R`), which supplies addresses without pulling in any code.
+
+The catch is that `-R` imports *every* global symbol in that module, including
+the build metadata each module defines for its own linker script --
+`MODULE_ROM_ORIGIN`, `MMD_DEST`, `_BSS_ORIGIN` and so on -- plus its `main`.
+The importing module defines all of those itself, so the link sees genuine
+duplicate definitions. Megadev used to pass `-z muldefs` to silence them, which
+worked but suppressed *all* duplicate-symbol errors, real ones included.
+
+Instead, the symbol reference is now curated before it is used. By default the
+known build-metadata symbols are stripped, which is enough to make the link
+unambiguous with no change to your project.
+
+You can go further and declare the module's ABI explicitly by adding
+`<module>.exports` next to your sources, listing one symbol per line:
+
+    # The IPX kernel's public API: symbols transient modules may call.
+    init_particles
+    process_particles
+    next_module
+
+When that file exists, only those symbols are offered to importing modules and
+everything else stays private. This is worth doing for a resident kernel: it
+documents the interface, and it turns "a transient module accidentally resolved
+against an internal helper" into a link error.
+
 ### Object file layout
 
 Object files mirror the path you name the source by, under the build directory: a module listing
