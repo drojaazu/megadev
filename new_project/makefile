@@ -56,6 +56,10 @@ BUILD_PATH:=build
 
 DISC_PATH:=disc
 
+# Modules other modules import symbols from. These are built with the
+# RESIDENT_* layout contract so their build metadata cannot collide.
+RESIDENT_MODULES:=$(DISC_PATH)/ipx.mmd
+
 # Additional C compiler flags
 CC_FLAGS?=-O1 -fconserve-stack -fomit-frame-pointer -fno-gcse
 
@@ -93,7 +97,6 @@ clean:
 $(DISC_PATH)/ipx.mmd: \
 	ipx_layout.s \
 	main/ipx_init.s \
-	ipx_jmptbl.s \
 	ipx.c \
 	io.macros.s
 
