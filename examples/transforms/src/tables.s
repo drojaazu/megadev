@@ -1,5 +1,5 @@
 .section .rodata
-#include <macros.s>
+#include <macro.s>
 
 GLABEL ReciprocalLUT
 .word	0x8000, 0x5556, 0x4000, 0x3334, 0x2AAB, 0x2493, 0x2000, 0x1C72

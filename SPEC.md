@@ -489,10 +489,15 @@ removed from this clone on 2026-08-13 after its **SSH host key changed** and con
 The key change was *not* accepted — it needs human verification before that remote is trusted again.
 See BACKLOG.md OPS-1.
 
-### D7 — Macro files use the singular suffix `.macro.s` *(Damian R, in flight)*
-Rename begun in commit `bd4d06c` on `feature/sub_bios_overhaul`. `docs/manual.md:342` still documents
-the old plural `.macros.s`, which is correct for `master` and wrong for the branch. The rename is
-incomplete (KB-27) and must land atomically with its consumers.
+### D7 — Macro files use the singular suffix `.macro.s` *(Damian R, landed 2026-08-13)*
+Nine files renamed and all 57 referencing files updated, along with include guards (`_MACROS_S` →
+`_MACRO_S`) and `docs/manual.md`. The tree previously held a mix: `main.macro.s`, `sub.macro.s` and
+`cdrom.macro.s` were already singular while the rest were plural.
+
+The original attempt (`bd4d06c`, on `feature/sub_bios_overhaul`) left 39 files including a file that
+no longer existed, and nothing caught it — the branch simply stopped building for five commits. The
+same rename is now mechanical, because Tier 0.2 assembles every `.s` and a dangling `#include`
+fails immediately.
 
 ### D8 — The verification gate is written in Python *(Damian R, 2026-08-13)*
 Stdlib only, in `tools/check/`, replacing six bash scripts. **Why:** the compile/assemble drivers

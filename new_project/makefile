@@ -98,7 +98,7 @@ $(DISC_PATH)/ipx.mmd: \
 	ipx_layout.s \
 	main/ipx_init.s \
 	ipx.c \
-	io.macros.s
+	io.macro.s
 
 $(DISC_PATH)/ex1.mmd: \
 	shared_mmd_layout.s \

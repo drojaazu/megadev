@@ -12,7 +12,5 @@ INV-4|lib/sub/bios.h|guard is MEGADEV__SUBBIOS_H, expected MEGADEV__SUB_BIOS_H
 INV-4|lib/sub/gate_arr.def.h|guard is MEGADEV__SUB_GATEARR_DEF_H, expected MEGADEV__SUB_GATE_ARR_DEF_H
 INV-4|lib/sub/gate_arr.h|guard is MEGADEV__SUB_GATEARR_H, expected MEGADEV__SUB_GATE_ARR_H
 INV-4|lib/xform.h|guard is MEGADEV__SUB_XFORM_H, expected MEGADEV__XFORM_H
-INV-5|lib/main/main.macro.s|@file says 'macros.s'
 INV-5|lib/main/md_sys.h|@file says 'mmd.h'
 INV-5|lib/security.c|@file says 'security.s'
-INV-5|lib/system.macros.s|@file says 'system.s'

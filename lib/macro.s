@@ -1,14 +1,14 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file macros.s
+ * @file macro.s
  * @brief General purpose asm macros
  */
 
-#ifndef MACROS_S
-#define MACROS_S
+#ifndef MACRO_S
+#define MACRO_S
 
-#include <system.macros.s>
+#include <system.macro.s>
 
 .macro SUB name, align=2
   //.section .text.asm.\name

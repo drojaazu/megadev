@@ -1,14 +1,14 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file comm.macros.s
+ * @file comm.macro.s
  * @brief Serial communications utilities
  */
 
-#ifndef MEGADEV___COMM_MACROS_S
-#define MEGADEV___COMM_MACROS_S
+#ifndef MEGADEV___COMM_MACRO_S
+#define MEGADEV___COMM_MACRO_S
 
-#include "macros.s"
+#include "macro.s"
 #include "main/io.def.h"
 #include "main/comm.def.h"
 

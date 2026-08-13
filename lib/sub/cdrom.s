@@ -8,7 +8,7 @@
  * Subdirectories are *not* supported. All files should be in the root.
  */
 
-#include <macros.s>
+#include <macro.s>
 #include <sub/cdrom.def.h>
 #include <sub/bios.def.h>
 #include <sub/gate_arr.def.h>

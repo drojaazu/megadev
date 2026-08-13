@@ -1,14 +1,14 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file z80.macros.s
+ * @file z80.macro.s
  * @brief Z80 CPU utilities
  */
 
 #ifndef MEGADEV__MAIN_Z80_S
 #define MEGADEV__MAIN_Z80_S
 
-#include "macros.s"
+#include "macro.s"
 #include "z80.def.h"
 
 .section .text

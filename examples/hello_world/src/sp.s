@@ -4,7 +4,7 @@
 	Check out one of the other examples for something more substantial.
 */
 
-#include <macros.s>
+#include <macro.s>
 #include <sub/bios.def.h>
 #include <sub/sub.macro.s>
 

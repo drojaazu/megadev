@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file init.macros.s
+ * @file init.macro.s
  * @brief Module initialization
  * @details Performs three main tasks:
  *          - Disables interrupts
@@ -9,8 +9,8 @@
  *          - Copies .data section into RAM
  */
 
-#ifndef INIT_MACROS_S
-#define INIT_MACROS_S
+#ifndef INIT_MACRO_S
+#define INIT_MACRO_S
 
 .macro BASIC_INIT
   moveq    #0, d0

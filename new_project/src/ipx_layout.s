@@ -1,7 +1,7 @@
 // The IPX is memory resident: it is loaded once and other modules import its
 // symbols. It therefore uses the RESIDENT_* layout names so its build metadata
 // cannot collide with that of the modules importing it.
-#include <macros.s>
+#include <macro.s>
 #include <main/memmap.def.h>
 
 // ROM will begin at the start of Work RAM, overwriting the security code/IP

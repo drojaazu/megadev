@@ -24,7 +24,7 @@ In short, statically allocated variables (such as global variables declared outs
 
 The technical reason for is that specifying a default value will simply include that value in the .data section of the executable binary. It is up to the program initialization to copy values from .data into memory before main() is called. Executable containers like ELF and PE include code to take care of this copying automatically, but retro consoles like the Mega Drive/CD do not use such execution containers. There is no automatic initialization utility and code execution begins immediately.
 
-Megadev includes a utility to copy the .data section into memory, in the `init.macros.s` file. Instead of using this directly, however, you may want to use either `main/ipx_init.s` or `std_init.s` for self-loading and standard modules respectively. Simply include this within the prerequisite list for your module and it will both zero out RAM and copy initialized variable data.
+Megadev includes a utility to copy the .data section into memory, in the `init.macro.s` file. Instead of using this directly, however, you may want to use either `main/ipx_init.s` or `std_init.s` for self-loading and standard modules respectively. Simply include this within the prerequisite list for your module and it will both zero out RAM and copy initialized variable data.
 
 Please see the makefile for the example projects.
 

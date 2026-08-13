@@ -1,4 +1,4 @@
-#include <macros.s>
+#include <macro.s>
 #include <main/memmap.def.h>
 
 // ROM will begin at the start of Work RAM, overwriting the security code/IP
