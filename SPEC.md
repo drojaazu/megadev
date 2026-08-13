@@ -688,11 +688,19 @@ single 16-bit value, or a field spanning both halves, stay 16-bit.
 This supersedes the uniform word-relative rule of **D16**, which stands only for the registers that
 remain 16-bit.
 
-**Why.** The hardware's flag registers are byte-organised: no field in either header straddles bit
-7/8, verified mechanically. Modelling them as 16-bit registers therefore described something the
-hardware does not have, and every access site had to convert back — which is all `FIELD_BYTE` /
-`FIELD_BPOS` ever did. Under the split, `GA_LED_R_POS` is 0 again, as it was before D16, but now
-because it is bit 0 of `GA_REG_LED` rather than by accident.
+**This is a modelling choice, not a hardware boundary.** The hardware register really is 16 bits
+wide and the two halves really are adjacent and word-addressable. What the split reflects is that the
+*fields* are byte-organised — no field in either header straddles bit 7/8, verified mechanically —
+and that the two halves carry unrelated concerns, so there is no operation that legitimately spans
+them. Modelling them as one word meant every access site converted back to a byte, which is all
+`FIELD_BYTE` / `FIELD_BPOS` ever did, and it made a word-wide write the path of least resistance for
+setting a field in one half — which silently clobbers the other. Under the split, `GA_LED_R_POS` is 0
+again, as it was before D16, but now because it is bit 0 of `GA_REG_LED` rather than by accident.
+
+Because it is a modelling choice, it is one an advanced user may deliberately step outside of. What
+governs a direct word access is the hardware's own access-width and bit-operation rules, transcribed
+in `docs/gate_array.md`; the official manual is the reference beyond that. Explaining this to users
+is **DOC-20**.
 
 The trap KB-34 turned on becomes structurally impossible rather than merely documented: bit 0 of the
 old `GA_REG_RESET` was `RES0`, the peripheral reset, while bit 0 of the LED byte is the red LED. One
