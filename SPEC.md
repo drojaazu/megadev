@@ -25,6 +25,29 @@ developers and a small external-tool footprint over hand-holding.
 (dual CPU, Gate Array arbitration, Word RAM banking, a disc boot chain, module loading). Mega Drive
 cartridge support is real but secondary.
 
+### Terminology: "BIOS" means two different things
+
+The Mega CD's internal ROM provides a library of system calls on **both** CPUs, and Megadev calls
+both of them "bios" — but they are not equivalent, and conflating them causes real errors:
+
+| | Sub CPU side | Main CPU side |
+|---|---|---|
+| What it is | The actual Mega CD BIOS: CD drive control, CD audio, data reads, Backup RAM | A general-purpose utility library: controller input, DMA, palette/sprite caches, decompression, PRNG |
+| Documentation | **Officially documented** in the *Mega-CD BIOS Manual* | **Entirely undocumented in English.** Understood only through reverse engineering |
+| Megadev prefix | `bios_` / `BIOS_` (`lib/sub/bios.*`) | `bios_` / `BIOS_` (`lib/main/bios.*`) |
+| Required? | Yes, a basic part of Mega CD development | **Entirely optional** |
+
+**"Main BIOS" is a deliberate misnomer.** A more accurate name is "Boot ROM System Library", and
+Megadev used the `bootlib` prefix for a time. `bios` was chosen for brevity in syscall prefixes and
+for symmetry with the Sub side; the whole internal ROM is also colloquially "the BIOS". The
+reasoning is recorded in full in [docs/main_bios.md](docs/main_bios.md) §Naming — read it before
+renaming anything. (Sega's own use of "BIOS" for the Sub CPU *system calls* is not strictly correct
+either.)
+
+Practical consequence: **the Sega BIOS Manual documents the Sub side only.** It is not a source for
+anything in `lib/main/bios.*`. Evidence for the Main side comes from disassembly, from *Sega-CD
+Technical Bulletin #3*, and from shipped game source.
+
 ### In scope
 
 - Mega CD disc projects (IP/SP boot chain, ISO mastering, MMD/SMD module system)
@@ -32,7 +55,8 @@ cartridge support is real but secondary.
 - C and M68k assembly, sharing one set of hardware definitions
 - Hardware definitions for VDP, Gate Array (Main and Sub views), PCM (RF5C164), CDC/CD-ROM,
   Backup RAM, controller I/O, Z80 bus control
-- Wrappers for the Mega CD Sub BIOS and the (undocumented) Mega Drive Boot ROM system library
+- Wrappers for the **Sub CPU BIOS** and the **Main CPU Boot ROM system library** — see the
+  terminology note below, these are different things
 
 ### Explicitly out of scope / deferred
 
@@ -330,6 +354,23 @@ share (verified present 2026-08-13):
   - `Development Documents/` — Genesis Software Manual, Genesis Technical Bulletins, reference sheets.
   - `Dev Resources and Source Code/` — Batman Returns, Cliffhanger, Ex-Mutants project packages,
     SegaKit.
+- `/mnt/library/Retro Games/By Hardware/Sega Super 32X/dev examples/CD_V2A/`
+  - **Sega's own Mega CD source.** `INC/CDBIOS.INC` defines the boot-call function codes
+    (`CBTINIT`…`CBTSPSTAT`) and the BRAM codes; `INC/MAINCPU.INC` is the file quoted in
+    `docs/main_bios.md` on the "not for general use" memory area. This is the "32X CD example
+    source" that `lib/sub/cdboot.def.h` refers to.
+- `/mnt/library/Retro Games/By Organization/Sega/`
+  - `Megadrive/Old Project Source Dumps/`, `Data Dumps/SEGA Disk Backups/Sega Developer Tools/` —
+    a larger source tree than the by-hardware folders; further copies of the above.
+
+**Sought and confirmed absent** (searched 2026-08-13): `ROM_UTIL.DOC` and `MAINENT.I`, the two files
+*Sega-CD Technical Bulletin #3* points to for Main-side Boot ROM documentation. Their absence is why
+`lib/main/bios.*` rests on reverse engineering. If either ever surfaces, it supersedes a great deal
+of `docs/main_bios.md`.
+
+**Present and under-used:** `Sega-CD_Technical_Bulletins.pdf` and `Sega-CD Technical Bulletins.pdf`
+collect the numbered bulletins, including **#3** — the primary written evidence that the Main-side
+calls were sanctioned for game use, and the source of the Work RAM equates in `docs/main_bios.md`.
 
 > **Two independent translations exist** for several Mega-CD manuals — credited *(Rex Sabio)* and
 > *(The Code Monkeys)*. The official English is in places ambiguous or plainly wrong, so where a
@@ -340,8 +381,9 @@ share (verified present 2026-08-13):
 |---|---|---|
 | Gate Array register map, Sub side | DOC | Sega BIOS manual + community research |
 | Gate Array register map, Main side | DOC | as above |
-| Sub BIOS function codes | DOC | Sega BIOS manual |
-| Main Boot ROM system library | **Partly ASSUMED** | Reverse-engineered; `docs/main_bios.md` has ~39 empty entries and self-describes as needing "better notes" |
+| Sub CPU BIOS function codes | DOC | *Mega-CD BIOS Manual* (official) |
+| Main CPU Boot ROM system library | **Reverse-engineered** | No official English documentation exists at all. Corroborated by *Sega-CD Technical Bulletin #3*, which states plainly that "subroutine in the boot ROM may also be used" and refers to two files — `ROM_UTIL.DOC` and `MAINENT.I` — that are **still missing** (searched the library share 2026-08-13). Per-call detail in `docs/main_bios.md`. |
+| Boot-call function codes (`CBT*`) | **DOC** | Verified byte-for-byte against Sega's own `CDBIOS.INC` in the 32X CD example source; see below. |
 | Boot sector layout may be changed | **ASSUMED — open question** | `docs/boot.md:15`. Check *Mega-CD Disc Format Specifications* and the BIOS Manual before testing on hardware. |
 | Writing 0 to Word RAM mode bits in 2M mode | **ASSUMED — open question** | `lib/sub/gate_arr.def.h` `@todo` cites *"the 'The Hardware' documentation"* — that is *Mega-CD Hardware Manual - The Hardware*, held in the library share above. |
 | Main-CPU CD-ROM read path | **UNKNOWN** | `docs/cdrom.md`: "not well understood" |
