@@ -8,7 +8,7 @@ These formats can be used together (what is called a "mixed mode" disc) and this
 
 There are often misconceptions about CD images. You may be familiar with ISO files and consider them an "image" of the disc. This is not entirely true. An ISO file is a dump of the ISO9660 file system within the CD-ROM data track only. While it is often true that the ISO file makes up the entirety of the readable data on the disc, it is not a true image inasmuch as there is data on the disc that is present outside of the file system that has not been copied, such as the lead in/out or the subcode channels. And if the disc was mixed-mode with CD audio, the ISO file will not include that audio.
 
-When building your game in Megadev, an ISO file will be generated. This is your CD-ROM data track. You can run this in an emulator burn it to a CD as-is. The emulator or burning software will generate the necessary metadata to read/burn a simple CD-ROM disc.
+When building your game in Megadev, an ISO file will be generated. This is your CD-ROM data track. You can run this in an emulator or burn it to a CD as-is. The emulator or burning software will generate the necessary metadata to read/burn a simple CD-ROM disc.
 
 ## CD Audio
 

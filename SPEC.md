@@ -109,9 +109,14 @@ Additional rules, all mechanically checkable:
   collide. Choice of `#pragma once` vs `#ifndef` is settled in §9 OD-3.
 - **INV-5** — A `@file` doc tag MUST name the file it appears in.
 - **INV-6** — Where a constant is used as an operand to a bit-level opcode (`btst`, `bset`, `bclr`,
-  `bchg`), a `_BIT` companion giving the **bit index** MUST exist alongside the mask.
-  Masks and indices are not interchangeable, and conflating them is a silent wrong-bit bug rather
-  than a compile error. *(See KB-11.)*
+  `bchg`), a companion giving the **bit index** MUST exist alongside the mask. Masks and indices are
+  not interchangeable, and conflating them is a silent wrong-bit bug rather than a compile error.
+  *(See KB-11.)*
+
+  This is **long-standing project policy**, documented in `docs/manual.md` §"Bitwise Definition
+  Naming", not a rule invented here. That section specifies the **prefix** form `GA_BIT_DMNA` /
+  `GA_MASK_DMNA`, which is what both gate array headers use (40 occurrences). The naming is
+  nevertheless unsettled — see §9 OD-8.
 - **INV-8** — Every header MUST be self-contained: including it, and nothing else, into an empty
   translation unit must compile cleanly. Enforced by Tier 0.1 (§6).
 - **INV-9** — A header MUST NOT define storage or a non-`static` function. Two translation units
@@ -535,6 +540,21 @@ cannot drift — the same trap that produced the C/asm `hextoa` divergence (KB-1
 
 Verified behaviour-preserving: `boot.bin`, `ip.bin`, `sp.bin` and `cyber.mmd` are **byte-identical**
 before and after the migration.
+
+### OD-8 — Bit-index / mask naming: prefix or suffix *(open)*
+`docs/manual.md` §"Bitwise Definition Naming" documents the **prefix** form — `GA_BIT_DMNA` /
+`GA_MASK_DMNA` — and `lib/main/gate_arr.def.h` and `lib/sub/gate_arr.def.h` follow it in 40 places.
+
+Two things diverge from it:
+- `feature/sub_bios_overhaul` rewrites the Sub gate array using the **suffix** form
+  (`GA_CEDE_WDRAM2M_BIT` alongside a bare `GA_CEDE_WDRAM2M`).
+- The `SCTRL_*_BIT` companions added to `lib/main/io.def.h` on 2026-08-13 (fixing KB-11) also used
+  the suffix form, making them the only suffix-style names on `develop`.
+
+Pick one and make it uniform. If prefix wins, the `io.def.h` additions become `SCTRL_BIT_TX_FULL` /
+`SCTRL_MASK_TX_FULL` and the branch's gate array work needs the same treatment; if suffix wins,
+`manual.md` and 40 gate array constants change instead. **The KB-11 defect is fixed either way** —
+only the spelling is in question.
 
 ### OD-1 — How to resolve the Main/Sub Gate Array namespace collision *(open)*
 INV-7 is violated (KB-12). Options: prefix by CPU side (`GA_MAIN_*` / `GA_SUB_*`); rely solely on
