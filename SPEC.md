@@ -119,8 +119,19 @@ Additional rules, all mechanically checkable:
   translation unit must compile cleanly. Enforced by Tier 0.1 (§6).
 - **INV-9** — A header MUST NOT define storage or a non-`static` function. Two translation units
   including it must link. Enforced by Tier 0.4 (§6). **Holds as of 2026-08-13** (42 pass, 0 fail).
-- **INV-10** — A register accessor macro dereferences itself, so it is used as `reg = x` rather than
-  `*reg = x` (§9 D14). Enforced by Tier 1.
+- **INV-10** — A **hardware register** accessor dereferences itself, so it is used as `reg = x`
+  rather than `*reg = x` (§9 D14). Enforced by Tier 1.
+- **INV-11** — A **memory region** accessor stays indexable — it is *not* a scalar lvalue. Two forms
+  are permitted:
+  - a plain pointer, `((char volatile *) WORD_RAM)`, where no length is associated with the region;
+  - a **sized** array lvalue, `(*((s16(*)[64]) BIOS_PALETTE_CACHE))`, where the extent is fixed by
+    hardware. This is preferred when the size is known, because indexing still works *and*
+    `sizeof` reports the region size — `BIOS_WORK_BUFFER_LEN` is derived that way rather than being
+    a second hardcoded number that can drift.
+
+  The distinction that matters is register versus region, not lvalue versus pointer: a register
+  holds one value, a region holds many. Not mechanically enforced — telling a one-byte register from
+  a one-byte region needs intent, not syntax — so it is a convention the reviewer applies.
 - **STYLE-1** — Where two mnemonics assemble to the **identical encoding**, only the house spelling
   is written. Classified empirically against `m68k-linux-gnu-as`:
 
