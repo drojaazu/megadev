@@ -446,10 +446,11 @@ calls were sanctioned for game use, and the source of the Work RAM equates in `d
 #### Page map of *The Hardware*, Ver 1.0
 
 The scan's PDF page number is the printed page number plus a **constant that changes partway
-through**: **+4** through the Sub CPU registers (printed 21 = PDF 25, printed 27 = PDF 31) and **+3**
-from the Main CPU registers on (printed 56 = PDF 59, printed 58 = PDF 61). A page is dropped from the
-scan somewhere in printed 28–55; the exact point has not been located, so check the printed number in
-the page footer rather than trusting either offset in that range. Sections:
+through**: **+4** up to and including printed page 39 (printed 21 = PDF 25, printed 39 = PDF 43) and **+3**
+from printed page 55 on (printed 55 = PDF 58, printed 59 = PDF 62). A page is dropped from the scan
+somewhere in printed 40–54, which is inside the rotation and scaling explanatory material; the exact
+point has not been located, so check the printed number in the page footer if you read in that
+range. Sections:
 
 | Printed | Contents |
 |---|---|
@@ -518,6 +519,7 @@ diagnostic, not by reading. Marked ✅ = present on `master`; ⚠️ = introduce
 | KB-36 | `lib/sub/cdrom.s:339,451` | **Fixed 2026-08-13.** `btst #GA_CDCMODE_DSR_POS-8` with `DSR_POS` of 6 assembles to `btst #-2`, and the `EDT` site to `btst #-1`. Both were **accidentally correct**: the 68000 uses only the low three bits of the immediate, so `-2` selects bit 6 and `-1` selects bit 7, which is what the byte-relative constants meant. Two errors cancelling. Rewritten with `FIELD_BYTE`/`FIELD_BPOS`; the emitted code was diffed before and after and is identical but for the two immediates, now `#6` and `#7`. | ✅ |
 | KB-37 | `lib/build.def.h` | **Fixed 2026-08-13.** `FIELD_BYTE` was first written with a ternary, which C accepts and **GNU as rejects outright** (`found '?', expected: ')'`) — in a macro whose whole purpose is bit opcodes in assembly. Tier 1.5 was C-only, so the gate passed it. Rewritten as `((reg) + 1 - ((POS >> 3) & 1))`, and Tier 1.5 now assembles `asserts/*.s` as well, so the assembly grammar is actually exercised. | ✅ |
 | KB-38 | `lib/main/gate_arr.h` | **Fixed 2026-08-14.** All eight `ga_reg_comstat0..7` accessors were typed `ga_reg`, i.e. writable, but comm status is **Read Only** from the Main CPU (manual p.60) — the Sub CPU writes it. Nothing in the tree wrote them, so this was latent; now typed `ga_reg_ro` and verified to reject an assignment. The mirrored case on the Sub side (`ga_reg_comcmd0..7`) was already correct. | ✅ |
+| KB-39 | `lib/main/gate_arr.h` | **Fixed 2026-08-14.** `ga_reg_stopwatch` and `ga_reg_cdchostdata` were typed `ga_reg`, i.e. writable, but both are **read only from the Main CPU** (manual pp. 58-59; the WR row of each is entirely `-`). For the stopwatch this is not a formality: only the Sub CPU can clear the timer, by writing its own `$FF800C`, so Main-side code that "resets" the stopwatch before timing something has been silently measuring from an arbitrary point. Same class as KB-38. | ✅ |
 | KB-33 | `lib/memory.h` | **FIXED** 2026-08-13 — every `memset*`/`memcpy*` counted with a single `dbra`, which decrements only the low 16 bits. Lengths above 65536 elements silently truncated (a full 256 KB Word RAM copy is 262,144 bytes, well past it) and a length of 0 underflowed into ~65536 iterations, writing far outside the buffer. | ✅ |
 | KB-13 | `lib/str_util.s:19` vs `lib/str_util.h:26` | **FIXED** 2026-08-13 — C wrote no terminator while assembly wrote `0xFF`. The Boot ROM print routines require 0xFF and treat 0x00 as a newline, so the assembly was right. Both now share `STRING_TERMINATOR` from `lib/str_util.def.h`. | ✅ |
 | KB-14 | `megadev.make:30-48` | `MEGADEV_PATH` is not sanity-checked; unset yields `LIB_PATH=/lib` | ✅ |

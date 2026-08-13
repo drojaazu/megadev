@@ -496,9 +496,13 @@
  * |HIBF|HIBE|HIBD|HIBC|HIBB|HIBA|HIB9|HIB8|HIB7|HIB6|HIB5|HIB4|HIB3|HIB2|HIB1|HIB0|
  *
  * @param [width] 16 bit
- * @param HIB Specifies the lower word of the HBLANK (Level 4) interrupt vector
- *      The upper word is specied at the standard location (0x70), the value
- *      of which is 0x00FF by the Boot ROM.
+ * @param HIB The **low** word of the HBLANK (level 4) interrupt vector.
+ *
+ * When H-INT fires, the vector normally at 0x70 is not used as written: the
+ * hardware takes the high word from 0x70 and substitutes this register for the
+ * low word, ignoring 0x72 entirely. The Boot ROM leaves 0x00FF in the high
+ * word.
+ * @note Reset leaves this register set to 0xFFFF.
  *
  * @warning Bit level opcodes (BTST, BCLR, BSET) are undefined for this register
  * @warning Word access only. A byte access to this register can raise a
@@ -514,24 +518,35 @@
 
 /**
  * @def GA_REG_CDCHOSTDATA
- * @brief CDC Host Data
+ * @brief CDC host data
  *
  * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * |HD15|HD14|HD13|HD12|HD11|HD10|HD09|HD08|HD07|HD06|HD05|HD04|HD03|HD02|HD01|HD00|
+ * Two bytes recovered from the disc, ready to be moved into Main CPU memory.
+ * Reading it releases the register and the CDC loads the next two bytes.
  *
- * @param [width] 16 bit
- * @param HD CDC read data
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | |\b HD|||||||||||||||
+ * |\b R|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|
+ * |\b W|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|
  *
- * @warning Bit level opcodes (BTST, BCLR, BSET) are undefined for this register
- * @warning Word access only. A byte access to this register can raise a
- * bus error.
- * @warning Bit operation instructions are not permitted here; read the
- * register, modify the copy, and write the whole value back.
+ * @param HD CDC read data.
+ * @note Only meaningful once GA_CDC_DSR_MASK is set.
+ * @warning Read only, and word access only. A byte access can raise a bus
+ * error, and there is nothing to write.
+ * @warning Bit operation instructions are not permitted here.
+ * @sa ga_reg_cdchostdata
  * @ingroup ga_reg_main_04
  */
 #define GA_REG_CDCHOSTDATA 0xA12008
+
+/**
+ * @def GA_REG_SYSRESERVED
+ * @brief Reserved by the system
+ * @details 0xA1200A is documented only as reserved. Do not use it.
+ * @ingroup ga_reg_main_05
+ */
+#define GA_REG_SYSRESERVED 0xA1200A
 
 /**
  * @defgroup ga_reg_main_stopwatch Main CPU / Gate Array / Registers / Stopwatch
@@ -539,23 +554,26 @@
 
 /**
  * @def GA_REG_STOPWATCH
- * @brief Stop watch
+ * @brief Stopwatch, read only from this side
  *
  * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * |||| |TD11|TD10|TD09|TD08|TD07|TD06|TD05|TD04|TD03|TD02|TD01|TD00|
+ * The same free-running 12 bit counter the Sub CPU sees at 0xFF800C: it counts
+ * 0 to 4095 at 30.72 microseconds per tick and wraps.
  *
- * @param [width] 16 bit
- * @param TD Timer data
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | | | | | |\b TD11|\b TD10|\b TD09|\b TD08|\b TD07|\b TD06|\b TD05|\b TD04|\b TD03|\b TD02|\b TD01|\b TD00|
+ * |\b R| | | | |◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|
+ * |\b W|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|
  *
- * @details One count is timed to 30.72µs
- *
- * @warning Bit level opcodes (BTST, BCLR, BSET) are undefined for this register
- * @warning Word access only. A byte access to this register can raise a
- * bus error.
- * @warning Bit operation instructions are not permitted here; read the
- * register, modify the copy, and write the whole value back.
+ * @param TD Current count.
+ * @warning **Read only from the Main CPU.** Only the Sub CPU can clear the
+ * timer, by writing its own 0xFF800C. Writing here does nothing, so the Main
+ * side can measure an interval but cannot choose when it starts.
+ * @warning Word access only. A byte access to this register can raise a bus
+ * error.
+ * @warning Bit operation instructions are not permitted here.
+ * @sa ga_reg_stopwatch
  * @ingroup ga_reg_main_06
  */
 #define GA_REG_STOPWATCH 0xA1200C

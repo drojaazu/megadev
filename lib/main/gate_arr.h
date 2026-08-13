@@ -64,12 +64,12 @@ typedef u8 volatile const * ga_reg8_ro;
  * @copydoc GA_REG_CDCHOSTDATA
  *
  */
-#define ga_reg_cdchostdata (*((ga_reg) GA_REG_CDCHOSTDATA))
+#define ga_reg_cdchostdata (*((ga_reg_ro) GA_REG_CDCHOSTDATA))
 /**
  * @copydoc GA_REG_STOPWATCH
  *
  */
-#define ga_reg_stopwatch (*((ga_reg) GA_REG_STOPWATCH))
+#define ga_reg_stopwatch (*((ga_reg_ro) GA_REG_STOPWATCH))
 
 /**
  * @copydoc GA_REG_COMCMD0

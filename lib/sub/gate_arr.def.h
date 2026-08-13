@@ -1977,23 +1977,57 @@
 
 /**
  * @def GA_REG_SUBCODEADDR
- * @sa ga_reg_subcodeaddr
+ * @brief Sub-code write pointer and overrun flag
+ *
+ * @details
+ * @warning **The hardware documentation states that sub-code is generally
+ * controlled by the BIOS and cannot be accessed directly.** Use the Sub BIOS
+ * sub-code calls.
+ *
+ * A sub-code frame is 98 bytes, numbered 0 to 97, clocked in one byte at a time
+ * and framed by a SYNC pulse. This register holds the top address the incoming
+ * bytes are written from, plus an overrun flag.
+ *
+ * Fields:
+ * - **STA1-6** — sub-code top address.
+ * - **SAOR** — sub-code address overrun. Set once 32 bytes have been written,
+ *   and cleared by the next SYNC.
+ *
+ * @note The bit table for this register is illegible in the fax scan and the
+ * page is not in the clean SPHERE set, so the field *positions* are not
+ * recorded here rather than guessed. The semantics above are transcribed from
+ * the page. See SPEC.md section 7.
+ * @sa ga_reg_subcodeaddr, GA_REG_SUBCODEBUF
  * @ingroup ga_reg_sub_52
  */
 #define GA_REG_SUBCODEADDR 0xFF8068
 
 /**
  * @def GA_REG_SUBCODEBUF
- * @sa ga_reg_subcodebuf
+ * @brief Sub-code buffer, 64 words
+ *
+ * @details
+ * 0xFF8100 to 0xFF817E, 64 words of 16 bits -- 128 bytes, of which a 98 byte
+ * sub-code frame occupies the front. The range from 0xFF806A to 0xFF80FE
+ * between this and GA_REG_SUBCODEADDR is reserved by the system.
+ *
+ * @note Level 6 fires when a frame has finished buffering; see GA_INT6_MASK.
+ * @sa ga_reg_subcodebuf, GA_REG_SUBCODEBUFIMG
  * @ingroup ga_reg_sub_128
-*/
+ */
 #define GA_REG_SUBCODEBUF 0xFF8100
 
 /**
  * @def GA_REG_SUBCODEBUFIMG
- * @sa ga_reg_subcodebufimg
+ * @brief Mirror of the sub-code buffer
+ *
+ * @details
+ * 0xFF8180 to 0xFF81FE is a second view of the same 64 words as
+ * GA_REG_SUBCODEBUF. It is a mirror, not a second buffer.
+ *
+ * @sa ga_reg_subcodebufimg, GA_REG_SUBCODEBUF
  * @ingroup ga_reg_sub_192
-*/
+ */
 #define GA_REG_SUBCODEBUFIMG 0xFF8180
 
 #define CDC_DEST_MAINREAD 2
