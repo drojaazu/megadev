@@ -640,8 +640,11 @@ self-consistent; deferring keeps the branch's diff focused on documentation.
 
 Adopted going forward, in response to 95 of 191 commits (49.7%) being titled `Checkpoint!`:
 
-- Commit messages state what changed and why. `Checkpoint!` is not a commit message; if a checkpoint
-  is genuinely needed mid-work, say what state it captures.
+- **Commit messages state what changed, not why.** A subject line and, where a change spans several
+  things, a few short bullets. The reasoning belongs in the decision record (§9) or the backlog
+  entry, and the subject should name the relevant ID — `Register accessors become lvalues (D14,
+  ARCH-4)` — so the two are linked without being duplicated. `Checkpoint!` is not a commit message;
+  if a checkpoint is genuinely needed mid-work, say what state it captures.
 - One concern per branch — a refactor and a logic change do not share a commit.
 - Every release gets a tag **and** an entry in the changelog.
 - Every item in §8 has an ID; when it is fixed, the fixing commit references that ID.
