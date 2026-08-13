@@ -41,8 +41,9 @@ ASSERT_FIELD(GA_MEMMODE_WP);
 /* Values the hardware defines, unchanged by the rename. */
 _Static_assert(GA_DMNA_POS == 1, "DMNA is bit 1 of memory mode");
 _Static_assert(GA_RETURN_2M_POS == 0, "RET is bit 0 of memory mode");
-_Static_assert(GA_MEMMODE_BANK_MASK == 0xC0, "bank select is bits 6-7");
-_Static_assert(GA_MEMMODE_WP_MASK == 0xFF, "write protect is the low byte");
+_Static_assert(GA_MEMMODE_BANK_MASK == 0x00C0, "bank select is bits 6-7");
+_Static_assert(GA_MEMMODE_WP_MASK == 0xFF00, "write protect is the HIGH byte, bits 8-15");
+_Static_assert(GA_CDC_DEST_MASK == 0x0700, "device destination is bits 8-10");
 
 /* --- I/O serial control -------------------------------------------------- */
 
@@ -105,11 +106,27 @@ _Static_assert(GA_REG_RESET_LO == GA_REG_RESET + 1, "LO is the second byte");
 _Static_assert(GA_REG_MEMMODE_HI == GA_REG_MEMMODE, "HI is the register address itself");
 _Static_assert(GA_REG_MEMMODE_LO == GA_REG_MEMMODE + 1, "LO is the second byte");
 
-/* The fields the code bit-tests all live in the low byte, which is why that is
- * the half everything addresses. */
+/* Every _POS is word-relative: bit 0 is the LSB of the 16-bit register, never
+ * of whichever byte the field happens to sit in. Mixing the two conventions is
+ * how GA_MEMMODE_WP came to claim bits 0-7 (KB-34) -- its derived mask was
+ * 0x00FF, the exact complement of the bits it actually occupies. */
+_Static_assert(GA_MEMMODE_WP_POS >= 8, "WP is word-relative, so it starts at 8");
 _Static_assert(GA_DMNA_POS < 8, "DMNA is in the low byte of memory mode");
 _Static_assert(GA_RETURN_2M_POS < 8, "RET is in the low byte of memory mode");
 _Static_assert(GA_WORDRAM_LAYOUT_POS < 8, "MODE is in the low byte of memory mode");
+
+/* Word-relative positions cannot be handed to a bit opcode directly: the m68k
+ * takes the immediate modulo 8 on a memory operand, so `btst #8` would silently
+ * test bit 0 of the SAME byte rather than bit 0 of the other one. FIELD_BYTE
+ * picks the half and FIELD_BPOS reduces the position to fit it. */
+_Static_assert(FIELD_BYTE(GA_REG_MEMMODE, GA_MEMMODE_WP) == GA_REG_MEMMODE_HI,
+	"a field at bit 8+ lives in the high byte, at the register address");
+_Static_assert(FIELD_BYTE(GA_REG_MEMMODE, GA_DMNA) == GA_REG_MEMMODE_LO,
+	"a field below bit 8 lives in the low byte, one past the register address");
+_Static_assert(FIELD_BPOS(GA_MEMMODE_WP) == 0, "bit 8 of the word is bit 0 of the high byte");
+_Static_assert(FIELD_BPOS(GA_DMNA) == GA_DMNA_POS, "low-byte fields are unchanged");
+_Static_assert(FIELD_BPOS(GA_MEMMODE_WP) < 8 && FIELD_BPOS(GA_DMNA) < 8,
+	"FIELD_BPOS always yields a legal bit-opcode operand");
 
 /* --- string convention -------------------------------------------------- */
 

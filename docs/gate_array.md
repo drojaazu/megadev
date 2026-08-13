@@ -37,11 +37,35 @@ convention described in [manual.md](manual.md) under "Bitwise Definition Naming"
 
 Use `_POS` with the bit opcodes and `_MASK` with logic operations:
 
-    btst  #GA_DMNA_POS, GA_REG_MEMMODE+1     ; assembly
-    if (*ga_reg_memmode & GA_DMNA_MASK)      /* C */
+    btst  #GA_DMNA_POS, GA_REG_MEMMODE_LO    ; assembly
+    if (ga_reg_memmode & GA_DMNA_MASK)       /* C */
+
+— with the caveat below for any field above bit 7.
 
 A single-bit flag is simply a field of width 1, so the same three definitions describe both flags and
 wider fields. Multi-bit field *values* are stored unshifted and placed with `FIELD_PREP`.
+
+### `_POS` counts from the register, not from the byte
+
+The registers are 16 bit, and a `_POS` is always relative to the whole register: bit 0 is the LSB of
+the word, and a field in the upper half has a position of 8 or more. `GA_LED_R_POS` is 8, not 0,
+even though the red LED is the bottom bit of the byte you would actually write.
+
+This matters because `_MASK` is derived from `_POS`. Anything counting from its own byte produces a
+mask naming the wrong bits — `GA_MEMMODE_WP` once had a position of 0 and so a mask of `0x00FF`,
+which is the exact complement of the byte it protects.
+
+It also means **a `_POS` of 8 or more is not a legal bit-opcode operand.** On a memory operand the
+68000 takes the bit number modulo 8, so `bset #8` on a register address sets bit 0 of that same
+byte — it assembles, it runs, and it hits the wrong bit. Use the two helpers from `build.def.h`,
+which pick the correct half and renumber within it:
+
+    bset  #FIELD_BPOS(GA_LED_R), FIELD_BYTE(GA_REG_RESET, GA_LED_R)   ; assembly
+    ga_reg_reset |= GA_LED_R_MASK;                                    /* C */
+
+The C form needs neither helper: a word-wide read-modify-write on the whole register is already
+correct, and the mask is already in the right place. The helpers exist for the assembly bit opcodes,
+and for the C cases where a single-byte write is wanted.
 
 ## Bus width
 

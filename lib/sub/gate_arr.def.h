@@ -341,22 +341,36 @@
 
 
 /**
- * @def GA_LED_R
+ * @def GA_LED_R_MASK
  * @brief Red LED Control
+ * @details
+ * Drives the red element of the LED on the front of the unit. Free for
+ * application use; the Sub BIOS does not touch it after boot.
+ * @note Bit 8 of the register, i.e. bit 0 of its high byte. Reach it with
+ * FIELD_BYTE / FIELD_BPOS rather than passing the position to a bit opcode.
  * @sa ga_reg_reset
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_subctrl
  */
-#define GA_LED_R (1 << 0)
+#define GA_LED_R_POS 8
+#define GA_LED_R_WIDTH 1
+#define GA_LED_R_MASK FIELD_MASK(GA_LED_R_POS, GA_LED_R_WIDTH)
 
 /**
- * @def GA_LED_G
+ * @def GA_LED_G_MASK
  * @brief Green LED Control
+ * @details
+ * Drives the green element of the LED on the front of the unit. Free for
+ * application use; the Sub BIOS does not touch it after boot.
+ * @note Bit 9 of the register, i.e. bit 1 of its high byte. Reach it with
+ * FIELD_BYTE / FIELD_BPOS rather than passing the position to a bit opcode.
  * @sa ga_reg_reset
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_subctrl
  */
-#define GA_LED_G (1 << 1)
+#define GA_LED_G_POS 9
+#define GA_LED_G_WIDTH 1
+#define GA_LED_G_MASK FIELD_MASK(GA_LED_G_POS, GA_LED_G_WIDTH)
 
 /**
  * @def GA_VERSION_MASK

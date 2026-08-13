@@ -345,10 +345,34 @@
 #define GA_WORDRAM_LAYOUT_WIDTH 1
 #define GA_WORDRAM_LAYOUT_MASK FIELD_MASK(GA_WORDRAM_LAYOUT_POS, GA_WORDRAM_LAYOUT_WIDTH)
 
+/**
+ * @def GA_MEMMODE_BANK_MASK
+ * @brief Program RAM bank select
+ * @details
+ * The Main CPU sees only 128kB of the 512kB of Program RAM at a time, as a
+ * window at 0x020000. This field selects which of the four banks appears
+ * there. Only meaningful while the Sub CPU is stopped or has granted the bus.
+ * @ingroup ga_regs_main
+ * @ingroup ga_reg_main_memmode
+ */
 #define GA_MEMMODE_BANK_POS 6
 #define GA_MEMMODE_BANK_WIDTH 2
 #define GA_MEMMODE_BANK_MASK FIELD_MASK(GA_MEMMODE_BANK_POS, GA_MEMMODE_BANK_WIDTH)
-#define GA_MEMMODE_WP_POS 0
+
+/**
+ * @def GA_MEMMODE_WP_MASK
+ * @brief Program RAM write protect
+ * @details
+ * Protects the bottom of Program RAM from Main CPU writes in units of 512
+ * bytes: each set bit protects one 512 byte block, covering 0x000000 to
+ * 0x01FDFF in total. This is how the Sub CPU's resident code is shielded from
+ * a stray write by the Main side.
+ * @note Occupies the high byte of the register, so a byte-sized write to
+ * GA_REG_MEMMODE_HI sets the whole field at once.
+ * @ingroup ga_regs_main
+ * @ingroup ga_reg_main_memmode
+ */
+#define GA_MEMMODE_WP_POS 8
 #define GA_MEMMODE_WP_WIDTH 8
 #define GA_MEMMODE_WP_MASK FIELD_MASK(GA_MEMMODE_WP_POS, GA_MEMMODE_WP_WIDTH)
 
@@ -385,11 +409,16 @@
 #define GA_REG_CDCMODE 0xA12004
 
 /**
- * @def GA_CDC_DEST_MAIN
+ * @def GA_CDC_DEST_MASK
+ * @brief CDC data destination device
+ * @details
+ * Where the CDC sends the data it reads off the disc. The Main CPU may read
+ * this field but only the Sub CPU may set it.
+ * @sa GA_CDC_DEST_MAIN, GA_CDC_DEST_SUB, GA_CDC_DEST_PCM, GA_CDC_DEST_WORD
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cdcmode
  */
-#define GA_CDC_DEST_POS 0
+#define GA_CDC_DEST_POS 8
 #define GA_CDC_DEST_WIDTH 3
 #define GA_CDC_DEST_MASK FIELD_MASK(GA_CDC_DEST_POS, GA_CDC_DEST_WIDTH)
 

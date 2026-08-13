@@ -115,6 +115,11 @@ Additional rules, all mechanically checkable:
   This is **long-standing project policy**, documented in `docs/manual.md` §"Bitwise Definition
   Naming", not a rule invented here. The naming scheme is settled in §9 **D12**: `_POS`, `_WIDTH`
   and `_MASK`, with values stored unshifted and placed by `FIELD_PREP`.
+- **INV-12** — A `_POS` is **relative to its register**, counting from the LSB of the whole register,
+  never from the byte the field happens to occupy (§9 **D16**). A `_POS` of 8 or more therefore
+  cannot be handed to a bit opcode on a memory operand: the m68k takes the immediate **modulo 8**, so
+  `btst #8` silently tests bit 0 of the same byte. Use `FIELD_BYTE(reg, field)` to select the half and
+  `FIELD_BPOS(field)` to reduce the position. *(See KB-34.)* Enforced by Tier 1.5.
 - **INV-8** — Every header MUST be self-contained: including it, and nothing else, into an empty
   translation unit must compile cleanly. Enforced by Tier 0.1 (§6).
 - **INV-9** — A header MUST NOT define storage or a non-`static` function. Two translation units
@@ -408,6 +413,7 @@ calls were sanctioned for game use, and the source of the Work RAM equates in `d
 |---|---|---|
 | Gate Array register map, Sub side | DOC | Sega BIOS manual + community research |
 | Gate Array register map, Main side | DOC | as above |
+| Gate Array field **bit positions** | DOC | *Hardware Manual - The Hardware*, pp. 21, 57, 58 (PDF pages 25, 60, 61 in the Rex Sabio scan). Page 57 gives `$A12002`: `WP0-7` in the high byte, `BK0,1` at bits 6-7, `MODE`/`DMNA`/`RET` at bits 2/1/0. Page 58 gives `$A12004`: `DD0-2` at bits 8-10. Page 21 is the per-register access-width and bit-operation table. |
 | Mega Drive ROM header checksum algorithm | DOC | Sum of 16-bit big-endian words from 0x200 to end of ROM, truncated to 16 bits. Hardware does not verify it; flashcarts and loaders read the ROM end field at 0x1A4. Implemented in `tools/romfix.py`. |
 | Sub CPU BIOS function codes | DOC | *Mega-CD BIOS Manual* (official) |
 | Main CPU Boot ROM system library | **Reverse-engineered** | No official English documentation exists at all. Corroborated by *Sega-CD Technical Bulletin #3*, which states plainly that "subroutine in the boot ROM may also be used" and refers to two files — `ROM_UTIL.DOC` and `MAINENT.I` — that are **still missing** (searched the library share 2026-08-13). Per-call detail in `docs/main_bios.md`. |
@@ -447,7 +453,7 @@ diagnostic, not by reading. Marked ✅ = present on `master`; ⚠️ = introduce
 | KB-10 | `lib/main/bios.h:108` | **Compile-verified**: `error: cast specifies array type` when expanded. The commented-out line 109 is the working version. | ✅ |
 | KB-11 | `lib/main/comm.h:51,74` + `comm.macros.s:41,53` | **Proven by `_Static_assert`**: `SCTRL_TX_FULL == 1` and `SCTRL_RX_READY == 2` — masks. Passed to `btst` they select bits 1 and 2 instead of bits 0 and 1, in both the C and assembly copies. Root cause: `io.def.h` has no `_BIT` companions (INV-6). | ✅ |
 | KB-12 | `lib/main/gate_arr.def.h` vs `lib/sub/gate_arr.def.h` | Same macro names, different values, non-matching include guards (INV-7) | ✅ |
-| KB-34 | `lib/sub/gate_arr.def.h` | **SUSPECTED — do not use until confirmed.** `GA_LED_R` is `(1 << 0)` and `GA_LED_G` is `(1 << 1)`, both documented `@sa ga_reg_reset`, the *word* accessor. But bit 0 of that register is **RES0, the peripheral reset**, and the Hardware Manual places the LEDs at bits 9 and 8. `*ga_reg_reset \| GA_LED_R` would therefore reset the peripheral rather than light the red LED. The values are only consistent if they were meant for **high-byte** access, in which case the `@sa` is wrong. Neither symbol is used anywhere in the tree, so nothing is broken today. Not corrected on the strength of a fax scan — needs the manual re-read or a hardware check. | ✅ |
+| KB-34 | `lib/sub/gate_arr.def.h`, `lib/main/gate_arr.def.h` | **Fixed 2026-08-13.** Three field groups gave positions relative to their *byte* rather than their register, so the mask derived from each named the wrong bits: `GA_LED_R`/`GA_LED_G` at 0/1 rather than 8/9 (bit 0 of that register is **RES0, the peripheral reset**, so `ga_reg_reset | GA_LED_R_MASK` would have reset the peripheral instead of lighting the LED); `GA_MEMMODE_WP` at 0, deriving `0x00FF` for a field that occupies `0xFF00`; and the Main-side `GA_CDC_DEST` at 0 rather than 8. Confirmed against the Hardware Manual pages 57 and 58 (§7). All three are now register-relative (§9 D16, INV-12), with `FIELD_BYTE`/`FIELD_BPOS` for the bit-opcode case and Tier 1.5 assertions pinning the positions. `GA_MEMMODE_BANK` was checked on the same page and was already correct. None of the three had a use site, so nothing downstream changed. | ✅ |
 | KB-33 | `lib/memory.h` | **FIXED** 2026-08-13 — every `memset*`/`memcpy*` counted with a single `dbra`, which decrements only the low 16 bits. Lengths above 65536 elements silently truncated (a full 256 KB Word RAM copy is 262,144 bytes, well past it) and a length of 0 underflowed into ~65536 iterations, writing far outside the buffer. | ✅ |
 | KB-13 | `lib/str_util.s:19` vs `lib/str_util.h:26` | **FIXED** 2026-08-13 — C wrote no terminator while assembly wrote `0xFF`. The Boot ROM print routines require 0xFF and treat 0x00 as a newline, so the assembly was right. Both now share `STRING_TERMINATOR` from `lib/str_util.def.h`. | ✅ |
 | KB-14 | `megadev.make:30-48` | `MEGADEV_PATH` is not sanity-checked; unset yields `LIB_PATH=/lib` | ✅ |
@@ -605,6 +611,28 @@ removes the ambiguity that made this an open question.
 
 An earlier note here claimed the manual settled this. It does not; it settles only what the hardware
 is called, not how the SDK presents it.
+
+### D16 — Field positions are register-relative; byte access is derived *(Damian R, 2026-08-13)*
+`_POS` counts from the LSB of the whole register. A field in the high half of a 16-bit register has a
+`_POS` of 8 or more, and its `_MASK` follows from that (INV-12).
+
+Three definitions did the opposite, giving positions relative to the byte the field sits in:
+`GA_LED_R`/`GA_LED_G` at 0 and 1, `GA_MEMMODE_WP` at 0, and the Main-side `GA_CDC_DEST` at 0. Under
+D12 the mask is derived from the position, so each produced a mask naming the wrong bits —
+`GA_MEMMODE_WP_MASK` came out `0x00FF`, the exact complement of the byte it protects. The
+byte-relative reading was self-consistent only as long as nobody wrote the mask down.
+
+The alternative — keeping positions byte-relative and adding a `_BYTE` suffix to say which half — was
+rejected because it makes `_MASK` meaningless without knowing the suffix, and every `&` and `|`
+against the whole register then has to be audited by hand.
+
+The cost is that a `_POS` is no longer a legal bit-opcode operand on a memory byte. That is now
+explicit rather than assumed: `FIELD_BYTE(reg, field)` picks the half and `FIELD_BPOS(field)` reduces
+the position, both in `lib/build.def.h`. Renumbering *without* them would have been worse than the
+original bug — `bset #8` on the register address is taken modulo 8, so it would have kept assembling
+and quietly moved the fault from the mask to the opcode.
+
+`GA_MEMMODE_BANK` was checked against the same page and was already register-relative at bits 6–7.
 
 ### OD-1 — How to resolve the Main/Sub Gate Array namespace collision *(open)*
 INV-7 is violated (KB-12). Options: prefix by CPU side (`GA_MAIN_*` / `GA_SUB_*`); rely solely on
