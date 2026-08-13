@@ -92,3 +92,24 @@ _Static_assert(GA_REG_COMCMD0 == 0xFF8010 && GA_REG_COMCMD7 == GA_REG_COMCMD0 + 
 	"eight comm command words");
 _Static_assert(GA_REG_COMSTAT0 == 0xFF8020 && GA_REG_COMSTAT7 == GA_REG_COMSTAT0 + 14,
 	"eight comm status words");
+
+/* --- registers with one unused byte (D17a, provisional) ------------------ */
+
+/* These live at the ODD address: their fields are in the low byte and the high
+ * byte is unused, so the byte that carries the data is the one the name points
+ * at. Getting this backwards would make every byte write a silent no-op. */
+_Static_assert(GA_REG_INT3TIMER == 0xFF8031, "the timer value is in the low byte");
+_Static_assert(GA_REG_INTMASK == 0xFF8033, "the interrupt mask is in the low byte");
+
+ASSERT_BYTE_FIELD(GA_INT1);
+ASSERT_BYTE_FIELD(GA_INT2);
+ASSERT_BYTE_FIELD(GA_INT3);
+ASSERT_BYTE_FIELD(GA_INT4);
+ASSERT_BYTE_FIELD(GA_INT5);
+ASSERT_BYTE_FIELD(GA_INT6);
+
+/* Levels 1-6 occupy bits 1-6; bit 0 is not a level. */
+_Static_assert(GA_INT1_POS == 1 && GA_INT6_POS == 6, "levels map to like-numbered bits");
+_Static_assert((GA_INT1_MASK | GA_INT2_MASK | GA_INT3_MASK |
+                GA_INT4_MASK | GA_INT5_MASK | GA_INT6_MASK) == 0x7E,
+	"the six enables are bits 1-6, and bit 0 is unused");

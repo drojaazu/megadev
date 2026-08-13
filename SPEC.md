@@ -771,6 +771,31 @@ warn or fail.
 New fields that had no definitions before: `GA_PERIPH_RESET` (`RES0`), `GA_PRIORITY` (`PM0-1`, with
 values), and `GA_WP`.
 
+### D17a — A register with one unused byte becomes a byte register *(Claude, 2026-08-14 — PROVISIONAL, needs Damian R's confirmation)*
+**This extends D17, which was Damian R's decision, so it is recorded as provisional rather than
+settled.** It was taken unattended; reverting it touches three registers and no call sites.
+
+D17 covers registers whose two halves hold *unrelated* concerns. It says nothing about registers
+where one half holds *nothing*. Three such registers exist: the Main side's `$A12004` (all fields in
+the high byte) and the Sub side's `$FF8030` and `$FF8032` (all fields in the low byte).
+
+The extension: **such a register is modelled as a byte register at the address of the byte that is
+actually used.** So `$A12004` keeps its address, while `GA_REG_INT3TIMER` becomes `0xFF8031` and
+`GA_REG_INTMASK` becomes `0xFF8033`.
+
+**Why.** Without it, `move.b #n, GA_REG_INT3TIMER` writes the unused high byte and silently does
+nothing — the exact class of bug D17 exists to remove, and the one the commented-out line in
+`examples/gfx/src/sp.s:89` was working around by hand with `ga_reg_intmask+1`. With the extension,
+the natural byte spelling is correct by construction.
+
+**The alternative, rejected:** keep them 16-bit with positions 0–7. That is defensible — nothing is
+*wrong* about it, and it avoids moving an address. It was rejected because it leaves byte access to
+these registers a trap, and byte access is the only sensible way to use them.
+
+**What would settle it:** whether Damian R considers the address move acceptable for registers whose
+name stays the same. Usage in-tree is one commented-out line, so the blast radius is as small as it
+will ever be. Addresses are pinned by Tier 1.5 assertions either way.
+
 ### OD-1 — How to resolve the Main/Sub Gate Array namespace collision *(open)*
 INV-7 is violated (KB-12). Options: prefix by CPU side (`GA_MAIN_*` / `GA_SUB_*`); rely solely on
 path-derived include guards plus a hard rule that a TU may include only one side; or generate both

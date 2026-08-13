@@ -202,7 +202,7 @@ typedef u8 volatile const * ga_reg8_ro;
  * This does not seem to properly reflected in emulators, but initial tests on
  * hardware show it to be accurate
  */
-#define ga_reg_int3timer (*((ga_reg) GA_REG_INT3TIMER))
+#define ga_reg_int3timer (*((ga_reg8) GA_REG_INT3TIMER))
 /**
  * @def ga_reg_intmask
  * @brief GA Reg 19 - Interrupt mask control
@@ -226,7 +226,7 @@ typedef u8 volatile const * ga_reg8_ro;
  *   5: CDC
  *   6: SUBCODE
  */
-#define ga_reg_intmask (*((ga_reg) GA_REG_INTMASK))
+#define ga_reg_intmask (*((ga_reg8) GA_REG_INTMASK))
 /**
  * @def ga_reg_cdfader
  * @brief GA Reg 1A - CD Audio Fader

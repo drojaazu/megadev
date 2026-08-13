@@ -963,17 +963,66 @@
 
 /**
  * @def GA_REG_INT3TIMER
- * @sa ga_reg_comstat7
+ * @brief General purpose timer, drives INT3
+ *
+ * @details
+ * The low byte of the hardware register at 0xFF8030; the high byte is unused
+ * and reads as 0. Writing n starts a countdown from n to 0 at one tick per
+ * 30.72 microseconds, and level 3 is raised when it reaches 0. The timer then
+ * reloads and repeats, so this is a periodic interrupt rather than a one shot.
+ *
+ * The resulting interval is (n + 1) x 30.72 microseconds.
+ *
+ * | |7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|
+ * | |\b TD7|\b TD6|\b TD5|\b TD4|\b TD3|\b TD2|\b TD1|\b TD0|
+ * |\b R|◯|◯|◯|◯|◯|◯|◯|◯|
+ * |\b W|◯|◯|◯|◯|◯|◯|◯|◯|
+ *
+ * @param TD Timer period, 1 to 255.
+ * @note Writing 0 disables the timer; INT3 is not generated. 0 is also the
+ * reset value, so the timer is off until it is set.
+ * @warning **A read returns the value you last wrote, not the live count.**
+ * There is no way to read how far the countdown has progressed.
+ * @note Level 3 must also be enabled in GA_REG_INTMASK before anything is
+ * delivered.
+ * @sa ga_reg_int3timer, GA_INT3_MASK
  * @ingroup ga_reg_sub_24
  */
-#define GA_REG_INT3TIMER 0xFF8030
+#define GA_REG_INT3TIMER 0xFF8031
 
 /**
  * @def GA_REG_INTMASK
+ * @brief Interrupt enable mask
+ *
+ * @details
+ * The low byte of the hardware register at 0xFF8032; the high byte is unused
+ * and reads as 0. One enable bit per interrupt level: 0 disables, 1 enables.
+ *
+ * | |7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|
+ * | | |\b IEN6|\b IEN5|\b IEN4|\b IEN3|\b IEN2|\b IEN1| |
+ * |\b R| |◯|◯|◯|◯|◯|◯| |
+ * |\b W| |◯|◯|◯|◯|◯|◯| |
+ *
+ * What each level signals:
+ *
+ * | Level | Source | Raised when |
+ * |---|---|---|
+ * | 1 | Graphics | A graphics operation finishes, in 2M mode |
+ * | 2 | Mega Drive | The Main CPU raises a software interrupt |
+ * | 3 | Timer | GA_REG_INT3TIMER counts down to 0 |
+ * | 4 | CDD | Reception of status 7 completes |
+ * | 5 | CDC | Errors are corrected, or buffering completes |
+ * | 6 | Sub-code | A sub-code buffer fills |
+ *
+ * @note Bit 0 is unused; there is no level 0.
+ * @note For proper synchronisation, the Main CPU should raise level 2 from its
+ * vertical interrupt.
  * @sa ga_reg_intmask
  * @ingroup ga_reg_sub_25
  */
-#define GA_REG_INTMASK 0xFF8032
+#define GA_REG_INTMASK 0xFF8033
 
 #define GA_INT1_POS 1
 #define GA_INT1_WIDTH 1
