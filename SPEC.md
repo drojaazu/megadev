@@ -395,10 +395,14 @@ of `docs/main_bios.md`.
 collect the numbered bulletins, including **#3** — the primary written evidence that the Main-side
 calls were sanctioned for game use, and the source of the Work RAM equates in `docs/main_bios.md`.
 
-> **Two independent translations exist** for several Mega-CD manuals — credited *(Rex Sabio)* and
-> *(The Code Monkeys)*. The official English is in places ambiguous or plainly wrong, so where a
-> claim rests on wording, **check both translations before recording it as `DOC`**; a disagreement
-> between them is itself a signal to downgrade the claim to `ASSUMED` pending hardware testing.
+> **The two "translations" are two scans of the same fax, not independent translations.** Both the
+> *(Rex Sabio)* and *(The Code Monkeys)* copies of *The Hardware* carry the identical transmission
+> header (`8137437483 #24/48`), so comparing them verifies **legibility, not content** — a
+> mistranslation is present in both. The Rex Sabio scan is the higher resolution of the two and is
+> the one to read when a figure is unclear.
+>
+> Where a claim rests on wording that is ambiguous in the scan, record it as `ASSUMED` and say which
+> page it came from, rather than treating agreement between the two files as corroboration.
 
 | Claim | Provenance | Source / note |
 |---|---|---|
