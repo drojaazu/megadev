@@ -112,10 +112,10 @@ toolchain was available during the audit. VER-1 must land first so that fixes ca
 | DOC-2 | S2 | **done** | `@alias` is used 49 times but never declared in `Doxyfile` `ALIASES`; `@macro`, `@in`, `@out`, `@desc` are used throughout `.macro.s` files and are not Doxygen commands at all. |
 | DOC-3 | S2 | **done** | KB-19 — `bootrom.md` is referenced 8× and `design.md` 2×; **neither exists**. Pre-rename ghosts of `main_bios.md` / `program_design.md`. |
 | DOC-4 | S2 | open | `docs/gate_array.md` **ends mid-sentence** ("Some registers (namely the CD Fader control ") with no trailing newline; a second sentence dangles at line 43. |
-| DOC-5 | S3 | open | `docs/main_bios.md` has ~39 headings with no body, including all of System Group, Input Reads, Decompression, and 9 of 10 Unknown Functions. Its table of contents lists 3 entries for ~15 sections. |
+| DOC-5 | S3 | open | `docs/main_bios.md` has ~39 headings with no body, including all of System Group, Input Reads and Decompression. **Sources now available:** the `BIOS Revisions/` ROM dumps for disassembly, and the shipped Sega source packages (Batman Returns, Cliffhanger, Ex-Mutants) showing how games actually called the library. See SPEC.md §7. |
 | DOC-6 | S3 | open | `docs/megacd_dev.md` and `docs/program_design.md` are ~65% the same document, including identical ASCII memory maps and identical typos. Merge or clearly split by purpose. |
 | DOC-7 | S3 | open | `docs/manual.md` Further Reading omits `gate_array.md` and `program_design.md` — 2 of 10 docs are unreachable from the manual. |
-| DOC-8 | S3 | open | No prose documentation exists for `sub/pcm.*`, `sub/bram.*`, `sub/bios.*`, `main/vdp.*`, `main/io.*`, `main/z80.*`, `main/comm.*`, `main/bramcart.def.h`, or the `lib/` utility headers — roughly 45 of 72 library files. |
+| DOC-8 | S3 | open | No prose documentation for `sub/pcm.*`, `sub/bram.*`, `sub/bios.*`, `main/vdp.*`, `main/io.*`, `main/z80.*`, `main/comm.*`, or the `lib/` utility headers — roughly 45 of 72 files. **For PCM specifically:** *Mega-CD Hardware Manual - PCM Sound Source* (SPEC.md §7). |
 | DOC-9 | S4 | open | `docs/manual.md` typos preserved across releases: "Masimum" (×2), "apepar", "relatve" (×3), "reccommend", "supporttools". |
 | DOC-10 | S3 | open | ~29 `@file` / `@def` / `@fn` tags name the wrong file or symbol (e.g. `lib/main/md_sys.h:4-7` is a copy-paste of `mmd.h`'s header block). Enforced by INV-5 once VER-2 lands. |
 | DOC-11 | S3 | open | Write a `CHANGELOG.md`. 13 release tags exist with no release notes anywhere. |
@@ -134,6 +134,7 @@ toolchain was available during the audit. VER-1 must land first so that fixes ca
 | OPS-7 | S3 | open | 11 files mix tabs and spaces internally despite `.editorconfig` and `.clang-format`; neither is enforced. Closed by VER-2. |
 | OPS-8 | S4 | open | `lib/sub/sp_header.s:11` — the Sub CPU program header string is `.ascii "MAIN       "`. |
 | OPS-9 | S3 | open | `.vscode/` is gitignored, but `.devcontainer/devcontainer.json` and `.vscode/c_cpp_properties.json` both hardcode `/usr/bin/m68k-linux-gnu-gcc`. New contributors get no working IntelliSense config. |
+| DOC-13 | S4 | open | `lib/sub/boot.def.h` retains Sega names `CBTIPDISC`/`CBTIPSTAT`/`CBTSPDISC`/`CBTSPSTAT` whose briefs all read "Preent in 32X CD example source" (typo x4). The shipped source packages in the library share (SPEC.md §7) may identify what they actually do. |
 | OPS-10 | S4 | open | A stale `git stash` exists: `stash@{0}: WIP on out_path: bcd7db8`, an incomplete `OUT_PATH` → `BUILD_PATH` rename across 8 makefiles. It references `makefile.global` and `examples/ipx_spx/`, neither of which still exists, and the rename was evidently completed by other means since the tree now uses `BUILD_PATH`. Almost certainly obsolete — confirm and drop. |
 
 ## Features & research
@@ -159,12 +160,12 @@ Items that can only be closed by testing on real hardware. See [SPEC.md §7](SPE
 
 | ID | Sev | Status | Item |
 |---|---|---|---|
-| HW-1 | S2 | open | `docs/boot.md:15` — verify on real hardware whether the boot sector layout can be changed. Currently ASSUMED. |
-| HW-2 | S3 | open | `lib/sub/gate_arr.def.h` `@todo` — effects of writing 0 to the Word RAM mode bits in 2M mode. Currently ASSUMED. |
-| HW-3 | S3 | open | `lib/main/md_sys.def.h:28` — `HW_REV` is defined as 3 bits but its own comment shows VER3..VER0 (4 bits). Gates the TMSS write in `md_init.s:32`. Resolve against hardware or documentation. |
-| HW-4 | S4 | open | `docs/cdrom.md` — measure CDC DMA transfer speed and any bus-contention effects. Currently UNKNOWN. |
-| HW-5 | S4 | open | `lib/main/bramcart.def.h` — BRAM cart bank/ID map came from a forum post; verify against a real RAM cart. |
-| HW-6 | S3 | open | `lib/main/bios.h:590` — "@todo this isn't clearing the sprite list for some reason...?" An open bug filed as a code comment. |
+| HW-1 | S2 | open | `docs/boot.md:15` — verify on real hardware whether the boot sector layout can be changed. **Source to read first:** *Mega-CD Disc Format Specifications* + BIOS Manual (see SPEC.md §7). |
+| HW-2 | S3 | open | `lib/sub/gate_arr.def.h` `@todo` — effects of writing 0 to the Word RAM mode bits in 2M mode. **The `@todo` names its own source:** *Mega-CD Hardware Manual - The Hardware*, which is in the library share (SPEC.md §7). |
+| HW-3 | S3 | open | `lib/main/md_sys.def.h:28` — `HW_REV` is 3 bits but its comment shows VER3..VER0 (4 bits). Gates the TMSS write in `md_init.s:32`. **Settle against the *Genesis Software Manual*.** |
+| HW-4 | S4 | open | `docs/cdrom.md` — measure CDC DMA transfer speed and bus-contention effects. **Start with *Mega-CD Hardware Manual - The Hardware*.** |
+| HW-5 | S4 | open | `lib/main/bramcart.def.h` — bank/ID map came from a forum post. **Cross-check the BIOS Manual** before promoting it above ASSUMED. |
+| HW-6 | S3 | open | `lib/main/bios.h:590` — "@todo this isn't clearing the sprite list for some reason...?" An open bug filed as a code comment. **The `BIOS Revisions/` ROM dumps allow disassembling the actual routine.** |
 
 ## Low-value inline TODOs
 
