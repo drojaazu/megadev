@@ -7,6 +7,7 @@
  */
 
 #include "macro.s"
+#include "str_util.def.h"
 
 .section .text
 
@@ -23,7 +24,7 @@ SUB hextoa8
 	rol.b #4, d0
 	jbsr hex_to_ascii
 	move.b d1, (a0)+
-	move.b #0xFF,(a0)
+	move.b #STRING_TERMINATOR,(a0)
 	rts
 
 /**
@@ -38,7 +39,7 @@ SUB hextoa16
 	jbsr hex_to_ascii
 	move.b d1, (a0)+
 	dbra d7, 1b
-	move.b #0xFF,(a0)
+	move.b #STRING_TERMINATOR,(a0)
 	rts
 
 /**
@@ -53,7 +54,7 @@ SUB hextoa32
 	jbsr hex_to_ascii
 	move.b d1, (a0)+
 	dbra d7, 1b
-	move.b #0xFF,(a0)
+	move.b #STRING_TERMINATOR,(a0)
 	rts
 
 hex_to_ascii:

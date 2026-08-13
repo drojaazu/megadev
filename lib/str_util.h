@@ -8,6 +8,7 @@
 #ifndef MEGADEV__MAIN_STR_UTIL_H
 #define MEGADEV__MAIN_STR_UTIL_H
 
+#include "str_util.def.h"
 #include "types.h"
 
 static inline u8 _hextoa(register u8 value)
@@ -30,6 +31,7 @@ static inline void hextoa8(register u8 value, register char * const string)
   *output++ = _hextoa(value);
   asm("rol.b #4, %[value]" : [value] "+d"(value));
   *output++ = _hextoa(value);
+  *output = STRING_TERMINATOR;
 }
 
 /**
@@ -46,6 +48,7 @@ static inline void hextoa16(register u16 value, register char * const string)
   *output++ = _hextoa(value);
   asm("rol.w #4, %[value]" : [value] "+d"(value));
   *output++ = _hextoa(value);
+  *output = STRING_TERMINATOR;
 }
 
 /**
@@ -65,6 +68,7 @@ static inline void hextoa32(register u32 value, register char * const string)
     asm("rol.l #4, %[value]" : [value] "+d"(value));
     *output++ = _hextoa(value);
   }
+  *output = STRING_TERMINATOR;
 }
 
 static inline bool
