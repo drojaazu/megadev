@@ -284,60 +284,64 @@
  */
 
 /**
- * @def GA_REG_RESET
- * @brief Peripheral reset, drive LEDs and gate array version
+ * @def GA_REG_LED
+ * @brief Drive state LEDs
  *
  * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * |  |  |  |  |  |  |LEDG|LEDR|VER3|VER2|VER1|VER0|  |  |  |RES0|
- * |R |  |  |  |  |  |  | o| o| o| o| o| o|  |  |  | o|
- * |W |  |  |  |  |  |  | o| o|  |  |  |  |  |  |  | o|
+ * The high byte of the hardware register at 0xFF8000. Split out as its own byte
+ * register because it shares nothing with the low half beyond an address: see
+ * SPEC.md D17.
+ *
+ * | |7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|
+ * | | | | | | | |\b LEDG|\b LEDR|
+ * |\b R| | | | | | |◯|◯|
+ * |\b W| | | | | | |◯|◯|
+ *
+ * @param LEDR Red LED. 1: on, 0: off. Lit during disc access.
+ * @param LEDG Green LED. 1: on, 0: off. Lit when the drive is ready.
+ *
+ * The pair is read as a single drive state indicator, and the BIOS drives it:
+ *
+ * | Green | Red | Meaning |
+ * |---|---|---|
+ * | on | blinking | Ready. No disc present, or the TOC is still being read |
+ * | on | off | Ready. A disc is present and readable |
+ * | on | on | Disc access in progress |
+ * | blinking | off | Standby |
+ *
+ * Power-on and reset clear both LEDs. Any other combination requires a special
+ * system mode.
+ *
+ * @sa ga_reg_led
+ * @ingroup ga_reg_sub_00
+ */
+#define GA_REG_LED 0xFF8000
+
+/**
+ * @def GA_REG_SUBCTRL
+ * @brief Peripheral reset and gate array version
+ *
+ * @details
+ * The low byte of the hardware register at 0xFF8000.
+ *
+ * | |7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|
+ * | |\b VER3|\b VER2|\b VER1|\b VER0| | | |\b RES0|
+ * |\b R|◯|◯|◯|◯| | | |◯|
+ * |\b W| | | | | | | |◯|
  *
  * @param RES0 Peripheral reset.
- * \n [write] 0: reset the peripheral (1 is not used)
+ * \n [write] 0: reset the peripheral. Writing 1 is not used.
  * \n [read] 0: the peripheral is being reset / 1: the peripheral is operable
  * \n Roughly 100 ms after a reset the peripheral becomes operable and RES0
  * becomes 1 of its own accord.
  * @param VER0-3 Gate array chip version. Read only.
- * @param LEDR Red LED. 1: on, 0: off. Lit during CD access.
- * @param LEDG Green LED. 1: on, 0: off. Lit when the drive is ready.
  *
- * The two LEDs are read together as a drive state indicator, and the BIOS
- * drives them:
- *
- * | Green | Red | Meaning |
- * |---|---|---|
- * | 1 | 0 | Ready. No disc, or waiting for the TOC to finish reading |
- * | 1 | 0 | Ready. A disc is present and readable |
- * | 1 | 1 | Disc access in progress |
- * | either | 0 | Standby |
- *
- * Power-on and reset clear both LEDs. Any other combination requires a
- * special system mode.
- *
- * @sa ga_reg_reset
+ * @sa ga_reg_subctrl
  * @ingroup ga_reg_sub_00
  */
-#define GA_REG_RESET 0xFF8000
-
-/**
- * @def GA_REG_RESET_HI
- * @brief High byte of @ref GA_REG_RESET
- * @ingroup ga_regs_sub
- * @details The gate array registers are 16 bit, but this one is frequently
- * accessed a byte at a time. GA_REG_RESET_HI is an alias for the register address
- * itself; prefer it over the bare name when you mean a byte access, so the
- * width you intended is visible at the call site.
- */
-#define GA_REG_RESET_HI GA_REG_RESET
-
-/**
- * @def GA_REG_RESET_LO
- * @brief Low byte of @ref GA_REG_RESET
- * @ingroup ga_regs_sub
- */
-#define GA_REG_RESET_LO (GA_REG_RESET + 1)
+#define GA_REG_SUBCTRL 0xFF8001
 
 
 /**
@@ -346,13 +350,11 @@
  * @details
  * Drives the red element of the LED on the front of the unit. Free for
  * application use; the Sub BIOS does not touch it after boot.
- * @note Bit 8 of the register, i.e. bit 0 of its high byte. Reach it with
- * FIELD_BYTE / FIELD_BPOS rather than passing the position to a bit opcode.
- * @sa ga_reg_reset
+ * @sa ga_reg_led
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_subctrl
  */
-#define GA_LED_R_POS 8
+#define GA_LED_R_POS 0
 #define GA_LED_R_WIDTH 1
 #define GA_LED_R_MASK FIELD_MASK(GA_LED_R_POS, GA_LED_R_WIDTH)
 
@@ -362,20 +364,18 @@
  * @details
  * Drives the green element of the LED on the front of the unit. Free for
  * application use; the Sub BIOS does not touch it after boot.
- * @note Bit 9 of the register, i.e. bit 1 of its high byte. Reach it with
- * FIELD_BYTE / FIELD_BPOS rather than passing the position to a bit opcode.
- * @sa ga_reg_reset
+ * @sa ga_reg_led
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_subctrl
  */
-#define GA_LED_G_POS 9
+#define GA_LED_G_POS 1
 #define GA_LED_G_WIDTH 1
 #define GA_LED_G_MASK FIELD_MASK(GA_LED_G_POS, GA_LED_G_WIDTH)
 
 /**
  * @def GA_VERSION_MASK
- * @brief ROM Version
- * @sa ga_reg_reset
+ * @brief Gate array chip version
+ * @sa ga_reg_subctrl
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_subctrl
  */
@@ -384,62 +384,86 @@
 #define GA_VERSION_MASK FIELD_MASK(GA_VERSION_POS, GA_VERSION_WIDTH)
 
 /**
+ * @def GA_PERIPH_RESET_MASK
+ * @brief Peripheral reset
+ * @details Write 0 to reset the peripheral; reads 1 once it is operable again.
+ * @warning This is bit 0 of GA_REG_SUBCTRL, not of GA_REG_LED. The two were a
+ * single 16 bit register until D17, and a stray bit 0 write through the old
+ * word accessor reset the peripheral instead of touching an LED (KB-34).
+ * @sa ga_reg_subctrl
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_subctrl
+ */
+#define GA_PERIPH_RESET_POS 0
+#define GA_PERIPH_RESET_WIDTH 1
+#define GA_PERIPH_RESET_MASK FIELD_MASK(GA_PERIPH_RESET_POS, GA_PERIPH_RESET_WIDTH)
+
+/**
  * @defgroup ga_reg_sub_memmode Sub CPU / Gate Array / Registers / Memory Mode
  */
 
 /**
- * @def GA_REG_MEMMODE
- * @brief Word RAM ownership and layout, PRG RAM write protection
+ * @def GA_REG_WP
+ * @brief Program RAM write protection
  *
  * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * |WP7|WP6|WP5|WP4|WP3|WP2|WP1|WP0|  |  |  |PM1|PM0|MODE|DMNA|RET|
- * |R | o| o| o| o| o| o| o| o|  |  |  | o| o| o| o| o|
- * |W |  |  |  |  |  |  |  |  |  |  |  | o| o| o|  | o|
+ * The high byte of the hardware register at 0xFF8002. Protects the bottom of
+ * Program RAM against writes in units of 512 bytes: each set bit covers one
+ * block, so the field as a whole spans 0x000000 to 0x01FDFF. This is how the
+ * Sub CPU's resident code is shielded from a stray write by the Main side.
  *
- * @param WP0-7 Write protect for the lower PRG RAM. Read only from this side.
+ * | |7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|
+ * | |\b WP7|\b WP6|\b WP5|\b WP4|\b WP3|\b WP2|\b WP1|\b WP0|
+ * |\b R|◯|◯|◯|◯|◯|◯|◯|◯|
+ * |\b W| | | | | | | | |
+ *
+ * @param WP0-7 Write protect block enables.
+ * @note Read only from the Sub CPU side. The Main CPU sets the protection; see
+ * the Main CPU header for the writable view.
+ * @sa ga_reg_wp
+ * @ingroup ga_reg_sub_01
+ */
+#define GA_REG_WP 0xFF8002
+
+/**
+ * @def GA_REG_MEMMODE
+ * @brief Word RAM ownership, layout and priority mode
+ *
+ * @details
+ * The low byte of the hardware register at 0xFF8002. Split from the write
+ * protect byte above it because the two share nothing but an address, and a
+ * word-wide write to set the memory mode would silently clear the protection:
+ * see SPEC.md D17.
+ *
+ * | |7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|
+ * | | | | |\b PM1|\b PM0|\b MODE|\b DMNA|\b RET|
+ * |\b R| | | |◯|◯|◯|◯|◯|
+ * |\b W| | | |◯|◯|◯| |◯|
+ *
  * @param PM0-1 Priority mode, applied when the Sub CPU writes into Word RAM.
- * \n 0,0: off - all stamp map data is written to the image buffer
- * \n 0,1: underwrite - stamp data is written only where the buffer holds 0
- * \n 1,0: overwrite - only non-zero stamp data is written
- * \n 1,1: prohibited
+ * See GA_PRIORITY_MASK.
  * @param MODE Word RAM layout. 0: 2M, 1: 1M.
  * @param DMNA Declaration of Main RAM No Access.
- * \n In 2M mode, writing 1 returns Word RAM to the Sub CPU. Reading 0 means
- * it has not been returned yet; 1 means it has.
+ * \n In 2M mode, writing 1 returns Word RAM to the Sub CPU. Reading 0 means it
+ * has not been returned yet; 1 means it has.
  * \n In 1M mode, reading 1 means the Main CPU has requested a bank swap, and
  * reading 0 means the swap is complete. Setting RET also sets DMNA.
  * @param RET The counterpart to DMNA.
  * \n In 2M mode, writing 1 gives Word RAM to the Main CPU. Reading 0 means it
  * has not been given up yet; 1 means it has.
  *
- * @note DMNA and RET are the two halves of Word RAM handover: each declares
- * the transfer in one direction, and the bit you write is not the bit you
- * poll to confirm it.
+ * @note DMNA and RET are the two halves of Word RAM handover: each declares the
+ * transfer in one direction, and the bit you write is not the bit you poll to
+ * confirm it.
+ * @note DMNA is read only from this side -- the Main CPU sets it. Writing it
+ * here has no effect.
  *
  * @sa ga_reg_memmode
  * @ingroup ga_reg_sub_01
  */
-#define GA_REG_MEMMODE 0xFF8002
-
-/**
- * @def GA_REG_MEMMODE_HI
- * @brief High byte of @ref GA_REG_MEMMODE
- * @ingroup ga_regs_sub
- * @details The gate array registers are 16 bit, but this one is frequently
- * accessed a byte at a time. GA_REG_MEMMODE_HI is an alias for the register address
- * itself; prefer it over the bare name when you mean a byte access, so the
- * width you intended is visible at the call site.
- */
-#define GA_REG_MEMMODE_HI GA_REG_MEMMODE
-
-/**
- * @def GA_REG_MEMMODE_LO
- * @brief Low byte of @ref GA_REG_MEMMODE
- * @ingroup ga_regs_sub
- */
-#define GA_REG_MEMMODE_LO (GA_REG_MEMMODE + 1)
+#define GA_REG_MEMMODE 0xFF8003
 
 
 #define GA_RETURN_2M_POS 0
@@ -474,6 +498,44 @@
  * @ingroup ga_reg_sub_memmode
  */
 #define GA_WORDRAM_LAYOUT_MASK FIELD_MASK(GA_WORDRAM_LAYOUT_POS, GA_WORDRAM_LAYOUT_WIDTH)
+
+/**
+ * @def GA_PRIORITY_MASK
+ * @brief Word RAM priority mode
+ * @details
+ * Governs which pixels a Sub CPU write into Word RAM is allowed to change.
+ * Values are stored unshifted; place them with FIELD_PREP.
+ *
+ * | Value | Effect |
+ * |:|:|
+ * | GA_PRIORITY_OFF | Every pixel is written |
+ * | GA_PRIORITY_UNDERWRITE | Written only where the buffer already holds 0 |
+ * | GA_PRIORITY_OVERWRITE | Only non-zero source pixels are written |
+ *
+ * @warning The fourth value is prohibited by the hardware documentation and has
+ * no defined behaviour.
+ * @sa ga_reg_memmode
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_memmode
+ */
+#define GA_PRIORITY_POS 3
+#define GA_PRIORITY_WIDTH 2
+#define GA_PRIORITY_MASK FIELD_MASK(GA_PRIORITY_POS, GA_PRIORITY_WIDTH)
+
+#define GA_PRIORITY_OFF 0b00
+#define GA_PRIORITY_UNDERWRITE 0b01
+#define GA_PRIORITY_OVERWRITE 0b10
+
+/**
+ * @def GA_WP_MASK
+ * @brief Program RAM write protect blocks
+ * @sa ga_reg_wp
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_memmode
+ */
+#define GA_WP_POS 0
+#define GA_WP_WIDTH 8
+#define GA_WP_MASK FIELD_MASK(GA_WP_POS, GA_WP_WIDTH)
 
 /**
  * @defgroup ga_reg_sub_cdcmode Sub CPU / Gate Array / Registers / CDC Mode &

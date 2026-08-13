@@ -37,35 +37,57 @@ convention described in [manual.md](manual.md) under "Bitwise Definition Naming"
 
 Use `_POS` with the bit opcodes and `_MASK` with logic operations:
 
-    btst  #GA_DMNA_POS, GA_REG_MEMMODE_LO    ; assembly
-    if (ga_reg_memmode & GA_DMNA_MASK)       /* C */
+    btst  #GA_DMNA_POS, GA_REG_MEMMODE    ; assembly
+    if (ga_reg_memmode & GA_DMNA_MASK)    /* C */
 
-— with the caveat below for any field above bit 7.
+— with the caveat below for any field above bit 7 of a register that is still 16 bit.
 
 A single-bit flag is simply a field of width 1, so the same three definitions describe both flags and
 wider fields. Multi-bit field *values* are stored unshifted and placed with `FIELD_PREP`.
 
-### `_POS` counts from the register, not from the byte
+### Some registers are 16 bit, some are a pair of byte registers
 
-The registers are 16 bit, and a `_POS` is always relative to the whole register: bit 0 is the LSB of
-the word, and a field in the upper half has a position of 8 or more. `GA_LED_R_POS` is 8, not 0,
-even though the red LED is the bottom bit of the byte you would actually write.
+The hardware presents 16-bit registers, but its *flag* registers are organised a byte at a time: no
+field in either header straddles bit 7/8. Where the two halves of a hardware register hold unrelated
+concerns, Megadev models them as two named byte registers rather than one word:
 
-This matters because `_MASK` is derived from `_POS`. Anything counting from its own byte produces a
-mask naming the wrong bits — `GA_MEMMODE_WP` once had a position of 0 and so a mask of `0x00FF`,
-which is the exact complement of the byte it protects.
+    #define GA_REG_LED      0xFF8000   /* LEDR bit 0, LEDG bit 1        */
+    #define GA_REG_SUBCTRL  0xFF8001   /* RES0 bit 0, VER0-3 bits 4-7   */
 
-It also means **a `_POS` of 8 or more is not a legal bit-opcode operand.** On a memory operand the
-68000 takes the bit number modulo 8, so `bset #8` on a register address sets bit 0 of that same
-byte — it assembles, it runs, and it hits the wrong bit. Use the two helpers from `build.def.h`,
-which pick the correct half and renumber within it:
+`_POS` is then relative to that byte, so it goes straight to a bit opcode:
 
-    bset  #FIELD_BPOS(GA_LED_R), FIELD_BYTE(GA_REG_RESET, GA_LED_R)   ; assembly
-    ga_reg_reset |= GA_LED_R_MASK;                                    /* C */
+    bset  #GA_LED_R_POS, GA_REG_LED    ; assembly
+    ga_reg_led |= GA_LED_R_MASK;       /* C */
 
-The C form needs neither helper: a word-wide read-modify-write on the whole register is already
-correct, and the mask is already in the right place. The helpers exist for the assembly bit opcodes,
-and for the C cases where a single-byte write is wanted.
+This is why `GA_REG_RESET` no longer exists: the LEDs and the peripheral reset shared an address and
+nothing else. Keeping them together made bit 0 ambiguous — bit 0 of the word is `RES0`, the
+peripheral reset, and bit 0 of the LED byte is the red LED. Splitting them makes the two impossible
+to confuse.
+
+A word access to a split pair is still available, since the halves are adjacent and the high byte is
+even-aligned. It is simply no longer the default spelling, so clearing the Program RAM write
+protection while setting the memory mode is now something you have to write on purpose.
+
+### Registers that stay 16 bit
+
+Two kinds do not split:
+
+- **Word-only data registers** — `GA_REG_CDCHOSTDATA`, `GA_REG_DMAADDR`, `GA_REG_STOPWATCH`,
+  `GA_REG_CDFADER` and the address/size registers. They hold one wide value, have no fields, and
+  forbid bit operations, so there is nothing to separate.
+- **Registers whose fields span both halves** — `GA_REG_CDCMODE` is the example: the CDC register
+  address sits in the low byte and the status flags in the high byte, but they are read and written
+  as one CDC transaction.
+
+For those, `_POS` is relative to the whole word and a position of 8 or more is **not** a legal
+bit-opcode operand: on a memory operand the 68000 takes the bit number modulo 8, so `btst #14` would
+test bit 6 of the wrong byte. Two macros in `build.def.h` handle it:
+
+    btst  #FIELD_BPOS(GA_CDCMODE_DSR), FIELD_BYTE(GA_REG_CDCMODE, GA_CDCMODE_DSR)
+
+`FIELD_BYTE` picks the half and `FIELD_BPOS` renumbers within it. On a byte register both are the
+identity, so they are always safe to use — but on a byte register they are also noise, and the plain
+`_POS` is preferred.
 
 ## Bus width
 
@@ -77,28 +99,21 @@ Where a register's documentation carries an access warning, take it literally: t
 few places in Mega CD programming where getting it wrong produces a hardware exception rather than
 merely a wrong value. The authoritative per-register table is below.
 
-Because byte access is common, registers that are routinely used that way carry `_HI` and `_LO`
-address definitions:
+Registers that are accessed a byte at a time are **named** a byte at a time (see above), so there are
+no `_HI` / `_LO` address aliases to keep straight. `GA_REG_LED` is the high byte of `0xFF8000` and
+`GA_REG_SUBCTRL` is the low byte; `GA_REG_WP` and `GA_REG_MEMMODE` are the two halves of `0xFF8002`.
+The C accessors are typed `ga_reg8`, and `ga_reg8_ro` where this CPU may only read:
 
-    #define GA_REG_MEMMODE     0xFF8002
-    #define GA_REG_MEMMODE_HI  GA_REG_MEMMODE
-    #define GA_REG_MEMMODE_LO  (GA_REG_MEMMODE + 1)
+    #define ga_reg_wp       (*((ga_reg8_ro) GA_REG_WP))    /* Main CPU writes it */
+    #define ga_reg_memmode  (*((ga_reg8) GA_REG_MEMMODE))
 
-`_HI` is simply an alias for the register address. Prefer it over the bare name when you mean a byte
-access, so the width you intended is visible at the point of use rather than implied. There are
-matching C accessors typed as `ga_reg8`:
+Note that `ga_reg const` does **not** express read-only — it is a const pointer to a mutable
+register, which enforces nothing at the point of use. `ga_reg_ro` and `ga_reg8_ro` are the types that
+do.
 
-    #define ga_reg_memmode_hi ((ga_reg8) GA_REG_MEMMODE_HI)
-    #define ga_reg_memmode_lo ((ga_reg8) GA_REG_MEMMODE_LO)
-
-Currently provided for `GA_REG_RESET` and `GA_REG_MEMMODE` on both CPU sides — the registers the
-library itself accesses a byte at a time. They are added where byte access is known to be used
-rather than blanket, since offering `_LO` for a word-only register would invite a bus error.
-
-Where the two halves have distinct meanings, they get names that say so instead. `GA_REG_COMFLAGS`
-is the clearest case: its high byte is the Main CPU's flags and its low byte the Sub CPU's, so the
-accessors are `ga_reg_comflags_main` and `ga_reg_comflags_sub`, each `const` on the side that may
-only read them.
+`GA_REG_COMFLAGS` follows the same pattern from the other direction: its high byte is the Main CPU's
+flags and its low byte the Sub CPU's, so the accessors are `ga_reg_comflags_main` and
+`ga_reg_comflags_sub`, read-only on the side that may not write.
 
 ## Bit level restrictions and read/write access
 
@@ -111,16 +126,17 @@ Some registers or fields are further restricted to reads or writes only. This is
 fields whose value is simply undefined in one direction. The generated documentation shows this per
 bit: `◯` means the access is valid, a blank means it is undefined, and `🗙` means it is forbidden.
 
-For example, the `ROM_VER` field of `GA_REG_RESET` is meaningful when read but not when written:
+For example, the `VER` field of `GA_REG_SUBCTRL` is meaningful when read but not when written:
 
-| |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
-|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
-| | | | | | | |\b LED_G|\b LED_R|\b ROM_VER|||| | | |\b SUB_RESET|
-|\b R| | | | | | |◯|◯|◯|◯|◯|◯| | | |◯|
-|\b W| | | | | | |◯|◯| | | | | | | |◯|
+| |7|6|5|4|3|2|1|0|
+|:|:|:|:|:|:|:|:|:|
+| |\b VER3|\b VER2|\b VER1|\b VER0| | | |\b RES0|
+|\b R|◯|◯|◯|◯| | | |◯|
+|\b W| | | | | | | |◯|
 
-Writing to `ROM_VER` is not allowed but is unlikely to crash anything. Fields like this carry an
-`@note`.
+Writing to `VER` is not allowed but is unlikely to crash anything. Fields like this carry an `@note`.
+
+Byte registers get an 8-column table; the ones that remain 16 bit get all sixteen.
 
 A register that is genuinely read- or write-only is a different matter — violating it will likely
 raise a bus error. Those are marked `🗙` and carry a `@warning` rather than a `@note`:

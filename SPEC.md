@@ -115,11 +115,19 @@ Additional rules, all mechanically checkable:
   This is **long-standing project policy**, documented in `docs/manual.md` §"Bitwise Definition
   Naming", not a rule invented here. The naming scheme is settled in §9 **D12**: `_POS`, `_WIDTH`
   and `_MASK`, with values stored unshifted and placed by `FIELD_PREP`.
-- **INV-12** — A `_POS` is **relative to its register**, counting from the LSB of the whole register,
-  never from the byte the field happens to occupy (§9 **D16**). A `_POS` of 8 or more therefore
-  cannot be handed to a bit opcode on a memory operand: the m68k takes the immediate **modulo 8**, so
-  `btst #8` silently tests bit 0 of the same byte. Use `FIELD_BYTE(reg, field)` to select the half and
-  `FIELD_BPOS(field)` to reduce the position. *(See KB-34.)* Enforced by Tier 1.5.
+- **INV-12** — A `_POS` is **relative to the register it belongs to**, counting from that register's
+  LSB — never from the byte the field happens to occupy within a wider register.
+
+  Which register that is depends on the width the SDK models, settled in §9 **D17**: where the two
+  halves of a 16-bit hardware register hold unrelated concerns, each byte is its own register and
+  positions are 0–7. Registers that remain 16-bit (a single wide value, or fields spanning both
+  halves) use word-relative positions per §9 **D16**.
+
+  On a 16-bit register, a `_POS` of 8 or more cannot be handed to a bit opcode on a memory operand:
+  the m68k takes the immediate **modulo 8**, so `btst #8` silently tests bit 0 of the same byte. Use
+  `FIELD_BYTE(reg, field)` and `FIELD_BPOS(field)`. On a byte register no helper is needed, and Tier
+  1.5 asserts that `FIELD_BPOS` is the identity there and that every field satisfies
+  `POS + WIDTH <= 8`. *(See KB-34.)*
 - **INV-8** — Every header MUST be self-contained: including it, and nothing else, into an empty
   translation unit must compile cleanly. Enforced by Tier 0.1 (§6).
 - **INV-9** — A header MUST NOT define storage or a non-`static` function. Two translation units
@@ -671,6 +679,60 @@ original bug — `bset #8` on the register address is taken modulo 8, so it woul
 and quietly moved the fault from the mask to the opcode.
 
 `GA_MEMMODE_BANK` was checked against the same page and was already register-relative at bits 6–7.
+
+### D17 — Registers whose halves hold unrelated concerns are split into byte registers *(Damian R, 2026-08-14)*
+Where the two bytes of a 16-bit gate array register carry unrelated concerns, each byte becomes a
+named register in its own right, and `_POS` is relative to **that byte**. Registers that hold a
+single 16-bit value, or a field spanning both halves, stay 16-bit.
+
+This supersedes the uniform word-relative rule of **D16**, which stands only for the registers that
+remain 16-bit.
+
+**Why.** The hardware's flag registers are byte-organised: no field in either header straddles bit
+7/8, verified mechanically. Modelling them as 16-bit registers therefore described something the
+hardware does not have, and every access site had to convert back — which is all `FIELD_BYTE` /
+`FIELD_BPOS` ever did. Under the split, `GA_LED_R_POS` is 0 again, as it was before D16, but now
+because it is bit 0 of `GA_REG_LED` rather than by accident.
+
+The trap KB-34 turned on becomes structurally impossible rather than merely documented: bit 0 of the
+old `GA_REG_RESET` was `RES0`, the peripheral reset, while bit 0 of the LED byte is the red LED. One
+number, two unrelated bits. They are now fields of two different registers.
+
+Word-wide access to a split pair is still possible — the halves are adjacent and the high byte is
+even-aligned — but it is no longer the default spelling, so clearing the write protection while
+setting the memory mode has to be written on purpose.
+
+**Scope.** Split only where the halves differ. Word-only data registers (`$FF8008`, `$FF800A`,
+`$FF800C`, `$FF8034`, and the address/size registers) keep a single 16-bit name; they have no fields
+and permit no bit operations. `$FF8004` also stays 16-bit: `CA` is in the low byte and the CDC status
+flags in the high byte, but they are read and written as one CDC transaction.
+
+**Enforced by** Tier 1.5: every field of a byte register must satisfy `POS + WIDTH <= 8`, and
+`FIELD_BPOS` must be the identity on it.
+
+#### Renames (2.0.0 migration)
+
+No name keeps its old meaning at a new address without changing, except `GA_REG_MEMMODE`, which is
+called out below.
+
+| Was | Now | Note |
+|---|---|---|
+| `GA_REG_RESET` (word, `$FF8000`) | *removed* | split into the two below |
+| `GA_REG_RESET_HI` / `ga_reg_reset_hi` | `GA_REG_LED` / `ga_reg_led` | `$FF8000` |
+| `GA_REG_RESET_LO` / `ga_reg_reset_lo` | `GA_REG_SUBCTRL` / `ga_reg_subctrl` | `$FF8001` |
+| `GA_REG_MEMMODE_HI` / `ga_reg_memmode_hi` | `GA_REG_WP` / `ga_reg_wp` | `$FF8002`, read only from the Sub side |
+| **`GA_REG_MEMMODE`** (word, `$FF8002`) | **`GA_REG_MEMMODE`** (byte, `$FF8003`) | ⚠ **same name, new address and width** |
+| `GA_REG_MEMMODE_LO` / `ga_reg_memmode_lo` | `GA_REG_MEMMODE` / `ga_reg_memmode` | `$FF8003` |
+| `GA_LED_R_POS` 8, `GA_LED_G_POS` 9 | 0, 1 | now relative to `GA_REG_LED` |
+
+`GA_REG_MEMMODE` is the one carried-over name, because the low byte *is* the memory mode and the
+write protect was the passenger. Out-of-tree code that used it as a word will now address one byte
+further along. There is no diagnostic for this in assembly, so it is called out here and pinned by a
+Tier 1.5 assertion on its address; in C the accessor changed from `u16` to `u8` and most uses will
+warn or fail.
+
+New fields that had no definitions before: `GA_PERIPH_RESET` (`RES0`), `GA_PRIORITY` (`PM0-1`, with
+values), and `GA_WP`.
 
 ### OD-1 — How to resolve the Main/Sub Gate Array namespace collision *(open)*
 INV-7 is violated (KB-12). Options: prefix by CPU side (`GA_MAIN_*` / `GA_SUB_*`); rely solely on

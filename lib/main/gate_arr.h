@@ -12,12 +12,26 @@
 typedef u16 volatile * ga_reg;
 
 /**
+ * @typedef ga_reg_ro
+ * @brief A register this CPU may read but not write
+ * @details Note that `ga_reg const` does NOT mean this: it is a const pointer
+ * to a mutable register, which enforces nothing at the point of use.
+ */
+typedef u16 volatile const * ga_reg_ro;
+
+/**
  * @typedef ga_reg8
  * @brief Pointer to one byte of a gate array register
  * @details Registers are 16 bit, but several are routinely accessed a byte at
  * a time; use with the _HI and _LO address definitions.
  */
 typedef u8 volatile * ga_reg8;
+
+/**
+ * @typedef ga_reg8_ro
+ * @brief A byte register this CPU may read but not write
+ */
+typedef u8 volatile const * ga_reg8_ro;
 
 /**
  * @sa GA_REG_COMFLAGS
