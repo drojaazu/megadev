@@ -178,6 +178,31 @@ def check_mnemonics(text: str, display: str) -> list[Finding]:
     return findings
 
 
+# INV-10: register accessors are lvalues (SPEC.md D14). A hardware register
+# accessor dereferences itself, `(*((type) ADDR))`, and is used as `reg = x`.
+# Both forms were in use, so a caller could not tell from the name whether a
+# `*` was needed. Measured before deciding: of 72 pointer-form accessors, only
+# two uses in the whole tree wanted the pointer, and `&` recovers it there.
+#
+# Scoped to the register typedefs on purpose. Memory REGIONS -- word_ram,
+# prg_ram and friends -- are genuinely pointers to many objects and are indexed
+# as such, so they stay as they are.
+_PTR_ACCESSOR_RE = re.compile(
+    r"^#define ([a-z][a-z0-9_]*) +\(\("
+    r"(?:const )?(?:ga_reg8|ga_reg|io_reg|vdp_reg)(?: const)?"
+    r"\) *[A-Z_]",
+    re.M)
+
+
+def check_accessor_form(text: str, display: str) -> list[Finding]:
+    """INV-10: register accessor macros dereference themselves."""
+    return [
+        Finding("INV-10", display,
+                f"{m.group(1)} is a pointer-form accessor; write it as (*((type) ADDR))")
+        for m in _PTR_ACCESSOR_RE.finditer(text)
+    ]
+
+
 def collect() -> list[Finding]:
     findings: list[Finding] = []
     for rel in tc.lib_files(".h", ".s", ".c"):
@@ -187,6 +212,7 @@ def collect() -> list[Finding]:
             findings += check_def_h(text, display)
         if rel.endswith(".h"):
             findings += check_guard(text, rel, display)
+            findings += check_accessor_form(text, display)
         if rel.endswith((".h", ".s")):
             findings += check_mnemonics(text, display)
         findings += check_file_tag(text, rel, display)

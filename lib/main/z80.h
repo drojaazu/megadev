@@ -9,10 +9,9 @@
 #include "types.h"
 #include "z80.def.h"
 
-#define z80_ram        ((volatile u8 *) Z80_RAM)
-#define z80_reg_busreq ((volatile u16 *) Z80_REG_BUSREQ)
-#define z80_reg_reset  ((volatile u16 *) Z80_REG_RESET)
-
+#define z80_ram        (*((volatile u8 *) Z80_RAM))
+#define z80_reg_busreq (*((volatile u16 *) Z80_REG_BUSREQ))
+#define z80_reg_reset  (*((volatile u16 *) Z80_REG_RESET))
 static inline void z80_request_bus()
 {
   // clang-format off
