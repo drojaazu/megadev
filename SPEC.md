@@ -268,7 +268,7 @@ Megadev targets obsolete hardware, so "run the test suite" needs definition. Ver
 
 | Tier | What it proves | Status |
 |---|---|---|
-| **0 — Build gate** | The toolchain accepts the source. | **Implemented and GREEN** (m68k gcc 14.2.0): headers 70, assembly 23 (2 excluded by contract), ODR 42, all 7 projects build. |
+| **0 — Build gate** | The toolchain accepts the source, and the build behaves. | **Implemented and GREEN** (m68k gcc 14.2.0): headers 70, assembly 23 (2 excluded), ODR 42, symbols 115, 7 projects build with verified contents, incremental rebuild correct. |
 | **1 — Convention lint** | The rules in §2–§3 actually hold. | **Implemented and GREEN** (15 baselined, down from 16). 25 unit tests, `make test`. |
 | **2 — On-target tests** | The code computes the right answers on a real 68000. | **Specified, not built.** |
 | **3 — Hardware validation** | Behaviour matches real Mega CD silicon. | Manual; tracked as provenance (§7). |
@@ -287,6 +287,11 @@ Three jobs, run inside the devcontainer image:
 3. **Full build** of every example and `new_project` through to final `.iso` / `.cart`.
 4. **One-definition-rule check.** Two translation units include the same header and are linked
    together (`-fno-common`). See INV-9.
+5. **Symbol resolution.** Every undefined symbol in the lib objects is cross-referenced against
+   everything lib defines; the remainder must be a documented external.
+6. **Incremental rebuild.** Touching a library header must recompile its dependents, and an
+   unchanged rebuild must do nothing. This exists because header dependency tracking can be lost
+   without any build failing — which happened, and shipped.
 
 > **What Tier 0.1 does NOT catch — measured, not assumed.**
 > On its first real run the per-header compile reported **70 passed, 0 failed**, while the library

@@ -49,6 +49,10 @@ BUILD_PATH:=build
 
 DISC_PATH:=disc
 
+# Files copied from $(RES_PATH) into the disc image at build time.
+# Must be declared BEFORE the include below, since it generates build rules.
+DISC_ASSETS:=audio.pcm
+
 # Additional C compiler flags
 CC_FLAGS?=-O1 -fconserve-stack -fomit-frame-pointer -fno-gcse
 
@@ -76,7 +80,8 @@ init:
 # so a parallel build cannot master the image before the modules exist.
 DISC_CONTENTS := \
 	disc/ipx.mmd \
-	disc/spx.smd
+	disc/spx.smd \
+	disc/audio.pcm
 
 all: $(PROJECT_ID).iso
 

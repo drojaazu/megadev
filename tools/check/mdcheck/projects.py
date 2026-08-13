@@ -55,7 +55,13 @@ def run(clean_first: bool = True) -> int:
         # gate reported a completely broken ISO as a pass. Verify the build
         # actually produced what it said it would.
         missing = []
-        contents = _make(p, "-s", "print-DISC_CONTENTS").stdout.split()
+        probe = _make(p, "-s", "print-DISC_CONTENTS")
+        if probe.returncode != 0:
+            # Previously this failure was swallowed, so the content check below
+            # silently verified nothing at all for several commits.
+            rep.fail(p.name, "could not read DISC_CONTENTS:\n" + probe.stderr)
+            continue
+        contents = probe.stdout.split()
         for item in contents:
             f = p / item
             if not f.exists() or f.stat().st_size == 0:
@@ -72,4 +78,53 @@ def run(clean_first: bool = True) -> int:
         else:
             rep.ok(p.name, quiet=False)
 
+    return rep.summarise()
+
+
+def incremental() -> int:
+    """Tier 0.6 - editing a header rebuilds its dependents (SPEC.md B-2).
+
+    Nothing else detects the loss of this behaviour. The -include of the .d
+    files can be deleted and every build still succeeds; make simply stops
+    noticing header changes. That happened once, silently, and shipped.
+
+    So this exercises the real behaviour rather than grepping the makefile:
+    build clean, touch a library header, and assert that something recompiled
+    and that a following build is a no-op.
+    """
+    info("Tier 0.6 - incremental rebuild on header change")
+    tc.require()
+    rep = Reporter("Incremental")
+
+    project = tc.ROOT / "examples" / "gfx"
+    header = tc.LIB / "main" / "vdp.h"
+    if not (project / "makefile").exists() or not header.exists():
+        rep.skip("gfx or lib/main/vdp.h missing")
+        return rep.summarise()
+
+    _make(project, "clean")
+    if _make(project).returncode != 0:
+        rep.fail("baseline build", "gfx must build before the check is meaningful")
+        return rep.summarise()
+
+    header.touch()
+    res = _make(project)
+    if res.returncode != 0:
+        rep.fail("rebuild after touching a header", res.stdout + res.stderr)
+        return rep.summarise()
+    if "Compiling" not in res.stdout:
+        rep.fail(
+            "touching lib/main/vdp.h recompiled nothing",
+            "Header dependency tracking is not working. Check that megadev.make\n"
+            "still passes -MMD -MP and -includes the generated .d files, and that\n"
+            "module targets take their objects as prerequisites.",
+        )
+        return rep.summarise()
+    rep.ok("header change triggers a rebuild", quiet=False)
+
+    res = _make(project)
+    if "Compiling" in res.stdout:
+        rep.fail("second build recompiled again", "a no-op build should do nothing")
+    else:
+        rep.ok("unchanged rebuild is a no-op", quiet=False)
     return rep.summarise()

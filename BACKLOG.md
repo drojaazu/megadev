@@ -101,9 +101,10 @@ toolchain was available during the audit. VER-1 must land first so that fixes ca
 | MAKE-10 | S3 | open | `.SECONDARY: $(BUILD_PATH)/*` (`megadev.make:147`) expands at parse time, so its meaning differs between a clean and an incremental build. |
 | MAKE-11 | S4 | **done** | Dead `TOOLS_PATH`, `AS`, `Z80_AS` and the leftover debug `echo` removed. |
 | MAKE-12 | S4 | **done** | `ISO_FLAGS` makes the mkisofs options overridable. |
+| VER-7 | S1 | **done** | **Tier 0.6 — incremental rebuild.** Nothing detected the loss of header dependency tracking: the `-include` can be deleted and every build still succeeds, make simply stops noticing header changes. That regression shipped. This tier builds gfx, touches `lib/main/vdp.h`, and asserts something recompiles and that a following build is a no-op. Red-tested against the exact regression. |
 | VER-6 | S2 | **done** | Tier 0.3 verified only the exit status, so a misexpanded prerequisite that made `mkisofs` master an **empty** disc still passed. It now checks every file in `DISC_CONTENTS` exists and is non-empty, and that an image was produced. Red-tested by reintroducing the bug: 5 projects fail. |
 | MAKE-13 | S3 | open | Orphan linker scripts: `cfg/module_mmd_newwork.ld` and `cfg/module_bin.ld` are referenced by no rule. Wire up or delete. `cfg/md_cart.ld` also uses a different symbol-naming convention (`_text_org` vs `_TEXT_ORIGIN`) from the others. |
-| MAKE-14 | S2 | open | KB-18 — `examples/pcm_playback/disc/audio.pcm` (262 KB) is required at runtime but gitignored; a fresh clone builds a broken ISO. Narrow the `disc/` ignore so payload sources are tracked. |
+| MAKE-14 | S2 | **done** | KB-18 — disc payload assets now live in `$(RES_PATH)` (the convention `docs/disc.md` already stated) and are copied in via `DISC_ASSETS`. `examples/pcm_playback/res/audio.pcm` is tracked, so a fresh clone gets a working ISO. Verified: `AUDIO.PCM;1` is present in the image at 262,144 bytes. |
 
 ## Documentation
 
