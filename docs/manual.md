@@ -297,6 +297,23 @@ Megadev provides a simplified framework for disc file access, accomplished by si
 
 As with other Megadev components, the use of the CD-ROM header is optional. You are free to write your own disc access system if you wish.
 
+## Rotation and Scaling
+
+(This applies to Mega CD development only.)
+
+The gate array includes a graphics unit that reads a large source image and writes a transformed
+rectangle into an output buffer, one line at a time. It is the hardware behind rotating, scaling and
+perspective effects such as textured ground planes.
+
+It does not rotate or scale a bitmap as such. For each output line the caller supplies a starting
+point in the source image and a step vector, and the hardware samples along that line. Rotation,
+scaling and perspective are all consequences of the values in that table, which is why a single
+mechanism covers all three.
+
+Please see `docs/rotation_scaling.md` for the data structures involved, the register sequence, the
+timing behaviour that governs how fast it runs, and a derivation of the trace vector table for a
+pseudo-3D ground plane.
+
 ## Boot Sector Generation
 
 (This applies to Mega CD development only.)
