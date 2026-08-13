@@ -39,15 +39,15 @@ toolchain was available during the audit. VER-1 must land first so that fixes ca
 | ID | Sev | Status | Item |
 |---|---|---|---|
 | LIB-1 | S4 | **done** | ~~`mov.l` is not an M68k mnemonic~~ — **false positive**, GNU as accepts it as an alias for `move` (identical encoding, 0x22d8). Kept as style rule STYLE-1 and corrected in all 5 places. |
-| LIB-2 | S1 | open | KB-3 — `divu()`/`div()` assign `out.quot` twice and never set `out.rem`. `lib/math.h:46-47,59-60`. |
-| LIB-3 | S1 | open | KB-4 — `div()` documented as signed but emits `divu.w`. `lib/math.h:58`. |
-| LIB-4 | S1 | open | KB-8 — `int_to_f32` casts a value shifted left by 16 to `short`; always yields 0. `lib/fixed.h:34`. |
+| LIB-2 | S1 | **done** | KB-3 — `divu()`/`div()` now set `out.rem`; `div()` uses `divs.w`. |
+| LIB-3 | S1 | **done** | KB-4 — `div()` now emits `divs.w` as documented. |
+| LIB-4 | S1 | **done** | KB-8 — all **four** `int_to_*` macros were always 0, not just `int_to_f32`. Fixed and locked by Tier 1.5 assertions. |
 | LIB-5 | S1 | **done** | KB-5 — `strcpy` in `lib/memory.h` is now `static inline`. |
 | LIB-6 | S1 | **done** | KB-6 — the five BRAM buffers are now `extern`, defined in `lib/sub/bram.c`. Projects using BRAM list `sub/bram.c` in their sources. |
-| LIB-7 | S2 | open | KB-7 — `EXVECEXVEC_TRACE` botched find-and-replace, `lib/main/cd_exception.s:79`. The file **assembles**; needs link-level verification to confirm. |
-| LIB-8 | S1 | open | KB-10 — illegal cast-to-array-type, `lib/main/bios.h:108`. |
-| LIB-9 | S1 | open | KB-9 — `time_mapping` is not valid C and has zero references; delete. `lib/main/io.h:94`. |
-| LIB-10 | S1 | open | KB-11 — `btst` given a mask instead of a bit index, in both the C and asm copies. Fix requires adding `_BIT` companions to `lib/main/io.def.h` (INV-6). |
+| LIB-7 | S1 | **done** | KB-7 — doubled `EXVEC` rename artifacts repaired across 4 code sites + 2 doc references. Link-verified. |
+| LIB-8 | S1 | **done** | KB-10 — `bios_work_buffer` uses the `(*((T(*)[N]) ADDR))` idiom; `BIOS_WORK_BUFFER_LEN` is now sizeof-derived. |
+| LIB-9 | S1 | **done** | KB-9 — `time_mapping` fixed to the same idiom rather than deleted; it describes the real cartridge /TIME region. |
+| LIB-10 | S1 | **done** | KB-11 — `_BIT` companions added for all six SCTRL flags (INV-6); the four `btst` sites now use indices. |
 | LIB-11 | S2 | open | KB-13 — `hextoa8/16/32` C and asm versions disagree on string termination. Decide the contract, then make both match; first subject for VER-3. |
 | LIB-12 | S2 | open | `lib/memory.h` — every `memset*`/`memcpy*` uses a `dbf` loop with a **16-bit** counter. Lengths > 65536 silently truncate; length 0 wraps and loops 65536 times. Undocumented. Document or guard. |
 | BR-1 | S1 | open | KB-27 — the `macros.s` → `macro.s` rename is unpropagated across 39 files; **`feature/sub_bios_overhaul` does not build.** Must land atomically with its consumers. |
@@ -80,6 +80,7 @@ toolchain was available during the audit. VER-1 must land first so that fixes ca
 |---|---|---|---|
 | VER-1 | S1 | **done** | **Tier 0 build gate** (SPEC.md §6): per-header compile, assemble every `.s`/`.macro.s`, full build of all examples + `new_project`. Prerequisite for proving every LIB-* fix. Requires classifying each header Main-valid / Sub-valid / both. |
 | VER-2 | S2 | **done** | **Tier 1 convention lint**: INV-1 (`.def.h` is `#define`-only), INV-4 (guard name matches path), INV-5 (`@file` matches filename), `clang-format --dry-run --Werror`, Doxygen `WARN_AS_ERROR`. Blocked on DOC-1 for the Doxygen part. |
+| VER-5 | S2 | **done** | Tier 1.5 compile-time assertions and Tier 0.5 symbol resolution added; both red-tested. |
 | VER-3 | S2 | open | **Tier 2 on-target tests**: emulator harness + differential C-vs-asm tests over `math.h`, `fixed.h`, `memory.h`, `str_util.*`. Choose BlastEm or Genesis Plus GX; result protocol via RAM byte or the existing `comm.h` serial channel. |
 | VER-4 | S3 | in-progress | GitHub Actions workflow wrapping `make check` (SPEC.md D5). |
 | VER-5 | S3 | open | Pin the toolchain. `.devcontainer/Dockerfile` pins only `debian:13-slim` (mutable tag) and `clang-format-19`; gcc/binutils are whatever Debian ships. `etc/Dockerfile_alpine` *does* pin (`binutils-2.45`, `gcc-15.2.0`) — reconcile the two. |

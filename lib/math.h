@@ -44,7 +44,7 @@ static inline div_t divu(u32 dividend, u16 divisor)
 	u32 result = dividend;
 	asm("divu.w %1, %0" : "+d"(result) : "d"(divisor) : "cc");
 	out.quot = result & 0x0000ffff;
-	out.quot = (result & 0xffff0000) >> 16;
+	out.rem = (result & 0xffff0000) >> 16;
 	return out;
 }
 
@@ -54,10 +54,10 @@ static inline div_t divu(u32 dividend, u16 divisor)
 static inline div_t div(s32 dividend, s16 divisor)
 {
 	div_t out;
-	u32 result = dividend;
-	asm("divu.w %1, %0" : "+d"(result) : "d"(divisor) : "cc");
+	s32 result = dividend;
+	asm("divs.w %1, %0" : "+d"(result) : "d"(divisor) : "cc");
 	out.quot = result & 0x0000ffff;
-	out.quot = (result & 0xffff0000) >> 16;
+	out.rem = (result & 0xffff0000) >> 16;
 	return out;
 }
 

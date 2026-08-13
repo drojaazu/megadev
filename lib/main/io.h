@@ -91,7 +91,7 @@ typedef u8 volatile * io_reg;
 /**
  * @sa TIME_MAPPING
  */
-#define time_mapping ((u8)[0x100] TIME_MAPPING)
+#define time_mapping (*((u8(*)[0x100]) TIME_MAPPING))
 
 static inline void init_joypads()
 {

@@ -53,7 +53,7 @@ static inline u8 ext_rx()
   move.b   (%c[ext_rx_data]), %[rx] \n\
 	"
     : [rx] "=d"(rx_data), [scratch_a] "=&a"(scratch_a)
-    : [sctrl_rx_ready] "i"(SCTRL_RX_READY),
+    : [sctrl_rx_ready] "i"(SCTRL_RX_READY_BIT),
       [ext_sctrl] "i"(EXT_SCTRL),
       [ext_rx_data] "i"(EXT_RXDATA)
     :);
@@ -77,7 +77,7 @@ static inline void ext_tx(register u8 tx_data)
 	"
     : [scratch_a] "=&a"(scratch_a)
     : [tx] "d"(tx_data),
-      [sctrl_tx_full] "i"(SCTRL_TX_FULL),
+      [sctrl_tx_full] "i"(SCTRL_TX_FULL_BIT),
       [ext_sctrl] "i"(EXT_SCTRL),
       [ext_tx_data] "i"(EXT_TXDATA)
     :);

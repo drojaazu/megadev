@@ -38,7 +38,7 @@
 LOCAL loop
 
 loop:
-  btst     #SCTRL_RX_READY, (EXT_SCTRL)	// check that we're ready to receive
+  btst     #SCTRL_RX_READY_BIT, (EXT_SCTRL)	// check that we're ready to receive
   beq      loop
   move.b   (EXT_RXDATA), d0
 .endm
@@ -50,7 +50,7 @@ loop:
  */
 .macro EXT_TX
 2:move.b  (EXT_SCTRL), d1
-  btst    #SCTRL_TX_FULL, d1 // make sure transmit queue is not full
+  btst    #SCTRL_TX_FULL_BIT, d1 // make sure transmit queue is not full
   bne     2b
   move.b  d0, EXT_TXDATA
   rts
