@@ -424,6 +424,16 @@ of `docs/main_bios.md`.
 collect the numbered bulletins, including **#3** — the primary written evidence that the Main-side
 calls were sanctioned for game use, and the source of the Work RAM equates in `docs/main_bios.md`.
 
+> **A third, far better scan exists for eleven pages.**
+> `Development Documents/mcd_manual_sphere/` holds clean, high-contrast scans (SPHERE, INC.) of
+> *The Hardware* — `pg22`–`pg30`, `pg32`, `pg33` and `pg58`. **The filenames are not the printed page
+> numbers**: `pg29`=29 and `pg30`=30, but `pg31`=**32** and `pg32`=**33**. Printed page 31 (the CD
+> fader) is the one page in that range the set does not contain.
+>
+> Where a page exists here, read it instead of the fax — it is legible where the fax is destroyed,
+> and it settled the `$FF8036` field positions that were previously ASSUMED. It also carries a
+> previous reader's handwritten corrections (e.g. "unmeric" → "numeric" on page 30).
+
 > **The two "translations" are two scans of the same fax, not independent translations.** Both the
 > *(Rex Sabio)* and *(The Code Monkeys)* copies of *The Hardware* carry the identical transmission
 > header (`8137437483 #24/48`), so comparing them verifies **legibility, not content** — a
@@ -461,7 +471,8 @@ the page footer rather than trusting either offset in that range. Sections:
 | Gate Array register map, Sub side | DOC | Sega BIOS manual + community research |
 | Gate Array register map, Main side | DOC | as above |
 | Gate Array field **bit positions** | DOC | *Hardware Manual - The Hardware*, pp. 21, 57, 58 (PDF pages 25, 60, 61 in the Rex Sabio scan). Page 57 gives `$A12002`: `WP0-7` in the high byte, `BK0,1` at bits 6-7, `MODE`/`DMNA`/`RET` at bits 2/1/0. Page 58 gives `$A12004`: `DD0-2` at bits 8-10. Page 21 is the per-register access-width and bit-operation table. |
-| `$FF8034` / `$FF8036` field **positions** | **ASSUMED** | *The Hardware* pp. 31–32. The bit tables on both pages are obscured by scan damage at exactly the columns the fields occupy, so only the **semantics** are DOC. `GA_CDFADER_FD` at bits 4–14 is stated in the legend text and is DOC; the positions of `EFDT` and `DEF0-1` are not recorded at all rather than guessed. `GA_CDDCTRL_{DTS,DRS,HOCK,DM}` keep the SDK's prior values, corroborated only by the illegible cells falling in the right places. Both registers are marked *"direct access using application software is prohibited"* by the manual, so the exposure is low. |
+| `$FF8036` field positions | **DOC** | Confirmed 2026-08-14 against `mcd_manual_sphere/pg31.jpg` (printed page 32), which is legible where the fax is not: `DTS`=0, `DRS`=1, `HOCK`=2, `D/M`=8. Matches the values the SDK already carried, so those are promoted from ASSUMED. `DTS`/`DRS` accept only 0 on write, `HOCK` is fully writable, `D/M` is read only. |
+| `$FF8034` field positions | **ASSUMED / partly unknown** | *The Hardware* p.31, obscured in the fax, and **printed page 31 is the one page missing from the clean SPHERE scan set**. `GA_CDFADER_FD` at bits 4-14 is stated in the legend text and is DOC; the positions of `EFDT` and `DEF0-1` remain unrecorded rather than guessed. The manual prohibits direct access to this register, so the exposure is low. |
 | CDD and CD fader are **BIOS-only** | DOC | *The Hardware* pp. 31–32 both carry "Direct access to this register using application software is prohibited." Use the Sub BIOS calls. |
 | Mega Drive ROM header checksum algorithm | DOC | Sum of 16-bit big-endian words from 0x200 to end of ROM, truncated to 16 bits. Hardware does not verify it; flashcarts and loaders read the ROM end field at 0x1A4. Implemented in `tools/romfix.py`. |
 | Sub CPU BIOS function codes | DOC | *Mega-CD BIOS Manual* (official) |

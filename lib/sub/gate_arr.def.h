@@ -1132,10 +1132,8 @@
  * @note A communication error aborts the transfer in progress within 240
  * microseconds, so DTS and DRS may clear without the transfer completing.
  * @warning BSET and BCLR may not be used on this register.
- * @note The manual's bit table is illegible in the scan at exactly the columns
- * these four fields occupy, so the field *positions* below come from the SDK's
- * prior research rather than from the page. Their *semantics* are transcribed
- * from it. See SPEC.md section 7.
+ * @note Positions confirmed against the clean SPHERE scan of printed page 32;
+ * the fax copy is illegible at exactly these columns.
  * @sa ga_reg_cddctrl
  * @ingroup ga_reg_sub_27
  */
@@ -1189,7 +1187,26 @@
 
 /**
  * @def GA_REG_CDDCOMM0
- * @sa ga_reg_cddcomm0
+ * @brief CDD receiving status 0 and 1
+ *
+ * @details
+ * @warning **The hardware documentation prohibits application software from
+ * accessing this register directly.** Use the Sub BIOS drive calls.
+ *
+ * Two of the ten status nibbles the CDD returns. Read only in practice: the
+ * drive fills them and the Sub CPU consumes them.
+ *
+ * The ten registers from 0xFF8038 to 0xFF804A carry twenty 4 bit values, two
+ * per register: one in bits 11-8 and one in bits 3-0. The remaining nibbles
+ * read as 0.
+ *
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | |0|0|0|0|\b RS0||||0|0|0|0|\b RS1||||
+ *
+ * @param RS0 Receiving Status 0, in bits 11-8.
+ * @param RS1 Receiving Status 1, in bits 3-0.
+ * @sa ga_reg_cddcomm0, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_28
@@ -1198,7 +1215,26 @@
 
 /**
  * @def GA_REG_CDDCOMM1
- * @sa ga_reg_cddcomm1
+ * @brief CDD receiving status 2 and 3
+ *
+ * @details
+ * @warning **The hardware documentation prohibits application software from
+ * accessing this register directly.** Use the Sub BIOS drive calls.
+ *
+ * Two of the ten status nibbles the CDD returns. Read only in practice: the
+ * drive fills them and the Sub CPU consumes them.
+ *
+ * The ten registers from 0xFF8038 to 0xFF804A carry twenty 4 bit values, two
+ * per register: one in bits 11-8 and one in bits 3-0. The remaining nibbles
+ * read as 0.
+ *
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | |0|0|0|0|\b RS2||||0|0|0|0|\b RS3||||
+ *
+ * @param RS2 Receiving Status 2, in bits 11-8.
+ * @param RS3 Receiving Status 3, in bits 3-0.
+ * @sa ga_reg_cddcomm1, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_29
@@ -1207,7 +1243,26 @@
 
 /**
  * @def GA_REG_CDDCOMM2
- * @sa ga_reg_cddcomm2
+ * @brief CDD receiving status 4 and 5
+ *
+ * @details
+ * @warning **The hardware documentation prohibits application software from
+ * accessing this register directly.** Use the Sub BIOS drive calls.
+ *
+ * Two of the ten status nibbles the CDD returns. Read only in practice: the
+ * drive fills them and the Sub CPU consumes them.
+ *
+ * The ten registers from 0xFF8038 to 0xFF804A carry twenty 4 bit values, two
+ * per register: one in bits 11-8 and one in bits 3-0. The remaining nibbles
+ * read as 0.
+ *
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | |0|0|0|0|\b RS4||||0|0|0|0|\b RS5||||
+ *
+ * @param RS4 Receiving Status 4, in bits 11-8.
+ * @param RS5 Receiving Status 5, in bits 3-0.
+ * @sa ga_reg_cddcomm2, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_30
@@ -1216,7 +1271,28 @@
 
 /**
  * @def GA_REG_CDDCOMM3
- * @sa ga_reg_cddcomm2
+ * @brief CDD receiving status 6 and 7
+ *
+ * @details
+ * @warning **The hardware documentation prohibits application software from
+ * accessing this register directly.** Use the Sub BIOS drive calls.
+ *
+ * Two of the ten status nibbles the CDD returns. Read only in practice: the
+ * drive fills them and the Sub CPU consumes them.
+ *
+ * The ten registers from 0xFF8038 to 0xFF804A carry twenty 4 bit values, two
+ * per register: one in bits 11-8 and one in bits 3-0. The remaining nibbles
+ * read as 0.
+ *
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | |0|0|0|0|\b RS6||||0|0|0|0|\b RS7||||
+ *
+ * @param RS6 Receiving Status 6, in bits 11-8.
+ * @param RS7 Receiving Status 7, in bits 3-0.
+ * @note Reception of **Receiving Status 7** raises INT4, so that is the nibble
+ * to treat as the "status is ready" signal -- it lives in GA_REG_CDDCOMM3.
+ * @sa ga_reg_cddcomm3, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_31
@@ -1225,7 +1301,26 @@
 
 /**
  * @def GA_REG_CDDCOMM4
- * @sa ga_reg_cddcomm4
+ * @brief CDD receiving status 8 and 9
+ *
+ * @details
+ * @warning **The hardware documentation prohibits application software from
+ * accessing this register directly.** Use the Sub BIOS drive calls.
+ *
+ * Two of the ten status nibbles the CDD returns. Read only in practice: the
+ * drive fills them and the Sub CPU consumes them.
+ *
+ * The ten registers from 0xFF8038 to 0xFF804A carry twenty 4 bit values, two
+ * per register: one in bits 11-8 and one in bits 3-0. The remaining nibbles
+ * read as 0.
+ *
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | |0|0|0|0|\b RS8||||0|0|0|0|\b RS9||||
+ *
+ * @param RS8 Receiving Status 8, in bits 11-8.
+ * @param RS9 Receiving Status 9, in bits 3-0.
+ * @sa ga_reg_cddcomm4, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_32
@@ -1234,7 +1329,26 @@
 
 /**
  * @def GA_REG_CDDCOMM5
- * @sa ga_reg_cddcomm5
+ * @brief CDD transmission command 0 and 1
+ *
+ * @details
+ * @warning **The hardware documentation prohibits application software from
+ * accessing this register directly.** Use the Sub BIOS drive calls.
+ *
+ * Two of the ten command nibbles sent to the CDD. The Sub CPU fills them and
+ * the drive consumes them.
+ *
+ * The ten registers from 0xFF8038 to 0xFF804A carry twenty 4 bit values, two
+ * per register: one in bits 11-8 and one in bits 3-0. The remaining nibbles
+ * read as 0.
+ *
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | |0|0|0|0|\b TC0||||0|0|0|0|\b TC1||||
+ *
+ * @param TC0 Transmission Command 0, in bits 11-8.
+ * @param TC1 Transmission Command 1, in bits 3-0.
+ * @sa ga_reg_cddcomm5, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_33
@@ -1243,7 +1357,26 @@
 
 /**
  * @def GA_REG_CDDCOMM6
- * @sa ga_reg_cddcomm6
+ * @brief CDD transmission command 2 and 3
+ *
+ * @details
+ * @warning **The hardware documentation prohibits application software from
+ * accessing this register directly.** Use the Sub BIOS drive calls.
+ *
+ * Two of the ten command nibbles sent to the CDD. The Sub CPU fills them and
+ * the drive consumes them.
+ *
+ * The ten registers from 0xFF8038 to 0xFF804A carry twenty 4 bit values, two
+ * per register: one in bits 11-8 and one in bits 3-0. The remaining nibbles
+ * read as 0.
+ *
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | |0|0|0|0|\b TC2||||0|0|0|0|\b TC3||||
+ *
+ * @param TC2 Transmission Command 2, in bits 11-8.
+ * @param TC3 Transmission Command 3, in bits 3-0.
+ * @sa ga_reg_cddcomm6, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_34
@@ -1252,7 +1385,26 @@
 
 /**
  * @def GA_REG_CDDCOMM7
- * @sa ga_reg_cddcomm7
+ * @brief CDD transmission command 4 and 5
+ *
+ * @details
+ * @warning **The hardware documentation prohibits application software from
+ * accessing this register directly.** Use the Sub BIOS drive calls.
+ *
+ * Two of the ten command nibbles sent to the CDD. The Sub CPU fills them and
+ * the drive consumes them.
+ *
+ * The ten registers from 0xFF8038 to 0xFF804A carry twenty 4 bit values, two
+ * per register: one in bits 11-8 and one in bits 3-0. The remaining nibbles
+ * read as 0.
+ *
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | |0|0|0|0|\b TC4||||0|0|0|0|\b TC5||||
+ *
+ * @param TC4 Transmission Command 4, in bits 11-8.
+ * @param TC5 Transmission Command 5, in bits 3-0.
+ * @sa ga_reg_cddcomm7, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_35
@@ -1261,7 +1413,26 @@
 
 /**
  * @def GA_REG_CDDCOMM8
- * @sa ga_reg_cddcomm8
+ * @brief CDD transmission command 6 and 7
+ *
+ * @details
+ * @warning **The hardware documentation prohibits application software from
+ * accessing this register directly.** Use the Sub BIOS drive calls.
+ *
+ * Two of the ten command nibbles sent to the CDD. The Sub CPU fills them and
+ * the drive consumes them.
+ *
+ * The ten registers from 0xFF8038 to 0xFF804A carry twenty 4 bit values, two
+ * per register: one in bits 11-8 and one in bits 3-0. The remaining nibbles
+ * read as 0.
+ *
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | |0|0|0|0|\b TC6||||0|0|0|0|\b TC7||||
+ *
+ * @param TC6 Transmission Command 6, in bits 11-8.
+ * @param TC7 Transmission Command 7, in bits 3-0.
+ * @sa ga_reg_cddcomm8, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_36
@@ -1270,12 +1441,54 @@
 
 /**
  * @def GA_REG_CDDCOMM9
- * @sa ga_reg_cddcomm9
+ * @brief CDD transmission command 8 and 9
+ *
+ * @details
+ * @warning **The hardware documentation prohibits application software from
+ * accessing this register directly.** Use the Sub BIOS drive calls.
+ *
+ * Two of the ten command nibbles sent to the CDD. The Sub CPU fills them and
+ * the drive consumes them.
+ *
+ * The ten registers from 0xFF8038 to 0xFF804A carry twenty 4 bit values, two
+ * per register: one in bits 11-8 and one in bits 3-0. The remaining nibbles
+ * read as 0.
+ *
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | |0|0|0|0|\b TC8||||0|0|0|0|\b TC9||||
+ *
+ * @param TC8 Transmission Command 8, in bits 11-8.
+ * @param TC9 Transmission Command 9, in bits 3-0.
+ * @warning Writing **Transmission Command 9** is what starts the transfer to
+ * the CDD, so fill every other nibble first. It lives in the low half of this
+ * register.
+ * @sa ga_reg_cddcomm9, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_37
  */
 #define GA_REG_CDDCOMM9 0xFF804A
+
+/**
+ * @def GA_CDDCOMM_HI_MASK
+ * @brief The even-numbered nibble of a CDD communication register
+ * @sa GA_REG_CDDCOMM0
+ * @ingroup ga_regs_sub
+ */
+#define GA_CDDCOMM_HI_POS 8
+#define GA_CDDCOMM_HI_WIDTH 4
+#define GA_CDDCOMM_HI_MASK FIELD_MASK(GA_CDDCOMM_HI_POS, GA_CDDCOMM_HI_WIDTH)
+
+/**
+ * @def GA_CDDCOMM_LO_MASK
+ * @brief The odd-numbered nibble of a CDD communication register
+ * @sa GA_REG_CDDCOMM0
+ * @ingroup ga_regs_sub
+ */
+#define GA_CDDCOMM_LO_POS 0
+#define GA_CDDCOMM_LO_WIDTH 4
+#define GA_CDDCOMM_LO_MASK FIELD_MASK(GA_CDDCOMM_LO_POS, GA_CDDCOMM_LO_WIDTH)
 
 /**
  * @def GA_REG_FONTCOLOR
