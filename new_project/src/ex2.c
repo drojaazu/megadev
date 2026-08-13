@@ -7,7 +7,6 @@
 #include <system.h>
 #include <types.h>
 
-extern u8      next_module;
 extern u8      res_snow_chr;
 extern u16     res_snow_chr_sz;
 extern Palette res_snow_pal;

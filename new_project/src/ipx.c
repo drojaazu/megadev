@@ -1,3 +1,4 @@
+#define IPX_IMPLEMENTATION
 #include "ipx.h"
 #include "shared.h"
 #include <main/bios.h>
@@ -8,7 +9,10 @@
 #include <system.h>
 #include <types.h>
 
-u8 next_module;
+/* Placed at a fixed address so transient modules can reach it without
+ * linking against this module. See ipx_api.def.h. */
+__attribute__((section(".shared"))) u8 next_module_storage;
+
 
 Particle particles[16];
 

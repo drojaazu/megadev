@@ -213,14 +213,8 @@ MODULE_PRIVATE_SYMS:= \
 STRIP_PRIVATE_SYMS=$(foreach s,$(MODULE_PRIVATE_SYMS),--strip-symbol=$(s))
 
 # How to curate a resident module's symbols before a transient module links
-# against them. If the project provides $(SRC_PATH)/<module>.exports -- one
-# symbol name per line -- only those are offered, making the module's ABI
-# explicit. Otherwise the private build metadata above is stripped, which is
-# enough to make the link unambiguous.
-# $(1) = module output path, e.g. disc/ipx.mmd
-module_export_args = $(if $(wildcard $(SRC_PATH)/$(basename $(notdir $(1))).exports),\
-	--keep-global-symbols=$(SRC_PATH)/$(basename $(notdir $(1))).exports,\
-	$(STRIP_PRIVATE_SYMS))
+# against them: strip the private build metadata listed above.
+module_export_args = $(STRIP_PRIVATE_SYMS)
 
 .DEFAULT_GOAL:=all
 
