@@ -79,7 +79,7 @@ Additional rules, all mechanically checkable:
   `#include` at all; and on `feature_sub_bios_overhaul` by `lib/sub/gate_arr.macro.s`,
   `lib/sub/bios.macro.s` and `lib/sub/boot.macro.s`.)*
 - **INV-3** — A `.macro.s` MUST NOT emit code, and a code-emitting `.s` MUST NOT define macros.
-  *(Currently violated by `lib/str_util.s:69`, which defines `.macro ATOI`.)*
+  **Holds as of 2026-08-13.**
 - **INV-4** — Every header MUST have an include guard whose name is derived from its path
   (`MEGADEV__<PATH>_<NAME>_<SUFFIX>`), so that the Main and Sub views of the same peripheral cannot
   collide. Choice of `#pragma once` vs `#ifndef` is settled in §9 OD-3.
@@ -238,8 +238,8 @@ Megadev targets obsolete hardware, so "run the test suite" needs definition. Ver
 
 | Tier | What it proves | Status |
 |---|---|---|
-| **0 — Build gate** | The toolchain accepts the source. | **Implemented and run** (m68k gcc 14.2.0). Headers 70/70 pass; assembly 21 pass / 3 fail / 2 excluded; ODR 34 pass / 5 fail; **all 7 projects build**. |
-| **1 — Convention lint** | The rules in §2–§3 actually hold. | **Implemented and passing** (16 baselined). 25 unit tests, `make test`. |
+| **0 — Build gate** | The toolchain accepts the source. | **Implemented and GREEN** (m68k gcc 14.2.0): headers 70, assembly 23 (2 excluded by contract), ODR 42, all 7 projects build. |
+| **1 — Convention lint** | The rules in §2–§3 actually hold. | **Implemented and GREEN** (15 baselined, down from 16). 25 unit tests, `make test`. |
 | **2 — On-target tests** | The code computes the right answers on a real 68000. | **Specified, not built.** |
 | **3 — Hardware validation** | Behaviour matches real Mega CD silicon. | Manual; tracked as provenance (§7). |
 
@@ -372,10 +372,10 @@ diagnostic, not by reading. Marked ✅ = present on `master`; ⚠️ = introduce
 | KB-26 | `lib/sub/boot.macro.s` | `.macro CDBOOT` whose body is `jsr CDBOOT` — invokes itself | ⚠️ branch only |
 | KB-27 | 39 files on `feature_sub_bios_overhaul` | Rename `macros.s` → `macro.s` (commit `bd4d06c`) not propagated; `main.macro.s` and `sub.macro.s` deleted but still included. **The branch does not build.** | ⚠️ branch only |
 | KB-28 | `lib/main/z80.h:78` | **FIXED** 2026-08-13 — now `static inline`. **Link-verified — found by the gate, missed by the audit.** `z80_init` is a non-`static` function definition in a header (INV-9); `multiple definition of 'z80_init'` across two TUs. Propagates to `lib/main/comm.h`. | ✅ |
-| KB-29 | `lib/main/vdp.s:62,64,65,70,72` | **Assemble-verified.** `move.w d1.w, d3.w` and similar — register size suffixes GNU `as` rejects. 5 errors. **This is on `master`, not branch-only as first recorded.** No project references this file, so it has never been assembled. | ✅ |
-| KB-30 | `lib/str_util.s:69` | **Assemble-verified.** `.macro ATOI` is never closed with `.endm`: `Error: unexpected end of file in macro 'atoi' definition`. **The whole file therefore cannot assemble**, and no project references it. Also an INV-3 violation. | ✅ |
+| KB-29 | `lib/main/vdp.s:62,64,65,70,72` | **FIXED** 2026-08-13 — size suffixes, `btst`, and the `vdp_ctrl`/`VDP_CTRL` symbol. **Assemble-verified.** `move.w d1.w, d3.w` and similar — register size suffixes GNU `as` rejects. 5 errors. **This is on `master`, not branch-only as first recorded.** No project references this file, so it has never been assembled. | ✅ |
+| KB-30 | `lib/str_util.s:69` | **FIXED** 2026-08-13 — `ATOI` removed; see BACKLOG FEAT-10. **Assemble-verified.** `.macro ATOI` is never closed with `.endm`: `Error: unexpected end of file in macro 'atoi' definition`. **The whole file therefore cannot assemble**, and no project references it. Also an INV-3 violation. | ✅ |
 | KB-32 | `lib/main/vdp.h:290` | **FIXED** 2026-08-13 — `vdp_dma_transfer` was a non-`static` definition in a header (INV-9), propagating to `main.h` and `bios.h`. Found only after the Python port aligned the ODR check's flags with the real build. Now `static inline`. | ✅ |
-| KB-31 | `lib/sub/commsync.s:38-53` | **Assemble-verified.** `.global _COMCMD0: .word 0` — a label definition cannot follow `.global` on one line; 16 errors. Already deleted on `feature_sub_bios_overhaul`. | ✅ |
+| KB-31 | `lib/sub/commsync.s:38-53` | **FIXED** 2026-08-13 — file deleted. **Assemble-verified.** `.global _COMCMD0: .word 0` — a label definition cannot follow `.global` on one line; 16 errors. Already deleted on `feature_sub_bios_overhaul`. | ✅ |
 
 **A structural observation from the first gate run:** KB-29, KB-30 and KB-31 are all in files that no
 example or template references. The library contains assembly that has **never once been assembled**.
