@@ -73,10 +73,10 @@ typedef struct
   u8                          user;
   struct SpriteLayout const * layout;
 
-  f32 pos_x;
-  f32 pos_y;
-  f32 move_x;
-  f32 move_y;
+  fix32 pos_x;
+  fix32 pos_y;
+  fix32 move_x;
+  fix32 move_y;
   // this byte is ORed on to the byte starting with the priority
   // bit in the SpriteMapping struct
   u8 sprite_flags;

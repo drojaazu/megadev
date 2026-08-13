@@ -448,6 +448,31 @@ the exact inverse of the intended shape. Nothing had been pushed, so `develop` w
 and `master` reset to `v1.2.0`. The pre-restructure state is preserved as tag
 `pre-gitflow-restructure-2026-08-13`.
 
+### D11 — Fixed-point API and the `_t` naming rule *(Damian R, 2026-08-13)*
+Types are `fix16` (Q10.6), `fix32` (Q16.16), `ufix16`, `ufix32`; literal macros are `FIX16()` /
+`FIX32()`; operations are `fix16_mul` / `fix16_div` / `fix32_mul` and friends.
+
+**No `_t` suffix.** Every `_t` name in Megadev is a C standard library type being re-provided for the
+freestanding build (`size_t`, `ptrdiff_t`, `intptr_t`, `int8_t` …). There are **zero** Megadev-original
+types using `_t`, so the suffix carries meaning: *this stands in for a libc type*. Megadev's own types
+are short lowercase (`u8`, `ga_reg`, `vdp_addr`) or PascalCase structs (`Sprite`). `div_t` is not a
+counter-example but a defect — see BACKLOG ARCH-11.
+
+**fix16 is Q10.6, not the previous 8.8.** Signed 8.8 spans ±128 and so could not hold a horizontal
+screen coordinate on a 320×224 display, which is why the 16-bit type was unused in practice. Q10.6
+spans ±512. This matters because the 68000 has a 16×16→32 multiply but **no 32-bit multiply**, so
+fix16 arithmetic is one `MULS.W` while fix32 needs partial products — the cheap type should be the
+usable one.
+
+**Each operation is defined once as a macro, with the inline function a thin wrapper.** A
+`static inline` call is never an integer constant expression in C, so `_Static_assert` cannot check
+it. Defining the arithmetic as a macro makes it assertable and usable in initialisers; wrapping it in
+a function gives type checking and single evaluation. Because the function calls the macro, the two
+cannot drift — the same trap that produced the C/asm `hextoa` divergence (KB-13).
+
+Verified behaviour-preserving: `boot.bin`, `ip.bin`, `sp.bin` and `cyber.mmd` are **byte-identical**
+before and after the migration.
+
 ### OD-1 — How to resolve the Main/Sub Gate Array namespace collision *(open)*
 INV-7 is violated (KB-12). Options: prefix by CPU side (`GA_MAIN_*` / `GA_SUB_*`); rely solely on
 path-derived include guards plus a hard rule that a TU may include only one side; or generate both
