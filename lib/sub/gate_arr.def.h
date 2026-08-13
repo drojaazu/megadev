@@ -6,6 +6,274 @@
  */
 
 #pragma once
+
+/*
+ * Per-register documentation groups.
+ *
+ * Registers are numbered by their word index from the base address, 0-based, to
+ * match the vdp_regNN groups. The address is given in each title because the
+ * hardware manual identifies these registers by address rather than by number.
+ */
+
+/**
+ * @defgroup ga_reg_sub_00 Sub CPU / Gate Array / Register 00 (0xFF8000) - Sub CPU & Hardware Control
+ * @ingroup ga_reg_sub_subctrl
+ */
+
+/**
+ * @defgroup ga_reg_sub_01 Sub CPU / Gate Array / Register 01 (0xFF8002) - Word RAM Memory Mode / RAM Write Protect / Priority Mode
+ * @ingroup ga_reg_sub_memmode
+ */
+
+/**
+ * @defgroup ga_reg_sub_02 Sub CPU / Gate Array / Register 02 (0xFF8004) - CDC Mode & CDC Registers #1
+ * @ingroup ga_reg_sub_cdcmode
+ */
+
+/**
+ * @defgroup ga_reg_sub_03 Sub CPU / Gate Array / Register 03 (0xFF8006) - CDC Registers #2
+ * @ingroup ga_reg_sub_cdcregs
+ */
+
+/**
+ * @defgroup ga_reg_sub_04 Sub CPU / Gate Array / Register 04 (0xFF8008) - CDC Host Data
+ * @ingroup ga_reg_sub_cdcdata
+ */
+
+/**
+ * @defgroup ga_reg_sub_05 Sub CPU / Gate Array / Register 05 (0xFF800A) - CDC DMA Address
+ * @ingroup ga_reg_sub_dmaaddr
+ */
+
+/**
+ * @defgroup ga_reg_sub_06 Sub CPU / Gate Array / Register 06 (0xFF800C) - Stopwatch
+ * @ingroup ga_reg_sub_stopwatch
+ */
+
+/**
+ * @defgroup ga_reg_sub_07 Sub CPU / Gate Array / Register 07 (0xFF800E) - Main/Sub CPU communication flags
+ * @ingroup ga_reg_sub_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_sub_08 Sub CPU / Gate Array / Register 08 (0xFF8010) - Comm Command 0 (Main -> Sub)
+ * @ingroup ga_reg_sub_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_sub_09 Sub CPU / Gate Array / Register 09 (0xFF8012) - Comm Command  (Main -> Sub)
+ * @ingroup ga_reg_sub_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_sub_10 Sub CPU / Gate Array / Register 10 (0xFF8014) - Communication Command 2
+ * @ingroup ga_reg_sub_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_sub_11 Sub CPU / Gate Array / Register 11 (0xFF8016) - Communication Command 3
+ * @ingroup ga_reg_sub_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_sub_12 Sub CPU / Gate Array / Register 12 (0xFF8018) - Communication Command 4
+ * @ingroup ga_reg_sub_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_sub_13 Sub CPU / Gate Array / Register 13 (0xFF801A) - Communication Command 5
+ * @ingroup ga_reg_sub_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_sub_14 Sub CPU / Gate Array / Register 14 (0xFF801C) - Communication Command 6
+ * @ingroup ga_reg_sub_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_sub_15 Sub CPU / Gate Array / Register 15 (0xFF801E) - Communication Command 7
+ * @ingroup ga_reg_sub_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_sub_16 Sub CPU / Gate Array / Register 16 (0xFF8020) - Communication Status 0
+ * @ingroup ga_reg_sub_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_sub_17 Sub CPU / Gate Array / Register 17 (0xFF8022) - Communication Status 1
+ * @ingroup ga_reg_sub_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_sub_18 Sub CPU / Gate Array / Register 18 (0xFF8024) - Communication Status 2
+ * @ingroup ga_reg_sub_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_sub_19 Sub CPU / Gate Array / Register 19 (0xFF8026) - Communication Status 3
+ * @ingroup ga_reg_sub_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_sub_20 Sub CPU / Gate Array / Register 20 (0xFF8028) - Communication Status 4
+ * @ingroup ga_reg_sub_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_sub_21 Sub CPU / Gate Array / Register 21 (0xFF802A) - Communication Status 5
+ * @ingroup ga_reg_sub_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_sub_22 Sub CPU / Gate Array / Register 22 (0xFF802C) - Communication Status 6
+ * @ingroup ga_reg_sub_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_sub_23 Sub CPU / Gate Array / Register 23 (0xFF802E) - Communication Status 7
+ * @ingroup ga_reg_sub_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_sub_24 Sub CPU / Gate Array / Register 24 (0xFF8030) - Timer (INT3)
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_25 Sub CPU / Gate Array / Register 25 (0xFF8032) - Interrupt Mask
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_26 Sub CPU / Gate Array / Register 26 (0xFF8034) - CD Fader
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_27 Sub CPU / Gate Array / Register 27 (0xFF8036) - CDD Control
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_28 Sub CPU / Gate Array / Register 28 (0xFF8038) - CDD Communication 0
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_29 Sub CPU / Gate Array / Register 29 (0xFF803A) - CDD Communication 1
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_30 Sub CPU / Gate Array / Register 30 (0xFF803C) - CDD Communication 2
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_31 Sub CPU / Gate Array / Register 31 (0xFF803E) - CDD Communication 3
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_32 Sub CPU / Gate Array / Register 32 (0xFF8040) - CDD Communication 4
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_33 Sub CPU / Gate Array / Register 33 (0xFF8042) - CDD Communication 5
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_34 Sub CPU / Gate Array / Register 34 (0xFF8044) - CDD Communication 6
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_35 Sub CPU / Gate Array / Register 35 (0xFF8046) - CDD Communication 7
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_36 Sub CPU / Gate Array / Register 36 (0xFF8048) - CDD Communication 8
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_37 Sub CPU / Gate Array / Register 37 (0xFF804A) - CDD Communication 9
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_38 Sub CPU / Gate Array / Register 38 (0xFF804C) - Font Colour
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_39 Sub CPU / Gate Array / Register 39 (0xFF804E) - Font Bits
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_40 Sub CPU / Gate Array / Register 40 (0xFF8050) - Font Data
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_44 Sub CPU / Gate Array / Register 44 (0xFF8058) - Stamp Size
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_45 Sub CPU / Gate Array / Register 45 (0xFF805A) - Stamp Map Base Address
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_46 Sub CPU / Gate Array / Register 46 (0xFF805C) - Image Buffer V-cell Size
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_47 Sub CPU / Gate Array / Register 47 (0xFF805E) - Image Buffer Start Address
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_48 Sub CPU / Gate Array / Register 48 (0xFF8060) - Image Buffer Offset
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_49 Sub CPU / Gate Array / Register 49 (0xFF8062) - Image Buffer H-dot Size
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_50 Sub CPU / Gate Array / Register 50 (0xFF8064) - Image Buffer V-dot Size
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_51 Sub CPU / Gate Array / Register 51 (0xFF8066) - Trace Vector Base Address
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_52 Sub CPU / Gate Array / Register 52 (0xFF8068) - Sub-code Address
+ * @ingroup ga_regs_sub
+ */
+
+/**
+ * @defgroup ga_reg_sub_128 Sub CPU / Gate Array / Register 128 (0xFF8100) - GA_REG_SUBCODEBUF
+ * @ingroup ga_reg_sub_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_sub_192 Sub CPU / Gate Array / Register 192 (0xFF8180) - GA_REG_SUBCODEBUFIMG
+ * @ingroup ga_reg_sub_cpucomm
+ */
 /**
  * @defgroup ga_regs_sub Sub CPU / Gate Array / Registers
  */
@@ -18,8 +286,6 @@
 /**
  * @def GA_REG_RESET
  * @brief Sub CPU & Hardware Control
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_subctrl
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -38,6 +304,7 @@
  * \n 1: On
  * @param Ver ROM Version
  * [read] ROM Version
+ * @ingroup ga_reg_sub_00
  */
 #define GA_REG_RESET 0xFF8000
 
@@ -96,8 +363,6 @@
 /**
  * @def GA_REG_MEMMODE
  * @brief GA Reg 01 - Word RAM Memory Mode / RAM Write Protect / Priority Mode
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_memmode
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -113,6 +378,7 @@
  * @param RET In 2M mode: Give Word RAM control to Main CPU;
  * In 1M mode: Change 1M block ownership
  *
+ * @ingroup ga_reg_sub_01
  */
 #define GA_REG_MEMMODE 0xFF8002
 
@@ -176,8 +442,6 @@
 /**
  * @def GA_REG_CDCMODE
  * @brief CDC Mode & CDC Registers #1
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cdcmode
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -200,6 +464,9 @@
  *   |1|1|1|In 2M Mode: Word RAM \n In 1M Mode: Sub CPU controlled Word RAM|
  *
  *   All other values for DD are invalid.
+ * @warning Of the bit operations, only BTST is permitted.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_sub_02
  */
 #define GA_REG_CDCMODE 0xFF8004
 
@@ -211,8 +478,6 @@
 /**
  * @def GA_REG_CDCRS1
  * @brief CDC Registers #2
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cdcregs2
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -221,6 +486,10 @@
  *
  * @param CD CDC register data
  * \n Details for this register can be found in the LC89510 manual
+ * @warning Bit operation instructions are not permitted here; read the
+ * register, modify the copy, and write the whole value back.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_sub_03
  */
 #define GA_REG_CDCRS1 0xFF8006
 
@@ -231,8 +500,6 @@
 /**
  * @def GA_REG_CDCHOSTDATA
  * @brief CDC Host Data
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cdcdata
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -242,6 +509,12 @@
  * @param HD CDC read data
  * [read] 2 bytes of data read by the CDC and ready to be transferred to
  * Main or Sub CPU memory
+ * @warning Word access only. A byte access to this register can raise a
+ * bus error. (Hardware Manual p.21)
+ * @warning Bit operation instructions are not permitted here; read the
+ * register, modify the copy, and write the whole value back.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_sub_04
  */
 #define GA_REG_CDCHOSTDATA 0xFF8008
 
@@ -253,8 +526,6 @@
 /**
  * @def GA_REG_DMAADDR
  * @brief CDC DMA Address
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_dmaaddr
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -269,6 +540,12 @@
  * - For PRG-RAM: all bits are used
  *
  * Unused bits will be read as 0.
+ * @warning Word access only. A byte access to this register can raise a
+ * bus error. (Hardware Manual p.21)
+ * @warning Bit operation instructions are not permitted here; read the
+ * register, modify the copy, and write the whole value back.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_sub_05
  */
 #define GA_REG_DMAADDR 0xFF800A
 
@@ -279,8 +556,6 @@
 /**
  * @def GA_REG_STOPWATCH
  * @brief Stopwatch
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_stopwatch
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -291,6 +566,12 @@
  * @details R: Read current value / W: Reset the clock (0 only)
  * This is a general use timer, though it is primarily used for CDD/CDC
  * timing. Each tick is 30.72 microseconds.
+ * @warning Word access only. A byte access to this register can raise a
+ * bus error. (Hardware Manual p.21)
+ * @warning Bit operation instructions are not permitted here; read the
+ * register, modify the copy, and write the whole value back.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_sub_06
  */
 #define GA_REG_STOPWATCH 0xFF800C
 
@@ -302,8 +583,6 @@
 /**
  * @def GA_REG_COMFLAGS
  * @brief Main/Sub CPU communication flags
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -312,136 +591,121 @@
  *
  * CFM: Comm flags for Main CPU
  * CFS: Comm flags for Sub CPU
+ * @ingroup ga_reg_sub_07
  */
 #define GA_REG_COMFLAGS 0xFF800E
 
 /**
  * @def GA_REG_COMCMD0
  * @brief Comm Command 0 (Main -> Sub)
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
  *
  * @details R: 16 bit data
+ * @ingroup ga_reg_sub_08
  */
 #define GA_REG_COMCMD0 0xFF8010
 
 /**
  * @def GA_REG_COMCMD1
  * @brief Comm Command  (Main -> Sub)
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup ga_reg_sub_09
  */
 #define GA_REG_COMCMD1 0xFF8012
 
 /**
  * @def GA_REG_COMCMD2
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup ga_reg_sub_10
  */
 #define GA_REG_COMCMD2 0xFF8014
 
 /**
  * @def GA_REG_COMCMD3
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup ga_reg_sub_11
  */
 #define GA_REG_COMCMD3 0xFF8016
 
 /**
  * @def GA_REG_COMCMD4
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup ga_reg_sub_12
  */
 #define GA_REG_COMCMD4 0xFF8018
 
 /**
  * @def GA_REG_COMCMD5
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup ga_reg_sub_13
  */
 #define GA_REG_COMCMD5 0xFF801A
 
 /**
  * @def GA_REG_COMCMD6
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup ga_reg_sub_14
  */
 #define GA_REG_COMCMD6 0xFF801C
 
 /**
  * @def GA_REG_COMCMD7
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup ga_reg_sub_15
  */
 #define GA_REG_COMCMD7 0xFF801E
 
 /**
  * @def GA_REG_COMSTAT0
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup ga_reg_sub_16
  */
 #define GA_REG_COMSTAT0 0xFF8020
 
 /**
  * @def GA_REG_COMSTAT1
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup ga_reg_sub_17
  */
 #define GA_REG_COMSTAT1 0xFF8022
 
 /**
  * @def GA_REG_COMSTAT2
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup ga_reg_sub_18
  */
 #define GA_REG_COMSTAT2 0xFF8024
 
 /**
  * @def GA_REG_COMSTAT3
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup ga_reg_sub_19
  */
 #define GA_REG_COMSTAT3 0xFF8026
 
 /**
  * @def GA_REG_COMSTAT4
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup ga_reg_sub_20
  */
 #define GA_REG_COMSTAT4 0xFF8028
 
 /**
  * @def GA_REG_COMSTAT5
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup ga_reg_sub_21
  */
 #define GA_REG_COMSTAT5 0xFF802A
 
 /**
  * @def GA_REG_COMSTAT6
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup ga_reg_sub_22
  */
 #define GA_REG_COMSTAT6 0xFF802C
 
 /**
  * @def GA_REG_COMSTAT7
- * @ingroup ga_regs_sub
- * @ingroup ga_reg_sub_cpucomm
+ * @ingroup ga_reg_sub_23
  */
 #define GA_REG_COMSTAT7 0xFF802E
 
 /**
  * @def GA_REG_INT3TIMER
  * @sa ga_reg_comstat7
- * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_24
  */
 #define GA_REG_INT3TIMER 0xFF8030
 
 /**
  * @def GA_REG_INTMASK
  * @sa ga_reg_intmask
- * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_25
  */
 #define GA_REG_INTMASK 0xFF8032
 
@@ -468,105 +732,143 @@
 /**
  * @def GA_REG_CDFADER
  * @sa ga_reg_cdfader
- * @ingroup ga_regs_sub
+ * @warning Word access only. A byte access to this register can raise a
+ * bus error. (Hardware Manual p.21)
+ * @warning Bit operation instructions are not permitted here; read the
+ * register, modify the copy, and write the whole value back.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_sub_26
  */
 #define GA_REG_CDFADER 0xFF8034
 
 /**
  * @def GA_REG_CDDCTRL
  * @sa ga_reg_cddctrl
- * @ingroup ga_regs_sub
+ * @warning Bit operation instructions are not permitted here; read the
+ * register, modify the copy, and write the whole value back.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_sub_27
  */
 #define GA_REG_CDDCTRL 0xFF8036
 
 /**
  * @def GA_REG_CDDCOMM0
  * @sa ga_reg_cddcomm0
- * @ingroup ga_regs_sub
+ * @warning Bit operation instructions are not permitted here; read the
+ * register, modify the copy, and write the whole value back.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_sub_28
  */
 #define GA_REG_CDDCOMM0 0xFF8038
 
 /**
  * @def GA_REG_CDDCOMM1
  * @sa ga_reg_cddcomm1
- * @ingroup ga_regs_sub
+ * @warning Bit operation instructions are not permitted here; read the
+ * register, modify the copy, and write the whole value back.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_sub_29
  */
 #define GA_REG_CDDCOMM1 0xFF803A
 
 /**
  * @def GA_REG_CDDCOMM2
  * @sa ga_reg_cddcomm2
- * @ingroup ga_regs_sub
+ * @warning Bit operation instructions are not permitted here; read the
+ * register, modify the copy, and write the whole value back.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_sub_30
  */
 #define GA_REG_CDDCOMM2 0xFF803C
 
 /**
  * @def GA_REG_CDDCOMM3
  * @sa ga_reg_cddcomm2
- * @ingroup ga_regs_sub
+ * @warning Bit operation instructions are not permitted here; read the
+ * register, modify the copy, and write the whole value back.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_sub_31
  */
 #define GA_REG_CDDCOMM3 0xFF803E
 
 /**
  * @def GA_REG_CDDCOMM4
  * @sa ga_reg_cddcomm4
- * @ingroup ga_regs_sub
+ * @warning Bit operation instructions are not permitted here; read the
+ * register, modify the copy, and write the whole value back.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_sub_32
  */
 #define GA_REG_CDDCOMM4 0xFF8040
 
 /**
  * @def GA_REG_CDDCOMM5
  * @sa ga_reg_cddcomm5
- * @ingroup ga_regs_sub
+ * @warning Bit operation instructions are not permitted here; read the
+ * register, modify the copy, and write the whole value back.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_sub_33
  */
 #define GA_REG_CDDCOMM5 0xFF8042
 
 /**
  * @def GA_REG_CDDCOMM6
  * @sa ga_reg_cddcomm6
- * @ingroup ga_regs_sub
+ * @warning Bit operation instructions are not permitted here; read the
+ * register, modify the copy, and write the whole value back.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_sub_34
  */
 #define GA_REG_CDDCOMM6 0xFF8044
 
 /**
  * @def GA_REG_CDDCOMM7
  * @sa ga_reg_cddcomm7
- * @ingroup ga_regs_sub
+ * @warning Bit operation instructions are not permitted here; read the
+ * register, modify the copy, and write the whole value back.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_sub_35
  */
 #define GA_REG_CDDCOMM7 0xFF8046
 
 /**
  * @def GA_REG_CDDCOMM8
  * @sa ga_reg_cddcomm8
- * @ingroup ga_regs_sub
+ * @warning Bit operation instructions are not permitted here; read the
+ * register, modify the copy, and write the whole value back.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_sub_36
  */
 #define GA_REG_CDDCOMM8 0xFF8048
 
 /**
  * @def GA_REG_CDDCOMM9
  * @sa ga_reg_cddcomm9
- * @ingroup ga_regs_sub
+ * @warning Bit operation instructions are not permitted here; read the
+ * register, modify the copy, and write the whole value back.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_sub_37
  */
 #define GA_REG_CDDCOMM9 0xFF804A
 
 /**
  * @def GA_REG_FONTCOLOR
  * @sa ga_reg_fontcolor
- * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_38
  */
 #define GA_REG_FONTCOLOR 0xFF804C
 
 /**
  * @def GA_REG_FONTBITS
  * @sa ga_reg_fontbits
- * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_39
  */
 #define GA_REG_FONTBITS 0xFF804E
 
 /**
  * @def GA_REG_FONTDATA
  * @sa ga_reg_fontdata
- * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_40
  */
 #define GA_REG_FONTDATA 0xFF8050
 
@@ -593,7 +895,7 @@
 /**
  * @def GA_REG_STAMPSIZE
  * @sa ga_reg_stampsize
- * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_44
  */
 #define GA_REG_STAMPSIZE 0xFF8058
 
@@ -611,7 +913,6 @@
 /**
  * @def GA_REG_STAMPMAPBASE
  * @sa ga_reg_stampmapbase
- * @ingroup ga_regs_sub
  * @note The location of the stamp map in Word RAM. The value you put in is the
  * offset relative to the start of Word RAM divided by 4. What the raw location
  * needs to be a multiple of depends on the sizes you have set:
@@ -620,71 +921,99 @@
     32x32px stamps, 256x256px stamp map: Multiples of 0x80
     16x16px stamps, 4096x4096px stamp map: Multiples of 0x20000
     32x32px stamps, 4096x4096px stamp map: Multiples of 0x8000
-
+ * @warning Word access only. A byte access to this register can raise a
+ * bus error. (Hardware Manual p.21)
+ * @warning Bit operation instructions are not permitted here; read the
+ * register, modify the copy, and write the whole value back.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_sub_45
  */
 #define GA_REG_STAMPMAPBASE 0xFF805A
 
 /**
  * @def GA_REG_IMGBUFVSIZE
  * @sa ga_reg_imgbufvsize
- * @ingroup ga_regs_sub
+ * @warning Bit operation instructions are not permitted here; read the
+ * register, modify the copy, and write the whole value back.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_sub_46
  */
 #define GA_REG_IMGBUFVSIZE 0xFF805C
 
 /**
  * @def GA_REG_IMGBUFSTART
  * @sa ga_reg_imgbufstart
- * @ingroup ga_regs_sub
+ * @warning Word access only. A byte access to this register can raise a
+ * bus error. (Hardware Manual p.21)
+ * @warning Bit operation instructions are not permitted here; read the
+ * register, modify the copy, and write the whole value back.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_sub_47
  */
 #define GA_REG_IMGBUFSTART 0xFF805E
 
 /**
  * @def GA_REG_IMGBUFOFFSET
  * @sa ga_reg_imgbufoffset
- * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_48
  */
 #define GA_REG_IMGBUFOFFSET 0xFF8060
 
 /**
  * @def GA_REG_IMGBUFHDOTSIZE
  * @sa ga_reg_imgbufhdotsize
- * @ingroup ga_regs_sub
+ * @warning Word access only. A byte access to this register can raise a
+ * bus error. (Hardware Manual p.21)
+ * @warning Bit operation instructions are not permitted here; read the
+ * register, modify the copy, and write the whole value back.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_sub_49
  */
 #define GA_REG_IMGBUFHDOTSIZE 0xFF8062
 
 /**
  * @def GA_REG_IMGBUFVDOTSIZE
  * @sa ga_reg_imgbufvdotsize
- * @ingroup ga_regs_sub
+ * @warning Word access only. A byte access to this register can raise a
+ * bus error. (Hardware Manual p.21)
+ * @warning Bit operation instructions are not permitted here; read the
+ * register, modify the copy, and write the whole value back.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_sub_50
  */
 #define GA_REG_IMGBUFVDOTSIZE 0xFF8064
 
 /**
  * @def GA_REG_TRACEVECTBASE
  * @sa ga_reg_tracevectbase
- * @ingroup ga_regs_sub
+ * @warning Word access only. A byte access to this register can raise a
+ * bus error. (Hardware Manual p.21)
+ * @warning Bit operation instructions are not permitted here; read the
+ * register, modify the copy, and write the whole value back.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_sub_51
  */
 #define GA_REG_TRACEVECTBASE 0xFF8066
 
 /**
  * @def GA_REG_SUBCODEADDR
  * @sa ga_reg_subcodeaddr
- * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_52
  */
 #define GA_REG_SUBCODEADDR 0xFF8068
 
 /**
  * @def GA_REG_SUBCODEBUF
  * @sa ga_reg_subcodebuf
- * @ingroup ga_regs_sub
- */
+ * @ingroup ga_reg_sub_128
+*/
 #define GA_REG_SUBCODEBUF 0xFF8100
 
 /**
  * @def GA_REG_SUBCODEBUFIMG
  * @sa ga_reg_subcodebufimg
- * @ingroup ga_regs_sub
- */
+ * @ingroup ga_reg_sub_192
+*/
 #define GA_REG_SUBCODEBUFIMG 0xFF8180
 
 /**

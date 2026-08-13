@@ -592,6 +592,19 @@ were defined as `1 << x` **without parentheses**, and `VDP_MASK_INTERLACE_*` / `
 `SCTRL_BAUD_*` were *values* misnamed as masks — `VDP_MASK_INTERLACE_NONE` was `0`, which no mask
 can be.
 
+### D15 — Gate array registers are numbered by 0-based word index *(Damian R, 2026-08-13)*
+Documentation groups are `ga_reg_<side>_NN`, titled `Register NN (0xFF80NN) - Name`, with the
+per-register group nested inside its functional group.
+
+The numbering is an **SDK convention, not a hardware fact**: the Hardware Manual identifies these
+registers by address and never numbers them. It is 0-based to match the existing `vdp_regNN` groups,
+where the number genuinely is the hardware's register selector, so the two peripherals read alike.
+The address appears in every title because the number is ours and the address is Sega's — which
+removes the ambiguity that made this an open question.
+
+An earlier note here claimed the manual settled this. It does not; it settles only what the hardware
+is called, not how the SDK presents it.
+
 ### OD-1 — How to resolve the Main/Sub Gate Array namespace collision *(open)*
 INV-7 is violated (KB-12). Options: prefix by CPU side (`GA_MAIN_*` / `GA_SUB_*`); rely solely on
 path-derived include guards plus a hard rule that a TU may include only one side; or generate both
