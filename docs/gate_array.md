@@ -225,9 +225,10 @@ matter — a byte access to a word-only register can raise a bus error.
 | `04` | CDC mode — **read only**, high byte only | W/B | yes |
 | `06` | H-INT vector | **W** | yes |
 | `08` | CDC host data — **read only** | **W** | **no** |
-| `0C` | Stopwatch | **W** | **no** |
+| `0C` | Stopwatch — **read only**; only the Sub CPU clears it | **W** | **no** |
 | `0E` | Communication flag | W/B | yes |
-| `10`–`2E` | Communication command / status | W/B | yes |
+| `10`–`1E` | Communication command (Main writes) | W/B | yes |
+| `20`–`2E` | Communication status — **read only** | W/B | yes |
 
 This is why the CD fader (`GA_REG_CDFADER`, `$FF8034`) needs care: it is **word access only, with no bit
 operations**. Read-modify-write the whole word.
