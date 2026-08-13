@@ -67,6 +67,27 @@ def run(clean_first: bool = True) -> int:
             if not f.exists() or f.stat().st_size == 0:
                 missing.append(f"{item} (declared in DISC_CONTENTS)")
 
+        # Cartridge ROM headers must describe the ROM they are in. Recomputed
+        # here independently of tools/romfix.py, so this is a cross-check
+        # rather than the tool agreeing with itself.
+        for rom in p.glob("*.cart"):
+            data = rom.read_bytes()
+            if len(data) < 0x200:
+                missing.append(f"{rom.name} is too small to hold a ROM header")
+                continue
+            declared_end = int.from_bytes(data[0x1A4:0x1A8], "big")
+            if declared_end != len(data) - 1:
+                missing.append(
+                    f"{rom.name} header claims ROM end 0x{declared_end:06X}"
+                    f" but the file ends at 0x{len(data) - 1:06X}")
+            declared_sum = int.from_bytes(data[0x18E:0x190], "big")
+            actual = sum(int.from_bytes(data[i:i + 2], "big")
+                         for i in range(0x200, len(data) - 1, 2)) & 0xFFFF
+            if declared_sum != actual:
+                missing.append(
+                    f"{rom.name} header checksum 0x{declared_sum:04X}"
+                    f" != computed 0x{actual:04X}")
+
         images = [f for f in list(p.glob("*.iso")) + list(p.glob("*.cart"))]
         if not images:
             missing.append("no .iso or .cart produced")

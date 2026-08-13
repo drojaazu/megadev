@@ -392,6 +392,7 @@ calls were sanctioned for game use, and the source of the Work RAM equates in `d
 |---|---|---|
 | Gate Array register map, Sub side | DOC | Sega BIOS manual + community research |
 | Gate Array register map, Main side | DOC | as above |
+| Mega Drive ROM header checksum algorithm | DOC | Sum of 16-bit big-endian words from 0x200 to end of ROM, truncated to 16 bits. Hardware does not verify it; flashcarts and loaders read the ROM end field at 0x1A4. Implemented in `tools/romfix.py`. |
 | Sub CPU BIOS function codes | DOC | *Mega-CD BIOS Manual* (official) |
 | Main CPU Boot ROM system library | **Reverse-engineered** | No official English documentation exists at all. Corroborated by *Sega-CD Technical Bulletin #3*, which states plainly that "subroutine in the boot ROM may also be used" and refers to two files — `ROM_UTIL.DOC` and `MAINENT.I` — that are **still missing** (searched the library share 2026-08-13). Per-call detail in `docs/main_bios.md`. |
 | Boot-call function codes (`CBT*`) | **DOC** | Verified byte-for-byte against Sega's own `CDBIOS.INC` in the 32X CD example source; see below. |

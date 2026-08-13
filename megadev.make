@@ -91,6 +91,9 @@ Q:=$(if $(V),,@)
 # Megadev library code (ASM and C)
 LIB_PATH:=$(MEGADEV_PATH)/lib
 
+# build time tools
+TOOLS_PATH:=$(MEGADEV_PATH)/tools
+
 # linker scripts
 CFG_PATH:=$(MEGADEV_PATH)/cfg
 
@@ -258,7 +261,9 @@ $(BUILD_PATH)/%.s.o: %.s | $(BUILD_PATH)
 	$(eval OUT_CART_ELF:=$(addprefix $(BUILD_PATH)/,$(addsuffix .elf,$(notdir $@))))
 	@$(LD) $(LD_FLAGS) -T $(CFG_PATH)/md_cart.ld $(BUILD_SRC) -o $(OUT_CART_ELF)
 	@$(NM) -n $(OUT_CART_ELF) > $(addprefix $(BUILD_PATH)/,$(addsuffix .sym,$(notdir $@)))
-	@$(OBJCPY) -O binary $(OUT_CART_ELF) $@
+	$(Q)$(OBJCPY) -O binary $(OUT_CART_ELF) $@
+	$(call msg_info,Fixing ROM header)
+	$(Q)$(TOOLS_PATH)/romfix.py $@
 
 # special rules for boot sector binaries
 $(BUILD_PATH)/ip.bin: $(BUILD_PATH)/ip.bin.elf | $(BUILD_PATH)

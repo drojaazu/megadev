@@ -151,7 +151,7 @@ toolchain was available during the audit. VER-1 must land first so that fixes ca
 |---|---|---|---|
 | FEAT-1 | S4 | open | Z80 assembly support. `megadev.make:20` declares `Z80_AS:=sjasmplus`, unused. `docs/manual.md:272` calls it "on the roadmap". |
 | FEAT-2 | S4 | open | Evaluate clang/LLVM as an alternative compiler (`docs/manual.md:276`). |
-| FEAT-3 | S3 | open | `lib/md_header.s:25` — **ROM header checksum is never calculated.** Also `:31` proper rom start/end, `:33` Extra Memory and Modem fields. *(inline TODOs)* |
+| FEAT-3 | S3 | **done** | Cartridge ROM header is patched after linking by `tools/romfix.py`: ROM end is set to the real last byte and the Sega checksum computed over 0x200..EOF. Previously the header claimed 4 MB for an 8 KB ROM and a zero checksum. Cross-checked in Tier 0.3 with an independent recomputation. Note `:33` (Extra Memory / Modem fields) is still unaddressed. |
 | FEAT-4 | S3 | open | `lib/md_init.s:39` — add VDP initialisation (CRAM/VRAM clear). *(inline TODO)* |
 | FEAT-5 | S4 | open | `docs/modules.md:79,106` — make the module layout system more user-friendly. *(prose-only backlog item)* |
 | FEAT-6 | S4 | open | Support the Main-CPU CD-ROM read path (`docs/cdrom.md`: "not well understood"). |

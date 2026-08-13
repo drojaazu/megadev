@@ -22,13 +22,15 @@
 .org 0x180, 0x20
 .ascii STR(HEADER_SOFTWARE_ID)
 .org 0x18E, 0x20
-# TODO calculate checksum
+# Patched after linking by tools/romfix.py, which is the only point at which
+# the final ROM size is known.
 .word  0
 .org 0x190
 .ascii "J"
 .org 0x1A0, 0x20
 .long 0x0
-# TODO fill out proper rom start/rom end
+# ROM end is patched after linking by tools/romfix.py; this placeholder is
+# what the ROM would claim if that step were skipped.
 .long 0x3FFFFF
 # TODO add variables for Extra Memory and Modem
 .ascii "            "
