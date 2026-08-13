@@ -17,7 +17,7 @@
 LOCAL loop
 
 loop:
-	btst     #GA_RETURN_2M_POS, GA_REG_MEMMODE_LO
+	btst     #GA_RETURN_2M_POS, GA_REG_MEMMODE
 	beq      loop
 .endm
 
@@ -30,8 +30,8 @@ loop:
 LOCAL loop
 
 loop:
-  bset     #GA_DMNA_POS,GA_REG_MEMMODE_LO
-  btst     #GA_DMNA_POS,GA_REG_MEMMODE_LO
+  bset     #GA_DMNA_POS,GA_REG_MEMMODE
+  btst     #GA_DMNA_POS,GA_REG_MEMMODE
   beq      loop
 .endm
 
@@ -58,12 +58,18 @@ loop:
  * RESET_GA
  * Pattern to reset gate array
  * Taken from Wonder Libary
+ *
+ * The gate array performs a forced reset only in response to this exact
+ * sequence of accesses, so the width and address of each one is load bearing --
+ * in particular the first must be a WORD write to 0xA12002, which is why it is
+ * written through GA_REG_WP rather than as two byte writes. See BR-4 for the
+ * one respect in which this differs from the documented pattern.
  */
 .macro RESET_GA
-  move.w   #0xFF00,GA_REG_MEMMODE
-  move.b   #0x3,GA_REG_RESET_LO
+  move.w   #0xFF00,GA_REG_WP
+  move.b   #0x3,GA_REG_SUBCPU
   nop
-  move.b   #0x3,GA_REG_RESET_LO
-  move.b   #0x2,GA_REG_RESET_LO
-  move.b   #0x0,GA_REG_RESET_LO
+  move.b   #0x3,GA_REG_SUBCPU
+  move.b   #0x2,GA_REG_SUBCPU
+  move.b   #0x0,GA_REG_SUBCPU
 .endm

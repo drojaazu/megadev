@@ -27,23 +27,59 @@
 
 /* --- Gate Array, Main CPU side ------------------------------------------ */
 
-ASSERT_FIELD(GA_SUB_RESET);
-ASSERT_FIELD(GA_SUB_REQ);
-ASSERT_FIELD(GA_RAISE_INT2);
-ASSERT_FIELD(GA_INT2_MASKING);
-ASSERT_FIELD(GA_RETURN_2M);
-ASSERT_FIELD(GA_DMNA);
-ASSERT_FIELD(GA_WORDRAM_LAYOUT);
-ASSERT_FIELD(GA_CDC_DEST);
-ASSERT_FIELD(GA_MEMMODE_BANK);
-ASSERT_FIELD(GA_MEMMODE_WP);
+/* A field on a byte register must fit inside that byte -- the invariant that
+ * makes the D17 split model safe, since it is what lets _POS go straight to a
+ * bit opcode with no FIELD_BYTE/FIELD_BPOS. */
+#define ASSERT_BYTE_FIELD(name)                                                \
+	ASSERT_FIELD(name);                                                          \
+	_Static_assert((name##_POS) + (name##_WIDTH) <= 8,                           \
+		#name ": a field on a byte register must fit in 8 bits");                  \
+	_Static_assert(FIELD_BPOS(name) == (name##_POS),                             \
+		#name ": on a byte register FIELD_BPOS is the identity")
 
-/* Values the hardware defines, unchanged by the rename. */
-_Static_assert(GA_DMNA_POS == 1, "DMNA is bit 1 of memory mode");
-_Static_assert(GA_RETURN_2M_POS == 0, "RET is bit 0 of memory mode");
-_Static_assert(GA_MEMMODE_BANK_MASK == 0x00C0, "bank select is bits 6-7");
-_Static_assert(GA_MEMMODE_WP_MASK == 0xFF00, "write protect is the HIGH byte, bits 8-15");
-_Static_assert(GA_CDC_DEST_MASK == 0x0700, "device destination is bits 8-10");
+/* 0xA12000, split into two byte registers (D17). */
+_Static_assert(GA_REG_INT2 == 0xA12000, "INT2 control is the high byte");
+_Static_assert(GA_REG_SUBCPU == GA_REG_INT2 + 1, "Sub CPU control is the low byte");
+
+ASSERT_BYTE_FIELD(GA_SUB_RESET);
+ASSERT_BYTE_FIELD(GA_SUB_REQ);
+ASSERT_BYTE_FIELD(GA_RAISE_INT2);
+ASSERT_BYTE_FIELD(GA_INT2_MASKING);
+
+/* These two both sit at bit 0 and always did. As fields of one 16-bit register
+ * that was an outright collision -- GA_RAISE_INT2 is IFL2 in the high byte and
+ * GA_SUB_RESET is SRES in the low byte, and nothing in the source said so. */
+_Static_assert(GA_RAISE_INT2_POS == GA_SUB_RESET_POS,
+	"same bit number in different registers - which is why they are different "
+	"registers now");
+_Static_assert(GA_INT2_MASKING_POS == 7, "IEN2 is the top bit of GA_REG_INT2");
+
+/* 0xA12002, likewise. */
+_Static_assert(GA_REG_WP == 0xA12002, "write protect is the high byte");
+_Static_assert(GA_REG_MEMMODE == GA_REG_WP + 1, "memory mode is the low byte");
+
+ASSERT_BYTE_FIELD(GA_WP);
+ASSERT_BYTE_FIELD(GA_RETURN_2M);
+ASSERT_BYTE_FIELD(GA_DMNA);
+ASSERT_BYTE_FIELD(GA_WORDRAM_LAYOUT);
+ASSERT_BYTE_FIELD(GA_MEMMODE_BANK);
+
+_Static_assert(GA_WP_MASK == 0xFF, "write protect is a whole byte of its own now");
+_Static_assert(GA_MEMMODE_BANK_MASK == 0xC0, "bank select is bits 6-7 of the low byte");
+
+/* The forced reset sequence is only recognised as an exact pattern of accesses,
+ * and the first of them is a WORD write to 0xA12002 -- the address GA_REG_WP
+ * names. Splitting the register must not have moved it. */
+_Static_assert(GA_REG_WP == 0xA12002,
+	"RESET_GA writes its magic word here; the forced reset depends on the address");
+
+/* 0xA12004 has no low byte at all: every field is in the high byte and the
+ * Main CPU may only read it, so the whole register is one read-only byte. */
+_Static_assert(GA_REG_CDCMODE == 0xA12004, "CDC mode is the high byte");
+ASSERT_BYTE_FIELD(GA_CDC_DEST);
+ASSERT_BYTE_FIELD(GA_CDC_DSR);
+ASSERT_BYTE_FIELD(GA_CDC_EDT);
+_Static_assert(GA_CDC_DEST_MASK == 0x07, "device destination is bits 0-2 of that byte");
 
 /* --- I/O serial control -------------------------------------------------- */
 
@@ -96,37 +132,14 @@ _Static_assert(FIELD_PREP(VDP_INTERLACE, VDP_INTERLACE_DOUBLE) == (0b11 << 1),
  * and is deliberately kept as a literal mask. */
 _Static_assert(VDP_WIDTH_40CELL_MASK == 0x81, "bits 0 and 7");
 
-/* --- byte access to 16-bit registers ------------------------------------ */
+/* --- the split model (D17) ---------------------------------------------- */
 
-/* The gate array registers are 16 bit but several are routinely accessed a
- * byte at a time. _HI aliases the register itself and _LO is the next byte;
- * getting these the wrong way round would silently address the wrong half. */
-_Static_assert(GA_REG_RESET_HI == GA_REG_RESET, "HI is the register address itself");
-_Static_assert(GA_REG_RESET_LO == GA_REG_RESET + 1, "LO is the second byte");
-_Static_assert(GA_REG_MEMMODE_HI == GA_REG_MEMMODE, "HI is the register address itself");
-_Static_assert(GA_REG_MEMMODE_LO == GA_REG_MEMMODE + 1, "LO is the second byte");
-
-/* Every _POS is word-relative: bit 0 is the LSB of the 16-bit register, never
- * of whichever byte the field happens to sit in. Mixing the two conventions is
- * how GA_MEMMODE_WP came to claim bits 0-7 (KB-34) -- its derived mask was
- * 0x00FF, the exact complement of the bits it actually occupies. */
-_Static_assert(GA_MEMMODE_WP_POS >= 8, "WP is word-relative, so it starts at 8");
-_Static_assert(GA_DMNA_POS < 8, "DMNA is in the low byte of memory mode");
-_Static_assert(GA_RETURN_2M_POS < 8, "RET is in the low byte of memory mode");
-_Static_assert(GA_WORDRAM_LAYOUT_POS < 8, "MODE is in the low byte of memory mode");
-
-/* Word-relative positions cannot be handed to a bit opcode directly: the m68k
- * takes the immediate modulo 8 on a memory operand, so `btst #8` would silently
- * test bit 0 of the SAME byte rather than bit 0 of the other one. FIELD_BYTE
- * picks the half and FIELD_BPOS reduces the position to fit it. */
-_Static_assert(FIELD_BYTE(GA_REG_MEMMODE, GA_MEMMODE_WP) == GA_REG_MEMMODE_HI,
-	"a field at bit 8+ lives in the high byte, at the register address");
-_Static_assert(FIELD_BYTE(GA_REG_MEMMODE, GA_DMNA) == GA_REG_MEMMODE_LO,
-	"a field below bit 8 lives in the low byte, one past the register address");
-_Static_assert(FIELD_BPOS(GA_MEMMODE_WP) == 0, "bit 8 of the word is bit 0 of the high byte");
-_Static_assert(FIELD_BPOS(GA_DMNA) == GA_DMNA_POS, "low-byte fields are unchanged");
-_Static_assert(FIELD_BPOS(GA_MEMMODE_WP) < 8 && FIELD_BPOS(GA_DMNA) < 8,
-	"FIELD_BPOS always yields a legal bit-opcode operand");
+/* Every Main-side register with fields in both halves is now a pair of byte
+ * registers, so FIELD_BYTE/FIELD_BPOS have no users left on this side. They
+ * remain for the Sub CPU's CDC mode register, which genuinely spans both bytes;
+ * see bit_constants_sub.c and field_access.s. */
+_Static_assert(GA_REG_SUBCPU - GA_REG_INT2 == 1 && GA_REG_MEMMODE - GA_REG_WP == 1,
+	"each split pair is two adjacent bytes, high half first");
 
 /* --- string convention -------------------------------------------------- */
 

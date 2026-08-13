@@ -435,7 +435,11 @@ calls were sanctioned for game use, and the source of the Work RAM equates in `d
 
 #### Page map of *The Hardware*, Ver 1.0
 
-The scan's PDF page number is the printed page number **plus 4** (printed 21 = PDF 25). Sections:
+The scan's PDF page number is the printed page number plus a **constant that changes partway
+through**: **+4** through the Sub CPU registers (printed 21 = PDF 25, printed 27 = PDF 31) and **+3**
+from the Main CPU registers on (printed 56 = PDF 59, printed 58 = PDF 61). A page is dropped from the
+scan somewhere in printed 28–55; the exact point has not been located, so check the printed number in
+the page footer rather than trusting either offset in that range. Sections:
 
 | Printed | Contents |
 |---|---|
@@ -732,6 +736,30 @@ called out below.
 | **`GA_REG_MEMMODE`** (word, `$FF8002`) | **`GA_REG_MEMMODE`** (byte, `$FF8003`) | ⚠ **same name, new address and width** |
 | `GA_REG_MEMMODE_LO` / `ga_reg_memmode_lo` | `GA_REG_MEMMODE` / `ga_reg_memmode` | `$FF8003` |
 | `GA_LED_R_POS` 8, `GA_LED_G_POS` 9 | 0, 1 | now relative to `GA_REG_LED` |
+
+The Main side is split the same way, for symmetry (`$A12000`, `$A12002`, `$A12004`):
+
+| Was | Now | Note |
+|---|---|---|
+| `GA_REG_RESET` (word, `$A12000`) | *removed* | split into the two below |
+| `GA_REG_RESET_HI` / `ga_reg_reset_hi` | `GA_REG_INT2` / `ga_reg_int2` | `$A12000`, IEN2 and IFL2 |
+| `GA_REG_RESET_LO` / `ga_reg_reset_lo` | `GA_REG_SUBCPU` / `ga_reg_subcpu` | `$A12001`, SBRQ and SRES |
+| `GA_REG_MEMMODE_HI` / `ga_reg_memmode_hi` | `GA_REG_WP` / `ga_reg_wp` | `$A12002`, writable from this side |
+| **`GA_REG_MEMMODE`** (word, `$A12002`) | **`GA_REG_MEMMODE`** (byte, `$A12003`) | ⚠ same name, new address and width |
+| `GA_MEMMODE_WP_*` | `GA_WP_*`, `_POS` 8 → 0 | named for symmetry with the Sub side |
+| `GA_CDC_DEST_POS` 8 | 0 | `$A12004` is now a single read-only byte register |
+
+Two things the Main side made visible that the Sub side did not:
+
+- `GA_RAISE_INT2_POS` and `GA_SUB_RESET_POS` were **both 0**. As fields of one 16-bit register that
+  was a straight collision; they are IFL2 in the high byte and SRES in the low byte, and nothing in
+  the source said so. They are now fields of two different registers and the collision is gone.
+- `$A12004` has **no low byte at all** — every field is in the high byte and the Main CPU may only
+  read it (manual p.58, the WR row is entirely `-`). It becomes one read-only byte register rather
+  than a split pair, and gains `GA_CDC_EDT` and `GA_CDC_DSR`, which the Main side never defined.
+
+The split changed **no emitted code** on the Main side: every rewritten access resolves to the same
+address at the same width, verified by diffing all 44 built ELF and BIN artifacts before and after.
 
 `GA_REG_MEMMODE` is the one carried-over name, because the low byte *is* the memory mode and the
 write protect was the passenger. Out-of-tree code that used it as a word will now address one byte

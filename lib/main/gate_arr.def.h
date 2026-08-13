@@ -144,51 +144,60 @@
  */
 
 /**
- * @def GA_REG_RESET
- * @brief Sub CPU Control
+ * @def GA_REG_INT2
+ * @brief Level 2 interrupt to the Sub CPU
  *
  * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * |IEN2| ||||||IFL2| ||||||SBRQ|SRES|
+ * The high byte of the hardware register at 0xA12000. Split from the Sub CPU
+ * bus control below it because the two halves share nothing but an address:
+ * see SPEC.md D17.
  *
- * @param
- * \n [width] 8 bit/16 bit
- * @param SRES Sub CPU reset
- * \n [write] 0: Reset / 1: Run
- * \n [read] 0: Reset in progress / 1: Running
- * @param SBRQ Sub CPU bus access request
- * \n [write] 0: Cancel request / 1: Request access
- * \n [read] 0: Sub CPU running / 1: Acknowledge
- * @param IFL2 Send INT2 to Sub CPU
- * \n [write] 0: Not used / 1: Raise INT2 on Sub CPU
- * \n [read] 0: INT2 in progress / 1: INT2 not occurred yet
- * @param IEN2 Mask state of INT2 on Sub CPU
- * @details 0: Masked / 1: Enabled
+ * | |7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|
+ * | |\b IEN2| | | | | | |\b IFL2|
+ * |\b R|◯| | | | | | |◯|
+ * |\b W| | | | | | | |◯|
  *
- * @note Only BTST bitwise operation allowed on this register
- * @warning Of the bit operations, only BTST is permitted.
+ * @param IFL2 Raise a level 2 interrupt on the Sub CPU.
+ * \n [write] 1: generate the interrupt, provided IEN2 is set. Writing 0 is not
+ * used.
+ * \n [read] 0: the interrupt is still being serviced / 1: it has not been
+ * taken yet
+ * @param IEN2 Mask state of level 2 on the Sub CPU side. 0: masked, 1: enabled.
+ * @note IEN2 is read only from this side -- the Sub CPU owns its own interrupt
+ * mask. Raising an interrupt while it reads 0 does nothing.
+ * @warning BSET and BCLR may not be used on this register; only BTST.
+ * @sa ga_reg_int2
  * @ingroup ga_reg_main_00
  */
-#define GA_REG_RESET 0xA12000
+#define GA_REG_INT2 0xA12000
 
 /**
- * @def GA_REG_RESET_HI
- * @brief High byte of @ref GA_REG_RESET
- * @ingroup ga_regs_main
- * @details The gate array registers are 16 bit, but this one is frequently
- * accessed a byte at a time. GA_REG_RESET_HI is an alias for the register address
- * itself; prefer it over the bare name when you mean a byte access, so the
- * width you intended is visible at the call site.
+ * @def GA_REG_SUBCPU
+ * @brief Sub CPU reset and bus request
+ *
+ * @details
+ * The low byte of the hardware register at 0xA12000.
+ *
+ * | |7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|
+ * | | | | | | | |\b SBRQ|\b SRES|
+ * |\b R| | | | | | |◯|◯|
+ * |\b W| | | | | | |◯|◯|
+ *
+ * @param SRES Sub CPU reset.
+ * \n [write] 0: hold in reset / 1: run
+ * \n [read] 0: the reset is still in progress / 1: the reset has finished
+ * @param SBRQ Sub CPU bus request.
+ * \n [write] 0: cancel the request / 1: request the bus
+ * \n [read] 0: the Sub CPU is running / 1: the request has been granted
+ *
+ * @note Program RAM may only be touched from this side once SBRQ reads 1.
+ * @warning BSET and BCLR may not be used on this register; only BTST.
+ * @sa ga_reg_subcpu
+ * @ingroup ga_reg_main_00
  */
-#define GA_REG_RESET_HI GA_REG_RESET
-
-/**
- * @def GA_REG_RESET_LO
- * @brief Low byte of @ref GA_REG_RESET
- * @ingroup ga_regs_main
- */
-#define GA_REG_RESET_LO (GA_REG_RESET + 1)
+#define GA_REG_SUBCPU 0xA12001
 
 
 /**
@@ -242,65 +251,56 @@
  */
 
 /**
- * @def GA_REG_MEMMODE
- * @brief Memory Mode
+ * @def GA_REG_WP
+ * @brief Program RAM write protection
  *
  * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * |WP7|WP6|WP5|WP4|WP3|WP2|WP1|WP0|BK1|BK0| |||MODE|DMNA|RET|
+ * The high byte of the hardware register at 0xA12002. Each set bit protects one
+ * 512 byte block at the bottom of Program RAM, so the field spans 0x000000 to
+ * 0x01FDFF. This is what keeps a stray write from this side out of the Sub
+ * CPU's resident code.
  *
- * @param [width] 8 bit/16 bit
- * @param WP Write protect Sub CPU RAM
- * @param BK PRG-RAM bank select
- * @param MODE Word RAM layout
- * \n 0: 2M
- * \n 1: 1M
- * @param DMNA Main CPU will not access Word RAM
- * \n\em In 2M mode:
- * \n [write] 0: N/A / 1: Return Word RAM to Sub CPU
- * \n [read] 0: Return Word RAM in process / 1: Return Word RAM complete
- * \n\em In 1M mode:
- * \n [write] 0: Bank swap in progress / 1: Bank swap complete
- * @param RET Give Word RAM control to Main CPU
+ * | |7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|
+ * | |\b WP7|\b WP6|\b WP5|\b WP4|\b WP3|\b WP2|\b WP1|\b WP0|
+ * |\b R|◯|◯|◯|◯|◯|◯|◯|◯|
+ * |\b W|◯|◯|◯|◯|◯|◯|◯|◯|
  *
- * @details
- * WP Write protect an area of Sub CPU RAM from 0 to 0x1FE00 in increments
- * of 0x200
- * BK|PRG-RAM bank select for Main CPU access
- * (4M PRG-RAM divided into 1M banks)
- * MODE|Word RAM Mode
- *     |  Read Only: 0: 2M / 1: 1M/1M
- * RET|Return Word RAM to Main CPU
- *      Effect depends on MODE bit:
- *			MODE = 0 (2M):
- *			 Read Only: 0: Return Word RAM to Main CPU In Progress
- *			            1: Return Word RAM to Main CPU Completed
- *       MODE = 1 (1M/1M):
- *        Read Only: 0: Word RAM Bank 0 attached to Main CPU, Bank 1 to Sub CPU
- *                   1: Word RAM Bank 0 attached to Sub CPU, Bank 1 to Main CPU
- *
+ * @param WP0-7 Write protect block enables.
+ * @sa ga_reg_wp
  * @ingroup ga_reg_main_01
  */
-#define GA_REG_MEMMODE 0xA12002
+#define GA_REG_WP 0xA12002
 
 /**
- * @def GA_REG_MEMMODE_HI
- * @brief High byte of @ref GA_REG_MEMMODE
- * @ingroup ga_regs_main
- * @details The gate array registers are 16 bit, but this one is frequently
- * accessed a byte at a time. GA_REG_MEMMODE_HI is an alias for the register address
- * itself; prefer it over the bare name when you mean a byte access, so the
- * width you intended is visible at the call site.
+ * @def GA_REG_MEMMODE
+ * @brief Word RAM ownership and layout, Program RAM bank select
+ *
+ * @details
+ * The low byte of the hardware register at 0xA12002. Split from the write
+ * protect byte above it because a word-wide write to change the memory mode
+ * would silently clear the protection: see SPEC.md D17.
+ *
+ * | |7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|
+ * | |\b BK1|\b BK0| | | |\b MODE|\b DMNA|\b RET|
+ * |\b R|◯|◯| | | |◯|◯|◯|
+ * |\b W|◯|◯| | | |◯|◯| |
+ *
+ * @param BK0-1 Program RAM bank select. See GA_MEMMODE_BANK_MASK.
+ * @param MODE Word RAM layout. 0: 2M, 1: 1M. Read only from this side.
+ * @param DMNA Declaration of Main RAM No Access. Writing 1 hands Word RAM to
+ * the Sub CPU; reading 1 means the handover is complete.
+ * @param RET The counterpart to DMNA, read only from this side. 1 means Word
+ * RAM has been returned to the Main CPU.
+ *
+ * @note RET is read only here and DMNA is read only on the Sub side: each CPU
+ * writes the bit that gives the memory away and polls the one that takes it
+ * back.
+ * @sa ga_reg_memmode
+ * @ingroup ga_reg_main_01
  */
-#define GA_REG_MEMMODE_HI GA_REG_MEMMODE
-
-/**
- * @def GA_REG_MEMMODE_LO
- * @brief Low byte of @ref GA_REG_MEMMODE
- * @ingroup ga_regs_main
- */
-#define GA_REG_MEMMODE_LO (GA_REG_MEMMODE + 1)
+#define GA_REG_MEMMODE 0xA12003
 
 
 /**
@@ -360,21 +360,21 @@
 #define GA_MEMMODE_BANK_MASK FIELD_MASK(GA_MEMMODE_BANK_POS, GA_MEMMODE_BANK_WIDTH)
 
 /**
- * @def GA_MEMMODE_WP_MASK
+ * @def GA_WP_MASK
  * @brief Program RAM write protect
  * @details
  * Protects the bottom of Program RAM from Main CPU writes in units of 512
  * bytes: each set bit protects one 512 byte block, covering 0x000000 to
  * 0x01FDFF in total. This is how the Sub CPU's resident code is shielded from
  * a stray write by the Main side.
- * @note Occupies the high byte of the register, so a byte-sized write to
- * GA_REG_MEMMODE_HI sets the whole field at once.
+ * @note A byte register in its own right since D17, so a single byte write
+ * sets the whole field.
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_memmode
  */
-#define GA_MEMMODE_WP_POS 8
-#define GA_MEMMODE_WP_WIDTH 8
-#define GA_MEMMODE_WP_MASK FIELD_MASK(GA_MEMMODE_WP_POS, GA_MEMMODE_WP_WIDTH)
+#define GA_WP_POS 0
+#define GA_WP_WIDTH 8
+#define GA_WP_MASK FIELD_MASK(GA_WP_POS, GA_WP_WIDTH)
 
 /**
  * @defgroup ga_reg_main_cdcmode Main CPU / Gate Array / Registers / CDC Mode
@@ -418,9 +418,33 @@
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cdcmode
  */
-#define GA_CDC_DEST_POS 8
+#define GA_CDC_DEST_POS 0
 #define GA_CDC_DEST_WIDTH 3
 #define GA_CDC_DEST_MASK FIELD_MASK(GA_CDC_DEST_POS, GA_CDC_DEST_WIDTH)
+
+/**
+ * @def GA_CDC_DSR_MASK
+ * @brief Data set ready
+ * @details R: A word from the CDC is waiting in GA_REG_CDCHOSTDATA.
+ * @sa GA_REG_CDCMODE
+ * @ingroup ga_regs_main
+ * @ingroup ga_reg_main_cdcmode
+ */
+#define GA_CDC_DSR_POS 6
+#define GA_CDC_DSR_WIDTH 1
+#define GA_CDC_DSR_MASK FIELD_MASK(GA_CDC_DSR_POS, GA_CDC_DSR_WIDTH)
+
+/**
+ * @def GA_CDC_EDT_MASK
+ * @brief End of data transfer
+ * @details R: Every byte has been transferred out of the CDC.
+ * @sa GA_REG_CDCMODE
+ * @ingroup ga_regs_main
+ * @ingroup ga_reg_main_cdcmode
+ */
+#define GA_CDC_EDT_POS 7
+#define GA_CDC_EDT_WIDTH 1
+#define GA_CDC_EDT_MASK FIELD_MASK(GA_CDC_EDT_POS, GA_CDC_EDT_WIDTH)
 
 #define GA_CDC_DEST_MAIN 0b010
 

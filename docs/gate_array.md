@@ -54,15 +54,23 @@ concerns, Megadev models them as two named byte registers rather than one word:
     #define GA_REG_LED      0xFF8000   /* LEDR bit 0, LEDG bit 1        */
     #define GA_REG_SUBCTRL  0xFF8001   /* RES0 bit 0, VER0-3 bits 4-7   */
 
+    #define GA_REG_INT2     0xA12000   /* IFL2 bit 0, IEN2 bit 7        */
+    #define GA_REG_SUBCPU   0xA12001   /* SRES bit 0, SBRQ bit 1        */
+
 `_POS` is then relative to that byte, so it goes straight to a bit opcode:
 
     bset  #GA_LED_R_POS, GA_REG_LED    ; assembly
     ga_reg_led |= GA_LED_R_MASK;       /* C */
 
-This is why `GA_REG_RESET` no longer exists: the LEDs and the peripheral reset shared an address and
-nothing else. Keeping them together made bit 0 ambiguous — bit 0 of the word is `RES0`, the
-peripheral reset, and bit 0 of the LED byte is the red LED. Splitting them makes the two impossible
-to confuse.
+This is why `GA_REG_RESET` no longer exists on either side. On the Sub side the LEDs and the
+peripheral reset shared an address and nothing else, which made bit 0 ambiguous: bit 0 of the word is
+`RES0`, the peripheral reset, and bit 0 of the LED byte is the red LED. The Main side had the same
+problem in a sharper form — `GA_RAISE_INT2` and `GA_SUB_RESET` were *both* defined at bit 0, because
+one is `IFL2` in the high byte and the other is `SRES` in the low byte. Splitting the registers makes
+each of those pairs impossible to confuse.
+
+The two sides are split symmetrically, so `GA_REG_WP` and `GA_REG_MEMMODE` mean the same thing in
+both headers, at `$FF8002`/`$FF8003` and `$A12002`/`$A12003` respectively.
 
 A word access to a split pair is still available, since the halves are adjacent and the high byte is
 even-aligned. It is simply no longer the default spelling, so clearing the Program RAM write
@@ -75,9 +83,10 @@ Two kinds do not split:
 - **Word-only data registers** — `GA_REG_CDCHOSTDATA`, `GA_REG_DMAADDR`, `GA_REG_STOPWATCH`,
   `GA_REG_CDFADER` and the address/size registers. They hold one wide value, have no fields, and
   forbid bit operations, so there is nothing to separate.
-- **Registers whose fields span both halves** — `GA_REG_CDCMODE` is the example: the CDC register
-  address sits in the low byte and the status flags in the high byte, but they are read and written
-  as one CDC transaction.
+- **Registers whose fields span both halves** — the Sub side's `GA_REG_CDCMODE` (`$FF8004`) is the
+  example: the CDC register address sits in the low byte and the status flags in the high byte, but
+  they are read and written as one CDC transaction. (The Main side's `$A12004` is *not* one of these
+  — it has no low byte at all and is a single read-only byte register.)
 
 For those, `_POS` is relative to the whole word and a position of 8 or more is **not** a legal
 bit-opcode operand: on a memory operand the 68000 takes the bit number modulo 8, so `btst #14` would
@@ -104,7 +113,7 @@ no `_HI` / `_LO` address aliases to keep straight. `GA_REG_LED` is the high byte
 `GA_REG_SUBCTRL` is the low byte; `GA_REG_WP` and `GA_REG_MEMMODE` are the two halves of `0xFF8002`.
 The C accessors are typed `ga_reg8`, and `ga_reg8_ro` where this CPU may only read:
 
-    #define ga_reg_wp       (*((ga_reg8_ro) GA_REG_WP))    /* Main CPU writes it */
+    #define ga_reg_wp       (*((ga_reg8_ro) GA_REG_WP))    /* Sub side: read only */
     #define ga_reg_memmode  (*((ga_reg8) GA_REG_MEMMODE))
 
 Note that `ga_reg const` does **not** express read-only — it is a const pointer to a mutable
@@ -195,9 +204,9 @@ matter — a byte access to a word-only register can raise a bus error.
 
 | Offset | Register | Access | Bit ops |
 |---|---|---|---|
-| `00` | Reset / INT2 | W/B | **btst only** |
+| `00` | INT2 control / Sub CPU reset | W/B | **btst only** — BSET and BCLR are forbidden |
 | `02` | Memory mode / write protect | W/B | yes |
-| `04` | CDC mode | W/B | yes |
+| `04` | CDC mode — **read only**, high byte only | W/B | yes |
 | `06` | H-INT vector | **W** | yes |
 | `08` | CDC host data — **read only** | **W** | **no** |
 | `0C` | Stopwatch | **W** | **no** |
