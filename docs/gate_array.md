@@ -51,7 +51,7 @@ a byte access to a word-only register can raise a bus or address error.
 
 Where a register's documentation carries an access warning, take it literally: this is one of the
 few places in Mega CD programming where getting it wrong produces a hardware exception rather than
-merely a wrong value.
+merely a wrong value. The authoritative per-register table is below.
 
 Because byte access is common, registers that are routinely used that way carry `_HI` and `_LO`
 address definitions:
@@ -107,11 +107,67 @@ raise a bus error. Those are marked `🗙` and carry a `@warning` rather than a 
 |\b R|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|
 |\b W|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|
 
-## Registers with additional constraints
+## Access width and bit operations, per register
 
-Some registers carry timing or sequencing constraints beyond simple access width — the CD fader
-control (`GA_REG_CDFADER`, `0xFF8034`) among them.
+Transcribed from *Mega-CD Hardware Manual — The Hardware*, Ver 1.0 (1991-10-14), page 21,
+"Initial values of registers after Power ON". Cross-read against both scans in the primary source
+collection (see SPEC.md §7).
 
-**These are not yet documented here.** The constraints are described in *Mega-CD Hardware Manual —
-The Hardware*, which is held with the project's primary sources (see SPEC.md §7); they have not been
-transcribed, and no claim about them should be made from memory. See BACKLOG DOC-17.
+The manual states the default plainly: **"If not otherwise mentioned, byte/word access and bit
+operation commands are allowed."** The table below is the exceptions, and they are the ones that
+matter — a byte access to a word-only register can raise a bus error.
+
+`W/B` = word or byte access. `W` = **word access only**.
+
+### Sub CPU side, base `$FF8000`
+
+| Offset | Register | Access | Bit ops |
+|---|---|---|---|
+| `00` | Reset / LED / version | W/B | yes |
+| `02` | Memory mode / write protect | W/B | yes |
+| `04` | CDC mode / register address | W/B | **btst only** |
+| `06` | CDC register data | W/B | **no** |
+| `08` | CDC host data | **W** | **no** |
+| `0A` | CDC DMA address | **W** | **no** |
+| `0C` | Stopwatch | **W** | **no** |
+| `0E` | Communication flag | W/B | yes |
+| `10`–`2E` | Communication command / status | W/B | yes |
+| `30` | Timer (INT3) | W/B | yes |
+| `32` | Interrupt mask | W/B | yes |
+| `34` | **CD fader** | **W** | **no** |
+| `36` | CDD control | W/B | **no** |
+| `38`–`4A` | CDD status / command | W/B | **no** |
+| `4C` | Font colour | W/B | yes |
+| `4E` | Font bit | W/B | yes |
+| `50`–`56` | Font data | W/B | yes |
+| `58` | Stamp size | W/B | yes |
+| `5A` | Stamp map base address | **W** | **no** |
+| `5C` | Image buffer V-cell size | W/B | **no** |
+| `5E` | Image buffer start address | **W** | **no** |
+| `60` | Image buffer offset | W/B | yes |
+| `62` | Image buffer H-dot size | **W** | **no** |
+| `64` | Image buffer V-dot size | **W** | **no** |
+| `66` | Trace vector base address | **W** | **no** |
+| `68` | Sub-code address | W/B | yes |
+| `100`–`1FE` | Sub-code data | W/B | yes |
+
+### Main CPU side, base `$A12000`
+
+| Offset | Register | Access | Bit ops |
+|---|---|---|---|
+| `00` | Reset / INT2 | W/B | **btst only** |
+| `02` | Memory mode / write protect | W/B | yes |
+| `04` | CDC mode | W/B | yes |
+| `06` | H-INT vector | **W** | yes |
+| `08` | CDC host data | **W** | **no** |
+| `0C` | Stopwatch | **W** | **no** |
+| `0E` | Communication flag | W/B | yes |
+| `10`–`2E` | Communication command / status | W/B | yes |
+
+This is why the CD fader (`GA_REG_CDFADER`, `$FF8034`) needs care: it is **word access only, with no bit
+operations**. Read-modify-write the whole word.
+
+> **One row is uncertain.** The scan's row alignment around offsets `04` and `06` is ambiguous as to
+> which carries "Only btst". Both are recorded above on the reading that the two scans agree on, but
+> if you are about to rely on bit operations against the CDC registers, check the page yourself.
+
