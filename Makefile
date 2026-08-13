@@ -20,7 +20,7 @@
 
 CHECK := tools/check/check.py
 
-.PHONY: all check check-headers check-asserts check-link check-asm check-symbols check-projects lint test \
+.PHONY: all check check-headers check-asserts check-link check-asm check-symbols check-projects check-incremental lint test \
         baseline format format-check docs clean-check help
 
 all: help
@@ -63,6 +63,9 @@ check-symbols:
 
 check-projects:
 	@$(CHECK) projects
+
+check-incremental:
+	@$(CHECK) incremental
 
 lint:
 	@$(CHECK) conventions

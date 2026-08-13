@@ -291,3 +291,41 @@ endif
 	$(Q)$(MKISOFS) -quiet $(ISO_FLAGS) $(ISO_DATE_FLAGS) -G $< -V "$(PROJECT_ID)" \
 		-o $@ $(DISC_PATH)
 	$(call msg_done,Completed build of $(PROJECT_ID) ($(TARGET) / $(REGION) / $(VIDEO)))
+
+# Disc payload assets. Source assets live in $(RES_PATH) (as docs/disc.md
+# already advises for audio) and are copied into $(DISC_PATH) at build time.
+# $(DISC_PATH) holds build output and is gitignored, so an asset kept there
+# directly is untracked, and a fresh clone silently produces an image missing
+# its data. List the copy under DISC_CONTENTS to have it built and verified.
+# Declared explicitly rather than as a $(DISC_PATH)/% pattern rule: a pattern
+# would also match the module outputs, and make would try to build res/foo.mmd
+# and copy it into place.
+define disc_asset_rule
+$(DISC_PATH)/$(1): $(RES_PATH)/$(1)
+	$$(Q)mkdir -p $$(dir $$@)
+	$$(Q)cp $$< $$@
+endef
+$(foreach a,$(DISC_ASSETS),$(eval $(call disc_asset_rule,$(a))))
+
+# Introspection: `make print-DISC_CONTENTS` reports a variable's value, so
+# tooling can check what the build intends to produce.
+print-%:
+	@echo '$($*)'
+
+################################################################################
+# Header dependency tracking
+#
+# -MMD writes a .d file alongside each object listing the headers it included,
+# and -MP adds a phony target for each of those headers so that deleting one
+# does not break the build with "No rule to make target".
+#
+# Including them here is what makes `make` notice a changed header. Without it,
+# editing a .h leaves every dependent object stale, which is why the advice
+# used to be to run `make clean` before every build.
+#
+# NOTE: this include is easy to delete by accident and nothing fails loudly
+# when it is missing - the build simply stops noticing header changes. The
+# verification gate checks for it explicitly (Tier 0.6).
+################################################################################
+
+-include $(shell test -d $(BUILD_PATH) && find $(BUILD_PATH) -name '*.d' 2>/dev/null)
