@@ -1046,23 +1046,146 @@
 
 /**
  * @def GA_REG_CDFADER
- * @sa ga_reg_cdfader
- * @warning Word access only. A byte access to this register can raise a
- * bus error.
+ * @brief CD audio fader and de-emphasis
+ *
+ * @details
+ * @warning **The hardware documentation prohibits application software from
+ * accessing this register directly.** Use the Sub BIOS fader calls instead.
+ * It is defined here for completeness and for the BIOS wrappers, not as an
+ * interface to reach for.
+ *
+ * Volume is expressed as a *decay depth* rather than a level, and the hardware
+ * ramps to it rather than jumping: the ramp takes 22 microseconds per unit of
+ * depth. Depth is minimum (loudest) at `%10000000000` and maximum (silent) at
+ * `%00000000000`. From `%00000000100` upward the attenuation in decibels is
+ * -20 log(FD10..FD02 / 256), with the bottom two bits not used arithmetically.
+ *
+ * Fields:
+ * - **FD00-10** — fade volume data, at bits 4 through 14.
+ * - **EFDT** — end of fade data transfer. 1: busy, the previous value is still
+ *   being shifted out to the fader; 0: ready, a new value may be set.
+ * - **DEF0-1** — de-emphasis, for the pre-emphasis used by some early classical
+ *   CDs. Normally off.
+ *
+ * | DEF1 | DEF0 | De-emphasis |
+ * |---|---|---|
+ * | 0 | 0 | Off |
+ * | 0 | 1 | Fs = 44.1 kHz |
+ * | 1 | 0 | Fs = 32 kHz |
+ * | 1 | 1 | Fs = 48 kHz |
+ *
+ * @note Only the position of FD00-10 is transcribed as fact; the manual states
+ * it in words. The bit table on that page is obscured in the scan, so the exact
+ * positions of EFDT and DEF0-1 are **not** recorded here rather than guessed.
+ * See SPEC.md section 7.
+ * @warning Word access only. A byte access to this register can raise a bus
+ * error.
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
+ * @sa ga_reg_cdfader
  * @ingroup ga_reg_sub_26
  */
 #define GA_REG_CDFADER 0xFF8034
 
 /**
+ * @def GA_CDFADER_FD_MASK
+ * @brief Fade volume data (decay depth)
+ * @details Larger is quieter. See GA_REG_CDFADER for the scale and the ramp
+ * timing.
+ * @sa ga_reg_cdfader
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_26
+ */
+#define GA_CDFADER_FD_POS 4
+#define GA_CDFADER_FD_WIDTH 11
+#define GA_CDFADER_FD_MASK FIELD_MASK(GA_CDFADER_FD_POS, GA_CDFADER_FD_WIDTH)
+
+/**
  * @def GA_REG_CDDCTRL
+ * @brief CDD communication control
+ *
+ * @details
+ * @warning **The hardware documentation prohibits application software from
+ * accessing this register directly.** Use the Sub BIOS drive calls instead.
+ *
+ * Drives the serial link to the CD drive controller. Communication is started
+ * once, by taking HOCK from 0 to 1; the two status bits then report which
+ * direction a transfer is currently running in.
+ *
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | | | | | | | | |\b D/M| | | | | |\b HOCK|\b DRS|\b DTS|
+ * |\b R| | | | | | | |◯| | | | | |◯|◯|◯|
+ * |\b W| | | | | | | | | | | | | |◯|◯|◯|
+ *
+ * @param DTS Data transmission status.
+ * \n [read] 1: the communication buffer is being sent to the CDD
+ * \n [write] **0 only**, which aborts the transfer in progress
+ * @param DRS Data receiving status.
+ * \n [read] 1: the CDD is sending into the communication buffer
+ * \n [write] **0 only**, which aborts the transfer in progress
+ * @param HOCK Host clock. 0 after power on; taking it 0 to 1 starts
+ * communication with the CDD.
+ * @param D/M Data or music. Read only. 1: the current CDD data is ROM data,
+ * which includes the stop and pause states. 0: it is audio.
+ *
+ * @note A communication error aborts the transfer in progress within 240
+ * microseconds, so DTS and DRS may clear without the transfer completing.
+ * @warning BSET and BCLR may not be used on this register.
+ * @note The manual's bit table is illegible in the scan at exactly the columns
+ * these four fields occupy, so the field *positions* below come from the SDK's
+ * prior research rather than from the page. Their *semantics* are transcribed
+ * from it. See SPEC.md section 7.
  * @sa ga_reg_cddctrl
- * @warning Bit operation instructions are not permitted here; read the
- * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_27
  */
 #define GA_REG_CDDCTRL 0xFF8036
+
+/**
+ * @def GA_CDDCTRL_DTS_MASK
+ * @brief Data transmission status
+ * @sa GA_REG_CDDCTRL
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_27
+ */
+#define GA_CDDCTRL_DTS_POS 0
+#define GA_CDDCTRL_DTS_WIDTH 1
+#define GA_CDDCTRL_DTS_MASK FIELD_MASK(GA_CDDCTRL_DTS_POS, GA_CDDCTRL_DTS_WIDTH)
+
+/**
+ * @def GA_CDDCTRL_DRS_MASK
+ * @brief Data receiving status
+ * @sa GA_REG_CDDCTRL
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_27
+ */
+#define GA_CDDCTRL_DRS_POS 1
+#define GA_CDDCTRL_DRS_WIDTH 1
+#define GA_CDDCTRL_DRS_MASK FIELD_MASK(GA_CDDCTRL_DRS_POS, GA_CDDCTRL_DRS_WIDTH)
+
+/**
+ * @def GA_CDDCTRL_HOCK_MASK
+ * @brief Host clock; 0 to 1 starts CDD communication
+ * @sa GA_REG_CDDCTRL
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_27
+ */
+#define GA_CDDCTRL_HOCK_POS 2
+#define GA_CDDCTRL_HOCK_WIDTH 1
+#define GA_CDDCTRL_HOCK_MASK FIELD_MASK(GA_CDDCTRL_HOCK_POS, GA_CDDCTRL_HOCK_WIDTH)
+
+/**
+ * @def GA_CDDCTRL_DM_MASK
+ * @brief Data or music; read only
+ * @note In the high byte, so use FIELD_BYTE and FIELD_BPOS to reach it with a
+ * bit opcode.
+ * @sa GA_REG_CDDCTRL
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_27
+ */
+#define GA_CDDCTRL_DM_POS 8
+#define GA_CDDCTRL_DM_WIDTH 1
+#define GA_CDDCTRL_DM_MASK FIELD_MASK(GA_CDDCTRL_DM_POS, GA_CDDCTRL_DM_WIDTH)
 
 /**
  * @def GA_REG_CDDCOMM0

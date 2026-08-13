@@ -183,8 +183,8 @@ matter — a byte access to a word-only register can raise a bus error.
 | `10`–`2E` | Communication command / status | W/B | yes |
 | `30` | Timer (INT3) | W/B | yes |
 | `32` | Interrupt mask | W/B | yes |
-| `34` | **CD fader** | **W** | **no** |
-| `36` | CDD control | W/B | **no** |
+| `34` | **CD fader** — *direct access prohibited* | **W** | **no** |
+| `36` | CDD control — *direct access prohibited* | W/B | **no BSET/BCLR** |
 | `38`–`4A` | CDD status / command | W/B | **no** |
 | `4C` | Font colour | W/B | yes |
 | `4E` | Font bit | W/B | yes |

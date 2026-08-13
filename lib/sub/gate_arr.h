@@ -256,34 +256,8 @@ typedef u8 volatile const * ga_reg8_ro;
 #define ga_reg_cdfader (*((ga_reg) GA_REG_CDFADER))
 /**
  * @def ga_reg_cddctrl
- * @brief GA Reg 1B - CDD Control
- * @sa GA_REG_CDDCTRL
+ * @copydoc GA_REG_CDDCTRL
  * @ingroup gatearray_sub
- *
- * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * | |||||||D/M| |||||HOCK|DRS|DTS|
- *
- * DTS: Data Transfer Status
- * @details R: 1 - indicates data is being transferr from the communications
- * buffer to the CDD; W: 0 - abort the communication transfer (only 0 can be
- * written to this bit)
- *
- * DRS: Data Receive Status
- * @details R: 1 - indicates data is being transferr from the CDD to the
- * communications buffer; W: 0 - abort the communication transfer (only 0 can
- * be written to this bit)
- *
- * HOCK: Host Clock
- * @details: W: 1 - Starts communication with the CDD
- *
- * D/M: Data/Music
- * @details: R: 0 - CDD data is audio data; 1 - CDD data is ROM data
- *
- * @details Official documentation indicates this register is not intended
- * for direct access from user applications. Consider using BIOS functions
- * for CD drive functionality.
  */
 #define ga_reg_cddctrl (*((ga_reg) GA_REG_CDDCTRL))
 /**
