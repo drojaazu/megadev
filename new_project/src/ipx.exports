@@ -1,5 +1,0 @@
-# The IPX kernel's public API: symbols transient modules may call.
-# One name per line. Anything not listed stays private to the module.
-init_particles
-process_particles
-next_module

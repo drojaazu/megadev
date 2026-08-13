@@ -113,19 +113,6 @@ Instead, the symbol reference is now curated before it is used. By default the
 known build-metadata symbols are stripped, which is enough to make the link
 unambiguous with no change to your project.
 
-You can go further and declare the module's ABI explicitly by adding
-`<module>.exports` next to your sources, listing one symbol per line:
-
-    # The IPX kernel's public API: symbols transient modules may call.
-    init_particles
-    process_particles
-    next_module
-
-When that file exists, only those symbols are offered to importing modules and
-everything else stays private. This is worth doing for a resident kernel: it
-documents the interface, and it turns "a transient module accidentally resolved
-against an internal helper" into a link error.
-
 ### Object file layout
 
 Object files mirror the path you name the source by, under the build directory: a module listing
