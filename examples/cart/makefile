@@ -78,7 +78,7 @@ rom: \
 	$(PROJECT_ID).cart
 
 clean:
-	@rm -f $(PROJECT_ID).cart $(BUILD_PATH)/* > /dev/null 2>&1
+	@rm -rf $(PROJECT_ID).cart $(BUILD_PATH)/ > /dev/null 2>&1
 
 $(PROJECT_ID).cart: \
 	init.s \

@@ -46,9 +46,30 @@ def run(clean_first: bool = True) -> int:
         # `make` (SPEC.md B-1). This tier is what proves that stays true.
         res = _make(p)
 
-        if res.returncode == 0:
-            rep.ok(p.name, quiet=False)
-        else:
+        if res.returncode != 0:
             rep.fail(p.name, res.stdout + res.stderr)
+            continue
+
+        # Exit status alone is NOT enough. A misexpanded prerequisite once let
+        # mkisofs master an image from an empty disc/ and still exit 0, so the
+        # gate reported a completely broken ISO as a pass. Verify the build
+        # actually produced what it said it would.
+        missing = []
+        contents = _make(p, "-s", "print-DISC_CONTENTS").stdout.split()
+        for item in contents:
+            f = p / item
+            if not f.exists() or f.stat().st_size == 0:
+                missing.append(f"{item} (declared in DISC_CONTENTS)")
+
+        images = [f for f in list(p.glob("*.iso")) + list(p.glob("*.cart"))]
+        if not images:
+            missing.append("no .iso or .cart produced")
+        else:
+            missing += [f"{i.name} is empty" for i in images if i.stat().st_size == 0]
+
+        if missing:
+            rep.fail(p.name, "build exited 0 but did not produce:\n  " + "\n  ".join(missing))
+        else:
+            rep.ok(p.name, quiet=False)
 
     return rep.summarise()

@@ -97,12 +97,11 @@ For example, the title screen may be `title.mmd`, for which we will need `title.
 
 Those files will be compiled then linked together to create the final `title.mmd` on the disc.
 
-### Limitations
+### Object file layout
 
-Object files are named after the source file alone, without its directory, and all of them are
-written into a single build directory. Two sources with the same base name in different directories
-will therefore overwrite each other. If you have `gfx/sprite.c` and `audio/sprite.c`, rename one of
-them.
+Object files mirror the path you name the source by, under the build directory: a module listing
+`sub/pcm.s` produces `build/sub/pcm.s.o`, and `sprite.c` produces `build/sprite.c.o`. Sources with
+the same base name in different directories therefore do not collide.
 
 
 ## Memory Resident Modules

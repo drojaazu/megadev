@@ -81,16 +81,19 @@ init:
 	@mkdir -p $(BUILD_PATH)
 	@mkdir -p $(DISC_PATH)
 
-all: \
+# Everything that must be built into $(DISC_PATH). The ISO depends on this,
+# so a parallel build cannot master the image before the modules exist.
+DISC_CONTENTS := \
 	$(DISC_PATH)/ipx.mmd \
 	$(DISC_PATH)/spx.smd \
 	$(DISC_PATH)/ex1.mmd \
 	$(DISC_PATH)/ex2.mmd \
-	$(DISC_PATH)/ex3.mmd \
-	$(PROJECT_ID).iso
+	$(DISC_PATH)/ex3.mmd
+
+all: $(PROJECT_ID).iso
 
 clean:
-	@rm -f $(PROJECT_ID).iso $(DISC_PATH)/*.mmd $(DISC_PATH)/*.smd $(BUILD_PATH)/* > /dev/null 2>&1
+	@rm -rf $(PROJECT_ID).iso $(DISC_PATH)/*.mmd $(DISC_PATH)/*.smd $(BUILD_PATH)/ > /dev/null 2>&1
 
 $(DISC_PATH)/ipx.mmd: \
 	ipx_layout.s \
