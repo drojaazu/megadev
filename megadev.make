@@ -192,29 +192,15 @@ endif
 # other (B-5). `sub/pcm.s` becomes `$(BUILD_PATH)/sub/pcm.s.o`.
 MODULE_OBJS = $(addprefix $(BUILD_PATH)/,$(addsuffix .o,$(filter %.c %.s,$1)))
 
-# Symbols that are a module's private BUILD METADATA, not part of its API.
-# Every module defines these for its own linker script, so importing them from
-# a resident module collides with the importing module's own copies -- which is
-# the only reason -z muldefs was ever needed. Stripping them from the symbol
-# reference ELF lets modules link cleanly, so duplicate symbols are once again
-# a real error rather than something suppressed wholesale.
-MODULE_PRIVATE_SYMS:= \
-	MMD_DEST \
-	MODULE_ROM_ORIGIN MODULE_ROM_LENGTH \
-	MODULE_RAM_ORIGIN MODULE_RAM_LENGTH \
-	_TEXT_ORIGIN _TEXT_LENGTH \
-	_ROM_LENGTH _ROM_LENGTH_LOOPSZ _ROM_DATA_ORIGIN \
-	_BSS_ORIGIN _BSS_LENGTH _BSS_LENGTH_LOOPSZ \
-	_RAM_DATA_ORIGIN _RAM_DATA_LENGTH _RAM_DATA_LENGTH_LOOPSZ \
-	_RODATA_ORIGIN _RODATA_LENGTH \
-	_INIT_ORIGIN _INIT_LENGTH \
-	main
-
-STRIP_PRIVATE_SYMS=$(foreach s,$(MODULE_PRIVATE_SYMS),--strip-symbol=$(s))
-
-# How to curate a resident module's symbols before a transient module links
-# against them: strip the private build metadata listed above.
-module_export_args = $(STRIP_PRIVATE_SYMS)
+# Memory resident modules -- those other modules import symbols from -- are
+# built with a layout script that names its metadata RESIDENT_* instead of
+# MODULE_*. Declare them in the project makefile:
+#
+#     RESIDENT_MODULES:=$(DISC_PATH)/ipx.mmd
+#
+# Without this, a transient module importing a resident one sees that module's
+# MODULE_ROM_ORIGIN and friends collide with its own.
+module_ld_script = $(if $(filter $(1),$(RESIDENT_MODULES)),$(CFG_PATH)/module_resident_$(2).ld,$(CFG_PATH)/module_$(2).ld)
 
 .DEFAULT_GOAL:=all
 
@@ -232,7 +218,7 @@ $(BUILD_PATH)/%.s.o: %.s | $(BUILD_PATH)
 #	@echo "mmd elf in: $^"
 #	@echo "mmd elf out: $@"
 #	echo "making mmd elf with: $^ $@"
-#	$(LD) $(LD_FLAGS) -T $(CFG_PATH)/module_mmd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(symref)) -o $@
+#	$(LD) $(LD_FLAGS) -T $(call module_ld_script,$@,mmd) $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(symref)) -o $@
 
 %.mmd: $$(call MODULE_OBJS,$$^)
 # @echo "mmd in: $^"
@@ -242,11 +228,9 @@ $(BUILD_PATH)/%.s.o: %.s | $(BUILD_PATH)
 	$(eval BUILD_SRC:=$(filter %.o,$^))
 	$(eval BUILD_MOD:=$(filter %.mmd %.smd %.bin,$^))
 # @echo "build mod: $(BUILD_MOD)"
-	$(Q)$(foreach symref,$(BUILD_MOD),$(OBJCPY) $(call module_export_args,$(symref)) \
-		$(BUILD_PATH)/$(notdir $(symref)).elf $(BUILD_PATH)/$(notdir $(symref)).syms.elf &&) true
 	$(call msg_info,Linking module $(notdir $@))
 	$(eval OUT_MOD_ELF:=$(addprefix $(BUILD_PATH)/,$(addsuffix .elf,$(notdir $@))))
-	@$(LD) $(LD_FLAGS) -T $(CFG_PATH)/module_mmd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(addsuffix .syms.elf,$(addprefix $(BUILD_PATH)/,$(notdir $(symref))))) -o $(OUT_MOD_ELF)
+	@$(LD) $(LD_FLAGS) -T $(call module_ld_script,$@,mmd) $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(addsuffix .elf,$(addprefix $(BUILD_PATH)/,$(notdir $(symref))))) -o $(OUT_MOD_ELF)
 	@$(NM) -n $(OUT_MOD_ELF) > $(addsuffix .sym,$(OUT_MOD_ELF))
 	@$(OBJCPY) -O binary $(OUT_MOD_ELF) $@
 
@@ -258,11 +242,9 @@ $(BUILD_PATH)/%.s.o: %.s | $(BUILD_PATH)
 	$(eval BUILD_SRC:=$(filter %.o,$^))
 	$(eval BUILD_MOD:=$(filter %.mmd %.smd %.bin,$^))
 # @echo "build mod: $(BUILD_MOD)"
-	$(Q)$(foreach symref,$(BUILD_MOD),$(OBJCPY) $(call module_export_args,$(symref)) \
-		$(BUILD_PATH)/$(notdir $(symref)).elf $(BUILD_PATH)/$(notdir $(symref)).syms.elf &&) true
 	$(call msg_info,Linking module $(notdir $@))
 	$(eval OUT_MOD_ELF:=$(addprefix $(BUILD_PATH)/,$(addsuffix .elf,$(notdir $@))))
-	@$(LD) $(LD_FLAGS) -T $(CFG_PATH)/module_smd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(addsuffix .syms.elf,$(addprefix $(BUILD_PATH)/,$(notdir $(symref))))) -o $(OUT_MOD_ELF)
+	@$(LD) $(LD_FLAGS) -T $(call module_ld_script,$@,smd) $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(addsuffix .elf,$(addprefix $(BUILD_PATH)/,$(notdir $(symref))))) -o $(OUT_MOD_ELF)
 	@$(NM) -n $(OUT_MOD_ELF) > $(addsuffix .sym,$(OUT_MOD_ELF))
 	@$(OBJCPY) -O binary $(OUT_MOD_ELF) $@
 
