@@ -7,3 +7,7 @@ docs/html/
 
 # verification gate scratch
 build-check/
+
+# python bytecode
+__pycache__/
+*.pyc

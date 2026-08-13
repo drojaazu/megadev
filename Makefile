@@ -10,16 +10,18 @@
 #
 #   make check          everything
 #   make check-headers  Tier 0.1 - every header compiles standalone
+#   make check-link     Tier 0.4 - one-definition-rule across two TUs
 #   make check-asm      Tier 0.2 - every assembly source assembles
-#   make check-examples Tier 0.3 - every example and the template builds
+#   make check-projects Tier 0.3 - every example and the template builds
 #   make lint           Tier 1   - convention lint
-#   make format-check   clang-format, no changes written
+#   make test           unit tests for the gate itself (no toolchain needed)
 #
 # CI runs `make check` and nothing else, so the local and CI paths cannot drift.
 
-CHECK_DIR := tools/check
+CHECK := tools/check/check.py
 
-.PHONY: all check check-headers check-link check-asm check-examples lint format format-check docs clean-check help
+.PHONY: all check check-headers check-link check-asm check-projects lint test \
+        baseline format format-check docs clean-check help
 
 all: help
 
@@ -29,32 +31,39 @@ help:
 	@printf '  check-headers   Tier 0.1 - per-header compile\n'
 	@printf '  check-link      Tier 0.4 - one-definition-rule across two TUs\n'
 	@printf '  check-asm       Tier 0.2 - assemble every .s\n'
-	@printf '  check-examples  Tier 0.3 - build examples and template\n'
+	@printf '  check-projects  Tier 0.3 - build examples and template\n'
 	@printf '  lint            Tier 1   - convention lint\n'
+	@printf '  test            unit tests for the gate (no toolchain needed)\n'
+	@printf '  baseline        re-accept current lint findings as the baseline\n'
 	@printf '  format-check    clang-format --dry-run\n'
 	@printf '  format          apply clang-format in place\n'
 	@printf '  docs            generate Doxygen output\n'
 	@printf '  clean-check     remove gate scratch files\n\n'
 	@printf 'Run inside the devcontainer - these need the m68k toolchain.\n'
 
-# Ordered cheapest-first so an obvious breakage fails fast.
-check: lint check-headers check-link check-asm check-examples
-	@printf '\n\033[1;32mAll checks passed.\033[0m\n'
+check:
+	@$(CHECK) all
 
 check-headers:
-	@$(CHECK_DIR)/headers.sh
+	@$(CHECK) headers
 
 check-link:
-	@$(CHECK_DIR)/link.sh
+	@$(CHECK) link
 
 check-asm:
-	@$(CHECK_DIR)/asm.sh
+	@$(CHECK) asm
 
-check-examples:
-	@$(CHECK_DIR)/examples.sh
+check-projects:
+	@$(CHECK) projects
 
 lint:
-	@$(CHECK_DIR)/conventions.sh
+	@$(CHECK) conventions
+
+baseline:
+	@$(CHECK) conventions --write-baseline
+
+test:
+	@python3 -m unittest discover -s tools/check/tests -v
 
 format-check:
 	@find lib -name '*.h' -o -name '*.c' | xargs clang-format --dry-run --Werror
@@ -62,8 +71,6 @@ format-check:
 format:
 	@find lib -name '*.h' -o -name '*.c' | xargs clang-format -i
 
-# NOTE: the Doxyfile is currently broken - see BACKLOG.md DOC-1. This target
-# will not produce complete output until that is fixed.
 docs:
 	@doxygen Doxyfile
 

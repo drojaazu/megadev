@@ -13,6 +13,7 @@ RUN \
 	libnewlib-dev \
 	genisoimage \
 	xxd \
+	python3 \
 	clang-format-19 \
 	&& \
 	apt-get clean && \
