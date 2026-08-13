@@ -65,7 +65,7 @@ ifeq ($(REGION),US)
 else
 	HEADER_HARDWARE_ID?="SEGA MEGA DRIVE"
 endif
-HEADER_VOL_ID?=$(shell printf $(PROJECT_ID) |tr '[:lower:]' '[:upper:]')
+HEADER_VOL_ID?=$(shell printf '%s' '$(PROJECT_ID)' | tr '[:lower:]' '[:upper:]')
 # Simply-expanded so the date is resolved once per build rather than on every
 # compile. Set SOURCE_DATE_EPOCH for a reproducible build.
 BUILD_DATE:=$(shell LC_TIME=C date $(if $(SOURCE_DATE_EPOCH),-u -d @$(SOURCE_DATE_EPOCH),) +"%Y.%b" | tr '[:lower:]' '[:upper:]')
@@ -73,7 +73,7 @@ HEADER_COPYRIGHT?="(C)\ \ \ \ \ $(BUILD_DATE)"
 HEADER_SOFTWARE_ID?="GM 00-0000-00"
 HEADER_REGION?="JUE"
 HEADER_DISC_ID?="SEGADISCSYSTEM"
-HEADER_SYS_ID?=$(shell printf $(PROJECT_ID) |tr '[:lower:]' '[:upper:]')
+HEADER_SYS_ID?=$(shell printf '%s' '$(PROJECT_ID)' | tr '[:lower:]' '[:upper:]')
 
 # Fancy colors cause we're fancy
 CLEAR=\033[0m
@@ -157,7 +157,19 @@ vpath %.elf $(BUILD_PATH)
 vpath %.c.o $(BUILD_PATH)
 vpath %.s.o $(BUILD_PATH)
 
-.SECONDARY: $(BUILD_PATH)/*
+# A recipe that fails part way leaves its partial output behind, and make then
+# treats that file as up to date -- so an interrupted mkisofs, objcopy or ld
+# yields a corrupt image that the NEXT build happily accepts. Demonstrated:
+# without this, a failed recipe left a 7 byte file and make reported success.
+.DELETE_ON_ERROR:
+
+# Keep intermediates (objects, ELFs) rather than deleting them after a build.
+# This was previously `.SECONDARY: $(BUILD_PATH)/*`, whose wildcard is expanded
+# when the makefile is read: on a clean tree it matched nothing, which means
+# "all targets are secondary", and on an incremental build it matched only the
+# files that already existed. Bare .SECONDARY: states that intent directly and
+# behaves the same on every run.
+.SECONDARY:
 
 $(BUILD_PATH):
 	$(Q)mkdir -p $@
@@ -198,6 +210,12 @@ $(BUILD_PATH)/%.s.o: %.s | $(BUILD_PATH)
 #	echo "making mmd elf with: $^ $@"
 #	$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_mmd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(symref)) -o $@
 
+# NOTE on -z muldefs below: modules that share a layout file define the same
+# MODULE_ROM_LENGTH etc. as the resident module they import symbols from with
+# -R, so the link genuinely does see duplicate definitions. Verified: removing
+# it fails new_project with "multiple definition of MODULE_ROM_LENGTH".
+# It is a blunt instrument -- it suppresses ALL duplicate-symbol errors, real
+# ones included. See BACKLOG MAKE-15.
 %.mmd: $$(call MODULE_OBJS,$$^)
 # @echo "mmd in: $^"
 # @echo "mmd out: $@"
@@ -288,7 +306,7 @@ endif
 	$(Q)mkdir -p $(dir $@) $(DISC_PATH)
 	$(call msg_info,Generating ISO image $(notdir $@))
 	$(Q)$(NORMALISE_DISC_MTIMES)
-	$(Q)$(MKISOFS) -quiet $(ISO_FLAGS) $(ISO_DATE_FLAGS) -G $< -V "$(PROJECT_ID)" \
+	$(Q)$(MKISOFS) -quiet $(ISO_FLAGS) $(ISO_DATE_FLAGS) -G $< -V "$(HEADER_VOL_ID)" \
 		-o $@ $(DISC_PATH)
 	$(call msg_done,Completed build of $(PROJECT_ID) ($(TARGET) / $(REGION) / $(VIDEO)))
 

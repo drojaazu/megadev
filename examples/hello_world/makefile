@@ -66,13 +66,8 @@ MEGADEV_PATH?=/opt/megadev
 # *** REQUIRED!***
 include $(MEGADEV_PATH)/megadev.make
 
-.PHONY: init all clean
+.PHONY: all clean
 
-init:
-	@mkdir -p $(SRC_PATH)
-	@mkdir -p $(RES_PATH)
-	@mkdir -p $(BUILD_PATH)
-	@mkdir -p $(DISC_PATH)
 
 all: \
 	$(PROJECT_ID).iso
