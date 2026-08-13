@@ -315,18 +315,39 @@ Cannot be automated. Tracked as provenance in §7: no claim is silently promoted
 Every hardware assertion carries one of: `HW` (verified on real hardware, model noted), `EMU`
 (emulator only), `DOC` (from Sega documentation or credible third-party research), `ASSUMED`.
 
+### Primary sources
+
+Official Sega documentation and source dumps are held outside the repo, on the `motoi-nas` library
+share (verified present 2026-08-13):
+
+- `/mnt/library/Retro Games/By Hardware/Sega Mega CD/`
+  - `Development Documents/` — Mega-CD BIOS Manual, **Hardware Manual "The Hardware"**, Hardware
+    Manual "PCM Sound Source", Disc Format Specifications, Mega-CD Outline, CTrac tooling, Cinepak
+    bulletins.
+  - `BIOS Revisions/` — dated Boot ROM dumps (JP 1.00C through 1.11 and later).
+  - `Source Code/` — Batman Returns Sega CD project package.
+- `/mnt/library/Retro Games/By Hardware/Sega Mega Drive/`
+  - `Development Documents/` — Genesis Software Manual, Genesis Technical Bulletins, reference sheets.
+  - `Dev Resources and Source Code/` — Batman Returns, Cliffhanger, Ex-Mutants project packages,
+    SegaKit.
+
+> **Two independent translations exist** for several Mega-CD manuals — credited *(Rex Sabio)* and
+> *(The Code Monkeys)*. The official English is in places ambiguous or plainly wrong, so where a
+> claim rests on wording, **check both translations before recording it as `DOC`**; a disagreement
+> between them is itself a signal to downgrade the claim to `ASSUMED` pending hardware testing.
+
 | Claim | Provenance | Source / note |
 |---|---|---|
 | Gate Array register map, Sub side | DOC | Sega BIOS manual + community research |
 | Gate Array register map, Main side | DOC | as above |
 | Sub BIOS function codes | DOC | Sega BIOS manual |
 | Main Boot ROM system library | **Partly ASSUMED** | Reverse-engineered; `docs/main_bios.md` has ~39 empty entries and self-describes as needing "better notes" |
-| Boot sector layout may be changed | **ASSUMED — open question** | `docs/boot.md:15`: "we need to test whether changing the boot sector layout will work on actual hardware" |
-| Writing 0 to Word RAM mode bits in 2M mode | **ASSUMED — open question** | `lib/sub/gate_arr.def.h:239` `@todo` requests hardware research |
+| Boot sector layout may be changed | **ASSUMED — open question** | `docs/boot.md:15`. Check *Mega-CD Disc Format Specifications* and the BIOS Manual before testing on hardware. |
+| Writing 0 to Word RAM mode bits in 2M mode | **ASSUMED — open question** | `lib/sub/gate_arr.def.h` `@todo` cites *"the 'The Hardware' documentation"* — that is *Mega-CD Hardware Manual - The Hardware*, held in the library share above. |
 | Main-CPU CD-ROM read path | **UNKNOWN** | `docs/cdrom.md`: "not well understood" |
-| CDC DMA transfer speed / bus contention | **UNKNOWN** | `docs/cdrom.md`: speed advantages and bus issues "are unknown" |
-| BRAM cart bank/ID map | DOC | `lib/main/bramcart.def.h` — sourced from a spritesmind forum thread, unverified |
-| `HW_REV` is 3 bits | **SUSPECT** | `lib/main/md_sys.def.h:28` defines `(0b111 << 0)`; its own comment shows VER3..VER0 (4 bits). Gates the TMSS write in `md_init.s:32`. |
+| CDC DMA transfer speed / bus contention | **UNKNOWN** | `docs/cdrom.md`. Start with *Mega-CD Hardware Manual - The Hardware*. |
+| BRAM cart bank/ID map | **ASSUMED** | `lib/main/bramcart.def.h` — from a spritesmind forum thread, not an official source. Cross-check against the BIOS Manual. |
+| `HW_REV` is 3 bits | **SUSPECT** | `lib/main/md_sys.def.h:28` defines `(0b111 << 0)`; its own comment shows VER3..VER0 (4 bits). Gates the TMSS write in `md_init.s:32`. Settle against the *Genesis Software Manual*. |
 
 ---
 
