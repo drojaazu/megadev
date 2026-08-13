@@ -148,6 +148,8 @@ toolchain was available during the audit. VER-1 must land first so that fixes ca
 | FEAT-6 | S4 | open | Support the Main-CPU CD-ROM read path (`docs/cdrom.md`: "not well understood"). |
 | FEAT-7 | S4 | open | `lib/main/vdp.h:238` — create a matching macro for `to_vram_addr`. *(inline TODO)* |
 | FEAT-8 | S4 | open | `lib/sub/cdrom.h:84` — file info struct. *(inline TODO)* |
+| LIB-18 | S4 | open | Full Q16.16 / Q16.16 division (`fix32_div`). Needs a 48-bit intermediate, which the 68000's 32/16 DIVS.W cannot provide, so it needs a software long-division routine. `fix32_div_int` covers the common case today. |
+| ARCH-11 | S3 | open | `div_t` in `lib/math.h` shadows `<stdlib.h>`'s `div_t` with a different layout (standard is `int quot; int rem;`). Part of the ARCH-8 libc-shadowing cluster alongside `div`, `divu`, `abs`, `strcpy`, `strcmp`. Note `_t` in Megadev means "stands in for a libc type" (see SPEC.md D11), so this name is actively misleading. |
 | FEAT-10 | S4 | open | **Reimplement ASCII-to-integer conversion.** The old `ATOI` macro in `lib/str_util.s` was never finished: it took no macro arguments (hardcoded to `a0`/`d0`/`d1`) and ended on a bare label with no `.endm` or `rts`, so the file could not assemble. Removed in LIB-15; recoverable from git history. It parsed an ASCII **hex** string into an integer — the inverse of `hextoa8/16/32` in the same file. A reimplementation should take proper arguments and settle the terminator convention alongside LIB-11. |
 | FEAT-9 | S4 | open | `lib/main/comm.def.h:26` — comm definitions need to be user-definable. *(inline TODO)* |
 

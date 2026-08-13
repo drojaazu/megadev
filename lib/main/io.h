@@ -89,7 +89,18 @@ typedef u8 volatile * io_reg;
 #define io_sctrl3 ((io_reg) IO_SCTRL3)
 
 /**
+ * @def time_mapping
+ * @brief Address space enabled by the cartridge /TIME pin
+ * @ingroup ioports
  * @sa TIME_MAPPING
+ *
+ * @details
+ * A 0x100 byte region at 0xA13000 decoded by the cartridge /TIME pin, used by
+ * mapper hardware such as the Backup RAM cart. Indexable, and sizeof reports
+ * the region size:
+ *
+ *     time_mapping[0x01] = 0x01;      // write a mapper register
+ *     for (u16 i = 0; i < sizeof(time_mapping); ++i) ...
  */
 #define time_mapping (*((u8(*)[0x100]) TIME_MAPPING))
 

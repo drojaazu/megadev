@@ -111,8 +111,8 @@ __attribute__((noreturn)) void main()
 
   *bios_vblank_user = vblank_user;
 
-  uf32 scroll_a = 0.0;
-  uf32 scroll_b = 0.0;
+  ufix32 scroll_a = 0.0;
+  ufix32 scroll_b = 0.0;
 
   do
   {
@@ -122,40 +122,40 @@ __attribute__((noreturn)) void main()
     bios_process_entities(&sprobj_ship, bios_sprlist, 0, 0x1A);
 
     // scroll the background layers
-    scroll_a -= frac_to_uf32(0.9);
-    scroll_b -= frac_to_uf32(0.6);
+    scroll_a -= UFIX32(0.9);
+    scroll_b -= UFIX32(0.6);
 
     // (vdp auto increment is set to 2 so we only need to set the address once)
     vdp_ctrl_32 = vdpptr_scroll;
-    vdp_data_16 = uf32_to_int(scroll_a);
-    vdp_data_16 = uf32_to_int(scroll_b);
+    vdp_data_16 = ufix32_to_int(scroll_a);
+    vdp_data_16 = ufix32_to_int(scroll_b);
 
     if (bios_joy1_hold & PAD_RIGHT)
     {
-      // ship_parts.pos_x += frac_to_uf32(3);
+      // ship_parts.pos_x += UFIX32(3);
       sprobj_ship.display_flags = 0;
-      sprobj_ship.move_x += frac_to_f32(0.2);
-      if (sprobj_ship.move_x > frac_to_f32(4))
-        sprobj_ship.move_x = frac_to_f32(4);
+      sprobj_ship.move_x += FIX32(0.2);
+      if (sprobj_ship.move_x > FIX32(4))
+        sprobj_ship.move_x = FIX32(4);
     }
 
     if (bios_joy1_hold & PAD_LEFT)
     {
-      // ship_parts.pos_x -= frac_to_f32(3);
+      // ship_parts.pos_x -= FIX32(3);
       sprobj_ship.display_flags = 0x80;
-      sprobj_ship.move_x -= frac_to_f32(0.2);
-      if (sprobj_ship.move_x < frac_to_f32(-4))
-        sprobj_ship.move_x = frac_to_f32(-4);
+      sprobj_ship.move_x -= FIX32(0.2);
+      if (sprobj_ship.move_x < FIX32(-4))
+        sprobj_ship.move_x = FIX32(-4);
     }
 
     if (bios_joy1_hold & PAD_UP)
     {
-      sprobj_ship.pos_y -= frac_to_uf32(3);
+      sprobj_ship.pos_y -= UFIX32(3);
     }
 
     if (bios_joy1_hold & PAD_DOWN)
     {
-      sprobj_ship.pos_y += frac_to_uf32(3);
+      sprobj_ship.pos_y += UFIX32(3);
     }
 
   } while (1);
