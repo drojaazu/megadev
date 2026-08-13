@@ -13,6 +13,14 @@
 
 typedef u16 volatile * ga_reg;
 
+/**
+ * @typedef ga_reg8
+ * @brief Pointer to one byte of a gate array register
+ * @details Registers are 16 bit, but several are routinely accessed a byte at
+ * a time; use with the _HI and _LO address definitions.
+ */
+typedef u8 volatile * ga_reg8;
+
 #define ga_reg_reset ((ga_reg) GA_REG_RESET)
 
 #define ga_reg_memmode ((ga_reg) GA_REG_MEMMODE)
@@ -577,7 +585,7 @@ static inline void wait_2m()
 			beq 1b \n\
 		"
     :
-    : "i"(GA_DMNA_POS), "i"(GA_REG_MEMMODE + 1));
+    : "i"(GA_DMNA_POS), "i"GA_REG_MEMMODE_LO);
 }
 
 /**
@@ -593,7 +601,7 @@ static inline void grant_2m()
 			beq 1b \n\
 		"
     :
-    : "i"(GA_RETURN_2M_POS), "i"(GA_REG_MEMMODE + 1));
+    : "i"(GA_RETURN_2M_POS), "i"GA_REG_MEMMODE_LO);
 }
 
 /**
@@ -609,7 +617,7 @@ static inline void set_1m()
 			beq 1b \n\
 		"
     :
-    : "i"(GA_WORDRAM_LAYOUT_POS), "i"(GA_REG_MEMMODE + 1));
+    : "i"(GA_WORDRAM_LAYOUT_POS), "i"GA_REG_MEMMODE_LO);
 }
 
 /**
@@ -625,7 +633,7 @@ static inline void set_2m()
 			bne 1b \n\
 		"
     :
-    : "i"(GA_WORDRAM_LAYOUT_POS), "i"(GA_REG_MEMMODE + 1));
+    : "i"(GA_WORDRAM_LAYOUT_POS), "i"GA_REG_MEMMODE_LO);
 }
 
 /**
@@ -648,5 +656,34 @@ static inline void clear_comm_regs()
     : "i"(GA_REG_COMSTAT0)
     : "d0", "a0");
 }
+
+
+/**
+ * @def ga_reg_reset_hi
+ * @brief High byte of @ref ga_reg_reset
+ * @sa GA_REG_RESET_HI
+ */
+#define ga_reg_reset_hi ((ga_reg8) GA_REG_RESET_HI)
+
+/**
+ * @def ga_reg_reset_lo
+ * @brief Low byte of @ref ga_reg_reset
+ * @sa GA_REG_RESET_LO
+ */
+#define ga_reg_reset_lo ((ga_reg8) GA_REG_RESET_LO)
+
+/**
+ * @def ga_reg_memmode_hi
+ * @brief High byte of @ref ga_reg_memmode
+ * @sa GA_REG_MEMMODE_HI
+ */
+#define ga_reg_memmode_hi ((ga_reg8) GA_REG_MEMMODE_HI)
+
+/**
+ * @def ga_reg_memmode_lo
+ * @brief Low byte of @ref ga_reg_memmode
+ * @sa GA_REG_MEMMODE_LO
+ */
+#define ga_reg_memmode_lo ((ga_reg8) GA_REG_MEMMODE_LO)
 
 #endif

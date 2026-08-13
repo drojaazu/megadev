@@ -94,3 +94,19 @@ _Static_assert(FIELD_PREP(VDP_INTERLACE, VDP_INTERLACE_DOUBLE) == (0b11 << 1),
 /* 40-cell width sets two NON-adjacent bits, so it cannot be a POS/WIDTH field
  * and is deliberately kept as a literal mask. */
 _Static_assert(VDP_WIDTH_40CELL_MASK == 0x81, "bits 0 and 7");
+
+/* --- byte access to 16-bit registers ------------------------------------ */
+
+/* The gate array registers are 16 bit but several are routinely accessed a
+ * byte at a time. _HI aliases the register itself and _LO is the next byte;
+ * getting these the wrong way round would silently address the wrong half. */
+_Static_assert(GA_REG_RESET_HI == GA_REG_RESET, "HI is the register address itself");
+_Static_assert(GA_REG_RESET_LO == GA_REG_RESET + 1, "LO is the second byte");
+_Static_assert(GA_REG_MEMMODE_HI == GA_REG_MEMMODE, "HI is the register address itself");
+_Static_assert(GA_REG_MEMMODE_LO == GA_REG_MEMMODE + 1, "LO is the second byte");
+
+/* The fields the code bit-tests all live in the low byte, which is why that is
+ * the half everything addresses. */
+_Static_assert(GA_DMNA_POS < 8, "DMNA is in the low byte of memory mode");
+_Static_assert(GA_RETURN_2M_POS < 8, "RET is in the low byte of memory mode");
+_Static_assert(GA_WORDRAM_LAYOUT_POS < 8, "MODE is in the low byte of memory mode");
