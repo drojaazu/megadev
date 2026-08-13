@@ -49,7 +49,7 @@ toolchain was available during the audit. VER-1 must land first so that fixes ca
 | LIB-9 | S1 | **done** | KB-9 — `time_mapping` fixed to the same idiom rather than deleted; it describes the real cartridge /TIME region. |
 | LIB-10 | S1 | **done** | KB-11 — `_BIT` companions added for all six SCTRL flags (INV-6); the four `btst` sites now use indices. |
 | LIB-11 | S2 | open | KB-13 — `hextoa8/16/32` C and asm versions disagree on string termination. Decide the contract, then make both match; first subject for VER-3. |
-| LIB-12 | S2 | open | `lib/memory.h` — every `memset*`/`memcpy*` uses a `dbf` loop with a **16-bit** counter. Lengths > 65536 silently truncate; length 0 wraps and loops 65536 times. Undocumented. Document or guard. |
+| LIB-12 | S2 | **done** | `memset8/16/32` and `memcpy8/16/32` used a single `dbra`, which decrements only the **low word**: anything past 65536 elements silently truncated, and a length of 0 underflowed into ~65536 iterations. Now a nested `dbra` (low word inner, high word outer) with a zero guard. Verified from the emitted code, including the 65536/65537 boundary. |
 | BR-1 | S1 | **done** | KB-27 — the `.macros.s` → `.macro.s` rename is landed on `develop` directly (D7), not via the branch: 9 renames, 57 files updated, guards and docs included. Verified by the gate rather than by hope. |
 | BR-2 | S1 | open | KB-20 … KB-26 — seven defects that exist only on `feature/sub_bios_overhaul`. See SPEC.md OD-5 for whether to fix on-branch or after merge. |
 | LIB-13 | S1 | **done** | KB-28 — `z80_init` in `lib/main/z80.h` is now `static inline`. |
