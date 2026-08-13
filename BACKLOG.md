@@ -89,17 +89,17 @@ toolchain was available during the audit. VER-1 must land first so that fixes ca
 
 | ID | Sev | Status | Item |
 |---|---|---|---|
-| MAKE-1 | S1 | open | KB-16 / B-2 — no header dependency tracking; users must `make clean` after every edit. Documented as a limitation in `docs/modules.md:100`. Highest-friction item for end users. |
-| MAKE-2 | S2 | open | KB-15 / B-1 — `build/` and `disc/` are never created; `make init` is required on a fresh clone and documented nowhere. |
-| MAKE-3 | S2 | open | KB-14 — `MEGADEV_PATH` is not sanity-checked; unset silently yields `LIB_PATH=/lib`. |
+| MAKE-1 | S1 | **done** | KB-16 / B-2 — header dependency tracking via `-MMD -MP` plus `.SECONDEXPANSION:` module→object edges. `make clean` is no longer needed; `docs/modules.md` updated. |
+| MAKE-2 | S2 | **done** | KB-15 / B-1 — output directories are created by the rules that write into them. `make init` is no longer required, and Tier 0.3 proves it by not running it. |
+| MAKE-3 | S2 | **done** | KB-14 — `MEGADEV_PATH` is now sanity-checked with a clear error. |
 | MAKE-4 | S2 | open | B-5 — object names are `$(notdir)`-flattened into one `build/`; `lib/main/gate_arr.macros.s` and a future `lib/sub/gate_arr.macro.s` collide silently. |
 | MAKE-5 | S2 | open | B-4 — `make -j` unsafe: ISO prerequisites come from `$(shell find)` evaluated at parse time (`megadev.make:136-137`). |
-| MAKE-6 | S3 | open | B-3 — non-reproducible builds: `$(shell date)` in `HEADER_COPYRIGHT` (`megadev.make:61`), re-forked on every compile because `CC_FLAGS` is recursively expanded. |
-| MAKE-7 | S3 | open | `objcopy -O binary $@` with one argument does an in-place conversion (`megadev.make:231`); an interrupted build leaves an ELF named `boot.bin`. |
-| MAKE-8 | S3 | open | `mkisofs` is hardcoded, unlike every other tool, and is provided by three different packages across distros. Make it a variable. |
-| MAKE-9 | S3 | open | Every recipe is `@`-prefixed and `clean` redirects to `/dev/null`; failures produce no diagnosable output. |
+| MAKE-6 | S3 | open | B-3 — the build date is now resolved once and honours `SOURCE_DATE_EPOCH`, but the **ISO is still not byte-reproducible** because `mkisofs` embeds its own timestamps. This costs a real verification signal: payload comparison works, ISO comparison does not. Investigate `-volume-date` / cdrtools options. |
+| MAKE-7 | S3 | **done** | `boot.bin` is produced from a separate `boot.bin.o` rather than objcopied in place. |
+| MAKE-8 | S3 | **done** | `mkisofs` is now the overridable `$(MKISOFS)`. |
+| MAKE-9 | S3 | **done** | Recipes use `$(Q)`; build with `V=1` to see every command. |
 | MAKE-10 | S3 | open | `.SECONDARY: $(BUILD_PATH)/*` (`megadev.make:147`) expands at parse time, so its meaning differs between a clean and an incremental build. |
-| MAKE-11 | S4 | open | Dead code: `TOOLS_PATH` (points at a non-existent `tools/`), `AS`, `Z80_AS`, commented-out rule at 160-164, debug `echo` at 201. |
+| MAKE-11 | S4 | **done** | Dead `TOOLS_PATH`, `AS`, `Z80_AS` and the leftover debug `echo` removed. |
 | MAKE-12 | S4 | open | `megadev.make:235` — make the ISO settings user-configurable. *(inline TODO)* |
 | MAKE-13 | S3 | open | Orphan linker scripts: `cfg/module_mmd_newwork.ld` and `cfg/module_bin.ld` are referenced by no rule. Wire up or delete. `cfg/md_cart.ld` also uses a different symbol-naming convention (`_text_org` vs `_TEXT_ORIGIN`) from the others. |
 | MAKE-14 | S2 | open | KB-18 — `examples/pcm_playback/disc/audio.pcm` (262 KB) is required at runtime but gitignored; a fresh clone builds a broken ISO. Narrow the `disc/` ignore so payload sources are tracked. |

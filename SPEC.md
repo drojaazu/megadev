@@ -228,20 +228,21 @@ confusing downstream failures — see KB-14.
 ### Guarantees the build layer owes the user
 
 - **B-1** — `make` on a freshly cloned project produces a runnable image without manual steps.
-  **Currently false**: `build/` and `disc/` are gitignored and never created by `megadev.make`;
-  `make init` must be run first and is documented nowhere. See KB-15.
-- **B-2** — Editing a header rebuilds its dependents. **Currently false**: there is no dependency
-  tracking (`-MMD`/`-MP`) anywhere. `docs/modules.md:100` documents the workaround — `make clean`
-  before every `make`. This is daily friction for every user. See KB-16.
-- **B-3** — Builds are reproducible. **Currently false**: `HEADER_COPYRIGHT` embeds
-  `$(shell date +"%Y.%b")` (`megadev.make:61`), so identical source produces different output across
-  months; because `CC_FLAGS` is recursively expanded, that pipeline re-forks on every compile.
+  **Holds as of 2026-08-13.** Output directories are created by the rules that write into them.
+  Enforced by Tier 0.3, which deliberately does *not* run `make init`.
+- **B-2** — Editing a header rebuilds its dependents. **Holds as of 2026-08-13.** Compiles pass
+  `-MMD -MP` and the generated `.d` files are included. Crucially, module targets also gained the
+  objects as prerequisites (via `.SECONDEXPANSION:`) — without that edge the dependency information
+  existed but was never consulted, because make had no reason to consider the object at all.
+- **B-3** — Builds are reproducible. **Partly.** The date is now resolved once into `BUILD_DATE`
+  rather than re-forked per compile, and honours `SOURCE_DATE_EPOCH`. The ISO itself is still not
+  byte-reproducible because `mkisofs` embeds its own timestamps — see BACKLOG MAKE-6.
 - **B-4** — `make -j` is safe. **Currently false**: the ISO's disc-file prerequisites come from
   `$(shell find ...)` evaluated at parse time (`megadev.make:136-137`), so on a first build the
   not-yet-existing modules are not prerequisites of the ISO.
-- **B-5** — Two sources with the same basename in different directories do not collide. **Currently
-  false**: object names are `$(notdir)`-flattened into one `build/` directory. `lib/main/gate_arr.macro.s`
-  and `lib/sub/gate_arr.macro.s` are a live example of the hazard.
+- **B-5** — Two sources with the same basename in different directories do not collide. **Still
+  false**: object names are `$(notdir)`-flattened into one `build/` directory. Now documented as a
+  limitation in `docs/modules.md` rather than being a silent trap. See BACKLOG MAKE-4.
 
 B-1 through B-5 are the acceptance criteria for the build-system work in BACKLOG.md.
 

@@ -99,11 +99,11 @@ Those files will be compiled then linked together to create the final `title.mmd
 
 ### Limitations
 
-Currently, there is an issue with the build system wherein source files that have been modified will not be recompiled when a simple `make` command. This is due to the implementation of the abstracted/generic build system. For now, when making your projects, it's generally a good idea to make clean and then do a make again:
+Object files are named after the source file alone, without its directory, and all of them are
+written into a single build directory. Two sources with the same base name in different directories
+will therefore overwrite each other. If you have `gfx/sprite.c` and `audio/sprite.c`, rename one of
+them.
 
-    make clean && make
-
-This will ensure all source files are always rebuilt. We would certain like to address this issue in the future, but for now, keep this in mind.
 
 ## Memory Resident Modules
 

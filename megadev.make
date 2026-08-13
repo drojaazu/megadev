@@ -10,14 +10,18 @@
 # prefix
 M68K_PREFIX?=m68k-linux-gnu-
 
+# NOTE: these are assigned unconditionally, not with ?=. GNU make PREDEFINES
+# CC, LD and AS (as cc, ld, as), so ?= would silently keep the host tool and
+# the build would fail in confusing ways. Override the toolchain with
+# M68K_PREFIX instead.
 CC:=$(M68K_PREFIX)gcc
 OBJCPY:=$(M68K_PREFIX)objcopy
 NM:=$(M68K_PREFIX)nm
 LD:=$(M68K_PREFIX)ld
-AS:=$(M68K_PREFIX)as
 
-# (Z80 building not yet supported)
-Z80_AS:=sjasmplus
+# ISO mastering. The name is provided by cdrtools, cdrkit and genisoimage
+# depending on distro, so allow it to be overridden.
+MKISOFS?=mkisofs
 
 ################################################################################
 # STOP!
@@ -26,6 +30,10 @@ Z80_AS:=sjasmplus
 ################################################################################
 
 #### Project Sanity Check & Defaults
+
+ifndef MEGADEV_PATH
+	$(error MEGADEV_PATH not set! It must point at the Megadev installation, e.g. /opt/megadev.)
+endif
 
 ifndef PROJECT_ID
 	$(error PROJECT_ID not set! Please set this variable in your makefile.)
@@ -58,7 +66,10 @@ else
 	HEADER_HARDWARE_ID?="SEGA MEGA DRIVE"
 endif
 HEADER_VOL_ID?=$(shell printf $(PROJECT_ID) |tr '[:lower:]' '[:upper:]')
-HEADER_COPYRIGHT?="(C)\ \ \ \ \ $(shell LC_TIME="C" date +"%Y.%b" |tr '[:lower:]' '[:upper:]')"
+# Simply-expanded so the date is resolved once per build rather than on every
+# compile. Set SOURCE_DATE_EPOCH for a reproducible build.
+BUILD_DATE:=$(shell LC_TIME=C date $(if $(SOURCE_DATE_EPOCH),-u -d @$(SOURCE_DATE_EPOCH),) +"%Y.%b" | tr '[:lower:]' '[:upper:]')
+HEADER_COPYRIGHT?="(C)\ \ \ \ \ $(BUILD_DATE)"
 HEADER_SOFTWARE_ID?="GM 00-0000-00"
 HEADER_REGION?="JUE"
 HEADER_DISC_ID?="SEGADISCSYSTEM"
@@ -74,11 +85,11 @@ GREEN=\033[1;32m
 
 ##### Build Tool Paths
 
+# Set V=1 for a verbose build that shows every command.
+Q:=$(if $(V),,@)
+
 # Megadev library code (ASM and C)
 LIB_PATH:=$(MEGADEV_PATH)/lib
-
-# build time tools
-TOOLS_PATH:=$(MEGADEV_PATH)/tools
 
 # linker scripts
 CFG_PATH:=$(MEGADEV_PATH)/cfg
@@ -94,6 +105,8 @@ AS_INC:=-Wa,-I$(SRC_PATH) -Wa,-I$(LIB_PATH) -Wa,-I$(RES_PATH) -Wa,-I$(BUILD_PATH
 # because it is useful for inline asm. However, "-Wa,--bitwise-or" will
 # cause issues with the GCC created asm, so we split that off and only use it
 # with asm source files
+DEP_FLAGS=-MMD -MP
+
 CC_FLAGS+= \
 	-m68000 \
 	-imacros build.def.h \
@@ -133,8 +146,8 @@ endef
 
 # this is used to trigger an ISO rebuild if there are any file changes in the disc dir
 ifdef DISC_PATH
-	DISC_DIR_UPDATES = $(shell find $(DISC_PATH)/ -type d)
-	DISC_FILES_UPDATES = $(shell find $(DISC_PATH)/ -type f -name '*')
+	DISC_DIR_UPDATES = $(shell test -d $(DISC_PATH) && find $(DISC_PATH)/ -type d)
+	DISC_FILES_UPDATES = $(shell test -d $(DISC_PATH) && find $(DISC_PATH)/ -type f -name '*')
 endif
 
 vpath %.c $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
@@ -146,16 +159,34 @@ vpath %.s.o $(BUILD_PATH)
 
 .SECONDARY: $(BUILD_PATH)/*
 
+$(BUILD_PATH):
+	$(Q)mkdir -p $@
+
+ifdef DISC_PATH
+$(DISC_PATH):
+	$(Q)mkdir -p $@
+endif
+
+# Module targets must depend on their OBJECTS, not just their sources.
+# The .d files give each object a dependency on the headers it included, but
+# that edge is only consulted if make has a reason to consider the object at
+# all. Secondary expansion lets the pattern rules below turn the source list
+# supplied by the project ($$^ from its own target line) into the matching
+# object list, so a changed header reaches the module through its object.
+.SECONDEXPANSION:
+
+MODULE_OBJS = $(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o,$(filter %.c %.s,$1))))
+
 .DEFAULT_GOAL:=all
 
 # need to specify paths here as they're called through a secondary make
-$(BUILD_PATH)/%.c.o: %.c
-	$(call msg_info,Compiling source $(notdir $^))
-	@$(CC) $(CC_FLAGS) $(INC) -c $^ -o $@
+$(BUILD_PATH)/%.c.o: %.c | $(BUILD_PATH)
+	$(call msg_info,Compiling source $(notdir $<))
+	$(Q)$(CC) $(CC_FLAGS) $(DEP_FLAGS) $(INC) -c $< -o $@
 
-$(BUILD_PATH)/%.s.o: %.s
-	$(call msg_info,Compiling source $(notdir $^))
-	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $^ -o $@
+$(BUILD_PATH)/%.s.o: %.s | $(BUILD_PATH)
+	$(call msg_info,Compiling source $(notdir $<))
+	$(Q)$(CC) $(CC_FLAGS) $(DEP_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $< -o $@
 
 #%.mmd.elf: %.s %.c %.h
 #	@echo "mmd elf in: $^"
@@ -163,9 +194,10 @@ $(BUILD_PATH)/%.s.o: %.s
 #	echo "making mmd elf with: $^ $@"
 #	$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_mmd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(symref)) -o $@
 
-%.mmd:
+%.mmd: $$(call MODULE_OBJS,$$^)
 # @echo "mmd in: $^"
 # @echo "mmd out: $@"
+	$(Q)mkdir -p $(dir $@)
 	$(call msg_info,Building module $(notdir $@))
 	$(eval BUILD_SRC:=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o, $(filter %.c %.h %.s, $^)))))
 	$(eval BUILD_MOD:=$(filter %.mmd %.smd %.bin, $^))
@@ -178,9 +210,10 @@ $(BUILD_PATH)/%.s.o: %.s
 	@$(NM) -n $(OUT_MOD_ELF) > $(addsuffix .sym,$(OUT_MOD_ELF))
 	@$(OBJCPY) -O binary $(OUT_MOD_ELF) $@
 
-%.smd:
+%.smd: $$(call MODULE_OBJS,$$^)
 # @echo "smd in: $^"
 # @echo "smd out: $@"
+	$(Q)mkdir -p $(dir $@)
 	$(call msg_info,Building module $(notdir $@))
 	$(eval BUILD_SRC:=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o, $(filter %.c %.h %.s, $^)))))
 	$(eval BUILD_MOD:=$(filter %.mmd %.smd %.bin, $^))
@@ -193,12 +226,12 @@ $(BUILD_PATH)/%.s.o: %.s
 	@$(NM) -n $(OUT_MOD_ELF) > $(addsuffix .sym,$(OUT_MOD_ELF))
 	@$(OBJCPY) -O binary $(OUT_MOD_ELF) $@
 
-%.cart:
+%.cart: $$(call MODULE_OBJS,$$^)
 #	@echo "cart in: $^"
 #	@echo "cart out: $@"
+	$(Q)mkdir -p $(dir $@)
 	$(call msg_info,Building cart ROM $(notdir $@))
 	$(eval BUILD_SRC:=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o, $(filter %.c %.h %.s, $^)))))
-	@echo BUILD SRC: $(BUILD_SRC)
 	@$(if $(BUILD_SRC), $(MAKE) -s $(BUILD_SRC))
 	$(call msg_info,Linking cart ROM $(notdir $@))
 	$(eval OUT_CART_ELF:=$(addprefix $(BUILD_PATH)/,$(addsuffix .elf,$(notdir $@))))
@@ -207,36 +240,58 @@ $(BUILD_PATH)/%.s.o: %.s
 	@$(OBJCPY) -O binary $(OUT_CART_ELF) $@
 
 # special rules for boot sector binaries
-$(BUILD_PATH)/ip.bin: $(BUILD_PATH)/ip.bin.elf
+$(BUILD_PATH)/ip.bin: $(BUILD_PATH)/ip.bin.elf | $(BUILD_PATH)
 	@$(OBJCPY) -O binary $< $@
 
-$(BUILD_PATH)/security.s.o: $(MEGADEV_PATH)/lib/security.c
+$(BUILD_PATH)/security.s.o: $(MEGADEV_PATH)/lib/security.c | $(BUILD_PATH)
 	$(call msg_info,Creating security block)
 	@$(CC) $(CC_FLAGS) $(INC) -c $< -o $@
 
-$(BUILD_PATH)/ip.bin.elf: $(BUILD_PATH)/security.s.o $(BUILD_PATH)/ip.s.o
+$(BUILD_PATH)/ip.bin.elf: $(BUILD_PATH)/security.s.o $(BUILD_PATH)/ip.s.o | $(BUILD_PATH)
 	@$(LD) $(LD_FLAGS) -T$(CFG_PATH)/ip.ld -o$@ $^
 	@$(NM) -n $@ > $(addprefix $(BUILD_PATH)/,$(addsuffix .sym,$(notdir $@)))
 
-$(BUILD_PATH)/sp.bin: $(BUILD_PATH)/sp.bin.elf
+$(BUILD_PATH)/sp.bin: $(BUILD_PATH)/sp.bin.elf | $(BUILD_PATH)
 	@$(OBJCPY) -O binary $< $@
 
-$(BUILD_PATH)/sp.bin.elf: $(BUILD_PATH)/sp_header.s.o $(BUILD_PATH)/sp.s.o
+$(BUILD_PATH)/sp.bin.elf: $(BUILD_PATH)/sp_header.s.o $(BUILD_PATH)/sp.s.o | $(BUILD_PATH)
 	@$(LD) $(LD_FLAGS) -T$(CFG_PATH)/sp.ld -o$@ $^
 	@$(NM) -n $@ > $(addprefix $(BUILD_PATH)/,$(addsuffix .sym,$(notdir $@)))
 
-$(BUILD_PATH)/boot.bin: $(BUILD_PATH)/ip.bin $(BUILD_PATH)/sp.bin
+$(BUILD_PATH)/boot.bin.o: $(BUILD_PATH)/ip.bin $(BUILD_PATH)/sp.bin | $(BUILD_PATH)
 	$(call msg_info,Generating boot sector...)
-	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $(LIB_PATH)/cd_boot.s -o$@
-	@$(OBJCPY) -O binary $@
+	$(Q)$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $(LIB_PATH)/cd_boot.s -o $@
+
+# Converted to a separate target rather than in place: an interrupted build
+# previously left an ELF named boot.bin, which a re-run would happily objcopy
+# a second time.
+$(BUILD_PATH)/boot.bin: $(BUILD_PATH)/boot.bin.o | $(BUILD_PATH)
+	$(Q)$(OBJCPY) -O binary $< $@
 
 
 
 # TODO make the ISO settings user configurable
 %.iso: $(BUILD_PATH)/boot.bin $(DISC_FILES_UPDATES) $(DISC_DIR_UPDATES)
-
+	$(Q)mkdir -p $(dir $@) $(DISC_PATH)
 	$(call msg_info,Generating ISO image $(notdir $@))
-	@mkisofs -quiet -iso-level 1 -G $< -pad -V "$(PROJECT_ID)" \
+	$(Q)$(MKISOFS) -quiet -iso-level 1 -G $< -pad -V "$(PROJECT_ID)" \
 		-sysid "MEGA_CD" -appid "" -publisher "" -preparer "" \
 		-o $@ $(DISC_PATH)
 	$(call msg_done,Completed build of $(PROJECT_ID) ($(TARGET) / $(REGION) / $(VIDEO)))
+
+################################################################################
+# Header dependency tracking
+#
+# -MMD writes a .d file alongside each object listing the headers it included,
+# and -MP adds a phony target for each of those headers so that deleting one
+# does not break the build with "No rule to make target".
+#
+# Including them here is what makes `make` notice a changed header. Without it,
+# editing a .h left every dependent object stale, which is why the previous
+# advice was to run `make clean` before every build.
+#
+# The wildcard is evaluated late, and a missing .d is not an error on a first
+# build, hence -include.
+################################################################################
+
+-include $(wildcard $(BUILD_PATH)/*.d)

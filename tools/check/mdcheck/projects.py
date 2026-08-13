@@ -41,12 +41,10 @@ def run(clean_first: bool = True) -> int:
             rep.skip(p.name, "no makefile")
             continue
 
-        # `make init` is required on a fresh clone: build/ and disc/ are
-        # gitignored and megadev.make never creates them (BACKLOG MAKE-2).
-        # When that is fixed, drop this and the gate will prove the fix.
-        res = _make(p, "init")
-        if res.returncode == 0:
-            res = _make(p)
+        # Deliberately NOT running `make init` first. megadev.make now creates
+        # its own output directories, so a fresh clone must build with a bare
+        # `make` (SPEC.md B-1). This tier is what proves that stays true.
+        res = _make(p)
 
         if res.returncode == 0:
             rep.ok(p.name, quiet=False)
