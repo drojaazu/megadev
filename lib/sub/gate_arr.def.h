@@ -156,52 +156,52 @@
  */
 
 /**
- * @defgroup ga_reg_sub_28 Sub CPU / Gate Array / Register 28 (0xFF8038) - CDD Communication 0
+ * @defgroup ga_reg_sub_28 Sub CPU / Gate Array / Register 28 (0xFF8038) - CDD Receiving Status 0 and 1
  * @ingroup ga_regs_sub
  */
 
 /**
- * @defgroup ga_reg_sub_29 Sub CPU / Gate Array / Register 29 (0xFF803A) - CDD Communication 1
+ * @defgroup ga_reg_sub_29 Sub CPU / Gate Array / Register 29 (0xFF803A) - CDD Receiving Status 2 and 3
  * @ingroup ga_regs_sub
  */
 
 /**
- * @defgroup ga_reg_sub_30 Sub CPU / Gate Array / Register 30 (0xFF803C) - CDD Communication 2
+ * @defgroup ga_reg_sub_30 Sub CPU / Gate Array / Register 30 (0xFF803C) - CDD Receiving Status 4 and 5
  * @ingroup ga_regs_sub
  */
 
 /**
- * @defgroup ga_reg_sub_31 Sub CPU / Gate Array / Register 31 (0xFF803E) - CDD Communication 3
+ * @defgroup ga_reg_sub_31 Sub CPU / Gate Array / Register 31 (0xFF803E) - CDD Receiving Status 6 and 7
  * @ingroup ga_regs_sub
  */
 
 /**
- * @defgroup ga_reg_sub_32 Sub CPU / Gate Array / Register 32 (0xFF8040) - CDD Communication 4
+ * @defgroup ga_reg_sub_32 Sub CPU / Gate Array / Register 32 (0xFF8040) - CDD Receiving Status 8 and 9
  * @ingroup ga_regs_sub
  */
 
 /**
- * @defgroup ga_reg_sub_33 Sub CPU / Gate Array / Register 33 (0xFF8042) - CDD Communication 5
+ * @defgroup ga_reg_sub_33 Sub CPU / Gate Array / Register 33 (0xFF8042) - CDD Transmission Commands 0 and 1
  * @ingroup ga_regs_sub
  */
 
 /**
- * @defgroup ga_reg_sub_34 Sub CPU / Gate Array / Register 34 (0xFF8044) - CDD Communication 6
+ * @defgroup ga_reg_sub_34 Sub CPU / Gate Array / Register 34 (0xFF8044) - CDD Transmission Commands 2 and 3
  * @ingroup ga_regs_sub
  */
 
 /**
- * @defgroup ga_reg_sub_35 Sub CPU / Gate Array / Register 35 (0xFF8046) - CDD Communication 7
+ * @defgroup ga_reg_sub_35 Sub CPU / Gate Array / Register 35 (0xFF8046) - CDD Transmission Commands 4 and 5
  * @ingroup ga_regs_sub
  */
 
 /**
- * @defgroup ga_reg_sub_36 Sub CPU / Gate Array / Register 36 (0xFF8048) - CDD Communication 8
+ * @defgroup ga_reg_sub_36 Sub CPU / Gate Array / Register 36 (0xFF8048) - CDD Transmission Commands 6 and 7
  * @ingroup ga_regs_sub
  */
 
 /**
- * @defgroup ga_reg_sub_37 Sub CPU / Gate Array / Register 37 (0xFF804A) - CDD Communication 9
+ * @defgroup ga_reg_sub_37 Sub CPU / Gate Array / Register 37 (0xFF804A) - CDD Transmission Commands 8 and 9
  * @ingroup ga_regs_sub
  */
 
@@ -1186,7 +1186,7 @@
 #define GA_CDDCTRL_DM_MASK FIELD_MASK(GA_CDDCTRL_DM_POS, GA_CDDCTRL_DM_WIDTH)
 
 /**
- * @def GA_REG_CDDCOMM0
+ * @def GA_REG_CDDSTAT0
  * @brief CDD receiving status 0 and 1
  *
  * @details
@@ -1206,15 +1206,15 @@
  *
  * @param RS0 Receiving Status 0, in bits 11-8.
  * @param RS1 Receiving Status 1, in bits 3-0.
- * @sa ga_reg_cddcomm0, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
+ * @sa ga_reg_cddstat0, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_28
  */
-#define GA_REG_CDDCOMM0 0xFF8038
+#define GA_REG_CDDSTAT0 0xFF8038
 
 /**
- * @def GA_REG_CDDCOMM1
+ * @def GA_REG_CDDSTAT1
  * @brief CDD receiving status 2 and 3
  *
  * @details
@@ -1234,15 +1234,15 @@
  *
  * @param RS2 Receiving Status 2, in bits 11-8.
  * @param RS3 Receiving Status 3, in bits 3-0.
- * @sa ga_reg_cddcomm1, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
+ * @sa ga_reg_cddstat1, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_29
  */
-#define GA_REG_CDDCOMM1 0xFF803A
+#define GA_REG_CDDSTAT1 0xFF803A
 
 /**
- * @def GA_REG_CDDCOMM2
+ * @def GA_REG_CDDSTAT2
  * @brief CDD receiving status 4 and 5
  *
  * @details
@@ -1262,15 +1262,15 @@
  *
  * @param RS4 Receiving Status 4, in bits 11-8.
  * @param RS5 Receiving Status 5, in bits 3-0.
- * @sa ga_reg_cddcomm2, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
+ * @sa ga_reg_cddstat2, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_30
  */
-#define GA_REG_CDDCOMM2 0xFF803C
+#define GA_REG_CDDSTAT2 0xFF803C
 
 /**
- * @def GA_REG_CDDCOMM3
+ * @def GA_REG_CDDSTAT3
  * @brief CDD receiving status 6 and 7
  *
  * @details
@@ -1291,16 +1291,16 @@
  * @param RS6 Receiving Status 6, in bits 11-8.
  * @param RS7 Receiving Status 7, in bits 3-0.
  * @note Reception of **Receiving Status 7** raises INT4, so that is the nibble
- * to treat as the "status is ready" signal -- it lives in GA_REG_CDDCOMM3.
- * @sa ga_reg_cddcomm3, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
+ * to treat as the "status is ready" signal -- it lives in GA_REG_CDDSTAT3.
+ * @sa ga_reg_cddstat3, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_31
  */
-#define GA_REG_CDDCOMM3 0xFF803E
+#define GA_REG_CDDSTAT3 0xFF803E
 
 /**
- * @def GA_REG_CDDCOMM4
+ * @def GA_REG_CDDSTAT4
  * @brief CDD receiving status 8 and 9
  *
  * @details
@@ -1320,15 +1320,15 @@
  *
  * @param RS8 Receiving Status 8, in bits 11-8.
  * @param RS9 Receiving Status 9, in bits 3-0.
- * @sa ga_reg_cddcomm4, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
+ * @sa ga_reg_cddstat4, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_32
  */
-#define GA_REG_CDDCOMM4 0xFF8040
+#define GA_REG_CDDSTAT4 0xFF8040
 
 /**
- * @def GA_REG_CDDCOMM5
+ * @def GA_REG_CDDCMD0
  * @brief CDD transmission command 0 and 1
  *
  * @details
@@ -1348,15 +1348,15 @@
  *
  * @param TC0 Transmission Command 0, in bits 11-8.
  * @param TC1 Transmission Command 1, in bits 3-0.
- * @sa ga_reg_cddcomm5, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
+ * @sa ga_reg_cddcmd0, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_33
  */
-#define GA_REG_CDDCOMM5 0xFF8042
+#define GA_REG_CDDCMD0 0xFF8042
 
 /**
- * @def GA_REG_CDDCOMM6
+ * @def GA_REG_CDDCMD1
  * @brief CDD transmission command 2 and 3
  *
  * @details
@@ -1376,15 +1376,15 @@
  *
  * @param TC2 Transmission Command 2, in bits 11-8.
  * @param TC3 Transmission Command 3, in bits 3-0.
- * @sa ga_reg_cddcomm6, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
+ * @sa ga_reg_cddcmd1, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_34
  */
-#define GA_REG_CDDCOMM6 0xFF8044
+#define GA_REG_CDDCMD1 0xFF8044
 
 /**
- * @def GA_REG_CDDCOMM7
+ * @def GA_REG_CDDCMD2
  * @brief CDD transmission command 4 and 5
  *
  * @details
@@ -1404,15 +1404,15 @@
  *
  * @param TC4 Transmission Command 4, in bits 11-8.
  * @param TC5 Transmission Command 5, in bits 3-0.
- * @sa ga_reg_cddcomm7, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
+ * @sa ga_reg_cddcmd2, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_35
  */
-#define GA_REG_CDDCOMM7 0xFF8046
+#define GA_REG_CDDCMD2 0xFF8046
 
 /**
- * @def GA_REG_CDDCOMM8
+ * @def GA_REG_CDDCMD3
  * @brief CDD transmission command 6 and 7
  *
  * @details
@@ -1432,15 +1432,15 @@
  *
  * @param TC6 Transmission Command 6, in bits 11-8.
  * @param TC7 Transmission Command 7, in bits 3-0.
- * @sa ga_reg_cddcomm8, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
+ * @sa ga_reg_cddcmd3, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_36
  */
-#define GA_REG_CDDCOMM8 0xFF8048
+#define GA_REG_CDDCMD3 0xFF8048
 
 /**
- * @def GA_REG_CDDCOMM9
+ * @def GA_REG_CDDCMD4
  * @brief CDD transmission command 8 and 9
  *
  * @details
@@ -1463,17 +1463,17 @@
  * @warning Writing **Transmission Command 9** is what starts the transfer to
  * the CDD, so fill every other nibble first. It lives in the low half of this
  * register.
- * @sa ga_reg_cddcomm9, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
+ * @sa ga_reg_cddcmd4, GA_CDDCOMM_HI_MASK, GA_CDDCOMM_LO_MASK
  * @warning Bit operation instructions are not permitted here; read the
  * register, modify the copy, and write the whole value back.
  * @ingroup ga_reg_sub_37
  */
-#define GA_REG_CDDCOMM9 0xFF804A
+#define GA_REG_CDDCMD4 0xFF804A
 
 /**
  * @def GA_CDDCOMM_HI_MASK
  * @brief The even-numbered nibble of a CDD communication register
- * @sa GA_REG_CDDCOMM0
+ * @sa GA_REG_CDDSTAT0
  * @ingroup ga_regs_sub
  */
 #define GA_CDDCOMM_HI_POS 8
@@ -1483,7 +1483,7 @@
 /**
  * @def GA_CDDCOMM_LO_MASK
  * @brief The odd-numbered nibble of a CDD communication register
- * @sa GA_REG_CDDCOMM0
+ * @sa GA_REG_CDDSTAT0
  * @ingroup ga_regs_sub
  */
 #define GA_CDDCOMM_LO_POS 0

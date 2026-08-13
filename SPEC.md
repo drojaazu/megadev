@@ -819,6 +819,19 @@ grepping for `0xFF8030` still lands on the right register even though the defini
 
 Addresses are pinned by Tier 1.5 assertions.
 
+### D18 — CDD communication registers are named for their direction *(Damian R, 2026-08-14)*
+`GA_REG_CDDCOMM0-9` becomes `GA_REG_CDDSTAT0-4` and `GA_REG_CDDCMD0-4`. The ten registers are not
+one homogeneous block: the manual (p.33) shows `$FF8038`–`$FF8040` carrying Receiving Status 0–9 and
+`$FF8042`–`$FF804A` carrying Transmission Command 0–9. A single `CDDCOMM` name hid that the halves
+run in opposite directions.
+
+The pair matches `GA_REG_COMSTAT` / `GA_REG_COMCMD`, used for Main↔Sub communication, and keeps the
+same convention on both: **the command is what the controlling CPU sends, the status is what comes
+back.** For Main↔Sub the controller is the Main CPU; for the CDD it is the Sub CPU.
+
+Register *numbering* is unchanged — the doc groups stay `ga_reg_sub_28` through `ga_reg_sub_37`,
+since D15 keys those to the address rather than to the name.
+
 ### OD-1 — How to resolve the Main/Sub Gate Array namespace collision *(open)*
 INV-7 is violated (KB-12). Options: prefix by CPU side (`GA_MAIN_*` / `GA_SUB_*`); rely solely on
 path-derived include guards plus a hard rule that a TU may include only one side; or generate both

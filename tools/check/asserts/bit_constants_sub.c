@@ -113,3 +113,21 @@ _Static_assert(GA_INT1_POS == 1 && GA_INT6_POS == 6, "levels map to like-numbere
 _Static_assert((GA_INT1_MASK | GA_INT2_MASK | GA_INT3_MASK |
                 GA_INT4_MASK | GA_INT5_MASK | GA_INT6_MASK) == 0x7E,
 	"the six enables are bits 1-6, and bit 0 is unused");
+
+/* --- CDD communication block, $FF8038-$FF804A ---------------------------- */
+
+/* Ten registers carrying twenty 4 bit values, two per register. The first five
+ * are what the drive sends back and the last five are what is sent to it, which
+ * is why they are named for the direction rather than numbered 0-9 (DOC-21).
+ * The boundary is the thing worth pinning: CDDSTAT4 and CDDCMD0 are adjacent,
+ * so an off-by-one in the split would silently read commands as status. */
+_Static_assert(GA_REG_CDDSTAT0 == 0xFF8038, "the status block starts here");
+_Static_assert(GA_REG_CDDSTAT4 == GA_REG_CDDSTAT0 + 8, "five status registers");
+_Static_assert(GA_REG_CDDCMD0 == GA_REG_CDDSTAT4 + 2, "commands follow immediately");
+_Static_assert(GA_REG_CDDCMD4 == 0xFF804A, "the command block ends here");
+
+/* Each register holds its two nibbles at bits 11-8 and 3-0; the other two
+ * nibbles read as 0. */
+_Static_assert(GA_CDDCOMM_HI_MASK == 0x0F00, "even-numbered nibble is bits 11-8");
+_Static_assert(GA_CDDCOMM_LO_MASK == 0x000F, "odd-numbered nibble is bits 3-0");
+_Static_assert((GA_CDDCOMM_HI_MASK & GA_CDDCOMM_LO_MASK) == 0, "the nibbles do not overlap");

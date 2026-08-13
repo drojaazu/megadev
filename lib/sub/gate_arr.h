@@ -261,9 +261,9 @@ typedef u8 volatile const * ga_reg8_ro;
  */
 #define ga_reg_cddctrl (*((ga_reg) GA_REG_CDDCTRL))
 /**
- * @def ga_reg_cddcomm0
+ * @def ga_reg_cddstat0
  * @brief GA Reg 1C - CDD Communication
- * @sa GA_REG_CDDCOMM0
+ * @sa GA_REG_CDDSTAT0
  * @ingroup gatearray_sub
  *
  * @details See the documentation for more info
@@ -272,11 +272,11 @@ typedef u8 volatile const * ga_reg8_ro;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_reg_cddcomm0 (*((ga_reg) GA_REG_CDDCOMM0))
+#define ga_reg_cddstat0 (*((ga_reg) GA_REG_CDDSTAT0))
 /**
- * @def ga_reg_cddcomm1
+ * @def ga_reg_cddstat1
  * @brief GA Reg 1D - CDD Communication
- * @sa GA_REG_CDDCOMM1
+ * @sa GA_REG_CDDSTAT1
  * @ingroup gatearray_sub
  *
  * @details See the documentation for more info
@@ -285,11 +285,11 @@ typedef u8 volatile const * ga_reg8_ro;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_reg_cddcomm1 (*((ga_reg) GA_REG_CDDCOMM1))
+#define ga_reg_cddstat1 (*((ga_reg) GA_REG_CDDSTAT1))
 /**
- * @def ga_reg_cddcomm2
+ * @def ga_reg_cddstat2
  * @brief GA Reg 1E - CDD Communication
- * @sa GA_REG_CDDCOMM2
+ * @sa GA_REG_CDDSTAT2
  * @ingroup gatearray_sub
  *
  * @details See the documentation for more info
@@ -298,11 +298,11 @@ typedef u8 volatile const * ga_reg8_ro;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_reg_cddcomm2 (*((ga_reg) GA_REG_CDDCOMM2))
+#define ga_reg_cddstat2 (*((ga_reg) GA_REG_CDDSTAT2))
 /**
- * @def ga_reg_cddcomm3
+ * @def ga_reg_cddstat3
  * @brief GA Reg 1F - CDD Communication
- * @sa GA_REG_CDDCOMM3
+ * @sa GA_REG_CDDSTAT3
  * @ingroup gatearray_sub
  *
  * @details See the documentation for more info
@@ -311,11 +311,11 @@ typedef u8 volatile const * ga_reg8_ro;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_reg_cddcomm3 (*((ga_reg) GA_REG_CDDCOMM3))
+#define ga_reg_cddstat3 (*((ga_reg) GA_REG_CDDSTAT3))
 /**
- * @def ga_reg_cddcomm4
+ * @def ga_reg_cddstat4
  * @brief GA Reg 20 - CDD Communication
- * @sa GA_REG_CDDCOMM4
+ * @sa GA_REG_CDDSTAT4
  * @ingroup gatearray_sub
  *
  * @details See the documentation for more info
@@ -324,11 +324,11 @@ typedef u8 volatile const * ga_reg8_ro;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_reg_cddcomm4 (*((ga_reg) GA_REG_CDDCOMM4))
+#define ga_reg_cddstat4 (*((ga_reg) GA_REG_CDDSTAT4))
 /**
- * @def ga_reg_cddcomm5
+ * @def ga_reg_cddcmd0
  * @brief GA Reg 21 - CDD Communication
- * @sa GA_REG_CDDCOMM5
+ * @sa GA_REG_CDDCMD0
  * @ingroup gatearray_sub
  *
  * @details See the documentation for more info
@@ -337,11 +337,11 @@ typedef u8 volatile const * ga_reg8_ro;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_reg_cddcomm5 (*((ga_reg) GA_REG_CDDCOMM5))
+#define ga_reg_cddcmd0 (*((ga_reg) GA_REG_CDDCMD0))
 /**
- * @def ga_reg_cddcomm6
+ * @def ga_reg_cddcmd1
  * @brief GA Reg 22 - CDD Communication
- * @sa GA_REG_CDDCOMM6
+ * @sa GA_REG_CDDCMD1
  * @ingroup gatearray_sub
  *
  * @details See the documentation for more info
@@ -350,11 +350,11 @@ typedef u8 volatile const * ga_reg8_ro;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_reg_cddcomm6 (*((ga_reg) GA_REG_CDDCOMM6))
+#define ga_reg_cddcmd1 (*((ga_reg) GA_REG_CDDCMD1))
 /**
- * @def ga_reg_cddcomm7
+ * @def ga_reg_cddcmd2
  * @brief GA Reg 23 - CDD Communication
- * @sa GA_REG_CDDCOMM7
+ * @sa GA_REG_CDDCMD2
  * @ingroup gatearray_sub
  *
  * @details See the documentation for more info
@@ -363,11 +363,11 @@ typedef u8 volatile const * ga_reg8_ro;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_reg_cddcomm7 (*((ga_reg) GA_REG_CDDCOMM7))
+#define ga_reg_cddcmd2 (*((ga_reg) GA_REG_CDDCMD2))
 /**
- * @def ga_reg_cddcomm8
+ * @def ga_reg_cddcmd3
  * @brief GA Reg 24 - CDD Communication
- * @sa GA_REG_CDDCOMM8
+ * @sa GA_REG_CDDCMD3
  * @ingroup gatearray_sub
  *
  * @details See the documentation for more info
@@ -376,11 +376,11 @@ typedef u8 volatile const * ga_reg8_ro;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_reg_cddcomm8 (*((ga_reg) GA_REG_CDDCOMM8))
+#define ga_reg_cddcmd3 (*((ga_reg) GA_REG_CDDCMD3))
 /**
- * @def ga_reg_cddcomm9
+ * @def ga_reg_cddcmd4
  * @brief GA Reg 25 - CDD Communication
- * @sa GA_REG_CDDCOMM9
+ * @sa GA_REG_CDDCMD4
  * @ingroup gatearray_sub
  *
  * @details See the documentation for more info
@@ -389,7 +389,7 @@ typedef u8 volatile const * ga_reg8_ro;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_reg_cddcomm9 (*((ga_reg) GA_REG_CDDCOMM9))
+#define ga_reg_cddcmd4 (*((ga_reg) GA_REG_CDDCMD4))
 /**
  * @def ga_reg_fontcolor
  * @brief GA Reg 26 - Font Color
