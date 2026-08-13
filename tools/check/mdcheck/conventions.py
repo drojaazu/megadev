@@ -203,8 +203,44 @@ def check_accessor_form(text: str, display: str) -> list[Finding]:
     ]
 
 
+_BYTE_ACCESSOR_RE = re.compile(
+    r"#define\s+(ga_reg_\w+)\s+\(\*\(\(ga_reg8(?:_ro)?\)")
+
+
+def _byte_accessors() -> set[str]:
+    """Gate array accessors that are a single byte wide (D17)."""
+    out: set[str] = set()
+    for rel in tc.lib_files(".h"):
+        if rel.endswith("gate_arr.h"):
+            out |= set(_BYTE_ACCESSOR_RE.findall((tc.LIB / rel).read_text(errors="replace")))
+    return out
+
+
+def check_overwide_mask(text: str, display: str, byte_accessors: set[str]) -> list[Finding]:
+    """A byte register masked with a constant that cannot fit in a byte.
+
+    Splitting the 16 bit registers into byte registers (D17) silently changed
+    what `reg & 0x8000` means: the expression is still valid C, it just folds to
+    zero. GCC emits no diagnostic for it at any warning level -- verified -- and
+    it cost a real bug, where the wait for a graphics operation to finish
+    stopped waiting at all (KB-40). Nothing else catches this, so it is checked
+    here.
+    """
+    findings = []
+    for name in byte_accessors:
+        for m in re.finditer(
+                rf"\b{re.escape(name)}\b\s*[&|^]\s*(0[xX][0-9A-Fa-f]+|\d+)", text):
+            if int(m.group(1), 0) > 0xFF:
+                findings.append(Finding(
+                    "D17", display,
+                    f"`{m.group(0)}` masks a byte-wide register with a value that "
+                    f"does not fit in a byte; this folds to 0 with no warning"))
+    return findings
+
+
 def collect() -> list[Finding]:
     findings: list[Finding] = []
+    byte_accessors = _byte_accessors()
     for rel in tc.lib_files(".h", ".s", ".c"):
         text = (tc.LIB / rel).read_text(errors="replace")
         display = f"lib/{rel}"
@@ -216,6 +252,18 @@ def collect() -> list[Finding]:
         if rel.endswith((".h", ".s")):
             findings += check_mnemonics(text, display)
         findings += check_file_tag(text, rel, display)
+        findings += check_overwide_mask(text, display, byte_accessors)
+
+    # Project sources too: the register width changed under them, and this is
+    # exactly where the D17 fallout landed.
+    root = tc.LIB.parent
+    for area in ("examples", "new_project"):
+        for src in sorted((root / area).rglob("*")):
+            if src.suffix not in (".c", ".h", ".s") or "build" in src.parts:
+                continue
+            findings += check_overwide_mask(
+                src.read_text(errors="replace"),
+                str(src.relative_to(root)), byte_accessors)
     return sorted(set(findings))
 
 

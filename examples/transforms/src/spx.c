@@ -154,7 +154,9 @@ void redraw(s16 trace_x, s16 trace_y, s16 trace_dx, s16 trace_dy)
 
   ga_reg_tracevectbase = (u16) (TRACE_TABLE_OFFSET / 4);
 
-  while (ga_reg_stampsize & 0x8000)
+  // Wait for the graphics operation to finish before handing Word RAM over:
+  // GRON reads 1 while it is running.
+  while (ga_reg_gfxstat & GA_GRON_MASK)
   {
     asm("nop");
   }
