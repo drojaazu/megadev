@@ -110,3 +110,14 @@ _Static_assert(GA_REG_MEMMODE_LO == GA_REG_MEMMODE + 1, "LO is the second byte")
 _Static_assert(GA_DMNA_POS < 8, "DMNA is in the low byte of memory mode");
 _Static_assert(GA_RETURN_2M_POS < 8, "RET is in the low byte of memory mode");
 _Static_assert(GA_WORDRAM_LAYOUT_POS < 8, "MODE is in the low byte of memory mode");
+
+/* --- string convention -------------------------------------------------- */
+
+#include <str_util.def.h>
+
+/* Megadev strings end with 0xFF, not NUL, because the Boot ROM print routines
+ * require it and treat 0x00 as a newline. The C and assembly implementations
+ * of hextoa* now share this one definition; they previously each hardcoded a
+ * value and the C side omitted the terminator altogether. */
+_Static_assert(STRING_TERMINATOR == 0xFF, "Boot ROM print expects an 0xFF terminator");
+_Static_assert(STRING_TERMINATOR != 0, "0x00 is a newline here, not a terminator");
