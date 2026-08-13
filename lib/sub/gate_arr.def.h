@@ -482,55 +482,167 @@
 
 /**
  * @def GA_REG_CDCMODE
- * @brief CDC Mode & CDC Registers #1
+ * @brief CDC mode / CDC register address
  *
  * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * |EDT|DSR| |||DD2|DD1|DD0| ||||CA3|CA2|CA1|CA0|
+ * Selects which internal CDC register `GA_REG_CDCRS1` reads and writes, sets
+ * where the CDC sends the data it recovers from the disc, and reports the
+ * progress of that transfer.
+ *
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | |\b EDT|\b DSR|\b UBR| | |\b DD2|\b DD1|\b DD0| | | | |\b CA3|\b CA2|\b CA1|\b CA0|
+ * |\b R|◯|◯| | | |◯|◯|◯| | | | |◯|◯|◯|◯|
+ * |\b W| | | | | |◯|◯|◯| | | | |◯|◯|◯|◯|
  *
  * @param CA CDC register address
- * @details RW: Details for this register can be found in the LC89510 manual
- * @param DSR Data set ready
- * @details R: Data from the CDC is present in the CDC Host Data register
- * @param EDT End of data transfer
- * @details R: All data from the CDC has been transferred
+ * @details RW: Selects the CDC register exposed through GA_REG_CDCRS1. The
+ * registers themselves are documented in the LC89510 manual, not here.
  * @param DD Device destination
- * @details RW: Specifies the destination for CDC data transfer, as defined
- * below: |DD2|DD1|DD0|Destination|
- *   |:|:|:|:|
- *   |0|1|0|Main CPU|
- *   |0|1|1|Sub CPU|
- *   |1|0|0|PCM DMA|
- *   |1|1|1|In 2M Mode: Word RAM \n In 1M Mode: Sub CPU controlled Word RAM|
+ * @details RW: Where the CDC sends its data. See GA_CDCMODE_DD_MASK.
+ * @param UBR Upper byte ready
+ * @details R: The CDC has sent the high order byte. Cleared when the low order
+ * byte follows.
+ * @param DSR Data set ready
+ * @details R: The CDC has sent the low order byte, so a full word is waiting in
+ * GA_REG_CDCHOSTDATA. Cleared once that word has been read or transferred.
+ * \n Under PCM DMA the unit is a byte rather than a word: the flag sets when
+ * the gate array takes one byte from the CDC and clears when it hands that byte
+ * to the PCM chip.
+ * @param EDT End of data transfer
+ * @details R: Every byte has been transferred out of the CDC. Cleared when the
+ * device destination is written, set on completion, and cleared again when a
+ * further transfer begins.
  *
- *   All other values for DD are invalid.
+ * @note Writing the device destination resets the DMA circuit, GA_REG_DMAADDR
+ * included. After any reset other than power-on the destination bits keep their
+ * previous value but the transfer circuit may be unstable, so set them again
+ * rather than assuming they survived.
  * @warning Of the bit operations, only BTST is permitted.
  * @ingroup ga_reg_sub_02
  */
 #define GA_REG_CDCMODE 0xFF8004
 
 /**
+ * @def GA_CDCMODE_CA_MASK
+ * @brief CDC register address
+ * @sa GA_REG_CDCMODE
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_02
+ */
+#define GA_CDCMODE_CA_POS 0
+#define GA_CDCMODE_CA_WIDTH 4
+#define GA_CDCMODE_CA_MASK FIELD_MASK(GA_CDCMODE_CA_POS, GA_CDCMODE_CA_WIDTH)
+
+/**
+ * @def GA_CDCMODE_DD_MASK
+ * @brief CDC device destination
+ * @details
+ * Where the CDC sends the data it reads. Values are stored unshifted; place
+ * them with FIELD_PREP.
+ *
+ * | Value | 2M mode | 1M mode |
+ * |:|:|:|
+ * | GA_CDCMODE_DD_MAINREAD | Main CPU read | Main CPU read |
+ * | GA_CDCMODE_DD_SUBREAD | Sub CPU read | Sub CPU read |
+ * | GA_CDCMODE_DD_PCMDMA | PCM sound source, by DMA | PCM sound source, by DMA |
+ * | GA_CDCMODE_DD_PRGDMA | Program RAM, by DMA | Program RAM, by DMA |
+ * | GA_CDCMODE_DD_WRAMDMA | Sub CPU side 2M Word RAM, by DMA | Sub CPU side 1M Word RAM, by DMA |
+ *
+ * The three remaining values (0, 1 and 6) are documented as "do not set" and
+ * have no defined behaviour.
+ * @warning The DMA destinations apply only while the target memory is attached
+ * to the Sub CPU. DMA cannot be performed into memory attached to the Main CPU.
+ * @sa GA_REG_CDCMODE
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_02
+ */
+#define GA_CDCMODE_DD_POS 8
+#define GA_CDCMODE_DD_WIDTH 3
+#define GA_CDCMODE_DD_MASK FIELD_MASK(GA_CDCMODE_DD_POS, GA_CDCMODE_DD_WIDTH)
+
+#define GA_CDCMODE_DD_MAINREAD 0b010
+#define GA_CDCMODE_DD_SUBREAD 0b011
+#define GA_CDCMODE_DD_PCMDMA 0b100
+#define GA_CDCMODE_DD_PRGDMA 0b101
+#define GA_CDCMODE_DD_WRAMDMA 0b111
+
+/**
+ * @def GA_CDCMODE_UBR_MASK
+ * @brief Upper byte ready
+ * @sa GA_REG_CDCMODE
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_02
+ */
+#define GA_CDCMODE_UBR_POS 13
+#define GA_CDCMODE_UBR_WIDTH 1
+#define GA_CDCMODE_UBR_MASK FIELD_MASK(GA_CDCMODE_UBR_POS, GA_CDCMODE_UBR_WIDTH)
+
+/**
+ * @def GA_CDCMODE_DSR_MASK
+ * @brief Data set ready
+ * @note In the high byte of the register, so use FIELD_BYTE and FIELD_BPOS to
+ * reach it with BTST.
+ * @sa GA_REG_CDCMODE
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_02
+ */
+#define GA_CDCMODE_DSR_POS 14
+#define GA_CDCMODE_DSR_WIDTH 1
+#define GA_CDCMODE_DSR_MASK FIELD_MASK(GA_CDCMODE_DSR_POS, GA_CDCMODE_DSR_WIDTH)
+
+/**
+ * @def GA_CDCMODE_EDT_MASK
+ * @brief End of data transfer
+ * @note In the high byte of the register, so use FIELD_BYTE and FIELD_BPOS to
+ * reach it with BTST.
+ * @sa GA_REG_CDCMODE
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_02
+ */
+#define GA_CDCMODE_EDT_POS 15
+#define GA_CDCMODE_EDT_WIDTH 1
+#define GA_CDCMODE_EDT_MASK FIELD_MASK(GA_CDCMODE_EDT_POS, GA_CDCMODE_EDT_WIDTH)
+
+/**
  * @defgroup ga_reg_sub_cdcregs2 Sub CPU / Gate Array / Registers / CDC
- * Registers #1
+ * Registers #2
  */
 
 /**
  * @def GA_REG_CDCRS1
- * @brief CDC Registers #2
+ * @brief CDC register data
  *
  * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * | ||||||||CD7|CD6|CD5|CD4|CD3|CD2|CD1|CD0|
+ * The data port for whichever internal CDC register GA_CDCMODE_CA_MASK
+ * currently selects. The registers behind it belong to the LC89510 and are
+ * documented in its manual, not here.
+ *
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | | | | | | | | | |\b CD7|\b CD6|\b CD5|\b CD4|\b CD3|\b CD2|\b CD1|\b CD0|
+ * |\b R| | | | | | | | |◯|◯|◯|◯|◯|◯|◯|◯|
+ * |\b W| | | | | | | | |◯|◯|◯|◯|◯|◯|◯|◯|
  *
  * @param CD CDC register data
- * \n Details for this register can be found in the LC89510 manual
- * @warning Bit operation instructions are not permitted here; read the
- * register, modify the copy, and write the whole value back.
+ * @details RW: The selected CDC register.
+ * @warning No bit or read-modify-write instruction may be used on this
+ * register -- not BTST, BSET, BCLR, and not CLR either. Read the whole value,
+ * modify the copy, and write it back.
  * @ingroup ga_reg_sub_03
  */
 #define GA_REG_CDCRS1 0xFF8006
+
+/**
+ * @def GA_CDCRS1_CD_MASK
+ * @brief Selected CDC register data
+ * @sa GA_REG_CDCRS1
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_03
+ */
+#define GA_CDCRS1_CD_POS 0
+#define GA_CDCRS1_CD_WIDTH 8
+#define GA_CDCRS1_CD_MASK FIELD_MASK(GA_CDCRS1_CD_POS, GA_CDCRS1_CD_WIDTH)
 
 /**
  * @defgroup ga_reg_sub_cdcdata Sub CPU / Gate Array / Registers / CDC Host Data
@@ -538,20 +650,28 @@
 
 /**
  * @def GA_REG_CDCHOSTDATA
- * @brief CDC Host Data
+ * @brief CDC host data
  *
  * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * |HD15|HD14|HD13|HD12|HD11|HD10|HD09|HD08|HD07|HD06|HD05|HD04|HD03|HD02|HD01|HD00|
+ * The CDC accumulates two bytes here and the word is then read by the Main or
+ * Sub CPU. Reading it releases the register, and the CDC loads the next two
+ * bytes into it.
+ *
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | |\b HD|||||||||||||||
+ * |\b R|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|
+ * |\b W|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|
  *
  * @param HD CDC read data
- * [read] 2 bytes of data read by the CDC and ready to be transferred to
- * Main or Sub CPU memory
- * @warning Word access only. A byte access to this register can raise a
- * bus error.
- * @warning Bit operation instructions are not permitted here; read the
- * register, modify the copy, and write the whole value back.
+ * @details R: Two bytes read from the disc, ready to be moved into Main or Sub
+ * CPU memory.
+ *
+ * @note Only meaningful once GA_CDCMODE_DSR_MASK is set. Reading it before then
+ * yields whatever the previous transfer left behind.
+ * @warning Read only, and word access only. A byte access can raise a bus
+ * error, and there is nothing to write.
+ * @warning Bit operation instructions are not permitted here.
  * @ingroup ga_reg_sub_04
  */
 #define GA_REG_CDCHOSTDATA 0xFF8008
@@ -563,25 +683,34 @@
 
 /**
  * @def GA_REG_DMAADDR
- * @brief CDC DMA Address
+ * @brief CDC DMA address
  *
  * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * |A18|A17|A16|A15|A14|A13|A12|A11|A10|A09|A08|A07|A06|A05|A04|A03|
+ * The destination address for a CDC DMA transfer. The register holds address
+ * bits 3 through 18, so the address it describes is the register value shifted
+ * left by three -- transfers are therefore aligned to 8 byte boundaries and the
+ * bottom three address bits cannot be expressed at all.
  *
- * @param A DMA destination address
- * \n Specifies the address for CDC DMA transfer
- * - For PCM DMA: bits up to A12 are used
- * - For 1M Word RAM: bits up to A16 are used
- * - For 2M Word RAM: bits up to A17 are used
- * - For PRG-RAM: all bits are used
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | |\b A18|\b A17|\b A16|\b A15|\b A14|\b A13|\b A12|\b A11|\b A10|\b A09|\b A08|\b A07|\b A06|\b A05|\b A04|\b A03|
+ * |\b R|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|
+ * |\b W|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|
  *
- * Unused bits will be read as 0.
- * @warning Word access only. A byte access to this register can raise a
- * bus error.
- * @warning Bit operation instructions are not permitted here; read the
- * register, modify the copy, and write the whole value back.
+ * @param A DMA destination address, bits 3-18
+ * @details W: How much of the field is usable depends on the destination
+ * selected by GA_CDCMODE_DD_MASK, because each target is a different size:
+ * - PCM sound source: up to A12; A13 through A18 must be written 0
+ * - 1M mode Word RAM (either half): up to A16; A17 and A18 must be written 0
+ * - 2M mode Word RAM: up to A17; A18 must be written 0
+ * - Program RAM: the whole field is usable
+ *
+ * @note Reset whenever the device destination in GA_REG_CDCMODE is written, so
+ * set the destination first and the address second.
+ * @warning Write only, and word access only. A byte access can raise a bus
+ * error, and the register does not read back -- keep your own copy if you need
+ * to know what it holds.
+ * @warning Bit operation instructions are not permitted here.
  * @ingroup ga_reg_sub_05
  */
 #define GA_REG_DMAADDR 0xFF800A
@@ -1033,40 +1162,6 @@
  * @ingroup ga_reg_sub_192
 */
 #define GA_REG_SUBCODEBUFIMG 0xFF8180
-
-/**
- * ga_reg_cdcmode bit/mask settings
- */
-#define GA_CDCMODE_DD0_POS 5
-#define GA_CDCMODE_DD0_WIDTH 1
-#define GA_CDCMODE_DSR_POS 6
-#define GA_CDCMODE_DSR_WIDTH 1
-#define GA_CDCMODE_EDT_POS 7
-#define GA_CDCMODE_EDT_WIDTH 1
-
-// these aren't right...
-// TODO clean these up
-#define GA_CDCMODE_MAINREAD_POS 2
-#define GA_CDCMODE_MAINREAD_WIDTH 1
-#define GA_CDCMODE_SUBREAD_POS 3
-#define GA_CDCMODE_SUBREAD_WIDTH 1
-#define GA_CDCMODE_PCMDMA_POS 4
-#define GA_CDCMODE_PCMDMA_WIDTH 1
-#define GA_CDCMODE_PRAMDMA_POS 5
-#define GA_CDCMODE_PRAMDMA_WIDTH 1
-#define GA_CDCMODE_WRAMDMA_POS 7
-#define GA_CDCMODE_WRAMDMA_WIDTH 1
-
-#define CDCMODE_CABITS           0x000F
-#define CDCMODE_DDBITS           0x0700
-#define GA_CDCMODE_DD0_MASK FIELD_MASK(GA_CDCMODE_DD0_POS, GA_CDCMODE_DD0_WIDTH)
-#define GA_CDCMODE_DSR_MASK FIELD_MASK(GA_CDCMODE_DSR_POS, GA_CDCMODE_DSR_WIDTH)
-#define GA_CDCMODE_EDT_MASK FIELD_MASK(GA_CDCMODE_EDT_POS, GA_CDCMODE_EDT_WIDTH)
-#define GA_CDCMODE_MAINREAD_MASK FIELD_MASK(GA_CDCMODE_MAINREAD_POS, GA_CDCMODE_MAINREAD_WIDTH)
-#define GA_CDCMODE_SUBREAD_MASK FIELD_MASK(GA_CDCMODE_SUBREAD_POS, GA_CDCMODE_SUBREAD_WIDTH)
-#define GA_CDCMODE_PCMDMA_MASK FIELD_MASK(GA_CDCMODE_PCMDMA_POS, GA_CDCMODE_PCMDMA_WIDTH)
-#define GA_CDCMODE_PRAMDMA_MASK FIELD_MASK(GA_CDCMODE_PRAMDMA_POS, GA_CDCMODE_PRAMDMA_WIDTH)
-#define GA_CDCMODE_WRAMDMA_MASK FIELD_MASK(GA_CDCMODE_WRAMDMA_POS, GA_CDCMODE_WRAMDMA_WIDTH)
 
 #define CDC_DEST_MAINREAD 2
 #define CDC_DEST_SUBREAD  3

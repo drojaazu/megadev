@@ -339,6 +339,22 @@ baseline should only ever shrink — that is the ratchet.
 Result of the first run: **INV-1 holds everywhere on `master`** — every `.def.h` really is
 preprocessor-only. The 16 accepted violations are 11 include-guard names and 5 wrong `@file` tags.
 
+### Tier 1.5 — compile-time semantic assertions
+
+Tier 0.1 proves a macro *parses*; it says nothing about what the macro *evaluates to*, because a
+macro that is never expanded is never checked. Tier 1.5 expands them and asserts the results, in
+`tools/check/asserts/`.
+
+It runs in **both languages, deliberately**. `*.c` files use `_Static_assert`; `*.s` files use
+`.if`/`.error` and are assembled for real. The assembly half is not redundant: GNU as accepts a much
+smaller expression grammar than C, and a macro in a `.def.h` has to expand in both. The first cut of
+`FIELD_BYTE` used a ternary — legal C, rejected outright by GNU as — and a C-only Tier 1.5 passed it
+(KB-37). An assertion file that only ever exercises one of the two languages is checking half the
+contract.
+
+The assembly asserts also emit real instructions, not just `.if` expressions, so a macro that
+evaluates correctly but cannot be used as an operand still fails.
+
 ### Tier 2 — on-target tests (specified, not built)
 
 A `tests/` project built like any other Megadev project, run under a headless emulator
@@ -409,6 +425,25 @@ calls were sanctioned for game use, and the source of the Work RAM equates in `d
 > Where a claim rests on wording that is ambiguous in the scan, record it as `ASSUMED` and say which
 > page it came from, rather than treating agreement between the two files as corroboration.
 
+#### Page map of *The Hardware*, Ver 1.0
+
+The scan's PDF page number is the printed page number **plus 4** (printed 21 = PDF 25). Sections:
+
+| Printed | Contents |
+|---|---|
+| 12–18 | §1 Mapping: 2M / 1M modes, Sub CPU map, Main CPU map |
+| 19–21 | §2 Register table; **p.21 is the access-width and bit-operation table** |
+| 22–25 | §3-1 Sub CPU init: `$FF8000`, `$FF8002`, Word RAM switching in 1M and 2M |
+| **26–27** | §3-2 Sub CPU CDC: `$FF8004`, `$FF8006`, `$FF8008`, `$FF800A` |
+| 28–29 | §3-3 Sub CPU communication: `$FF800C`, `$FF800E`, `$FF8010`–`$FF802E` |
+| 30 | §3-4 timer `$FF8030`, §3-5 interrupt mask `$FF8032` |
+| 31–33 | §3-6 CDD: fader `$FF8034`, control `$FF8036`, comms `$FF8038`–`$FF804A` |
+| 34 | §3-7 colour operation: `$FF804C`, `$FF804E`, `$FF8050`–`$FF8056` |
+| 35–54 | §3-8 rotation / scaling: `$FF8058`–`$FF8066`, stamps, image buffer |
+| 55 | §3-9 sub-code: `$FF8068`, `$FF8100`–`$FF817E`, image at `$FF8180` |
+| 56–60 | §4 Main CPU registers: `$A12000`–`$A1202E` |
+| 61+ | Supplements; PCM sound source (RF5C164) appendix |
+
 | Claim | Provenance | Source / note |
 |---|---|---|
 | Gate Array register map, Sub side | DOC | Sega BIOS manual + community research |
@@ -454,6 +489,9 @@ diagnostic, not by reading. Marked ✅ = present on `master`; ⚠️ = introduce
 | KB-11 | `lib/main/comm.h:51,74` + `comm.macros.s:41,53` | **Proven by `_Static_assert`**: `SCTRL_TX_FULL == 1` and `SCTRL_RX_READY == 2` — masks. Passed to `btst` they select bits 1 and 2 instead of bits 0 and 1, in both the C and assembly copies. Root cause: `io.def.h` has no `_BIT` companions (INV-6). | ✅ |
 | KB-12 | `lib/main/gate_arr.def.h` vs `lib/sub/gate_arr.def.h` | Same macro names, different values, non-matching include guards (INV-7) | ✅ |
 | KB-34 | `lib/sub/gate_arr.def.h`, `lib/main/gate_arr.def.h` | **Fixed 2026-08-13.** Three field groups gave positions relative to their *byte* rather than their register, so the mask derived from each named the wrong bits: `GA_LED_R`/`GA_LED_G` at 0/1 rather than 8/9 (bit 0 of that register is **RES0, the peripheral reset**, so `ga_reg_reset | GA_LED_R_MASK` would have reset the peripheral instead of lighting the LED); `GA_MEMMODE_WP` at 0, deriving `0x00FF` for a field that occupies `0xFF00`; and the Main-side `GA_CDC_DEST` at 0 rather than 8. Confirmed against the Hardware Manual pages 57 and 58 (§7). All three are now register-relative (§9 D16, INV-12), with `FIELD_BYTE`/`FIELD_BPOS` for the bit-opcode case and Tier 1.5 assertions pinning the positions. `GA_MEMMODE_BANK` was checked on the same page and was already correct. None of the three had a use site, so nothing downstream changed. | ✅ |
+| KB-35 | `lib/sub/gate_arr.def.h` | **Fixed 2026-08-13.** The `GA_CDCMODE_*` field block was wrong in three ways at once and carried its own `// these aren't right... // TODO clean these up`. `DSR`/`EDT` were byte-relative (6, 7) rather than word-relative (14, 15). `DD0` was position 5, which is neither. And `MAINREAD`/`SUBREAD`/`PCMDMA`/`PRAMDMA`/`WRAMDMA` were declared as `_POS`/`_WIDTH`/`_MASK` when the numbers 2, 3, 4, 5, 7 are **destination values**, duplicated verbatim from the `CDC_DEST_*` list below them — a value set masquerading as bit positions. Replaced with `GA_CDCMODE_{CA,DD,UBR,DSR,EDT}` at the positions the manual gives (p.26), `DD` as one 3-bit field with unshifted values per D12. | ✅ |
+| KB-36 | `lib/sub/cdrom.s:339,451` | **Fixed 2026-08-13.** `btst #GA_CDCMODE_DSR_POS-8` with `DSR_POS` of 6 assembles to `btst #-2`, and the `EDT` site to `btst #-1`. Both were **accidentally correct**: the 68000 uses only the low three bits of the immediate, so `-2` selects bit 6 and `-1` selects bit 7, which is what the byte-relative constants meant. Two errors cancelling. Rewritten with `FIELD_BYTE`/`FIELD_BPOS`; the emitted code was diffed before and after and is identical but for the two immediates, now `#6` and `#7`. | ✅ |
+| KB-37 | `lib/build.def.h` | **Fixed 2026-08-13.** `FIELD_BYTE` was first written with a ternary, which C accepts and **GNU as rejects outright** (`found '?', expected: ')'`) — in a macro whose whole purpose is bit opcodes in assembly. Tier 1.5 was C-only, so the gate passed it. Rewritten as `((reg) + 1 - ((POS >> 3) & 1))`, and Tier 1.5 now assembles `asserts/*.s` as well, so the assembly grammar is actually exercised. | ✅ |
 | KB-33 | `lib/memory.h` | **FIXED** 2026-08-13 — every `memset*`/`memcpy*` counted with a single `dbra`, which decrements only the low 16 bits. Lengths above 65536 elements silently truncated (a full 256 KB Word RAM copy is 262,144 bytes, well past it) and a length of 0 underflowed into ~65536 iterations, writing far outside the buffer. | ✅ |
 | KB-13 | `lib/str_util.s:19` vs `lib/str_util.h:26` | **FIXED** 2026-08-13 — C wrote no terminator while assembly wrote `0xFF`. The Boot ROM print routines require 0xFF and treat 0x00 as a newline, so the assembly was right. Both now share `STRING_TERMINATOR` from `lib/str_util.def.h`. | ✅ |
 | KB-14 | `megadev.make:30-48` | `MEGADEV_PATH` is not sanity-checked; unset yields `LIB_PATH=/lib` | ✅ |

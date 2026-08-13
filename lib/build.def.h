@@ -77,8 +77,11 @@
  * at the following byte.
  *
  *     btst #FIELD_BPOS(GA_DMNA), FIELD_BYTE(GA_REG_MEMMODE, GA_DMNA)
+ *
+ * @note Written as arithmetic rather than a conditional because GNU as has no
+ * ternary operator, and this must expand in assembly sources as well as C.
  */
-#define FIELD_BYTE(reg, field) ((reg) + (((field##_POS) < 8) ? 1 : 0))
+#define FIELD_BYTE(reg, field) ((reg) + 1 - ((((field##_POS)) >> 3) & 1))
 
 /**
  * @brief Bit number of a field within its own byte, for bit operations

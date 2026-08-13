@@ -113,7 +113,7 @@ bit: `◯` means the access is valid, a blank means it is undefined, and `🗙` 
 
 For example, the `ROM_VER` field of `GA_REG_RESET` is meaningful when read but not when written:
 
-| |7|6|5|4|3|2|1|0|7|6|5|4|3|2|1|0|
+| |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
 |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
 | | | | | | | |\b LED_G|\b LED_R|\b ROM_VER|||| | | |\b SUB_RESET|
 |\b R| | | | | | |◯|◯|◯|◯|◯|◯| | | |◯|
@@ -150,9 +150,9 @@ matter — a byte access to a word-only register can raise a bus error.
 | `00` | Reset / LED / version | W/B | yes |
 | `02` | Memory mode / write protect | W/B | yes |
 | `04` | CDC mode / register address | W/B | **btst only** |
-| `06` | CDC register data | W/B | **no** |
-| `08` | CDC host data | **W** | **no** |
-| `0A` | CDC DMA address | **W** | **no** |
+| `06` | CDC register data | W/B | **no** — not even `CLR` |
+| `08` | CDC host data — **read only** | **W** | **no** |
+| `0A` | CDC DMA address — **write only** | **W** | **no** |
 | `0C` | Stopwatch | **W** | **no** |
 | `0E` | Communication flag | W/B | yes |
 | `10`–`2E` | Communication command / status | W/B | yes |
@@ -183,7 +183,7 @@ matter — a byte access to a word-only register can raise a bus error.
 | `02` | Memory mode / write protect | W/B | yes |
 | `04` | CDC mode | W/B | yes |
 | `06` | H-INT vector | **W** | yes |
-| `08` | CDC host data | **W** | **no** |
+| `08` | CDC host data — **read only** | **W** | **no** |
 | `0C` | Stopwatch | **W** | **no** |
 | `0E` | Communication flag | W/B | yes |
 | `10`–`2E` | Communication command / status | W/B | yes |
@@ -191,7 +191,9 @@ matter — a byte access to a word-only register can raise a bus error.
 This is why the CD fader (`GA_REG_CDFADER`, `$FF8034`) needs care: it is **word access only, with no bit
 operations**. Read-modify-write the whole word.
 
-> **One row is uncertain.** The scan's row alignment around offsets `04` and `06` is ambiguous as to
-> which carries "Only btst". Both are recorded above on the reading that the two scans agree on, but
-> if you are about to rely on bit operations against the CDC registers, check the page yourself.
+The `04`/`06` rows were once recorded as uncertain, because the scan's row alignment on page 21 is
+ambiguous about which of them carries "Only btst". The per-register pages settle it: page 26 places
+no restriction beyond bit operations on `$FF8004`, and page 27 says of `$FF8006` that it "may not be
+accessed using commands such as BTST, BCLR, BSET, CLR, etc." — note `CLR`, which is a
+read-modify-write on the 68000 and so is caught by the same rule.
 
