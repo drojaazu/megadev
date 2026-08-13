@@ -1,3 +1,10 @@
+/* NOT CURRENTLY WIRED UP.
+   megadev.make has no rule that uses this script, so nothing builds a .bin
+   module today -- though the module rules do accept one as a dependency
+   (they filter %.bin when gathering symbol references), so the intent is
+   half-present. Kept rather than deleted because the design is sound and the
+   gap is real; see BACKLOG MAKE-13 before relying on it. */
+
 OUTPUT_ARCH(m68k)
 
 /* Raw data module
