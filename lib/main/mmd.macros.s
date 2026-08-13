@@ -28,7 +28,7 @@
   lea      0x100(a0), a1  //start of MMD Data section in a1
   move.w   6(a0), d0  //size of MMD Data in d7
 0:move.l   (a1)+, (a2)+   //copy MMD Data to destination
-  dbf      d0, 0b
+  dbra      d0, 0b
 1:move.l   12(a0), d0  //set HBLANK vector if provided
   beq      2f
   move.l   d0, EXVEC_LEVEL4

@@ -37,7 +37,7 @@ SUB hextoa16
 1:rol.w #4, d0
 	jbsr hex_to_ascii
 	move.b d1, (a0)+
-	dbf d7, 1b
+	dbra d7, 1b
 	move.b #0xFF,(a0)
 	rts
 
@@ -52,7 +52,7 @@ SUB hextoa32
 1:rol.l #4, d0
 	jbsr hex_to_ascii
 	move.b d1, (a0)+
-	dbf d7, 1b
+	dbra d7, 1b
 	move.b #0xFF,(a0)
 	rts
 

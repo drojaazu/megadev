@@ -25,7 +25,7 @@ GLABEL pcm_clear_ram
 
 2:move.b   #0, (a6)
   addq     #2, a6
-  dbf      d2, 2b
+  dbra      d2, 2b
   addq     #1, d0
   addq     #1, d1
   cmpi.w   #0x10, d0
@@ -48,5 +48,5 @@ GLABEL pcm_config_channel
     nop
   .endr
   addq     #2, a6
-  dbf      d0, 1b
+  dbra      d0, 1b
   rts

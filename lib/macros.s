@@ -85,7 +85,7 @@ file_end:
 LOOP:
   cmpm.b  (a1)+, (a2)+
   bne      END
-  dbf      d1, LOOP
+  dbra      d1, LOOP
   moveq    #0, d1
 END:
   POPM    d1/a1-a2  // movem does not affect registers; Z will be preserved

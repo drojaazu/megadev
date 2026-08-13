@@ -54,7 +54,7 @@ status_wait:
   lea      (Z80_RAM), a1
 copy:
   move.b  (a0)+,(a1)+
-  dbf	    d7, copy
+  dbra	    d7, copy
   move.w   #Z80_RESET_ASSERT, (Z80_REG_RESET)
   move.w   #Z80_BUS_RELEASE, (Z80_REG_BUSREQ)
   move.w   #Z80_RESET_RELEASE, (Z80_REG_RESET)

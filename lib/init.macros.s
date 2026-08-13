@@ -18,14 +18,14 @@
   lea      _BSS_ORIGIN, a0
   bra      1f
 0:move.l   d0, (a0)+
-1:dbf      d7, 0b
+1:dbra      d7, 0b
   // copy .data section to RAM
   move.l   #_RAM_DATA_LENGTH_LOOPSZ, d7
   lea      _ROM_DATA_ORIGIN, a0
   lea      _RAM_DATA_ORIGIN, a1
   bra      1f
 0:move.l    (a0)+, (a1)+
-1:dbf      d7, 0b
+1:dbra      d7, 0b
 .endm
 
 

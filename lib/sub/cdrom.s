@@ -71,7 +71,7 @@ find_file:
   beq      1f
   addq.w   #1, d1       // increment size
   addq.l   #1, a1       // increment char pointer
-  dbf      d0, 0b
+  dbra      d0, 0b
 
   // part 2 - find the filename in the directory cache
 1:move.w   dir_entry_count, d0  // for each file in the dir
@@ -81,7 +81,7 @@ find_file:
 2:COMPARE_STRING           // compare the filename to this dir entry
   beq      3f              // found the file!
   adda.w   #22, a2       // not found, move to next entry
-  dbf      d0, 2b
+  dbra      d0, 2b
 
   move     #1, ccr     // couldn't find the file! report file not found
   rts

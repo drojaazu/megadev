@@ -92,4 +92,5 @@ $(DISC_PATH)/bramdemo.mmd: \
 $(DISC_PATH)/spx.smd: \
 	spx_layout.s \
 	spx.c \
+	sub/bram.c \
 	$(BUILD_PATH)/sp.bin

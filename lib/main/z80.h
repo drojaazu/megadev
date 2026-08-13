@@ -75,7 +75,7 @@ static inline void z80_reset_cpu()
 /**
  * @note z80_program_size is the size of the data in bytes MINUS ONE
  */
-void z80_init(
+static inline void z80_init(
   register void const * z80_program, register u16 const z80_program_size)
 {
   register u32 scratch_a1;
@@ -89,7 +89,7 @@ void z80_init(
   bne.s    0b \n\
   lea      (%c[_Z80_RAM]), %[scratch_a1] \n\
 1:move.b   (%[_z80_program])+,(%[scratch_a1])+ \n\
-  dbf	     %[_z80_program_size], 1b \n\
+  dbra	     %[_z80_program_size], 1b \n\
   move.w   #%c[_Z80_RESET_ASSERT], (%c[_Z80_REG_RESET]) \n\
   move.w   #%c[_Z80_BUS_RELEASE], (%c[_Z80_REG_BUSREQ]) \n\
   move.w   #%c[_Z80_RESET_RELEASE], (%c[_Z80_REG_RESET]) \n\

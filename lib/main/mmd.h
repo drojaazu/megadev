@@ -28,7 +28,7 @@ static inline void const * init_mmd()
   lea      0x100(%[wrdram]), %[scratch_a1] \n\
   move.w   6(%[wrdram]), %[scratch_d0] \n\
 0:move.l   (%[scratch_a1])+, (%[scratch_a0])+ \n\
-  dbf      %[scratch_d0], 0b \n\
+  dbra      %[scratch_d0], 0b \n\
 1:move.l   12(%[wrdram]), %[scratch_d0] \n\
   beq      2f \n\
   move.l   %[scratch_d0], %c[mlevel4]+2 \n\

@@ -30,7 +30,7 @@ SUB comm_sync
 	moveq #3, d0
 1:move.l (a2), (a1)+
 	clr.l	(a2)+
-	dbf d0, 1b
+	dbra d0, 1b
 	bchg #1, (a0)
 2:rts
 
