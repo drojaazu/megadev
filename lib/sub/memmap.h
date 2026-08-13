@@ -5,9 +5,7 @@
  * @brief C wrappers for Sub CPU memory map & system vectors
  */
 
-#ifndef MEGADEV__SUB_MEMMAP_H
-#define MEGADEV__SUB_MEMMAP_H
-
+#pragma once
 #include <sub/memmap.def.h>
 #include <types.h>
 
@@ -33,5 +31,3 @@
 #define DMAADDR_WORDRAM2M(addr) (((addr) & 0x7FFF) >> 3)
 #define DMAADDR_PCM(addr)       (((addr) & 0x03FF) >> 3)
 #define DMAADDR_PRGRAM(addr)    ((addr) >> 3)
-
-#endif

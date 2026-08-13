@@ -5,9 +5,7 @@
  * @brief VDP hardware definitions
  */
 
-#ifndef MEGADEV__MAIN_VDP_DEF_H
-#define MEGADEV__MAIN_VDP_DEF_H
-
+#pragma once
 /**
  * @defgroup vdp Main CPU / VDP
  */
@@ -1362,5 +1360,3 @@
  * (assuming tile data begins at 0 in VRAM)
  */
 #define tileidx_from_vram_addr(vram_addr) ((vram_addr) >> 5)
-
-#endif

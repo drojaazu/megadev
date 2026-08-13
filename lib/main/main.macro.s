@@ -5,8 +5,5 @@
  * @brief General purpose asm macros for use with the Main CPU
  */
 
-#ifndef MEGADEV__MAIN_MACRO_S
-#define MEGADEV__MAIN_MACRO_S
+#pragma once
 
-
-#endif

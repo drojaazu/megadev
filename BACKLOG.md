@@ -65,7 +65,7 @@ toolchain was available during the audit. VER-1 must land first so that fixes ca
 |---|---|---|---|
 | ARCH-1 | S1 | open | KB-12 / INV-7 — Main and Sub Gate Array headers define the same macro names with different values and non-matching guards. Blocked on SPEC.md **OD-1**. |
 | ARCH-2 | S3 | blocked | Decide whether Mode 1 is a supported target (SPEC.md **OD-2**). Gates ARCH-1. Four abandoned branches exist (`md_cart`, `md_cart_dev`, `feature_carts`, `origin/md_cart`); commit `48167ff` removed the example. |
-| ARCH-3 | S3 | open | Settle include-guard style (SPEC.md **OD-3**), then enforce via VER-2. |
+| ARCH-3 | S3 | **done** | D13 — all 56 headers use `#pragma once`. The convention baseline is now **empty**. |
 | ARCH-4 | S3 | open | Settle pointer-vs-lvalue register-access macro form (SPEC.md **OD-4**). Affects 2.0.0. |
 | ARCH-5 | S3 | open | Umbrella headers incomplete: `main.h` omits `bios.h`, `comm.h`, `md_sys.h`, `mmd.h`; `sub.h` omits `bios.h`. |
 | ARCH-6 | S3 | **done** | INV-3 violation resolved by removing the `ATOI` macro from `lib/str_util.s` (LIB-15). |

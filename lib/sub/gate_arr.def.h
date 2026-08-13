@@ -5,9 +5,7 @@
  * @brief Sub CPU side Gate Array registers
  */
 
-#ifndef MEGADEV__SUB_GATEARR_DEF_H
-#define MEGADEV__SUB_GATEARR_DEF_H
-
+#pragma once
 /**
  * @defgroup ga_regs_sub Sub CPU / Gate Array / Registers
  */
@@ -728,5 +726,3 @@
 #define CDC_DEST_PCMDMA   4
 #define CDC_DEST_PRAMDMA  5
 #define CDC_DEST_WRAMDMA  7
-
-#endif

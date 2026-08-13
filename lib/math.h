@@ -5,9 +5,7 @@
  * @brief Math functions
  */
 
-#ifndef MEGADEV__MATH_H
-#define MEGADEV__MATH_H
-
+#pragma once
 #include "types.h"
 
 typedef struct {
@@ -165,5 +163,3 @@ static inline s16 abs16(s16 val)
 		: "cc");
 	return val;
 }
-
-#endif

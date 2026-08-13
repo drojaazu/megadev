@@ -7,6 +7,8 @@
  * @note Taken from Wonder Library code
  */
 
+#pragma once
+
 #include "types.h"
 
 extern void Kos_Decomp();

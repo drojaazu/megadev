@@ -62,29 +62,26 @@ class TestDefH(unittest.TestCase):
 
 
 class TestGuard(unittest.TestCase):
-    def test_expected_guard_derivation(self):
-        self.assertEqual(
-            cv.expected_guard("main/gate_arr.def.h"), "MEGADEV__MAIN_GATE_ARR_DEF_H"
-        )
-        self.assertEqual(cv.expected_guard("types.h"), "MEGADEV__TYPES_H")
+    """INV-4: headers guard themselves with #pragma once (SPEC.md OD-3)."""
 
-    def test_correct_guard_passes(self):
+    def test_pragma_once_passes(self):
+        self.assertEqual(cv.check_guard("#pragma once\nint x;\n", "types.h", "x"), [])
+
+    def test_pragma_once_with_leading_comment_passes(self):
+        src = "/**\n * @file types.h\n */\n\n#pragma once\n"
+        self.assertEqual(cv.check_guard(src, "types.h", "x"), [])
+
+    def test_ifndef_guard_is_flagged(self):
         src = "#ifndef MEGADEV__TYPES_H\n#define MEGADEV__TYPES_H\n#endif\n"
-        self.assertEqual(cv.check_guard(src, "types.h", "lib/types.h"), [])
-
-    def test_wrong_guard_flagged(self):
-        src = "#ifndef WRONG_H\n#define WRONG_H\n#endif\n"
-        out = cv.check_guard(src, "types.h", "lib/types.h")
+        out = cv.check_guard(src, "types.h", "x")
         self.assertEqual(len(out), 1)
-        self.assertIn("expected MEGADEV__TYPES_H", out[0].detail)
+        self.assertIn("use #pragma once", out[0].detail)
+        self.assertIn("MEGADEV__TYPES_H", out[0].detail)
 
     def test_missing_guard_flagged(self):
-        out = cv.check_guard("int x;\n", "types.h", "lib/types.h")
+        out = cv.check_guard("int x;\n", "types.h", "x")
+        self.assertEqual(len(out), 1)
         self.assertIn("no include guard", out[0].detail)
-
-    def test_pragma_once_flagged(self):
-        out = cv.check_guard("#pragma once\n", "types.h", "lib/types.h")
-        self.assertIn("pragma once", out[0].detail)
 
 
 class TestFileTag(unittest.TestCase):

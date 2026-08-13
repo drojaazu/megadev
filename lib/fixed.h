@@ -40,9 +40,7 @@
  * link.
  */
 
-#ifndef MEGADEV__FIXED_H
-#define MEGADEV__FIXED_H
-
+#pragma once
 #include "types.h"
 
 /**
@@ -234,5 +232,3 @@ static inline fix32 fix32_mul(fix32 a, fix32 b) { return FIX32_MUL(a, b); }
 #define FIX32_DIV_INT(a, b) ((fix32) ((a) / (s32) (b)))
 
 static inline fix32 fix32_div_int(fix32 a, s16 b) { return FIX32_DIV_INT(a, b); }
-
-#endif

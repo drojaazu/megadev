@@ -10,9 +10,7 @@
  * to determine which call should be used for their purpose.
  */
 
-#ifndef MEGADEV__MEMORY_H
-#define MEGADEV__MEMORY_H
-
+#pragma once
 #include <types.h>
 
 /**
@@ -155,5 +153,3 @@ static inline void strcpy(char * dest, const char * src)
     src++;
   }
 }
-
-#endif

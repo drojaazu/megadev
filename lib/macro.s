@@ -5,9 +5,7 @@
  * @brief General purpose asm macros
  */
 
-#ifndef MACRO_S
-#define MACRO_S
-
+#pragma once
 #include <system.macro.s>
 
 .macro SUB name, align=2
@@ -90,5 +88,3 @@ LOOP:
 END:
   POPM    d1/a1-a2  // movem does not affect registers; Z will be preserved
 .endm
-
-#endif

@@ -5,9 +5,7 @@
  * @brief Z80 CPU Utilities
  */
 
-#ifndef MEGADEV__MAIN_Z80_H
-#define MEGADEV__MAIN_Z80_H
-
+#pragma once
 #include "types.h"
 #include "z80.def.h"
 
@@ -112,5 +110,3 @@ static inline void z80_init(
 	);
   // clang-format on
 };
-
-#endif

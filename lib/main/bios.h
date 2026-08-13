@@ -23,9 +23,7 @@
  * documented and useful and have wrappers in this header.
  */
 
-#ifndef MEGADEV__MAIN__BIOS_H
-#define MEGADEV__MAIN__BIOS_H
-
+#pragma once
 #include "fixed.h"
 #include "main/bios.def.h"
 #include "main/vdp.h"
@@ -1502,5 +1500,3 @@ static inline void bios_dma_queue(DmaTransfer const * queue)
     : "i"(BIOS_DMA_QUEUE), "a"(a1_queue)
     : "d0", "d1", "d2", "d3");
 }
-
-#endif

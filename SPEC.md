@@ -104,9 +104,8 @@ Additional rules, all mechanically checkable:
   `lib/sub/bios.macro.s` and `lib/sub/boot.macro.s`.)*
 - **INV-3** — A `.macro.s` MUST NOT emit code, and a code-emitting `.s` MUST NOT define macros.
   **Holds as of 2026-08-13.**
-- **INV-4** — Every header MUST have an include guard whose name is derived from its path
-  (`MEGADEV__<PATH>_<NAME>_<SUFFIX>`), so that the Main and Sub views of the same peripheral cannot
-  collide. Choice of `#pragma once` vs `#ifndef` is settled in §9 OD-3.
+- **INV-4** — Every header MUST guard itself with `#pragma once` (§9 D13). **Holds everywhere as of
+  2026-08-13.**
 - **INV-5** — A `@file` doc tag MUST name the file it appears in.
 - **INV-6** — Where a constant is used as an operand to a bit-level opcode (`btst`, `bset`, `bclr`,
   `bchg`), a companion giving the **bit index** MUST exist alongside the mask. Masks and indices are
@@ -588,15 +587,28 @@ Currently undefined. `48167ff` removed the example. Four parallel abandoned bran
 (`md_cart`, `md_cart_dev`, `feature_carts`, `origin/md_cart`) suggest repeated unfinished attempts.
 This decision gates OD-1.
 
-### OD-3 — Include-guard style: `#pragma once` or `#ifndef` *(open)*
-Currently split: most of `lib/sub/` uses `#pragma once`, everything else uses `#ifndef`, and `sub/`
-is not internally consistent. `#ifndef` is what INV-4's path-derived naming needs in order to be
-lint-checkable and to make collisions visible; `#pragma once` is terser. Pick one and enforce it.
+### D13 — Include guards use `#pragma once` *(Damian R, 2026-08-13)*
+All 56 headers converted; no `#ifndef` guards remain. Adoption had already begun by hand.
 
-### OD-4 — Register-access macro form: pointer or lvalue *(open)*
-`lib/sub/gate_arr.h` has both — `ga_reg_stopwatch` is a pointer, `ga_reg_stampsize` (same file) is a
-dereferenced lvalue. `main/vdp.h` is all-lvalue; `main/io.h` all-pointer. A caller cannot predict
-whether `foo` or `*foo` is correct. Pick one for 2.0.0.
+Verified before converting that `#pragma once` behaves correctly when a `.def.h` is pulled in by the
+assembler (`gcc -x assembler-with-cpp`), including a doubled include — that mattered because the
+`.def.h` layer is consumed by both languages.
+
+The lint now requires it rather than checking a naming scheme, which removed 11 of the 13 remaining
+baseline entries at a stroke. The other two were then fixed, so **the convention baseline is empty**:
+every rule in §2–§3 holds across the whole library, and any new violation fails the gate outright.
+
+### D14 — Register accessors use the pointer form *(Damian R, 2026-08-13)*
+`#define ga_reg_foo ((ga_reg) GA_REG_FOO)`, used as `*ga_reg_foo = x`.
+
+Both forms were in use — 78 pointer against 16 lvalue — and `lib/sub/gate_arr.h` mixed them
+internally while `lib/main/vdp.h` used the opposite convention throughout, so a caller could not tell
+from the name whether a dereference was needed.
+
+Pointer form wins on more than majority: `ga_reg` is `u16 volatile *`, so `ga_reg_foo + 1` is
+pointer arithmetic meaning "the next register", and it composes with the `_HI`/`_LO` address
+definitions and with anything taking a pointer. The lvalue form reads better in isolation but cannot
+express those.
 
 ### OD-5 — Should the audit's branch-only defects be fixed on the branch or after merge? *(open)*
 KB-20 … KB-27 exist only on `feature/sub_bios_overhaul`. Fixing them there keeps the branch

@@ -5,9 +5,7 @@
  * @brief Sub CPU side system library vectors & memory definitions
  */
 
-#ifndef MEGADEV__SUB_BIOS_DEF_H
-#define MEGADEV__SUB_BIOS_DEF_H
-
+#pragma once
 /**
  * @defgroup bios_cdda Sub CPU / BIOS / CD-DA
  */
@@ -718,5 +716,3 @@
  * @ingroup bios_unknown
  */
 #define BIOS_WONDERCHK 0x0098
-
-#endif

@@ -5,9 +5,7 @@
  * @brief Serial communications utilities
  */
 
-#ifndef MEGADEV___COMM_MACRO_S
-#define MEGADEV___COMM_MACRO_S
-
+#pragma once
 #include "macro.s"
 #include "main/io.def.h"
 #include "main/comm.def.h"
@@ -55,5 +53,3 @@ loop:
   move.b  d0, EXT_TXDATA
   rts
 .endm
-
-#endif

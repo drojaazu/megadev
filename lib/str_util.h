@@ -5,9 +5,7 @@
  * @brief C wrappers for hex string conversion functions
  */
 
-#ifndef MEGADEV__MAIN_STR_UTIL_H
-#define MEGADEV__MAIN_STR_UTIL_H
-
+#pragma once
 #include "str_util.def.h"
 #include "types.h"
 
@@ -92,5 +90,3 @@ strcmpt(char const * str1, char const * str2, char terminator)
   }
   return (*(const unsigned char *) str1 - *(const unsigned char *) str2) == 0;
 }
-
-#endif

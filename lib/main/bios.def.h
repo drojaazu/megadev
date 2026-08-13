@@ -5,9 +5,7 @@
  * @brief Main CPU side system library vectors & memory definitions
  */
 
-#ifndef MEGADEV__MAIN_BIOS_DEF_H
-#define MEGADEV__MAIN_BIOS_DEF_H
-
+#pragma once
 /**
  * @defgroup bios_vdp Main CPU / BIOS / VDP
  */
@@ -1399,6 +1397,4 @@
 #define _COMPRESSED_SUB_BIOS 0x416000
 #else
 #define _COMPRESSED_SUB_BIOS 0x016000
-#endif
-
 #endif

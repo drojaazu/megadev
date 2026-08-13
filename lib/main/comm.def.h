@@ -5,9 +5,7 @@
  * @brief Serial communications utilities
  */
 
-#ifndef MEGADEV__COMM_DEF_H
-#define MEGADEV__COMM_DEF_H
-
+#pragma once
 #include <main/io.def.h>
 
 /*
@@ -35,5 +33,3 @@
 	Sets the transfer speed of the external device port
 */
 #define EXT_BAUD SCTRL_BAUD_4800
-
-#endif

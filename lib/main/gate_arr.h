@@ -5,9 +5,7 @@
  * @brief C wrappers for Main CPU side Gate Array registers
  */
 
-#ifndef MEGADEV__MAIN_GATE_ARR_H
-#define MEGADEV__MAIN_GATE_ARR_H
-
+#pragma once
 #include "main/gate_arr.def.h"
 #include <types.h>
 
@@ -270,5 +268,3 @@ static inline void reset_ga()
  * @sa GA_REG_MEMMODE_LO
  */
 #define ga_reg_memmode_lo ((ga_reg8) GA_REG_MEMMODE_LO)
-
-#endif
