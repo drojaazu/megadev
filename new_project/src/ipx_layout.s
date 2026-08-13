@@ -13,6 +13,12 @@ GLOBAL MODULE_ROM_LENGTH, MODULE_RAM_ORIGIN - MODULE_ROM_ORIGIN
 // ... and 512 bytes of RAM. This layout is rather arbitrary.
 GLOBAL MODULE_RAM_LENGTH, 0x200
 
+// The IPX is memory resident and publishes an API, so it reserves a fixed
+// block for its jump table and another for shared variables. Transient
+// modules declare neither and pay nothing.
+GLOBAL MODULE_JMPTBL_SIZE 0x100
+GLOBAL MODULE_SHARED_SIZE 0x40
+
 // Finally, we must specify from where the code will actually execute, which is
 // to say, to where it should be copied after being put in Word RAM by the Sub
 GLOBAL MMD_DEST WORK_RAM

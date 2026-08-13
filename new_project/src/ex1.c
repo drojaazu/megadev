@@ -6,7 +6,6 @@
 #include <main/vdp.h>
 #include <system.h>
 
-extern u8      next_module;
 extern u8      res_rain_chr;
 extern u16     res_rain_chr_sz;
 extern Palette res_rain_pal;

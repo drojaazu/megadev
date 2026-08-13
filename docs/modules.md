@@ -97,21 +97,53 @@ For example, the title screen may be `title.mmd`, for which we will need `title.
 
 Those files will be compiled then linked together to create the final `title.mmd` on the disc.
 
-### Linking against a memory resident module
+### Calling into a memory resident module
 
-A transient module calls into a resident one by importing its symbols at link
-time (`ld -R`), which supplies addresses without pulling in any code.
+A resident module is loaded once and stays put; transient modules come and go
+and need to call into it. There are two ways to arrange that.
 
-The catch is that `-R` imports *every* global symbol in that module, including
-the build metadata each module defines for its own linker script --
-`MODULE_ROM_ORIGIN`, `MMD_DEST`, `_BSS_ORIGIN` and so on -- plus its `main`.
-The importing module defines all of those itself, so the link sees genuine
-duplicate definitions. Megadev used to pass `-z muldefs` to silence them, which
-worked but suppressed *all* duplicate-symbol errors, real ones included.
+**A jump table at a fixed address (recommended).** The resident module publishes
+a table of `jmp` instructions at a known offset, and callers jump through it.
+Because the table's position never moves, the resident module can be rebuilt --
+its routines shifting anywhere in memory -- and modules built earlier keep
+working. This is exactly what the Mega CD Boot ROM does with its own table at
+0x280 (see `main_bios.md`), and it is what `new_project` demonstrates.
 
-Instead, the symbol reference is now curated before it is used. By default the
-known build-metadata symbols are stripped, which is enough to make the link
-unambiguous with no change to your project.
+The API is declared once, as a list:
+
+    /* ipx_api.def.h */
+    #define IPX_API_LIST     \
+        X(0, init_particles)   \
+        X(1, process_particles)
+
+`ipx_jmptbl.s` expands it into the table itself, and `ipx.h` expands it into
+call macros, so the two cannot disagree about which entry is which. Reserve the
+space in the module's layout file:
+
+    GLOBAL MODULE_JMPTBL_SIZE 0x100
+    GLOBAL MODULE_SHARED_SIZE 0x40
+
+A module that declares neither reserves nothing, so transient modules pay no
+cost. Shared variables go in the `.shared` block immediately after the table,
+reached the same way -- a fixed address rather than a linked symbol.
+
+> **The table is APPEND ONLY.** Reordering or removing an entry changes what
+> every previously built module jumps to, and nothing diagnoses it: the call
+> simply lands somewhere else. Add new entries at the end.
+
+The cost is one `jmp` per call and 6 bytes per entry.
+
+**Symbol import (`ld -R`).** The alternative is to link the transient module
+against the resident module's ELF, which supplies addresses without pulling in
+code. It is simpler and has no indirection, but it couples the builds: change
+the resident module and every module that calls it must be relinked, because
+the addresses it baked in have moved. Megadev still supports this, and it is a
+reasonable choice when everything is rebuilt together.
+
+Note that `-R` imports *every* global symbol, including the build metadata each
+module defines for its own linker script. Megadev strips those automatically
+before use, which is what lets the link stay free of `-z muldefs` and keeps
+duplicate symbols a real error.
 
 ### Object file layout
 

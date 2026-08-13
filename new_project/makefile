@@ -93,6 +93,7 @@ clean:
 $(DISC_PATH)/ipx.mmd: \
 	ipx_layout.s \
 	main/ipx_init.s \
+	ipx_jmptbl.s \
 	ipx.c \
 	io.macros.s
 
