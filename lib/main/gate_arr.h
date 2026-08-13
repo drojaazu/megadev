@@ -14,6 +14,14 @@
 typedef u16 volatile * ga_reg;
 
 /**
+ * @typedef ga_reg8
+ * @brief Pointer to one byte of a gate array register
+ * @details Registers are 16 bit, but several are routinely accessed a byte at
+ * a time; use with the _HI and _LO address definitions.
+ */
+typedef u8 volatile * ga_reg8;
+
+/**
  * @sa GA_REG_COMFLAGS
  */
 #define ga_reg_comflags_main ((volatile u8 *) GA_REG_COMFLAGS)
@@ -171,7 +179,7 @@ static inline void wait_2m()
 		"
     :
     : [ga_ret_bit] "i"(GA_RETURN_2M_POS),
-      [ga_reg_memmmode] "i"(GA_REG_MEMMODE + 1));
+      [ga_reg_memmmode] "i"GA_REG_MEMMODE_LO);
 }
 
 /**
@@ -188,7 +196,7 @@ static inline void grant_2m()
 		"
     :
     :
-    [ga_dmna_bit] "i"(GA_DMNA_POS), [ga_reg_memmmode] "i"(GA_REG_MEMMODE + 1));
+    [ga_dmna_bit] "i"(GA_DMNA_POS), [ga_reg_memmmode] "i"GA_REG_MEMMODE_LO);
 }
 
 /**
@@ -229,8 +237,38 @@ static inline void reset_ga()
   move.b   #0x0, %c[reset] \n\
 		"
     :
-    : [memmode] "i"(GA_REG_MEMMODE), [reset] "i"(GA_REG_RESET + 1)
+    : [memmode] "i"(GA_REG_MEMMODE), [reset] "i"GA_REG_RESET_LO
     :);
 }
+
+
+
+/**
+ * @def ga_reg_reset_hi
+ * @brief High byte of @ref ga_reg_reset
+ * @sa GA_REG_RESET_HI
+ */
+#define ga_reg_reset_hi ((ga_reg8) GA_REG_RESET_HI)
+
+/**
+ * @def ga_reg_reset_lo
+ * @brief Low byte of @ref ga_reg_reset
+ * @sa GA_REG_RESET_LO
+ */
+#define ga_reg_reset_lo ((ga_reg8) GA_REG_RESET_LO)
+
+/**
+ * @def ga_reg_memmode_hi
+ * @brief High byte of @ref ga_reg_memmode
+ * @sa GA_REG_MEMMODE_HI
+ */
+#define ga_reg_memmode_hi ((ga_reg8) GA_REG_MEMMODE_HI)
+
+/**
+ * @def ga_reg_memmode_lo
+ * @brief Low byte of @ref ga_reg_memmode
+ * @sa GA_REG_MEMMODE_LO
+ */
+#define ga_reg_memmode_lo ((ga_reg8) GA_REG_MEMMODE_LO)
 
 #endif

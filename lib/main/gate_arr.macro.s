@@ -19,7 +19,7 @@
 LOCAL loop
 
 loop:
-	btst     #GA_RETURN_2M_POS, GA_REG_MEMMODE+1
+	btst     #GA_RETURN_2M_POS, GA_REG_MEMMODE_LO
 	beq      loop
 .endm
 
@@ -32,8 +32,8 @@ loop:
 LOCAL loop
 
 loop:
-  bset     #GA_DMNA_POS,GA_REG_MEMMODE+1
-  btst     #GA_DMNA_POS,GA_REG_MEMMODE+1
+  bset     #GA_DMNA_POS,GA_REG_MEMMODE_LO
+  btst     #GA_DMNA_POS,GA_REG_MEMMODE_LO
   beq      loop
 .endm
 
@@ -63,11 +63,11 @@ loop:
  */
 .macro RESET_GA
   move.w   #0xFF00,GA_REG_MEMMODE
-  move.b   #0x3,(GA_REG_RESET + 1)
+  move.b   #0x3,GA_REG_RESET_LO
   nop
-  move.b   #0x3,(GA_REG_RESET + 1)
-  move.b   #0x2,(GA_REG_RESET + 1)
-  move.b   #0x0,(GA_REG_RESET + 1)
+  move.b   #0x3,GA_REG_RESET_LO
+  move.b   #0x2,GA_REG_RESET_LO
+  move.b   #0x0,GA_REG_RESET_LO
 .endm
 
 #endif

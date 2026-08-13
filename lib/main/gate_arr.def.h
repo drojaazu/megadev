@@ -52,6 +52,25 @@
 #define GA_REG_RESET 0xA12000
 
 /**
+ * @def GA_REG_RESET_HI
+ * @brief High byte of @ref GA_REG_RESET
+ * @ingroup ga_regs_main
+ * @details The gate array registers are 16 bit, but this one is frequently
+ * accessed a byte at a time. GA_REG_RESET_HI is an alias for the register address
+ * itself; prefer it over the bare name when you mean a byte access, so the
+ * width you intended is visible at the call site.
+ */
+#define GA_REG_RESET_HI GA_REG_RESET
+
+/**
+ * @def GA_REG_RESET_LO
+ * @brief Low byte of @ref GA_REG_RESET
+ * @ingroup ga_regs_main
+ */
+#define GA_REG_RESET_LO (GA_REG_RESET + 1)
+
+
+/**
  * @def GA_SUB_RESET_MASK
  * @brief Sub CPU Reset
  * @ingroup ga_regs_main
@@ -144,6 +163,25 @@
  *
  */
 #define GA_REG_MEMMODE 0xA12002
+
+/**
+ * @def GA_REG_MEMMODE_HI
+ * @brief High byte of @ref GA_REG_MEMMODE
+ * @ingroup ga_regs_main
+ * @details The gate array registers are 16 bit, but this one is frequently
+ * accessed a byte at a time. GA_REG_MEMMODE_HI is an alias for the register address
+ * itself; prefer it over the bare name when you mean a byte access, so the
+ * width you intended is visible at the call site.
+ */
+#define GA_REG_MEMMODE_HI GA_REG_MEMMODE
+
+/**
+ * @def GA_REG_MEMMODE_LO
+ * @brief Low byte of @ref GA_REG_MEMMODE
+ * @ingroup ga_regs_main
+ */
+#define GA_REG_MEMMODE_LO (GA_REG_MEMMODE + 1)
+
 
 /**
  * @def GA_RETURN_2M_POS

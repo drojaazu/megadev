@@ -53,9 +53,28 @@ Where a register's documentation carries an access warning, take it literally: t
 few places in Mega CD programming where getting it wrong produces a hardware exception rather than
 merely a wrong value.
 
-> **Not yet provided:** Megadev does not currently define `_HI`/`_LO` aliases for the byte halves of
-> byte-accessible registers. Writing `GA_REG_MEMMODE + 1` for the low byte is the current practice.
-> See BACKLOG DOC-16.
+Because byte access is common, registers that are routinely used that way carry `_HI` and `_LO`
+address definitions:
+
+    #define GA_REG_MEMMODE     0xFF8002
+    #define GA_REG_MEMMODE_HI  GA_REG_MEMMODE
+    #define GA_REG_MEMMODE_LO  (GA_REG_MEMMODE + 1)
+
+`_HI` is simply an alias for the register address. Prefer it over the bare name when you mean a byte
+access, so the width you intended is visible at the point of use rather than implied. There are
+matching C accessors typed as `ga_reg8`:
+
+    #define ga_reg_memmode_hi ((ga_reg8) GA_REG_MEMMODE_HI)
+    #define ga_reg_memmode_lo ((ga_reg8) GA_REG_MEMMODE_LO)
+
+Currently provided for `GA_REG_RESET` and `GA_REG_MEMMODE` on both CPU sides — the registers the
+library itself accesses a byte at a time. They are added where byte access is known to be used
+rather than blanket, since offering `_LO` for a word-only register would invite a bus error.
+
+Where the two halves have distinct meanings, they get names that say so instead. `GA_REG_COMFLAGS`
+is the clearest case: its high byte is the Main CPU's flags and its low byte the Sub CPU's, so the
+accessors are `ga_reg_comflags_main` and `ga_reg_comflags_sub`, each `const` on the side that may
+only read them.
 
 ## Bit level restrictions and read/write access
 
