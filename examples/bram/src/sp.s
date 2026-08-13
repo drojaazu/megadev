@@ -3,7 +3,7 @@
 #include <sub/cdrom.def.h>
 #include <sub/cdrom.macro.s>
 #include <sub/gate_arr.def.h>
-#include <macros.s>
+#include <macro.s>
 
 .section .text
 

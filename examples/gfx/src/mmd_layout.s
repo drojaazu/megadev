@@ -1,4 +1,4 @@
-#include "macros.s"
+#include "macro.s"
 
 GLOBAL MMD_DEST 0
 

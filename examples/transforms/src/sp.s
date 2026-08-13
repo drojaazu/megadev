@@ -1,7 +1,7 @@
 #include <sub/sub.macro.s>
 #include <sub/bios.def.h>
 #include <sub/cdrom.macro.s>
-#include <macros.s>
+#include <macro.s>
 
 .section .text
 

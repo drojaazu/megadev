@@ -1,6 +1,6 @@
 
 .section .rodata
-#include "macros.s"
+#include "macro.s"
 
 GLABEL res_cybercity_bldg_cmp_nem
 .incbin "cybercity_bldg.chr.cmp_nem"

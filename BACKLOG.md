@@ -50,7 +50,7 @@ toolchain was available during the audit. VER-1 must land first so that fixes ca
 | LIB-10 | S1 | **done** | KB-11 — `_BIT` companions added for all six SCTRL flags (INV-6); the four `btst` sites now use indices. |
 | LIB-11 | S2 | open | KB-13 — `hextoa8/16/32` C and asm versions disagree on string termination. Decide the contract, then make both match; first subject for VER-3. |
 | LIB-12 | S2 | open | `lib/memory.h` — every `memset*`/`memcpy*` uses a `dbf` loop with a **16-bit** counter. Lengths > 65536 silently truncate; length 0 wraps and loops 65536 times. Undocumented. Document or guard. |
-| BR-1 | S1 | open | KB-27 — the `macros.s` → `macro.s` rename is unpropagated across 39 files; **`feature/sub_bios_overhaul` does not build.** Must land atomically with its consumers. |
+| BR-1 | S1 | **done** | KB-27 — the `.macros.s` → `.macro.s` rename is landed on `develop` directly (D7), not via the branch: 9 renames, 57 files updated, guards and docs included. Verified by the gate rather than by hope. |
 | BR-2 | S1 | open | KB-20 … KB-26 — seven defects that exist only on `feature/sub_bios_overhaul`. See SPEC.md OD-5 for whether to fix on-branch or after merge. |
 | LIB-13 | S1 | **done** | KB-28 — `z80_init` in `lib/main/z80.h` is now `static inline`. |
 | LIB-14 | S2 | **done** | KB-29 — `lib/main/vdp.s` fixed: register size suffixes removed, `btst.l 0x1` corrected to `btst #1`, and `vdp_ctrl` (a C macro the assembler never saw) replaced with `VDP_CTRL` from vdp.def.h. That last one was a latent **link** error affecting both routines, including the one that already assembled. Verified by disassembly: no relocations, no undefined symbols. |

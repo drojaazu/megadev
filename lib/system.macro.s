@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file system.s
+ * @file system.macro.s
  * @brief CPU System Control Operations
  */
 

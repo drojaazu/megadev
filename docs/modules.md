@@ -24,7 +24,7 @@ For example, if we want our module to run on the Main CPU from Word RAM in 2Mbit
     GLOBAL MODULE_RAM_ORIGIN 0x380000
     GLOBAL MODULE_RAM_LENGTH 0x80000
 
-(Note that we use GLOBAL, which is a Megadev macro that sets the symbol to global; this is in macros.s, so you will need to include that file. We also use WORD_RAM which is present in the main/memmap.def.h file, which should also be included if you wish to use such named memory locations. You can, of course, opt to not include these files and manually define the memory location and the global attribute.)
+(Note that we use GLOBAL, which is a Megadev macro that sets the symbol to global; this is in macro.s, so you will need to include that file. We also use WORD_RAM which is present in the main/memmap.def.h file, which should also be included if you wish to use such named memory locations. You can, of course, opt to not include these files and manually define the memory location and the global attribute.)
 
 (As another side note, there doesn't seem to be a way to manually define a symbol (i.e. a named memory address) in C. You will need to specify this in asm using .equ/.global. A good idea is to have a single asm definitions file and include it in your MMD def.)
 
@@ -66,7 +66,7 @@ The module size is the size of the binary portion of the module, that is, the si
 
 There is only one bit in the flags value, bit #6, which will return Word RAM control to the Sub CPU before jumping to main. (This appears to be the only bit used by Sonic CD.) You are free to use the rest of the bits as you wish, but we may associate additional functions to the lower bits of the word someday, if necessary. The flags are specified by a global symbol called `MMD_FLAGS`. Specifying the flags is optional.
 
-This is followed by padding up to offset 0x100. This is not strictly necessary and we only do so because that's what Sonic CD does. You are free to extend into it with your own metadata (it would be a perfect place for identification text during debugging or for hidden "easter egg" text). You can reduce or remove it entirely if you wish, but you will need to modify the MMD loader code (in mmd.macros.s) and the .header section in the module LD script (module_mmd.ld) to account for the start of the module's binary section.
+This is followed by padding up to offset 0x100. This is not strictly necessary and we only do so because that's what Sonic CD does. You are free to extend into it with your own metadata (it would be a perfect place for identification text during debugging or for hidden "easter egg" text). You can reduce or remove it entirely if you wish, but you will need to modify the MMD loader code (in mmd.macro.s) and the .header section in the module LD script (module_mmd.ld) to account for the start of the module's binary section.
 
 In summary, for a valid MMD module, you must specify an entry point by having a global function called `main` and you must specify a runtime address with a global symbol called MMD_DEST. You can also optionally specify a new HBLANK/VBLANK handler by having a global function called `hblank` and `vblank`, respectively, within your module code, and can also optionally specify optional flags with a global symbol called MMD_FLAGS.
 

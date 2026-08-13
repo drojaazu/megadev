@@ -5,9 +5,9 @@
  * @brief Standard initialization for modules
  */
 
-#include <macros.s>
-#include <system.macros.s>
-#include <init.macros.s>
+#include <macro.s>
+#include <system.macro.s>
+#include <init.macro.s>
 
 .section .init
 

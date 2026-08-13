@@ -8,7 +8,7 @@
 #ifndef MEGADEV__MAIN_VDP_S
 #define MEGADEV__MAIN_VDP_S
 
-#include <macros.s>
+#include <macro.s>
 #include <main/vdp.def.h>
 
 /**
