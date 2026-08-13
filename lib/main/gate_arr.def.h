@@ -6,6 +6,129 @@
  */
 
 #pragma once
+
+/*
+ * Per-register documentation groups.
+ *
+ * Registers are numbered by their word index from the base address, 0-based, to
+ * match the vdp_regNN groups. The address is given in each title because the
+ * hardware manual identifies these registers by address rather than by number.
+ */
+
+/**
+ * @defgroup ga_reg_main_00 Main CPU / Gate Array / Register 00 (0xA12000) - Sub CPU Control
+ * @ingroup ga_reg_main_subctrl
+ */
+
+/**
+ * @defgroup ga_reg_main_01 Main CPU / Gate Array / Register 01 (0xA12002) - Memory Mode
+ * @ingroup ga_reg_main_memmode
+ */
+
+/**
+ * @defgroup ga_reg_main_02 Main CPU / Gate Array / Register 02 (0xA12004) - CDC Mode
+ * @ingroup ga_reg_main_cdcmode
+ */
+
+/**
+ * @defgroup ga_reg_main_03 Main CPU / Gate Array / Register 03 (0xA12006) - HBLANK Vector
+ * @ingroup ga_reg_main_hblankvect
+ */
+
+/**
+ * @defgroup ga_reg_main_04 Main CPU / Gate Array / Register 04 (0xA12008) - CDC Host Data
+ * @ingroup ga_reg_main_cdcdata
+ */
+
+/**
+ * @defgroup ga_reg_main_06 Main CPU / Gate Array / Register 06 (0xA1200C) - Stop watch
+ * @ingroup ga_reg_main_stopwatch
+ */
+
+/**
+ * @defgroup ga_reg_main_07 Main CPU / Gate Array / Register 07 (0xA1200E) - CPU Communication Flags
+ * @ingroup ga_reg_main_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_main_08 Main CPU / Gate Array / Register 08 (0xA12010) - Comm Command 0 (Main -> Sub)
+ * @ingroup ga_reg_main_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_main_09 Main CPU / Gate Array / Register 09 (0xA12012) - Comm Command 1 (Main -> Sub)
+ * @ingroup ga_reg_main_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_main_10 Main CPU / Gate Array / Register 10 (0xA12014) - Comm Command 2 (Main -> Sub)
+ * @ingroup ga_reg_main_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_main_11 Main CPU / Gate Array / Register 11 (0xA12016) - Comm Command 3 (Main -> Sub)
+ * @ingroup ga_reg_main_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_main_12 Main CPU / Gate Array / Register 12 (0xA12018) - Comm Command 4 (Main -> Sub)
+ * @ingroup ga_reg_main_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_main_13 Main CPU / Gate Array / Register 13 (0xA1201A) - Comm Command 5 (Main -> Sub)
+ * @ingroup ga_reg_main_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_main_14 Main CPU / Gate Array / Register 14 (0xA1201C) - Comm Command 6 (Main -> Sub)
+ * @ingroup ga_reg_main_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_main_15 Main CPU / Gate Array / Register 15 (0xA1201E) - Comm Command 7 (Main -> Sub)
+ * @ingroup ga_reg_main_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_main_16 Main CPU / Gate Array / Register 16 (0xA12020) - Comm Status 0 (Main -> Sub)
+ * @ingroup ga_reg_main_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_main_17 Main CPU / Gate Array / Register 17 (0xA12022) - Comm Status 1 (Main -> Sub)
+ * @ingroup ga_reg_main_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_main_18 Main CPU / Gate Array / Register 18 (0xA12024) - Comm Status 2 (Main -> Sub)
+ * @ingroup ga_reg_main_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_main_19 Main CPU / Gate Array / Register 19 (0xA12026) - Comm Status 3 (Main -> Sub)
+ * @ingroup ga_reg_main_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_main_20 Main CPU / Gate Array / Register 20 (0xA12028) - Comm Status 4 (Main -> Sub)
+ * @ingroup ga_reg_main_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_main_21 Main CPU / Gate Array / Register 21 (0xA1202A) - Comm Status 5 (Main -> Sub)
+ * @ingroup ga_reg_main_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_main_22 Main CPU / Gate Array / Register 22 (0xA1202C) - Comm Status 6 (Main -> Sub)
+ * @ingroup ga_reg_main_cpucomm
+ */
+
+/**
+ * @defgroup ga_reg_main_23 Main CPU / Gate Array / Register 23 (0xA1202E) - Comm Status 7 (Main -> Sub)
+ * @ingroup ga_reg_main_cpucomm
+ */
 /**
  * @defgroup ga_regs_main Main CPU / Gate Array / Registers
  *
@@ -23,8 +146,6 @@
 /**
  * @def GA_REG_RESET
  * @brief Sub CPU Control
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_subctrl
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -46,6 +167,9 @@
  * @details 0: Masked / 1: Enabled
  *
  * @note Only BTST bitwise operation allowed on this register
+ * @warning Of the bit operations, only BTST is permitted.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_main_00
  */
 #define GA_REG_RESET 0xA12000
 
@@ -121,8 +245,6 @@
 /**
  * @def GA_REG_MEMMODE
  * @brief Memory Mode
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_memmode
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -159,6 +281,7 @@
  *        Read Only: 0: Word RAM Bank 0 attached to Main CPU, Bank 1 to Sub CPU
  *                   1: Word RAM Bank 0 attached to Sub CPU, Bank 1 to Main CPU
  *
+ * @ingroup ga_reg_main_01
  */
 #define GA_REG_MEMMODE 0xA12002
 
@@ -237,8 +360,6 @@
 /**
  * @def GA_REG_CDCMODE
  * @brief CDC Mode
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_cdcmode
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -260,6 +381,7 @@
  *   |1|1|1|In 2M Mode: Word RAM \n In 1M Mode: Sub CPU controlled Word RAM|
  *
  *   All other values for DD are invalid.
+ * @ingroup ga_reg_main_02
  */
 #define GA_REG_CDCMODE 0xA12004
 
@@ -303,8 +425,6 @@
 /**
  * @def GA_REG_HBLANKVECT
  * @brief HBLANK Vector
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_hblankvect
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -317,6 +437,9 @@
  *      of which is 0x00FF by the Boot ROM.
  *
  * @warning Bit level opcodes (BTST, BCLR, BSET) are undefined for this register
+ * @warning Word access only. A byte access to this register can raise a
+ * bus error. (Hardware Manual p.21)
+ * @ingroup ga_reg_main_03
  */
 #define GA_REG_HBLANKVECT 0xA12006
 
@@ -328,8 +451,6 @@
 /**
  * @def GA_REG_CDCHOSTDATA
  * @brief CDC Host Data
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_cdcdata
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -340,6 +461,12 @@
  * @param HD CDC read data
  *
  * @warning Bit level opcodes (BTST, BCLR, BSET) are undefined for this register
+ * @warning Word access only. A byte access to this register can raise a
+ * bus error. (Hardware Manual p.21)
+ * @warning Bit operation instructions are not permitted here; read the
+ * register, modify the copy, and write the whole value back.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_main_04
  */
 #define GA_REG_CDCHOSTDATA 0xA12008
 
@@ -350,8 +477,6 @@
 /**
  * @def GA_REG_STOPWATCH
  * @brief Stop watch
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_stopwatch
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -364,6 +489,12 @@
  * @details One count is timed to 30.72µs
  *
  * @warning Bit level opcodes (BTST, BCLR, BSET) are undefined for this register
+ * @warning Word access only. A byte access to this register can raise a
+ * bus error. (Hardware Manual p.21)
+ * @warning Bit operation instructions are not permitted here; read the
+ * register, modify the copy, and write the whole value back.
+ * (Hardware Manual p.21)
+ * @ingroup ga_reg_main_06
  */
 #define GA_REG_STOPWATCH 0xA1200C
 
@@ -375,8 +506,6 @@
 /**
  * @def GA_REG_COMFLAGS
  * @brief CPU Communication Flags
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_cpucomm
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -386,181 +515,166 @@
  * @param [width] 8 bit/16 bit
  * @param CFM Comm flags for Main CPU
  * @param CFS Comm flags for Sub CPU
+ * @ingroup ga_reg_main_07
  */
 #define GA_REG_COMFLAGS 0xA1200E
 
 /**
  * @def GA_REG_COMCMD0
  * @brief Comm Command 0 (Main -> Sub)
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_cpucomm
  *
  * @param [width] 8 bit/16 bit
  * @param CMD Communication data
+ * @ingroup ga_reg_main_08
  */
 #define GA_REG_COMCMD0 0xA12010
 
 /**
  * @def GA_REG_COMCMD1
  * @brief Comm Command 1 (Main -> Sub)
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_cpucomm
  *
  * @param [width] 8 bit/16 bit
  * @param CMD Communication data
+ * @ingroup ga_reg_main_09
  */
 #define GA_REG_COMCMD1 0xA12012
 
 /**
  * @def GA_REG_COMCMD2
  * @brief Comm Command 2 (Main -> Sub)
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_cpucomm
  *
  * @param [width] 8 bit/16 bit
  * @param CMD Communication data
+ * @ingroup ga_reg_main_10
  */
 #define GA_REG_COMCMD2 0xA12014
 
 /**
  * @def GA_REG_COMCMD3
  * @brief Comm Command 3 (Main -> Sub)
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_cpucomm
  *
  * @param [width] 8 bit/16 bit
  * @param CMD Communication data
+ * @ingroup ga_reg_main_11
  */
 #define GA_REG_COMCMD3 0xA12016
 
 /**
  * @def GA_REG_COMCMD4
  * @brief Comm Command 4 (Main -> Sub)
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_cpucomm
  *
  * @param [width] 8 bit/16 bit
  * @param CMD Communication data
+ * @ingroup ga_reg_main_12
  */
 #define GA_REG_COMCMD4 0xA12018
 
 /**
  * @def GA_REG_COMCMD5
  * @brief Comm Command 5 (Main -> Sub)
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_cpucomm
  *
  * @param [width] 8 bit/16 bit
  * @param CMD Communication data
+ * @ingroup ga_reg_main_13
  */
 #define GA_REG_COMCMD5 0xA1201A
 
 /**
  * @def GA_REG_COMCMD6
  * @brief Comm Command 6 (Main -> Sub)
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_cpucomm
  *
  * @param [width] 8 bit/16 bit
  * @param CMD Communication data
+ * @ingroup ga_reg_main_14
  */
 #define GA_REG_COMCMD6 0xA1201C
 
 /**
  * @def GA_REG_COMCMD7
  * @brief Comm Command 7 (Main -> Sub)
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_cpucomm
  *
  * @param [width] 8 bit/16 bit
  * @param CMD Communication data
+ * @ingroup ga_reg_main_15
  */
 #define GA_REG_COMCMD7 0xA1201E
 
 /**
  * @def GA_REG_COMSTAT0
  * @brief Comm Status 0 (Main -> Sub)
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_cpucomm
  *
  * @param [width] 8 bit/16 bit
  * @param STAT Comm Status
+ * @ingroup ga_reg_main_16
  */
 #define GA_REG_COMSTAT0 0xA12020
 
 /**
  * @def GA_REG_COMSTAT1
  * @brief Comm Status 1 (Main -> Sub)
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_cpucomm
  *
  * @param [width] 8 bit/16 bit
  * @param STAT Comm Status
+ * @ingroup ga_reg_main_17
  */
 #define GA_REG_COMSTAT1 0xA12022
 
 /**
  * @def GA_REG_COMSTAT2
  * @brief Comm Status 2 (Main -> Sub)
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_cpucomm
  *
  * @param [width] 8 bit/16 bit
  * @param STAT Comm Status
+ * @ingroup ga_reg_main_18
  */
 #define GA_REG_COMSTAT2 0xA12024
 
 /**
  * @def GA_REG_COMSTAT3
  * @brief Comm Status 3 (Main -> Sub)
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_cpucomm
  *
  * @param [width] 8 bit/16 bit
  * @param STAT Comm Status
+ * @ingroup ga_reg_main_19
  */
 #define GA_REG_COMSTAT3 0xA12026
 
 /**
  * @def GA_REG_COMSTAT4
  * @brief Comm Status 4 (Main -> Sub)
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_cpucomm
  *
  * @param [width] 8 bit/16 bit
  * @param STAT Comm Status
+ * @ingroup ga_reg_main_20
  */
 #define GA_REG_COMSTAT4 0xA12028
 
 /**
  * @def GA_REG_COMSTAT5
  * @brief Comm Status 5 (Main -> Sub)
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_cpucomm
  *
  * @param [width] 8 bit/16 bit
  * @param STAT Comm Status
+ * @ingroup ga_reg_main_21
  */
 #define GA_REG_COMSTAT5 0xA1202A
 
 /**
  * @def GA_REG_COMSTAT6
  * @brief Comm Status 6 (Main -> Sub)
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_cpucomm
  *
  * @param [width] 8 bit/16 bit
  * @param STAT Comm Status
+ * @ingroup ga_reg_main_22
  */
 #define GA_REG_COMSTAT6 0xA1202C
 
 /**
  * @def GA_REG_COMSTAT7
  * @brief Comm Status 7 (Main -> Sub)
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_cpucomm
  *
  * @param [width] 8 bit/16 bit
  * @param STAT Comm Status
+ * @ingroup ga_reg_main_23
  */
 #define GA_REG_COMSTAT7 0xA1202E
