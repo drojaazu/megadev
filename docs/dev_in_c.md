@@ -38,7 +38,11 @@ Instead, use the sized types (`char`, `short`, `long`) or better yet their typed
 
 The M68000 CPU does not have a floating point unit and use of the `float` type will only work using software emulation that is not included with Megadev.
 
-Rather than floating point values, hardware from the era used fixed point math for fractional values. Megadev implements simple fixed point types and conversion macros in the `fixed.h` header. You can find examples of its usage in the `gfx` example project.
+Rather than floating point values, hardware from the era used fixed point math for fractional values. Megadev provides fixed point types, literal macros and arithmetic in the `fixed.h` header: `fix16` (Q10.6) and `fix32` (Q16.16), with unsigned `ufix16`/`ufix32` counterparts.
+
+Prefer `fix16` where the range allows. The 68000 has a 16x16->32 multiply but no 32-bit multiply, so `fix16_mul` is a single instruction while `fix32_mul` must be built from partial products.
+
+Addition and subtraction of two values in the same format are plain integer operations. Multiplication and division are not, since the scale factor would be squared or cancelled -- use `fix16_mul`, `fix16_div` and friends. You can find examples of fixed point usage in the `gfx` example project.
 
 (If you wish to include floating point emulation, you will need to implement [the expected GCC routines](https://gcc.gnu.org/onlinedocs/gccint/Soft-float-library-routines.html#Soft-float-library-routines).)
 

@@ -339,6 +339,10 @@ While the Sub CPU may have:
 #include <types.h>
 ```
 
+Note that `sub/bram.h` declares its work buffers rather than defining them, so a project using the
+Backup RAM API must also add `sub/bram.c` to its sources, in the same way `sub/pcm.s` is added for
+PCM playback. See the `bram` example project.
+
 ### Macros (.macros.s)
 
 Assembly files that have the `.macros.s` suffix contain only macros and can thus be included multiple times without worry of symbol duplication.
@@ -380,3 +384,5 @@ There are a number of additional documents in the `docs` subdirectory. We recomm
 `megacd_dev.md` - Considerations for program architecture and development on the Mega CD.
 
 `modules.md` - Discusses the modules concept and how to use them.
+
+`program_design.md` - Program architecture concepts: the kernel, the library and memory planning.

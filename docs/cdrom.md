@@ -18,7 +18,7 @@ Finally, in the early part of SP main subroutine (`sp_main`), you'll want to loa
 At this point, you are ready to load files. There are four steps involved:
 
 - Set the pointer to the filename string in `filename`
-- Set the destination buffer in either the Gate Array DMA register or `file_dest_ptr` depending on the operation
+- Set the destination buffer in either the Gate Array DMA register or `filebuff` depending on the operation
 - Set the appropriate access operation
 - Wait for the operation to complete
 
@@ -44,7 +44,7 @@ As a quick example, you may have `title.mmd` on your local system. This will be 
 
 Please refer to the CDC section of the Mega CD Software Development documentation before or alongside this section.
 
-The buffer where your data will be stored must be specified in one of two ways depending on the transfer type. If you plan to use DMA, you will need to set the destination address in the `GA_DMAADDR` register. If you plan to use non-DMA transfer via the CDC host data register, you will need to set the address in the `file_buff` pointer.
+The buffer where your data will be stored must be specified in one of two ways depending on the transfer type. If you plan to use DMA, you will need to set the destination address in the `GA_REG_DMAADDR` register. If you plan to use non-DMA transfer via the CDC host data register, you will need to set the address in the `filebuff` pointer.
 
 ### Access Operation
 
