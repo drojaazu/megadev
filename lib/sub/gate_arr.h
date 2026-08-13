@@ -407,7 +407,7 @@ typedef u8 volatile const * ga_reg8_ro;
  * SC10-13: Source Color Data for font bits set to 1
  * @details RW: Palette entry
  */
-#define ga_reg_fontcolor (*((ga_reg) GA_REG_FONTCOLOR))
+#define ga_reg_fontcolor (*((ga_reg8) GA_REG_FONTCOLOR))
 /**
  * @def ga_reg_fontbits
  * @brief GA Reg 27 - 1bpp Font Data
@@ -425,14 +425,15 @@ typedef u8 volatile const * ga_reg8_ro;
  * This register is a group of four 16-bit values which represent
  * the 4bpp VDP tile data converted from the 1bpp data in @ref ga_reg_fontbits
  */
-#define ga_reg_fontdata (*((ga_reg) GA_REG_FONTDATA))
+#define ga_reg_fontdata (*((ga_reg_ro) GA_REG_FONTDATA))
 /**
  * @def ga_reg_stampsize
  * @brief GA Reg 29
  * @sa GA_REG_STAMPSIZE
  * @ingroup gatearray_sub
  */
-#define ga_reg_stampsize (*((ga_reg) GA_REG_STAMPSIZE))
+#define ga_reg_gfxstat (*((ga_reg8_ro) GA_REG_GFXSTAT))
+#define ga_reg_stampsize (*((ga_reg8) GA_REG_STAMPSIZE))
 
 /**
  * @def ga_reg_stampmapbase

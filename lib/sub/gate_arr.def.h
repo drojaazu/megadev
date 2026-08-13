@@ -1492,51 +1492,167 @@
 
 /**
  * @def GA_REG_FONTCOLOR
- * @sa ga_reg_fontcolor
+ * @brief Colours the font expander substitutes for 0 and 1 bits
+ *
+ * @details
+ * The low byte of the hardware register at 0xFF804C; the high byte is unused
+ * and reads as 0.
+ *
+ * Together with GA_REG_FONTBITS and GA_REG_FONTDATA this forms a small hardware
+ * accelerator that expands a 1 bit per pixel bitmap into Mega Drive 4 bits per
+ * pixel pattern data. Write the two colour indices here, write a row of 16
+ * source bits to GA_REG_FONTBITS, then read four words back from
+ * GA_REG_FONTDATA.
+ *
+ * | |7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|
+ * | |\b SC13|\b SC12|\b SC11|\b SC10|\b SC03|\b SC02|\b SC01|\b SC00|
+ * |\b R|◯|◯|◯|◯|◯|◯|◯|◯|
+ * |\b W|◯|◯|◯|◯|◯|◯|◯|◯|
+ *
+ * @param SC0 Palette index written wherever a source bit is **0**.
+ * @param SC1 Palette index written wherever a source bit is **1**.
+ * @sa ga_reg_fontcolor, GA_FONTCOLOR_0_MASK, GA_FONTCOLOR_1_MASK
  * @ingroup ga_reg_sub_38
  */
-#define GA_REG_FONTCOLOR 0xFF804C
+#define GA_REG_FONTCOLOR 0xFF804D
+
+/**
+ * @def GA_FONTCOLOR_0_MASK
+ * @brief Colour substituted for a source bit of 0
+ * @sa GA_REG_FONTCOLOR
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_38
+ */
+#define GA_FONTCOLOR_0_POS 0
+#define GA_FONTCOLOR_0_WIDTH 4
+#define GA_FONTCOLOR_0_MASK FIELD_MASK(GA_FONTCOLOR_0_POS, GA_FONTCOLOR_0_WIDTH)
+
+/**
+ * @def GA_FONTCOLOR_1_MASK
+ * @brief Colour substituted for a source bit of 1
+ * @sa GA_REG_FONTCOLOR
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_38
+ */
+#define GA_FONTCOLOR_1_POS 4
+#define GA_FONTCOLOR_1_WIDTH 4
+#define GA_FONTCOLOR_1_MASK FIELD_MASK(GA_FONTCOLOR_1_POS, GA_FONTCOLOR_1_WIDTH)
 
 /**
  * @def GA_REG_FONTBITS
- * @sa ga_reg_fontbits
+ * @brief Source bitmap for the font expander, 16 pixels
+ *
+ * @details
+ * Sixteen source pixels, one per bit. SBF is the leftmost and SB0 the
+ * rightmost, matching the order the expanded pixels appear in GA_REG_FONTDATA.
+ *
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | |\b SBF|\b SBE|\b SBD|\b SBC|\b SBB|\b SBA|\b SB9|\b SB8|\b SB7|\b SB6|\b SB5|\b SB4|\b SB3|\b SB2|\b SB1|\b SB0|
+ * |\b R|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|
+ * |\b W|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|
+ *
+ * @param SB Source bits. The documentation gives Chinese character fonts as the
+ * motivating case, but nothing about the conversion is font specific.
+ * @note Writing this register is what triggers the conversion; the result is
+ * available in GA_REG_FONTDATA immediately afterwards.
+ * @sa ga_reg_fontbits, GA_REG_FONTDATA
  * @ingroup ga_reg_sub_39
  */
 #define GA_REG_FONTBITS 0xFF804E
 
 /**
  * @def GA_REG_FONTDATA
- * @sa ga_reg_fontdata
+ * @brief Expanded 4 bits per pixel output of the font expander
+ *
+ * @details
+ * Four consecutive words at 0xFF8050, 0xFF8052, 0xFF8054 and 0xFF8056. Each of
+ * the sixteen source bits becomes one 4 bit pixel, so the sixteen pixels fill
+ * 64 bits, laid out ready to copy into VRAM.
+ *
+ * The order runs from the most significant source bit down: SBF becomes the top
+ * nibble of the first word and SB0 the bottom nibble of the last, which is the
+ * left to right pixel order Mega Drive pattern data uses.
+ *
+ * | Word | Pixels, high nibble first |
+ * |---|---|
+ * | 0xFF8050 | SBF, SBE, SBD, SBC |
+ * | 0xFF8052 | SBB, SBA, SB9, SB8 |
+ * | 0xFF8054 | SB7, SB6, SB5, SB4 |
+ * | 0xFF8056 | SB3, SB2, SB1, SB0 |
+ *
+ * With GA_FONTCOLOR_1 set to 0xF and GA_FONTCOLOR_0 to 0x1, a source bit of 0
+ * yields the pixel value 1 and a source bit of 1 yields 0xF.
+ *
+ * @warning Read only.
+ * @sa ga_reg_fontdata, GA_REG_FONTBITS
  * @ingroup ga_reg_sub_40
  */
 #define GA_REG_FONTDATA 0xFF8050
 
 /**
- * @def GA_REG_STAMPSIZE
- * @brief Stamp data sizes
- * @ingroup ga_regs_sub
- * @ingroup gfx_xform
+ * @def GA_REG_GFXSTAT
+ * @brief Graphics operation status
  *
  * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * |GRON|||||||||||||SMS|STS|RPT|
+ * The high byte of the hardware register at 0xFF8058. Split from the size
+ * configuration in its low byte because one is a status flag the hardware
+ * drives and the other is configuration you write (SPEC.md D17).
  *
- * @param RPT Repeat
- * @details RW:
- * @param STS Stamp size
- * @details RW:
- * @param SMS Stamp map size
- * @details RW:
- * @param GRON Graphics operation in progress
- * @details R:
- */
-/**
- * @def GA_REG_STAMPSIZE
- * @sa ga_reg_stampsize
+ * | |7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|
+ * | |\b GRON| | | | | | | |
+ * |\b R|◯| | | | | | | |
+ * |\b W| | | | | | | | |
+ *
+ * @param GRON Graphics operation in progress. 1: running, 0: complete.
+ * @note Poll this to know when a rotation or scaling operation has finished.
+ * It is the only completion signal the hardware gives, other than the level 1
+ * interrupt (GA_INT1_MASK).
+ * @warning Read only.
+ * @sa ga_reg_gfxstat, GA_REG_STAMPSIZE
  * @ingroup ga_reg_sub_44
  */
-#define GA_REG_STAMPSIZE 0xFF8058
+#define GA_REG_GFXSTAT 0xFF8058
+
+/**
+ * @def GA_GRON_MASK
+ * @brief Graphics operation in progress
+ * @sa GA_REG_GFXSTAT
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_44
+ */
+#define GA_GRON_POS 7
+#define GA_GRON_WIDTH 1
+#define GA_GRON_MASK FIELD_MASK(GA_GRON_POS, GA_GRON_WIDTH)
+
+/**
+ * @def GA_REG_STAMPSIZE
+ * @brief Stamp and stamp map geometry
+ *
+ * @details
+ * The low byte of the hardware register at 0xFF8058.
+ *
+ * | |7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|
+ * | | | | | | |\b SMS|\b STS|\b RPT|
+ * |\b R| | | | | |◯|◯|◯|
+ * |\b W| | | | | |◯|◯|◯|
+ *
+ * @param RPT Repeat. 1: the stamp map tiles indefinitely. 0: anything outside
+ * the map reads as 0.
+ * @param STS Stamp size. 0: 16x16 dots, 1: 32x32 dots.
+ * @param SMS Stamp map size. 0: one screen, 256x256 dots. 1: sixteen screens
+ * square, 4096x4096 dots.
+ *
+ * The two size bits together decide how much Word RAM the map occupies, and
+ * therefore how coarsely GA_REG_STAMPMAPBASE must be aligned.
+ *
+ * @sa ga_reg_stampsize, GA_REG_GFXSTAT, GA_REG_STAMPMAPBASE
+ * @ingroup ga_reg_sub_44
+ */
+#define GA_REG_STAMPSIZE 0xFF8059
 
 #define GA_STAMPSIZE_REPEAT_POS 0
 #define GA_STAMPSIZE_REPEAT_WIDTH 1
@@ -1551,22 +1667,91 @@
 
 /**
  * @def GA_REG_STAMPMAPBASE
- * @sa ga_reg_stampmapbase
- * @note The location of the stamp map in Word RAM. The value you put in is the
- * offset relative to the start of Word RAM divided by 4. What the raw location
- * needs to be a multiple of depends on the sizes you have set:
-
-    16x16px stamps, 256x256px stamp map: Multiples of 0x200
-    32x32px stamps, 256x256px stamp map: Multiples of 0x80
-    16x16px stamps, 4096x4096px stamp map: Multiples of 0x20000
-    32x32px stamps, 4096x4096px stamp map: Multiples of 0x8000
- * @warning Word access only. A byte access to this register can raise a
- * bus error.
- * @warning Bit operation instructions are not permitted here; read the
- * register, modify the copy, and write the whole value back.
+ * @brief Where the stamp map sits in Word RAM
+ *
+ * @details
+ * The value written is the offset from the start of Word RAM divided by 4, so
+ * register bit 15 corresponds to address bit A17.
+ *
+ * How many of the high bits are usable depends on how big the map is, which
+ * follows from GA_REG_STAMPSIZE. A larger map needs coarser alignment:
+ *
+ * | Stamp | Map | Map occupies | Usable bits | Align the offset to |
+ * |---|---|---|---|---|
+ * | 16x16 | 256x256 | 0x200 | A17-A09 | 0x200 |
+ * | 32x32 | 256x256 | 0x80 | A17-A07 | 0x80 |
+ * | 16x16 | 4096x4096 | 0x20000 | A17 only | 0x20000 |
+ * | 32x32 | 4096x4096 | 0x8000 | A17-A15 | 0x8000 |
+ *
+ * With a 4096x4096 map and 16x16 stamps only A17 remains, so the map may start
+ * at just two places in Word RAM.
+ *
+ * @note The manual's own figures on printed page 36 label these two cases with
+ * the stamp sizes **swapped** -- it calls SMS=1/STS=0 "32x32 dots" where STS=0
+ * is 16x16 by its own definition on page 35. The address tables either side of
+ * that text are self consistent, and the table above is derived from the map
+ * geometry, which agrees with them. Do not "correct" this against page 36.
+ * @note Only meaningful in 2M mode.
+ * @warning Word access only. A byte access to this register can raise a bus
+ * error.
+ * @warning Bit operation instructions are not permitted here.
+ * @sa ga_reg_stampmapbase, GA_REG_STAMPSIZE
  * @ingroup ga_reg_sub_45
  */
 #define GA_REG_STAMPMAPBASE 0xFF805A
+
+/**
+ * @defgroup stamp_entry Sub CPU / Graphics / Stamp map entry
+ * @brief Layout of one entry in a stamp map
+ *
+ * @details
+ * A stamp map is an array of 16 bit entries, one per stamp position. This is
+ * not a gate array register -- it is the data the rotation hardware reads from
+ * Word RAM -- but the field layout belongs with the registers that describe it.
+ *
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | |\b HFLP|\b RT1|\b RT0|0|0|\b SNOA|\b SNO9|\b SNO8|\b SNO7|\b SNO6|\b SNO5|\b SNO4|\b SNO3|\b SNO2|\b SNO1|\b SNO0|
+ *
+ * Stamp generators begin at the start of 2M Word RAM, which the Sub CPU sees at
+ * 0x080000, and are laid out exactly like Mega Drive sprite patterns: two dots
+ * per byte, high nibble first, so the top nibble of the first byte is the top
+ * left dot.
+ * @{
+ */
+
+/**
+ * @def STAMP_SNO_MASK
+ * @brief Stamp number
+ * @warning With 32x32 stamps the two low bits must be 0, since each stamp then
+ * covers four 16x16 generator slots.
+ */
+#define STAMP_SNO_POS 0
+#define STAMP_SNO_WIDTH 11
+#define STAMP_SNO_MASK FIELD_MASK(STAMP_SNO_POS, STAMP_SNO_WIDTH)
+
+/**
+ * @def STAMP_ROTATE_MASK
+ * @brief Rotation applied to this stamp, in 90 degree steps
+ */
+#define STAMP_ROTATE_POS 13
+#define STAMP_ROTATE_WIDTH 2
+#define STAMP_ROTATE_MASK FIELD_MASK(STAMP_ROTATE_POS, STAMP_ROTATE_WIDTH)
+
+#define STAMP_ROTATE_0 0b00
+#define STAMP_ROTATE_90 0b01
+#define STAMP_ROTATE_180 0b10
+#define STAMP_ROTATE_270 0b11
+
+/**
+ * @def STAMP_HFLIP_MASK
+ * @brief Mirror the stamp horizontally
+ */
+#define STAMP_HFLIP_POS 15
+#define STAMP_HFLIP_WIDTH 1
+#define STAMP_HFLIP_MASK FIELD_MASK(STAMP_HFLIP_POS, STAMP_HFLIP_WIDTH)
+
+/** @} */
 
 /**
  * @def GA_REG_IMGBUFVSIZE
