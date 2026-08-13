@@ -14,8 +14,8 @@ volatile u8 p2_hold, p2_single, p2_prev;
 
 void read_inputs()
 {
-  p1_hold = ~read_input_joypad(io_data1);
-  p2_hold = ~read_input_joypad(io_data2);
+  p1_hold = ~read_input_joypad(&io_data1);
+  p2_hold = ~read_input_joypad(&io_data2);
   if (p1_hold == p1_prev)
     p1_single = 0;
   else

@@ -119,6 +119,8 @@ Additional rules, all mechanically checkable:
   translation unit must compile cleanly. Enforced by Tier 0.1 (§6).
 - **INV-9** — A header MUST NOT define storage or a non-`static` function. Two translation units
   including it must link. Enforced by Tier 0.4 (§6). **Holds as of 2026-08-13** (42 pass, 0 fail).
+- **INV-10** — A register accessor macro dereferences itself, so it is used as `reg = x` rather than
+  `*reg = x` (§9 D14). Enforced by Tier 1.
 - **STYLE-1** — Where two mnemonics assemble to the **identical encoding**, only the house spelling
   is written. Classified empirically against `m68k-linux-gnu-as`:
 
@@ -598,17 +600,24 @@ The lint now requires it rather than checking a naming scheme, which removed 11 
 baseline entries at a stroke. The other two were then fixed, so **the convention baseline is empty**:
 every rule in §2–§3 holds across the whole library, and any new violation fails the gate outright.
 
-### D14 — Register accessors use the pointer form *(Damian R, 2026-08-13)*
-`#define ga_reg_foo ((ga_reg) GA_REG_FOO)`, used as `*ga_reg_foo = x`.
+### D14 — Register accessors are lvalues *(Damian R, 2026-08-13)*
+`#define ga_reg_foo (*((ga_reg) GA_REG_FOO))`, used as `ga_reg_foo = x`.
 
-Both forms were in use — 78 pointer against 16 lvalue — and `lib/sub/gate_arr.h` mixed them
-internally while `lib/main/vdp.h` used the opposite convention throughout, so a caller could not tell
-from the name whether a dereference was needed.
+Both forms were in use — `lib/sub/gate_arr.h` mixed them internally while `lib/main/vdp.h` used the
+opposite convention throughout — so a caller could not tell from the name whether a `*` was needed.
 
-Pointer form wins on more than majority: `ga_reg` is `u16 volatile *`, so `ga_reg_foo + 1` is
-pointer arithmetic meaning "the next register", and it composes with the `_HI`/`_LO` address
-definitions and with anything taking a pointer. The lvalue form reads better in isolation but cannot
-express those.
+**Decided on measurement, not preference.** Of 72 pointer-form accessors in the tree, exactly **two
+uses** wanted the pointer rather than the value (`read_input_joypad(io_data1)`), and `&` recovers the
+address in those cases. The lvalue form therefore charges the sigil to the rare case instead of the
+common one. An earlier draft of this decision recommended the pointer form on the grounds that it
+composed with pointer arithmetic; that was backwards — `ga_reg_foo + 1` silently meaning "the next
+register" is a hazard, and explicit `_LO` definitions say it better.
+
+Scope: **single registers**, identified by the register typedefs. Memory *regions* — `word_ram`,
+`prg_ram` — are genuinely pointers to many objects and are indexed as such, so they are unaffected.
+
+Enforced by INV-10, red-tested. Verified behaviour-preserving: `boot.bin`, `cyber.mmd` and the ISO
+are byte-identical before and after the conversion.
 
 ### OD-5 — Should the audit's branch-only defects be fixed on the branch or after merge? *(open)*
 KB-20 … KB-27 exist only on `feature/sub_bios_overhaul`. Fixing them there keeps the branch

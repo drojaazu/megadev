@@ -188,15 +188,13 @@ typedef struct Palette
  * @sa BIOS_VDP_REG_CACHE
  */
 // #define bios_vdp_regs (*((volatile u16(*)[19]) BIOS_VDP_REG_CACHE))
-#define bios_vdp_regs ((volatile u16 *) BIOS_VDP_REG_CACHE)
-
+#define bios_vdp_regs (*((volatile u16 *) BIOS_VDP_REG_CACHE))
 /**
  * @def bios_comflags_main
  * @brief GA comm flags for Main CPU buffer
  * @sa BIOS_COMMFLAGS_MAIN_CACHE
  */
-#define bios_comflags_main ((volatile u8 *) BIOS_COMMFLAGS_MAIN_CACHE)
-
+#define bios_comflags_main (*((volatile u8 *) BIOS_COMMFLAGS_MAIN_CACHE))
 /**
  * @def const bios_comflags_sub
  * @brief GA comm flags for Sub CPU buffer
