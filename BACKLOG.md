@@ -19,11 +19,11 @@ messages, and the 2026-08-13 audit.
 
 | Branch | Base | Contains | State |
 |---|---|---|---|
-| `docs/spec-and-backlog` | `master` | SPEC.md, BACKLOG.md, README index, `docs/html/` ignore | ready to merge |
-| `feat/verification-gate` | `master` | `make check`, `tools/check/*`, GitHub Actions workflow | lint verified; build gate needs a real toolchain run |
-| `fix/doxygen-config` | `master` | Doxyfile repair, two doc-tag typos | verified with doxygen 1.16.1 |
-| `fix/doc-cross-references` | `master` | `bootrom.md`/`design.md` link repair | verified |
-| `feature_sub_bios_overhaul` | `master` | in-flight inline-documentation overhaul | **does not build** (BR-1); resume after the above land |
+| `docs/spec-and-backlog` | `develop` | SPEC.md, BACKLOG.md, README index, `docs/html/` ignore | ready to merge |
+| `feature/verification-gate` | `develop` | `make check`, `tools/check/*`, GitHub Actions workflow | lint verified; build gate needs a real toolchain run |
+| `fix/doxygen-config` | `develop` | Doxyfile repair, two doc-tag typos | verified with doxygen 1.16.1 |
+| `fix/doc-cross-references` | `develop` | `bootrom.md`/`design.md` link repair | verified |
+| `feature/sub_bios_overhaul` | `develop` | in-flight inline-documentation overhaul | **does not build** (BR-1); resume after the above land |
 | `backup/feature_sub_bios_overhaul-2026-08-13` | — | backup pointer, plus tag `backup-sub-bios-overhaul-2026-08-13` | do not delete until the branch is pushed |
 
 None of these branches has been pushed to any remote. Offline backups (bundle, patch, original
@@ -50,12 +50,12 @@ toolchain was available during the audit. VER-1 must land first so that fixes ca
 | LIB-10 | S1 | open | KB-11 — `btst` given a mask instead of a bit index, in both the C and asm copies. Fix requires adding `_BIT` companions to `lib/main/io.def.h` (INV-6). |
 | LIB-11 | S2 | open | KB-13 — `hextoa8/16/32` C and asm versions disagree on string termination. Decide the contract, then make both match; first subject for VER-3. |
 | LIB-12 | S2 | open | `lib/memory.h` — every `memset*`/`memcpy*` uses a `dbf` loop with a **16-bit** counter. Lengths > 65536 silently truncate; length 0 wraps and loops 65536 times. Undocumented. Document or guard. |
-| BR-1 | S1 | open | KB-27 — the `macros.s` → `macro.s` rename is unpropagated across 39 files; **`feature_sub_bios_overhaul` does not build.** Must land atomically with its consumers. |
-| BR-2 | S1 | open | KB-20 … KB-26 — seven defects that exist only on `feature_sub_bios_overhaul`. See SPEC.md OD-5 for whether to fix on-branch or after merge. |
+| BR-1 | S1 | open | KB-27 — the `macros.s` → `macro.s` rename is unpropagated across 39 files; **`feature/sub_bios_overhaul` does not build.** Must land atomically with its consumers. |
+| BR-2 | S1 | open | KB-20 … KB-26 — seven defects that exist only on `feature/sub_bios_overhaul`. See SPEC.md OD-5 for whether to fix on-branch or after merge. |
 | LIB-13 | S1 | **done** | KB-28 — `z80_init` in `lib/main/z80.h` is now `static inline`. |
 | LIB-14 | S2 | **done** | KB-29 — `lib/main/vdp.s` fixed: register size suffixes removed, `btst.l 0x1` corrected to `btst #1`, and `vdp_ctrl` (a C macro the assembler never saw) replaced with `VDP_CTRL` from vdp.def.h. That last one was a latent **link** error affecting both routines, including the one that already assembled. Verified by disassembly: no relocations, no undefined symbols. |
 | LIB-15 | S2 | **done** | KB-30 — the unfinished `ATOI` macro was removed from `lib/str_util.s`, which now assembles. Closes ARCH-6 (INV-3). See FEAT-10 for reimplementation. |
-| LIB-16 | S2 | **done** | KB-31 — `lib/sub/commsync.s` deleted. Unreferenced by any project and could not assemble; already deleted on `feature_sub_bios_overhaul`. |
+| LIB-16 | S2 | **done** | KB-31 — `lib/sub/commsync.s` deleted. Unreferenced by any project and could not assemble; already deleted on `feature/sub_bios_overhaul`. |
 | LIB-17 | S1 | **done** | KB-32 — `vdp_dma_transfer` in `lib/main/vdp.h` is now `static inline`. Found by the ODR check only after the Python port aligned its flags with the real build. |
 | BR-3 | S2 | open | `examples/bram/src/bram_demo_init.s:27` includes `<init_data.s>`, which exists at **no ref** in the repo. Determine intent; restore or remove. |
 
@@ -126,7 +126,7 @@ toolchain was available during the audit. VER-1 must land first so that fixes ca
 |---|---|---|---|
 | OPS-1 | S2 | **needs owner** | **The SSH host key for `cloud.motoi.pro` has changed.** Connection was refused on 2026-08-13 (`SHA256:0QUYZWVWxGjdB3k65UVa8/3bKx0zopnl7iKL2PPx0n8`, offending entry `~/.ssh/known_hosts:8`). The key was **not** accepted. The remote was removed from this clone per SPEC.md D6. Verify the server was legitimately rebuilt before trusting it again; re-add with `git remote add origin git@cloud.motoi.pro:megadev.git`. |
 | OPS-2 | S3 | **done** | Add `docs/html/` to `.gitignore` — 385 generated files sit permanently in `git status`, one `git add .` from being committed. Commit `5013d70` removed the earlier exclusion. |
-| OPS-3 | S3 | open | Prune stale branches: `temp` (idle 11 months), `md_cart_dev` (12 months), `md_cart` (2.5 years), `feature_serial_comm_example` (never merged), plus merged `feature_carts` and `release/*`. |
+| OPS-3 | S3 | open | Prune stale branches (all renamed to the `feature/` prefix on 2026-08-13): `temp` (idle 11 months), `md_cart_dev` (12 months), `md_cart` (2.5 years), `feature_serial_comm_example` (never merged), plus merged `feature_carts` and `release/*`. |
 | OPS-4 | S3 | open | Normalise git tags: `1.0.0` and `v1.0.0` duplicate the same release; `0.1.6`, `0.1.7`, `v1.2.0` are lightweight tags with no message or date; `v0.1.2b` is not valid semver. |
 | OPS-5 | S3 | open | `VERSION` is referenced by nothing — not `megadev.make`, no header, no ROM field. Either wire it into the build or drop it in favour of tags. |
 | OPS-6 | S4 | open | `lib/sysfont.1bpp.chr` is a **0-byte** binary asset. Restore or delete. |

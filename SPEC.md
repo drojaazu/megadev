@@ -76,7 +76,7 @@ Additional rules, all mechanically checkable:
 
 - **INV-2** — A `.h` or `.macro.s` MUST include the `.def.h` it depends on rather than relying on
   the caller's include order. *(Violated on `master` by `lib/main/vdp.macros.s`, which has no
-  `#include` at all; and on `feature_sub_bios_overhaul` by `lib/sub/gate_arr.macro.s`,
+  `#include` at all; and on `feature/sub_bios_overhaul` by `lib/sub/gate_arr.macro.s`,
   `lib/sub/bios.macro.s` and `lib/sub/boot.macro.s`.)*
 - **INV-3** — A `.macro.s` MUST NOT emit code, and a code-emitting `.s` MUST NOT define macros.
   **Holds as of 2026-08-13.**
@@ -335,7 +335,7 @@ Every hardware assertion carries one of: `HW` (verified on real hardware, model 
 Catalogued by inspection on 2026-08-13, then **re-tested against m68k gcc 14.2.0** in the
 devcontainer the same day. Every ✅ row below is now backed by a compiler, linker or assembler
 diagnostic, not by reading. Marked ✅ = present on `master`; ⚠️ = introduced on
-`feature_sub_bios_overhaul` and not on master.
+`feature/sub_bios_overhaul` and not on master.
 
 **Two entries from the original inspection were wrong and have been withdrawn:**
 
@@ -370,12 +370,12 @@ diagnostic, not by reading. Marked ✅ = present on `master`; ⚠️ = introduce
 | KB-24 | `lib/sub/gate_arr.macro.s:34,47,48` | references `BIT_GA_REG_DMNA` / `BIT_GA_REG_RET`, which exist nowhere | ⚠️ branch only |
 | KB-25 | `lib/main/comm.macro.s:23,26` | calls `Z80_DO_BUSREQ`/`Z80_DO_BUSRELEASE`; the macros are `Z80_REQUEST_BUS`/`Z80_RELEASE_BUS` | ⚠️ branch only |
 | KB-26 | `lib/sub/boot.macro.s` | `.macro CDBOOT` whose body is `jsr CDBOOT` — invokes itself | ⚠️ branch only |
-| KB-27 | 39 files on `feature_sub_bios_overhaul` | Rename `macros.s` → `macro.s` (commit `bd4d06c`) not propagated; `main.macro.s` and `sub.macro.s` deleted but still included. **The branch does not build.** | ⚠️ branch only |
+| KB-27 | 39 files on `feature/sub_bios_overhaul` | Rename `macros.s` → `macro.s` (commit `bd4d06c`) not propagated; `main.macro.s` and `sub.macro.s` deleted but still included. **The branch does not build.** | ⚠️ branch only |
 | KB-28 | `lib/main/z80.h:78` | **FIXED** 2026-08-13 — now `static inline`. **Link-verified — found by the gate, missed by the audit.** `z80_init` is a non-`static` function definition in a header (INV-9); `multiple definition of 'z80_init'` across two TUs. Propagates to `lib/main/comm.h`. | ✅ |
 | KB-29 | `lib/main/vdp.s:62,64,65,70,72` | **FIXED** 2026-08-13 — size suffixes, `btst`, and the `vdp_ctrl`/`VDP_CTRL` symbol. **Assemble-verified.** `move.w d1.w, d3.w` and similar — register size suffixes GNU `as` rejects. 5 errors. **This is on `master`, not branch-only as first recorded.** No project references this file, so it has never been assembled. | ✅ |
 | KB-30 | `lib/str_util.s:69` | **FIXED** 2026-08-13 — `ATOI` removed; see BACKLOG FEAT-10. **Assemble-verified.** `.macro ATOI` is never closed with `.endm`: `Error: unexpected end of file in macro 'atoi' definition`. **The whole file therefore cannot assemble**, and no project references it. Also an INV-3 violation. | ✅ |
 | KB-32 | `lib/main/vdp.h:290` | **FIXED** 2026-08-13 — `vdp_dma_transfer` was a non-`static` definition in a header (INV-9), propagating to `main.h` and `bios.h`. Found only after the Python port aligned the ODR check's flags with the real build. Now `static inline`. | ✅ |
-| KB-31 | `lib/sub/commsync.s:38-53` | **FIXED** 2026-08-13 — file deleted. **Assemble-verified.** `.global _COMCMD0: .word 0` — a label definition cannot follow `.global` on one line; 16 errors. Already deleted on `feature_sub_bios_overhaul`. | ✅ |
+| KB-31 | `lib/sub/commsync.s:38-53` | **FIXED** 2026-08-13 — file deleted. **Assemble-verified.** `.global _COMCMD0: .word 0` — a label definition cannot follow `.global` on one line; 16 errors. Already deleted on `feature/sub_bios_overhaul`. | ✅ |
 
 **A structural observation from the first gate run:** KB-29, KB-30 and KB-31 are all in files that no
 example or template references. The library contains assembly that has **never once been assembled**.
@@ -415,7 +415,7 @@ The key change was *not* accepted — it needs human verification before that re
 See BACKLOG.md OPS-1.
 
 ### D7 — Macro files use the singular suffix `.macro.s` *(Damian R, in flight)*
-Rename begun in commit `bd4d06c` on `feature_sub_bios_overhaul`. `docs/manual.md:342` still documents
+Rename begun in commit `bd4d06c` on `feature/sub_bios_overhaul`. `docs/manual.md:342` still documents
 the old plural `.macros.s`, which is correct for `master` and wrong for the branch. The rename is
 incomplete (KB-27) and must land atomically with its consumers.
 
@@ -431,6 +431,22 @@ forbidden** (STYLE-2). **Why:** the pseudo-ops choose the smallest working encod
 them as style violations would actively cost size and cycles. `dbra` chosen over `dbf` (20
 occurrences rewritten) as it states the intent — decrement and branch always — rather than the
 condition-code encoding.
+
+### D10 — Branching model is gitflow; branch names use slash prefixes *(Damian R, 2026-08-13)*
+`master` receives **only** release merges and hotfixes — never direct commits. `develop` is the
+integration branch; all work reaches it through a branch and a `--no-ff` merge. Releases are cut as
+`release/vX.Y.Z` from `develop`, merged to `master`, and tagged.
+
+Branch names use slash prefixes: `feature/`, `fix/`, `docs/`, `release/`, `hotfix/`. **Why:** the
+repo already used `release/v1.2.0`, most tooling groups slash-separated names into folders, and the
+old mixed style (`feature_carts` alongside `release/v1.2.0`) made the set hard to read. Existing
+branches were renamed on 2026-08-13.
+
+**This decision was made in response to a violation:** the SPEC, backlog, verification gate and
+defect fixes were initially committed straight to `master`, leaving `develop` stranded at v1.2.0 —
+the exact inverse of the intended shape. Nothing had been pushed, so `develop` was moved to the work
+and `master` reset to `v1.2.0`. The pre-restructure state is preserved as tag
+`pre-gitflow-restructure-2026-08-13`.
 
 ### OD-1 — How to resolve the Main/Sub Gate Array namespace collision *(open)*
 INV-7 is violated (KB-12). Options: prefix by CPU side (`GA_MAIN_*` / `GA_SUB_*`); rely solely on
@@ -455,7 +471,7 @@ dereferenced lvalue. `main/vdp.h` is all-lvalue; `main/io.h` all-pointer. A call
 whether `foo` or `*foo` is correct. Pick one for 2.0.0.
 
 ### OD-5 — Should the audit's branch-only defects be fixed on the branch or after merge? *(open)*
-KB-20 … KB-27 exist only on `feature_sub_bios_overhaul`. Fixing them there keeps the branch
+KB-20 … KB-27 exist only on `feature/sub_bios_overhaul`. Fixing them there keeps the branch
 self-consistent; deferring keeps the branch's diff focused on documentation.
 
 ---
