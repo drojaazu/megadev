@@ -131,3 +131,27 @@ _Static_assert(GA_REG_CDDCMD4 == 0xFF804A, "the command block ends here");
 _Static_assert(GA_CDDCOMM_HI_MASK == 0x0F00, "even-numbered nibble is bits 11-8");
 _Static_assert(GA_CDDCOMM_LO_MASK == 0x000F, "odd-numbered nibble is bits 3-0");
 _Static_assert((GA_CDDCOMM_HI_MASK & GA_CDDCOMM_LO_MASK) == 0, "the nibbles do not overlap");
+
+/* --- trace vector step encoding (KB-41) --------------------------------- */
+
+#include <xform.h>
+
+/* The step format is sign and magnitude. Two's complement is what ordinary C
+ * arithmetic produces and what the previous to_xform_delta() emitted, and the
+ * hardware reads it as a large step of the wrong size: -0.5 became -15.5. */
+_Static_assert(to_xform_delta(1.0) == 0x0800, "1.0 is the scale itself");
+_Static_assert(to_xform_delta(0.5) == 0x0400, "0.5 is half the scale");
+_Static_assert(to_xform_delta(-0.5) == (0x8000 | 0x0400),
+	"a negative step sets the sign bit and keeps the magnitude");
+_Static_assert(to_xform_delta(-1.0) == (0x8000 | 0x0800),
+	"-1.0 differs from 1.0 only in the sign bit");
+
+/* Which is exactly what two's complement does not do. */
+_Static_assert(to_xform_delta(-1.0) != (xform_delta) (s16) -0x0800,
+	"sign-magnitude and two's complement disagree; that was the bug");
+
+/* Negating must not disturb the magnitude. */
+_Static_assert((0x0800 ^ 0x8000) == (0x8000 | 0x0800), "negate toggles bit 15 only");
+
+/* Positions are unsigned, 13.3. */
+_Static_assert(to_xform_pos(1.0) == 8, "one dot is 8 units of 1/8");
