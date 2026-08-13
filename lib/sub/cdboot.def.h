@@ -5,9 +5,7 @@
  * @brief Function codes for the _CDBOOT vector
  */
 
-#ifndef MEGADEV__SUB_CDBOOT_DEF_H
-#define MEGADEV__SUB_CDBOOT_DEF_H
-
+#pragma once
 /**
  * @def CDBOOT
  * @brief CD Boot system calls vector
@@ -123,5 +121,3 @@
  * Presumably checks on SP load status
  */
 #define CBTSPSTAT 0x0009
-
-#endif

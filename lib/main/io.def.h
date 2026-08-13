@@ -5,9 +5,7 @@
  * @brief I/O register definitions
  */
 
-#ifndef MEGADEV__MAIN_IO_DEF_H
-#define MEGADEV__MAIN_IO_DEF_H
-
+#pragma once
 /**
  * @defgroup ioports Main CPU / I/O Ports
  */
@@ -339,5 +337,3 @@
  * Size: 0x100 bytes
  */
 #define TIME_MAPPING 0xA13000
-
-#endif

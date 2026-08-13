@@ -4,9 +4,7 @@
  * @file mmd.macro.s
  */
 
-#ifndef MEGADEV__MAIN_INIT_MMD_S
-#define MEGADEV__MAIN_INIT_MMD_S
-
+#pragma once
 #include "macro.s"
 #include <main/memmap.def.h>
 #include <main/gate_arr.def.h>
@@ -40,5 +38,3 @@
   GRANT_2M
 4:movea.l  8(a0), a0
 .endm
-
-#endif

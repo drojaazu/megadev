@@ -5,9 +5,7 @@
  * @brief C wrappers for VDP usage
  */
 
-#ifndef MEGADEV__MAIN_VDP_H
-#define MEGADEV__MAIN_VDP_H
-
+#pragma once
 #include "main/vdp.def.h"
 #include "types.h"
 
@@ -332,5 +330,3 @@ static inline void vdp_dma_transfer(char const * source, vdp_cmd dest, u16 const
 	);
   // clang-format on
 }
-
-#endif

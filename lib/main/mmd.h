@@ -6,9 +6,7 @@
  * @note This expects a module to be already loaded at the start of Word RAM
  */
 
-#ifndef MEGADEV__MAIN_INIT_MMD_H
-#define MEGADEV__MAIN_INIT_MMD_H
-
+#pragma once
 #include <main/gate_arr.h>
 #include <main/memmap.h>
 
@@ -59,5 +57,3 @@ static inline void const * init_mmd()
 
   return mmd_entry;
 }
-
-#endif

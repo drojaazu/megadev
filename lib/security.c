@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file security.s
+ * @file security.c
  * @brief Mega CD security block inclusion
  *
  * @note

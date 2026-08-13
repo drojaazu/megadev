@@ -5,9 +5,5 @@
  * @brief Function codes for the BRAM_CART vector
  */
 
-#ifndef MEGADEV__MAIN_BRAMCART_DEF_H
-#define MEGADEV__MAIN_BRAMCART_DEF_H
-
+#pragma once
 #define BRAM_CART 0xFFFDAE
-
-#endif

@@ -5,9 +5,7 @@
  * @brief PCM audio playback utilities
  */
 
-#ifndef MEGADEV__SUB_PCM_H
-#define MEGADEV__SUB_PCM_H
-
+#pragma once
 #include "pcm.def.h"
 #include "types.h"
 
@@ -89,5 +87,3 @@ static inline void pcm_config_channel_c(
 		: "+d"(d0_channel), "+a"(a5_settings)
 		: "d"(d0_channel), "a"(a5_settings));
 };
-
-#endif

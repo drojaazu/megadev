@@ -5,9 +5,7 @@
  * @brief CPU System Control Operations
  */
 
-#ifndef SYSTEM_S
-#define SYSTEM_S
-
+#pragma once
 .macro DISABLE_INTERRUPTS
   ori #0x700, sr
 .endm
@@ -52,6 +50,3 @@
 .macro POPM regs
 	movem.l (sp)+, \regs
 .endm
-
-
-#endif

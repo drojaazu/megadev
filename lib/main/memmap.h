@@ -5,9 +5,7 @@
  * @brief C wrappers for main CPU side hardware memory map & system vectors
  */
 
-#ifndef MEGADEV__MAIN_MEMMAP_H
-#define MEGADEV__MAIN_MEMMAP_H
-
+#pragma once
 #include <main/memmap.def.h>
 
 /**
@@ -47,5 +45,3 @@
  * @sa EXVEC_EXT
  */
 #define exvec_ext ((void(* volatile *)) EXVEC_EXT)
-
-#endif

@@ -8,9 +8,7 @@
  * registers cast to an 8 bit type.
  */
 
-#ifndef MEGADEV__MAIN_MEMMAP_DEF_H
-#define MEGADEV__MAIN_MEMMAP_DEF_H
-
+#pragma once
 /**
  * @note Officially marked as "not for general use" in the English language
  * documentation, but this area is used by the Main BIOS in a number of ways,
@@ -97,5 +95,3 @@
 #define EXVEC_LINE1111 0xFFFD98 // Line 1111 Instruction
 #define EXVEC_PRIVERR  0xFFFD9E // Privilege Violation
 #define EXVEC_TRACE    0xFFFDA4 // Trace
-
-#endif

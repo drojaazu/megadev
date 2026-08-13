@@ -5,9 +5,7 @@
  * @brief Function codes for the _BURAM vector
  */
 
-#ifndef MEGADEV__SUB_BRAM_DEF_H
-#define MEGADEV__SUB_BRAM_DEF_H
-
+#pragma once
 /**
  * @def BURAM
  * @brief Backup RAM system calls vector
@@ -188,5 +186,3 @@
 
 #define BRM__UNKNOWN0 0x0009
 #define BRM__UNKNOWN1 0x000A
-
-#endif

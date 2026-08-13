@@ -6,9 +6,7 @@
  * @todo this needs some renaming...
  */
 
-#ifndef MEGADEV__SUB_XFORM_H
-#define MEGADEV__SUB_XFORM_H
-
+#pragma once
 typedef short xform_pos;
 typedef short xform_delta;
 
@@ -24,5 +22,3 @@ typedef short xform_delta;
 
 #define to_xform_delta(value)                         \
 	((xform_delta) ((value) * (XFORM_DELTA_FRAC_MASK)))
-
-#endif

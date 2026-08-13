@@ -5,9 +5,7 @@
  * @brief VDP utility macros
  */
 
-#ifndef MEGADEV__MAIN_VDP_MACRO_S
-#define MEGADEV__MAIN_VDP_MACRO_S
-
+#pragma once
 /**
  * @brief Converts a 16 bit VRAM address into VDP format at runtime
  */
@@ -28,5 +26,3 @@
   lsr.l    #6, \dreg
   ror.w    #2, \dreg
 .endm
-
-#endif

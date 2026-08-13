@@ -5,9 +5,7 @@
  * @brief System utilities
  */
 
-#ifndef MEGADEV__SYSTEM_H
-#define MEGADEV__SYSTEM_H
-
+#pragma once
 /**
  * Disables all interrupt levels; preserves other bits
  */
@@ -33,5 +31,3 @@ static inline void cpu_stop()
 {
 	asm("stop #0x700");
 }
-
-#endif

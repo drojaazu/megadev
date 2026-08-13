@@ -9,9 +9,7 @@
  *          - Copies .data section into RAM
  */
 
-#ifndef INIT_MACRO_S
-#define INIT_MACRO_S
-
+#pragma once
 .macro BASIC_INIT
   moveq    #0, d0
   move.l   #_BSS_LENGTH_LOOPSZ, d7
@@ -27,6 +25,3 @@
 0:move.l    (a0)+, (a1)+
 1:dbra      d7, 0b
 .endm
-
-
-#endif

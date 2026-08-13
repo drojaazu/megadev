@@ -5,9 +5,7 @@
  * @brief I/O utilities
  */
 
-#ifndef MEGADEV__MAIN_IO_MACRO_S
-#define MEGADEV__MAIN_IO_MACRO_S
-
+#pragma once
 #include "main/io.def.h"
 
 /**
@@ -48,5 +46,3 @@
   lsl.b   #2, d1
   or.b    d1, d0
 .endm
-
-#endif

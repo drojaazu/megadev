@@ -5,9 +5,7 @@
  * @brief Misc Mega Drive system registers
  */
 
-#ifndef MEGADEV__MAIN_MD_SYS_DEF_H
-#define MEGADEV__MAIN_MD_SYS_DEF_H
-
+#pragma once
 /**
  * @def HW_VERSION
  * @brief Version register
@@ -51,5 +49,3 @@
  * for reference
  */
 #define TMSS_BANK_SWITCH 0x0A14001
-
-#endif

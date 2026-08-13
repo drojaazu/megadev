@@ -6,9 +6,7 @@
  *
  */
 
-#ifndef MEGADEV__BUILD_DEF_H
-#define MEGADEV__BUILD_DEF_H
-
+#pragma once
 // For use with the TARGET definition
 #define MEGADRIVE 0
 #define MEGACD 1
@@ -67,5 +65,3 @@
 #define FIELD_GET(field, reg) (((reg) &field##_MASK) >> field##_POS)
 
 /** @} */
-
-#endif

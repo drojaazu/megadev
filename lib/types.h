@@ -5,9 +5,7 @@
  * @brief Commonly used typedefs
  */
 
-#ifndef MEGADEV__TYPES_H
-#define MEGADEV__TYPES_H
-
+#pragma once
 #define NULL ((void *) 0)
 
 typedef long ptrdiff_t;
@@ -108,5 +106,3 @@ typedef uintptr_t			uptr;
 #define UINT8_MAX	 0xFF
 #define UINT16_MAX 0xFFFF
 #define UINT32_MAX 0xFFFFFFFF
-
-#endif

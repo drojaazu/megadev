@@ -5,9 +5,7 @@
  * @brief Helper macros for use with the Gate Array on the Main CPU side
  */
 
-#ifndef MEGADEV__MAIN_GATE_ARR_MACRO_S
-#define MEGADEV__MAIN_GATE_ARR_MACRO_S
-
+#pragma once
 #include "main/gate_arr.def.h"
 
 /**
@@ -69,5 +67,3 @@ loop:
   move.b   #0x2,GA_REG_RESET_LO
   move.b   #0x0,GA_REG_RESET_LO
 .endm
-
-#endif

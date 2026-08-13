@@ -5,9 +5,7 @@
  * @brief CD-ROM File Access Framework Macros
  */
 
-#ifndef MEGADEV__SUB_CDROM_MACROS_H
-#define MEGADEV__SUB_CDROM_MACROS_H
-
+#pragma once
 #include "sub/cdrom.def.h"
 
 /**
@@ -43,5 +41,3 @@ loop:
   jbsr    check_status
   bcs     loop
 .endm
-
-#endif

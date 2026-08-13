@@ -7,9 +7,7 @@
  * CPU and direct Z80 access, and defines and macros for YM2612 register access
  */
 
-#ifndef MEGADEV__MAIN_Z80_DEF_H
-#define MEGADEV__MAIN_Z80_DEF_H
-
+#pragma once
 /**
  * @defgroup z80 Main CPU / Z80
  */
@@ -102,5 +100,3 @@ it's memory, the Z80 may be let go from reset by writing #$0100 to $A11200.
  * @details Use with @ref Z80_REG_RESET
  */
 #define Z80_RESET_RELEASE 0x0100
-
-#endif

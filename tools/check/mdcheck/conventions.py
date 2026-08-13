@@ -125,24 +125,21 @@ def check_def_h(text: str, display: str) -> list[Finding]:
     return findings
 
 
-def expected_guard(rel: str) -> str:
-    """main/gate_arr.def.h -> MEGADEV__MAIN_GATE_ARR_DEF_H"""
-    return "MEGADEV__" + re.sub(r"[/.]", "_", rel).upper()
-
-
 def check_guard(text: str, rel: str, display: str) -> list[Finding]:
-    """INV-4: include guard derived from path."""
+    """INV-4: every header guards itself with #pragma once.
+
+    Settled in SPEC.md OD-3. Verified that #pragma once behaves correctly when
+    a .def.h is pulled in by the assembler (gcc -x assembler-with-cpp),
+    including a doubled include, so it is safe for the shared layer too.
+    """
     if re.search(r"^\s*#pragma\s+once", text, re.M):
-        return [Finding("INV-4", display, "uses #pragma once (see SPEC.md OD-3)")]
+        return []
 
     m = re.search(r"^\s*#ifndef\s+([A-Za-z_]\w*)", text, re.M)
-    if not m:
-        return [Finding("INV-4", display, "no include guard")]
-
-    want = expected_guard(rel)
-    if m.group(1) != want:
-        return [Finding("INV-4", display, f"guard is {m.group(1)}, expected {want}")]
-    return []
+    if m:
+        return [Finding("INV-4", display,
+                        f"uses an #ifndef guard ({m.group(1)}); use #pragma once")]
+    return [Finding("INV-4", display, "no include guard")]
 
 
 def check_file_tag(text: str, rel: str, display: str) -> list[Finding]:

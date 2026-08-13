@@ -5,9 +5,7 @@
  * @brief Serial communications utilities
  */
 
-#ifndef MEGADEV__COMM_H
-#define MEGADEV__COMM_H
-
+#pragma once
 #include <main/comm.def.h>
 #include <main/io.def.h>
 #include <main/z80.h>
@@ -82,5 +80,3 @@ static inline void ext_tx(register u8 tx_data)
       [ext_tx_data] "i"(EXT_TXDATA)
     :);
 }
-
-#endif
