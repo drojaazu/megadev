@@ -74,12 +74,15 @@ init:
 	@mkdir -p $(BUILD_PATH)
 	@mkdir -p $(DISC_PATH)
 
-all: \
-	$(DISC_PATH)/cyber.mmd \
-	$(PROJECT_ID).iso
+# Everything that must be built into $(DISC_PATH). The ISO depends on this,
+# so a parallel build cannot master the image before the modules exist.
+DISC_CONTENTS := \
+	$(DISC_PATH)/cyber.mmd
+
+all: $(PROJECT_ID).iso
 
 clean:
-	@rm -f $(PROJECT_ID).iso $(DISC_PATH)/*.mmd $(DISC_PATH)/*.smd $(BUILD_PATH)/* > /dev/null 2>&1
+	@rm -rf $(PROJECT_ID).iso $(DISC_PATH)/*.mmd $(DISC_PATH)/*.smd $(BUILD_PATH)/ > /dev/null 2>&1
 
 $(DISC_PATH)/cyber.mmd: \
 	mmd_layout.s \

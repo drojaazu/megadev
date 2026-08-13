@@ -175,17 +175,21 @@ endif
 # object list, so a changed header reaches the module through its object.
 .SECONDEXPANSION:
 
-MODULE_OBJS = $(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o,$(filter %.c %.s,$1))))
+# Object paths mirror the source path they were named with, so two sources
+# with the same base name in different directories no longer overwrite each
+# other (B-5). `sub/pcm.s` becomes `$(BUILD_PATH)/sub/pcm.s.o`.
+MODULE_OBJS = $(addprefix $(BUILD_PATH)/,$(addsuffix .o,$(filter %.c %.s,$1)))
 
 .DEFAULT_GOAL:=all
 
-# need to specify paths here as they're called through a secondary make
 $(BUILD_PATH)/%.c.o: %.c | $(BUILD_PATH)
-	$(call msg_info,Compiling source $(notdir $<))
+	$(call msg_info,Compiling source $<)
+	$(Q)mkdir -p $(dir $@)
 	$(Q)$(CC) $(CC_FLAGS) $(DEP_FLAGS) $(INC) -c $< -o $@
 
 $(BUILD_PATH)/%.s.o: %.s | $(BUILD_PATH)
-	$(call msg_info,Compiling source $(notdir $<))
+	$(call msg_info,Compiling source $<)
+	$(Q)mkdir -p $(dir $@)
 	$(Q)$(CC) $(CC_FLAGS) $(DEP_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $< -o $@
 
 #%.mmd.elf: %.s %.c %.h
@@ -199,11 +203,9 @@ $(BUILD_PATH)/%.s.o: %.s | $(BUILD_PATH)
 # @echo "mmd out: $@"
 	$(Q)mkdir -p $(dir $@)
 	$(call msg_info,Building module $(notdir $@))
-	$(eval BUILD_SRC:=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o, $(filter %.c %.h %.s, $^)))))
-	$(eval BUILD_MOD:=$(filter %.mmd %.smd %.bin, $^))
+	$(eval BUILD_SRC:=$(filter %.o,$^))
+	$(eval BUILD_MOD:=$(filter %.mmd %.smd %.bin,$^))
 # @echo "build mod: $(BUILD_MOD)"
-	@$(if $(BUILD_MOD), $(MAKE) -s $(BUILD_MOD))
-	@$(if $(BUILD_SRC), $(MAKE) -s $(BUILD_SRC))
 	$(call msg_info,Linking module $(notdir $@))
 	$(eval OUT_MOD_ELF:=$(addprefix $(BUILD_PATH)/,$(addsuffix .elf,$(notdir $@))))
 	@$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_mmd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(addsuffix .elf,$(addprefix $(BUILD_PATH)/,$(notdir $(symref))))) -o $(OUT_MOD_ELF)
@@ -215,11 +217,9 @@ $(BUILD_PATH)/%.s.o: %.s | $(BUILD_PATH)
 # @echo "smd out: $@"
 	$(Q)mkdir -p $(dir $@)
 	$(call msg_info,Building module $(notdir $@))
-	$(eval BUILD_SRC:=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o, $(filter %.c %.h %.s, $^)))))
-	$(eval BUILD_MOD:=$(filter %.mmd %.smd %.bin, $^))
+	$(eval BUILD_SRC:=$(filter %.o,$^))
+	$(eval BUILD_MOD:=$(filter %.mmd %.smd %.bin,$^))
 # @echo "build mod: $(BUILD_MOD)"
-	@$(if $(BUILD_MOD), $(MAKE) -s $(BUILD_MOD))
-	@$(if $(BUILD_SRC), $(MAKE) -s $(BUILD_SRC))
 	$(call msg_info,Linking module $(notdir $@))
 	$(eval OUT_MOD_ELF:=$(addprefix $(BUILD_PATH)/,$(addsuffix .elf,$(notdir $@))))
 	@$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_smd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(addsuffix .elf,$(addprefix $(BUILD_PATH)/,$(notdir $(symref))))) -o $(OUT_MOD_ELF)
@@ -231,8 +231,7 @@ $(BUILD_PATH)/%.s.o: %.s | $(BUILD_PATH)
 #	@echo "cart out: $@"
 	$(Q)mkdir -p $(dir $@)
 	$(call msg_info,Building cart ROM $(notdir $@))
-	$(eval BUILD_SRC:=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o, $(filter %.c %.h %.s, $^)))))
-	@$(if $(BUILD_SRC), $(MAKE) -s $(BUILD_SRC))
+	$(eval BUILD_SRC:=$(filter %.o,$^))
 	$(call msg_info,Linking cart ROM $(notdir $@))
 	$(eval OUT_CART_ELF:=$(addprefix $(BUILD_PATH)/,$(addsuffix .elf,$(notdir $@))))
 	@$(LD) $(LD_FLAGS) -T $(CFG_PATH)/md_cart.ld $(BUILD_SRC) -o $(OUT_CART_ELF)
@@ -270,28 +269,25 @@ $(BUILD_PATH)/boot.bin: $(BUILD_PATH)/boot.bin.o | $(BUILD_PATH)
 
 
 
-# TODO make the ISO settings user configurable
-%.iso: $(BUILD_PATH)/boot.bin $(DISC_FILES_UPDATES) $(DISC_DIR_UPDATES)
+# ISO mastering options. Override ISO_FLAGS to change them wholesale, or set
+# the individual header variables above.
+ISO_FLAGS?=-iso-level 1 -pad -sysid "MEGA_CD" -appid "" -publisher "" -preparer ""
+
+# Reproducible builds: mkisofs stamps the image with the current time, and
+# ISO9660 records a timestamp per file, so BOTH have to be pinned. Verified:
+# pinning only the volume date is not enough once the payload is rebuilt.
+ifdef SOURCE_DATE_EPOCH
+ISO_DATE_FLAGS=-creation-date $(shell date -u -d @$(SOURCE_DATE_EPOCH) +%Y%m%d%H%M%S)00
+NORMALISE_DISC_MTIMES=find $(DISC_PATH) -exec touch -d @$(SOURCE_DATE_EPOCH) {} +
+else
+ISO_DATE_FLAGS=
+NORMALISE_DISC_MTIMES=true
+endif
+
+%.iso: $(BUILD_PATH)/boot.bin $$(DISC_CONTENTS) $(DISC_FILES_UPDATES) $(DISC_DIR_UPDATES)
 	$(Q)mkdir -p $(dir $@) $(DISC_PATH)
 	$(call msg_info,Generating ISO image $(notdir $@))
-	$(Q)$(MKISOFS) -quiet -iso-level 1 -G $< -pad -V "$(PROJECT_ID)" \
-		-sysid "MEGA_CD" -appid "" -publisher "" -preparer "" \
+	$(Q)$(NORMALISE_DISC_MTIMES)
+	$(Q)$(MKISOFS) -quiet $(ISO_FLAGS) $(ISO_DATE_FLAGS) -G $< -V "$(PROJECT_ID)" \
 		-o $@ $(DISC_PATH)
 	$(call msg_done,Completed build of $(PROJECT_ID) ($(TARGET) / $(REGION) / $(VIDEO)))
-
-################################################################################
-# Header dependency tracking
-#
-# -MMD writes a .d file alongside each object listing the headers it included,
-# and -MP adds a phony target for each of those headers so that deleting one
-# does not break the build with "No rule to make target".
-#
-# Including them here is what makes `make` notice a changed header. Without it,
-# editing a .h left every dependent object stale, which is why the previous
-# advice was to run `make clean` before every build.
-#
-# The wildcard is evaluated late, and a missing .d is not an error on a first
-# build, hence -include.
-################################################################################
-
--include $(wildcard $(BUILD_PATH)/*.d)

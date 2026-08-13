@@ -137,7 +137,7 @@ void redraw(s16 trace_x, s16 trace_y, s16 trace_dx, s16 trace_dy)
 
   ga_reg_stampmapbase = (u16) (STAMP_MAP_OFFSET / 4);
   ga_reg_imgbufstart = (u16) (IMG_BUFFER_OFFSET / 4);
-  ga_reg_stampsize = GA_MASK_STAMPSIZE_REPEAT | GA_MASK_STAMPSIZE_32x32_STAMP;
+  ga_reg_stampsize = GA_STAMPSIZE_REPEAT_MASK | GA_STAMPSIZE_32x32_STAMP_MASK;
   ga_reg_imgbufvdotsize = IMG_HEIGHT;
   ga_reg_imgbufhdotsize = IMG_WIDTH;
   ga_reg_imgbufvsize = (IMG_HEIGHT / 8) - 1;

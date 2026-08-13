@@ -234,15 +234,16 @@ confusing downstream failures — see KB-14.
   `-MMD -MP` and the generated `.d` files are included. Crucially, module targets also gained the
   objects as prerequisites (via `.SECONDEXPANSION:`) — without that edge the dependency information
   existed but was never consulted, because make had no reason to consider the object at all.
-- **B-3** — Builds are reproducible. **Partly.** The date is now resolved once into `BUILD_DATE`
-  rather than re-forked per compile, and honours `SOURCE_DATE_EPOCH`. The ISO itself is still not
-  byte-reproducible because `mkisofs` embeds its own timestamps — see BACKLOG MAKE-6.
-- **B-4** — `make -j` is safe. **Currently false**: the ISO's disc-file prerequisites come from
-  `$(shell find ...)` evaluated at parse time (`megadev.make:136-137`), so on a first build the
-  not-yet-existing modules are not prerequisites of the ISO.
-- **B-5** — Two sources with the same basename in different directories do not collide. **Still
-  false**: object names are `$(notdir)`-flattened into one `build/` directory. Now documented as a
-  limitation in `docs/modules.md` rather than being a silent trap. See BACKLOG MAKE-4.
+- **B-3** — Builds are reproducible. **Holds with `SOURCE_DATE_EPOCH` set**, verified byte-identical
+  across clean builds. Two things had to be pinned, not one: `mkisofs -creation-date` for the volume,
+  **and** the payload file mtimes, because ISO9660 records a timestamp per file. Pinning only the
+  volume date still produced differing images once the modules were rebuilt.
+- **B-4** — `make -j` is safe. **Holds as of 2026-08-13.** Projects declare `DISC_CONTENTS`, which
+  the ISO depends on, so the image cannot be mastered before its modules exist. Verified with
+  repeated `make -j8` builds from clean.
+- **B-5** — Two sources with the same basename in different directories do not collide. **Holds as
+  of 2026-08-13.** Object paths mirror the source path they are named by, so `sub/pcm.s` becomes
+  `$(BUILD_PATH)/sub/pcm.s.o`.
 
 B-1 through B-5 are the acceptance criteria for the build-system work in BACKLOG.md.
 

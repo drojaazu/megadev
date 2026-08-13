@@ -92,15 +92,16 @@ toolchain was available during the audit. VER-1 must land first so that fixes ca
 | MAKE-1 | S1 | **done** | KB-16 / B-2 — header dependency tracking via `-MMD -MP` plus `.SECONDEXPANSION:` module→object edges. `make clean` is no longer needed; `docs/modules.md` updated. |
 | MAKE-2 | S2 | **done** | KB-15 / B-1 — output directories are created by the rules that write into them. `make init` is no longer required, and Tier 0.3 proves it by not running it. |
 | MAKE-3 | S2 | **done** | KB-14 — `MEGADEV_PATH` is now sanity-checked with a clear error. |
-| MAKE-4 | S2 | open | B-5 — object names are `$(notdir)`-flattened into one `build/`; `lib/main/gate_arr.macros.s` and a future `lib/sub/gate_arr.macro.s` collide silently. |
-| MAKE-5 | S2 | open | B-4 — `make -j` unsafe: ISO prerequisites come from `$(shell find)` evaluated at parse time (`megadev.make:136-137`). |
-| MAKE-6 | S3 | open | B-3 — the build date is now resolved once and honours `SOURCE_DATE_EPOCH`, but the **ISO is still not byte-reproducible** because `mkisofs` embeds its own timestamps. This costs a real verification signal: payload comparison works, ISO comparison does not. Investigate `-volume-date` / cdrtools options. |
+| MAKE-4 | S2 | **done** | B-5 — object paths mirror the source path (`sub/pcm.s` → `build/sub/pcm.s.o`). Removing the `$(notdir)` also removed the recursive sub-make, since objects are now real prerequisites. |
+| MAKE-5 | S2 | **done** | B-4 — projects declare `DISC_CONTENTS` and the ISO depends on it. Verified with repeated `make -j8` from clean. |
+| MAKE-6 | S3 | **done** | B-3 — `SOURCE_DATE_EPOCH` gives byte-identical ISOs. Required pinning **both** `mkisofs -creation-date` and the payload file mtimes; the volume date alone was not enough. |
 | MAKE-7 | S3 | **done** | `boot.bin` is produced from a separate `boot.bin.o` rather than objcopied in place. |
 | MAKE-8 | S3 | **done** | `mkisofs` is now the overridable `$(MKISOFS)`. |
 | MAKE-9 | S3 | **done** | Recipes use `$(Q)`; build with `V=1` to see every command. |
 | MAKE-10 | S3 | open | `.SECONDARY: $(BUILD_PATH)/*` (`megadev.make:147`) expands at parse time, so its meaning differs between a clean and an incremental build. |
 | MAKE-11 | S4 | **done** | Dead `TOOLS_PATH`, `AS`, `Z80_AS` and the leftover debug `echo` removed. |
-| MAKE-12 | S4 | open | `megadev.make:235` — make the ISO settings user-configurable. *(inline TODO)* |
+| MAKE-12 | S4 | **done** | `ISO_FLAGS` makes the mkisofs options overridable. |
+| VER-6 | S2 | **done** | Tier 0.3 verified only the exit status, so a misexpanded prerequisite that made `mkisofs` master an **empty** disc still passed. It now checks every file in `DISC_CONTENTS` exists and is non-empty, and that an image was produced. Red-tested by reintroducing the bug: 5 projects fail. |
 | MAKE-13 | S3 | open | Orphan linker scripts: `cfg/module_mmd_newwork.ld` and `cfg/module_bin.ld` are referenced by no rule. Wire up or delete. `cfg/md_cart.ld` also uses a different symbol-naming convention (`_text_org` vs `_TEXT_ORIGIN`) from the others. |
 | MAKE-14 | S2 | open | KB-18 — `examples/pcm_playback/disc/audio.pcm` (262 KB) is required at runtime but gitignored; a fresh clone builds a broken ISO. Narrow the `disc/` ignore so payload sources are tracked. |
 
