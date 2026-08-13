@@ -53,9 +53,9 @@ toolchain was available during the audit. VER-1 must land first so that fixes ca
 | BR-1 | S1 | open | KB-27 — the `macros.s` → `macro.s` rename is unpropagated across 39 files; **`feature_sub_bios_overhaul` does not build.** Must land atomically with its consumers. |
 | BR-2 | S1 | open | KB-20 … KB-26 — seven defects that exist only on `feature_sub_bios_overhaul`. See SPEC.md OD-5 for whether to fix on-branch or after merge. |
 | LIB-13 | S1 | **done** | KB-28 — `z80_init` in `lib/main/z80.h` is now `static inline`. |
-| LIB-14 | S2 | open | KB-29 — `lib/main/vdp.s:62,64,65,70,72` uses register size suffixes (`move.w d1.w, d3.w`) that GNU as rejects. Assemble-verified, 5 errors. No project references this file. |
-| LIB-15 | S2 | open | KB-30 — `lib/str_util.s:69` `.macro ATOI` is never closed with `.endm`; **the entire file fails to assemble**. Closes ARCH-6 too. No project references it. |
-| LIB-16 | S2 | open | KB-31 — `lib/sub/commsync.s:38-53` `.global _COMCMD0: .word 0` is invalid; 16 errors. Already deleted on `feature_sub_bios_overhaul` — confirm intent and delete on master. |
+| LIB-14 | S2 | **done** | KB-29 — `lib/main/vdp.s` fixed: register size suffixes removed, `btst.l 0x1` corrected to `btst #1`, and `vdp_ctrl` (a C macro the assembler never saw) replaced with `VDP_CTRL` from vdp.def.h. That last one was a latent **link** error affecting both routines, including the one that already assembled. Verified by disassembly: no relocations, no undefined symbols. |
+| LIB-15 | S2 | **done** | KB-30 — the unfinished `ATOI` macro was removed from `lib/str_util.s`, which now assembles. Closes ARCH-6 (INV-3). See FEAT-10 for reimplementation. |
+| LIB-16 | S2 | **done** | KB-31 — `lib/sub/commsync.s` deleted. Unreferenced by any project and could not assemble; already deleted on `feature_sub_bios_overhaul`. |
 | LIB-17 | S1 | **done** | KB-32 — `vdp_dma_transfer` in `lib/main/vdp.h` is now `static inline`. Found by the ODR check only after the Python port aligned its flags with the real build. |
 | BR-3 | S2 | open | `examples/bram/src/bram_demo_init.s:27` includes `<init_data.s>`, which exists at **no ref** in the repo. Determine intent; restore or remove. |
 
@@ -68,7 +68,7 @@ toolchain was available during the audit. VER-1 must land first so that fixes ca
 | ARCH-3 | S3 | open | Settle include-guard style (SPEC.md **OD-3**), then enforce via VER-2. |
 | ARCH-4 | S3 | open | Settle pointer-vs-lvalue register-access macro form (SPEC.md **OD-4**). Affects 2.0.0. |
 | ARCH-5 | S3 | open | Umbrella headers incomplete: `main.h` omits `bios.h`, `comm.h`, `md_sys.h`, `mmd.h`; `sub.h` omits `bios.h`. |
-| ARCH-6 | S3 | open | INV-3 violation: `lib/str_util.s:69` defines `.macro ATOI` inside a code-emitting `.s`; the macro ends on a bare label with no `rts` and is unusable. Move or delete. |
+| ARCH-6 | S3 | **done** | INV-3 violation resolved by removing the `ATOI` macro from `lib/str_util.s` (LIB-15). |
 | ARCH-7 | S3 | open | INV-2 violation: `lib/main/vdp.macros.s` has no `#include` at all and relies on caller include order. |
 | ARCH-8 | S3 | open | Remove libc-shadowing names with non-libc semantics: `strcmp`→`bool` (`lib/str_util.h:68`), `strcpy`→`void` (`lib/memory.h:120`), `abs`/`abs16` (`lib/math.h`). Part of 2.0.0. |
 | ARCH-9 | S3 | open | `lib/sub/pcm.def.h:11-19` uses reserved leading-underscore identifiers (`_PCM_ENV` …). Also `pcm.h` uniquely uses SCREAMING_CASE C macros, a `_c` function suffix, and camelCase struct fields. |
@@ -147,6 +147,7 @@ toolchain was available during the audit. VER-1 must land first so that fixes ca
 | FEAT-6 | S4 | open | Support the Main-CPU CD-ROM read path (`docs/cdrom.md`: "not well understood"). |
 | FEAT-7 | S4 | open | `lib/main/vdp.h:238` — create a matching macro for `to_vram_addr`. *(inline TODO)* |
 | FEAT-8 | S4 | open | `lib/sub/cdrom.h:84` — file info struct. *(inline TODO)* |
+| FEAT-10 | S4 | open | **Reimplement ASCII-to-integer conversion.** The old `ATOI` macro in `lib/str_util.s` was never finished: it took no macro arguments (hardcoded to `a0`/`d0`/`d1`) and ended on a bare label with no `.endm` or `rts`, so the file could not assemble. Removed in LIB-15; recoverable from git history. It parsed an ASCII **hex** string into an integer — the inverse of `hextoa8/16/32` in the same file. A reimplementation should take proper arguments and settle the terminator convention alongside LIB-11. |
 | FEAT-9 | S4 | open | `lib/main/comm.def.h:26` — comm definitions need to be user-definable. *(inline TODO)* |
 
 ## Hardware research
