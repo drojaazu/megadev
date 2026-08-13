@@ -444,7 +444,7 @@
 #define BIOS_VDP_DEFAULT_PLANE_WIDTH 128
 
 /**
- * @sa bios_bios_entry
+ * @sa bios_entry
  * @ingroup bios_system
  */
 #if TARGET == MEGACD_MODE1

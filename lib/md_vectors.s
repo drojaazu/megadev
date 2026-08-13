@@ -18,7 +18,7 @@ dc.l ERR_ZERODIV       // Division by zero
 dc.l EX_CHK            // CHK instruction
 dc.l EX_TRAPV          // TRAPV instruction
 dc.l ERR_VIOLATION     // Privilege violation
-dc.l EXEXVEC_TRACE          // Trace exception
+dc.l EX_TRACE          // Trace exception
 dc.l EX_LINE_1010      // Line A instruction
 dc.l EX_LINE_1111      // Line F instruction
 dc.l ex_null           // Unassigned, do not use

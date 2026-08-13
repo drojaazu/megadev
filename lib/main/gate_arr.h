@@ -63,7 +63,7 @@ typedef u16 volatile * ga_reg;
 #define ga_reg_comflags ((ga_reg) GA_REG_COMFLAGS)
 
 /**
- * @copydoc GA_REG_GA_REG_COMCMD0
+ * @copydoc GA_REG_COMCMD0
  *
  */
 #define ga_reg_comcmd0 ((ga_reg) GA_REG_COMCMD0)
