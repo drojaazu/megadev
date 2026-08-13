@@ -91,10 +91,25 @@ Additional rules, all mechanically checkable:
 - **INV-8** — Every header MUST be self-contained: including it, and nothing else, into an empty
   translation unit must compile cleanly. Enforced by Tier 0.1 (§6).
 - **INV-9** — A header MUST NOT define storage or a non-`static` function. Two translation units
-  including it must link. Enforced by Tier 0.4 (§6). *(Currently violated by `lib/main/z80.h`
-  (`z80_init`), `lib/memory.h` (`strcpy`) and `lib/sub/bram.h` (five arrays).)*
-- **STYLE-1** — Use canonical M68k mnemonics. GNU `as` accepts `mov` as an alias for `move` — both
-  assemble to the identical encoding — but only `move` is written. Enforced by Tier 1.
+  including it must link. Enforced by Tier 0.4 (§6). **Holds as of 2026-08-13** (42 pass, 0 fail).
+- **STYLE-1** — Where two mnemonics assemble to the **identical encoding**, only the house spelling
+  is written. Classified empirically against `m68k-linux-gnu-as`:
+
+  | House spelling | Synonym (not used) | Encoding |
+  |---|---|---|
+  | `move` | `mov` | `2200` |
+  | `dbra` | `dbf` | `51c8` |
+  | `bcc` | `bhs` | `64fe` |
+  | `bcs` | `blo` | `65fe` |
+
+  Enforced by Tier 1.
+- **STYLE-2** — **Prefer GNU branch-improvement pseudo-ops** — `jra`, `jbsr`, and the `jCC` family
+  (`jhi jls jcc jcs jne jeq jvc jvs jpl jmi jge jlt jgt jle`) — where the target's reach is not
+  known locally, which for Megadev means external symbols and cross-module calls. These are **not**
+  synonyms: the assembler picks the smallest working encoding (`jbsr` emits a 2-byte `bsr.s` in
+  reach, a 6-byte `jsr.l` out of reach), so rewriting them to a fixed instruction costs size and
+  cycles. **Deliberately not machine-enforced** — a linter cannot tell a local label from a symbol
+  that may end up out of reach, and flagging plain `bCC` on in-file branches would be noise.
 
 ### 2.2 Main / Sub separation
 
@@ -224,7 +239,7 @@ Megadev targets obsolete hardware, so "run the test suite" needs definition. Ver
 | Tier | What it proves | Status |
 |---|---|---|
 | **0 — Build gate** | The toolchain accepts the source. | **Implemented and run** (m68k gcc 14.2.0). Headers 70/70 pass; assembly 21 pass / 3 fail / 2 excluded; ODR 34 pass / 5 fail; **all 7 projects build**. |
-| **1 — Convention lint** | The rules in §2–§3 actually hold. | **Implemented and passing** (16 baselined). |
+| **1 — Convention lint** | The rules in §2–§3 actually hold. | **Implemented and passing** (16 baselined). 25 unit tests, `make test`. |
 | **2 — On-target tests** | The code computes the right answers on a real 68000. | **Specified, not built.** |
 | **3 — Hardware validation** | Behaviour matches real Mega CD silicon. | Manual; tracked as provenance (§7). |
 
@@ -333,8 +348,8 @@ diagnostic, not by reading. Marked ✅ = present on `master`; ⚠️ = introduce
 |---|---|---|---|
 | KB-3 | `lib/math.h:46-47, 59-60` | `out.quot` assigned twice; `out.rem` **never assigned**. `divu()` and `div()` both return the wrong quotient and an uninitialised remainder. | ✅ |
 | KB-4 | `lib/math.h:58` | `div()` documented as signed (DIVS) but emits `divu.w` | ✅ |
-| KB-5 | `lib/memory.h:120` | **Link-verified.** `void strcpy(...)` — non-static function definition in a header; `multiple definition of 'strcpy'` when two TUs link. | ✅ |
-| KB-6 | `lib/sub/bram.h:15,16` | **Link-verified.** Tentative definitions in a header. **Five** duplicate symbols, not two: `bram_work_buff`, `bram_string_buff`, `brmstat_results`, `brmserch_results`, `brmread_results`. Fails under `-fno-common` (the GCC 10+ default). Propagates to `lib/sub/sub.h`. | ✅ |
+| KB-5 | `lib/memory.h:120` | **FIXED** 2026-08-13 — now `static inline`. **Link-verified.** `void strcpy(...)` — non-static function definition in a header; `multiple definition of 'strcpy'` when two TUs link. | ✅ |
+| KB-6 | `lib/sub/bram.h:15,16` | **FIXED** 2026-08-13 — now `extern`, defined in `lib/sub/bram.c`. **Link-verified.** Tentative definitions in a header. **Five** duplicate symbols, not two: `bram_work_buff`, `bram_string_buff`, `brmstat_results`, `brmserch_results`, `brmread_results`. Fails under `-fno-common` (the GCC 10+ default). Propagates to `lib/sub/sub.h`. | ✅ |
 | KB-7 | `lib/main/cd_exception.s:79` | `EXVECEXVEC_TRACE` — botched find-and-replace. The file assembles; the symbol becomes an undefined reference, so this surfaces at **link**. Not yet link-verified. | ✅ |
 | KB-8 | `lib/fixed.h:34` | **Proven by `_Static_assert`**: `int_to_f32(1)` and `int_to_f32(5)` both evaluate to 0. Shifts left by 16 then casts to `short`. | ✅ |
 | KB-9 | `lib/main/io.h:94` | **Compile-verified**: `error: expected expression before '[' token` when expanded. Zero references repo-wide. | ✅ |
@@ -356,9 +371,10 @@ diagnostic, not by reading. Marked ✅ = present on `master`; ⚠️ = introduce
 | KB-25 | `lib/main/comm.macro.s:23,26` | calls `Z80_DO_BUSREQ`/`Z80_DO_BUSRELEASE`; the macros are `Z80_REQUEST_BUS`/`Z80_RELEASE_BUS` | ⚠️ branch only |
 | KB-26 | `lib/sub/boot.macro.s` | `.macro CDBOOT` whose body is `jsr CDBOOT` — invokes itself | ⚠️ branch only |
 | KB-27 | 39 files on `feature_sub_bios_overhaul` | Rename `macros.s` → `macro.s` (commit `bd4d06c`) not propagated; `main.macro.s` and `sub.macro.s` deleted but still included. **The branch does not build.** | ⚠️ branch only |
-| KB-28 | `lib/main/z80.h:78` | **Link-verified — found by the gate, missed by the audit.** `z80_init` is a non-`static` function definition in a header (INV-9); `multiple definition of 'z80_init'` across two TUs. Propagates to `lib/main/comm.h`. | ✅ |
+| KB-28 | `lib/main/z80.h:78` | **FIXED** 2026-08-13 — now `static inline`. **Link-verified — found by the gate, missed by the audit.** `z80_init` is a non-`static` function definition in a header (INV-9); `multiple definition of 'z80_init'` across two TUs. Propagates to `lib/main/comm.h`. | ✅ |
 | KB-29 | `lib/main/vdp.s:62,64,65,70,72` | **Assemble-verified.** `move.w d1.w, d3.w` and similar — register size suffixes GNU `as` rejects. 5 errors. **This is on `master`, not branch-only as first recorded.** No project references this file, so it has never been assembled. | ✅ |
 | KB-30 | `lib/str_util.s:69` | **Assemble-verified.** `.macro ATOI` is never closed with `.endm`: `Error: unexpected end of file in macro 'atoi' definition`. **The whole file therefore cannot assemble**, and no project references it. Also an INV-3 violation. | ✅ |
+| KB-32 | `lib/main/vdp.h:290` | **FIXED** 2026-08-13 — `vdp_dma_transfer` was a non-`static` definition in a header (INV-9), propagating to `main.h` and `bios.h`. Found only after the Python port aligned the ODR check's flags with the real build. Now `static inline`. | ✅ |
 | KB-31 | `lib/sub/commsync.s:38-53` | **Assemble-verified.** `.global _COMCMD0: .word 0` — a label definition cannot follow `.global` on one line; 16 errors. Already deleted on `feature_sub_bios_overhaul`. | ✅ |
 
 **A structural observation from the first gate run:** KB-29, KB-30 and KB-31 are all in files that no
@@ -402,6 +418,19 @@ See BACKLOG.md OPS-1.
 Rename begun in commit `bd4d06c` on `feature_sub_bios_overhaul`. `docs/manual.md:342` still documents
 the old plural `.macros.s`, which is correct for `master` and wrong for the branch. The rename is
 incomplete (KB-27) and must land atomically with its consumers.
+
+### D8 — The verification gate is written in Python *(Damian R, 2026-08-13)*
+Stdlib only, in `tools/check/`, replacing six bash scripts. **Why:** the compile/assemble drivers
+were fine as shell, but the lint is text analysis, and shell grows unwieldy and esoteric as it does.
+Python buys unit tests for the `.def.h` parser (25 of them) and code a maintainer can still read
+after a months-long gap. `python3` is now explicit in the devcontainer.
+
+### D9 — Mnemonic house style *(Damian R, 2026-08-13)*
+Pure synonyms get one spelling (STYLE-1); GNU branch-improvement pseudo-ops are **preferred, not
+forbidden** (STYLE-2). **Why:** the pseudo-ops choose the smallest working encoding, so treating
+them as style violations would actively cost size and cycles. `dbra` chosen over `dbf` (20
+occurrences rewritten) as it states the intent — decrement and branch always — rather than the
+condition-code encoding.
 
 ### OD-1 — How to resolve the Main/Sub Gate Array namespace collision *(open)*
 INV-7 is violated (KB-12). Options: prefix by CPU side (`GA_MAIN_*` / `GA_SUB_*`); rely solely on
