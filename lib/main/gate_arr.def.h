@@ -554,20 +554,54 @@
  */
 
 /**
- * @def GA_REG_COMFLAGS
- * @brief CPU Communication Flags
+ * @def GA_REG_COMFLAGS_MAIN
+ * @brief Communication flags written by the Main CPU
  *
  * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * |CFM7|CFM6|CFM5|CFM4|CFM3|CFM2|CFM1|CFM0|CFS7|CFS6|CFS5|CFS4|CFS3|CFS2|CFS1|CFS0|
+ * The high byte of the hardware register at 0xA1200E. Eight flags the Main CPU
+ * sets and the other side polls. The hardware assigns no meaning to any of
+ * them; they are yours to define.
  *
- * @param [width] 8 bit/16 bit
- * @param CFM Comm flags for Main CPU
- * @param CFS Comm flags for Sub CPU
+ * | |7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|
+ * | |\b CFM7|\b CFM6|\b CFM5|\b CFM4|\b CFM3|\b CFM2|\b CFM1|\b CFM0|
+ * |\b R|◯|◯|◯|◯|◯|◯|◯|◯|
+ * |\b W|◯|◯|◯|◯|◯|◯|◯|◯|
+ *
+ * @note Read/write from this CPU.
+ * @warning **Test one bit at a time.** If both CPUs read and write the flags at
+ * the same moment the write lands correctly but the read may return stale data.
+ * A single-bit test is immune to this; a byte or word read of the pair is not,
+ * which is the reason the two halves are separate registers here.
+ * @sa ga_reg_comflags_main
  * @ingroup ga_reg_main_07
  */
-#define GA_REG_COMFLAGS 0xA1200E
+#define GA_REG_COMFLAGS_MAIN 0xA1200E
+
+/**
+ * @def GA_REG_COMFLAGS_SUB
+ * @brief Communication flags written by the Sub CPU
+ *
+ * @details
+ * The low byte of the hardware register at 0xA1200E. Eight flags the Sub CPU
+ * sets and the other side polls. The hardware assigns no meaning to any of
+ * them; they are yours to define.
+ *
+ * | |7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|
+ * | |\b CFS7|\b CFS6|\b CFS5|\b CFS4|\b CFS3|\b CFS2|\b CFS1|\b CFS0|
+ * |\b R|◯|◯|◯|◯|◯|◯|◯|◯|
+ * |\b W| | | | | | | | |
+ *
+ * @note Read only from this CPU -- the other side owns these flags.
+ * @warning **Test one bit at a time.** If both CPUs read and write the flags at
+ * the same moment the write lands correctly but the read may return stale data.
+ * A single-bit test is immune to this; a byte or word read of the pair is not,
+ * which is the reason the two halves are separate registers here.
+ * @sa ga_reg_comflags_sub
+ * @ingroup ga_reg_main_07
+ */
+#define GA_REG_COMFLAGS_SUB (0xA1200E + 1)
 
 /**
  * @def GA_REG_COMCMD0

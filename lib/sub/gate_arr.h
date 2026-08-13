@@ -42,9 +42,8 @@ typedef u8 volatile const * ga_reg8_ro;
 #define ga_reg_cdchostdata (*((ga_reg) GA_REG_CDCHOSTDATA))
 #define ga_reg_dmaaddr (*((ga_reg) GA_REG_DMAADDR))
 #define ga_reg_stopwatch (*((ga_reg) GA_REG_STOPWATCH))
-#define ga_reg_comflags (*((ga_reg_ro) GA_REG_COMFLAGS))
-#define ga_reg_comflags_main (*((volatile const u8 *) GA_REG_COMFLAGS))
-#define ga_reg_comflags_sub (*((volatile u8 *) GA_REG_COMFLAGS + 1))
+#define ga_reg_comflags_main (*((ga_reg8_ro) GA_REG_COMFLAGS_MAIN))
+#define ga_reg_comflags_sub (*((ga_reg8) GA_REG_COMFLAGS_SUB))
 #define ga_reg_comcmd0 (*((ga_reg_ro) GA_REG_COMCMD0))
 /**
  * @def ga_reg_comcmd1

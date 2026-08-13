@@ -75,3 +75,20 @@ ASSERT_FIELD(GA_CDCMODE_DSR);
 ASSERT_FIELD(GA_CDCMODE_EDT);
 _Static_assert(GA_CDCMODE_DSR_POS >= 8 && GA_CDCMODE_CA_POS < 8,
 	"CDC mode genuinely spans both bytes, so it stays a 16-bit register");
+
+/* --- 0xFF800E, split like the rest (D17, HW-9) --------------------------- */
+
+/* The two halves have opposite access -- each CPU writes its own byte and reads
+ * the other's -- so a single word accessor could not express either one. The
+ * manual adds a second reason: a byte or word read of the pair may return stale
+ * data if the other CPU writes at the same moment, while a single-bit test
+ * cannot. Splitting them makes the bit test the natural spelling. */
+_Static_assert(GA_REG_COMFLAGS_MAIN == 0xFF800E, "the Main CPU's flags are the high byte");
+_Static_assert(GA_REG_COMFLAGS_SUB == GA_REG_COMFLAGS_MAIN + 1, "the Sub CPU's flags are the low byte");
+
+/* Comm command is Main -> Sub and comm status is Sub -> Main, eight words each,
+ * contiguous and in that order. */
+_Static_assert(GA_REG_COMCMD0 == 0xFF8010 && GA_REG_COMCMD7 == GA_REG_COMCMD0 + 14,
+	"eight comm command words");
+_Static_assert(GA_REG_COMSTAT0 == 0xFF8020 && GA_REG_COMSTAT7 == GA_REG_COMSTAT0 + 14,
+	"eight comm status words");

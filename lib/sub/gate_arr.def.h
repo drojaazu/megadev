@@ -786,18 +786,22 @@
  * @brief Stopwatch
  *
  * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * | ||||SW11|SW10|SW09|SW08|SW07|SW06|SW05|SW04|SW03|SW02|SW01|SW00|
+ * A free-running 12 bit counter, primarily used for CDD and CDC timing but
+ * general purpose otherwise. One tick is 30.72 microseconds, so it counts 0 to
+ * 4095 and then wraps to 0 and keeps going.
  *
- * @param SW CDC read data
- * @details R: Read current value / W: Reset the clock (0 only)
- * This is a general use timer, though it is primarily used for CDD/CDC
- * timing. Each tick is 30.72 microseconds.
- * @warning Word access only. A byte access to this register can raise a
- * bus error.
- * @warning Bit operation instructions are not permitted here; read the
- * register, modify the copy, and write the whole value back.
+ * | |F|E|D|C|B|A|9|8|7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|:|
+ * | | | | | |\b SW11|\b SW10|\b SW09|\b SW08|\b SW07|\b SW06|\b SW05|\b SW04|\b SW03|\b SW02|\b SW01|\b SW00|
+ * |\b R| | | | |◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|
+ * |\b W| | | | |◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|◯|
+ *
+ * @param SW Counter value.
+ * @details R: the current count / W: **write 0 only**; any write restarts the
+ * counter from 0, whatever value is written.
+ * @warning Word access only. A byte access to this register can raise a bus
+ * error.
+ * @warning Bit operation instructions are not permitted here.
  * @ingroup ga_reg_sub_06
  */
 #define GA_REG_STOPWATCH 0xFF800C
@@ -808,25 +812,60 @@
  */
 
 /**
- * @def GA_REG_COMFLAGS
- * @brief Main/Sub CPU communication flags
+ * @def GA_REG_COMFLAGS_MAIN
+ * @brief Communication flags written by the Main CPU
  *
  * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * |CFM7|CFM6|CFM5|CFM4|CFM3|CFM2|CFM1|CFM0|CFS7|CFS6|CFS5|CFS4|CFS3|CFS2|CFS1|CFS0|
+ * The high byte of the hardware register at 0xFF800E. Eight flags the Main CPU
+ * sets and the other side polls. The hardware assigns no meaning to any of
+ * them; they are yours to define.
  *
- * CFM: Comm flags for Main CPU
- * CFS: Comm flags for Sub CPU
+ * | |7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|
+ * | |\b CFM7|\b CFM6|\b CFM5|\b CFM4|\b CFM3|\b CFM2|\b CFM1|\b CFM0|
+ * |\b R|◯|◯|◯|◯|◯|◯|◯|◯|
+ * |\b W| | | | | | | | |
+ *
+ * @note Read only from this CPU -- the other side owns these flags.
+ * @warning **Test one bit at a time.** If both CPUs read and write the flags at
+ * the same moment the write lands correctly but the read may return stale data.
+ * A single-bit test is immune to this; a byte or word read of the pair is not,
+ * which is the reason the two halves are separate registers here.
+ * @sa ga_reg_comflags_main
  * @ingroup ga_reg_sub_07
  */
-#define GA_REG_COMFLAGS 0xFF800E
+#define GA_REG_COMFLAGS_MAIN 0xFF800E
+
+/**
+ * @def GA_REG_COMFLAGS_SUB
+ * @brief Communication flags written by the Sub CPU
+ *
+ * @details
+ * The low byte of the hardware register at 0xFF800E. Eight flags the Sub CPU
+ * sets and the other side polls. The hardware assigns no meaning to any of
+ * them; they are yours to define.
+ *
+ * | |7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|
+ * | |\b CFS7|\b CFS6|\b CFS5|\b CFS4|\b CFS3|\b CFS2|\b CFS1|\b CFS0|
+ * |\b R|◯|◯|◯|◯|◯|◯|◯|◯|
+ * |\b W|◯|◯|◯|◯|◯|◯|◯|◯|
+ *
+ * @note Read/write from this CPU.
+ * @warning **Test one bit at a time.** If both CPUs read and write the flags at
+ * the same moment the write lands correctly but the read may return stale data.
+ * A single-bit test is immune to this; a byte or word read of the pair is not,
+ * which is the reason the two halves are separate registers here.
+ * @sa ga_reg_comflags_sub
+ * @ingroup ga_reg_sub_07
+ */
+#define GA_REG_COMFLAGS_SUB (0xFF800E + 1)
 
 /**
  * @def GA_REG_COMCMD0
  * @brief Comm Command 0 (Main -> Sub)
  *
- * @details R: 16 bit data
+ * @details R: 16 bit data. **Read only from this side** -- the Main CPU writes it.
  * @ingroup ga_reg_sub_08
  */
 #define GA_REG_COMCMD0 0xFF8010

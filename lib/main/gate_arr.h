@@ -34,10 +34,10 @@ typedef u8 volatile * ga_reg8;
 typedef u8 volatile const * ga_reg8_ro;
 
 /**
- * @sa GA_REG_COMFLAGS
+ * @sa GA_REG_COMFLAGS_MAIN, GA_REG_COMFLAGS_SUB
  */
-#define ga_reg_comflags_main (*((volatile u8 *) GA_REG_COMFLAGS))
-#define ga_reg_comflags_sub (*((volatile const u8 *) GA_REG_COMFLAGS + 1))
+#define ga_reg_comflags_main (*((ga_reg8) GA_REG_COMFLAGS_MAIN))
+#define ga_reg_comflags_sub (*((ga_reg8_ro) GA_REG_COMFLAGS_SUB))
 /**
  * @copydoc GA_REG_INT2
  *
@@ -70,11 +70,7 @@ typedef u8 volatile const * ga_reg8_ro;
  *
  */
 #define ga_reg_stopwatch (*((ga_reg) GA_REG_STOPWATCH))
-/**
- * @copydoc GA_REG_COMFLAGS
- *
- */
-#define ga_reg_comflags (*((ga_reg) GA_REG_COMFLAGS))
+
 /**
  * @copydoc GA_REG_COMCMD0
  *
@@ -119,42 +115,42 @@ typedef u8 volatile const * ga_reg8_ro;
  * @copydoc GA_REG_COMSTAT0
  *
  */
-#define ga_reg_comstat0 (*((ga_reg) GA_REG_COMSTAT0))
+#define ga_reg_comstat0 (*((ga_reg_ro) GA_REG_COMSTAT0))
 /**
  * @copydoc GA_REG_COMSTAT1
  *
  */
-#define ga_reg_comstat1 (*((ga_reg) GA_REG_COMSTAT1))
+#define ga_reg_comstat1 (*((ga_reg_ro) GA_REG_COMSTAT1))
 /**
  * @copydoc GA_REG_COMSTAT2
  *
  */
-#define ga_reg_comstat2 (*((ga_reg) GA_REG_COMSTAT2))
+#define ga_reg_comstat2 (*((ga_reg_ro) GA_REG_COMSTAT2))
 /**
  * @copydoc GA_REG_COMSTAT3
  *
  */
-#define ga_reg_comstat3 (*((ga_reg) GA_REG_COMSTAT3))
+#define ga_reg_comstat3 (*((ga_reg_ro) GA_REG_COMSTAT3))
 /**
  * @copydoc GA_REG_COMSTAT4
  *
  */
-#define ga_reg_comstat4 (*((ga_reg) GA_REG_COMSTAT4))
+#define ga_reg_comstat4 (*((ga_reg_ro) GA_REG_COMSTAT4))
 /**
  * @copydoc GA_REG_COMSTAT5
  *
  */
-#define ga_reg_comstat5 (*((ga_reg) GA_REG_COMSTAT5))
+#define ga_reg_comstat5 (*((ga_reg_ro) GA_REG_COMSTAT5))
 /**
  * @copydoc GA_REG_COMSTAT6
  *
  */
-#define ga_reg_comstat6 (*((ga_reg) GA_REG_COMSTAT6))
+#define ga_reg_comstat6 (*((ga_reg_ro) GA_REG_COMSTAT6))
 /**
  * @copydoc GA_REG_COMSTAT7
  *
  */
-#define ga_reg_comstat7 (*((ga_reg) GA_REG_COMSTAT7))
+#define ga_reg_comstat7 (*((ga_reg_ro) GA_REG_COMSTAT7))
 /**
  * @fn wait_2m
  * Wait for Main CPU access to 2M Word RAM

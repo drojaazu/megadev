@@ -141,6 +141,15 @@ _Static_assert(VDP_WIDTH_40CELL_MASK == 0x81, "bits 0 and 7");
 _Static_assert(GA_REG_SUBCPU - GA_REG_INT2 == 1 && GA_REG_MEMMODE - GA_REG_WP == 1,
 	"each split pair is two adjacent bytes, high half first");
 
+/* --- 0xA1200E, split like the rest (D17, HW-9) --------------------------- */
+
+_Static_assert(GA_REG_COMFLAGS_MAIN == 0xA1200E, "the Main CPU's flags are the high byte");
+_Static_assert(GA_REG_COMFLAGS_SUB == GA_REG_COMFLAGS_MAIN + 1, "the Sub CPU's flags are the low byte");
+_Static_assert(GA_REG_COMCMD0 == 0xA12010 && GA_REG_COMCMD7 == GA_REG_COMCMD0 + 14,
+	"eight comm command words");
+_Static_assert(GA_REG_COMSTAT0 == 0xA12020 && GA_REG_COMSTAT7 == GA_REG_COMSTAT0 + 14,
+	"eight comm status words");
+
 /* --- string convention -------------------------------------------------- */
 
 #include <str_util.def.h>
