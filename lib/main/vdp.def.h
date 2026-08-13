@@ -808,12 +808,12 @@
  * @param HSY (No documentation.)
  * @param EP External pixel bus enable
  * @param SH Enable shadow/highlight mode
- * \n [@ref VDP_MASK_SHADOW_HIGHLIGHT]
+ * \n [@ref VDP_SHADOW_HIGHLIGHT_MASK]
  * @param LS Interlace mode
- * \n 00: No interlace [@ref VDP_MASK_INTERLACE_NONE]
- * \n 01: Interlace normal resolution [@ref VDP_MASK_INTERLACE_NORMAL]
- * \n 10: No interlace [@ref VDP_MASK_INTERLACE_NONE]
- * \n 11: Interlace double resolution [@ref VDP_MASK_INTERLACE_DOUBLE]
+ * \n 00: No interlace [@ref VDP_INTERLACE_NONE]
+ * \n 01: Interlace normal resolution [@ref VDP_INTERLACE_NORMAL]
+ * \n 10: No interlace [@ref VDP_INTERLACE_NONE]
+ * \n 11: Interlace double resolution [@ref VDP_INTERLACE_DOUBLE]
  *
  * @aliases VDP_REG_MODE4
  */
@@ -828,44 +828,52 @@
 #define VDP_REG_MODE4 VDP_REG0C
 
 /**
- * @def VDP_MASK_WIDTH_40CELL
+ * @def VDP_WIDTH_40CELL_MASK
  * @ingroup vdp_regs
  * @ingroup vdp_reg0C
  * @brief Screen Width / 40 Cell
  */
-#define VDP_MASK_WIDTH_40CELL ((1 << 0) | (1 << 7))
+/* Non-contiguous: bits 0 and 7 are both set for 40-cell mode, so this is a
+ * literal mask rather than a POS/WIDTH field. */
+#define VDP_WIDTH_40CELL_MASK ((1 << 0) | (1 << 7))
 
 /**
- * @def VDP_MASK_SHADOW_HIGHLIGHT
+ * @def VDP_SHADOW_HIGHLIGHT_MASK
  * @ingroup vdp_regs
  * @ingroup vdp_reg0C
  * @brief Enable Shadow/Highlight Mode
  */
-#define VDP_MASK_SHADOW_HIGHLIGHT (1 << 3)
+#define VDP_SHADOW_HIGHLIGHT_POS 3
+#define VDP_SHADOW_HIGHLIGHT_WIDTH 1
+#define VDP_SHADOW_HIGHLIGHT_MASK FIELD_MASK(VDP_SHADOW_HIGHLIGHT_POS, VDP_SHADOW_HIGHLIGHT_WIDTH)
 
 /**
- * @def VDP_MASK_INTERLACE_NONE
+ * @def VDP_INTERLACE_NONE
  * @ingroup vdp_regs
  * @ingroup vdp_reg0C
  * @brief Interlace Mode / None
  */
-#define VDP_MASK_INTERLACE_NONE (0b00 << 1)
+#define VDP_INTERLACE_POS 1
+#define VDP_INTERLACE_WIDTH 2
+#define VDP_INTERLACE_MASK FIELD_MASK(VDP_INTERLACE_POS, VDP_INTERLACE_WIDTH)
+
+#define VDP_INTERLACE_NONE 0b00
 
 /**
- * @def VDP_MASK_INTERLACE_NORMAL
+ * @def VDP_INTERLACE_NORMAL
  * @ingroup vdp_regs
  * @ingroup vdp_reg0C
  * @brief Interlace Mode / Normal
  */
-#define VDP_MASK_INTERLACE_NORMAL (0b10 << 1)
+#define VDP_INTERLACE_NORMAL 0b10
 
 /**
- * @def VDP_MASK_INTERLACE_DOUBLE
+ * @def VDP_INTERLACE_DOUBLE
  * @ingroup vdp_regs
  * @ingroup vdp_reg0C
  * @brief Interlace Mode / Double
  */
-#define VDP_MASK_INTERLACE_DOUBLE (0b11 << 1)
+#define VDP_INTERLACE_DOUBLE 0b11
 
 /**
  * @defgroup vdp_reg0D Main CPU / VDP / Register 0D (Horizontal Scroll Data VRAM

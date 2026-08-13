@@ -577,7 +577,7 @@ static inline void wait_2m()
 			beq 1b \n\
 		"
     :
-    : "i"(BIT_GA_REG_DMNA), "i"(GA_REG_MEMMODE + 1));
+    : "i"(GA_DMNA_POS), "i"(GA_REG_MEMMODE + 1));
 }
 
 /**
@@ -593,7 +593,7 @@ static inline void grant_2m()
 			beq 1b \n\
 		"
     :
-    : "i"(BIT_GA_REG_RET), "i"(GA_REG_MEMMODE + 1));
+    : "i"(GA_RETURN_2M_POS), "i"(GA_REG_MEMMODE + 1));
 }
 
 /**
@@ -609,7 +609,7 @@ static inline void set_1m()
 			beq 1b \n\
 		"
     :
-    : "i"(BIT_GA_REG_MODE), "i"(GA_REG_MEMMODE + 1));
+    : "i"(GA_WORDRAM_LAYOUT_POS), "i"(GA_REG_MEMMODE + 1));
 }
 
 /**
@@ -625,7 +625,7 @@ static inline void set_2m()
 			bne 1b \n\
 		"
     :
-    : "i"(BIT_GA_REG_MODE), "i"(GA_REG_MEMMODE + 1));
+    : "i"(GA_WORDRAM_LAYOUT_POS), "i"(GA_REG_MEMMODE + 1));
 }
 
 /**

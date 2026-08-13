@@ -114,9 +114,8 @@ Additional rules, all mechanically checkable:
   *(See KB-11.)*
 
   This is **long-standing project policy**, documented in `docs/manual.md` §"Bitwise Definition
-  Naming", not a rule invented here. That section specifies the **prefix** form `GA_BIT_DMNA` /
-  `GA_MASK_DMNA`, which is what both gate array headers use (40 occurrences). The naming is
-  nevertheless unsettled — see §9 OD-8.
+  Naming", not a rule invented here. The naming scheme is settled in §9 **D12**: `_POS`, `_WIDTH`
+  and `_MASK`, with values stored unshifted and placed by `FIELD_PREP`.
 - **INV-8** — Every header MUST be self-contained: including it, and nothing else, into an empty
   translation unit must compile cleanly. Enforced by Tier 0.1 (§6).
 - **INV-9** — A header MUST NOT define storage or a non-`static` function. Two translation units
@@ -541,20 +540,27 @@ cannot drift — the same trap that produced the C/asm `hextoa` divergence (KB-1
 Verified behaviour-preserving: `boot.bin`, `ip.bin`, `sp.bin` and `cyber.mmd` are **byte-identical**
 before and after the migration.
 
-### OD-8 — Bit-index / mask naming: prefix or suffix *(open)*
-`docs/manual.md` §"Bitwise Definition Naming" documents the **prefix** form — `GA_BIT_DMNA` /
-`GA_MASK_DMNA` — and `lib/main/gate_arr.def.h` and `lib/sub/gate_arr.def.h` follow it in 40 places.
+### D12 — Register fields use `<SUBSYSTEM>_<FIELD>_<ASPECT>` *(Damian R, 2026-08-13)*
+Every register field carries `_POS`, `_WIDTH` and `_MASK`, with `_MASK` derived via `FIELD_MASK` so
+it cannot disagree with the other two. Field *values* are stored **unshifted** and placed with
+`FIELD_PREP` / read with `FIELD_GET` (`build.def.h`, preprocessor-only so both languages can use
+them). Supersedes OD-8.
 
-Two things diverge from it:
-- `feature/sub_bios_overhaul` rewrites the Sub gate array using the **suffix** form
-  (`GA_CEDE_WDRAM2M_BIT` alongside a bare `GA_CEDE_WDRAM2M`).
-- The `SCTRL_*_BIT` companions added to `lib/main/io.def.h` on 2026-08-13 (fixing KB-11) also used
-  the suffix form, making them the only suffix-style names on `develop`.
+**Why this ordering:** subsystem, then field, then aspect, so everything about one field sorts
+together in an index, symbol list or autocomplete. This matches CMSIS, ARM's convention for register
+definitions (`ADC_CR1_AWDCH_Pos` / `_Msk`), which is the closest thing to an industry standard here.
 
-Pick one and make it uniform. If prefix wins, the `io.def.h` additions become `SCTRL_BIT_TX_FULL` /
-`SCTRL_MASK_TX_FULL` and the branch's gate array work needs the same treatment; if suffix wins,
-`manual.md` and 40 gate array constants change instead. **The KB-11 defect is fixed either way** —
-only the spelling is in question.
+**Why `_POS` and not `_BIT`:** for a multi-bit field the low bit's index is the shift amount, which
+is exactly what placing a value needs; for a single-bit flag the same number is the bit index for
+`btst`. One concept covers both, so a flag is simply a field of width 1. Naming it `_BIT` only
+describes the degenerate case — the question that prompted this.
+
+**What it replaced:** six spellings coexisted — `GA_BIT_*`/`GA_MASK_*` (prefix, 40 uses),
+`BIT_GA_REG_*` and `MSK_GA_REG_*` (Sub side), `*_MSK` (two), and `*_BIT` (suffix, added here on
+2026-08-13). Converting them also surfaced two defects: `GA_MASK_CDCMODE_*` and `MSK_GA_REG_INT*`
+were defined as `1 << x` **without parentheses**, and `VDP_MASK_INTERLACE_*` / `GA_MASK_CDC_DEST_*` /
+`SCTRL_BAUD_*` were *values* misnamed as masks — `VDP_MASK_INTERLACE_NONE` was `0`, which no mask
+can be.
 
 ### OD-1 — How to resolve the Main/Sub Gate Array namespace collision *(open)*
 INV-7 is violated (KB-12). Options: prefix by CPU side (`GA_MAIN_*` / `GA_SUB_*`); rely solely on

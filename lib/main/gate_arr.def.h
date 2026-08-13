@@ -52,43 +52,50 @@
 #define GA_REG_RESET 0xA12000
 
 /**
- * @def GA_MASK_SUB_RESET
+ * @def GA_SUB_RESET_MASK
  * @brief Sub CPU Reset
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_subctrl
  */
-#define GA_MASK_SUB_RESET (1 << 0)
+#define GA_SUB_RESET_POS 0
+#define GA_SUB_RESET_WIDTH 1
+#define GA_SUB_RESET_MASK FIELD_MASK(GA_SUB_RESET_POS, GA_SUB_RESET_WIDTH)
 
 /**
- * @def GA_MASK_SUB_REQ
+ * @def GA_SUB_REQ_MASK
  * @brief Sub CPU Bus Access Request
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_subctrl
  */
-#define GA_MASK_SUB_REQ (1 << 1)
+#define GA_SUB_REQ_POS 1
+#define GA_SUB_REQ_WIDTH 1
+#define GA_SUB_REQ_MASK FIELD_MASK(GA_SUB_REQ_POS, GA_SUB_REQ_WIDTH)
 
 /**
- * @def GA_BIT_RAISE_INT2
+ * @def GA_RAISE_INT2_POS
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_subctrl
  */
-#define GA_BIT_RAISE_INT2 0
+#define GA_RAISE_INT2_POS 0
+#define GA_RAISE_INT2_WIDTH 1
 
 /**
- * @def GA_MASK_SUB_REQ
+ * @def GA_SUB_REQ_MASK
  * @brief Raise INT2 on Sub CPU
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_subctrl
  */
-#define GA_MASK_RAISE_INT2 (1 << GA_BIT_RAISE_INT2)
+#define GA_RAISE_INT2_MASK FIELD_MASK(GA_RAISE_INT2_POS, GA_RAISE_INT2_WIDTH)
 
 /**
- * @def GA_MASK_INT2_MASK
+ * @def GA_INT2_MASKING_MASK
  * @brief INT2 Masking on Sub CPU
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_subctrl
  */
-#define GA_MASK_INT2_MASK (1 << 7)
+#define GA_INT2_MASKING_POS 7
+#define GA_INT2_MASKING_WIDTH 1
+#define GA_INT2_MASKING_MASK FIELD_MASK(GA_INT2_MASKING_POS, GA_INT2_MASKING_WIDTH)
 
 /**
  * @defgroup ga_reg_main_memmode Main CPU / Gate Array / Registers / Memory Mode
@@ -139,45 +146,53 @@
 #define GA_REG_MEMMODE 0xA12002
 
 /**
- * @def GA_BIT_RETURN_2M
+ * @def GA_RETURN_2M_POS
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_memmode
  */
-#define GA_BIT_RETURN_2M 0
+#define GA_RETURN_2M_POS 0
+#define GA_RETURN_2M_WIDTH 1
 
 /**
- * @def GA_MASK_RETURN_2M
+ * @def GA_RETURN_2M_MASK
  * @brief Give Word RAM control to Main CPU
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_memmode
  */
-#define GA_MASK_RETURN_2M (1 << GA_BIT_RETURN_2M)
+#define GA_RETURN_2M_MASK FIELD_MASK(GA_RETURN_2M_POS, GA_RETURN_2M_WIDTH)
 
 /**
- * @def GA_BIT_DMNA
+ * @def GA_DMNA_POS
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_memmode
  */
-#define GA_BIT_DMNA 1
+#define GA_DMNA_POS 1
+#define GA_DMNA_WIDTH 1
 
 /**
- * @def GA_MASK_DMNA
+ * @def GA_DMNA_MASK
  * @brief Main CPU will not access Word RAM
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_memmode
  */
-#define GA_MASK_DMNA (1 << GA_BIT_DMNA)
+#define GA_DMNA_MASK FIELD_MASK(GA_DMNA_POS, GA_DMNA_WIDTH)
 
 /**
- * @def GA_MASK_WORDRAM_LAYOUT
+ * @def GA_WORDRAM_LAYOUT_MASK
  * @brief Word RAM layout
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_memmode
  */
-#define GA_MASK_WORDRAM_LAYOUT (1 << 2)
+#define GA_WORDRAM_LAYOUT_POS 2
+#define GA_WORDRAM_LAYOUT_WIDTH 1
+#define GA_WORDRAM_LAYOUT_MASK FIELD_MASK(GA_WORDRAM_LAYOUT_POS, GA_WORDRAM_LAYOUT_WIDTH)
 
-#define MEMMODE_BK0_MSK (0b11 << 6)
-#define MEMMODE_WP0_MSK 0xFF
+#define GA_MEMMODE_BANK_POS 6
+#define GA_MEMMODE_BANK_WIDTH 2
+#define GA_MEMMODE_BANK_MASK FIELD_MASK(GA_MEMMODE_BANK_POS, GA_MEMMODE_BANK_WIDTH)
+#define GA_MEMMODE_WP_POS 0
+#define GA_MEMMODE_WP_WIDTH 8
+#define GA_MEMMODE_WP_MASK FIELD_MASK(GA_MEMMODE_WP_POS, GA_MEMMODE_WP_WIDTH)
 
 /**
  * @defgroup ga_reg_main_cdcmode Main CPU / Gate Array / Registers / CDC Mode
@@ -213,32 +228,36 @@
 #define GA_REG_CDCMODE 0xA12004
 
 /**
- * @def GA_MASK_CDC_DEST_MAIN
+ * @def GA_CDC_DEST_MAIN
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cdcmode
  */
-#define GA_MASK_CDC_DEST_MAIN 0b010
+#define GA_CDC_DEST_POS 0
+#define GA_CDC_DEST_WIDTH 3
+#define GA_CDC_DEST_MASK FIELD_MASK(GA_CDC_DEST_POS, GA_CDC_DEST_WIDTH)
+
+#define GA_CDC_DEST_MAIN 0b010
 
 /**
- * @def GA_MASK_CDC_DEST_SUB
+ * @def GA_CDC_DEST_SUB
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cdcmode
  */
-#define GA_MASK_CDC_DEST_SUB 0b011
+#define GA_CDC_DEST_SUB 0b011
 
 /**
- * @def GA_MASK_CDC_DEST_PCM
+ * @def GA_CDC_DEST_PCM
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cdcmode
  */
-#define GA_MASK_CDC_DEST_PCM 0b100
+#define GA_CDC_DEST_PCM 0b100
 
 /**
- * @def GA_MASK_CDC_DEST_WORD
+ * @def GA_CDC_DEST_WORD
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cdcmode
  */
-#define GA_MASK_CDC_DEST_WORD 0b111
+#define GA_CDC_DEST_WORD 0b111
 
 /**
  * @defgroup ga_reg_main_hblankvect Main CPU / Gate Array / Registers / HBLANK

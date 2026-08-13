@@ -51,7 +51,7 @@ static inline void const * init_mmd()
 			[wrdram] "a"(WORD_RAM),
 			[mlevel4] "i"(EXVEC_LEVEL4),
 			[mlevel6] "i"(EXVEC_LEVEL6),
-			[ga_dmna] "i"(GA_BIT_DMNA),
+			[ga_dmna] "i"(GA_DMNA_POS),
 			[ga_memmode] "i"(GA_REG_MEMMODE)
 		:
 			"cc");

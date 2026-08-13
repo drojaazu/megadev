@@ -170,7 +170,7 @@ static inline void wait_2m()
   beq      1b \n\
 		"
     :
-    : [ga_ret_bit] "i"(GA_BIT_RETURN_2M),
+    : [ga_ret_bit] "i"(GA_RETURN_2M_POS),
       [ga_reg_memmmode] "i"(GA_REG_MEMMODE + 1));
 }
 
@@ -188,7 +188,7 @@ static inline void grant_2m()
 		"
     :
     :
-    [ga_dmna_bit] "i"(GA_BIT_DMNA), [ga_reg_memmmode] "i"(GA_REG_MEMMODE + 1));
+    [ga_dmna_bit] "i"(GA_DMNA_POS), [ga_reg_memmmode] "i"(GA_REG_MEMMODE + 1));
 }
 
 /**

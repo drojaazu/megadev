@@ -19,7 +19,7 @@
 LOCAL loop
 
 loop:
-	btst     #GA_BIT_RETURN_2M, GA_REG_MEMMODE+1
+	btst     #GA_RETURN_2M_POS, GA_REG_MEMMODE+1
 	beq      loop
 .endm
 
@@ -32,8 +32,8 @@ loop:
 LOCAL loop
 
 loop:
-  bset     #GA_BIT_DMNA,GA_REG_MEMMODE+1
-  btst     #GA_BIT_DMNA,GA_REG_MEMMODE+1
+  bset     #GA_DMNA_POS,GA_REG_MEMMODE+1
+  btst     #GA_DMNA_POS,GA_REG_MEMMODE+1
   beq      loop
 .endm
 
