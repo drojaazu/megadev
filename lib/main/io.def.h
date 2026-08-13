@@ -199,129 +199,139 @@
 #define IO_SCTRL3 0xA1001F
 
 /**
- * @def SCTRL_TX_FULL_BIT
+ * @def SCTRL_TX_FULL_POS
  * @brief IO Serial Control Register / Transmit buffer full flag (bit index)
  * @ingroup ioports_s
  */
-#define SCTRL_TX_FULL_BIT 0
+#define SCTRL_TX_FULL_POS 0
+#define SCTRL_TX_FULL_WIDTH 1
 
 /**
- * @def SCTRL_TX_FULL
+ * @def SCTRL_TX_FULL_MASK
  * @brief IO Serial Control Register / Transmit buffer full flag (mask)
  * @ingroup ioports_s
- * @sa SCTRL_TX_FULL_BIT
+ * @sa SCTRL_TX_FULL_POS
  */
-#define SCTRL_TX_FULL (1 << SCTRL_TX_FULL_BIT)
+#define SCTRL_TX_FULL_MASK FIELD_MASK(SCTRL_TX_FULL_POS, SCTRL_TX_FULL_WIDTH)
 
 /**
- * @def SCTRL_RX_READY_BIT
+ * @def SCTRL_RX_READY_POS
  * @brief IO Serial Control Register / Receive buffer ready flag (bit index)
  * @ingroup ioports_s
  */
-#define SCTRL_RX_READY_BIT 1
+#define SCTRL_RX_READY_POS 1
+#define SCTRL_RX_READY_WIDTH 1
 
 /**
- * @def SCTRL_RX_READY
+ * @def SCTRL_RX_READY_MASK
  * @brief IO Serial Control Register / Receive buffer ready flag (mask)
  * @ingroup ioports_s
- * @sa SCTRL_RX_READY_BIT
+ * @sa SCTRL_RX_READY_POS
  */
-#define SCTRL_RX_READY (1 << SCTRL_RX_READY_BIT)
+#define SCTRL_RX_READY_MASK FIELD_MASK(SCTRL_RX_READY_POS, SCTRL_RX_READY_WIDTH)
 
 /**
- * @def SCTRL_RX_ERR_BIT
+ * @def SCTRL_RX_ERR_POS
  * @brief IO Serial Control Register / Receive error flag (bit index)
  * @ingroup ioports_s
  */
-#define SCTRL_RX_ERR_BIT 2
+#define SCTRL_RX_ERR_POS 2
+#define SCTRL_RX_ERR_WIDTH 1
 
 /**
- * @def SCTRL_RX_ERR
+ * @def SCTRL_RX_ERR_MASK
  * @brief IO Serial Control Register / Receive error flag (mask)
  * @ingroup ioports_s
- * @sa SCTRL_RX_ERR_BIT
+ * @sa SCTRL_RX_ERR_POS
  */
-#define SCTRL_RX_ERR (1 << SCTRL_RX_ERR_BIT)
+#define SCTRL_RX_ERR_MASK FIELD_MASK(SCTRL_RX_ERR_POS, SCTRL_RX_ERR_WIDTH)
 
 /**
- * @def SCTRL_RX_INT_ENABLE_BIT
+ * @def SCTRL_RX_INT_ENABLE_POS
  * @brief IO Serial Control Register / Enable INT2 on data receipt (bit index)
  * @ingroup ioports_s
  */
-#define SCTRL_RX_INT_ENABLE_BIT 3
+#define SCTRL_RX_INT_ENABLE_POS 3
+#define SCTRL_RX_INT_ENABLE_WIDTH 1
 
 /**
- * @def SCTRL_RX_INT_ENABLE
+ * @def SCTRL_RX_INT_ENABLE_MASK
  * @brief IO Serial Control Register / Enable INT2 on data receipt (mask)
  * @ingroup ioports_s
- * @sa SCTRL_RX_INT_ENABLE_BIT
+ * @sa SCTRL_RX_INT_ENABLE_POS
  */
-#define SCTRL_RX_INT_ENABLE (1 << SCTRL_RX_INT_ENABLE_BIT)
+#define SCTRL_RX_INT_ENABLE_MASK FIELD_MASK(SCTRL_RX_INT_ENABLE_POS, SCTRL_RX_INT_ENABLE_WIDTH)
 
 /**
- * @def SCTRL_SERIAL_OUT_ENABLE_BIT
+ * @def SCTRL_SERIAL_OUT_ENABLE_POS
  * @brief IO Serial Control Register / Enable serial output (bit index)
  * @ingroup ioports_s
  */
-#define SCTRL_SERIAL_OUT_ENABLE_BIT 4
+#define SCTRL_SERIAL_OUT_ENABLE_POS 4
+#define SCTRL_SERIAL_OUT_ENABLE_WIDTH 1
 
 /**
- * @def SCTRL_SERIAL_OUT_ENABLE
+ * @def SCTRL_SERIAL_OUT_ENABLE_MASK
  * @brief IO Serial Control Register / Enable serial output (mask)
  * @ingroup ioports_s
- * @sa SCTRL_SERIAL_OUT_ENABLE_BIT
+ * @sa SCTRL_SERIAL_OUT_ENABLE_POS
  */
-#define SCTRL_SERIAL_OUT_ENABLE (1 << SCTRL_SERIAL_OUT_ENABLE_BIT)
+#define SCTRL_SERIAL_OUT_ENABLE_MASK FIELD_MASK(SCTRL_SERIAL_OUT_ENABLE_POS, SCTRL_SERIAL_OUT_ENABLE_WIDTH)
 
 /**
- * @def SCTRL_SERIAL_IN_ENABLE_BIT
+ * @def SCTRL_SERIAL_IN_ENABLE_POS
  * @brief IO Serial Control Register / Enable serial input (bit index)
  * @ingroup ioports_s
  */
-#define SCTRL_SERIAL_IN_ENABLE_BIT 5
+#define SCTRL_SERIAL_IN_ENABLE_POS 5
+#define SCTRL_SERIAL_IN_ENABLE_WIDTH 1
 
 /**
- * @def SCTRL_SERIAL_IN_ENABLE
+ * @def SCTRL_SERIAL_IN_ENABLE_MASK
  * @brief IO Serial Control Register / Enable serial input (mask)
  * @ingroup ioports_s
- * @sa SCTRL_SERIAL_IN_ENABLE_BIT
+ * @sa SCTRL_SERIAL_IN_ENABLE_POS
  */
-#define SCTRL_SERIAL_IN_ENABLE (1 << SCTRL_SERIAL_IN_ENABLE_BIT)
+#define SCTRL_SERIAL_IN_ENABLE_MASK FIELD_MASK(SCTRL_SERIAL_IN_ENABLE_POS, SCTRL_SERIAL_IN_ENABLE_WIDTH)
 
 /**
- * @def SCTRL_SERIAL_ENABLE
+ * @def SCTRL_SERIAL_ENABLE_MASK
  * @brief IO Serial Control Register / Enable serial input/output
  * @ingroup ioports_s
  */
-#define SCTRL_SERIAL_ENABLE (0b11 << 4)
+#define SCTRL_SERIAL_ENABLE_MASK (SCTRL_SERIAL_OUT_ENABLE_MASK | SCTRL_SERIAL_IN_ENABLE_MASK)
 
 /**
  * @def SCTRL_BAUD_300
  * @brief IO Serial Control Register / Set baud rate 300
  * @ingroup ioports_s
  */
-#define SCTRL_BAUD_300 (0b11 << 6)
+#define SCTRL_BAUD_POS 6
+#define SCTRL_BAUD_WIDTH 2
+#define SCTRL_BAUD_MASK FIELD_MASK(SCTRL_BAUD_POS, SCTRL_BAUD_WIDTH)
+
+#define SCTRL_BAUD_300 0b11
 
 /**
  * @def SCTRL_BAUD_1200
  * @brief IO Serial Control Register / Set baud rate 1200
  * @ingroup ioports_s
  */
-#define SCTRL_BAUD_1200 (0b10 << 6)
+#define SCTRL_BAUD_1200 0b10
 
 /**
  * @def SCTRL_BAUD_2400
  * @brief IO Serial Control Register / Set baud rate 2400
  * @ingroup ioports_s
  */
-#define SCTRL_BAUD_2400 (0b01 << 6)
+#define SCTRL_BAUD_2400 0b01
 
 /**
  * @def SCTRL_BAUD_4800
  * @brief IO Serial Control Register / Set baud rate 4800
  * @ingroup ioports_s
  */
-#define SCTRL_BAUD_4800 (0b00 << 6)
+#define SCTRL_BAUD_4800 0b00
 
 /**
  * @brief Address space enabled by cartridge /TIME pin

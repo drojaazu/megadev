@@ -21,7 +21,7 @@
 .macro INIT_EXT_PORT
   DISABLE_INTERRUPTS
   Z80_DO_BUSREQ
-  move.b  #(SCTRL_SERIAL_ENABLE | SCTRL_RX_INT_ENABLE | EXT_BAUD), EXT_SCTRL
+  move.b  #(SCTRL_SERIAL_ENABLE_MASK | SCTRL_RX_INT_ENABLE_MASK | FIELD_PREP(SCTRL_BAUD, EXT_BAUD)), EXT_SCTRL
   move.b  #0x7F, EXT_CTRL
   Z80_DO_BUSRELEASE
   ENABLE_INTERRUPTS
@@ -38,7 +38,7 @@
 LOCAL loop
 
 loop:
-  btst     #SCTRL_RX_READY_BIT, (EXT_SCTRL)	// check that we're ready to receive
+  btst     #SCTRL_RX_READY_POS, (EXT_SCTRL)	// check that we're ready to receive
   beq      loop
   move.b   (EXT_RXDATA), d0
 .endm
@@ -50,7 +50,7 @@ loop:
  */
 .macro EXT_TX
 2:move.b  (EXT_SCTRL), d1
-  btst    #SCTRL_TX_FULL_BIT, d1 // make sure transmit queue is not full
+  btst    #SCTRL_TX_FULL_POS, d1 // make sure transmit queue is not full
   bne     2b
   move.b  d0, EXT_TXDATA
   rts

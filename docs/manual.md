@@ -363,26 +363,50 @@ There are occasional exceptions to this namespace rule, namely when a macro prov
 
 ### Bitwise Definition Naming
 
-There are many hardware registers that make use of bit-level settings. Such settings are given helpful names as `#define` directives with the `.def.h` files. Each setting has two defines: one for the bit index (for use in ASM commands such as `btst`) and one as a mask (to be used in logic operations).
+Hardware registers are made of *fields*: a run of one or more bits with a meaning. Every field is
+described by three definitions, named `<SUBSYSTEM>_<FIELD>_<ASPECT>`:
 
-For example, the gate array has a Main side register `memmmode` with a DMNA flag. This flag can be referenced by index with `GA_BIT_DMNA` or as a mask with `GA_MASK_DMNA`.
+| Aspect | Meaning |
+|---|---|
+| `_POS` | bit position of the field's low bit |
+| `_WIDTH` | how many bits the field occupies |
+| `_MASK` | the bits it occupies, derived from `_POS` and `_WIDTH` |
 
-# Further Reading
+For example, the Gate Array memory mode register has a DMNA flag at bit 1:
 
-There are a number of additional documents in the `docs` subdirectory. We recommend at least skimming through all of these before starting development.
+    GA_DMNA_POS     1
+    GA_DMNA_WIDTH   1
+    GA_DMNA_MASK    FIELD_MASK(GA_DMNA_POS, GA_DMNA_WIDTH)
 
-`boot.md` - Discusses the boot process of the Mega CD and important considerations for the IP/SP.
+The subsystem comes first, then the field, then the aspect, so that everything about one field sorts
+together in a symbol list, an index or an autocomplete popup.
 
-`cdrom.md` - Describes how to use the CD-ROM file access framework.
+**A single-bit flag is just a field of width 1.** That is why the position is called `_POS` rather
+than `_BIT`: for a wider field the same number is the shift amount, so one scheme covers both cases.
+Use `_POS` with the bit opcodes and `_MASK` with logic operations:
 
-`dev_in_c.md` - Discusses important concepts for developing code in C for an embedded system.
+    btst  #GA_DMNA_POS, GA_REG_MEMMODE+1     ; assembly: bit index
+    if (*ga_reg_memmode & GA_DMNA_MASK)      /* C: mask */
 
-`disc.md` - Explains how to master a proper disc image for the Mega CD.
+Passing a mask to `btst` selects the wrong bit and fails **silently** - there is no diagnostic. That
+is a real bug that shipped in Megadev's serial code, so the two are deliberately named so they
+cannot be confused.
 
-`main_bios.md` - Goes into deep detail about using the Main BIOS and its many utility calls.
+### Field Values
 
-`megacd_dev.md` - Considerations for program architecture and development on the Mega CD.
+A field wider than one bit takes a *value*. Values are stored **unshifted** and placed into the
+field with `FIELD_PREP`, or read back out with `FIELD_GET`:
 
-`modules.md` - Discusses the modules concept and how to use them.
+    #define SCTRL_BAUD_4800 0b00
+    #define SCTRL_BAUD_300  0b11
 
-`program_design.md` - Program architecture concepts: the kernel, the library and memory planning.
+    sctrl = SCTRL_SERIAL_ENABLE_MASK | FIELD_PREP(SCTRL_BAUD, SCTRL_BAUD_300);
+    baud  = FIELD_GET(SCTRL_BAUD, sctrl);
+
+Storing values unshifted keeps them readable against the hardware documentation and means the field
+can be moved by changing `_POS` alone. `FIELD_MASK`, `FIELD_PREP` and `FIELD_GET` are defined in
+`build.def.h` and are preprocessor-only, so they work in both C and assembly.
+
+Note that a *value* is not a *mask*, and the two must not share a naming pattern. An earlier scheme
+called these `VDP_MASK_INTERLACE_NONE` and so on, which was misleading: that constant is zero, and
+no mask can be.
