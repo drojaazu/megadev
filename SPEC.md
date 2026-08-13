@@ -784,10 +784,7 @@ warn or fail.
 New fields that had no definitions before: `GA_PERIPH_RESET` (`RES0`), `GA_PRIORITY` (`PM0-1`, with
 values), and `GA_WP`.
 
-### D17a — A register with one unused byte becomes a byte register *(Claude, 2026-08-14 — PROVISIONAL, needs Damian R's confirmation)*
-**This extends D17, which was Damian R's decision, so it is recorded as provisional rather than
-settled.** It was taken unattended; reverting it touches three registers and no call sites.
-
+### D17a — A register with one unused byte becomes a byte register; the unused byte stays undefined *(Damian R, 2026-08-14)*
 D17 covers registers whose two halves hold *unrelated* concerns. It says nothing about registers
 where one half holds *nothing*. Three such registers exist: the Main side's `$A12004` (all fields in
 the high byte) and the Sub side's `$FF8030` and `$FF8032` (all fields in the low byte).
@@ -805,9 +802,22 @@ the natural byte spelling is correct by construction.
 *wrong* about it, and it avoids moving an address. It was rejected because it leaves byte access to
 these registers a trap, and byte access is the only sensible way to use them.
 
-**What would settle it:** whether Damian R considers the address move acceptable for registers whose
-name stays the same. Usage in-tree is one commented-out line, so the blast radius is as small as it
-will ever be. Addresses are pinned by Tier 1.5 assertions either way.
+**The unused byte gets no definition of its own.** The three orphaned bytes — `$FF8030`, `$FF8032`
+and `$A12005` — are deliberately left undefined rather than given an `_UNUSED` symbol.
+
+The case for defining them is a researcher who wants to poke an "unused" byte on real hardware to
+confirm it really is inert. That case is real but rare, and someone doing it is equipped to write the
+address literally. The case against is that what such a researcher actually needs is *knowledge* —
+that the byte reads 0 and ignores writes — and a `#define` conveys an address while saying nothing
+about behaviour. So the fact is recorded where it is useful, in each register's documentation, and
+no symbol is created to invite casual use.
+
+Discoverability is handled separately and already works: each register's `@defgroup` title carries
+the **hardware** address (`Register 24 (0xFF8030) - Timer (INT3)`), so someone reading the manual and
+grepping for `0xFF8030` still lands on the right register even though the definition is at
+`0xFF8031`.
+
+Addresses are pinned by Tier 1.5 assertions.
 
 ### OD-1 — How to resolve the Main/Sub Gate Array namespace collision *(open)*
 INV-7 is violated (KB-12). Options: prefix by CPU side (`GA_MAIN_*` / `GA_SUB_*`); rely solely on

@@ -76,6 +76,22 @@ A word access to a split pair is still available, since the halves are adjacent 
 even-aligned. It is simply no longer the default spelling, so clearing the Program RAM write
 protection while setting the memory mode is now something you have to write on purpose.
 
+### When only one byte of a register is used
+
+Some registers put every field in one byte and leave the other empty. Those become a byte register at
+the address of the byte that carries the data — so `GA_REG_INT3TIMER` is `0xFF8031`, not `0xFF8030`.
+Without that, the natural spelling `move.b #n, GA_REG_INT3TIMER` would write the empty half and do
+nothing at all.
+
+**The unused byte is left undefined on purpose.** There is no `_UNUSED` symbol for `0xFF8030`,
+`0xFF8032` or `0xA12005`. If you are investigating whether one of those bytes really is inert, write
+the address literally — and note that what you most likely want to know, that it reads 0 and ignores
+writes, is in the register's documentation rather than in any macro.
+
+The hardware address is still easy to find: each register's documentation group is titled with it,
+so searching for the address printed in the official manual lands on the right register even when
+the definition sits one byte along.
+
 ### Registers that stay 16 bit
 
 Two kinds do not split:

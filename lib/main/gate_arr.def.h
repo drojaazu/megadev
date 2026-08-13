@@ -382,28 +382,31 @@
 
 /**
  * @def GA_REG_CDCMODE
- * @brief CDC Mode
+ * @brief CDC mode
  *
  * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * |EDT|DSR| |||DD2|DD1|DD0| ||||||||
+ * The Main CPU's view of the CDC transfer state. Every field is in the high
+ * byte of the hardware register at 0xA12004, and the register is read only from
+ * this side: the Sub CPU chooses the destination and the Main CPU watches the
+ * transfer. The low byte, 0xA12005, is unused -- it reads as 0 and is
+ * deliberately left undefined here (SPEC.md D17a).
  *
- * @param [width] 8 bit/16 bit
- * @param EDT End of data transfer
- * [read] All data from the CDC has been transferred
- * @param DSR Data set ready
- * [read] Data from the CDC is present in the CDC Host Data register
- * @param DD Device destination
- * [read/write] Specifies the destination for CDC data transfer:
- *   |DD2|DD1|DD0|Destination|
- *   |:|:|:|:|
- *   |0|1|0|Main CPU|
- *   |0|1|1|Sub CPU|
- *   |1|0|0|PCM DMA|
- *   |1|1|1|In 2M Mode: Word RAM \n In 1M Mode: Sub CPU controlled Word RAM|
+ * | |7|6|5|4|3|2|1|0|
+ * |:|:|:|:|:|:|:|:|:|
+ * | |\b EDT|\b DSR| | | |\b DD2|\b DD1|\b DD0|
+ * |\b R|◯|◯| | | |◯|◯|◯|
+ * |\b W|🗙|🗙|🗙|🗙|🗙|🗙|🗙|🗙|
  *
- *   All other values for DD are invalid.
+ * @param EDT End of data transfer. R: every byte has been transferred out of
+ * the CDC.
+ * @param DSR Data set ready. R: a word from the CDC is waiting in
+ * GA_REG_CDCHOSTDATA.
+ * @param DD Device destination, set by the Sub CPU. See GA_CDC_DEST_MASK.
+ *
+ * @warning Read only. The Sub CPU owns this register; see its `$FF8004`, which
+ * additionally carries the CDC register address in its low byte and is
+ * therefore still a 16 bit register on that side.
+ * @sa ga_reg_cdcmode
  * @ingroup ga_reg_main_02
  */
 #define GA_REG_CDCMODE 0xA12004
@@ -414,7 +417,8 @@
  * @details
  * Where the CDC sends the data it reads off the disc. The Main CPU may read
  * this field but only the Sub CPU may set it.
- * @sa GA_CDC_DEST_MAIN, GA_CDC_DEST_SUB, GA_CDC_DEST_PCM, GA_CDC_DEST_WORD
+ * @sa GA_CDC_DEST_MAIN, GA_CDC_DEST_SUB, GA_CDC_DEST_PCM, GA_CDC_DEST_PRG,
+ * GA_CDC_DEST_WORD
  * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cdcmode
  */
@@ -461,6 +465,14 @@
  * @ingroup ga_reg_main_cdcmode
  */
 #define GA_CDC_DEST_PCM 0b100
+
+/**
+ * @def GA_CDC_DEST_PRG
+ * @brief CDC data goes to Program RAM by DMA
+ * @ingroup ga_regs_main
+ * @ingroup ga_reg_main_cdcmode
+ */
+#define GA_CDC_DEST_PRG 0b101
 
 /**
  * @def GA_CDC_DEST_WORD
