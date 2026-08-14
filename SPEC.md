@@ -402,6 +402,31 @@ share (verified present 2026-08-13):
     bulletins.
   - `BIOS Revisions/` — dated Boot ROM dumps (JP 1.00C through 1.11 and later).
   - `Source Code/` — Batman Returns Sega CD project package.
+**The gate array registers are documented in *two* Sega manuals, and they disagree.** Besides *The
+Hardware*, the **Mega-CD Software Development Manual** (Ver 0.10, 1991-03-06 — seven months earlier)
+covers the same register block. Added here 2026-08-14; it had been overlooked. Read both when a
+register claim matters, and treat a disagreement as a live question rather than assuming the newer
+document wins.
+
+`Mega-CD Software Development.pdf` (43 pages) is the copy to use — like the Kodak *Hardware* scan it
+carries an **OCR text layer**. PDF page = printed page **+ 7** (printed 19 = PDF 26), the same offset.
+
+> **`Mega-CD Software Development Manual - Corrections Email - [1992-12-21] (Rex Sabio).pdf`** is a
+> one-page errata from Sega of America and is worth more than its size suggests. It records four
+> corrections found "while working with the Scaling Hardware":
+>
+> - **`RPT` in `$FF8058` is documented backwards in the Software Manual (printed p.19).** That manual
+>   gives `0` = repeat; the errata says the bit "works exactly opposite". ***The Hardware* p.35 gives
+>   `1` = repeat, and that is what megadev implements — verified at 600 dpi.** Recorded because the
+>   next reader to consult the Software Manual will otherwise "fix" a correct SDK into a broken one.
+> - Priority applies to **scaled pixel data** written to the image buffer — independent corroboration
+>   that priority governs graphics-operation output, not CPU writes (see `docs/rotation_scaling.md`
+>   §5). Sega's names there are Write Up / Write Down for what megadev calls `OVERWRITE`/`UNDERWRITE`,
+>   with matching semantics.
+> - `VCS0-4` in the image buffer V-cell size is the cell count **minus one** — matches megadev.
+> - Trace vector start positions have **3** fractional bits (1.0 = `8`) and deltas **11** (1.0 =
+>   `$0800`) — matches `lib/xform.h`.
+
 - `/mnt/library/Retro Games/By Hardware/Sega Mega Drive/`
   - `Development Documents/` — Genesis Software Manual, Genesis Technical Bulletins, reference sheets.
   - `Dev Resources and Source Code/` — Batman Returns, Cliffhanger, Ex-Mutants project packages,

@@ -104,8 +104,12 @@ occupies and therefore how coarsely `GA_REG_STAMPMAPBASE` must be aligned:
 | 16×16 | 4096×4096 | 0x20000 | 0x20000 |
 | 32×32 | 4096×4096 | 0x8000 | 0x8000 |
 
-Bit `RPT` decides what happens when sampling leaves the map: either the map repeats indefinitely, or
-everything outside it reads as pixel value 0.
+Bit `RPT` decides what happens when sampling leaves the map: `1` repeats the map indefinitely, `0`
+makes everything outside it read as pixel value 0.
+
+> Sega's *Software Development Manual* (p.19) states this bit backwards. Sega's own later correction
+> confirms it "works exactly opposite" there, and *The Hardware* (p.35) agrees with the sense given
+> above, which is what this SDK implements.
 
 ### 2.3 Trace vector table
 

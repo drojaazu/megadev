@@ -1642,6 +1642,13 @@
  *
  * @param RPT Repeat. 1: the stamp map tiles indefinitely. 0: anything outside
  * the map reads as 0.
+ *
+ * @warning **Do not "correct" RPT from the Software Development Manual.** That
+ * manual (printed p.19) states the sense of this bit backwards, giving 0 as
+ * repeat. Sega issued a written correction saying it "works exactly opposite as
+ * it is documented in the Software Manual on page 19", and *The Hardware*
+ * (printed p.35) states it as documented here. The value above is the correct
+ * one; see SPEC.md §7.
  * @param STS Stamp size. 0: 16x16 dots, 1: 32x32 dots.
  * @param SMS Stamp map size. 0: one screen, 256x256 dots. 1: sixteen screens
  * square, 4096x4096 dots.
