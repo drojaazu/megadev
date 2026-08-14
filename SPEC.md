@@ -973,12 +973,29 @@ objects fell from 56 to 2, and both survivors are switch jump-table data that ob
 instructions. Each removed wrapper also drops 2 instructions and 4 bytes from every expansion of the
 `static inline` that contained it, which is why hot calls like `bios_dma_xfer` get cheaper.
 
-**Assumption worth testing on hardware.** Removing the wrappers means a C function that calls the
-BIOS now returns with a6 clobbered. That is safe for C callers (none hold a value in a6) but assumes
-no *asm* caller does either — including the Boot ROM when it calls back into a user routine such as
-`bios_vblank_user`. The supporting evidence is that the Boot ROM's own VBLANK path calls
-`BIOS_READ_JOYPAD`, documented `@clobber d6-d7/a5-a6`, so the Boot ROM cannot itself be holding a
-live value in a6 across that path. Provenance: DOC. Not yet confirmed on hardware.
+**The a6-is-scratch assumption, and how it was checked.** Removing the wrappers means a C function
+that calls the BIOS now returns with a6 clobbered. That is safe for C callers (none hold a value in
+a6) but assumes no *asm* caller does either — including the Boot ROM when it calls back into a user
+routine such as `bios_vblank_user`. The documentary support is that the Boot ROM's own VBLANK path
+calls `BIOS_READ_JOYPAD`, documented `@clobber d6-d7/a5-a6`, so the Boot ROM cannot itself hold a
+live value in a6 across that path.
+
+Confirmed at runtime in MAME on 2026-08-15 (provenance EMU): `gfx`, `bram` and `pcm_playback` all
+ran correctly. `gfx` is the load-bearing case, since it installs `vblank_user` through
+`bios_vblank_user` and calls `bios_copy_sprlist()` from inside that callback — the exact Boot ROM →
+C path the assumption covers. `pcm_playback` covers the separate `lib/sub/pcm.h` clobber site, and
+`bram` exercises the main-side wrappers heavily.
+
+EMU is strong evidence for this particular class of change. Whether a routine keeps a value live in
+a register across a call is a property of the Boot ROM's instruction stream, and the emulator
+executes that real ROM image on an accurate 68000 core; unlike CDC timing or PCM output, there is no
+analog or timing behaviour for the emulator to approximate. The one residual is Boot ROM revision
+variance — the dumps under `BIOS Revisions/` are not all byte-identical, and this was exercised
+against one of them.
+
+Still unexercised: `bios_detect_controller`. No example calls it, so the `%c0` → `%c1` fix above is
+confirmed only to compile, never to run. It is also the one function that passes a parameter *in*
+a6, which makes it the single place where reserving a6 could interact with an explicit binding.
 
 Also fixed here: `bios_detect_controller` referenced `%c0` where it needed `%c1`. With an output
 operand present the immediate is operand 1, so the function emitted `jsr %d6` and failed to
