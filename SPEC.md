@@ -434,6 +434,24 @@ calls were sanctioned for game use, and the source of the Work RAM equates in `d
 > and it settled the `$FF8036` field positions that were previously ASSUMED. It also carries a
 > previous reader's handwritten corrections (e.g. "unmeric" → "numeric" on page 30).
 
+> **A third scan exists and is the best general-purpose copy: `Mega-CD Hardware Manual.pdf`.**
+> Identified 2026-08-14; previously present in the share but not distinguished here from the fax
+> scans. 97 pages against the fax scans' 66 and 70, produced on a Kodak Capture Pro scanner from a
+> **Sega Ozisoft** copy (stamped `#161`, where the fax scans are `#66`), and — uniquely — it carries
+> an **OCR text layer**, so `pdftotext` works on it and the manual is searchable.
+>
+> PDF page = printed page **+ 7** in the rotation/scaling range (printed 45 = PDF 52).
+>
+> It is **not an independent document**: 118 pages still carry the `8137437483` fax header, so it is
+> largely the same transmission and the same content, and the SPEC warning below still applies. It is
+> a mixed copy — some pages (e.g. printed 45) are clean non-fax originals, most are not. Its value is
+> legibility plus searchability, not corroboration.
+>
+> **Checked and it does not help:** printed page 31 (`$FF8034`, the CD fader) is the fax page here
+> too, with the same destroyed bit table, so the `EFDT`/`DEF` positions remain unrecorded. The prose
+> *is* legible and confirms `FD00–10` at bits 4–14, `EFDT` as 1=Busy / 0=Ready, and the de-emphasis
+> table (00=OFF, 01=44.1 kHz, 10=32 kHz, 11=48 kHz). Do not re-check this scan for those positions.
+
 > **The two "translations" are two scans of the same fax, not independent translations.** Both the
 > *(Rex Sabio)* and *(The Code Monkeys)* copies of *The Hardware* carry the identical transmission
 > header (`8137437483 #24/48`), so comparing them verifies **legibility, not content** — a
@@ -447,10 +465,10 @@ calls were sanctioned for game use, and the source of the Work RAM equates in `d
 
 The scan's PDF page number is the printed page number plus a **constant that changes partway
 through**: **+4** up to and including printed page 39 (printed 21 = PDF 25, printed 39 = PDF 43) and **+3**
-from printed page 55 on (printed 55 = PDF 58, printed 59 = PDF 62). A page is dropped from the scan
-somewhere in printed 40–54, which is inside the rotation and scaling explanatory material; the exact
-point has not been located, so check the printed number in the page footer if you read in that
-range. Sections:
+from printed page 55 on (printed 55 = PDF 58, printed 59 = PDF 62). **The dropped page is printed 45**
+(located 2026-08-14): the Rex Sabio scan runs printed 40, 41, 42, 43, 44, then 46. Nothing is lost —
+printed 45 is a **blank page**, confirmed against the Kodak scan below, which retains it and prints
+"Blank Page" on it. Sections:
 
 | Printed | Contents |
 |---|---|

@@ -1963,9 +1963,10 @@
  * | 2 | delta X per dot | sign bit, 4 integer bits, 11 fractional |
  * | 3 | delta Y per dot | sign bit, 4 integer bits, 11 fractional |
  *
- * @warning The deltas are **sign and magnitude**, not two's complement: bit 15
- * is the sign and the remaining bits are an unsigned magnitude. Negating a
- * delta means toggling bit 15, not negating the word.
+ * @note The deltas are ordinary signed **two's complement**, so normal C
+ * arithmetic on them is correct. The manual's bit table draws bit 15 as a
+ * separate `+/-` cell, which reads as sign-and-magnitude; that reading is
+ * wrong (SPEC.md KB-41, withdrawn).
  *
  * @warning Write only, and word access only. A byte access to this register can
  * raise a bus error.
