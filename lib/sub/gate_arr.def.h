@@ -1063,6 +1063,7 @@
  *   being shifted out to the fader; 0: ready, a new value may be set.
  * - **DEF0-1** — de-emphasis, for the pre-emphasis used by some early classical
  *   CDs. Normally off.
+ * - **SSF** — spindle speed. 0: normal speed playback. 1: double speed.
  *
  * | DEF1 | DEF0 | De-emphasis |
  * |---|---|---|
@@ -1071,8 +1072,8 @@
  * | 1 | 0 | Fs = 32 kHz |
  * | 1 | 1 | Fs = 48 kHz |
  *
- * @note The bit positions of EFDT and DEF0-1 are not defined here; only
- * FD00-10 is. Use the Sub BIOS fader calls rather than this register.
+ * EFDT is the only readable field; every other bit reads 0. FD, DEF and SSF are
+ * write only. Bit 0 is unused.
  * @warning Word access only. A byte access to this register can raise a bus
  * error.
  * @warning Bit operation instructions are not permitted here; read the
@@ -1094,6 +1095,46 @@
 #define GA_CDFADER_FD_POS 4
 #define GA_CDFADER_FD_WIDTH 11
 #define GA_CDFADER_FD_MASK FIELD_MASK(GA_CDFADER_FD_POS, GA_CDFADER_FD_WIDTH)
+
+/**
+ * @def GA_CDFADER_EFDT_MASK
+ * @brief End of fade data transfer; 1 while the previous value is still going
+ * out to the fader, 0 when a new one may be set
+ * @details The only readable field of this register.
+ * @sa ga_reg_cdfader
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_26
+ */
+#define GA_CDFADER_EFDT_POS 15
+#define GA_CDFADER_EFDT_WIDTH 1
+#define GA_CDFADER_EFDT_MASK FIELD_MASK(GA_CDFADER_EFDT_POS, GA_CDFADER_EFDT_WIDTH)
+
+/**
+ * @def GA_CDFADER_DEF_MASK
+ * @brief De-emphasis selection; see GA_REG_CDFADER for the value table
+ * @sa ga_reg_cdfader
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_26
+ */
+#define GA_CDFADER_DEF_POS 2
+#define GA_CDFADER_DEF_WIDTH 2
+#define GA_CDFADER_DEF_MASK FIELD_MASK(GA_CDFADER_DEF_POS, GA_CDFADER_DEF_WIDTH)
+
+#define GA_CDFADER_DEF_OFF 0b00
+#define GA_CDFADER_DEF_44100 0b01
+#define GA_CDFADER_DEF_32000 0b10
+#define GA_CDFADER_DEF_48000 0b11
+
+/**
+ * @def GA_CDFADER_SSF_MASK
+ * @brief Spindle speed; 0 normal, 1 double speed playback
+ * @sa ga_reg_cdfader
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_26
+ */
+#define GA_CDFADER_SSF_POS 1
+#define GA_CDFADER_SSF_WIDTH 1
+#define GA_CDFADER_SSF_MASK FIELD_MASK(GA_CDFADER_SSF_POS, GA_CDFADER_SSF_WIDTH)
 
 /**
  * @def GA_REG_CDDCTRL

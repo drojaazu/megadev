@@ -145,3 +145,20 @@ _Static_assert(to_xform_delta(-0.5) == (s16) 0xFC00, "negative is ordinary two's
 _Static_assert(to_xform_delta(-1.0) == (s16) 0xF800, "-1.0 is the negation of 1.0");
 _Static_assert(to_xform_delta(-1.0) == -to_xform_delta(1.0), "normal arithmetic applies");
 _Static_assert(to_xform_pos(1.0) == 8, "one dot is 8 units of 1/8");
+
+/* --- 0xFF8034 CD fader, field positions (DOC-26) ------------------------- */
+
+/* The whole 16-bit layout is accounted for: EFDT, then eleven FD bits, then
+ * the two de-emphasis bits, then SSF, leaving only bit 0 unused. */
+ASSERT_FIELD(GA_CDFADER_FD);
+ASSERT_FIELD(GA_CDFADER_EFDT);
+ASSERT_FIELD(GA_CDFADER_DEF);
+ASSERT_FIELD(GA_CDFADER_SSF);
+_Static_assert(GA_CDFADER_EFDT_MASK == 0x8000, "EFDT is bit 15");
+_Static_assert(GA_CDFADER_FD_MASK == 0x7FF0, "FD00-10 occupy bits 4-14");
+_Static_assert(GA_CDFADER_DEF_MASK == 0x000C, "DEF1,DEF0 are bits 3-2");
+_Static_assert(GA_CDFADER_SSF_MASK == 0x0002, "SSF is bit 1");
+_Static_assert((GA_CDFADER_EFDT_MASK | GA_CDFADER_FD_MASK | GA_CDFADER_DEF_MASK
+				   | GA_CDFADER_SSF_MASK)
+				   == 0xFFFE,
+	"the four fields tile the register, leaving only bit 0");
