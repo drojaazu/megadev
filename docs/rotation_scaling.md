@@ -72,9 +72,18 @@ The stamp map is a grid of 16-bit entries, one per stamp-sized cell of the sourc
 | 10–0 | `SNO` | Stamp number |
 
 `HFLIP` and `ROTATE` combine, giving eight orientations per stamp; the manual tabulates all eight
-(p.42). The order in which the two are applied is **not restated here** — the figure that shows it is
-too degraded in the available scans to transcribe safely. If you need a specific reflected-and-rotated
-orientation, determine it empirically rather than trusting a guess.
+using the letter P as the test glyph (p.42).
+
+**The rotation is applied first, then the horizontal flip.** In the manual's figure each cell of the
+combined row is the exact horizontal mirror of the corresponding rotate-only cell, which is what
+`HFLIP(ROTATE(stamp))` produces; applying the flip first would leave the 90° and 270° cells differing
+from that mirror by 180°.
+
+> **Which angle each `RT` combination selects is not settled** — see BACKLOG DOC-24. The bit
+> positions are certain (15 `HFLP`, 14 `RT1`, 13 `RT0`), but the four orientation glyphs in the fax
+> are at the edge of legibility, and one reading of them disagrees with the angle constants this SDK
+> currently ships. If your stamps come out rotated by the wrong multiple of 90°, try the other
+> mapping before assuming your own maths is wrong, and please report which was correct.
 
 Its dimensions come from `GA_STAMPSIZE` bit `SMS`: either one screen (256×256 dots) or sixteen
 screens square (4096×4096 dots). Combined with the stamp size, this fixes how much Word RAM the map
