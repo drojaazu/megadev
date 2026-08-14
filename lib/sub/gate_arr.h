@@ -39,7 +39,7 @@ typedef u8 volatile const * ga_reg8_ro;
 #define ga_reg_memmode (*((ga_reg8) GA_REG_MEMMODE))
 #define ga_reg_cdcmode (*((ga_reg) GA_REG_CDCMODE))
 #define ga_reg_cdcrs1 (*((ga_reg) GA_REG_CDCRS1))
-#define ga_reg_cdchostdata (*((ga_reg) GA_REG_CDCHOSTDATA))
+#define ga_reg_cdchostdata (*((ga_reg_ro) GA_REG_CDCHOSTDATA))
 #define ga_reg_dmaaddr (*((ga_reg) GA_REG_DMAADDR))
 #define ga_reg_stopwatch (*((ga_reg) GA_REG_STOPWATCH))
 #define ga_reg_comflags_main (*((ga_reg8_ro) GA_REG_COMFLAGS_MAIN))

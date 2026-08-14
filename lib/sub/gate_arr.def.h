@@ -804,6 +804,19 @@
 #define GA_REG_STOPWATCH 0xFF800C
 
 /**
+ * @def GA_STOPWATCH_SW_MASK
+ * @brief Stopwatch counter value, 12 bits
+ * @details The counter is 0 to 4095; the top four bits of the register are
+ * unused. Mask a read with this, or the unused bits come back with it.
+ * @sa ga_reg_stopwatch
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_06
+ */
+#define GA_STOPWATCH_SW_POS 0
+#define GA_STOPWATCH_SW_WIDTH 12
+#define GA_STOPWATCH_SW_MASK FIELD_MASK(GA_STOPWATCH_SW_POS, GA_STOPWATCH_SW_WIDTH)
+
+/**
  * @defgroup ga_reg_sub_cpucomm Sub CPU / Gate Array / Registers / CPU
  * Communication
  */
