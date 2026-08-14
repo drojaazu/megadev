@@ -6,7 +6,7 @@
 #include <main/main.macro.s>
 #include <main/gate_arr.macro.s>
 #include <system.macro.s>
-#include "bram_demo_layout.s"
+#include "mmd_layout.s"
 
 /*
   Please see the ip.s file in the ipx_spx project for details about the process below.

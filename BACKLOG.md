@@ -211,4 +211,4 @@ Retained for completeness; each is a local question rather than a tracked commit
 `lib/main/comm.macros.s:35` (RERR), `lib/main/bios.h:107,111,1390`, `lib/main/cd_exception.s:64,240`,
 `lib/sub/bios.def.h:664` (`@clobber UNKNOWN`), `lib/sub/gate_arr.def.h:648`,
 `lib/sub/cdrom.s:137,195,254,362`, `lib/main/z80.def.h:6`, `lib/xform.h:6`,
-`examples/hello_world/src/ip.s:81`, `examples/pcm_playback/src/pcmplay_v2.s:44,94`.
+`examples/hello_world/src/ip.s:81`, `examples/pcm_playback/src/pcmplay.s:44,94`.

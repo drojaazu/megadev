@@ -92,5 +92,5 @@ disc/spx.smd: \
 	spx_layout.s \
 	spx.c \
 	sub/pcm.s \
-	pcmplay_v2.s \
+	pcmplay.s \
 	$(BUILD_PATH)/sp.bin
