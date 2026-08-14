@@ -74,16 +74,24 @@ There are some strategies we can employ to help mitigate the risk of an overflow
 
 - Try to keep the number of chained function calls to a minimum. A function calling a function calling a function calling a function will generate a stack frame for each call, which includes space for any local variables. If possible, call a function to do work on an object passed by pointer, then return and call the next pointer, and so on. Similarly, avoid recursive functions.
 
-## Lack of "naked" function support
+## Function prologues and the register save
 
-One of the most frustrating aspects of working with GCC is the lack of flexibility in some (admittedly esoteric) aspects. Chief among these has been GCC's insistence on creating function prologue/epilogues for overlays (modules).
+When a function is called, certain CPU registers may be modified as a side effect of that code. If those registers were in active use by the calling code, then upon returning things will be broken as the values were unexpectedly changed. To prevent this, values for in-use registers are saved to the stack on entry and reloaded when the function returns. This automatic saving and loading is called the prologue and epilogue of a function.
 
-In summary, when a function is called, certain CPU registers may be modified as a side of that code. If those registers were in active use by the calling code, then upon returning things will be broken as the values were unexpectedly changed. To prevent this, values for in-use registers are saved to the stack for safekeeping and reloaded when the function has returned. This automatic saving and loading of registers (and possibly other function call utilities) is called the prologue and epilogue of a function.
+On the m68k, GCC decides what to save with a single rule: a register is saved if the function touches it and it is not call-clobbered. Nothing else enters into it — in particular, marking a function `noreturn` has no effect on the prologue. It only removes the epilogue.
 
-The automatically generated epilogue/prologue may be unnecessary if the function in question is an entry for a module. The register push takes up valuable stack space in our limited RAM. Moreover, the compiler may also LINK the A6 register, which essentially removes that register from use. This is especially problematic since a number of Main BIOS calls make use of A6.
+This matters because the m68k has just four call-clobbered registers (d0, d1, a0, a1). A function of any complexity exhausts those immediately and starts borrowing callee-saved registers, paying four bytes of prologue for each one it borrows. A module entry point commonly saves ten or eleven registers, or 40 to 44 bytes, against a default Boot ROM stack of only 256.
 
-A function lacking an epilogue and prologue is called "naked," and unfortunately GCC does not provide a way to specify a function as naked (at least not for the M68000 architecture). At this point, there doesn't seem to be a good solution for this. The stack can be manually reset by some inline ASM at the top of a function to recover the space used, but the (admitterly few) CPU cycles are still used for the push/pop. For BIOS calls using A6, we have wrapped these calls with a push/pop of A6, which keeps things stable but adds more CPU cycles...
+There is no `naked` attribute on m68k. It would not help if there were: GCC's own documentation states that only basic `asm` statements can safely appear in a naked function, and that mixing C code with them "cannot be depended upon to work reliably". `naked` exists to give an assembly-bodied routine a C declaration, which is a job already done here by ordinary `.s` files such as `main/ipx_init.s`.
 
-If you need to be particular about speed, we recommend checking any BIOS calls being made that may use A6 and perhaps write your own inline ASM caller to deal with tha LINKed A6 issue more efficiently. Of course, this issue only applies to C programming; if you are developing in pure ASM, this is not a problem.
+If you need to reduce the saved set, the flags that work are `-fcall-used-<reg>` (make a callee-saved register call-clobbered, so it need not be saved) and `-ffixed-<reg>` (reserve it entirely). Both change the ABI for every function in the translation unit, so a function compiled this way must never be called from code compiled normally — no BIOS callbacks, no interrupt handlers, nothing reached from assembly. Isolating a module's entry point in its own source file is the usual way to satisfy that.
 
-If anyone has any suggestions for how to solve for this, we greatly welcome your comments.
+## The A6 register
+
+Megadev compiles with `-ffixed-a6`, which reserves a6 so that GCC never places a value in it.
+
+This is necessary because a6 is the m68k frame pointer register and the Boot ROM treats it as scratch, clobbering it in most of its routines. Those two facts do not coexist quietly. Naming a6 in an `asm` clobber list does not protect it: doing so marks the register as used, which forces GCC to install a6 as the frame pointer, and a frame pointer is fixed and cannot be clobbered — so the clobber is silently discarded and the function goes on addressing its locals through a register the BIOS is about to destroy. With `-fno-omit-frame-pointer` GCC at least rejects the clobber outright ("%a6 cannot be used in `asm` here"); without it, the result is a silent miscompile.
+
+Reserving a6 removes the conflict at its source and costs nothing measurable — reserving it changed total code size across all example projects by well under a hundred bytes, in both directions. Because C holds nothing in a6, BIOS and library routines are free to clobber it, and no save/restore is needed around them.
+
+**Do not put `"a6"` in an `asm` clobber list.** It is not merely redundant, it is harmful, for the reason above. If a routine takes a parameter in a6, bind it explicitly with `register u32 x asm("a6")`, which continues to work normally under `-ffixed-a6`.

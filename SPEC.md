@@ -949,6 +949,43 @@ comparison target: ISO9660 volume and directory records embed a creation timesta
 of identical sources differ in 19 bytes at 0x80B3, 0x8339-0x836E and 0xB817-0xB886. Compare the
 constituent artifacts instead.
 
+### D22 — a6 is reserved with `-ffixed-a6`; never name it in a clobber list *(Damian R, 2026-08-15)*
+a6 is the m68k frame pointer register, and the Boot ROM treats it as scratch — `bios.def.h` documents
+`@clobber ...a6` on a dozen routines, and `lib/main/vdp.s` and `lib/sub/pcm.s` clobber it too.
+
+Naming a6 in an `asm` clobber list does not protect it. The clobber marks the register used, which
+sets `frame_pointer_needed`; GCC then installs a6 as the frame pointer, and a frame pointer is fixed
+and cannot be clobbered, so the clobber is discarded. Verified with GCC 14.2: under
+`-fomit-frame-pointer` the compiler emits `link.w %fp`, spills a local to `-4(%fp)`, runs the asm
+that declares it destroys a6, then reads `-4(%fp)` back. Under `-fno-omit-frame-pointer` it instead
+errors, "%a6 cannot be used in `asm` here". This is the mechanism behind the long-standing
+observation that a6 was "getting mangled even though it was in the clobber list".
+
+`-ffixed-a6` is now in `CC_FLAGS` (`megadev.make:113`). GCC places no value in a6, so nothing needs
+protecting, and the 11 `move.l a6,-(sp)` / `move.l (sp)+,a6` wrapper pairs in `lib/main/bios.h` plus
+2 in `lib/sub/pcm.h` were removed, along with the `"a6"` clobber on `bios_clear_comm`. The explicit
+`register u32 A6 asm("a6")` parameter binding in `bios_detect_controller` is unaffected and still
+works.
+
+**Measured.** Total code size across all example projects fell 62 bytes; the largest single change
+was −28 (`bram`) and the only increase was +4 (`bram/spx.smd`). References to a6 in compiled C
+objects fell from 56 to 2, and both survivors are switch jump-table data that objdump renders as
+instructions. Each removed wrapper also drops 2 instructions and 4 bytes from every expansion of the
+`static inline` that contained it, which is why hot calls like `bios_dma_xfer` get cheaper.
+
+**Assumption worth testing on hardware.** Removing the wrappers means a C function that calls the
+BIOS now returns with a6 clobbered. That is safe for C callers (none hold a value in a6) but assumes
+no *asm* caller does either — including the Boot ROM when it calls back into a user routine such as
+`bios_vblank_user`. The supporting evidence is that the Boot ROM's own VBLANK path calls
+`BIOS_READ_JOYPAD`, documented `@clobber d6-d7/a5-a6`, so the Boot ROM cannot itself be holding a
+live value in a6 across that path. Provenance: DOC. Not yet confirmed on hardware.
+
+Also fixed here: `bios_detect_controller` referenced `%c0` where it needed `%c1`. With an output
+operand present the immediate is operand 1, so the function emitted `jsr %d6` and failed to
+assemble. It is `static inline` and unused by any example, so it had never been instantiated — which
+is a gap in the gate: nothing forces a header's inline functions to be compiled. Every other asm
+block in the file with an output operand correctly uses `%p1`/`%c1`.
+
 ### OD-1 — How to resolve the Main/Sub Gate Array namespace collision *(open)*
 INV-7 is violated (KB-12). Options: prefix by CPU side (`GA_MAIN_*` / `GA_SUB_*`); rely solely on
 path-derived include guards plus a hard rule that a TU may include only one side; or generate both

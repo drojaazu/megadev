@@ -110,8 +110,15 @@ AS_INC:=-Wa,-I$(SRC_PATH) -Wa,-I$(LIB_PATH) -Wa,-I$(RES_PATH) -Wa,-I$(BUILD_PATH
 # with asm source files
 DEP_FLAGS=-MMD -MP
 
+# a6 is reserved rather than allocated. The Boot ROM treats a6 as scratch and
+# clobbers it in most of its routines, and naming a6 in an asm clobber list does
+# not protect it: doing so forces GCC to install a6 as the frame pointer, after
+# which the clobber is silently ignored. Reserving it keeps C values out of a6
+# entirely, which costs nothing measurable and removes the need to save and
+# restore it around every BIOS call.
 CC_FLAGS+= \
 	-m68000 \
+	-ffixed-a6 \
 	-imacros build.def.h \
 	-DPROJECT_ID=$(PROJECT_ID) \
 	-DTARGET=$(TARGET) \
