@@ -1732,16 +1732,25 @@
 
 /**
  * @def STAMP_ROTATE_MASK
- * @brief Rotation applied to this stamp, in 90 degree steps
+ * @brief Rotation applied to this stamp, in 90 degree steps, counter-clockwise
+ *
+ * @details The field occupies bits 14 and 13, which the manual names `RT1` and
+ * `RT0` respectively, so the value read out of the field is `RT1 * 2 + RT0`.
+ * The manual's orientation figure (p.42) is indexed the other way round, by
+ * `RT0 * 2 + RT1`, which is why 90 and 180 are not in the order the bit numbers
+ * suggest. Read the values below rather than deriving them.
+ *
+ * Rotation is applied to the stamp **before** @ref STAMP_HFLIP_MASK.
  */
 #define STAMP_ROTATE_POS 13
 #define STAMP_ROTATE_WIDTH 2
 #define STAMP_ROTATE_MASK FIELD_MASK(STAMP_ROTATE_POS, STAMP_ROTATE_WIDTH)
 
-#define STAMP_ROTATE_0 0b00
-#define STAMP_ROTATE_90 0b01
-#define STAMP_ROTATE_180 0b10
-#define STAMP_ROTATE_270 0b11
+/* RT1, RT0 */
+#define STAMP_ROTATE_0 0b00	  /* RT0=0, RT1=0 */
+#define STAMP_ROTATE_90 0b10  /* RT0=0, RT1=1 */
+#define STAMP_ROTATE_180 0b01 /* RT0=1, RT1=0 */
+#define STAMP_ROTATE_270 0b11 /* RT0=1, RT1=1 */
 
 /**
  * @def STAMP_HFLIP_MASK

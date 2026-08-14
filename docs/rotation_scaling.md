@@ -79,11 +79,19 @@ combined row is the exact horizontal mirror of the corresponding rotate-only cel
 `HFLIP(ROTATE(stamp))` produces; applying the flip first would leave the 90° and 270° cells differing
 from that mirror by 180°.
 
-> **Which angle each `RT` combination selects is not settled** — see BACKLOG DOC-24. The bit
-> positions are certain (15 `HFLP`, 14 `RT1`, 13 `RT0`), but the four orientation glyphs in the fax
-> are at the edge of legibility, and one reading of them disagrees with the angle constants this SDK
-> currently ships. If your stamps come out rotated by the wrong multiple of 90°, try the other
-> mapping before assuming your own maths is wrong, and please report which was correct.
+**Rotation is counter-clockwise**, and the two rotation bits are not ordered the way their names
+suggest. The field occupies bits 14 and 13, named `RT1` and `RT0`, so the value you read out of it is
+`RT1 × 2 + RT0` — but the manual's orientation figure is indexed by `RT0 × 2 + RT1`:
+
+| `RT0` | `RT1` | Field value | Rotation |
+|---|---|---|---|
+| 0 | 0 | `0b00` | 0° |
+| 0 | 1 | `0b10` | 90° counter-clockwise |
+| 1 | 0 | `0b01` | 180° |
+| 1 | 1 | `0b11` | 270° counter-clockwise |
+
+Use `STAMP_ROTATE_90` and friends rather than writing the field by hand; 90° and 180° are the two
+that catch people, because the field value is the reverse of what the bit names imply.
 
 Its dimensions come from `GA_STAMPSIZE` bit `SMS`: either one screen (256×256 dots) or sixteen
 screens square (4096×4096 dots). Combined with the stamp size, this fixes how much Word RAM the map
