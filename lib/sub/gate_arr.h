@@ -497,7 +497,7 @@ typedef u8 volatile const * ga_reg8_ro;
  * @sa GA_REG_SUBCODEADDR
  * @ingroup gatearray_sub
  */
-#define ga_reg_subcodeaddr (*((ga_reg) GA_REG_SUBCODEADDR))
+#define ga_reg_subcodeaddr (*((ga_reg_ro) GA_REG_SUBCODEADDR))
 /**
  * @def ga_reg_subcodebuf
  * @brief GA Reg 32 - Sub-code data buffer

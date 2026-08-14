@@ -162,3 +162,13 @@ _Static_assert((GA_CDFADER_EFDT_MASK | GA_CDFADER_FD_MASK | GA_CDFADER_DEF_MASK
 				   | GA_CDFADER_SSF_MASK)
 				   == 0xFFFE,
 	"the four fields tile the register, leaving only bit 0");
+
+/* --- 0xFF8068 subcode address, field positions (DOC-25) ------------------ */
+
+/* Read only, low byte only: SAOR at bit 7, STA6-1 at bits 6-1, bit 0 unused. */
+ASSERT_FIELD(GA_SUBCODE_STA);
+ASSERT_FIELD(GA_SUBCODE_SAOR);
+_Static_assert(GA_SUBCODE_SAOR_MASK == 0x0080, "SAOR is bit 7");
+_Static_assert(GA_SUBCODE_STA_MASK == 0x007E, "STA1-6 occupy bits 1-6");
+_Static_assert((GA_SUBCODE_SAOR_MASK | GA_SUBCODE_STA_MASK) == 0x00FE,
+	"the two fields fill the low byte but for bit 0");

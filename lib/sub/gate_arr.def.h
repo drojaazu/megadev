@@ -2026,12 +2026,40 @@
  * - **SAOR** — sub-code address overrun. Set once 32 bytes have been written,
  *   and cleared by the next SYNC.
  *
- * @note The bit positions of STA1-6 and SAOR are not defined here. This
- * register is driven by the BIOS; read the sub-code buffer instead.
+ * The whole register is read only, and the high byte reads 0. Bit 0 is unused.
+ *
+ * @note Driven by the hardware as sub-code arrives; read the sub-code buffer
+ * itself via GA_REG_SUBCODEBUF.
  * @sa ga_reg_subcodeaddr, GA_REG_SUBCODEBUF
  * @ingroup ga_reg_sub_52
  */
 #define GA_REG_SUBCODEADDR 0xFF8068
+
+/**
+ * @def GA_SUBCODE_STA_MASK
+ * @brief Sub-code top address: where the next incoming byte will be written
+ * @details Read only. Occupies bits 6 through 1, so the value is the address
+ * already shifted up by one.
+ * @sa ga_reg_subcodeaddr
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_52
+ */
+#define GA_SUBCODE_STA_POS 1
+#define GA_SUBCODE_STA_WIDTH 6
+#define GA_SUBCODE_STA_MASK FIELD_MASK(GA_SUBCODE_STA_POS, GA_SUBCODE_STA_WIDTH)
+
+/**
+ * @def GA_SUBCODE_SAOR_MASK
+ * @brief Sub-code address overrun; set once 32 bytes have been written, cleared
+ * by the next SYNC
+ * @details Read only.
+ * @sa ga_reg_subcodeaddr
+ * @ingroup ga_regs_sub
+ * @ingroup ga_reg_sub_52
+ */
+#define GA_SUBCODE_SAOR_POS 7
+#define GA_SUBCODE_SAOR_WIDTH 1
+#define GA_SUBCODE_SAOR_MASK FIELD_MASK(GA_SUBCODE_SAOR_POS, GA_SUBCODE_SAOR_WIDTH)
 
 /**
  * @def GA_REG_SUBCODEBUF
