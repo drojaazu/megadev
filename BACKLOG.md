@@ -17,12 +17,12 @@ messages, and the 2026-08-13 audit.
 
 ## Work in flight
 
-Swept against the actual refs on 2026-08-14. `develop` is level with `github/develop`, so everything
-merged into it is pushed.
+Swept against the actual refs on 2026-08-14; branch renamed and pushed the same day. `develop` is level
+with `github/develop`, so everything merged into it is pushed.
 
 | Branch | Base | Contains | State |
 |---|---|---|---|
-| `fix/register-field-positions` | `develop` | 24 commits: register field positions made register-relative (KB-34), the D17/D17a byte-register split on both CPU sides, D18 CDD naming, the full gate array transcription (DOC-19), the KB-41 withdrawal, the `mode7` example, and D19 | 24 ahead / 0 behind `develop`; **`make check` passes in full**; not pushed |
+| `feature/gate-array-register-model` | `develop` | 34 commits: register field positions made register-relative (KB-34), the D17/D17a byte-register split on both CPU sides, D18 CDD naming, the full gate array transcription (DOC-19), the KB-41 withdrawal, the `mode7` example, D19, and the DOC-25 sweep against the Software Development Manual (KB-42, KB-43, DOC-23/24/26) | 34 ahead / 0 behind `develop`; **`make check` passes in full**; **pushed**, level with `github/feature/gate-array-register-model` |
 | `feature/sub_bios_overhaul` | `develop` | in-flight inline-documentation overhaul | 6 ahead / **77 behind** `develop`; **does not build** (BR-2); level with `github/feature/sub_bios_overhaul` |
 | `feature/md_cart` | — | abandoned cartridge support attempt | 21 ahead / 215 behind; last touched 2024-01-29; see ARCH-2 |
 | `feature/serial_comm_example` | — | serial comms example | 3 ahead / 111 behind; last touched 2026-03-15; unreviewed |
