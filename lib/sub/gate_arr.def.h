@@ -289,8 +289,7 @@
  *
  * @details
  * The high byte of the hardware register at 0xFF8000. Split out as its own byte
- * register because it shares nothing with the low half beyond an address: see
- * SPEC.md D17.
+ * register because it shares nothing with the low half beyond an address.
  *
  * | |7|6|5|4|3|2|1|0|
  * |:|:|:|:|:|:|:|:|:|
@@ -387,9 +386,8 @@
  * @def GA_PERIPH_RESET_MASK
  * @brief Peripheral reset
  * @details Write 0 to reset the peripheral; reads 1 once it is operable again.
- * @warning This is bit 0 of GA_REG_SUBCTRL, not of GA_REG_LED. The two were a
- * single 16 bit register until D17, and a stray bit 0 write through the old
- * word accessor reset the peripheral instead of touching an LED (KB-34).
+ * @warning This is bit 0 of GA_REG_SUBCTRL, not of GA_REG_LED. Writing it
+ * through an accessor for the LED byte resets the peripheral.
  * @sa ga_reg_subctrl
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_subctrl
@@ -433,8 +431,7 @@
  * @details
  * The low byte of the hardware register at 0xFF8002. Split from the write
  * protect byte above it because the two share nothing but an address, and a
- * word-wide write to set the memory mode would silently clear the protection:
- * see SPEC.md D17.
+ * word-wide write to set the memory mode would silently clear the protection.
  *
  * | |7|6|5|4|3|2|1|0|
  * |:|:|:|:|:|:|:|:|:|
@@ -1074,10 +1071,8 @@
  * | 1 | 0 | Fs = 32 kHz |
  * | 1 | 1 | Fs = 48 kHz |
  *
- * @note Only the position of FD00-10 is transcribed as fact; the manual states
- * it in words. The bit table on that page is obscured in the scan, so the exact
- * positions of EFDT and DEF0-1 are **not** recorded here rather than guessed.
- * See SPEC.md section 7.
+ * @note The bit positions of EFDT and DEF0-1 are not defined here; only
+ * FD00-10 is. Use the Sub BIOS fader calls rather than this register.
  * @warning Word access only. A byte access to this register can raise a bus
  * error.
  * @warning Bit operation instructions are not permitted here; read the
@@ -1132,8 +1127,6 @@
  * @note A communication error aborts the transfer in progress within 240
  * microseconds, so DTS and DRS may clear without the transfer completing.
  * @warning BSET and BCLR may not be used on this register.
- * @note Positions confirmed against the clean SPHERE scan of printed page 32;
- * the fax copy is illegible at exactly these columns.
  * @sa ga_reg_cddctrl
  * @ingroup ga_reg_sub_27
  */
@@ -1598,7 +1591,7 @@
  * @details
  * The high byte of the hardware register at 0xFF8058. Split from the size
  * configuration in its low byte because one is a status flag the hardware
- * drives and the other is configuration you write (SPEC.md D17).
+ * drives and the other is configuration you write.
  *
  * | |7|6|5|4|3|2|1|0|
  * |:|:|:|:|:|:|:|:|:|
@@ -1686,11 +1679,6 @@
  * With a 4096x4096 map and 16x16 stamps only A17 remains, so the map may start
  * at just two places in Word RAM.
  *
- * @note The manual's own figures on printed page 36 label these two cases with
- * the stamp sizes **swapped** -- it calls SMS=1/STS=0 "32x32 dots" where STS=0
- * is 16x16 by its own definition on page 35. The address tables either side of
- * that text are self consistent, and the table above is derived from the map
- * geometry, which agrees with them. Do not "correct" this against page 36.
  * @note Only meaningful in 2M mode.
  * @warning Word access only. A byte access to this register can raise a bus
  * error.
@@ -1773,9 +1761,8 @@
  * |\b W| | | |◯|◯|◯|◯|◯|
  *
  * @param VCS Vertical size in cells, 0 to 31.
- * @warning **Store one less than the height you want.** The manual states it
- * plainly: set the value to (actual value - 1). A buffer 8 cells tall is
- * written as 7.
+ * @warning **Store one less than the height you want.** A buffer 8 cells tall
+ * is written as 7.
  * @warning Bit operation instructions are not permitted here.
  * @sa ga_reg_imgbufvsize
  * @ingroup ga_reg_sub_46
@@ -1998,10 +1985,8 @@
  * - **SAOR** — sub-code address overrun. Set once 32 bytes have been written,
  *   and cleared by the next SYNC.
  *
- * @note The bit table for this register is illegible in the fax scan and the
- * page is not in the clean SPHERE set, so the field *positions* are not
- * recorded here rather than guessed. The semantics above are transcribed from
- * the page. See SPEC.md section 7.
+ * @note The bit positions of STA1-6 and SAOR are not defined here. This
+ * register is driven by the BIOS; read the sub-code buffer instead.
  * @sa ga_reg_subcodeaddr, GA_REG_SUBCODEBUF
  * @ingroup ga_reg_sub_52
  */

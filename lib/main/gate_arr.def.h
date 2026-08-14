@@ -149,8 +149,7 @@
  *
  * @details
  * The high byte of the hardware register at 0xA12000. Split from the Sub CPU
- * bus control below it because the two halves share nothing but an address:
- * see SPEC.md D17.
+ * bus control below it because the two halves share nothing but an address.
  *
  * | |7|6|5|4|3|2|1|0|
  * |:|:|:|:|:|:|:|:|:|
@@ -279,7 +278,7 @@
  * @details
  * The low byte of the hardware register at 0xA12002. Split from the write
  * protect byte above it because a word-wide write to change the memory mode
- * would silently clear the protection: see SPEC.md D17.
+ * would silently clear the protection.
  *
  * | |7|6|5|4|3|2|1|0|
  * |:|:|:|:|:|:|:|:|:|
@@ -389,7 +388,7 @@
  * byte of the hardware register at 0xA12004, and the register is read only from
  * this side: the Sub CPU chooses the destination and the Main CPU watches the
  * transfer. The low byte, 0xA12005, is unused -- it reads as 0 and is
- * deliberately left undefined here (SPEC.md D17a).
+ * deliberately left undefined here.
  *
  * | |7|6|5|4|3|2|1|0|
  * |:|:|:|:|:|:|:|:|:|

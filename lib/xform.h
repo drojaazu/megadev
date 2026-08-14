@@ -30,9 +30,7 @@ typedef u16 xform_pos;
  * @brief A trace vector step: sign bit, 4 integer bits, 11 fractional
  *
  * @details Ordinary signed two's complement, so normal C arithmetic on it is
- * correct. The manual's bit table draws bit 15 as a separate `+/-` cell, which
- * reads as sign-and-magnitude; that reading is **wrong**, and was disproved by
- * tracing Sonic CD (SPEC.md KB-41). Do not "fix" this back.
+ * correct.
  */
 typedef s16 xform_delta;
 
