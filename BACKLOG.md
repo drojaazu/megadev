@@ -17,17 +17,28 @@ messages, and the 2026-08-13 audit.
 
 ## Work in flight
 
+Swept against the actual refs on 2026-08-14. `develop` is level with `github/develop`, so everything
+merged into it is pushed.
+
 | Branch | Base | Contains | State |
 |---|---|---|---|
-| `docs/spec-and-backlog` | `develop` | SPEC.md, BACKLOG.md, README index, `docs/html/` ignore | ready to merge |
-| `feature/verification-gate` | `develop` | `make check`, `tools/check/*`, GitHub Actions workflow | lint verified; build gate needs a real toolchain run |
-| `fix/doxygen-config` | `develop` | Doxyfile repair, two doc-tag typos | verified with doxygen 1.16.1 |
-| `fix/doc-cross-references` | `develop` | `bootrom.md`/`design.md` link repair | verified |
-| `feature/sub_bios_overhaul` | `develop` | in-flight inline-documentation overhaul | **does not build** (BR-1); resume after the above land |
-| `backup/feature_sub_bios_overhaul-2026-08-13` | — | backup pointer, plus tag `backup-sub-bios-overhaul-2026-08-13` | do not delete until the branch is pushed |
+| `fix/register-field-positions` | `develop` | 24 commits: register field positions made register-relative (KB-34), the D17/D17a byte-register split on both CPU sides, D18 CDD naming, the full gate array transcription (DOC-19), the KB-41 withdrawal, the `mode7` example, and D19 | 24 ahead / 0 behind `develop`; **`make check` passes in full**; not pushed |
+| `feature/sub_bios_overhaul` | `develop` | in-flight inline-documentation overhaul | 6 ahead / **77 behind** `develop`; **does not build** (BR-2); level with `github/feature/sub_bios_overhaul` |
+| `feature/md_cart` | — | abandoned cartridge support attempt | 21 ahead / 215 behind; last touched 2024-01-29; see ARCH-2 |
+| `feature/serial_comm_example` | — | serial comms example | 3 ahead / 111 behind; last touched 2026-03-15; unreviewed |
+| `backup/feature_sub_bios_overhaul-2026-08-13` | — | backup pointer (identical to `feature/sub_bios_overhaul`), plus tag `backup-sub-bios-overhaul-2026-08-13` | redundant now that the branch is pushed; safe to delete |
 
-None of these branches has been pushed to any remote. Offline backups (bundle, patch, original
-SPEC.md stub) are in `/mnt/motoi-s2/dev/megadev-backups/`.
+The four branches previously listed here — `docs/spec-and-backlog`, `feature/verification-gate`,
+`fix/doxygen-config`, `fix/doc-cross-references` — were merged into `develop` and deleted. The gate's
+"needs a real toolchain run" caveat is discharged: `make check` runs in the devcontainer on
+`motoi-s2` and passes.
+
+**Fully merged into `develop`, safe to delete:** `docs/ga-register-details`,
+`docs/ga-register-groups`, `docs/register-access-table`, `feature/carts`, `feature/md_cart_dev`,
+`release/v1.1.0`, `release/v1.2.0`, `temp`.
+
+Offline backups (bundle, patch, original SPEC.md stub) are in `/mnt/motoi-s2/dev/megadev-backups/`.
+Investigation tooling lives in `/mnt/motoi-s2/dev/megadev-testing/` (D19).
 
 ---
 
