@@ -1642,13 +1642,6 @@
  *
  * @param RPT Repeat. 1: the stamp map tiles indefinitely. 0: anything outside
  * the map reads as 0.
- *
- * @warning **Do not "correct" RPT from the Software Development Manual.** That
- * manual (printed p.19) states the sense of this bit backwards, giving 0 as
- * repeat. Sega issued a written correction saying it "works exactly opposite as
- * it is documented in the Software Manual on page 19", and *The Hardware*
- * (printed p.35) states it as documented here. The value above is the correct
- * one; see SPEC.md §7.
  * @param STS Stamp size. 0: 16x16 dots, 1: 32x32 dots.
  * @param SMS Stamp map size. 0: one screen, 256x256 dots. 1: sixteen screens
  * square, 4096x4096 dots.
@@ -1741,13 +1734,10 @@
  * @def STAMP_ROTATE_MASK
  * @brief Rotation applied to this stamp, in 90 degree steps, counter-clockwise
  *
- * @details The field occupies bits 14 and 13, which the manual names `RT1` and
- * `RT0` respectively, so the value read out of the field is `RT1 * 2 + RT0`.
- * The manual's orientation figure (p.42) is indexed the other way round, by
- * `RT0 * 2 + RT1`, which is why 90 and 180 are not in the order the bit numbers
- * suggest. Read the values below rather than deriving them.
+ * @details Rotation is applied to the stamp **before** @ref STAMP_HFLIP_MASK.
  *
- * Rotation is applied to the stamp **before** @ref STAMP_HFLIP_MASK.
+ * @warning Use the STAMP_ROTATE_* values below; do not derive them from the
+ * field width. 90 and 180 are not in the order the bit numbering implies.
  */
 #define STAMP_ROTATE_POS 13
 #define STAMP_ROTATE_WIDTH 2
@@ -1980,9 +1970,7 @@
  * | 3 | delta Y per dot | sign bit, 4 integer bits, 11 fractional |
  *
  * @note The deltas are ordinary signed **two's complement**, so normal C
- * arithmetic on them is correct. The manual's bit table draws bit 15 as a
- * separate `+/-` cell, which reads as sign-and-magnitude; that reading is
- * wrong (SPEC.md KB-41, withdrawn).
+ * arithmetic on them is correct.
  *
  * @warning Write only, and word access only. A byte access to this register can
  * raise a bus error.
