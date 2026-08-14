@@ -81,7 +81,6 @@ clean:
 	@rm -rf $(PROJECT_ID).iso $(DISC_PATH)/*.mmd $(DISC_PATH)/*.smd $(BUILD_PATH)/ > /dev/null 2>&1
 
 $(DISC_PATH)/ipx.mmd: \
-	ipx_layout.s \
 	main/ipx_init.s \
 	ipx.res.s \
 	tables.s \
@@ -89,7 +88,6 @@ $(DISC_PATH)/ipx.mmd: \
 	main/io.macro.s
 
 $(DISC_PATH)/spx.smd: \
-	spx_layout.s \
 	std_init.s \
 	spx.c \
 	tables.s \

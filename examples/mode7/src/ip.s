@@ -8,7 +8,6 @@
 #include <main/vdp.def.h>
 #include <macro.s>
 #include <system.macro.s>
-#include "mmd_layout.s"
 #include "shared.h"
 
   // First, disable all interrupts while we do some basic init

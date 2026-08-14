@@ -23,6 +23,22 @@
 #include <system.h>
 #include <types.h>
 #include <xform.h>
+#include <macro.h>
+#include <main/memmap.def.h>
+
+/*
+  Module layout.
+
+  ROM begins at the start of Work RAM, overwriting the security code/IP, and
+  RAM goes right after it. That gives a little over 61KB of ROM space and 512
+  bytes of RAM; the split is arbitrary. MMD_DEST is where the code actually
+  executes, i.e. where it is copied to after the Sub places it in Word RAM.
+*/
+GLOBAL_SYM(MODULE_ROM_ORIGIN, WORK_RAM);
+GLOBAL_SYM(MODULE_RAM_ORIGIN, 0xFFF500);
+GLOBAL_SYM(MODULE_ROM_LENGTH, MODULE_RAM_ORIGIN - MODULE_ROM_ORIGIN);
+GLOBAL_SYM(MODULE_RAM_LENGTH, 0x200);
+GLOBAL_SYM(MMD_DEST, WORK_RAM);
 
 #define TURN_RATE 2   /* sine table steps per frame */
 #define MOVE_RATE 24  /* xform_pos units per frame, i.e. 3 dots */

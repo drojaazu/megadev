@@ -907,6 +907,48 @@ Applied retroactively on 2026-08-14: `tools/trace/` was removed from history rat
 the tip, because its Sonic CD capture was 4 MB and would otherwise sit in every future clone. Four
 commits existed only to add or amend it and were dropped.
 
+### D20 — The module jump table is removed; resident APIs use `ld -R` *(Damian R, 2026-08-15)*
+A resident module used to be able to publish a jump table at a fixed offset, reserved by a
+`.jmptbl` / `.shared` block in each of the four module linker scripts, so that transient modules
+could call into it without linking against it.
+
+This was superseded by importing the resident module's symbols directly with `ld -R`, which needs
+no fixed offsets and no hand-maintained table. The remaining obstacle — that the importing module
+would see the resident module's `MODULE_ROM_ORIGIN` and friends collide with its own — is solved by
+naming a resident module's layout symbols `RESIDENT_*` (`cfg/module_resident_*.ld`,
+`megadev.make:198`). That is the documented and implemented mechanism (`docs/modules.md`).
+
+The linker script blocks survived the change and were dead: nothing emitted `.jmptbl` or `.shared`,
+no layout defined `MODULE_JMPTBL_SIZE` / `RESIDENT_JMPTBL_SIZE` / `*_SHARED_SIZE`, so both
+`DEFINED()` guards always took the no-op branch. They are now removed from all four scripts. The
+comment describing them was worse than the code, since it pointed at `docs/modules.md`, which
+documents the replacement instead.
+
+### D21 — A module's layout is declared in C, not a separate asm file *(Damian R, 2026-08-15)*
+Each module used to need a `*_layout.s` file whose only job was to call the `GLOBAL` macro a few
+times, because it was believed C could not define an absolute global symbol. It can: file-scope
+basic `asm(".global X\n.equ X, value")`, wrapped as `GLOBAL_SYM` in `lib/macro.h`.
+
+The symbol produced is identical — absolute, global, no storage in `.rodata`, `.data`, `.bss` or
+anywhere else — so the linker cannot distinguish the two forms. Both spellings remain valid; the
+asm `GLOBAL` macro is unchanged for projects written in assembly.
+
+Placement follows the layout's scope: a layout belonging to one module goes at the top of that
+module's C file, and a layout shared by several modules gets its own source file that each links
+against (`new_project/src/shared_mmd_layout.c`, shared by ex1/ex2/ex3).
+
+All eight `*_layout.s` files across the examples and the template were converted. Three of them
+(`mode7`, `transforms`, and the template's copy included by `ip.s`) turned out to be dead: an `ip.s`
+including a layout never used its symbols, since the `_BSS_*` symbols it does use come from
+`cfg/ip.ld`. Those includes were removed too.
+
+**Verification.** Every program binary — `ip.bin`, `sp.bin`, `boot.bin`, and every `.mmd` / `.smd` —
+is byte-identical before and after, across all seven examples plus the template, including the
+template's resident-module case with `ld -R` imports. Note that the `.iso` is **not** a valid
+comparison target: ISO9660 volume and directory records embed a creation timestamp, so two builds
+of identical sources differ in 19 bytes at 0x80B3, 0x8339-0x836E and 0xB817-0xB886. Compare the
+constituent artifacts instead.
+
 ### OD-1 — How to resolve the Main/Sub Gate Array namespace collision *(open)*
 INV-7 is violated (KB-12). Options: prefix by CPU side (`GA_MAIN_*` / `GA_SUB_*`); rely solely on
 path-derived include guards plus a hard rule that a TU may include only one side; or generate both

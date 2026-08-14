@@ -7,7 +7,6 @@
 #include <main/main.macro.s>
 #include <macro.s>
 #include <system.macro.s>
-#include "ipx_layout.s"
 #include "shared.h"
 
 ip_entry:

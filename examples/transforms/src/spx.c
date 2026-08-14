@@ -1,12 +1,19 @@
 
 #include "shared.h"
 #include "xform.res.h"
+#include <macro.h>
 #include <memory.h>
 #include <sub/cdrom.h>
 #include <sub/gate_arr.h>
 #include <sub/memmap.h>
 #include <system.h>
 #include <xform.h>
+
+/* Module layout */
+GLOBAL_SYM(MODULE_ROM_ORIGIN, 0x10000);
+GLOBAL_SYM(MODULE_ROM_LENGTH, 0xE000);
+GLOBAL_SYM(MODULE_RAM_ORIGIN, 0x1E000);
+GLOBAL_SYM(MODULE_RAM_LENGTH, 0x2000);
 
 #define STAMP_DATA_OFFSET  0x0
 #define STAMP_MAP_OFFSET   0x10000

@@ -4,6 +4,20 @@
 #include <main/vdp.h>
 #include <math.h>
 #include <types.h>
+#include <macro.h>
+
+/*
+  Module layout.
+
+  The module runs from Word RAM, where it is loaded, so MMD_DEST is 0 and the
+  origin is offset by 0x100 to clear the MMD header. Boot ROM memory begins at
+  0xFFF700, so that is the cutoff for RAM.
+*/
+GLOBAL_SYM(MMD_DEST, 0);
+GLOBAL_SYM(MODULE_ROM_ORIGIN, 0x200100);
+GLOBAL_SYM(MODULE_ROM_LENGTH, 0x40000 - 0x100);
+GLOBAL_SYM(MODULE_RAM_ORIGIN, 0xFFC000);
+GLOBAL_SYM(MODULE_RAM_LENGTH, 0xFFF700 - 0xFFC000);
 
 // resource declarations
 extern u8        res_cybercity_bldg_cmp_nem[];
