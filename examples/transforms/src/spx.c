@@ -1,12 +1,19 @@
 
 #include "shared.h"
 #include "xform.res.h"
+#include <macro.h>
 #include <memory.h>
 #include <sub/cdrom.h>
 #include <sub/gate_arr.h>
 #include <sub/memmap.h>
 #include <system.h>
 #include <xform.h>
+
+/* Module layout */
+GLOBAL_SYM(MODULE_ROM_ORIGIN, 0x10000);
+GLOBAL_SYM(MODULE_ROM_LENGTH, 0xE000);
+GLOBAL_SYM(MODULE_RAM_ORIGIN, 0x1E000);
+GLOBAL_SYM(MODULE_RAM_LENGTH, 0x2000);
 
 #define STAMP_DATA_OFFSET  0x0
 #define STAMP_MAP_OFFSET   0x10000
@@ -154,7 +161,9 @@ void redraw(s16 trace_x, s16 trace_y, s16 trace_dx, s16 trace_dy)
 
   ga_reg_tracevectbase = (u16) (TRACE_TABLE_OFFSET / 4);
 
-  while (ga_reg_stampsize & 0x8000)
+  // Wait for the graphics operation to finish before handing Word RAM over:
+  // GRON reads 1 while it is running.
+  while (ga_reg_gfxstat & GA_GRON_MASK)
   {
     asm("nop");
   }

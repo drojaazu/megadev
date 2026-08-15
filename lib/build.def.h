@@ -64,4 +64,29 @@
  */
 #define FIELD_GET(field, reg) (((reg) &field##_MASK) >> field##_POS)
 
+/**
+ * @brief Address of the byte holding a field, for bit operations
+ *
+ * @details
+ * M68k bit instructions on memory are BYTE operations, so a field in the high
+ * half of a 16-bit register cannot be reached with the register's own address
+ * and a bit number of 8 or more -- the immediate is taken modulo 8 and would
+ * silently address the wrong bit. This picks the correct half.
+ *
+ * The 68000 is big-endian: bits 15..8 live at the register address, bits 7..0
+ * at the following byte.
+ *
+ *     btst #FIELD_BPOS(GA_DMNA), FIELD_BYTE(GA_REG_MEMMODE, GA_DMNA)
+ *
+ * @note Written as arithmetic rather than a conditional because GNU as has no
+ * ternary operator, and this must expand in assembly sources as well as C.
+ */
+#define FIELD_BYTE(reg, field) ((reg) + 1 - ((((field##_POS)) >> 3) & 1))
+
+/**
+ * @brief Bit number of a field within its own byte, for bit operations
+ * @sa FIELD_BYTE
+ */
+#define FIELD_BPOS(field) ((field##_POS) &7)
+
 /** @} */

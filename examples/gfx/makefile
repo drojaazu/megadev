@@ -80,7 +80,6 @@ clean:
 	@rm -rf $(PROJECT_ID).iso $(DISC_PATH)/*.mmd $(DISC_PATH)/*.smd $(BUILD_PATH)/ > /dev/null 2>&1
 
 $(DISC_PATH)/cyber.mmd: \
-	mmd_layout.s \
 	main/ipx_init.s \
 	cybercity.c \
 	cybercity.res.s

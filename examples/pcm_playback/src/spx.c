@@ -4,6 +4,13 @@
 #include <sub/gate_arr.h>
 #include <sub/memmap.h>
 #include <sub/pcm.h>
+#include <macro.h>
+
+/* Module layout */
+GLOBAL_SYM(MODULE_ROM_ORIGIN, 0x10000);
+GLOBAL_SYM(MODULE_ROM_LENGTH, 0xE000);
+GLOBAL_SYM(MODULE_RAM_ORIGIN, 0x1E000);
+GLOBAL_SYM(MODULE_RAM_LENGTH, 0x2000);
 
 // void PCM_PLAYBACK_C(u8 * pcm_data, u32 pcm_data_size);
 

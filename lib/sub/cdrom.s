@@ -336,7 +336,7 @@ load_data_begin:
   bge      load_data_begin
   bra      load_data_failure
 5:move.w   #0x7FF, d0        /*wait for Data Set Ready flag from CDC*/
-  btst     #GA_CDCMODE_DSR_POS-8, (GA_REG_CDCMODE).l
+  btst     #FIELD_BPOS(GA_CDCMODE_DSR), (FIELD_BYTE(GA_REG_CDCMODE, GA_CDCMODE_DSR)).l
   dbne     d0, 5b
   bne      6f
   subq.w   #1, read_retry_count  /*no response from CDC in time, retry*/
@@ -384,7 +384,7 @@ load_data_failure:
 load_data_maincpudest:
   move.w   #6, read_timeout
 1:bsr      accloop_reentry
-  btst     #7, GA_REG_CDCMODE  /*check EDT*/
+  btst     #FIELD_BPOS(GA_CDCMODE_EDT), FIELD_BYTE(GA_REG_CDCMODE, GA_CDCMODE_EDT)  /*check EDT*/
   bne      9b
   subq.w   #1, read_timeout
   bge      1b
@@ -448,7 +448,7 @@ load_data_dma_begin:
 6:move.w   #6, read_timeout  // next we want the signal from the CDC that 
   													 // everything is done
 7:bsr      accloop_reentry   // give it some time...
-  btst     #GA_CDCMODE_EDT_POS-8, GA_REG_CDCMODE  // check that the EDT bit is set
+  btst     #FIELD_BPOS(GA_CDCMODE_EDT), FIELD_BYTE(GA_REG_CDCMODE, GA_CDCMODE_EDT)  // check that the EDT bit is set
   beq      0f               // not set yet, retry
   move.b   (cdc_frame_check), d0  // CDC is done, let's prepare for next frame
   moveq    #1, d1                 // grab the error check value

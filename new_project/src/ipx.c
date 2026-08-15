@@ -7,6 +7,27 @@
 #include <main/mmd.h>
 #include <system.h>
 #include <types.h>
+#include <macro.h>
+#include <main/memmap.def.h>
+
+/*
+  Module layout.
+
+  The IPX is memory resident: it is loaded once and other modules import its
+  symbols. It therefore uses the RESIDENT_* layout names so its build metadata
+  cannot collide with that of the modules importing it.
+
+  ROM begins at the start of Work RAM, overwriting the security code/IP, and
+  RAM goes right after it. That gives a little over 61KB of ROM space and 512
+  bytes of RAM; the split is arbitrary. RESIDENT_DEST is where the code
+  actually executes, i.e. where it is copied to after the Sub places it in
+  Word RAM.
+*/
+GLOBAL_SYM(RESIDENT_ROM_ORIGIN, WORK_RAM);
+GLOBAL_SYM(RESIDENT_RAM_ORIGIN, 0xFFF500);
+GLOBAL_SYM(RESIDENT_ROM_LENGTH, RESIDENT_RAM_ORIGIN - RESIDENT_ROM_ORIGIN);
+GLOBAL_SYM(RESIDENT_RAM_LENGTH, 0x200);
+GLOBAL_SYM(RESIDENT_DEST, WORK_RAM);
 
 u8 next_module;
 

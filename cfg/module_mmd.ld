@@ -43,17 +43,6 @@ SECTIONS
 
   .rom MODULE_ROM_ORIGIN : AT ( ADDR(.header) + SIZEOF(.header) ) SUBALIGN(2)
   {
-    /* A resident module may publish a jump table at a FIXED offset so that
-       transient modules can call into it without linking against it. Both
-       blocks are reserved only if the module's layout declares a size, so a
-       module without an API costs nothing. See docs/modules.md. */
-    _JMPTBL_ORIGIN = .;
-    *(.jmptbl)
-    . = DEFINED(MODULE_JMPTBL_SIZE) ? (_JMPTBL_ORIGIN + MODULE_JMPTBL_SIZE) : .;
-    _SHARED_ORIGIN = .;
-    *(.shared)
-    . = DEFINED(MODULE_SHARED_SIZE) ? (_SHARED_ORIGIN + MODULE_SHARED_SIZE) : .;
-
     _INIT_ORIGIN = .;
     *(.init)
     . = ALIGN(4);

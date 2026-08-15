@@ -115,6 +115,19 @@ Additional rules, all mechanically checkable:
   This is **long-standing project policy**, documented in `docs/manual.md` §"Bitwise Definition
   Naming", not a rule invented here. The naming scheme is settled in §9 **D12**: `_POS`, `_WIDTH`
   and `_MASK`, with values stored unshifted and placed by `FIELD_PREP`.
+- **INV-12** — A `_POS` is **relative to the register it belongs to**, counting from that register's
+  LSB — never from the byte the field happens to occupy within a wider register.
+
+  Which register that is depends on the width the SDK models, settled in §9 **D17**: where the two
+  halves of a 16-bit hardware register hold unrelated concerns, each byte is its own register and
+  positions are 0–7. Registers that remain 16-bit (a single wide value, or fields spanning both
+  halves) use word-relative positions per §9 **D16**.
+
+  On a 16-bit register, a `_POS` of 8 or more cannot be handed to a bit opcode on a memory operand:
+  the m68k takes the immediate **modulo 8**, so `btst #8` silently tests bit 0 of the same byte. Use
+  `FIELD_BYTE(reg, field)` and `FIELD_BPOS(field)`. On a byte register no helper is needed, and Tier
+  1.5 asserts that `FIELD_BPOS` is the identity there and that every field satisfies
+  `POS + WIDTH <= 8`. *(See KB-34.)*
 - **INV-8** — Every header MUST be self-contained: including it, and nothing else, into an empty
   translation unit must compile cleanly. Enforced by Tier 0.1 (§6).
 - **INV-9** — A header MUST NOT define storage or a non-`static` function. Two translation units
@@ -334,6 +347,22 @@ baseline should only ever shrink — that is the ratchet.
 Result of the first run: **INV-1 holds everywhere on `master`** — every `.def.h` really is
 preprocessor-only. The 16 accepted violations are 11 include-guard names and 5 wrong `@file` tags.
 
+### Tier 1.5 — compile-time semantic assertions
+
+Tier 0.1 proves a macro *parses*; it says nothing about what the macro *evaluates to*, because a
+macro that is never expanded is never checked. Tier 1.5 expands them and asserts the results, in
+`tools/check/asserts/`.
+
+It runs in **both languages, deliberately**. `*.c` files use `_Static_assert`; `*.s` files use
+`.if`/`.error` and are assembled for real. The assembly half is not redundant: GNU as accepts a much
+smaller expression grammar than C, and a macro in a `.def.h` has to expand in both. The first cut of
+`FIELD_BYTE` used a ternary — legal C, rejected outright by GNU as — and a C-only Tier 1.5 passed it
+(KB-37). An assertion file that only ever exercises one of the two languages is checking half the
+contract.
+
+The assembly asserts also emit real instructions, not just `.if` expressions, so a macro that
+evaluates correctly but cannot be used as an operand still fails.
+
 ### Tier 2 — on-target tests (specified, not built)
 
 A `tests/` project built like any other Megadev project, run under a headless emulator
@@ -373,6 +402,31 @@ share (verified present 2026-08-13):
     bulletins.
   - `BIOS Revisions/` — dated Boot ROM dumps (JP 1.00C through 1.11 and later).
   - `Source Code/` — Batman Returns Sega CD project package.
+**The gate array registers are documented in *two* Sega manuals, and they disagree.** Besides *The
+Hardware*, the **Mega-CD Software Development Manual** (Ver 0.10, 1991-03-06 — seven months earlier)
+covers the same register block. Added here 2026-08-14; it had been overlooked. Read both when a
+register claim matters, and treat a disagreement as a live question rather than assuming the newer
+document wins.
+
+`Mega-CD Software Development.pdf` (43 pages) is the copy to use — like the Kodak *Hardware* scan it
+carries an **OCR text layer**. PDF page = printed page **+ 7** (printed 19 = PDF 26), the same offset.
+
+> **`Mega-CD Software Development Manual - Corrections Email - [1992-12-21] (Rex Sabio).pdf`** is a
+> one-page errata from Sega of America and is worth more than its size suggests. It records four
+> corrections found "while working with the Scaling Hardware":
+>
+> - **`RPT` in `$FF8058` is documented backwards in the Software Manual (printed p.19).** That manual
+>   gives `0` = repeat; the errata says the bit "works exactly opposite". ***The Hardware* p.35 gives
+>   `1` = repeat, and that is what megadev implements — verified at 600 dpi.** Recorded because the
+>   next reader to consult the Software Manual will otherwise "fix" a correct SDK into a broken one.
+> - Priority applies to **scaled pixel data** written to the image buffer — independent corroboration
+>   that priority governs graphics-operation output, not CPU writes (see `docs/rotation_scaling.md`
+>   §5). Sega's names there are Write Up / Write Down for what megadev calls `OVERWRITE`/`UNDERWRITE`,
+>   with matching semantics.
+> - `VCS0-4` in the image buffer V-cell size is the cell count **minus one** — matches megadev.
+> - Trace vector start positions have **3** fractional bits (1.0 = `8`) and deltas **11** (1.0 =
+>   `$0800`) — matches `lib/xform.h`.
+
 - `/mnt/library/Retro Games/By Hardware/Sega Mega Drive/`
   - `Development Documents/` — Genesis Software Manual, Genesis Technical Bulletins, reference sheets.
   - `Dev Resources and Source Code/` — Batman Returns, Cliffhanger, Ex-Mutants project packages,
@@ -395,6 +449,34 @@ of `docs/main_bios.md`.
 collect the numbered bulletins, including **#3** — the primary written evidence that the Main-side
 calls were sanctioned for game use, and the source of the Work RAM equates in `docs/main_bios.md`.
 
+> **A third, far better scan exists for eleven pages.**
+> `Development Documents/mcd_manual_sphere/` holds clean, high-contrast scans (SPHERE, INC.) of
+> *The Hardware* — `pg22`–`pg30`, `pg32`, `pg33` and `pg58`. **The filenames are not the printed page
+> numbers**: `pg29`=29 and `pg30`=30, but `pg31`=**32** and `pg32`=**33**. Printed page 31 (the CD
+> fader) is the one page in that range the set does not contain.
+>
+> Where a page exists here, read it instead of the fax — it is legible where the fax is destroyed,
+> and it settled the `$FF8036` field positions that were previously ASSUMED. It also carries a
+> previous reader's handwritten corrections (e.g. "unmeric" → "numeric" on page 30).
+
+> **A third scan exists and is the best general-purpose copy: `Mega-CD Hardware Manual.pdf`.**
+> Identified 2026-08-14; previously present in the share but not distinguished here from the fax
+> scans. 97 pages against the fax scans' 66 and 70, produced on a Kodak Capture Pro scanner from a
+> **Sega Ozisoft** copy (stamped `#161`, where the fax scans are `#66`), and — uniquely — it carries
+> an **OCR text layer**, so `pdftotext` works on it and the manual is searchable.
+>
+> PDF page = printed page **+ 7** in the rotation/scaling range (printed 45 = PDF 52).
+>
+> It is **not an independent document**: 118 pages still carry the `8137437483` fax header, so it is
+> largely the same transmission and the same content, and the SPEC warning below still applies. It is
+> a mixed copy — some pages (e.g. printed 45) are clean non-fax originals, most are not. Its value is
+> legibility plus searchability, not corroboration.
+>
+> **Checked and it does not help:** printed page 31 (`$FF8034`, the CD fader) is the fax page here
+> too, with the same destroyed bit table, so the `EFDT`/`DEF` positions remain unrecorded. The prose
+> *is* legible and confirms `FD00–10` at bits 4–14, `EFDT` as 1=Busy / 0=Ready, and the de-emphasis
+> table (00=OFF, 01=44.1 kHz, 10=32 kHz, 11=48 kHz). Do not re-check this scan for those positions.
+
 > **The two "translations" are two scans of the same fax, not independent translations.** Both the
 > *(Rex Sabio)* and *(The Code Monkeys)* copies of *The Hardware* carry the identical transmission
 > header (`8137437483 #24/48`), so comparing them verifies **legibility, not content** — a
@@ -404,10 +486,43 @@ calls were sanctioned for game use, and the source of the Work RAM equates in `d
 > Where a claim rests on wording that is ambiguous in the scan, record it as `ASSUMED` and say which
 > page it came from, rather than treating agreement between the two files as corroboration.
 
+#### Page map of *The Hardware*, Ver 1.0
+
+The scan's PDF page number is the printed page number plus a **constant that changes partway
+through**: **+4** up to and including printed page 39 (printed 21 = PDF 25, printed 39 = PDF 43) and **+3**
+from printed page 55 on (printed 55 = PDF 58, printed 59 = PDF 62). **The dropped page is printed 45**
+(located 2026-08-14): the Rex Sabio scan runs printed 40, 41, 42, 43, 44, then 46. Nothing is lost —
+printed 45 is a **blank page**, confirmed against the Kodak scan below, which retains it and prints
+"Blank Page" on it. Sections:
+
+| Printed | Contents |
+|---|---|
+| 12–18 | §1 Mapping: 2M / 1M modes, Sub CPU map, Main CPU map |
+| 19–21 | §2 Register table; **p.21 is the access-width and bit-operation table** |
+| 22–25 | §3-1 Sub CPU init: `$FF8000`, `$FF8002`, Word RAM switching in 1M and 2M |
+| **26–27** | §3-2 Sub CPU CDC: `$FF8004`, `$FF8006`, `$FF8008`, `$FF800A` |
+| 28–29 | §3-3 Sub CPU communication: `$FF800C`, `$FF800E`, `$FF8010`–`$FF802E` |
+| 30 | §3-4 timer `$FF8030`, §3-5 interrupt mask `$FF8032` |
+| 31–33 | §3-6 CDD: fader `$FF8034`, control `$FF8036`, comms `$FF8038`–`$FF804A` |
+| 34 | §3-7 colour operation: `$FF804C`, `$FF804E`, `$FF8050`–`$FF8056` |
+| 35–54 | §3-8 rotation / scaling: `$FF8058`–`$FF8066`, stamps, image buffer |
+| 55 | §3-9 sub-code: `$FF8068`, `$FF8100`–`$FF817E`, image at `$FF8180` |
+| 56–60 | §4 Main CPU registers: `$A12000`–`$A1202E` |
+| 61+ | Supplements; PCM sound source (RF5C164) appendix |
+
 | Claim | Provenance | Source / note |
 |---|---|---|
 | Gate Array register map, Sub side | DOC | Sega BIOS manual + community research |
 | Gate Array register map, Main side | DOC | as above |
+| Gate Array field **bit positions** | DOC | *Hardware Manual - The Hardware*, pp. 21, 57, 58 (PDF pages 25, 60, 61 in the Rex Sabio scan). Page 57 gives `$A12002`: `WP0-7` in the high byte, `BK0,1` at bits 6-7, `MODE`/`DMNA`/`RET` at bits 2/1/0. Page 58 gives `$A12004`: `DD0-2` at bits 8-10. Page 21 is the per-register access-width and bit-operation table. |
+| Register **names** | **origin, not corroboration** | Megadev's gate array register names were taken from Sega's own `INC/SUBCPU.INC` and `INCLUDE/CDMAP.I` (32X dev examples) when the project was written. An earlier note here called the match "convergence"; that was wrong — these files are the source of the naming, so agreement with them says nothing about whether the names are independently correct. |
+| `_stampsize` is a **byte** at `$FF8059` | **DOC** | `CD_V1A/SOURCE/INCLUDE/CDMAP.I` line 76: `_stampsize equ $ffff8059 * byte`, against `* word` for every other register in the block. Sega's own memory map splits this register exactly as §9 **D17a** does, placing the size configuration at the odd address as a byte and leaving `GRON` in the high byte. D17a was derived from field geometry before this file was consulted, so this is genuine corroboration of the split — unlike the naming above. |
+| Word bit positions `EDT` and `WP7` | **DOC** | `SUBCPU.INC`: `CDCMODE_EDT_MSK EQU $8000` and `MEMORYMODE_WP7_MSK EQU $8000`. Both confirm the fax transcription — EDT at word bit 15, and write protect occupying the **high** byte, which is the KB-34 correction. Whether megadev's original (wrong) positions also came from these files is unknown; the masks here are correct, so the error was introduced downstream of them. |
+| Byte-wise addressing of the split registers | **DOC** | `WORK/sega_dev_stuff/STRIKE/NUGAME/SP.S` is production Sega-era game code and addresses these registers as D17 models them: `BCLR.B #2,$FF8003` and `BSET.B #0,$FF8003` for memory mode, `BTST.B #7,$FF800E` / `BSET.B #7,$FF800F` for the two halves of the communication flags, `MOVE.B $FF8004` for CDC mode. Sega's `SUBCPU.INC` meanwhile defines *word* masks for the same registers. Both views were in period use, which supports D17 being a modelling choice rather than a claim about the hardware. |
+| `$FF8036` field positions | **DOC** | Confirmed 2026-08-14 against `mcd_manual_sphere/pg31.jpg` (printed page 32), which is legible where the fax is not: `DTS`=0, `DRS`=1, `HOCK`=2, `D/M`=8. Matches the values the SDK already carried, so those are promoted from ASSUMED. `DTS`/`DRS` accept only 0 on write, `HOCK` is fully writable, `D/M` is read only. |
+| Stamp map base address alignment | **DOC, against the manual's own figure** | *The Hardware* printed **page 36** labels the two `SMS`/`STS` cases with the **stamp sizes swapped** — it calls `SMS=1`/`STS=0` "32x32 dots" where `STS=0` is 16x16 by the same manual's definition on page 35. The address tables either side of that text are self-consistent, and `lib/sub/gate_arr.def.h`'s alignment table is derived from the map geometry, which agrees with them. **Do not "correct" the alignment table against page 36.** Recorded here because the warning previously lived in the Doxygen comment, which is not where provenance belongs (D15). |
+| `$FF8034` field positions | **DOC — resolved 2026-08-14** | Previously ASSUMED and believed unrecoverable: *The Hardware* p.31 is obscured in the fax and is the one page missing from the SPHERE set. **The Software Development Manual (printed p.16) carries the same register with a fully legible bit table**, which is why a second manual is worth reading. The full row, MSB first: `EFDT`, `FD10`…`FD00`, `DEF1`, `DEF0`, `SSF`, unused. So `EFDT` = 15, `FD00-10` = 4–14, `DEF1` = 3, `DEF0` = 2, **`SSF` = 1** — a spindle speed flag (0 normal, 1 double speed) that megadev did not have at all. `FD` at 4–14 agrees with *The Hardware*'s legend text, corroborating the row. Access: `EFDT` is read only, `FD`/`DEF`/`SSF` are write only, bit 0 is unused. Pinned by Tier 1.5 assertions, including that the four fields tile the register. |
+| CDD and CD fader are **BIOS-only** | DOC | *The Hardware* pp. 31–32 both carry "Direct access to this register using application software is prohibited." Use the Sub BIOS calls. |
 | Mega Drive ROM header checksum algorithm | DOC | Sum of 16-bit big-endian words from 0x200 to end of ROM, truncated to 16 bits. Hardware does not verify it; flashcarts and loaders read the ROM end field at 0x1A4. Implemented in `tools/romfix.py`. |
 | Sub CPU BIOS function codes | DOC | *Mega-CD BIOS Manual* (official) |
 | Main CPU Boot ROM system library | **Reverse-engineered** | No official English documentation exists at all. Corroborated by *Sega-CD Technical Bulletin #3*, which states plainly that "subroutine in the boot ROM may also be used" and refers to two files — `ROM_UTIL.DOC` and `MAINENT.I` — that are **still missing** (searched the library share 2026-08-13). Per-call detail in `docs/main_bios.md`. |
@@ -447,7 +562,16 @@ diagnostic, not by reading. Marked ✅ = present on `master`; ⚠️ = introduce
 | KB-10 | `lib/main/bios.h:108` | **Compile-verified**: `error: cast specifies array type` when expanded. The commented-out line 109 is the working version. | ✅ |
 | KB-11 | `lib/main/comm.h:51,74` + `comm.macros.s:41,53` | **Proven by `_Static_assert`**: `SCTRL_TX_FULL == 1` and `SCTRL_RX_READY == 2` — masks. Passed to `btst` they select bits 1 and 2 instead of bits 0 and 1, in both the C and assembly copies. Root cause: `io.def.h` has no `_BIT` companions (INV-6). | ✅ |
 | KB-12 | `lib/main/gate_arr.def.h` vs `lib/sub/gate_arr.def.h` | Same macro names, different values, non-matching include guards (INV-7) | ✅ |
-| KB-34 | `lib/sub/gate_arr.def.h` | **SUSPECTED — do not use until confirmed.** `GA_LED_R` is `(1 << 0)` and `GA_LED_G` is `(1 << 1)`, both documented `@sa ga_reg_reset`, the *word* accessor. But bit 0 of that register is **RES0, the peripheral reset**, and the Hardware Manual places the LEDs at bits 9 and 8. `*ga_reg_reset \| GA_LED_R` would therefore reset the peripheral rather than light the red LED. The values are only consistent if they were meant for **high-byte** access, in which case the `@sa` is wrong. Neither symbol is used anywhere in the tree, so nothing is broken today. Not corrected on the strength of a fax scan — needs the manual re-read or a hardware check. | ✅ |
+| KB-34 | `lib/sub/gate_arr.def.h`, `lib/main/gate_arr.def.h` | **Fixed 2026-08-13.** Three field groups gave positions relative to their *byte* rather than their register, so the mask derived from each named the wrong bits: `GA_LED_R`/`GA_LED_G` at 0/1 rather than 8/9 (bit 0 of that register is **RES0, the peripheral reset**, so `ga_reg_reset | GA_LED_R_MASK` would have reset the peripheral instead of lighting the LED); `GA_MEMMODE_WP` at 0, deriving `0x00FF` for a field that occupies `0xFF00`; and the Main-side `GA_CDC_DEST` at 0 rather than 8. Confirmed against the Hardware Manual pages 57 and 58 (§7). All three are now register-relative (§9 D16, INV-12), with `FIELD_BYTE`/`FIELD_BPOS` for the bit-opcode case and Tier 1.5 assertions pinning the positions. `GA_MEMMODE_BANK` was checked on the same page and was already correct. None of the three had a use site, so nothing downstream changed. | ✅ |
+| KB-35 | `lib/sub/gate_arr.def.h` | **Fixed 2026-08-13.** The `GA_CDCMODE_*` field block was wrong in three ways at once and carried its own `// these aren't right... // TODO clean these up`. `DSR`/`EDT` were byte-relative (6, 7) rather than word-relative (14, 15). `DD0` was position 5, which is neither. And `MAINREAD`/`SUBREAD`/`PCMDMA`/`PRAMDMA`/`WRAMDMA` were declared as `_POS`/`_WIDTH`/`_MASK` when the numbers 2, 3, 4, 5, 7 are **destination values**, duplicated verbatim from the `CDC_DEST_*` list below them — a value set masquerading as bit positions. Replaced with `GA_CDCMODE_{CA,DD,UBR,DSR,EDT}` at the positions the manual gives (p.26), `DD` as one 3-bit field with unshifted values per D12. | ✅ |
+| KB-36 | `lib/sub/cdrom.s:339,451` | **Fixed 2026-08-13.** `btst #GA_CDCMODE_DSR_POS-8` with `DSR_POS` of 6 assembles to `btst #-2`, and the `EDT` site to `btst #-1`. Both were **accidentally correct**: the 68000 uses only the low three bits of the immediate, so `-2` selects bit 6 and `-1` selects bit 7, which is what the byte-relative constants meant. Two errors cancelling. Rewritten with `FIELD_BYTE`/`FIELD_BPOS`; the emitted code was diffed before and after and is identical but for the two immediates, now `#6` and `#7`. | ✅ |
+| KB-37 | `lib/build.def.h` | **Fixed 2026-08-13.** `FIELD_BYTE` was first written with a ternary, which C accepts and **GNU as rejects outright** (`found '?', expected: ')'`) — in a macro whose whole purpose is bit opcodes in assembly. Tier 1.5 was C-only, so the gate passed it. Rewritten as `((reg) + 1 - ((POS >> 3) & 1))`, and Tier 1.5 now assembles `asserts/*.s` as well, so the assembly grammar is actually exercised. | ✅ |
+| KB-38 | `lib/main/gate_arr.h` | **Fixed 2026-08-14.** All eight `ga_reg_comstat0..7` accessors were typed `ga_reg`, i.e. writable, but comm status is **Read Only** from the Main CPU (manual p.60) — the Sub CPU writes it. Nothing in the tree wrote them, so this was latent; now typed `ga_reg_ro` and verified to reject an assignment. The mirrored case on the Sub side (`ga_reg_comcmd0..7`) was already correct. | ✅ |
+| KB-39 | `lib/main/gate_arr.h` | **Fixed 2026-08-14.** `ga_reg_stopwatch` and `ga_reg_cdchostdata` were typed `ga_reg`, i.e. writable, but both are **read only from the Main CPU** (manual pp. 58-59; the WR row of each is entirely `-`). For the stopwatch this is not a formality: only the Sub CPU can clear the timer, by writing its own `$FF800C`, so Main-side code that "resets" the stopwatch before timing something has been silently measuring from an arbitrary point. Same class as KB-38. | ✅ |
+| KB-40 | `examples/transforms/src/spx.c:157` | **Introduced and fixed 2026-08-14.** The D17 split made `ga_reg_stampsize` a byte register, and the example's wait loop polled `ga_reg_stampsize & 0x8000` for GRON. The expression stayed valid C and folded to 0 — GCC emits **no diagnostic at any warning level**, verified against `-Wall -Wextra -Wconversion` — so the loop stopped waiting entirely and the example read the image buffer while the hardware was still writing it. This was a regression created by the refactor, not a pre-existing defect. Fixed to `ga_reg_gfxstat & GA_GRON_MASK`, and Tier 1 now rejects any byte-wide accessor masked with a constant above 0xFF, scanning `examples/` and `new_project/` as well as `lib/`. | ✅ |
+| KB-41 | `lib/xform.h` | **WITHDRAWN 2026-08-14 — the "fix" was wrong; original behaviour restored.** I read the manual's bit table for the trace vector step (printed p.39), saw a separate `+/-` cell at bit 15, and concluded the format was sign-and-magnitude rather than two's complement. That was wrong, and megadev's original two's complement encoding was correct all along. **Disproved by tracing Sonic CD's special stage** (capture kept outside the repo, `megadev-testing/trace/sonic-cd-special-stage.log` — see D19): in a rotating ground plane `dx` and `dy` are components of one step vector, so their magnitudes must scale together and the direction must stay constant across rows. The capture shows `dx` falling +14.62 → +4.38 over rows 3–10. Read as two's complement, `dy` falls −15.97 → −4.29 — a constant ≈−47° direction scaled by distance. Read as sign-and-magnitude, `dy` would run −0.03 → −11.71, swinging the view through 69° in eight rows. Only two's complement is geometrically possible. **Lesson: a bit table drawn with a separate sign cell does not imply sign-and-magnitude**, and this would have silently broken every rotation in the pseudo-3D example while the maths looked correct. | ✅ |
+| KB-43 | `lib/sub/gate_arr.h` | **Fixed 2026-08-14.** `ga_reg_cdchostdata` was typed `ga_reg`, i.e. writable, on the **Sub** side. The Software Development Manual (printed p.13) gives `$FF8008` as `HD15`–`HD00` with the RD row all `0/1` and **the WR row entirely dashes** — the register has no writable bits. This is the same defect KB-39 fixed on the Main side; that fix did not carry across, so the Sub side kept a writable accessor for a read-only register. Now `ga_reg_ro`. Latent: nothing in the tree wrote it. Found by the DOC-25 sweep, and the reason the sweep exists — the defect is invisible from *The Hardware* alone if you only transcribe field positions and not the access rows. | ✅ |
+| KB-42 | `lib/sub/gate_arr.def.h` | **Fixed 2026-08-14.** `STAMP_ROTATE_90` and `STAMP_ROTATE_180` were swapped. The stamp map entry's rotation field is bits 14–13, named `RT1` and `RT0`, so the extracted field value is `RT1 × 2 + RT0` — but *The Hardware* p.42 indexes its orientation figure by `RT0 × 2 + RT1`, the reverse. The transcription of the bit positions was correct (verified at 600 dpi against the Kodak scan: `HFLP`, then `RT` spanning two columns labelled `1 , 0`, then two zero bits, then `SNO A`–`SNO 0`); only the four angle constants were derived wrongly from it. `RT0=0, RT1=1` is 90°, which extracts as `0b10`, not `0b01`. Confirmed two ways: the maintainer read the p.42 glyph as P turned counter-clockwise, and the `RT0=1, RT1=0` cell independently reads as P through 180°. 0° and 270° were unaffected — they are palindromic in the two bits, which is why the error could not show up at those values. **Latent: the constants had no use site anywhere in the tree**, so nothing rendered wrongly; the first user to rotate a stamp by 90° would have got 180°. The same page settled that rotation is applied *before* `HFLIP` (each cell of the combined row is the horizontal mirror of the rotate-only cell), now documented in `docs/rotation_scaling.md` §2.2. | ✅ |
 | KB-33 | `lib/memory.h` | **FIXED** 2026-08-13 — every `memset*`/`memcpy*` counted with a single `dbra`, which decrements only the low 16 bits. Lengths above 65536 elements silently truncated (a full 256 KB Word RAM copy is 262,144 bytes, well past it) and a length of 0 underflowed into ~65536 iterations, writing far outside the buffer. | ✅ |
 | KB-13 | `lib/str_util.s:19` vs `lib/str_util.h:26` | **FIXED** 2026-08-13 — C wrote no terminator while assembly wrote `0xFF`. The Boot ROM print routines require 0xFF and treat 0x00 as a newline, so the assembly was right. Both now share `STRING_TERMINATOR` from `lib/str_util.def.h`. | ✅ |
 | KB-14 | `megadev.make:30-48` | `MEGADEV_PATH` is not sanity-checked; unset yields `LIB_PATH=/lib` | ✅ |
@@ -605,6 +729,225 @@ removes the ambiguity that made this an open question.
 
 An earlier note here claimed the manual settled this. It does not; it settles only what the hardware
 is called, not how the SDK presents it.
+
+### D16 — Field positions are register-relative; byte access is derived *(Damian R, 2026-08-13)*
+`_POS` counts from the LSB of the whole register. A field in the high half of a 16-bit register has a
+`_POS` of 8 or more, and its `_MASK` follows from that (INV-12).
+
+Three definitions did the opposite, giving positions relative to the byte the field sits in:
+`GA_LED_R`/`GA_LED_G` at 0 and 1, `GA_MEMMODE_WP` at 0, and the Main-side `GA_CDC_DEST` at 0. Under
+D12 the mask is derived from the position, so each produced a mask naming the wrong bits —
+`GA_MEMMODE_WP_MASK` came out `0x00FF`, the exact complement of the byte it protects. The
+byte-relative reading was self-consistent only as long as nobody wrote the mask down.
+
+The alternative — keeping positions byte-relative and adding a `_BYTE` suffix to say which half — was
+rejected because it makes `_MASK` meaningless without knowing the suffix, and every `&` and `|`
+against the whole register then has to be audited by hand.
+
+The cost is that a `_POS` is no longer a legal bit-opcode operand on a memory byte. That is now
+explicit rather than assumed: `FIELD_BYTE(reg, field)` picks the half and `FIELD_BPOS(field)` reduces
+the position, both in `lib/build.def.h`. Renumbering *without* them would have been worse than the
+original bug — `bset #8` on the register address is taken modulo 8, so it would have kept assembling
+and quietly moved the fault from the mask to the opcode.
+
+`GA_MEMMODE_BANK` was checked against the same page and was already register-relative at bits 6–7.
+
+### D17 — Registers whose halves hold unrelated concerns are split into byte registers *(Damian R, 2026-08-14)*
+Where the two bytes of a 16-bit gate array register carry unrelated concerns, each byte becomes a
+named register in its own right, and `_POS` is relative to **that byte**. Registers that hold a
+single 16-bit value, or a field spanning both halves, stay 16-bit.
+
+This supersedes the uniform word-relative rule of **D16**, which stands only for the registers that
+remain 16-bit.
+
+**This is a modelling choice, not a hardware boundary.** The hardware register really is 16 bits
+wide and the two halves really are adjacent and word-addressable. What the split reflects is that the
+*fields* are byte-organised — no field in either header straddles bit 7/8, verified mechanically —
+and that the two halves carry unrelated concerns, so there is no operation that legitimately spans
+them. Modelling them as one word meant every access site converted back to a byte, which is all
+`FIELD_BYTE` / `FIELD_BPOS` ever did, and it made a word-wide write the path of least resistance for
+setting a field in one half — which silently clobbers the other. Under the split, `GA_LED_R_POS` is 0
+again, as it was before D16, but now because it is bit 0 of `GA_REG_LED` rather than by accident.
+
+Because it is a modelling choice, it is one an advanced user may deliberately step outside of. What
+governs a direct word access is the hardware's own access-width and bit-operation rules, transcribed
+in `docs/gate_array.md`; the official manual is the reference beyond that. Explaining this to users
+is **DOC-20**.
+
+The trap KB-34 turned on becomes structurally impossible rather than merely documented: bit 0 of the
+old `GA_REG_RESET` was `RES0`, the peripheral reset, while bit 0 of the LED byte is the red LED. One
+number, two unrelated bits. They are now fields of two different registers.
+
+Word-wide access to a split pair is still possible — the halves are adjacent and the high byte is
+even-aligned — but it is no longer the default spelling, so clearing the write protection while
+setting the memory mode has to be written on purpose.
+
+**Scope.** Split only where the halves differ. Word-only data registers (`$FF8008`, `$FF800A`,
+`$FF800C`, `$FF8034`, and the address/size registers) keep a single 16-bit name; they have no fields
+and permit no bit operations. `$FF8004` also stays 16-bit: `CA` is in the low byte and the CDC status
+flags in the high byte, but they are read and written as one CDC transaction.
+
+**Enforced by** Tier 1.5: every field of a byte register must satisfy `POS + WIDTH <= 8`, and
+`FIELD_BPOS` must be the identity on it.
+
+#### Renames (2.0.0 migration)
+
+No name keeps its old meaning at a new address without changing, except `GA_REG_MEMMODE`, which is
+called out below.
+
+| Was | Now | Note |
+|---|---|---|
+| `GA_REG_RESET` (word, `$FF8000`) | *removed* | split into the two below |
+| `GA_REG_RESET_HI` / `ga_reg_reset_hi` | `GA_REG_LED` / `ga_reg_led` | `$FF8000` |
+| `GA_REG_RESET_LO` / `ga_reg_reset_lo` | `GA_REG_SUBCTRL` / `ga_reg_subctrl` | `$FF8001` |
+| `GA_REG_MEMMODE_HI` / `ga_reg_memmode_hi` | `GA_REG_WP` / `ga_reg_wp` | `$FF8002`, read only from the Sub side |
+| **`GA_REG_MEMMODE`** (word, `$FF8002`) | **`GA_REG_MEMMODE`** (byte, `$FF8003`) | ⚠ **same name, new address and width** |
+| `GA_REG_MEMMODE_LO` / `ga_reg_memmode_lo` | `GA_REG_MEMMODE` / `ga_reg_memmode` | `$FF8003` |
+| `GA_LED_R_POS` 8, `GA_LED_G_POS` 9 | 0, 1 | now relative to `GA_REG_LED` |
+
+The Main side is split the same way, for symmetry (`$A12000`, `$A12002`, `$A12004`):
+
+| Was | Now | Note |
+|---|---|---|
+| `GA_REG_RESET` (word, `$A12000`) | *removed* | split into the two below |
+| `GA_REG_RESET_HI` / `ga_reg_reset_hi` | `GA_REG_INT2` / `ga_reg_int2` | `$A12000`, IEN2 and IFL2 |
+| `GA_REG_RESET_LO` / `ga_reg_reset_lo` | `GA_REG_SUBCPU` / `ga_reg_subcpu` | `$A12001`, SBRQ and SRES |
+| `GA_REG_MEMMODE_HI` / `ga_reg_memmode_hi` | `GA_REG_WP` / `ga_reg_wp` | `$A12002`, writable from this side |
+| **`GA_REG_MEMMODE`** (word, `$A12002`) | **`GA_REG_MEMMODE`** (byte, `$A12003`) | ⚠ same name, new address and width |
+| `GA_MEMMODE_WP_*` | `GA_WP_*`, `_POS` 8 → 0 | named for symmetry with the Sub side |
+| `GA_CDC_DEST_POS` 8 | 0 | `$A12004` is now a single read-only byte register |
+
+Two things the Main side made visible that the Sub side did not:
+
+- `GA_RAISE_INT2_POS` and `GA_SUB_RESET_POS` were **both 0**. As fields of one 16-bit register that
+  was a straight collision; they are IFL2 in the high byte and SRES in the low byte, and nothing in
+  the source said so. They are now fields of two different registers and the collision is gone.
+- `$A12004` has **no low byte at all** — every field is in the high byte and the Main CPU may only
+  read it (manual p.58, the WR row is entirely `-`). It becomes one read-only byte register rather
+  than a split pair, and gains `GA_CDC_EDT` and `GA_CDC_DSR`, which the Main side never defined.
+
+The split changed **no emitted code** on the Main side: every rewritten access resolves to the same
+address at the same width, verified by diffing all 44 built ELF and BIN artifacts before and after.
+
+`GA_REG_MEMMODE` is the one carried-over name, because the low byte *is* the memory mode and the
+write protect was the passenger. Out-of-tree code that used it as a word will now address one byte
+further along. There is no diagnostic for this in assembly, so it is called out here and pinned by a
+Tier 1.5 assertion on its address; in C the accessor changed from `u16` to `u8` and most uses will
+warn or fail.
+
+New fields that had no definitions before: `GA_PERIPH_RESET` (`RES0`), `GA_PRIORITY` (`PM0-1`, with
+values), and `GA_WP`.
+
+### D17a — A register with one unused byte becomes a byte register; the unused byte stays undefined *(Damian R, 2026-08-14)*
+D17 covers registers whose two halves hold *unrelated* concerns. It says nothing about registers
+where one half holds *nothing*. Three such registers exist: the Main side's `$A12004` (all fields in
+the high byte) and the Sub side's `$FF8030` and `$FF8032` (all fields in the low byte).
+
+The extension: **such a register is modelled as a byte register at the address of the byte that is
+actually used.** So `$A12004` keeps its address, while `GA_REG_INT3TIMER` becomes `0xFF8031` and
+`GA_REG_INTMASK` becomes `0xFF8033`.
+
+**Why.** Without it, `move.b #n, GA_REG_INT3TIMER` writes the unused high byte and silently does
+nothing — the exact class of bug D17 exists to remove, and the one the commented-out line in
+`examples/gfx/src/sp.s:89` was working around by hand with `ga_reg_intmask+1`. With the extension,
+the natural byte spelling is correct by construction.
+
+**The alternative, rejected:** keep them 16-bit with positions 0–7. That is defensible — nothing is
+*wrong* about it, and it avoids moving an address. It was rejected because it leaves byte access to
+these registers a trap, and byte access is the only sensible way to use them.
+
+**The unused byte gets no definition of its own.** The three orphaned bytes — `$FF8030`, `$FF8032`
+and `$A12005` — are deliberately left undefined rather than given an `_UNUSED` symbol.
+
+The case for defining them is a researcher who wants to poke an "unused" byte on real hardware to
+confirm it really is inert. That case is real but rare, and someone doing it is equipped to write the
+address literally. The case against is that what such a researcher actually needs is *knowledge* —
+that the byte reads 0 and ignores writes — and a `#define` conveys an address while saying nothing
+about behaviour. So the fact is recorded where it is useful, in each register's documentation, and
+no symbol is created to invite casual use.
+
+Discoverability is handled separately and already works: each register's `@defgroup` title carries
+the **hardware** address (`Register 24 (0xFF8030) - Timer (INT3)`), so someone reading the manual and
+grepping for `0xFF8030` still lands on the right register even though the definition is at
+`0xFF8031`.
+
+Addresses are pinned by Tier 1.5 assertions.
+
+### D18 — CDD communication registers are named for their direction *(Damian R, 2026-08-14)*
+`GA_REG_CDDCOMM0-9` becomes `GA_REG_CDDSTAT0-4` and `GA_REG_CDDCMD0-4`. The ten registers are not
+one homogeneous block: the manual (p.33) shows `$FF8038`–`$FF8040` carrying Receiving Status 0–9 and
+`$FF8042`–`$FF804A` carrying Transmission Command 0–9. A single `CDDCOMM` name hid that the halves
+run in opposite directions.
+
+The pair matches `GA_REG_COMSTAT` / `GA_REG_COMCMD`, used for Main↔Sub communication, and keeps the
+same convention on both: **the command is what the controlling CPU sends, the status is what comes
+back.** For Main↔Sub the controller is the Main CPU; for the CDD it is the Sub CPU.
+
+Register *numbering* is unchanged — the doc groups stay `ga_reg_sub_28` through `ga_reg_sub_37`,
+since D15 keys those to the address rather than to the name.
+
+### D19 — Investigation tooling is not part of the kit *(Damian R, 2026-08-14)*
+Megadev is a development kit. The repository ships what a **user of the kit** needs; tools we write
+to test a hypothesis or settle a hardware question do not qualify, however useful they were.
+
+The dividing line is the audience, not the language or location:
+
+- **Tracked** — `tools/check/` (the verification gate, run by CI and by `make check`) and
+  `tools/romfix.py` (invoked by the build). A user's build depends on these.
+- **Not tracked** — anything whose only role was answering a question for us. The MAME gate array
+  tracer (`gatrace.lua`) is the founding case: it settled HW-10, and once that question was closed
+  it had no remaining purpose for a kit user.
+
+Such tools live in `megadev-testing/` alongside the repo, not inside it. Captures and other
+evidence go with them. Where SPEC or BACKLOG cites that evidence, it is cited by its
+`megadev-testing/` path with a note that it is outside the repo — the finding stays in the record
+even though the apparatus does not.
+
+Applied retroactively on 2026-08-14: `tools/trace/` was removed from history rather than deleted at
+the tip, because its Sonic CD capture was 4 MB and would otherwise sit in every future clone. Four
+commits existed only to add or amend it and were dropped.
+
+### D20 — The module jump table is removed; resident APIs use `ld -R` *(Damian R, 2026-08-15)*
+A resident module used to be able to publish a jump table at a fixed offset, reserved by a
+`.jmptbl` / `.shared` block in each of the four module linker scripts, so that transient modules
+could call into it without linking against it.
+
+This was superseded by importing the resident module's symbols directly with `ld -R`, which needs
+no fixed offsets and no hand-maintained table. The remaining obstacle — that the importing module
+would see the resident module's `MODULE_ROM_ORIGIN` and friends collide with its own — is solved by
+naming a resident module's layout symbols `RESIDENT_*` (`cfg/module_resident_*.ld`,
+`megadev.make:198`). That is the documented and implemented mechanism (`docs/modules.md`).
+
+The linker script blocks survived the change and were dead: nothing emitted `.jmptbl` or `.shared`,
+no layout defined `MODULE_JMPTBL_SIZE` / `RESIDENT_JMPTBL_SIZE` / `*_SHARED_SIZE`, so both
+`DEFINED()` guards always took the no-op branch. They are now removed from all four scripts. The
+comment describing them was worse than the code, since it pointed at `docs/modules.md`, which
+documents the replacement instead.
+
+### D21 — A module's layout is declared in C, not a separate asm file *(Damian R, 2026-08-15)*
+Each module used to need a `*_layout.s` file whose only job was to call the `GLOBAL` macro a few
+times, because it was believed C could not define an absolute global symbol. It can: file-scope
+basic `asm(".global X\n.equ X, value")`, wrapped as `GLOBAL_SYM` in `lib/macro.h`.
+
+The symbol produced is identical — absolute, global, no storage in `.rodata`, `.data`, `.bss` or
+anywhere else — so the linker cannot distinguish the two forms. Both spellings remain valid; the
+asm `GLOBAL` macro is unchanged for projects written in assembly.
+
+Placement follows the layout's scope: a layout belonging to one module goes at the top of that
+module's C file, and a layout shared by several modules gets its own source file that each links
+against (`new_project/src/shared_mmd_layout.c`, shared by ex1/ex2/ex3).
+
+All eight `*_layout.s` files across the examples and the template were converted. Three of them
+(`mode7`, `transforms`, and the template's copy included by `ip.s`) turned out to be dead: an `ip.s`
+including a layout never used its symbols, since the `_BSS_*` symbols it does use come from
+`cfg/ip.ld`. Those includes were removed too.
+
+**Verification.** Every program binary — `ip.bin`, `sp.bin`, `boot.bin`, and every `.mmd` / `.smd` —
+is byte-identical before and after, across all seven examples plus the template, including the
+template's resident-module case with `ld -R` imports. Note that the `.iso` is **not** a valid
+comparison target: ISO9660 volume and directory records embed a creation timestamp, so two builds
+of identical sources differ in 19 bytes at 0x80B3, 0x8339-0x836E and 0xB817-0xB886. Compare the
+constituent artifacts instead.
 
 ### OD-1 — How to resolve the Main/Sub Gate Array namespace collision *(open)*
 INV-7 is violated (KB-12). Options: prefix by CPU side (`GA_MAIN_*` / `GA_SUB_*`); rely solely on

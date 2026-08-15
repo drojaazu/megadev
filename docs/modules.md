@@ -26,7 +26,19 @@ For example, if we want our module to run on the Main CPU from Word RAM in 2Mbit
 
 (Note that we use GLOBAL, which is a Megadev macro that sets the symbol to global; this is in macro.s, so you will need to include that file. We also use WORD_RAM which is present in the main/memmap.def.h file, which should also be included if you wish to use such named memory locations. You can, of course, opt to not include these files and manually define the memory location and the global attribute.)
 
-(As another side note, there doesn't seem to be a way to manually define a symbol (i.e. a named memory address) in C. You will need to specify this in asm using .equ/.global. A good idea is to have a single asm definitions file and include it in your MMD def.)
+The same layout can be declared from C with the `GLOBAL_SYM` macro in `macro.h`:
+
+    #include <macro.h>
+    #include <main/memmap.def.h>
+
+    GLOBAL_SYM(MODULE_ROM_ORIGIN, WORD_RAM);
+    GLOBAL_SYM(MODULE_ROM_LENGTH, 0x180000);
+    GLOBAL_SYM(MODULE_RAM_ORIGIN, 0x380000);
+    GLOBAL_SYM(MODULE_RAM_LENGTH, 0x80000);
+
+These produce exactly the same absolute, global symbols as the asm version and occupy no space in any section, so a module needs no separate assembly file just to describe its layout. The values are evaluated by the assembler rather than the C compiler, so each must be an integer literal, another symbol defined this way, or arithmetic over those; `sizeof`, enum constants and casts will not work.
+
+Where a layout belongs to a single module, declaring it at the top of that module's C file keeps the two together. Where several modules share an identical layout, put the declarations in their own source file and link each module against it, as the `new_project` template does with `shared_mmd_layout.c`.
 
 In terms of object sections, .text and .rodata sections will be placed in ROM; .data and .bss will be placed in RAM. There is also a .init section which is guaranteed to be at the beginning of the ROM space. It's recommended only one routine be placed in .init and used as an entry point at a known address.
 

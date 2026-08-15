@@ -95,34 +95,32 @@ clean:
 	@rm -rf $(PROJECT_ID).iso $(DISC_PATH)/*.mmd $(DISC_PATH)/*.smd $(BUILD_PATH)/ > /dev/null 2>&1
 
 $(DISC_PATH)/ipx.mmd: \
-	ipx_layout.s \
 	main/ipx_init.s \
 	ipx.c \
 	io.macro.s
 
 $(DISC_PATH)/ex1.mmd: \
-	shared_mmd_layout.s \
+	shared_mmd_layout.c \
 	std_init.s \
 	ex1.c \
 	ex1_res.s \
 	$(DISC_PATH)/ipx.mmd
 
 $(DISC_PATH)/ex2.mmd: \
-	shared_mmd_layout.s \
+	shared_mmd_layout.c \
 	std_init.s \
 	ex2.c \
 	ex2_res.s \
 	$(DISC_PATH)/ipx.mmd
 
 $(DISC_PATH)/ex3.mmd: \
-	shared_mmd_layout.s \
+	shared_mmd_layout.c \
 	std_init.s \
 	ex3.c \
 	ex3_res.s \
 	$(DISC_PATH)/ipx.mmd
 
 $(DISC_PATH)/spx.smd: \
-	spx_layout.s \
 	std_init.s \
 	spx.c \
 	$(BUILD_PATH)/sp.bin

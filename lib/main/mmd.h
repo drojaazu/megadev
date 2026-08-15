@@ -35,8 +35,8 @@ static inline void const * init_mmd()
   move.l   %[scratch_d0], %c[mlevel6]+2 \n\
 3:btst     #6, (%[wrdram]) \n\
   beq      4f \n\
-6:bset     #%c[ga_dmna], %c[ga_memmode]+1 \n\
-  btst     #%c[ga_dmna], %c[ga_memmode]+1 \n\
+6:bset     #%c[ga_dmna], %c[ga_memmode] \n\
+  btst     #%c[ga_dmna], %c[ga_memmode] \n\
   beq      6b \n\
 4: movea.l 8(%[wrdram]), %[mmd_entry] \n\
 	"

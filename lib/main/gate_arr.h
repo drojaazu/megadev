@@ -12,6 +12,14 @@
 typedef u16 volatile * ga_reg;
 
 /**
+ * @typedef ga_reg_ro
+ * @brief A register this CPU may read but not write
+ * @details Note that `ga_reg const` does NOT mean this: it is a const pointer
+ * to a mutable register, which enforces nothing at the point of use.
+ */
+typedef u16 volatile const * ga_reg_ro;
+
+/**
  * @typedef ga_reg8
  * @brief Pointer to one byte of a gate array register
  * @details Registers are 16 bit, but several are routinely accessed a byte at
@@ -20,25 +28,33 @@ typedef u16 volatile * ga_reg;
 typedef u8 volatile * ga_reg8;
 
 /**
- * @sa GA_REG_COMFLAGS
+ * @typedef ga_reg8_ro
+ * @brief A byte register this CPU may read but not write
  */
-#define ga_reg_comflags_main (*((volatile u8 *) GA_REG_COMFLAGS))
-#define ga_reg_comflags_sub (*((volatile const u8 *) GA_REG_COMFLAGS + 1))
+typedef u8 volatile const * ga_reg8_ro;
+
 /**
- * @copydoc GA_REG_RESET
+ * @sa GA_REG_COMFLAGS_MAIN, GA_REG_COMFLAGS_SUB
+ */
+#define ga_reg_comflags_main (*((ga_reg8) GA_REG_COMFLAGS_MAIN))
+#define ga_reg_comflags_sub (*((ga_reg8_ro) GA_REG_COMFLAGS_SUB))
+/**
+ * @copydoc GA_REG_INT2
  *
  */
-#define ga_reg_reset (*((ga_reg) GA_REG_RESET))
+#define ga_reg_int2 (*((ga_reg8) GA_REG_INT2))
+#define ga_reg_subcpu (*((ga_reg8) GA_REG_SUBCPU))
 /**
- * @copydoc GA_REG_MEMMODE
+ * @copydoc GA_REG_WP
  *
  */
-#define ga_reg_memmode (*((ga_reg) GA_REG_MEMMODE))
+#define ga_reg_wp (*((ga_reg8) GA_REG_WP))
+#define ga_reg_memmode (*((ga_reg8) GA_REG_MEMMODE))
 /**
  * @copydoc GA_REG_CDCMODE
  *
  */
-#define ga_reg_cdcmode (*((ga_reg) GA_REG_CDCMODE))
+#define ga_reg_cdcmode (*((ga_reg8_ro) GA_REG_CDCMODE))
 /**
  * @copydoc GA_REG_HBLANKVECT
  *
@@ -48,17 +64,13 @@ typedef u8 volatile * ga_reg8;
  * @copydoc GA_REG_CDCHOSTDATA
  *
  */
-#define ga_reg_cdchostdata (*((ga_reg) GA_REG_CDCHOSTDATA))
+#define ga_reg_cdchostdata (*((ga_reg_ro) GA_REG_CDCHOSTDATA))
 /**
  * @copydoc GA_REG_STOPWATCH
  *
  */
-#define ga_reg_stopwatch (*((ga_reg) GA_REG_STOPWATCH))
-/**
- * @copydoc GA_REG_COMFLAGS
- *
- */
-#define ga_reg_comflags (*((ga_reg) GA_REG_COMFLAGS))
+#define ga_reg_stopwatch (*((ga_reg_ro) GA_REG_STOPWATCH))
+
 /**
  * @copydoc GA_REG_COMCMD0
  *
@@ -103,42 +115,42 @@ typedef u8 volatile * ga_reg8;
  * @copydoc GA_REG_COMSTAT0
  *
  */
-#define ga_reg_comstat0 (*((ga_reg) GA_REG_COMSTAT0))
+#define ga_reg_comstat0 (*((ga_reg_ro) GA_REG_COMSTAT0))
 /**
  * @copydoc GA_REG_COMSTAT1
  *
  */
-#define ga_reg_comstat1 (*((ga_reg) GA_REG_COMSTAT1))
+#define ga_reg_comstat1 (*((ga_reg_ro) GA_REG_COMSTAT1))
 /**
  * @copydoc GA_REG_COMSTAT2
  *
  */
-#define ga_reg_comstat2 (*((ga_reg) GA_REG_COMSTAT2))
+#define ga_reg_comstat2 (*((ga_reg_ro) GA_REG_COMSTAT2))
 /**
  * @copydoc GA_REG_COMSTAT3
  *
  */
-#define ga_reg_comstat3 (*((ga_reg) GA_REG_COMSTAT3))
+#define ga_reg_comstat3 (*((ga_reg_ro) GA_REG_COMSTAT3))
 /**
  * @copydoc GA_REG_COMSTAT4
  *
  */
-#define ga_reg_comstat4 (*((ga_reg) GA_REG_COMSTAT4))
+#define ga_reg_comstat4 (*((ga_reg_ro) GA_REG_COMSTAT4))
 /**
  * @copydoc GA_REG_COMSTAT5
  *
  */
-#define ga_reg_comstat5 (*((ga_reg) GA_REG_COMSTAT5))
+#define ga_reg_comstat5 (*((ga_reg_ro) GA_REG_COMSTAT5))
 /**
  * @copydoc GA_REG_COMSTAT6
  *
  */
-#define ga_reg_comstat6 (*((ga_reg) GA_REG_COMSTAT6))
+#define ga_reg_comstat6 (*((ga_reg_ro) GA_REG_COMSTAT6))
 /**
  * @copydoc GA_REG_COMSTAT7
  *
  */
-#define ga_reg_comstat7 (*((ga_reg) GA_REG_COMSTAT7))
+#define ga_reg_comstat7 (*((ga_reg_ro) GA_REG_COMSTAT7))
 /**
  * @fn wait_2m
  * Wait for Main CPU access to 2M Word RAM
@@ -152,7 +164,7 @@ static inline void wait_2m()
 		"
     :
     : [ga_ret_bit] "i"(GA_RETURN_2M_POS),
-      [ga_reg_memmmode] "i"GA_REG_MEMMODE_LO);
+      [ga_reg_memmmode] "i"(GA_REG_MEMMODE));
 }
 
 /**
@@ -169,7 +181,7 @@ static inline void grant_2m()
 		"
     :
     :
-    [ga_dmna_bit] "i"(GA_DMNA_POS), [ga_reg_memmmode] "i"GA_REG_MEMMODE_LO);
+    [ga_dmna_bit] "i"(GA_DMNA_POS), [ga_reg_memmmode] "i"(GA_REG_MEMMODE));
 }
 
 /**
@@ -210,33 +222,13 @@ static inline void reset_ga()
   move.b   #0x0, %c[reset] \n\
 		"
     :
-    : [memmode] "i"(GA_REG_MEMMODE), [reset] "i"GA_REG_RESET_LO
+    : [memmode] "i"(GA_REG_WP), [reset] "i"(GA_REG_SUBCPU)
     :);
 }
 
 
 
-/**
- * @def ga_reg_reset_hi
- * @brief High byte of @ref ga_reg_reset
- * @sa GA_REG_RESET_HI
- */
-#define ga_reg_reset_hi (*((ga_reg8) GA_REG_RESET_HI))
-/**
- * @def ga_reg_reset_lo
- * @brief Low byte of @ref ga_reg_reset
- * @sa GA_REG_RESET_LO
- */
-#define ga_reg_reset_lo (*((ga_reg8) GA_REG_RESET_LO))
-/**
- * @def ga_reg_memmode_hi
- * @brief High byte of @ref ga_reg_memmode
- * @sa GA_REG_MEMMODE_HI
- */
-#define ga_reg_memmode_hi (*((ga_reg8) GA_REG_MEMMODE_HI))
-/**
- * @def ga_reg_memmode_lo
- * @brief Low byte of @ref ga_reg_memmode
- * @sa GA_REG_MEMMODE_LO
- */
-#define ga_reg_memmode_lo (*((ga_reg8) GA_REG_MEMMODE_LO))
+/* The _hi/_lo accessors for 0xA12000 and 0xA12002 are gone: those registers are
+ * now named byte registers in their own right (D17). ga_reg_reset_hi is
+ * ga_reg_int2, ga_reg_reset_lo is ga_reg_subcpu, ga_reg_memmode_hi is
+ * ga_reg_wp, and ga_reg_memmode_lo is ga_reg_memmode. */

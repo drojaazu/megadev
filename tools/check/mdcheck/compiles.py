@@ -138,15 +138,21 @@ def asserts() -> int:
     tc.require()
     rep = Reporter("Assertions")
 
-    sources = sorted(ASSERTS_DIR.glob("*.c"))
+    sources = sorted(ASSERTS_DIR.glob("*.c")) + sorted(ASSERTS_DIR.glob("*.s"))
     if not sources:
         rep.skip("no assertion sources found")
         return rep.summarise()
 
     for src in sources:
-        res = tc.run(
-            [tc.CC, *tc.C_FLAGS, "-DTARGET=MEGACD", "-fsyntax-only", "-x", "c", str(src)]
-        )
+        if src.suffix == ".c":
+            cmd = [*tc.C_FLAGS, "-fsyntax-only", "-x", "c", str(src)]
+        else:
+            # Assembly has to be assembled for real -- there is no -fsyntax-only
+            # equivalent, and .if/.error is only evaluated by the assembler.
+            # GNU as accepts a far smaller expression grammar than C, so a macro
+            # that passes the C asserts can still be unusable here.
+            cmd = [*tc.ASM_FLAGS, "-c", str(src), "-o", "/dev/null"]
+        res = tc.run([tc.CC, "-DTARGET=MEGACD", *cmd])
         item = f"asserts/{src.name}"
         if res.returncode != 0:
             rep.fail(item, res.stderr)
