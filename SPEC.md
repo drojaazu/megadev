@@ -64,7 +64,7 @@ Technical Bulletin #3*, and from shipped game source.
 |---|---|
 | Z80 assembly toolchain integration | Deferred. `megadev.make:20` declares `Z80_AS:=sjasmplus` but it is never used. `docs/manual.md:272` calls it "on the roadmap". |
 | clang / LLVM as an alternative compiler | Deferred, speculative (`docs/manual.md:276`). |
-| Mode 1 (Mega CD hardware driven from a cartridge) | **Intended, not yet implemented.** Settled as a target 2026-08-15 (§9 D23). The removed example survives only on the local branch `feature/md_cart` as `examples/cart_mode1/`; emulator support is unverified. |
+| Mode 1 (Mega CD hardware driven from a cartridge) | **Intended, not yet implemented.** Settled as a target 2026-08-15 (§9 D23). No usable prior art exists — the old `cart_mode1` example is a skeleton. Work starts from the current `cart` example; emulator support is unverified. |
 | Main-CPU-side CD-ROM read path | Not supported; `docs/cdrom.md` states it "is not well understood". |
 | C++ | **Declined**, not deferred. `docs/manual.md:274`: C++ is not felt to bring anything that would support embedded development better than native C. Users may retool the makefile themselves; this is unsupported. |
 | A C standard library | Never. Builds are `-nostdlib -fno-builtin`. See `docs/dev_in_c.md`. |
@@ -1022,25 +1022,31 @@ branches suggested repeated unfinished attempts.
 Sub Gate Array views in one translation unit. Mode 1 is that case, so the namespace collision (KB-12,
 INV-7) must now be resolved rather than deferred, and it affects the 2.0.0 API.
 
-**Prior art, and it is fragile.** The removed example survives only as
-`examples/cart_mode1/` on the local branch `feature/md_cart` — a makefile, `init.s`, `main.c`,
-`res.s`, `example_rom.cart.def` and resources. That branch is dated 2024-01-29, has 21 commits not
-present in `develop`, exists on no remote, and is written against the pre-`megadev.make` build
-system (it still carries `makefile.global`). It is the only surviving Mode 1 example and must not be
-deleted. Mega Drive cartridge support was originally built *as a prerequisite for Mode 1*, not as a
-feature in its own right, which is why that work is entangled with the `cart` branches.
+**There is no salvageable prior art.** `examples/cart_mode1/` on the local branch `feature/md_cart`
+(2024-01-29) is a skeleton, not an implementation. Measured 2026-08-15: its entire difference from
+the plain `cart` example on the same branch is 11 lines of makefile, a renamed `.cart.def`, and
+`#define HW_TARGET MEGACD_MODE1` in `project.h`. Its 353-line `main.c` is the rain particle demo and
+contains no reference to the Sub CPU, the gate array, `COMCMD`, or any `0xA12xxxx` address. This
+corroborates the reason `48167ff` gave for removing it — "no real progress".
 
-Plain Mega Drive ROM output, by contrast, is complete in `develop`: `cfg/md_cart.ld`,
-`lib/md_header.s`, `lib/md_init.s`, `lib/md_vectors.s`, and the `cart` example, which builds an 8042
-byte ROM and passes the gate.
+**Future Mode 1 work starts from the current `cart` example, not from that branch.** The `cart`
+example is built against `megadev.make`, passes the gate, and produces an 8042 byte ROM;
+`cart_mode1` is written against the retired `makefile.global`. The only thing the old branch
+establishes is that `HW_TARGET MEGACD_MODE1` was the intended switch, and `develop` already carries
+`MEGACD_MODE1` handling in `lib/build.def.h` and `lib/main/memmap.def.h`.
+
+Mega Drive ROM output itself is done in `develop`: `cfg/md_cart.ld`, `lib/md_header.s`,
+`lib/md_init.s`, `lib/md_vectors.s`, plus the `cart` example. Note that this was originally built as
+a *prerequisite* for Mode 1 rather than as a feature in its own right, which is why the old work is
+entangled with the `cart` branches.
 
 **What remains open** is implementation, not intent:
 - Emulator support is unverified. Mode 1 may not be emulated at all; ares and BlastEm are the
   candidates worth testing first on accuracy grounds. If none support it, verification is
   hardware-only, which raises the cost of every iteration.
 - The OD-1 namespace resolution now becomes a prerequisite rather than a parallel question.
-- The surviving example needs porting from `makefile.global` to `megadev.make` before it can even be
-  built and observed.
+- The Sub CPU bring-up sequence from the cartridge side is entirely unwritten. Nothing in any branch
+  attempts it.
 
 ### D13 — Include guards use `#pragma once` *(Damian R, 2026-08-13)*
 All 56 headers converted; no `#ifndef` guards remain. Adoption had already begun by hand.
