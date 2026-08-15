@@ -64,7 +64,7 @@ Technical Bulletin #3*, and from shipped game source.
 |---|---|
 | Z80 assembly toolchain integration | Deferred. `megadev.make:20` declares `Z80_AS:=sjasmplus` but it is never used. `docs/manual.md:272` calls it "on the roadmap". |
 | clang / LLVM as an alternative compiler | Deferred, speculative (`docs/manual.md:276`). |
-| Mode 1 (Mega CD hardware driven from a cartridge) | **Undefined.** Commit `48167ff` removed the Mode 1 example as having "no real progress". See §9 OD-2. |
+| Mode 1 (Mega CD hardware driven from a cartridge) | **Intended, not yet implemented.** Settled as a target 2026-08-15 (§9 D23). The removed example survives only on the local branch `feature/md_cart` as `examples/cart_mode1/`; emulator support is unverified. |
 | Main-CPU-side CD-ROM read path | Not supported; `docs/cdrom.md` states it "is not well understood". |
 | C++ | **Declined**, not deferred. `docs/manual.md:274`: C++ is not felt to bring anything that would support embedded development better than native C. Users may retool the makefile themselves; this is unsupported. |
 | A C standard library | Never. Builds are `-nostdlib -fno-builtin`. See `docs/dev_in_c.md`. |
@@ -1010,10 +1010,37 @@ from one source with a base-address parameter. **The fact that would settle it:*
 project needs both views in one translation unit — Mode 1 (OD-2) is the case that would force it.
 Not settled unilaterally; affects the 2.0.0 API.
 
-### OD-2 — Is Mode 1 a supported target? *(open)*
-Currently undefined. `48167ff` removed the example. Four parallel abandoned branches
-(`md_cart`, `md_cart_dev`, `feature_carts`, `origin/md_cart`) suggest repeated unfinished attempts.
-This decision gates OD-1.
+### OD-2 — Is Mode 1 a supported target? *(resolved 2026-08-15 → D23)*
+Resolved: yes. See D23.
+
+### D23 — Mode 1 is a supported target *(Damian R, 2026-08-15)*
+Mega CD hardware driven from a cartridge is a target the kit intends to support. This was previously
+undefined; `48167ff` had removed the Mode 1 example for "no real progress", and four parallel
+branches suggested repeated unfinished attempts.
+
+**This unblocks OD-1.** That decision was waiting on whether any real project needs both the Main and
+Sub Gate Array views in one translation unit. Mode 1 is that case, so the namespace collision (KB-12,
+INV-7) must now be resolved rather than deferred, and it affects the 2.0.0 API.
+
+**Prior art, and it is fragile.** The removed example survives only as
+`examples/cart_mode1/` on the local branch `feature/md_cart` — a makefile, `init.s`, `main.c`,
+`res.s`, `example_rom.cart.def` and resources. That branch is dated 2024-01-29, has 21 commits not
+present in `develop`, exists on no remote, and is written against the pre-`megadev.make` build
+system (it still carries `makefile.global`). It is the only surviving Mode 1 example and must not be
+deleted. Mega Drive cartridge support was originally built *as a prerequisite for Mode 1*, not as a
+feature in its own right, which is why that work is entangled with the `cart` branches.
+
+Plain Mega Drive ROM output, by contrast, is complete in `develop`: `cfg/md_cart.ld`,
+`lib/md_header.s`, `lib/md_init.s`, `lib/md_vectors.s`, and the `cart` example, which builds an 8042
+byte ROM and passes the gate.
+
+**What remains open** is implementation, not intent:
+- Emulator support is unverified. Mode 1 may not be emulated at all; ares and BlastEm are the
+  candidates worth testing first on accuracy grounds. If none support it, verification is
+  hardware-only, which raises the cost of every iteration.
+- The OD-1 namespace resolution now becomes a prerequisite rather than a parallel question.
+- The surviving example needs porting from `makefile.global` to `megadev.make` before it can even be
+  built and observed.
 
 ### D13 — Include guards use `#pragma once` *(Damian R, 2026-08-13)*
 All 56 headers converted; no `#ifndef` guards remain. Adoption had already begun by hand.
