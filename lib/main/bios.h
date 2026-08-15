@@ -532,9 +532,7 @@ static inline void bios_read_joypad()
 {
   asm volatile(
     "\
-  move.l a6, -(sp) \n\
   jsr %c0 \n\
-  move.l (sp)+, a6 \n\
     "
     :
     : "i"(BIOS_READ_JOYPAD)
@@ -564,7 +562,7 @@ static inline u8 bios_detect_controller(u8 * io_data_port)
   register u8  D6 asm("d6");
   asm volatile(
     "\
-  jsr %c0 \n\
+  jsr %c1 \n\
     "
     : "=d"(D6)
     : "i"(BIOS_DETECT_CONTROLLER), "a"(A6)
@@ -587,9 +585,7 @@ static inline void bios_clear_vram()
 {
   asm volatile(
     "\
-  move.l a6, -(sp) \n\
   jsr %c0 \n\
-  move.l (sp)+, a6 \n\
     "
     :
     : "i"(BIOS_CLEAR_VRAM)
@@ -607,9 +603,7 @@ static inline void bios_clear_tables()
 {
   asm volatile(
     "\
-  move.l a6, -(sp) \n\
   jsr %c0 \n\
-  move.l (sp)+, a6 \n\
     "
     :
     : "i"(BIOS_CLEAR_TABLES)
@@ -760,9 +754,7 @@ static inline void bios_dma_fill_clear(u32 vdp_addr, u16 length)
   register u16 D1 asm("d1") = length;
   asm volatile(
     "\
-  move.l a6, -(sp) \n\
   jsr %c0 \n\
-  move.l (sp)+, a6 \n\
     "
     :
     : "i"(BIOS_DMA_FILL_CLEAR), "d"(D0), "d"(D1)
@@ -782,9 +774,7 @@ static inline void bios_dma_fill(u32 vdp_addr, u16 length, u16 value)
   register u16 D2 asm("d2") = value;
   asm volatile(
     "\
-  move.l a6, -(sp) \n\
   jsr %c0 \n\
-  move.l (sp)+, a6 \n\
     "
     :
     : "i"(BIOS_DMA_FILL), "d"(D0), "d"(D1), "d"(D2)
@@ -1096,7 +1086,7 @@ static inline void bios_clear_comm()
     "
     :
     : "i"(BIOS_CLEAR_COMM)
-    : "d0", "a6");
+    : "d0");
 }
 
 /**
@@ -1146,9 +1136,7 @@ bios_plane_fill(vdp_cmd pos, u16 width, u16 height, u16 value)
 
   asm volatile(
     "\
-    	move.l a6, -(sp) \n\
     	jsr %p1 \n\
-    	move.l (sp)+, a6 \n\
   	"
     : "+d"(D2)
     : "i"(BIOS_PLANE_FILL), "d"(D0), "d"(D1), "d"(D2), "d"(D3)
@@ -1171,9 +1159,7 @@ static inline void bios_dma_xfer(vdp_cmd dest, u8 const * source, u16 length)
 
   asm volatile(
     "\
-  		move.l a6, -(sp) \n\
   		jsr %c0 \n\
-  		move.l (sp)+, a6 \n\
     "
     :
     : "i"(BIOS_DMA_XFER), "d"(D0), "d"(D1), "d"(D2)
@@ -1201,9 +1187,7 @@ static inline void bios_dma_xfer_word_ram(
 
   asm volatile(
     "\
-  move.l a6, -(sp) \n\
   jsr %c0 \n\
-  move.l (sp)+, a6 \n\
     "
     :
     : "i"(BIOS_DMA_XFER_WORD_RAM), "d"(D0), "d"(D1), "d"(D2)
@@ -1226,9 +1210,7 @@ static inline void bios_dma_copy(u32 vdpptr_dest, u16 source, u16 length)
 
   asm volatile(
     "\
-  move.l a6, -(sp) \n\
   jsr %c0 \n\
-  move.l (sp)+, a6 \n\
     "
     :
     : "i"(BIOS_DMA_COPY), "d"(D0), "d"(D1), "d"(D2)
@@ -1269,9 +1251,7 @@ static inline void bios_clear_ram(void * address, u32 long_count)
 
   asm volatile(
     "\
-			move.l a6, -(sp) \n\
 			jsr %c0 \n\
-			move.l (sp)+, a6 \n\
     "
     :
     : "i"(BIOS_CLEAR_RAM), "d"(D7), "a"(A0));
@@ -1490,9 +1470,7 @@ static inline void bios_dma_queue(DmaTransfer const * queue)
 
   asm volatile(
     "\
-  move.l a6, -(sp) \n\
   jsr %p1 \n\
-  move.l (sp)+, a6 \n\
     "
     : "=a"(a1_change)
     : "i"(BIOS_DMA_QUEUE), "a"(a1_queue)
