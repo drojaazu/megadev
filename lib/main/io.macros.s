@@ -11,9 +11,9 @@
 #include "main/io.def.h"
 
 /**
- * @macro INIT_JOYPADS
+ * @fn INIT_JOYPADS
  * @brief Sets up Player 1 and 2 terminals for standard reads
- * @desc Sets TH pin to write mode for Control port for each normally used terminal. Note that this does not
+ * @details Sets TH pin to write mode for Control port for each normally used terminal. Note that this does not
  *       do any work on the third terminal on old MD models, normally used for serial comm.
  * @clobber a0
  */
@@ -24,10 +24,10 @@
 .endm
 
 /**
- * @macro READ_INPUT_JOYPAD
+ * @fn READ_INPUT_JOYPAD
  * @brief Reads controller input from a 3 button joypad
- * @in A0 the Data Port for the desired controller terminal
- * @out D0 byte with the state for each input, in the form: SACBRLDU
+ * @param[in] A0 the Data Port for the desired controller terminal
+ * @param[out] D0 byte with the state for each input, in the form: SACBRLDU
  * @clobber D1
  */
 .macro READ_INPUT_JOYPAD
