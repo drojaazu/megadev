@@ -48,6 +48,14 @@ ifndef BUILD_PATH
 	$(error BUILD_PATH not set! Please set this variable in your makefile.)
 endif
 
+ifndef MEGADEV_PATH
+	$(error MEGADEV_PATH not set! It must point at the Megadev directory, e.g. /opt/megadev.)
+endif
+
+ifeq ($(wildcard $(MEGADEV_PATH)/lib/build.def.h),)
+	$(error MEGADEV_PATH ($(MEGADEV_PATH)) does not contain the Megadev library.)
+endif
+
 REGION?=US
 VIDEO?=NTSC
 VRAM_SIZE?=VRAM_64K
