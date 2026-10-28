@@ -29,9 +29,20 @@ CHECK_FLAGS := -m68000 -imacros build.def.h -Ilib -Wa,-Ilib \
 	-DPROJECT_ID=check -DREGION=US -DVIDEO=NTSC \
 	-fno-builtin -Wall -Wextra -Wno-main -Wa,--register-prefix-optional
 
-.PHONY: check check-projects check-headers clean $(PROJECTS)
+ASM_SOURCES := $(shell find lib -name '*.s' | sort)
 
-check: check-projects check-headers
+# Assembly files that by contract cannot assemble on their own. Each entry
+# needs a reason. This list may only shrink.
+#   lib/cd_boot.s    .incbin of the project's built ip.bin and sp.bin
+#   lib/md_header.s  needs the project's fixed-length header strings; any
+#                    default would hide a string that overruns its field.
+#                    Exercised by the cart example build in loop 1.
+ASM_STANDALONE_EXCLUDE := lib/cd_boot.s lib/md_header.s
+ASM_STANDALONE := $(filter-out $(ASM_STANDALONE_EXCLUDE),$(ASM_SOURCES))
+
+.PHONY: check check-projects check-headers check-asm clean $(PROJECTS)
+
+check: check-projects check-headers check-asm
 	@printf '\ncheck: all passed\n'
 
 # ---------------------------------------------------------------------------
@@ -63,6 +74,22 @@ check-headers:
 	done; \
 	n=$$(echo $(HEADERS) | wc -w); \
 	[ $$fail = 0 ] && printf '== headers: %s compile alone (%s)\n' "$$n" "$(TARGETS)" || exit 1
+
+# ---------------------------------------------------------------------------
+# Loop 3: every library assembly file assembles on its own. Catches files no
+# project uses; three such files sat broken on master for years.
+# ---------------------------------------------------------------------------
+check-asm:
+	@mkdir -p $(CHECK_DIR)
+	@fail=0; \
+	for s in $(ASM_STANDALONE); do \
+	  if ! $(CC) $(CHECK_FLAGS) -DTARGET=MEGACD -Wa,--bitwise-or \
+	       -x assembler-with-cpp -c "$$s" -o $(CHECK_DIR)/asm.o 2> $(CHECK_DIR)/asm.err; then \
+	    printf 'FAIL asm %s\n' "$$s"; cat $(CHECK_DIR)/asm.err; fail=1; \
+	  fi; \
+	done; \
+	n=$$(echo $(ASM_STANDALONE) | wc -w); x=$$(echo $(ASM_STANDALONE_EXCLUDE) | wc -w); \
+	[ $$fail = 0 ] && printf '== asm: %s assemble alone, %s excluded by contract\n' "$$n" "$$x" || exit 1
 
 clean:
 	@for p in $(PROJECTS); do $(MAKE) -s -C "$$p" clean >/dev/null; done
