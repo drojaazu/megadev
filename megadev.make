@@ -124,14 +124,18 @@ LD_FLAGS+= \
 # lib/runtime, and the arithmetic helpers from libgcc. Built into an archive
 # per project so that only the members a link references are pulled in.
 LIBGCC:=$(shell $(CC) -print-libgcc-file-name)
-RUNTIME_SRC:=$(wildcard $(LIB_PATH)/runtime/*.s)
-RUNTIME_OBJ:=$(patsubst $(LIB_PATH)/runtime/%.s,$(BUILD_PATH)/runtime/%.s.o,$(RUNTIME_SRC))
+RUNTIME_SRC:=$(wildcard $(LIB_PATH)/runtime/*.s $(LIB_PATH)/runtime/*.c)
+RUNTIME_OBJ:=$(patsubst $(LIB_PATH)/runtime/%,$(BUILD_PATH)/runtime/%.o,$(RUNTIME_SRC))
 RUNTIME_LIB:=$(BUILD_PATH)/libmegadev.a
 LD_LIBS:=$(RUNTIME_LIB) $(LIBGCC)
 
 $(BUILD_PATH)/runtime/%.s.o: $(LIB_PATH)/runtime/%.s
 	@mkdir -p $(dir $@)
 	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $< -o $@
+
+$(BUILD_PATH)/runtime/%.c.o: $(LIB_PATH)/runtime/%.c
+	@mkdir -p $(dir $@)
+	@$(CC) $(CC_FLAGS) $(INC) -c $< -o $@
 
 $(RUNTIME_LIB): $(RUNTIME_OBJ)
 	@$(AR) rcs $@ $^

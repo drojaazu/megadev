@@ -40,7 +40,7 @@ ASM_SOURCES := $(shell find lib -name '*.s' | sort)
 ASM_STANDALONE_EXCLUDE := lib/cd_boot.s lib/md_header.s
 ASM_STANDALONE := $(filter-out $(ASM_STANDALONE_EXCLUDE),$(ASM_SOURCES))
 
-RUNTIME_SRC := $(wildcard lib/runtime/*.s)
+RUNTIME_SRC := $(wildcard lib/runtime/*.s lib/runtime/*.c)
 LIBGCC := $(shell $(CC) -print-libgcc-file-name)
 
 .PHONY: check check-projects check-headers check-asm check-link clean $(PROJECTS)
@@ -113,8 +113,12 @@ check-link:
 	  > $(CHECK_DIR)/link.c
 	@$(CC) $(CHECK_FLAGS) -DTARGET=MEGADRIVE -O2 -c $(CHECK_DIR)/link.c -o $(CHECK_DIR)/link.o
 	@for s in $(RUNTIME_SRC); do \
-	  $(CC) $(CHECK_FLAGS) -DTARGET=MEGADRIVE -Wa,--bitwise-or -x assembler-with-cpp \
-	    -c "$$s" -o $(CHECK_DIR)/runtime/$$(basename $$s).o || exit 1; \
+	  case "$$s" in \
+	    *.s) $(CC) $(CHECK_FLAGS) -DTARGET=MEGADRIVE -Wa,--bitwise-or -x assembler-with-cpp \
+	           -c "$$s" -o $(CHECK_DIR)/runtime/$$(basename $$s).o || exit 1 ;; \
+	    *.c) $(CC) $(CHECK_FLAGS) -DTARGET=MEGACD \
+	           -c "$$s" -o $(CHECK_DIR)/runtime/$$(basename $$s).o || exit 1 ;; \
+	  esac; \
 	done
 	@$(M68K_PREFIX)ar rcs $(CHECK_DIR)/libmegadev.a $(CHECK_DIR)/runtime/*.o
 	@$(M68K_PREFIX)ld -nostdlib -z noexecstack -T cfg/md_cart.ld $(CHECK_DIR)/link.o \
