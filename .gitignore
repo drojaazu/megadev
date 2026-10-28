@@ -1,3 +1,20 @@
+# editor / workspace
 .vscode/
-work/
 *.code-workspace
+work/
+
+# generated Doxygen output
+docs/html/
+
+# verification gate scratch
+build-check/
+
+# python bytecode
+__pycache__/
+*.pyc
+
+# example build output (also covered by per-example .gitignore files)
+examples/*/build/
+examples/*/disc/
+examples/*/*.iso
+examples/*/*.cart
