@@ -363,6 +363,22 @@ There are many hardware registers that make use of bit-level settings. Such sett
 
 For example, the gate array has a Main side register `memmmode` with a DMNA flag. This flag can be referenced by index with `GA_BIT_DMNA` or as a mask with `GA_MASK_DMNA`.
 
+# Working on Megadev Itself
+
+Everything above is for projects that use Megadev. This section is for changes to Megadev.
+
+The `Makefile` at the root of the repository is maintainer tooling. It is not part of the kit: projects include `megadev.make` and never read it, so its targets cannot collide with a project's own. Anything in `megadev.make`, by contrast, is user-facing.
+
+## `make check`
+
+Run `make check` from the repository root before merging any branch. It must pass. It takes a few seconds and needs only the toolchain described under Build Environment; `M68K_PREFIX` must be set as for any build. It proves three things:
+
+1. **Every project builds.** Each example and `new_project` is built from clean through its own makefile, the same way a user project is built. The repository root is passed as `MEGADEV_PATH`, so no installation is required.
+2. **Every library header compiles alone.** Each `lib/**/*.h` is included into an otherwise empty translation unit and compiled with `-Wall -Wextra -Werror`, once per hardware target. A header that only works when something else was included first fails here.
+3. **Every library assembly file assembles alone.** Each `lib/**/*.s` is assembled by itself. This catches files no project uses, which is how assembly that could not assemble at all once sat in the library unnoticed. Files that cannot assemble standalone by design, such as `cd_boot.s` which incbins a project's built binaries, are listed in the `Makefile` with a reason. That list may only shrink.
+
+`make clean` removes everything the gate produced.
+
 # Further Reading
 
 There are a number of additional documents in the `docs` subdirectory. We recommend at least skimming through all of these before starting development.
