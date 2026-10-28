@@ -515,10 +515,8 @@
  * @def BIOS_READ_JOYPAD
  * @ingroup bios_input
  *
- * @param[out] [@ref BIOS_JOY1_HIT]
- * @param[out] [@ref BIOS_JOY1_HOLD]
- * @param[out] [@ref BIOS_JOY2_HIT]
- * @param[out] [@ref BIOS_JOY2_HOLD]
+ * @par Writes
+ * @ref BIOS_JOY1_HIT, @ref BIOS_JOY1_HOLD, @ref BIOS_JOY2_HIT, @ref BIOS_JOY2_HOLD
  * @clobber d6-d7/a5-a6
  * @sa BIOS_READ_JOYPAD
  */
