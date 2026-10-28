@@ -176,7 +176,10 @@ vpath %.elf $(BUILD_PATH)
 vpath %.c.o $(BUILD_PATH)
 vpath %.s.o $(BUILD_PATH)
 
-.SECONDARY: $(BUILD_PATH)/*
+# Keep every intermediate file, and remove a target whose recipe failed so a
+# partial output is never taken as up to date on the next run.
+.SECONDARY:
+.DELETE_ON_ERROR:
 
 .DEFAULT_GOAL:=all
 
