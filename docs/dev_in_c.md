@@ -12,6 +12,10 @@ There is also the Main BIOS and Sub BIOS which provide a number of hardware util
 
 Development for a "bare metal" embedded system like the Mega Drive/Mega CD requires a paradigm shift away from PC development. Here, there is no console so there is no printf. There is no OS kernel managing memory, so there is no malloc/free. Anything you want to happen, you will need to write yourself.
 
+### Functions the compiler calls on its own
+
+A few standard functions are always available, because GCC emits calls to them whether or not you write them, and regardless of `-nostdlib` and `-fno-builtin`. Copying or zero-initializing a large struct or array becomes a call to `memcpy` or `memset`, and 32-bit multiplication, division and modulo become calls to helper routines in libgcc, since the 68000 only multiplies 16-bit and divides 32-by-16 in hardware. Megadev provides `memcpy`, `memmove`, `memset` and `memcmp` with their standard signatures in `lib/runtime`, and links them together with libgcc into every image. Only the routines an image actually references are included, so an image that uses none of them pays nothing.
+
 It is theoretically possible to use newlib, a reimplementation of much of the C standard library for embedded systems. However, we feel this is overkill for something like the relatively simple Mega Drive/CD system and thus have not done any integration testing with it. You are free to attempt this yourself, of course, and we welcome a report of your experience with it.
 
 ## Global Variable Initialization

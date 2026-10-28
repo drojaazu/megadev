@@ -40,9 +40,12 @@ ASM_SOURCES := $(shell find lib -name '*.s' | sort)
 ASM_STANDALONE_EXCLUDE := lib/cd_boot.s lib/md_header.s
 ASM_STANDALONE := $(filter-out $(ASM_STANDALONE_EXCLUDE),$(ASM_SOURCES))
 
-.PHONY: check check-projects check-headers check-asm clean $(PROJECTS)
+RUNTIME_SRC := $(wildcard lib/runtime/*.s)
+LIBGCC := $(shell $(CC) -print-libgcc-file-name)
 
-check: check-projects check-headers check-asm
+.PHONY: check check-projects check-headers check-asm check-link clean $(PROJECTS)
+
+check: check-projects check-headers check-asm check-link
 	@printf '\ncheck: all passed\n'
 
 # ---------------------------------------------------------------------------
@@ -90,6 +93,36 @@ check-asm:
 	done; \
 	n=$$(echo $(ASM_STANDALONE) | wc -w); x=$$(echo $(ASM_STANDALONE_EXCLUDE) | wc -w); \
 	[ $$fail = 0 ] && printf '== asm: %s assemble alone, %s excluded by contract\n' "$$n" "$$x" || exit 1
+
+# ---------------------------------------------------------------------------
+# Loop 4: every call the compiler emits on its own resolves at link time.
+# A translation unit that forces large struct copies and 32-bit arithmetic
+# is linked against lib/runtime and libgcc; no symbol may remain undefined.
+# ---------------------------------------------------------------------------
+check-link:
+	@rm -rf $(CHECK_DIR)/runtime && mkdir -p $(CHECK_DIR)/runtime
+	@printf '%s\n' \
+	  'typedef struct { char b[400]; } big;' \
+	  'big g; unsigned long u; long s;' \
+	  'void copy(big * d, big const * s) { *d = *s; }' \
+	  'void zero(big * d) { *d = (big){0}; }' \
+	  'int same(big const * a, big const * b) { return __builtin_memcmp(a, b, sizeof *a); }' \
+	  'void shift(big * d) { __builtin_memmove(d->b + 1, d->b, sizeof d->b - 1); }' \
+	  'void math(void) { u = u * u; u = u / 7; u = u % 7; s = s * s; s = s / 7; s = s % 7; }' \
+	  'int main(void) { return 0; }' \
+	  > $(CHECK_DIR)/link.c
+	@$(CC) $(CHECK_FLAGS) -DTARGET=MEGADRIVE -O2 -c $(CHECK_DIR)/link.c -o $(CHECK_DIR)/link.o
+	@for s in $(RUNTIME_SRC); do \
+	  $(CC) $(CHECK_FLAGS) -DTARGET=MEGADRIVE -Wa,--bitwise-or -x assembler-with-cpp \
+	    -c "$$s" -o $(CHECK_DIR)/runtime/$$(basename $$s).o || exit 1; \
+	done
+	@$(M68K_PREFIX)ar rcs $(CHECK_DIR)/libmegadev.a $(CHECK_DIR)/runtime/*.o
+	@$(M68K_PREFIX)ld -nostdlib -z noexecstack -T cfg/md_cart.ld $(CHECK_DIR)/link.o \
+	  $(CHECK_DIR)/libmegadev.a $(LIBGCC) -o $(CHECK_DIR)/link.elf
+	@if $(M68K_PREFIX)nm -u $(CHECK_DIR)/link.elf | grep .; then \
+	  printf 'FAIL link: undefined symbols above\n'; exit 1; fi
+	@printf '== link: compiler-emitted calls resolve (%s)\n' \
+	  "$$($(M68K_PREFIX)nm -u $(CHECK_DIR)/link.o | awk '{print $$2}' | tr '\n' ' ')"
 
 clean:
 	@for p in $(PROJECTS); do $(MAKE) -s -C "$$p" clean >/dev/null; done
