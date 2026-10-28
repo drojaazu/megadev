@@ -9,6 +9,7 @@
 #
 # Targets:
 #   make check   Verification gate. Must pass before a branch merges.
+#   make docs    Generate the reference documentation into docs/html.
 #   make clean   Remove the build output the gate produced.
 
 MEGADEV_PATH := $(CURDIR)
@@ -47,7 +48,7 @@ LIBGCC := $(shell $(CC) -print-libgcc-file-name)
 INCR_PROJECT := examples/gfx
 INCR_HEADER  := lib/main/vdp.h
 
-.PHONY: check check-projects check-headers check-asm check-link check-odr check-incremental clean $(PROJECTS)
+.PHONY: check check-projects check-headers check-asm check-link check-odr check-incremental docs clean $(PROJECTS)
 
 check: check-projects check-headers check-asm check-link check-odr check-incremental
 	@printf '\ncheck: all passed\n'
@@ -172,6 +173,11 @@ check-incremental:
 	@$(MAKE) -q -C $(INCR_PROJECT) >/dev/null 2>&1 || { printf 'FAIL incremental: second make is not a no-op\n'; exit 1; }
 	@printf '== incremental: %s rebuilds %s and settles\n' '$(INCR_HEADER)' '$(INCR_PROJECT)'
 
+docs:
+	@rm -rf docs/html
+	@doxygen Doxyfile > /dev/null 2> $(CHECK_DIR).doxygen.log || { cat $(CHECK_DIR).doxygen.log; exit 1; }
+	@printf '== docs: docs/html generated, %s warnings in %s\n' "$$(wc -l < $(CHECK_DIR).doxygen.log)" '$(CHECK_DIR).doxygen.log'
+
 clean:
 	@for p in $(PROJECTS); do $(MAKE) -s -C "$$p" clean >/dev/null; done
-	@rm -rf $(CHECK_DIR)
+	@rm -rf $(CHECK_DIR) $(CHECK_DIR).doxygen.log docs/html
