@@ -15,6 +15,7 @@ OBJCPY:=$(M68K_PREFIX)objcopy
 NM:=$(M68K_PREFIX)nm
 LD:=$(M68K_PREFIX)ld
 AS:=$(M68K_PREFIX)as
+AR:=$(M68K_PREFIX)ar
 
 # (Z80 building not yet supported)
 Z80_AS:=sjasmplus
@@ -119,6 +120,22 @@ AS_FLAGS+= \
 LD_FLAGS+= \
 	-nostdlib -z noexecstack
 
+# Runtime support the compiler expects to find: memcpy and friends from
+# lib/runtime, and the arithmetic helpers from libgcc. Built into an archive
+# per project so that only the members a link references are pulled in.
+LIBGCC:=$(shell $(CC) -print-libgcc-file-name)
+RUNTIME_SRC:=$(wildcard $(LIB_PATH)/runtime/*.s)
+RUNTIME_OBJ:=$(patsubst $(LIB_PATH)/runtime/%.s,$(BUILD_PATH)/runtime/%.s.o,$(RUNTIME_SRC))
+RUNTIME_LIB:=$(BUILD_PATH)/libmegadev.a
+LD_LIBS:=$(RUNTIME_LIB) $(LIBGCC)
+
+$(BUILD_PATH)/runtime/%.s.o: $(LIB_PATH)/runtime/%.s
+	@mkdir -p $(dir $@)
+	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $< -o $@
+
+$(RUNTIME_LIB): $(RUNTIME_OBJ)
+	@$(AR) rcs $@ $^
+
 define msg_info
 	@printf "${BOLD}- ${CYAN}$(1)${CLEAR}\n"
 endef
@@ -174,7 +191,8 @@ $(BUILD_PATH)/%.s.o: %.s
 	@$(if $(BUILD_SRC), $(MAKE) -s $(BUILD_SRC))
 	$(call msg_info,Linking module $(notdir $@))
 	$(eval OUT_MOD_ELF:=$(addprefix $(BUILD_PATH)/,$(addsuffix .elf,$(notdir $@))))
-	@$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_mmd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(addsuffix .elf,$(addprefix $(BUILD_PATH)/,$(notdir $(symref))))) -o $(OUT_MOD_ELF)
+	@$(MAKE) -s $(RUNTIME_LIB)
+	@$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_mmd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(addsuffix .elf,$(addprefix $(BUILD_PATH)/,$(notdir $(symref))))) $(LD_LIBS) -o $(OUT_MOD_ELF)
 	@$(NM) -n $(OUT_MOD_ELF) > $(addsuffix .sym,$(OUT_MOD_ELF))
 	@$(OBJCPY) -O binary $(OUT_MOD_ELF) $@
 
@@ -189,7 +207,8 @@ $(BUILD_PATH)/%.s.o: %.s
 	@$(if $(BUILD_SRC), $(MAKE) -s $(BUILD_SRC))
 	$(call msg_info,Linking module $(notdir $@))
 	$(eval OUT_MOD_ELF:=$(addprefix $(BUILD_PATH)/,$(addsuffix .elf,$(notdir $@))))
-	@$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_smd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(addsuffix .elf,$(addprefix $(BUILD_PATH)/,$(notdir $(symref))))) -o $(OUT_MOD_ELF)
+	@$(MAKE) -s $(RUNTIME_LIB)
+	@$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_smd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(addsuffix .elf,$(addprefix $(BUILD_PATH)/,$(notdir $(symref))))) $(LD_LIBS) -o $(OUT_MOD_ELF)
 	@$(NM) -n $(OUT_MOD_ELF) > $(addsuffix .sym,$(OUT_MOD_ELF))
 	@$(OBJCPY) -O binary $(OUT_MOD_ELF) $@
 
@@ -202,7 +221,8 @@ $(BUILD_PATH)/%.s.o: %.s
 	@$(if $(BUILD_SRC), $(MAKE) -s $(BUILD_SRC))
 	$(call msg_info,Linking cart ROM $(notdir $@))
 	$(eval OUT_CART_ELF:=$(addprefix $(BUILD_PATH)/,$(addsuffix .elf,$(notdir $@))))
-	@$(LD) $(LD_FLAGS) -T $(CFG_PATH)/md_cart.ld $(BUILD_SRC) -o $(OUT_CART_ELF)
+	@$(MAKE) -s $(RUNTIME_LIB)
+	@$(LD) $(LD_FLAGS) -T $(CFG_PATH)/md_cart.ld $(BUILD_SRC) $(LD_LIBS) -o $(OUT_CART_ELF)
 	@$(NM) -n $(OUT_CART_ELF) > $(addprefix $(BUILD_PATH)/,$(addsuffix .sym,$(notdir $@)))
 	@$(OBJCPY) -O binary $(OUT_CART_ELF) $@
 
@@ -214,15 +234,15 @@ $(BUILD_PATH)/security.s.o: $(MEGADEV_PATH)/lib/security.c
 	$(call msg_info,Creating security block)
 	@$(CC) $(CC_FLAGS) $(INC) -c $< -o $@
 
-$(BUILD_PATH)/ip.bin.elf: $(BUILD_PATH)/security.s.o $(BUILD_PATH)/ip.s.o
-	@$(LD) $(LD_FLAGS) -T$(CFG_PATH)/ip.ld -o$@ $^
+$(BUILD_PATH)/ip.bin.elf: $(BUILD_PATH)/security.s.o $(BUILD_PATH)/ip.s.o $(RUNTIME_LIB)
+	@$(LD) $(LD_FLAGS) -T$(CFG_PATH)/ip.ld -o$@ $^ $(LIBGCC)
 	@$(NM) -n $@ > $(addprefix $(BUILD_PATH)/,$(addsuffix .sym,$(notdir $@)))
 
 $(BUILD_PATH)/sp.bin: $(BUILD_PATH)/sp.bin.elf
 	@$(OBJCPY) -O binary $< $@
 
-$(BUILD_PATH)/sp.bin.elf: $(BUILD_PATH)/sp_header.s.o $(BUILD_PATH)/sp.s.o
-	@$(LD) $(LD_FLAGS) -T$(CFG_PATH)/sp.ld -o$@ $^
+$(BUILD_PATH)/sp.bin.elf: $(BUILD_PATH)/sp_header.s.o $(BUILD_PATH)/sp.s.o $(RUNTIME_LIB)
+	@$(LD) $(LD_FLAGS) -T$(CFG_PATH)/sp.ld -o$@ $^ $(LIBGCC)
 	@$(NM) -n $@ > $(addprefix $(BUILD_PATH)/,$(addsuffix .sym,$(notdir $@)))
 
 $(BUILD_PATH)/boot.bin: $(BUILD_PATH)/ip.bin $(BUILD_PATH)/sp.bin
