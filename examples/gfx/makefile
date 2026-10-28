@@ -79,7 +79,7 @@ all: \
 	$(PROJECT_ID).iso
 
 clean:
-	@rm -f $(PROJECT_ID).iso $(DISC_PATH)/*.mmd $(DISC_PATH)/*.smd $(BUILD_PATH)/* > /dev/null 2>&1
+	@rm -rf $(PROJECT_ID).iso $(DISC_PATH)/*.mmd $(DISC_PATH)/*.smd $(BUILD_PATH)/*
 
 $(DISC_PATH)/cyber.mmd: \
 	mmd_layout.s \
