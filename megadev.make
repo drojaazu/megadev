@@ -20,6 +20,11 @@ AR:=$(M68K_PREFIX)ar
 # (Z80 building not yet supported)
 Z80_AS:=sjasmplus
 
+# ISO mastering tool and options. Override ISO_FLAGS to change the options
+# wholesale; the boot sector, volume ID and output are always passed.
+MKISOFS?=mkisofs
+ISO_FLAGS?=-iso-level 1 -pad -sysid "MEGA_CD" -appid "" -publisher "" -preparer ""
+
 ################################################################################
 # STOP!
 # You should not need to change anything below this line unless you really,
@@ -46,6 +51,14 @@ endif
 
 ifndef BUILD_PATH
 	$(error BUILD_PATH not set! Please set this variable in your makefile.)
+endif
+
+ifndef MEGADEV_PATH
+	$(error MEGADEV_PATH not set! It must point at the Megadev directory, e.g. /opt/megadev.)
+endif
+
+ifeq ($(wildcard $(MEGADEV_PATH)/lib/build.def.h),)
+	$(error MEGADEV_PATH ($(MEGADEV_PATH)) does not contain the Megadev library.)
 endif
 
 REGION?=US
@@ -117,6 +130,9 @@ CC_FLAGS+= \
 	-Wall -Wextra -Wno-main -Wa,--register-prefix-optional
 AS_FLAGS+= \
 	-Wa,--bitwise-or
+# Each compile writes a .d file listing the headers it included; they are
+# included at the end of this file so a header change rebuilds its users.
+DEP_FLAGS:=-MMD -MP
 LD_FLAGS+= \
 	-nostdlib -z noexecstack
 
@@ -131,11 +147,11 @@ LD_LIBS:=$(RUNTIME_LIB) $(LIBGCC)
 
 $(BUILD_PATH)/runtime/%.s.o: $(LIB_PATH)/runtime/%.s
 	@mkdir -p $(dir $@)
-	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $< -o $@
+	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(DEP_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $< -o $@
 
 $(BUILD_PATH)/runtime/%.c.o: $(LIB_PATH)/runtime/%.c
 	@mkdir -p $(dir $@)
-	@$(CC) $(CC_FLAGS) $(INC) -c $< -o $@
+	@$(CC) $(CC_FLAGS) $(DEP_FLAGS) $(INC) -c $< -o $@
 
 $(RUNTIME_LIB): $(RUNTIME_OBJ)
 	@$(AR) rcs $@ $^
@@ -152,10 +168,25 @@ define msg_done
 	@printf "${BOLD}* ${GREEN}$(1)${CLEAR}\n"
 endef
 
+# DISC_PATH is a staging directory: whatever is in it goes on the disc, however
+# it got there. Two optional lists let the build produce and verify some of it:
+#   DISC_CONTENTS  files the build creates in DISC_PATH (modules, usually)
+#   DISC_ASSETS    files copied into DISC_PATH from RES_PATH, by name
+# The ISO depends on both, so make -j cannot master before they exist.
+DISC_CONTENTS+=$(addprefix $(DISC_PATH)/,$(DISC_ASSETS))
+
+define disc_asset_rule
+$(DISC_PATH)/$(1): $(RES_PATH)/$(1)
+	$$(call msg_info,Staging $(1))
+	@mkdir -p $$(dir $$@)
+	@cp $$< $$@
+endef
+$(foreach a,$(DISC_ASSETS),$(eval $(call disc_asset_rule,$(a))))
+
 # this is used to trigger an ISO rebuild if there are any file changes in the disc dir
 ifdef DISC_PATH
-	DISC_DIR_UPDATES = $(shell find $(DISC_PATH)/ -type d)
-	DISC_FILES_UPDATES = $(shell find $(DISC_PATH)/ -type f -name '*')
+	DISC_DIR_UPDATES = $(shell find $(DISC_PATH)/ -type d 2>/dev/null)
+	DISC_FILES_UPDATES = $(shell find $(DISC_PATH)/ -type f -name '*' 2>/dev/null)
 endif
 
 vpath %.c $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
@@ -165,18 +196,30 @@ vpath %.elf $(BUILD_PATH)
 vpath %.c.o $(BUILD_PATH)
 vpath %.s.o $(BUILD_PATH)
 
-.SECONDARY: $(BUILD_PATH)/*
+# Keep every intermediate file, and remove a target whose recipe failed so a
+# partial output is never taken as up to date on the next run.
+.SECONDARY:
+.DELETE_ON_ERROR:
 
 .DEFAULT_GOAL:=all
 
+# A module, cart or boot binary depends on the objects built from the sources
+# its project lists, so that a header change (recorded in the .d files) reaches
+# the link step. $$^ is the project's own prerequisite list, seen at second
+# expansion.
+.SECONDEXPANSION:
+MODULE_OBJS=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o,$(filter %.c %.s,$(1)))))
+
 # need to specify paths here as they're called through a secondary make
 $(BUILD_PATH)/%.c.o: %.c
-	$(call msg_info,Compiling source $(notdir $^))
-	@$(CC) $(CC_FLAGS) $(INC) -c $^ -o $@
+	$(call msg_info,Compiling source $(notdir $<))
+	@mkdir -p $(dir $@)
+	@$(CC) $(CC_FLAGS) $(DEP_FLAGS) $(INC) -c $< -o $@
 
 $(BUILD_PATH)/%.s.o: %.s
-	$(call msg_info,Compiling source $(notdir $^))
-	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $^ -o $@
+	$(call msg_info,Compiling source $(notdir $<))
+	@mkdir -p $(dir $@)
+	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(DEP_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $< -o $@
 
 #%.mmd.elf: %.s %.c %.h
 #	@echo "mmd elf in: $^"
@@ -184,10 +227,11 @@ $(BUILD_PATH)/%.s.o: %.s
 #	echo "making mmd elf with: $^ $@"
 #	$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_mmd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(symref)) -o $@
 
-%.mmd:
+%.mmd: $$(call MODULE_OBJS,$$^)
 # @echo "mmd in: $^"
 # @echo "mmd out: $@"
 	$(call msg_info,Building module $(notdir $@))
+	@mkdir -p $(dir $@) $(BUILD_PATH)
 	$(eval BUILD_SRC:=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o, $(filter %.c %.h %.s, $^)))))
 	$(eval BUILD_MOD:=$(filter %.mmd %.smd %.bin, $^))
 # @echo "build mod: $(BUILD_MOD)"
@@ -200,10 +244,11 @@ $(BUILD_PATH)/%.s.o: %.s
 	@$(NM) -n $(OUT_MOD_ELF) > $(addsuffix .sym,$(OUT_MOD_ELF))
 	@$(OBJCPY) -O binary $(OUT_MOD_ELF) $@
 
-%.smd:
+%.smd: $$(call MODULE_OBJS,$$^)
 # @echo "smd in: $^"
 # @echo "smd out: $@"
 	$(call msg_info,Building module $(notdir $@))
+	@mkdir -p $(dir $@) $(BUILD_PATH)
 	$(eval BUILD_SRC:=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o, $(filter %.c %.h %.s, $^)))))
 	$(eval BUILD_MOD:=$(filter %.mmd %.smd %.bin, $^))
 # @echo "build mod: $(BUILD_MOD)"
@@ -216,12 +261,12 @@ $(BUILD_PATH)/%.s.o: %.s
 	@$(NM) -n $(OUT_MOD_ELF) > $(addsuffix .sym,$(OUT_MOD_ELF))
 	@$(OBJCPY) -O binary $(OUT_MOD_ELF) $@
 
-%.cart:
+%.cart: $$(call MODULE_OBJS,$$^)
 #	@echo "cart in: $^"
 #	@echo "cart out: $@"
 	$(call msg_info,Building cart ROM $(notdir $@))
+	@mkdir -p $(dir $@) $(BUILD_PATH)
 	$(eval BUILD_SRC:=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o, $(filter %.c %.h %.s, $^)))))
-	@echo BUILD SRC: $(BUILD_SRC)
 	@$(if $(BUILD_SRC), $(MAKE) -s $(BUILD_SRC))
 	$(call msg_info,Linking cart ROM $(notdir $@))
 	$(eval OUT_CART_ELF:=$(addprefix $(BUILD_PATH)/,$(addsuffix .elf,$(notdir $@))))
@@ -236,7 +281,8 @@ $(BUILD_PATH)/ip.bin: $(BUILD_PATH)/ip.bin.elf
 
 $(BUILD_PATH)/security.s.o: $(MEGADEV_PATH)/lib/security.c
 	$(call msg_info,Creating security block)
-	@$(CC) $(CC_FLAGS) $(INC) -c $< -o $@
+	@mkdir -p $(dir $@)
+	@$(CC) $(CC_FLAGS) $(DEP_FLAGS) $(INC) -c $< -o $@
 
 $(BUILD_PATH)/ip.bin.elf: $(BUILD_PATH)/security.s.o $(BUILD_PATH)/ip.s.o $(RUNTIME_LIB)
 	@$(LD) $(LD_FLAGS) -T$(CFG_PATH)/ip.ld -o$@ $^ $(LIBGCC)
@@ -251,16 +297,24 @@ $(BUILD_PATH)/sp.bin.elf: $(BUILD_PATH)/sp_header.s.o $(BUILD_PATH)/sp.s.o $(RUN
 
 $(BUILD_PATH)/boot.bin: $(BUILD_PATH)/ip.bin $(BUILD_PATH)/sp.bin
 	$(call msg_info,Generating boot sector...)
+	@mkdir -p $(dir $@)
 	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $(LIB_PATH)/cd_boot.s -o$@
 	@$(OBJCPY) -O binary $@
 
 
 
 # TODO make the ISO settings user configurable
-%.iso: $(BUILD_PATH)/boot.bin $(DISC_FILES_UPDATES) $(DISC_DIR_UPDATES)
+%.iso: $(BUILD_PATH)/boot.bin $(DISC_CONTENTS) $(DISC_FILES_UPDATES) $(DISC_DIR_UPDATES)
 
 	$(call msg_info,Generating ISO image $(notdir $@))
-	@mkisofs -quiet -iso-level 1 -G $< -pad -V "$(PROJECT_ID)" \
-		-sysid "MEGA_CD" -appid "" -publisher "" -preparer "" \
-		-o $@ $(DISC_PATH)
+	@mkdir -p $(DISC_PATH)
+	@$(MKISOFS) -quiet $(ISO_FLAGS) -G $< -V "$(HEADER_VOL_ID)" -o $@ $(DISC_PATH)
 	$(call msg_done,Completed build of $(PROJECT_ID) ($(TARGET) / $(REGION) / $(VIDEO)))
+
+# `make print-NAME` shows the value of a variable, e.g. make print-DISC_CONTENTS
+print-%:
+	@printf '%s\n' '$($*)'
+
+# Header dependencies recorded by DEP_FLAGS. Deleting this line does not break
+# any build; it only stops header changes from triggering rebuilds.
+-include $(shell test -d $(BUILD_PATH) && find $(BUILD_PATH) -name '*.d' 2>/dev/null)

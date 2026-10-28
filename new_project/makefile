@@ -56,6 +56,14 @@ BUILD_PATH:=build
 
 DISC_PATH:=disc
 
+# Files the build creates in DISC_PATH
+DISC_CONTENTS:= \
+	$(DISC_PATH)/ipx.mmd \
+	$(DISC_PATH)/spx.smd \
+	$(DISC_PATH)/ex1.mmd \
+	$(DISC_PATH)/ex2.mmd \
+	$(DISC_PATH)/ex3.mmd
+
 # Additional C compiler flags
 CC_FLAGS?=-O1 -fconserve-stack -fomit-frame-pointer -fno-gcse
 
@@ -82,11 +90,7 @@ init:
 	@mkdir -p $(DISC_PATH)
 
 all: \
-	$(DISC_PATH)/ipx.mmd \
-	$(DISC_PATH)/spx.smd \
-	$(DISC_PATH)/ex1.mmd \
-	$(DISC_PATH)/ex2.mmd \
-	$(DISC_PATH)/ex3.mmd \
+	$(DISC_CONTENTS) \
 	$(PROJECT_ID).iso
 
 clean:

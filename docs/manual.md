@@ -124,7 +124,7 @@ The path to the compilation workspace, where build artifacts (such as object fil
 
 #### `DISC_PATH`
 
-The path to the staging directory where all final files that will appear on the disc will be stored. This will be used as the source when generating the ISO file.
+The path to the staging directory where all final files that will appear on the disc will be stored. This will be used as the source when generating the ISO file. Anything in this directory goes on the disc, whether the build put it there or you did; see `DISC_CONTENTS` and `DISC_ASSETS` for the files the build manages.
 
 #### `MEGADEV_PATH`
 
@@ -245,6 +245,22 @@ This is not directly used by Megadev, but can be used as a preprocessor directiv
 Valid values are `VRAM_64K`, `VRAM_128K`. 
 
 If unspecified, defaults to `VRAM_64K`.
+
+#### `DISC_CONTENTS`
+
+Applies to Mega CD only. The files the build creates inside `DISC_PATH`, normally the project's modules. Listing them here makes the ISO depend on them, so a parallel build cannot master the disc before they exist, and lets `make` build them from `all` without naming each one twice.
+
+#### `DISC_ASSETS`
+
+Applies to Mega CD only. Files to copy from `RES_PATH` into `DISC_PATH` before mastering, by name. Each is added to `DISC_CONTENTS`. This is one way to stage disc content, not the only one: anything placed in `DISC_PATH` by any means is included on the disc.
+
+#### `MKISOFS`
+
+The ISO mastering tool. Defaults to `mkisofs`; `genisoimage` and `xorrisofs` accept the same options.
+
+#### `ISO_FLAGS`
+
+Options passed to the mastering tool, replacing the defaults wholesale. The boot sector, volume ID and output file are always passed separately.
 
 ### Restricted Settings
 

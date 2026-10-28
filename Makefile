@@ -43,9 +43,13 @@ ASM_STANDALONE := $(filter-out $(ASM_STANDALONE_EXCLUDE),$(ASM_SOURCES))
 RUNTIME_SRC := $(wildcard lib/runtime/*.s lib/runtime/*.c)
 LIBGCC := $(shell $(CC) -print-libgcc-file-name)
 
-.PHONY: check check-projects check-headers check-asm check-link check-odr clean $(PROJECTS)
+# Project and header used by the incremental rebuild check.
+INCR_PROJECT := examples/gfx
+INCR_HEADER  := lib/main/vdp.h
 
-check: check-projects check-headers check-asm check-link check-odr
+.PHONY: check check-projects check-headers check-asm check-link check-odr check-incremental clean $(PROJECTS)
+
+check: check-projects check-headers check-asm check-link check-odr check-incremental
 	@printf '\ncheck: all passed\n'
 
 # ---------------------------------------------------------------------------
@@ -58,6 +62,10 @@ $(PROJECTS):
 	@printf '== build %s\n' '$@'
 	@$(MAKE) -s -C '$@' clean >/dev/null
 	@$(MAKE) -s -C '$@' >/dev/null
+	@id=$$($(MAKE) -s -C '$@' print-PROJECT_ID); \
+	for f in $$($(MAKE) -s -C '$@' print-DISC_CONTENTS) $$(cd '$@' && ls $$id.iso $$id.cart 2>/dev/null); do \
+	  if [ ! -s "$@/$$f" ]; then printf 'FAIL %s: %s missing or empty\n' '$@' "$$f"; exit 1; fi; \
+	done
 
 # ---------------------------------------------------------------------------
 # Loop 2: every library header compiles on its own, for every hardware target.
@@ -150,6 +158,19 @@ check-odr:
 	done; \
 	n=$$(echo $(HEADERS) | wc -w); \
 	[ $$fail = 0 ] && printf '== odr: %s headers link from two translation units\n' "$$n" || exit 1
+
+# ---------------------------------------------------------------------------
+# Loop 6: header dependency tracking works. Touching a library header must
+# recompile something and relink the module; a second make must do nothing.
+# ---------------------------------------------------------------------------
+check-incremental:
+	@$(MAKE) -s -C $(INCR_PROJECT) >/dev/null
+	@sleep 1; touch $(INCR_HEADER)
+	@out=$$($(MAKE) -C $(INCR_PROJECT) 2>&1 | sed 's/\x1b\[[0-9;]*m//g'); \
+	echo "$$out" | grep -q 'Compiling' || { printf 'FAIL incremental: touching %s recompiled nothing\n' '$(INCR_HEADER)'; exit 1; }; \
+	echo "$$out" | grep -q 'Linking' || { printf 'FAIL incremental: touching %s did not relink\n' '$(INCR_HEADER)'; exit 1; }
+	@$(MAKE) -q -C $(INCR_PROJECT) >/dev/null 2>&1 || { printf 'FAIL incremental: second make is not a no-op\n'; exit 1; }
+	@printf '== incremental: %s rebuilds %s and settles\n' '$(INCR_HEADER)' '$(INCR_PROJECT)'
 
 clean:
 	@for p in $(PROJECTS); do $(MAKE) -s -C "$$p" clean >/dev/null; done

@@ -51,6 +51,11 @@ BUILD_PATH:=build
 
 DISC_PATH:=disc
 
+# Files the build creates in DISC_PATH
+DISC_CONTENTS:= \
+	$(DISC_PATH)/bramdemo.mmd \
+	$(DISC_PATH)/spx.smd
+
 # Additional C compiler flags
 CC_FLAGS?=-O1 -fconserve-stack -fomit-frame-pointer -fno-gcse
 
@@ -77,8 +82,7 @@ init:
 	@mkdir -p $(DISC_PATH)
 
 all: \
-	$(DISC_PATH)/bramdemo.mmd \
-	$(DISC_PATH)/spx.smd \
+	$(DISC_CONTENTS) \
 	$(PROJECT_ID).iso
 
 clean:

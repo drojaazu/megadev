@@ -49,6 +49,14 @@ BUILD_PATH:=build
 
 DISC_PATH:=disc
 
+# Files the build creates in DISC_PATH
+DISC_CONTENTS:= \
+	$(DISC_PATH)/ipx.mmd \
+	$(DISC_PATH)/spx.smd
+
+# Files copied from RES_PATH into DISC_PATH before mastering
+DISC_ASSETS:=audio.pcm
+
 # Additional C compiler flags
 CC_FLAGS?=-O1 -fconserve-stack -fomit-frame-pointer -fno-gcse
 
@@ -73,19 +81,18 @@ init:
 	@mkdir -p $(DISC_PATH)
 
 all: \
-	disc/ipx.mmd \
-	disc/spx.smd \
+	$(DISC_CONTENTS) \
 	$(PROJECT_ID).iso
 
 clean:
 	@rm -rf $(PROJECT_ID).iso $(DISC_PATH)/*.mmd $(DISC_PATH)/*.smd $(BUILD_PATH)/*
 
-disc/ipx.mmd: \
+$(DISC_PATH)/ipx.mmd: \
 	ipx_layout.s \
 	main/ipx_init.s \
 	ipx.c
 
-disc/spx.smd: \
+$(DISC_PATH)/spx.smd: \
 	spx_layout.s \
 	spx.c \
 	sub/pcm.s \
