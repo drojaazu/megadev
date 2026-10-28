@@ -104,9 +104,7 @@ typedef struct Palette
  * @sa BIOS_WORK_BUFFER
  * @ingroup bios_cmp
  */
-// TODO test this
-#define bios_work_buffer (*(s8[0x200]) BIOS_WORK_BUFFER)
-// #define bios_work_buffer ((u8 *) BIOS_WORK_BUFFER)
+#define bios_work_buffer (*((s8(*)[0x200]) BIOS_WORK_BUFFER))
 
 // TODO check that the LEN/SZ's in this section can be replaced with sizeof()
 /**
