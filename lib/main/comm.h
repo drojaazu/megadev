@@ -48,12 +48,12 @@ static inline u8 ext_rx()
   asm volatile(
     "\
   lea      %c[ext_sctrl], (%[scratch_a]) \n\
-0:btst     #%c[sctrl_rx_ready], (%[scratch_a]) \n\
+0:btst     #%c[sctrl_rx_ready_bit], (%[scratch_a]) \n\
   beq      0b \n\
   move.b   (%c[ext_rx_data]), %[rx] \n\
 	"
     : [rx] "=d"(rx_data), [scratch_a] "=&a"(scratch_a)
-    : [sctrl_rx_ready] "i"(SCTRL_RX_READY),
+    : [sctrl_rx_ready_bit] "i"(SCTRL_RX_READY_BIT),
       [ext_sctrl] "i"(EXT_SCTRL),
       [ext_rx_data] "i"(EXT_RXDATA)
     :);
@@ -71,13 +71,13 @@ static inline void ext_tx(register u8 tx_data)
   asm volatile(
     "\
   lea      %c[ext_sctrl], (%[scratch_a]) \n\
-0:btst     #%c[sctrl_tx_full], (%[scratch_a])	\n\
+0:btst     #%c[sctrl_tx_full_bit], (%[scratch_a])	\n\
   bne      0b \n\
   move.b   %c[tx], (%c[ext_tx_data]) \n\
 	"
     : [scratch_a] "=&a"(scratch_a)
     : [tx] "d"(tx_data),
-      [sctrl_tx_full] "i"(SCTRL_TX_FULL),
+      [sctrl_tx_full_bit] "i"(SCTRL_TX_FULL_BIT),
       [ext_sctrl] "i"(EXT_SCTRL),
       [ext_tx_data] "i"(EXT_TXDATA)
     :);
