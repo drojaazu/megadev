@@ -43,9 +43,9 @@ ASM_STANDALONE := $(filter-out $(ASM_STANDALONE_EXCLUDE),$(ASM_SOURCES))
 RUNTIME_SRC := $(wildcard lib/runtime/*.s lib/runtime/*.c)
 LIBGCC := $(shell $(CC) -print-libgcc-file-name)
 
-.PHONY: check check-projects check-headers check-asm check-link clean $(PROJECTS)
+.PHONY: check check-projects check-headers check-asm check-link check-odr clean $(PROJECTS)
 
-check: check-projects check-headers check-asm check-link
+check: check-projects check-headers check-asm check-link check-odr
 	@printf '\ncheck: all passed\n'
 
 # ---------------------------------------------------------------------------
@@ -127,6 +127,29 @@ check-link:
 	  printf 'FAIL link: undefined symbols above\n'; exit 1; fi
 	@printf '== link: compiler-emitted calls resolve (%s)\n' \
 	  "$$($(M68K_PREFIX)nm -u $(CHECK_DIR)/link.o | awk '{print $$2}' | tr '\n' ' ')"
+
+# ---------------------------------------------------------------------------
+# Loop 5: every library header can be included by two translation units that
+# are linked together. A header that defines storage or a non-static function
+# produces a duplicate symbol here.
+# ---------------------------------------------------------------------------
+check-odr:
+	@mkdir -p $(CHECK_DIR)
+	@fail=0; \
+	for h in $(HEADERS); do \
+	  for t in $(TARGETS); do \
+	    printf '#include <%s>\nint one(void) { return 1; }\n' "$${h#lib/}" > $(CHECK_DIR)/odr1.c; \
+	    printf '#include <%s>\nint one(void); int main(void) { return one(); }\n' "$${h#lib/}" > $(CHECK_DIR)/odr2.c; \
+	    if ! ( $(CC) $(CHECK_FLAGS) -DTARGET=$$t -fno-common -c $(CHECK_DIR)/odr1.c -o $(CHECK_DIR)/odr1.o \
+	        && $(CC) $(CHECK_FLAGS) -DTARGET=$$t -fno-common -c $(CHECK_DIR)/odr2.c -o $(CHECK_DIR)/odr2.o \
+	        && $(M68K_PREFIX)ld -r $(CHECK_DIR)/odr1.o $(CHECK_DIR)/odr2.o -o $(CHECK_DIR)/odr.o ) \
+	        2> $(CHECK_DIR)/odr.err; then \
+	      printf 'FAIL odr %s (%s)\n' "$$h" "$$t"; cat $(CHECK_DIR)/odr.err; fail=1; \
+	    fi; \
+	  done; \
+	done; \
+	n=$$(echo $(HEADERS) | wc -w); \
+	[ $$fail = 0 ] && printf '== odr: %s headers link from two translation units\n' "$$n" || exit 1
 
 clean:
 	@for p in $(PROJECTS); do $(MAKE) -s -C "$$p" clean >/dev/null; done
