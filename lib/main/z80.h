@@ -75,7 +75,7 @@ static inline void z80_reset_cpu()
 /**
  * @note z80_program_size is the size of the data in bytes MINUS ONE
  */
-void z80_init(
+static inline void z80_init(
   register void const * z80_program, register u16 const z80_program_size)
 {
   register u32 scratch_a1;

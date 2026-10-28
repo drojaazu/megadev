@@ -12,8 +12,8 @@
 #include <sub/bram.def.h>
 #include <sub/memmap.def.h>
 
-u8 bram_work_buff[0x640];
-u8 bram_string_buff[12];
+extern u8 bram_work_buff[0x640];
+extern u8 bram_string_buff[12];
 
 enum BramStatus
 {
@@ -82,7 +82,7 @@ typedef struct BrmstatRes
 	u16 filecount;
 } BrmstatRes;
 
-BrmstatRes brmstat_results;
+extern BrmstatRes brmstat_results;
 
 /**
  * @def bram_brmstat
@@ -116,7 +116,7 @@ typedef struct BrmserchRes
 	u8 * dataptr;
 } BrmserchRes;
 
-BrmserchRes brmserch_results;
+extern BrmserchRes brmserch_results;
 
 /**
  * @def bram_brmserch
@@ -161,7 +161,7 @@ typedef struct BrmreadRes
 	u8	 mode;
 } BrmreadRes;
 
-BrmreadRes brmread_results;
+extern BrmreadRes brmread_results;
 
 /**
  * @def bram_brmread
