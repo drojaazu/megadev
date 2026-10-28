@@ -395,6 +395,10 @@ Run `make check` from the repository root before merging any branch. It must pas
 
 `make clean` removes everything the gate produced.
 
+## `make docs`
+
+Generates the reference documentation with Doxygen into `docs/html`, which is not tracked. The maintainer publishes it; anyone can build it locally.
+
 # Further Reading
 
 There are a number of additional documents in the `docs` subdirectory. We recommend at least skimming through all of these before starting development.
