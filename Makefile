@@ -174,10 +174,10 @@ check-incremental:
 	@printf '== incremental: %s rebuilds %s and settles\n' '$(INCR_HEADER)' '$(INCR_PROJECT)'
 
 docs:
-	@rm -rf docs/html
-	@doxygen Doxyfile > /dev/null 2> $(CHECK_DIR).doxygen.log || { cat $(CHECK_DIR).doxygen.log; exit 1; }
-	@printf '== docs: docs/html generated, %s warnings in %s\n' "$$(wc -l < $(CHECK_DIR).doxygen.log)" '$(CHECK_DIR).doxygen.log'
+	@rm -rf docs/html; mkdir -p $(CHECK_DIR)
+	@doxygen Doxyfile > /dev/null 2> $(CHECK_DIR)/doxygen.log || { cat $(CHECK_DIR)/doxygen.log; exit 1; }
+	@printf '== docs: docs/html generated, %s warnings in %s\n' "$$(wc -l < $(CHECK_DIR)/doxygen.log)" '$(CHECK_DIR)/doxygen.log'
 
 clean:
 	@for p in $(PROJECTS); do $(MAKE) -s -C "$$p" clean >/dev/null; done
-	@rm -rf $(CHECK_DIR) $(CHECK_DIR).doxygen.log docs/html
+	@rm -rf $(CHECK_DIR) docs/html
