@@ -37,7 +37,7 @@ On the Sub CPU side, we have the BIOS calls which are used for data I/O (namely,
 
 On the Main CPU side, we have what we refer to as the Main BIOS library. This is a set of functions built in to the hardware that provide a wide range of general functionality useful to Mega Drive games, such as DMA operations, controller input reads, palette and sprite list caches, and much more. The catch is that some of these functions place certain expectations on your program structure and use precious Work RAM space. Moreover, these calls are not documented and our understanding of their use is based on reverse engineering.
 
-While the Sub CPU BIOS calls are required and a basic part of Mega CD development, the Main CPU Boot ROM library is entirely optional to use. While helpful, some of the components of the library will affect your program architecture more fundamentall than others, and you should carefully examine how the pieces you wish to use will be integrated. Refer to bootrom.md for an in-depth look at this library of functions.
+While the Sub CPU BIOS calls are required and a basic part of Mega CD development, the Main CPU Boot ROM library is entirely optional to use. While helpful, some of the components of the library will affect your program architecture more fundamentall than others, and you should carefully examine how the pieces you wish to use will be integrated. Refer to main_bios.md for an in-depth look at this library of functions.
 
 ## Memory Planning
 As we have discussed, there is no hardware delineation of read-only (ROM) and storage (RAM) for your Mega CD program. As stated in the main readme:
@@ -69,13 +69,13 @@ Here is its default layout, with no user programs or Boot ROM library usage:
 
 The System Use area, beginning at 0xFFFD00, contains the jump table for the exceptions/interrupts. The jump table is a list of JMP commands: two bytes for the opcode and a four byte pointer. The M68000 vector table is defined by the Boot ROM when it is loaded into Main CPU memory space by the hardware at startup. The vectors point to locations within this System Use partition within Work RAM and cannot be changed. Therefore, this area is considered to be off limits except for changing the pointers.
 
-In reality, the jump table only takes up 180 bytes, leaving the space from 0xFFFDB4 and onward free for use (588 bytes). However, this free space is used by many of the Boot ROM library functions, so keep that in mind if you plan to use the built-in library. See the bootrom.md file for more info.
+In reality, the jump table only takes up 180 bytes, leaving the space from 0xFFFDB4 and onward free for use (588 bytes). However, this free space is used by many of the Boot ROM library functions, so keep that in mind if you plan to use the built-in library. See the main_bios.md file for more info.
 
 The stack is allocated to 0xFFFD00 by default. This can, of course, be re-pointed to wherever you'd like, though with the default layout it's already in an optimal position. Recall that the stack fills upwards, so you'll want to allocate enough space for it when planning the space for your ROM/RAM partitions above it. Too little space and it will overflow up into your RAM, possible overwriting runtime memory or runtime memory corrupting the stack. Too much space and it becomes wasted memory. This is an area of your program that you will likely want to optimize, especially if you are primarily coding in C. Lots of nested function calls with registers pushes and allocated local variables will quickly fill up the stack. Prefer using global values whenever possible to prevent too much stack usage.
 
 Let's map out a possible memory layout, apropos of nothing. As we said earlier, our goal is to define the boundaries of "ROM" (program code and resources) and "RAM" (runtime memory) for our program within the confines of usable space.
 
-In our program architecture, we'll load modules to Word RAM and run them directly from there. This means Work RAM is exclusive to our kernel. That simplifies things. So first, let's say 512 bytes allocated to the stack. This should actually be more than enough. (The Boot ROM allocates only 256 bytes; see bootrom.md for much more on that.) That leaves us a little less than 63KB for our ROM and RAM partitions.
+In our program architecture, we'll load modules to Word RAM and run them directly from there. This means Work RAM is exclusive to our kernel. That simplifies things. So first, let's say 512 bytes allocated to the stack. This should actually be more than enough. (The Boot ROM allocates only 256 bytes; see main_bios.md for much more on that.) That leaves us a little less than 63KB for our ROM and RAM partitions.
 
 The kernel won't have lots of logic by itself, let's say 1KB for global game state amd some basic services (global mode, game save information, input mirrors, random number generator, etc). Let's also keep our graphics system in the kernel as well: a VDP register cache, a sprite cache, some space for decompressing graphics, a DMA queue. Maybe anothet 4KB. We want to also keep our task processor within the kernel. Let's say a task frame is 64 bytes, and want to support a maximum of 32 tasks, meaning we need to allocate 2KB for the task system.
 
@@ -99,7 +99,7 @@ That's about 7KB of RAM, leaving us with just under 56KB of ROM. Our memory map 
 
 The start address and length of the ROM and RAM sections would then be specified as global symbols within the module code. More on that in modules.md.
 
-This example is not based on any real-world implementations, though you could use it as a generic layout to get things up and running. However, as we have said a couple times, once you bring the Boot ROM library into the picture, the space available for usage may change drastically. We'll continue with Work RAM mapping while using the library in bootrom.md.
+This example is not based on any real-world implementations, though you could use it as a generic layout to get things up and running. However, as we have said a couple times, once you bring the Boot ROM library into the picture, the space available for usage may change drastically. We'll continue with Work RAM mapping while using the library in main_bios.md.
 
 ### Memory Layout in Other Regions
 
