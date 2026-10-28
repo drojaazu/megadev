@@ -49,6 +49,9 @@ BUILD_PATH:=build
 
 DISC_PATH:=disc
 
+# Files the build creates in DISC_PATH
+DISC_CONTENTS:=
+
 # Additional C compiler flags
 CC_FLAGS?=-O1 -fconserve-stack -fomit-frame-pointer -fno-gcse
 
@@ -75,6 +78,7 @@ init:
 	@mkdir -p $(DISC_PATH)
 
 all: \
+	$(DISC_CONTENTS) \
 	$(PROJECT_ID).iso
 
 clean:

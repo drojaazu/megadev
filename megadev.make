@@ -168,10 +168,25 @@ define msg_done
 	@printf "${BOLD}* ${GREEN}$(1)${CLEAR}\n"
 endef
 
+# DISC_PATH is a staging directory: whatever is in it goes on the disc, however
+# it got there. Two optional lists let the build produce and verify some of it:
+#   DISC_CONTENTS  files the build creates in DISC_PATH (modules, usually)
+#   DISC_ASSETS    files copied into DISC_PATH from RES_PATH, by name
+# The ISO depends on both, so make -j cannot master before they exist.
+DISC_CONTENTS+=$(addprefix $(DISC_PATH)/,$(DISC_ASSETS))
+
+define disc_asset_rule
+$(DISC_PATH)/$(1): $(RES_PATH)/$(1)
+	$$(call msg_info,Staging $(1))
+	@mkdir -p $$(dir $$@)
+	@cp $$< $$@
+endef
+$(foreach a,$(DISC_ASSETS),$(eval $(call disc_asset_rule,$(a))))
+
 # this is used to trigger an ISO rebuild if there are any file changes in the disc dir
 ifdef DISC_PATH
-	DISC_DIR_UPDATES = $(shell find $(DISC_PATH)/ -type d)
-	DISC_FILES_UPDATES = $(shell find $(DISC_PATH)/ -type f -name '*')
+	DISC_DIR_UPDATES = $(shell find $(DISC_PATH)/ -type d 2>/dev/null)
+	DISC_FILES_UPDATES = $(shell find $(DISC_PATH)/ -type f -name '*' 2>/dev/null)
 endif
 
 vpath %.c $(SRC_PATH):$(LIB_PATH):$(LIB_PATH)/sub:$(LIB_PATH)/main
@@ -289,12 +304,16 @@ $(BUILD_PATH)/boot.bin: $(BUILD_PATH)/ip.bin $(BUILD_PATH)/sp.bin
 
 
 # TODO make the ISO settings user configurable
-%.iso: $(BUILD_PATH)/boot.bin $(DISC_FILES_UPDATES) $(DISC_DIR_UPDATES)
+%.iso: $(BUILD_PATH)/boot.bin $(DISC_CONTENTS) $(DISC_FILES_UPDATES) $(DISC_DIR_UPDATES)
 
 	$(call msg_info,Generating ISO image $(notdir $@))
 	@mkdir -p $(DISC_PATH)
 	@$(MKISOFS) -quiet $(ISO_FLAGS) -G $< -V "$(HEADER_VOL_ID)" -o $@ $(DISC_PATH)
 	$(call msg_done,Completed build of $(PROJECT_ID) ($(TARGET) / $(REGION) / $(VIDEO)))
+
+# `make print-NAME` shows the value of a variable, e.g. make print-DISC_CONTENTS
+print-%:
+	@printf '%s\n' '$($*)'
 
 # Header dependencies recorded by DEP_FLAGS. Deleting this line does not break
 # any build; it only stops header changes from triggering rebuilds.
