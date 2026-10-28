@@ -287,7 +287,7 @@ void vdp_dma_fill(
  * @warning Setting/clearing the DMA Enable bit on VDP Mode Register 2 is the
  * responsibility of the user
  */
-void vdp_dma_transfer(char const * source, vdp_cmd dest, u16 const length)
+static inline void vdp_dma_transfer(char const * source, vdp_cmd dest, u16 const length)
 {
   register u32 scratch_d, scratch_a;
 
