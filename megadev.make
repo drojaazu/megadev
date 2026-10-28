@@ -180,10 +180,12 @@ vpath %.s.o $(BUILD_PATH)
 # need to specify paths here as they're called through a secondary make
 $(BUILD_PATH)/%.c.o: %.c
 	$(call msg_info,Compiling source $(notdir $^))
+	@mkdir -p $(dir $@)
 	@$(CC) $(CC_FLAGS) $(INC) -c $^ -o $@
 
 $(BUILD_PATH)/%.s.o: %.s
 	$(call msg_info,Compiling source $(notdir $^))
+	@mkdir -p $(dir $@)
 	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $^ -o $@
 
 #%.mmd.elf: %.s %.c %.h
@@ -196,6 +198,7 @@ $(BUILD_PATH)/%.s.o: %.s
 # @echo "mmd in: $^"
 # @echo "mmd out: $@"
 	$(call msg_info,Building module $(notdir $@))
+	@mkdir -p $(dir $@) $(BUILD_PATH)
 	$(eval BUILD_SRC:=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o, $(filter %.c %.h %.s, $^)))))
 	$(eval BUILD_MOD:=$(filter %.mmd %.smd %.bin, $^))
 # @echo "build mod: $(BUILD_MOD)"
@@ -212,6 +215,7 @@ $(BUILD_PATH)/%.s.o: %.s
 # @echo "smd in: $^"
 # @echo "smd out: $@"
 	$(call msg_info,Building module $(notdir $@))
+	@mkdir -p $(dir $@) $(BUILD_PATH)
 	$(eval BUILD_SRC:=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o, $(filter %.c %.h %.s, $^)))))
 	$(eval BUILD_MOD:=$(filter %.mmd %.smd %.bin, $^))
 # @echo "build mod: $(BUILD_MOD)"
@@ -228,8 +232,8 @@ $(BUILD_PATH)/%.s.o: %.s
 #	@echo "cart in: $^"
 #	@echo "cart out: $@"
 	$(call msg_info,Building cart ROM $(notdir $@))
+	@mkdir -p $(dir $@) $(BUILD_PATH)
 	$(eval BUILD_SRC:=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o, $(filter %.c %.h %.s, $^)))))
-	@echo BUILD SRC: $(BUILD_SRC)
 	@$(if $(BUILD_SRC), $(MAKE) -s $(BUILD_SRC))
 	$(call msg_info,Linking cart ROM $(notdir $@))
 	$(eval OUT_CART_ELF:=$(addprefix $(BUILD_PATH)/,$(addsuffix .elf,$(notdir $@))))
@@ -244,6 +248,7 @@ $(BUILD_PATH)/ip.bin: $(BUILD_PATH)/ip.bin.elf
 
 $(BUILD_PATH)/security.s.o: $(MEGADEV_PATH)/lib/security.c
 	$(call msg_info,Creating security block)
+	@mkdir -p $(dir $@)
 	@$(CC) $(CC_FLAGS) $(INC) -c $< -o $@
 
 $(BUILD_PATH)/ip.bin.elf: $(BUILD_PATH)/security.s.o $(BUILD_PATH)/ip.s.o $(RUNTIME_LIB)
@@ -259,6 +264,7 @@ $(BUILD_PATH)/sp.bin.elf: $(BUILD_PATH)/sp_header.s.o $(BUILD_PATH)/sp.s.o $(RUN
 
 $(BUILD_PATH)/boot.bin: $(BUILD_PATH)/ip.bin $(BUILD_PATH)/sp.bin
 	$(call msg_info,Generating boot sector...)
+	@mkdir -p $(dir $@)
 	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $(LIB_PATH)/cd_boot.s -o$@
 	@$(OBJCPY) -O binary $@
 
@@ -268,6 +274,7 @@ $(BUILD_PATH)/boot.bin: $(BUILD_PATH)/ip.bin $(BUILD_PATH)/sp.bin
 %.iso: $(BUILD_PATH)/boot.bin $(DISC_FILES_UPDATES) $(DISC_DIR_UPDATES)
 
 	$(call msg_info,Generating ISO image $(notdir $@))
+	@mkdir -p $(DISC_PATH)
 	@mkisofs -quiet -iso-level 1 -G $< -pad -V "$(PROJECT_ID)" \
 		-sysid "MEGA_CD" -appid "" -publisher "" -preparer "" \
 		-o $@ $(DISC_PATH)
