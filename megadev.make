@@ -20,6 +20,11 @@ AR:=$(M68K_PREFIX)ar
 # (Z80 building not yet supported)
 Z80_AS:=sjasmplus
 
+# ISO mastering tool and options. Override ISO_FLAGS to change the options
+# wholesale; the boot sector, volume ID and output are always passed.
+MKISOFS?=mkisofs
+ISO_FLAGS?=-iso-level 1 -pad -sysid "MEGA_CD" -appid "" -publisher "" -preparer ""
+
 ################################################################################
 # STOP!
 # You should not need to change anything below this line unless you really,
@@ -288,9 +293,7 @@ $(BUILD_PATH)/boot.bin: $(BUILD_PATH)/ip.bin $(BUILD_PATH)/sp.bin
 
 	$(call msg_info,Generating ISO image $(notdir $@))
 	@mkdir -p $(DISC_PATH)
-	@mkisofs -quiet -iso-level 1 -G $< -pad -V "$(PROJECT_ID)" \
-		-sysid "MEGA_CD" -appid "" -publisher "" -preparer "" \
-		-o $@ $(DISC_PATH)
+	@$(MKISOFS) -quiet $(ISO_FLAGS) -G $< -V "$(HEADER_VOL_ID)" -o $@ $(DISC_PATH)
 	$(call msg_done,Completed build of $(PROJECT_ID) ($(TARGET) / $(REGION) / $(VIDEO)))
 
 # Header dependencies recorded by DEP_FLAGS. Deleting this line does not break
