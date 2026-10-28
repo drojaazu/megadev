@@ -58,6 +58,10 @@ $(PROJECTS):
 	@printf '== build %s\n' '$@'
 	@$(MAKE) -s -C '$@' clean >/dev/null
 	@$(MAKE) -s -C '$@' >/dev/null
+	@id=$$($(MAKE) -s -C '$@' print-PROJECT_ID); \
+	for f in $$($(MAKE) -s -C '$@' print-DISC_CONTENTS) $$(cd '$@' && ls $$id.iso $$id.cart 2>/dev/null); do \
+	  if [ ! -s "$@/$$f" ]; then printf 'FAIL %s: %s missing or empty\n' '$@' "$$f"; exit 1; fi; \
+	done
 
 # ---------------------------------------------------------------------------
 # Loop 2: every library header compiles on its own, for every hardware target.
