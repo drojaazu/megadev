@@ -125,6 +125,9 @@ CC_FLAGS+= \
 	-Wall -Wextra -Wno-main -Wa,--register-prefix-optional
 AS_FLAGS+= \
 	-Wa,--bitwise-or
+# Each compile writes a .d file listing the headers it included; they are
+# included at the end of this file so a header change rebuilds its users.
+DEP_FLAGS:=-MMD -MP
 LD_FLAGS+= \
 	-nostdlib -z noexecstack
 
@@ -139,11 +142,11 @@ LD_LIBS:=$(RUNTIME_LIB) $(LIBGCC)
 
 $(BUILD_PATH)/runtime/%.s.o: $(LIB_PATH)/runtime/%.s
 	@mkdir -p $(dir $@)
-	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $< -o $@
+	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(DEP_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $< -o $@
 
 $(BUILD_PATH)/runtime/%.c.o: $(LIB_PATH)/runtime/%.c
 	@mkdir -p $(dir $@)
-	@$(CC) $(CC_FLAGS) $(INC) -c $< -o $@
+	@$(CC) $(CC_FLAGS) $(DEP_FLAGS) $(INC) -c $< -o $@
 
 $(RUNTIME_LIB): $(RUNTIME_OBJ)
 	@$(AR) rcs $@ $^
@@ -177,16 +180,23 @@ vpath %.s.o $(BUILD_PATH)
 
 .DEFAULT_GOAL:=all
 
+# A module, cart or boot binary depends on the objects built from the sources
+# its project lists, so that a header change (recorded in the .d files) reaches
+# the link step. $$^ is the project's own prerequisite list, seen at second
+# expansion.
+.SECONDEXPANSION:
+MODULE_OBJS=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o,$(filter %.c %.s,$(1)))))
+
 # need to specify paths here as they're called through a secondary make
 $(BUILD_PATH)/%.c.o: %.c
-	$(call msg_info,Compiling source $(notdir $^))
+	$(call msg_info,Compiling source $(notdir $<))
 	@mkdir -p $(dir $@)
-	@$(CC) $(CC_FLAGS) $(INC) -c $^ -o $@
+	@$(CC) $(CC_FLAGS) $(DEP_FLAGS) $(INC) -c $< -o $@
 
 $(BUILD_PATH)/%.s.o: %.s
-	$(call msg_info,Compiling source $(notdir $^))
+	$(call msg_info,Compiling source $(notdir $<))
 	@mkdir -p $(dir $@)
-	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $^ -o $@
+	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(DEP_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $< -o $@
 
 #%.mmd.elf: %.s %.c %.h
 #	@echo "mmd elf in: $^"
@@ -194,7 +204,7 @@ $(BUILD_PATH)/%.s.o: %.s
 #	echo "making mmd elf with: $^ $@"
 #	$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_mmd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(symref)) -o $@
 
-%.mmd:
+%.mmd: $$(call MODULE_OBJS,$$^)
 # @echo "mmd in: $^"
 # @echo "mmd out: $@"
 	$(call msg_info,Building module $(notdir $@))
@@ -211,7 +221,7 @@ $(BUILD_PATH)/%.s.o: %.s
 	@$(NM) -n $(OUT_MOD_ELF) > $(addsuffix .sym,$(OUT_MOD_ELF))
 	@$(OBJCPY) -O binary $(OUT_MOD_ELF) $@
 
-%.smd:
+%.smd: $$(call MODULE_OBJS,$$^)
 # @echo "smd in: $^"
 # @echo "smd out: $@"
 	$(call msg_info,Building module $(notdir $@))
@@ -228,7 +238,7 @@ $(BUILD_PATH)/%.s.o: %.s
 	@$(NM) -n $(OUT_MOD_ELF) > $(addsuffix .sym,$(OUT_MOD_ELF))
 	@$(OBJCPY) -O binary $(OUT_MOD_ELF) $@
 
-%.cart:
+%.cart: $$(call MODULE_OBJS,$$^)
 #	@echo "cart in: $^"
 #	@echo "cart out: $@"
 	$(call msg_info,Building cart ROM $(notdir $@))
@@ -249,7 +259,7 @@ $(BUILD_PATH)/ip.bin: $(BUILD_PATH)/ip.bin.elf
 $(BUILD_PATH)/security.s.o: $(MEGADEV_PATH)/lib/security.c
 	$(call msg_info,Creating security block)
 	@mkdir -p $(dir $@)
-	@$(CC) $(CC_FLAGS) $(INC) -c $< -o $@
+	@$(CC) $(CC_FLAGS) $(DEP_FLAGS) $(INC) -c $< -o $@
 
 $(BUILD_PATH)/ip.bin.elf: $(BUILD_PATH)/security.s.o $(BUILD_PATH)/ip.s.o $(RUNTIME_LIB)
 	@$(LD) $(LD_FLAGS) -T$(CFG_PATH)/ip.ld -o$@ $^ $(LIBGCC)
@@ -279,3 +289,7 @@ $(BUILD_PATH)/boot.bin: $(BUILD_PATH)/ip.bin $(BUILD_PATH)/sp.bin
 		-sysid "MEGA_CD" -appid "" -publisher "" -preparer "" \
 		-o $@ $(DISC_PATH)
 	$(call msg_done,Completed build of $(PROJECT_ID) ($(TARGET) / $(REGION) / $(VIDEO)))
+
+# Header dependencies recorded by DEP_FLAGS. Deleting this line does not break
+# any build; it only stops header changes from triggering rebuilds.
+-include $(shell test -d $(BUILD_PATH) && find $(BUILD_PATH) -name '*.d' 2>/dev/null)
