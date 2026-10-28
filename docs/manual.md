@@ -365,9 +365,9 @@ For example, the gate array has a Main side register `memmmode` with a DMNA flag
 
 # Working on Megadev Itself
 
-Everything above is for projects that use Megadev. This section is for changes to Megadev.
+Everything above is for projects that use Megadev. This section is for changes to the Megadev project.
 
-The `Makefile` at the root of the repository is maintainer tooling. It is not part of the kit: projects include `megadev.make` and never read it, so its targets cannot collide with a project's own. Anything in `megadev.make`, by contrast, is user-facing.
+The `Makefile` at the root of the repository is maintainer tooling. It should not be confused with `megadev.make` which is used for development projects.
 
 ## `make check`
 
@@ -375,7 +375,7 @@ Run `make check` from the repository root before merging any branch. It must pas
 
 1. **Every project builds.** Each example and `new_project` is built from clean through its own makefile, the same way a user project is built. The repository root is passed as `MEGADEV_PATH`, so no installation is required.
 2. **Every library header compiles alone.** Each `lib/**/*.h` is included into an otherwise empty translation unit and compiled with `-Wall -Wextra -Werror`, once per hardware target. A header that only works when something else was included first fails here.
-3. **Every library assembly file assembles alone.** Each `lib/**/*.s` is assembled by itself. This catches files no project uses, which is how assembly that could not assemble at all once sat in the library unnoticed. Files that cannot assemble standalone by design, such as `cd_boot.s` which incbins a project's built binaries, are listed in the `Makefile` with a reason. That list may only shrink.
+3. **Every library assembly file assembles alone.** Each `lib/**/*.s` is assembled by itself. Files that cannot assemble standalone by design, such as `cd_boot.s` which incbins a project's built binaries, are listed in the `Makefile` with a reason.
 
 `make clean` removes everything the gate produced.
 

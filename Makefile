@@ -77,7 +77,7 @@ check-headers:
 
 # ---------------------------------------------------------------------------
 # Loop 3: every library assembly file assembles on its own. Catches files no
-# project uses; three such files sat broken on master for years.
+# project uses.
 # ---------------------------------------------------------------------------
 check-asm:
 	@mkdir -p $(CHECK_DIR)
