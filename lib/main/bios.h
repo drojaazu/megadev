@@ -569,7 +569,7 @@ static inline u8 bios_detect_controller(u8 * io_data_port)
   register u8  D6 asm("d6");
   asm volatile(
     "\
-  jsr %c0 \n\
+  jsr %c1 \n\
     "
     : "=d"(D6)
     : "i"(BIOS_DETECT_CONTROLLER), "a"(A6)
