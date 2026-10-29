@@ -60,6 +60,14 @@ In other words, consider what components may be instantiated and cleared during 
 
 You can see a rather simple example of this sort of setup in the `new_project` example.
 
+## Register a6
+
+The compiler never uses address register a6. It is reserved with `-ffixed-a6` because the Boot ROM library treats a6 as scratch, so no C value can be kept there safely. The consequences for your code:
+
+- Do not use a6 in inline assembly as a working register. Naming it in a clobber list does not protect it; the compiler cannot honor a clobber on a frame pointer, and silently ignores it.
+- Megadev's Boot ROM wrappers do not save and restore a6 around the call. Nothing the compiler generates needs it preserved.
+- Hand-written assembly that keeps a value in a6 across a call into C, or into a Boot ROM wrapper, must save it itself.
+
 ## Stack Usage
 
 Compared to hand-written assembly which often passes values by register, C tends to push values to the stack when calling functions. This means the stack can fill up very quickly, especially if you are using the default Boot ROM library memory layout which sets aside only 256 bytes for the stack (see `main_bios.md`).

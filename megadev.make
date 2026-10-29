@@ -110,6 +110,7 @@ AS_INC:=-Wa,-I$(SRC_PATH) -Wa,-I$(LIB_PATH) -Wa,-I$(RES_PATH) -Wa,-I$(BUILD_PATH
 # with asm source files
 CC_FLAGS+= \
 	-m68000 \
+	-ffixed-a6 \
 	-imacros build.def.h \
 	-DPROJECT_ID=$(PROJECT_ID) \
 	-DTARGET=$(TARGET) \
