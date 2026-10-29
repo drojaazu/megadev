@@ -1,0 +1,21 @@
+MEGADEV is distributed under the MIT License; see LICENSE.
+
+The following is excluded from that license:
+
+lib/security.c contains the Mega CD security block, a region-specific
+sequence of code and data created by Sega. The Mega CD Boot ROM refuses to
+run any disc that does not carry this block unmodified at the start of its
+Initial Program, so every bootable Mega CD disc, licensed or not, contains
+it. Megadev reproduces it unmodified, as distributed with the Mega CD
+development documentation, solely so that discs built with Megadev boot. It
+is Sega's property and is not relicensed here.
+
+The block includes the text "PRODUCED BY OR UNDER LICENCE FROM SEGA
+ENTERPRISES LTD." and the Sega logo, which the Boot ROM displays when a disc
+starts. That text and logo are part of Sega's block, not a statement by
+Megadev or by any project built with it. Megadev and projects built with it
+are not produced by or under license from Sega.
+
+SEGA, Mega Drive, Mega CD and related names and marks are the property of
+SEGA CORPORATION. Megadev is an unofficial, non-profit project with no
+affiliation to or endorsement from SEGA CORPORATION.

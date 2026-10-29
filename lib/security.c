@@ -1,11 +1,17 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file security.s
- * @brief Mega CD security block inclusion
+ * @file security.c
+ * @brief Mega CD security block, selected by region
  *
- * @note
- * This file should be included at the top of you IP asm source!
+ * @details
+ * The Boot ROM will not run a disc unless this block appears unmodified at
+ * the start of the Initial Program. It is placed there by the build; a
+ * project does not include this file.
+ *
+ * The block is Sega's code and data, reproduced as distributed with the Mega
+ * CD development documentation. It is not covered by the Megadev license and
+ * must not be edited. See NOTICE at the repository root.
  */
 
 #ifndef REGION
