@@ -14,6 +14,8 @@ Please refer to [docs/manual.md](docs/manual.md) for installation and usage info
 
 **Megadev is not affiliated with, endorsed by, or connected in any way with SEGA CORPORATION. The Megadev project is distributed free of charge under a permissive license and is developed as an unofficial, non-profit fan project.**
 
+Mega CD discs cannot boot without a security block required by the boot process. Megadev includes that block unmodified so that discs built with it will boot. It is Sega's work, is not covered by the Megadev license, and causes every disc to display Sega's logo and license text at startup regardless of who made the disc. See [NOTICE](NOTICE) for details.
+
 # Special Thanks
 
  - plutiedev, Chilly Willy, Nemesis and all the other gurus whose research has been integral to Megadev and the homebrew scene as a whole.
