@@ -330,7 +330,7 @@ static inline enum BrmverifyStatus bram_brmverify(BramFileInfo const * params)
 
 	asm(
 		"\
-			jsr %p0 \n\
+			jsr %p1 \n\
 			bcs 1f \n\
 			moveq #1, d0 \n\
 		1: \n\

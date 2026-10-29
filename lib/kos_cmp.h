@@ -18,7 +18,7 @@ static inline void dcmp_kosinski(void * src, void * dst)
 
 	asm volatile(
 		"\
-			jsr %p0 \n\
+			jsr %p2 \n\
 		"
 		: "+a"(A0), "+a"(A1)
 		: "i"(Kos_Decomp), "a"(A0), "a"(A1)
