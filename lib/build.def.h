@@ -6,8 +6,7 @@
  *
  */
 
-#ifndef MEGADEV__BUILD_DEF_H
-#define MEGADEV__BUILD_DEF_H
+#pragma once
 
 // For use with the TARGET definition
 #define MEGADRIVE 0
@@ -26,5 +25,3 @@
 // For use with VRAM_SIZE definition
 #define VRAM_64K 0
 #define VRAM_128K 1
-
-#endif

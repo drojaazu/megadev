@@ -4,8 +4,7 @@
  * @file mmd.macros.s
  */
 
-#ifndef MEGADEV__MAIN_INIT_MMD_S
-#define MEGADEV__MAIN_INIT_MMD_S
+#pragma once
 
 #include "macros.s"
 #include <main/memmap.def.h>
@@ -40,5 +39,3 @@
   GRANT_2M
 4:movea.l  8(a0), a0
 .endm
-
-#endif

@@ -5,8 +5,7 @@
  * @brief String conventions shared by C and assembly
  */
 
-#ifndef MEGADEV__STR_UTIL_DEF_H
-#define MEGADEV__STR_UTIL_DEF_H
+#pragma once
 
 /**
  * @def STRING_TERMINATOR
@@ -14,5 +13,3 @@
  * which treat 0x00 as a newline
  */
 #define STRING_TERMINATOR 0xFF
-
-#endif

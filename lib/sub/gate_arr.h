@@ -5,8 +5,7 @@
  * @brief C wrappers for Sub CPU side Gate Array registers
  */
 
-#ifndef MEGADEV__SUB_GATEARR_H
-#define MEGADEV__SUB_GATEARR_H
+#pragma once
 
 #include "gate_arr.def.h"
 #include <types.h>
@@ -648,5 +647,3 @@ static inline void clear_comm_regs()
     : "i"(GA_REG_COMSTAT0)
     : "d0", "a0");
 }
-
-#endif

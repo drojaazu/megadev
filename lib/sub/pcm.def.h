@@ -5,8 +5,7 @@
  * @brief PCM audio definitions
  */
 
-#ifndef MEGADEV__SUB_PCM_DEF_H
-#define MEGADEV__SUB_PCM_DEF_H
+#pragma once
 
 #define _PCM_ENV			0xFF0001
 #define _PCM_PAN			0xFF0003
@@ -36,5 +35,3 @@
 #define _PCM_PLAY_CH7_H 0xFF003B
 #define _PCM_PLAY_CH8_L 0xFF003D
 #define _PCM_PLAY_CH8_H 0xFF003F
-
-#endif

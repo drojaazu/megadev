@@ -5,8 +5,7 @@
  * @brief Sub CPU side system library
  */
 
-#ifndef MEGADEV__SUBBIOS_H
-#define MEGADEV__SUBBIOS_H
+#pragma once
 
 #include "sub/bios.def.h"
 #include "sub/memmap.def.h"
@@ -663,5 +662,3 @@ jsr %p1"
 		: "i"(CDBIOS), "d"(D0)
 		: "cc");
 };
-
-#endif

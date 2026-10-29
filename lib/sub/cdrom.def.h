@@ -5,8 +5,7 @@
  * @brief CD-ROM file access definitions
  */
 
-#ifndef MEGADEV__SUB_CDROM_DEF_H
-#define MEGADEV__SUB_CDROM_DEF_H
+#pragma once
 
 /*
  * Access Operations
@@ -80,5 +79,3 @@
  * @brief Filename not found on load attempt
  */
 #define CDROM_RESULT_NOT_FOUND 0xFFFE
-
-#endif

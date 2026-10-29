@@ -5,8 +5,7 @@
  * @brief Z80 CPU utilities
  */
 
-#ifndef MEGADEV__MAIN_Z80_S
-#define MEGADEV__MAIN_Z80_S
+#pragma once
 
 #include "macros.s"
 #include "z80.def.h"
@@ -59,5 +58,3 @@ copy:
   move.w   #Z80_BUS_RELEASE, (Z80_REG_BUSREQ)
   move.w   #Z80_RESET_RELEASE, (Z80_REG_RESET)
 .endm
-
-#endif
