@@ -48,9 +48,19 @@ LIBGCC := $(shell $(CC) -print-libgcc-file-name)
 INCR_PROJECT := examples/gfx
 INCR_HEADER  := lib/main/vdp.h
 
-.PHONY: check check-projects check-headers check-asm check-link check-odr check-incremental docs clean $(PROJECTS)
+# Headers whose inline functions do not yet compile when instantiated. Each
+# entry needs a reason. This list may only shrink.
+#   lib/main/comm.h   ext_rx/ext_tx: lea with a memory destination (KB-46);
+#                     fixed by the serial comm rework
+INLINE_EXCLUDE := lib/main/comm.h
 
-check: check-projects check-headers check-asm check-link check-odr check-incremental
+# The optimization flags projects build with by default; some inline asm is
+# only valid under them.
+INLINE_FLAGS := -O1 -fomit-frame-pointer
+
+.PHONY: check check-projects check-headers check-asm check-link check-odr check-incremental check-inline docs clean $(PROJECTS)
+
+check: check-projects check-headers check-asm check-link check-odr check-incremental check-inline
 	@printf '\ncheck: all passed\n'
 
 # ---------------------------------------------------------------------------
@@ -172,6 +182,29 @@ check-incremental:
 	echo "$$out" | grep -q 'Linking' || { printf 'FAIL incremental: touching %s did not relink\n' '$(INCR_HEADER)'; exit 1; }
 	@$(MAKE) -q -C $(INCR_PROJECT) >/dev/null 2>&1 || { printf 'FAIL incremental: second make is not a no-op\n'; exit 1; }
 	@printf '== incremental: %s rebuilds %s and settles\n' '$(INCR_HEADER)' '$(INCR_PROJECT)'
+
+# ---------------------------------------------------------------------------
+# Loop 7: every static inline function in every header compiles when it is
+# instantiated. A header compile alone never parses a body nothing calls;
+# this takes the address of each function so the compiler must.
+# ---------------------------------------------------------------------------
+check-inline:
+	@mkdir -p $(CHECK_DIR)
+	@fail=0; total=0; \
+	for h in $(filter-out $(INLINE_EXCLUDE),$(HEADERS)); do \
+	  printf '#include <%s>\n' "$${h#lib/}" > $(CHECK_DIR)/inline.c; \
+	  $(CC) $(CHECK_FLAGS) -DTARGET=MEGACD -fsyntax-only -aux-info $(CHECK_DIR)/inline.X $(CHECK_DIR)/inline.c 2>/dev/null || true; \
+	  names=$$(grep -E "^/\* $$h:[0-9]+:N[FC] \*/ static " $(CHECK_DIR)/inline.X | sed -E 's/ \(.*//; s/.*[ *]//' | sort -u); \
+	  [ -n "$$names" ] || continue; \
+	  total=$$((total + $$(echo "$$names" | wc -l))); \
+	  { printf '#include <%s>\nvoid const * const megadev_inline_check[] = {\n' "$${h#lib/}"; \
+	    for f in $$names; do printf '  (void const *) %s,\n' "$$f"; done; printf '};\n'; } > $(CHECK_DIR)/inline.c; \
+	  if ! $(CC) $(CHECK_FLAGS) $(INLINE_FLAGS) -DTARGET=MEGACD -c $(CHECK_DIR)/inline.c -o $(CHECK_DIR)/inline.o 2> $(CHECK_DIR)/inline.err; then \
+	    printf 'FAIL inline %s\n' "$$h"; cat $(CHECK_DIR)/inline.err; fail=1; \
+	  fi; \
+	done; \
+	x=$$(echo $(INLINE_EXCLUDE) | wc -w); \
+	[ $$fail = 0 ] && printf '== inline: %s functions instantiate, %s header(s) excluded\n' "$$total" "$$x" || exit 1
 
 docs:
 	@rm -rf docs/html; mkdir -p $(CHECK_DIR)
