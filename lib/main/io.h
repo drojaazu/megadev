@@ -5,8 +5,7 @@
  * @brief I/O utilities
  */
 
-#ifndef MEGADEV__MAIN_IO_H
-#define MEGADEV__MAIN_IO_H
+#pragma once
 
 #include "types.h"
 #include <main/io.def.h>
@@ -131,5 +130,3 @@ static inline u8 read_input_joypad(io_reg io_port)
 
 	return joypad_state;
 }
-
-#endif

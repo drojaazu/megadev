@@ -5,8 +5,7 @@
  * @brief Sub CPU side memory map & system vectors
  */
 
-#ifndef MEGADEV__SUB_MEMMAP_DEF_H
-#define MEGADEV__SUB_MEMMAP_DEF_H
+#pragma once
 
 /**
  * @def PRG_RAM
@@ -93,5 +92,3 @@
 #define EXVEC_TRAPD		 0x005FEE
 #define EXVEC_TRAPE		 0x005FF4
 #define EXVEC_TRAPF		 0x005FFA
-
-#endif

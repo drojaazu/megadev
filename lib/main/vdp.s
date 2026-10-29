@@ -5,8 +5,7 @@
  * @brief VDP utility subroutines
  */
 
-#ifndef MEGADEV__MAIN_VDP_S
-#define MEGADEV__MAIN_VDP_S
+#pragma once
 
 #include <macros.s>
 #include <main/vdp.def.h>
@@ -74,5 +73,3 @@ SUB VDP_DMA_FILL
   btst     #1, d3
   bne.b    0b
   rts
-
-#endif

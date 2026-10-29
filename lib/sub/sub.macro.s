@@ -5,8 +5,7 @@
  * Sub CPU Gate Array and misc. utilities for use with the Sub CPU
  */
 
-#ifndef MEGADEV__SUB_MACROS_S
-#define MEGADEV__SUB_MACROS_S
+#pragma once
 
 #include <sub/memmap.def.h>
 #include <sub/gate_arr.def.h>
@@ -86,5 +85,3 @@ loop:
 	btst    #BIT_GA_REG_RET, GA_REG_MEMMODE+1
 	beq     loop
 .endm
-
-#endif

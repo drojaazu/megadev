@@ -7,8 +7,7 @@
  * this is used!
  */
 
-#ifndef MEGADEV__MAIN_CD_EXCEPTION_S
-#define MEGADEV__MAIN_CD_EXCEPTION_S
+#pragma once
 
 #include "macros.s"
 #include "main/bios.def.h"
@@ -295,6 +294,3 @@ sr_val: .word 0
 pc_val: .long 0
 str_cache: .space 9
 .align 2
-
-
-#endif

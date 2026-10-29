@@ -5,8 +5,7 @@
  * @brief Main CPU side Gate Array registers
  */
 
-#ifndef MEGADEV__GATE_ARR_DEF_H
-#define MEGADEV__GATE_ARR_DEF_H
+#pragma once
 
 /**
  * @defgroup ga_regs_main Main CPU / Gate Array / Registers
@@ -509,5 +508,3 @@
  * @param STAT Comm Status
  */
 #define GA_REG_COMSTAT7 0xA1202E
-
-#endif

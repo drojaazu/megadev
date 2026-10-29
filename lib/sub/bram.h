@@ -5,8 +5,7 @@
  * @brief C wrappers for Backup RAM usage
  */
 
-#ifndef MEGADEV__SUB_BRAM_H
-#define MEGADEV__SUB_BRAM_H
+#pragma once
 
 #include "types.h"
 #include <sub/bram.def.h>
@@ -341,5 +340,3 @@ static inline enum BrmverifyStatus bram_brmverify(BramFileInfo const * params)
 
 	return d0_result;
 }
-
-#endif
