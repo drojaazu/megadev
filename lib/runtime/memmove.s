@@ -5,7 +5,7 @@
  * @brief memmove, as the compiler expects to find it
  */
 
-#include "macros.s"
+#include "macro.s"
 
 .section .text
 

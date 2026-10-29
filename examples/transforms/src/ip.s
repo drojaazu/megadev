@@ -3,11 +3,11 @@
 
 #include <main/memmap.def.h>
 #include <main/bios.def.h>
-#include <main/gate_arr.macros.s>
+#include <main/gate_arr.macro.s>
 #include <main/gate_arr.def.h>
 #include <main/vdp.def.h>
-#include <macros.s>
-#include <system.macros.s>
+#include <macro.s>
+#include <system.macro.s>
 #include "mmd_layout.s"
 #include "shared.h"
 

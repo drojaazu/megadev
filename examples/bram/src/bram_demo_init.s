@@ -1,5 +1,5 @@
 
-#include <macros.s>
+#include <macro.s>
 #include <main/memmap.def.h>
 #include <main/main.macro.s>
 
@@ -26,5 +26,5 @@ jmp (a0)
 data_init:
 #include <init_data.s>
 mmd_init:
-#include <main/mmd.macros.s>
+#include <main/mmd.macro.s>
 

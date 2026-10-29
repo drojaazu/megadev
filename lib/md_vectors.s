@@ -5,7 +5,7 @@
  * @brief Mega Drive exception vector table
  */
 
-#include "macros.s"
+#include "macro.s"
 
 .org 0
 

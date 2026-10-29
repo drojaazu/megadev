@@ -2,7 +2,7 @@
 #include <sub/sub.macro.s>
 #include <sub/cdrom.def.h>
 #include <sub/cdrom.macro.s>
-#include <macros.s>
+#include <macro.s>
 
 .section .text
 

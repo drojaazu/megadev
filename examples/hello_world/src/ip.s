@@ -1,11 +1,11 @@
 
 .section .text
 
-#include <macros.s>
-#include <system.macros.s>
+#include <macro.s>
+#include <system.macro.s>
 #include <main/memmap.def.h>
 #include <main/bios.def.h>
-#include <main/vdp.macros.s>
+#include <main/vdp.macro.s>
 #include <main/gate_arr.def.h>
 #include <main/vdp.def.h>
 #include <main/io.def.h>

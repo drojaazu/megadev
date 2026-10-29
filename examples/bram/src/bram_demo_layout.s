@@ -1,4 +1,4 @@
-#include <macros.s>
+#include <macro.s>
 #include <main/memmap.def.h>
 
 GLOBAL MODULE_ROM_ORIGIN WORK_RAM

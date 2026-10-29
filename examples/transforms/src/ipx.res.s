@@ -1,6 +1,6 @@
 
 .section .rodata
-#include <macros.s>
+#include <macro.s>
 
 GLABEL res_pal_stamps
 .byte 32 * 0

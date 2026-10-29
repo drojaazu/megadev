@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <macros.s>
+#include <macro.s>
 #include <main/vdp.def.h>
 
 /**
