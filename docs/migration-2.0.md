@@ -5,6 +5,7 @@ This guide lists every change in Megadev 2.0 that requires a change to a project
 # Contents
 
 - File names
+- Registers
 
 ---
 
@@ -27,3 +28,9 @@ Every macro-only assembly file now ends in `.macro.s`; the plural `.macros.s` is
 | `main/z80.macros.s` | `main/z80.macro.s` |
 
 The contents of the files are unchanged.
+
+# Registers
+
+## a6 is reserved
+
+Compiled C never uses a6 (`-ffixed-a6` is now in the default compiler flags), and the Boot ROM wrappers in `main/bios.h` and the PCM wrappers in `sub/pcm.h` no longer save and restore a6 around the call. Code size shrinks and nothing changes for C callers. Hand-written assembly that kept a value in a6 across a call to one of those wrappers must now save it itself; inline assembly that used a6 as a working register should use another address register. See `docs/dev_in_c.md`, Register a6.
