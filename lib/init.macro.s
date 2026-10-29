@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file init.macros.s
+ * @file init.macro.s
  * @brief Module initialization
  * @details Performs three main tasks:
  *          - Disables interrupts

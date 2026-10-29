@@ -6,7 +6,7 @@
  * print function
  */
 
-#include "macros.s"
+#include "macro.s"
 #include "str_util.def.h"
 
 .section .text

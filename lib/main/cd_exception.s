@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "macros.s"
+#include "macro.s"
 #include "main/bios.def.h"
 #include "main/memmap.def.h"
 #include "main/io.def.h"

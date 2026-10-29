@@ -1,6 +1,6 @@
 
 .section .rodata
-#include "macros.s"
+#include "macro.s"
 
 FILE "basic_font.md.chr", res_basic_font
 

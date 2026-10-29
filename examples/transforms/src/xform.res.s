@@ -1,6 +1,6 @@
 
 .section .rodata
-#include <macros.s>
+#include <macro.s>
 
 FILE "stampmap.bin", res_stamp_map
 

@@ -5,7 +5,7 @@
  
 #include "sub/memmap.def.h"
 #include "sub/pcm.def.h"
-#include "macros.s"
+#include "macro.s"
 
 .section .text
 
