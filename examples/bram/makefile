@@ -89,11 +89,9 @@ clean:
 	@rm -rf $(PROJECT_ID).iso $(DISC_PATH)/*.mmd $(DISC_PATH)/*.smd $(BUILD_PATH)/*
 
 $(DISC_PATH)/bramdemo.mmd: \
-	bram_demo_layout.s \
 	main/ipx_init.s \
 	bram_demo.c
 
 $(DISC_PATH)/spx.smd: \
-	spx_layout.s \
 	spx.c \
 	$(BUILD_PATH)/sp.bin

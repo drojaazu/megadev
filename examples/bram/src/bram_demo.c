@@ -1,3 +1,15 @@
+#include <macro.h>
+#include <main/memmap.def.h>
+
+// Module layout: ROM begins at the start of Work RAM, overwriting the IP;
+// RAM follows it, leaving a little over 61 KB for ROM and 512 bytes of RAM.
+// MMD_DEST says where the module is copied after loading into Word RAM.
+GLOBAL_SYM(MODULE_ROM_ORIGIN, WORK_RAM);
+GLOBAL_SYM(MODULE_RAM_ORIGIN, 0xFFF500);
+GLOBAL_SYM(MODULE_ROM_LENGTH, MODULE_RAM_ORIGIN - MODULE_ROM_ORIGIN);
+GLOBAL_SYM(MODULE_RAM_LENGTH, 0x200);
+GLOBAL_SYM(MMD_DEST, WORK_RAM);
+
 #include <main/bios.h>
 #include <main/gate_arr.h>
 #include <main/io.def.h>

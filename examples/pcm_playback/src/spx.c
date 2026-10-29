@@ -1,4 +1,13 @@
 
+#include <macro.h>
+#include <sub/memmap.def.h>
+
+// Module layout in Program RAM
+GLOBAL_SYM(MODULE_ROM_ORIGIN, 0x10000);
+GLOBAL_SYM(MODULE_ROM_LENGTH, 0xE000);
+GLOBAL_SYM(MODULE_RAM_ORIGIN, 0x1E000);
+GLOBAL_SYM(MODULE_RAM_LENGTH, 0x2000);
+
 #include "shared.h"
 #include <sub/cdrom.h>
 #include <sub/gate_arr.h>
