@@ -17,16 +17,24 @@ Basically, we need to tell the linker at what memory offset the ROM and RAM sect
     MODULE_RAM_ORIGIN
     MODULE_RAM_LENGTH
 
-For example, if we want our module to run on the Main CPU from Word RAM in 2Mbit mode with 1.5 Mbits for program/data (ROM) and 0.5 Mbits for runtime memory (RAM), we would specify the values like so:
+For example, if we want our module to run on the Main CPU from Word RAM in 2Mbit mode with 1.5 Mbits for program/data (ROM) and 0.5 Mbits for runtime memory (RAM), we would specify the values at file scope in the module's C source:
+
+    #include <macro.h>
+    #include <main/memmap.def.h>
+
+    GLOBAL_SYM(MODULE_ROM_ORIGIN, WORD_RAM);
+    GLOBAL_SYM(MODULE_ROM_LENGTH, 0x180000);
+    GLOBAL_SYM(MODULE_RAM_ORIGIN, 0x380000);
+    GLOBAL_SYM(MODULE_RAM_LENGTH, 0x80000);
+
+`GLOBAL_SYM` (from `macro.h`) defines an absolute global symbol that the linker script reads; it takes no storage. `WORD_RAM` comes from `main/memmap.def.h`. A module written in assembly uses the equivalent `GLOBAL` macro from `macro.s`:
 
     GLOBAL MODULE_ROM_ORIGIN WORD_RAM
     GLOBAL MODULE_ROM_LENGTH 0x180000
     GLOBAL MODULE_RAM_ORIGIN 0x380000
     GLOBAL MODULE_RAM_LENGTH 0x80000
 
-(Note that we use GLOBAL, which is a Megadev macro that sets the symbol to global; this is in macro.s, so you will need to include that file. We also use WORD_RAM which is present in the main/memmap.def.h file, which should also be included if you wish to use such named memory locations. You can, of course, opt to not include these files and manually define the memory location and the global attribute.)
-
-(As another side note, there doesn't seem to be a way to manually define a symbol (i.e. a named memory address) in C. You will need to specify this in asm using .equ/.global. A good idea is to have a single asm definitions file and include it in your MMD def.)
+Both produce the same symbol. A layout shared by several modules goes in its own small source file that each module lists; see `new_project/src/shared_mmd_layout.c`.
 
 In terms of object sections, .text and .rodata sections will be placed in ROM; .data and .bss will be placed in RAM. There is also a .init section which is guaranteed to be at the beginning of the ROM space. It's recommended only one routine be placed in .init and used as an entry point at a known address.
 
