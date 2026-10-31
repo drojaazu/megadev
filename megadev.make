@@ -267,6 +267,8 @@ $(BUILD_PATH)/%.s.o: %.s
 	$(call msg_info,Building cart ROM $(notdir $@))
 	@mkdir -p $(dir $@) $(BUILD_PATH)
 	$(eval BUILD_SRC:=$(addprefix $(BUILD_PATH)/,$(notdir $(addsuffix .o, $(filter %.c %.h %.s, $^)))))
+	$(eval BUILD_MOD:=$(filter %.bin, $^))
+	@$(if $(BUILD_MOD), $(MAKE) -s $(BUILD_MOD))
 	@$(if $(BUILD_SRC), $(MAKE) -s $(BUILD_SRC))
 	$(call msg_info,Linking cart ROM $(notdir $@))
 	$(eval OUT_CART_ELF:=$(addprefix $(BUILD_PATH)/,$(addsuffix .elf,$(notdir $@))))

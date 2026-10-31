@@ -53,6 +53,23 @@
 #endif
 
 /**
+ * @brief Base address of the Boot ROM as seen by the Main CPU
+ * @details The Boot ROM is at the bottom of the address space when the system
+ * boots from the Mega CD. When it boots from a cartridge (Mode 1) the
+ * cartridge takes that place and the Boot ROM moves to 0x400000.
+ */
+#if TARGET == MEGACD_MODE1
+#define BOOT_ROM 0x400000
+#else
+#define BOOT_ROM 0x000000
+#endif
+
+/**
+ * @brief Size of the Boot ROM
+ */
+#define BOOT_ROM_SIZE 0x20000
+
+/**
  * @brief Bass address for Sub CPU PRG RAM 1M mapping
  */
 #if TARGET == MEGACD_MODE1

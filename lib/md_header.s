@@ -25,7 +25,13 @@
 # TODO calculate checksum
 .word  0
 .org 0x190
+#if TARGET == MEGACD_MODE1
+// Device support: joypad and Mega CD. The C tells an emulator with a Boot ROM
+// available to attach the Mega CD to this cartridge.
+.ascii "JC"
+#else
 .ascii "J"
+#endif
 .org 0x1A0, 0x20
 .long 0x0
 # TODO fill out proper rom start/rom end
