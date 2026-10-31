@@ -16,16 +16,22 @@
 extern "C" {
 #endif
 
+#ifdef __cplusplus
+#define NULL nullptr
+#else
 #define NULL ((void *) 0)
+#endif
 
 typedef __PTRDIFF_TYPE__ ptrdiff_t;
 
 typedef __SIZE_TYPE__ size_t;
 
+#ifndef __cplusplus
 #define bool													_Bool
 #define true													1
 #define false													0
 #define __bool_true_false_are_defined 1
+#endif
 
 /**
  * @typedef int8_t
