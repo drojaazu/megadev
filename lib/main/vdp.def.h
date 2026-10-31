@@ -807,12 +807,12 @@
  * @param HSY (No documentation.)
  * @param EP External pixel bus enable
  * @param SH Enable shadow/highlight mode
- * \n [@ref VDP_MASK_SHADOW_HIGHLIGHT]
+ * \n [@ref VDP_SHADOW_HIGHLIGHT_MASK]
  * @param LS Interlace mode
- * \n 00: No interlace [@ref VDP_MASK_INTERLACE_NONE]
- * \n 01: Interlace normal resolution [@ref VDP_MASK_INTERLACE_NORMAL]
- * \n 10: No interlace [@ref VDP_MASK_INTERLACE_NONE]
- * \n 11: Interlace double resolution [@ref VDP_MASK_INTERLACE_DOUBLE]
+ * \n 00: No interlace [@ref VDP_INTERLACE_NONE]
+ * \n 01: Interlace normal resolution [@ref VDP_INTERLACE_NORMAL]
+ * \n 10: No interlace [@ref VDP_INTERLACE_NONE]
+ * \n 11: Interlace double resolution [@ref VDP_INTERLACE_DOUBLE]
  *
  * @aliases VDP_REG_MODE4
  */
