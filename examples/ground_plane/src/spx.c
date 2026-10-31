@@ -18,7 +18,7 @@
 
 #include "shared.h"
 #include "tables.h"
-#include "mode7.res.h"
+#include "ground.res.h"
 #include <memory.h>
 #include <sub/cdrom.h>
 #include <sub/gate_arr.h>
@@ -50,7 +50,7 @@ typedef struct
  * Writing it directly into Word RAM would work, but every one of those writes
  * costs 3 clocks of any graphics operation still running -- see
  * docs/rotation_scaling.md section 6. */
-static trace_entry trace_table[MODE7_ROWS];
+static trace_entry trace_table[GROUND_ROWS];
 
 /**
  * Signed 16x16 into 32 multiply.
@@ -76,7 +76,7 @@ static void redraw (s16 cam_x, s16 cam_y, s16 angle);
 void main()
 {
 	enable_interrupts();
-	wait_2m();
+	ga_sub_wait_2m();
 	memset32 (0, (u32 *) WORD_RAM_2M, 0x20000 * 2);
 
 	register s16 command, param1, param2, param3;
@@ -84,21 +84,21 @@ void main()
 	{
 		do
 		{
-			command = ga_reg_comcmd0;
+			command = ga_sub_reg_comcmd0;
 		} while (command == 0);
 
-		if (command != ga_reg_comcmd0)
+		if (command != ga_sub_reg_comcmd0)
 			continue;
 
-		param1 = ga_reg_comcmd1;
-		param2 = ga_reg_comcmd2;
-		param3 = ga_reg_comcmd3;
+		param1 = ga_sub_reg_comcmd1;
+		param2 = ga_sub_reg_comcmd2;
+		param3 = ga_sub_reg_comcmd3;
 
 		switch (command)
 		{
 			case CMD_LOAD_FILE:
 				load_file (CDROM_LOAD_CDC, filenames[param1], (u8 *) WORD_RAM_2M);
-				grant_2m();
+				ga_sub_grant_2m();
 				if (access_op_result != CDROM_RESULT_OK)
 					sp_fatal();
 				break;
@@ -108,13 +108,13 @@ void main()
 				break;
 		}
 
-		ga_reg_comstat0 = ga_reg_comcmd0;
+		ga_sub_reg_comstat0 = ga_sub_reg_comcmd0;
 		do
 		{
 			asm("nop");
-			command = ga_reg_comcmd0;
+			command = ga_sub_reg_comcmd0;
 		} while (command != 0);
-		ga_reg_comstat0 = 0;
+		ga_sub_reg_comstat0 = 0;
 
 	} while (1);
 }
@@ -141,24 +141,24 @@ static void load_gfx (void)
  * Build one frame's trace vector table and render it.
  *
  * @param cam_x,cam_y Camera position on the plane, in xform_pos units
- * @param angle Facing, 0 to MODE7_SIN_ENTRIES-1 over a full turn
+ * @param angle Facing, 0 to GROUND_SIN_ENTRIES-1 over a full turn
  */
 static void redraw (s16 cam_x, s16 cam_y, s16 angle)
 {
-	wait_2m();
+	ga_sub_wait_2m();
 	load_gfx();
 
 	/* forward = (sin a, cos a), right = (cos a, -sin a). One table serves both:
 	 * cosine is sine read a quarter turn along. */
 	/* Deliberately s16: the 68000 multiplies 16x16 into 32, and s32 operands
 	 * would pull in __mulsi3, a called routine, once per row per frame. */
-	s16 const sin_a = mode7_sin[angle & MODE7_ANGLE_MASK];
-	s16 const cos_a = mode7_sin[(angle + MODE7_COS_OFFSET) & MODE7_ANGLE_MASK];
+	s16 const sin_a = ground_sin[angle & GROUND_ANGLE_MASK];
+	s16 const cos_a = ground_sin[(angle + GROUND_COS_OFFSET) & GROUND_ANGLE_MASK];
 
-	for (u16 r = 0; r < MODE7_ROWS; ++r)
+	for (u16 r = 0; r < GROUND_ROWS; ++r)
 	{
-		s16 const zk = mode7_zk[r]; /* step before rotation, Q4.11 */
-		s16 const zf = (s16) mode7_zf[r]; /* ground distance, Q13.3 */
+		s16 const zk = ground_zk[r]; /* step before rotation, Q4.11 */
+		s16 const zf = (s16) ground_zf[r]; /* ground distance, Q13.3 */
 
 		/* Rotate the step. Q4.11 * Q15 gives Q26, so shift back by 15. */
 		s16 const dx = (s16) (mul16 (zk, cos_a) >> 15);
@@ -180,24 +180,24 @@ static void redraw (s16 cam_x, s16 cam_y, s16 angle)
 		(u16 *) (WORD_RAM_2M + TRACE_TABLE_OFFSET),
 		(sizeof (trace_table)) / 2);
 
-	ga_reg_stampmapbase = (u16) (STAMP_MAP_OFFSET / 4);
-	ga_reg_imgbufstart = (u16) (IMG_BUFFER_OFFSET / 4);
-	ga_reg_stampsize = GA_STAMPSIZE_REPEAT_MASK | GA_STAMPSIZE_32x32_STAMP_MASK;
-	ga_reg_imgbufoffset = 0;
-	ga_reg_imgbufhdotsize = MODE7_SCREEN_W;
-	ga_reg_imgbufvsize = (MODE7_ROWS / 8) - 1;
+	ga_sub_reg_stampmapbase = (u16) (STAMP_MAP_OFFSET / 4);
+	ga_sub_reg_imgbufstart = (u16) (IMG_BUFFER_OFFSET / 4);
+	ga_sub_reg_stampsize = GA_SUB_STAMPSIZE_REPEAT_MASK | GA_SUB_STAMPSIZE_32x32_STAMP_MASK;
+	ga_sub_reg_imgbufoffset = 0;
+	ga_sub_reg_imgbufhdotsize = GROUND_SCREEN_W;
+	ga_sub_reg_imgbufvsize = (GROUND_ROWS / 8) - 1;
 
 	/* Rewritten every frame on purpose: the hardware decrements this as it runs
 	 * and it reads 0 on completion. Set once and reused, the second operation
 	 * would silently have zero height. */
-	ga_reg_imgbufvdotsize = MODE7_ROWS;
+	ga_sub_reg_imgbufvdotsize = GROUND_ROWS;
 
 	/* Writing the trace vector base is what starts the operation, so it goes
 	 * last, after every other register holds its final value. */
-	ga_reg_tracevectbase = (u16) (TRACE_TABLE_OFFSET / 4);
+	ga_sub_reg_tracevectbase = (u16) (TRACE_TABLE_OFFSET / 4);
 
-	while (ga_reg_gfxstat & GA_GRON_MASK)
+	while (ga_sub_reg_gfxstat & GA_SUB_GRON_MASK)
 		asm("nop");
 
-	grant_2m();
+	ga_sub_grant_2m();
 }

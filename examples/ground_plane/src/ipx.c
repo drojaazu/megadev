@@ -70,7 +70,7 @@ static s16 cam_x, cam_y, cam_angle;
 /* The camera walks in the direction it faces, so movement needs the same sine
  * table the Sub CPU uses to rotate the step vectors. Kept in Q15 and scaled
  * down to xform_pos units at the point of use. */
-static s16 const * const sin_tbl = mode7_sin;
+static s16 const * const sin_tbl = ground_sin;
 
 static void camera_reset (void)
 {
@@ -82,7 +82,7 @@ static void camera_reset (void)
 __attribute__ ((noreturn)) void main()
 {
 	*bios_vblank_user = vblank_user;
-	grant_2m();
+	ga_main_grant_2m();
 
 	memset8 (0, (u8 *) &bios_sprlist, sizeof (bios_sprlist));
 	enable_interrupts();
@@ -100,8 +100,8 @@ __attribute__ ((noreturn)) void main()
 
 		/* s16 so the 68000's 16x16 multiply is used; s32 operands would call
 		 * __mulsi3 four times a frame for no benefit. */
-		s16 const s = sin_tbl[cam_angle & MODE7_ANGLE_MASK];
-		s16 const c = sin_tbl[(cam_angle + MODE7_COS_OFFSET) & MODE7_ANGLE_MASK];
+		s16 const s = sin_tbl[cam_angle & GROUND_ANGLE_MASK];
+		s16 const c = sin_tbl[(cam_angle + GROUND_COS_OFFSET) & GROUND_ANGLE_MASK];
 
 		if (bios_joy1_hold & PAD_UP)
 		{
@@ -139,32 +139,32 @@ __attribute__ ((noreturn)) void main()
 		if (bios_joy1_hit & PAD_C)
 			camera_reset();
 
-		grant_2m();
-		ga_reg_comcmd1 = cam_x;
-		ga_reg_comcmd2 = cam_y;
-		ga_reg_comcmd3 = cam_angle & MODE7_ANGLE_MASK;
-		ga_reg_comcmd0 = CMD_REDRAW;
+		ga_main_grant_2m();
+		ga_main_reg_comcmd1 = cam_x;
+		ga_main_reg_comcmd2 = cam_y;
+		ga_main_reg_comcmd3 = cam_angle & GROUND_ANGLE_MASK;
+		ga_main_reg_comcmd0 = CMD_REDRAW;
 
 		do
 		{
 			asm("nop");
-		} while (ga_reg_comstat0 == 0);
+		} while (ga_main_reg_comstat0 == 0);
 
-		ga_reg_comcmd0 = 0;
+		ga_main_reg_comcmd0 = 0;
 
 		do
 		{
 			asm("nop");
-		} while (ga_reg_comstat0 != 0);
+		} while (ga_main_reg_comstat0 != 0);
 
-		wait_2m();
+		ga_main_wait_2m();
 		bios_vblank_wait_default();
 
 		bios_dma_xfer_word_ram (
-			tiles, (void const *) (WORD_RAM + 0x30000), (MODE7_SCREEN_W * MODE7_ROWS) / 2);
+			tiles, (void const *) (WORD_RAM + 0x30000), (GROUND_SCREEN_W * GROUND_ROWS) / 2);
 
 		bios_load_stamp_tilemap (
-			(MODE7_SCREEN_W / 8) - 1, (MODE7_ROWS / 8) - 1,
+			(GROUND_SCREEN_W / 8) - 1, (GROUND_ROWS / 8) - 1,
 			to_vdp_addr (BIOS_VDP_DEFAULT_PLANEB) | VRAM_W, 0x80);
 	} while (1);
 }

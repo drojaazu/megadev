@@ -6,7 +6,7 @@
 ## Project ID
 # ASCII text only; maximum of 11 characters
 # *** REQUIRED!***
-PROJECT_ID:=mode7
+PROJECT_ID:=ground
 
 ## Build Target
 # Determines for which hardware this project is intended
@@ -16,7 +16,7 @@ TARGET:=MEGACD
 
 ## Project Name
 # ASCII text only; maximum of 48 characters
-PROJECT_NAME:="PSEUDO 3D GROUND PLANE"
+PROJECT_NAME:="GROUND PLANE"
 
 ## Hardware Region
 # This is *very important* for Mega CD builds as it determines which security code to use. It can be changed at compile
@@ -49,6 +49,12 @@ BUILD_PATH:=build
 
 DISC_PATH:=disc
 
+# Files the build creates in DISC_PATH
+DISC_CONTENTS:= \
+	$(DISC_PATH)/ipx.mmd \
+	$(DISC_PATH)/spx.smd
+
+
 # Additional C compiler flags
 CC_FLAGS?=-O1 -fconserve-stack -fomit-frame-pointer -fno-gcse
 
@@ -71,14 +77,12 @@ include $(MEGADEV_PATH)/megadev.make
 
 # Everything that must be built into $(DISC_PATH). The ISO depends on this,
 # so a parallel build cannot master the image before the modules exist.
-DISC_CONTENTS := \
-	$(DISC_PATH)/ipx.mmd \
-	$(DISC_PATH)/spx.smd
-
-all: $(PROJECT_ID).iso
+all: \
+	$(DISC_CONTENTS) \
+	$(PROJECT_ID).iso
 
 clean:
-	@rm -rf $(PROJECT_ID).iso $(DISC_PATH)/*.mmd $(DISC_PATH)/*.smd $(BUILD_PATH)/ > /dev/null 2>&1
+	@rm -rf $(PROJECT_ID).iso $(DISC_PATH)/*.mmd $(DISC_PATH)/*.smd $(BUILD_PATH)/*
 
 $(DISC_PATH)/ipx.mmd: \
 	main/ipx_init.s \
@@ -91,5 +95,5 @@ $(DISC_PATH)/spx.smd: \
 	std_init.s \
 	spx.c \
 	tables.s \
-	mode7.res.s \
+	ground.res.s \
 	$(BUILD_PATH)/sp.bin

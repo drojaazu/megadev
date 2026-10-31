@@ -6,12 +6,12 @@
 #pragma once
 #include <types.h>
 
-#define MODE7_SCREEN_W 256
-#define MODE7_ROWS 128
-#define MODE7_SIN_ENTRIES 256
-#define MODE7_ANGLE_MASK (MODE7_SIN_ENTRIES - 1)
-#define MODE7_COS_OFFSET (MODE7_SIN_ENTRIES / 4)
+#define GROUND_SCREEN_W 256
+#define GROUND_ROWS 128
+#define GROUND_SIN_ENTRIES 256
+#define GROUND_ANGLE_MASK (GROUND_SIN_ENTRIES - 1)
+#define GROUND_COS_OFFSET (GROUND_SIN_ENTRIES / 4)
 
-extern u16 const mode7_zf[MODE7_ROWS];
-extern s16 const mode7_zk[MODE7_ROWS];
-extern s16 const mode7_sin[MODE7_SIN_ENTRIES];
+extern u16 const ground_zf[GROUND_ROWS];
+extern s16 const ground_zk[GROUND_ROWS];
+extern s16 const ground_sin[GROUND_SIN_ENTRIES];

@@ -41,15 +41,15 @@ GLABEL sp_init
     even though already did it, otherwise there may be issues with CD audio track playback
   */
   lea drv_init_tracklist, a0
-  BIOSCALL   #BIOS_DRV_INIT
+  BIOS_CALL   #BIOS_DRIVE_INIT
   // loop until done reading the disc TOC
-1:BIOSCALL   #BIOS_CDB_STAT
-  andi.b   #0xF0, (CDSTAT).w
+1:BIOS_CALL   #BIOS_GET_STATUS
+  andi.b   #0xF0, (BIOS_CD_STATUS).w
   bne      1b
-  CLEAR_COMM_REGS
+  GA_SUB_CLEAR_COMM_REGS
   
   // Put Word RAM into 2M mode and assert control of it
-  andi.b   #~(GA_RETURN_2M_MASK | GA_WORDRAM_LAYOUT_MASK), GA_REG_MEMMODE
+  andi.b   #~(GA_SUB_RETURN_2M_MASK | GA_SUB_WORDRAM_LAYOUT_MASK), GA_SUB_REG_MEMMODE
   
   // This sets up the CD-ROM access loop with initial settings. It only needs
   // to be called once, here in sp_init
@@ -102,11 +102,11 @@ spx_filename:
 // was a problem
 GLABEL sp_fatal
   // move the "fatal error" code to comstat0 so the Main CPU knows what's up
-  move.w   #0xFF, GA_REG_COMSTAT0
+  move.w   #0xFF, GA_SUB_REG_COMSTAT0
   // make both LEDs blink (which is normally disallowed but Sega QA isn't
   // here to boss us around)
   moveq    #BIOS_LED_ERROR, d1
-  BIOSCALL   BIOS_LEDSET
+  BIOS_CALL   BIOS_LED_SET
 0:nop
   nop
   bra      0b

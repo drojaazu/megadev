@@ -79,14 +79,14 @@ def main():
 #include <macro.s>
 
 /* Ground distance per row, in 1/8 dot units (xform_pos). */
-{words("mode7_zf", zf)}
+{words("ground_zf", zf)}
 
 /* Step per row before rotation, in 1/2048 dot units (xform_delta). */
-{words("mode7_zk", zk)}
+{words("ground_zk", zk)}
 
 /* sin(a) in Q15 over a full turn of {SIN_ENTRIES} steps. cos is the same table
  * read a quarter turn along, which is why there is no separate cosine table. */
-{words("mode7_sin", sin)}
+{words("ground_sin", sin)}
 """)
 
     with open("src/tables.h", "w") as f:
@@ -98,15 +98,15 @@ def main():
 #pragma once
 #include <types.h>
 
-#define MODE7_SCREEN_W {SCREEN_W}
-#define MODE7_ROWS {ROWS}
-#define MODE7_SIN_ENTRIES {SIN_ENTRIES}
-#define MODE7_ANGLE_MASK (MODE7_SIN_ENTRIES - 1)
-#define MODE7_COS_OFFSET (MODE7_SIN_ENTRIES / 4)
+#define GROUND_SCREEN_W {SCREEN_W}
+#define GROUND_ROWS {ROWS}
+#define GROUND_SIN_ENTRIES {SIN_ENTRIES}
+#define GROUND_ANGLE_MASK (GROUND_SIN_ENTRIES - 1)
+#define GROUND_COS_OFFSET (GROUND_SIN_ENTRIES / 4)
 
-extern u16 const mode7_zf[MODE7_ROWS];
-extern s16 const mode7_zk[MODE7_ROWS];
-extern s16 const mode7_sin[MODE7_SIN_ENTRIES];
+extern u16 const ground_zf[GROUND_ROWS];
+extern s16 const ground_zk[GROUND_ROWS];
+extern s16 const ground_sin[GROUND_SIN_ENTRIES];
 """)
 
 
