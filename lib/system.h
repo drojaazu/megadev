@@ -7,6 +7,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <types.h>
 
 /**
@@ -60,3 +64,7 @@ static inline void cpu_stop()
 {
 	asm("stop #0x700");
 }
+
+#ifdef __cplusplus
+}
+#endif

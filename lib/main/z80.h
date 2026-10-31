@@ -7,6 +7,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "types.h"
 #include "z80.def.h"
 
@@ -111,3 +115,7 @@ static inline void z80_init(
 	);
   // clang-format on
 };
+
+#ifdef __cplusplus
+}
+#endif

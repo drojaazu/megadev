@@ -12,6 +12,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <types.h>
 
 /**
@@ -139,3 +143,7 @@ static inline void memcpy32(u32 const * src, u32 * dest, u32 length)
     :
     : "cc");
 }
+
+#ifdef __cplusplus
+}
+#endif

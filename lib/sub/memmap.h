@@ -7,6 +7,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <sub/memmap.def.h>
 #include <types.h>
 
@@ -32,3 +36,7 @@
 #define DMAADDR_WORDRAM2M(addr) (((addr) & 0x7FFF) >> 3)
 #define DMAADDR_PCM(addr)       (((addr) & 0x03FF) >> 3)
 #define DMAADDR_PRGRAM(addr)    ((addr) >> 3)
+
+#ifdef __cplusplus
+}
+#endif

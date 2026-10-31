@@ -6,6 +6,10 @@
  */
 
 #pragma once
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "gate_arr.def.h"
 #include <types.h>
 
@@ -598,3 +602,7 @@ static inline void ga_sub_clear_comm_regs()
     : "i"(GA_SUB_REG_COMSTAT0)
     : "d0", "a0");
 }
+
+#ifdef __cplusplus
+}
+#endif

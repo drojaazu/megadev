@@ -7,6 +7,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define _MEGADEV_STR(x) #x
 #define MEGADEV_STR(x) _MEGADEV_STR(x)
 
@@ -37,3 +41,7 @@
  */
 #define GLOBAL_SYM(name, value) \
   __asm__(".global " #name "\n\t.equ " #name ", " MEGADEV_STR(value))
+
+#ifdef __cplusplus
+}
+#endif

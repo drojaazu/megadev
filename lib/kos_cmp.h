@@ -7,6 +7,12 @@
  * @note Taken from Wonder Library code
  */
 
+#pragma once
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "types.h"
 
 extern void Kos_Decomp();
@@ -24,3 +30,7 @@ static inline void dcmp_kosinski(void * src, void * dst)
 		: "i"(Kos_Decomp), "a"(A0), "a"(A1)
 		: "d2", "d3", "d4", "d5", "d6", "cc");
 };
+
+#ifdef __cplusplus
+}
+#endif

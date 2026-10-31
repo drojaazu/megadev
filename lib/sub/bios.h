@@ -7,6 +7,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "sub/bios.def.h"
 #include "sub/memmap.def.h"
 #include "types.h"
@@ -662,3 +666,7 @@ jsr %p1"
 		: "i"(BIOS_CALL_VECTOR), "d"(D0)
 		: "cc");
 };
+
+#ifdef __cplusplus
+}
+#endif

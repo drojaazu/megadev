@@ -7,8 +7,16 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <main/memmap.h>
 #include <main/gate_arr.h>
 #include <main/io.h>
 #include <main/vdp.h>
 #include <main/z80.h>
+
+#ifdef __cplusplus
+}
+#endif
