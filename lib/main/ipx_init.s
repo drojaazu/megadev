@@ -21,4 +21,7 @@
   PUSH a0
   BASIC_INIT
   POP a0
+#ifdef INIT_SET_STACK
+  move.l   #STACK_TOP, sp
+#endif
   jmp      (a0)

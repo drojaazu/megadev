@@ -49,4 +49,17 @@ SECTIONS
     _RAM_DATA_LENGTH = ABSOLUTE(. - _RAM_DATA_ORIGIN);
     _RAM_DATA_LENGTH_LOOPSZ = ABSOLUTE(_RAM_DATA_LENGTH) >> 2;
   } > MODULE_RAM
+
+  /* If the module sets a stack (std_init_stack.s, main/ipx_init_stack.s), it
+  must not run into the module. STACK_SIZE is optional; without it, only
+  STACK_TOP itself is checked. */
+  _STACK_TOP = DEFINED(STACK_TOP) ? ((STACK_TOP - 1) & 0xFFFFFF) + 1 : 0; /* 0 is the top of RAM, 0x1000000 */
+  _STACK_BASE = _STACK_TOP - (DEFINED(STACK_SIZE) ? STACK_SIZE : 0);
+  _IMAGE_ROM_BASE = ADDR(.rom) & 0xFFFFFF;
+  _IMAGE_ROM_END = _IMAGE_ROM_BASE + SIZEOF(.rom);
+  _IMAGE_RAM_BASE = ADDR(.ram_bss) & 0xFFFFFF;
+  _IMAGE_RAM_END = _IMAGE_RAM_BASE + SIZEOF(.ram_bss) + SIZEOF(.ram_data);
+  ASSERT(!(_STACK_TOP & 1), "STACK_TOP must be even")
+  ASSERT(!_STACK_TOP || _STACK_BASE >= _IMAGE_ROM_END || _STACK_TOP <= _IMAGE_ROM_BASE, "stack overlaps the module's code")
+  ASSERT(!_STACK_TOP || _STACK_BASE >= _IMAGE_RAM_END || _STACK_TOP <= _IMAGE_RAM_BASE, "stack overlaps the module's RAM")
 }

@@ -14,4 +14,7 @@
 GLABEL init
   DISABLE_INTERRUPTS
   BASIC_INIT
+#ifdef INIT_SET_STACK
+  move.l   #STACK_TOP, sp
+#endif
   jmp      main
