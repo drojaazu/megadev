@@ -373,11 +373,19 @@ Functions and values related to a larger group of functionality will have a comm
 
 There are occasional exceptions to this namespace rule, namely when a macro provides some generally useful functionality and doesn't benefit by having a more complex name.
 
-### Bitwise Definition Naming
+### Register Field Naming
 
-There are many hardware registers that make use of bit-level settings. Such settings are given helpful names as `#define` directives with the `.def.h` files. Each setting has two defines: one for the bit index (for use in ASM commands such as `btst`) and one as a mask (to be used in logic operations).
+Hardware register fields are named `<SUBSYSTEM>_<FIELD>_<ASPECT>` in the `.def.h` files, with up to three aspects:
 
-For example, the gate array has a Main side register `memmmode` with a DMNA flag. This flag can be referenced by index with `GA_MAIN_BIT_DMNA` or as a mask with `GA_MAIN_MASK_DMNA`.
+- `_POS` is the bit position of the field's lowest bit. For a single-bit flag it is the operand for `btst`, `bset` and `bclr`.
+- `_MASK` is the bits the field occupies, for `and`, `or` and tests in C.
+- `_WIDTH` is the number of bits, present only for fields wider than one bit. A field with no `_WIDTH` is a single-bit flag.
+
+For example, the Main CPU's memory mode register has the DMNA flag at bit 1: `GA_MAIN_DMNA_POS` is `1` and `GA_MAIN_DMNA_MASK` is `0x02`. The Sub CPU's CDC mode register has a three-bit device destination field: `GA_SUB_CDCMODE_DD_POS` is `8`, `GA_SUB_CDCMODE_DD_WIDTH` is `3` and `GA_SUB_CDCMODE_DD_MASK` is `0x0700`.
+
+Values a multi-bit field can hold are defined unshifted, such as `GA_SUB_CDCMODE_DD_WRAMDMA`, and placed or extracted with `FIELD_PREP(field, value)` and `FIELD_GET(field, register)` from `build.def.h`. For a bit instruction on a field in the high byte of a 16-bit register, `FIELD_BYTE(register, field)` gives the byte address and `FIELD_BPOS(field)` the bit number within it, since the 68000's bit instructions address one byte.
+
+Gate array registers whose two bytes hold unrelated settings are defined as two byte registers, each with its own name and address, so a byte write to one cannot disturb the other. The register's documentation group names the hardware address.
 
 # Working on Megadev Itself
 
