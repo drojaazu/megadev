@@ -9,6 +9,7 @@ This guide lists every change in Megadev 2.0 that requires a change to a project
 - Gate array names
 - Gate array register model
 - Serial control and VDP fields
+- Sub CPU system call names
 
 ---
 
@@ -132,3 +133,159 @@ The same field scheme applies to the serial control register in `main/io.def.h` 
 | `VDP_MASK_WIDTH_40CELL` | `VDP_WIDTH_40CELL_MASK` |
 | `VDP_MASK_SHADOW_HIGHLIGHT` | `VDP_SHADOW_HIGHLIGHT_MASK`, with `VDP_SHADOW_HIGHLIGHT_POS` |
 | `VDP_MASK_INTERLACE_NONE`, `_NORMAL`, `_DOUBLE`, pre-shifted | unshifted values for the `VDP_INTERLACE` field: write `FIELD_PREP(VDP_INTERLACE, VDP_INTERLACE_DOUBLE)` |
+
+# Sub CPU system call names
+
+The Sub CPU BIOS, Backup RAM and CD Boot calls have descriptive names. Sega's documentation names remain available as `#define` synonyms at the end of each `.def.h` file and are shown in the reference as "Sega documentation name", so the BIOS Manual stays searchable. Code that used the Sega mnemonics (`MSCPLAY1`, `BRMINIT`, `CBTINIT`, `CDBIOS`, `BURAM`, `CDBOOT`) compiles unchanged; code that used the 1.x Megadev spellings in the middle column must move to the right column.
+
+## BIOS function codes and vectors (`sub/bios.def.h`)
+
+| Sega | 1.x | 2.0 |
+|---|---|---|
+| `MSCSTOP` | `BIOS_MSC_STOP` | `BIOS_AUDIO_STOP` |
+| `MSCPAUSEON` | `BIOS_MSC_PAUSEON` | `BIOS_AUDIO_PAUSE` |
+| `MSCPAUSEOFF` | `BIOS_MSC_PAUSEOFF` | `BIOS_AUDIO_RESUME` |
+| `MSCSCANFF` | `BIOS_MSC_SCANFF` | `BIOS_AUDIO_SCAN_FORWARD` |
+| `MSCSCANFR` | `BIOS_MSC_SCANFR` | `BIOS_AUDIO_SCAN_BACKWARD` |
+| `MSCSCANOFF` | `BIOS_MSC_SCANOFF` | `BIOS_AUDIO_SCAN_OFF` |
+| `ROMPAUSEON` | `BIOS_ROM_PAUSEON` | `BIOS_CDROM_PAUSE` |
+| `ROMPAUSEOFF` | `BIOS_ROM_PAUSEOFF` | `BIOS_CDROM_RESUME` |
+| `DRVOPEN` | `BIOS_DRV_OPEN` | `BIOS_DRIVE_OPEN` |
+| `DRVINIT` | `BIOS_DRV_INIT` | `BIOS_DRIVE_INIT` |
+| `MSCPLAY` | `BIOS_MSC_PLAY` | `BIOS_AUDIO_PLAY` |
+| `MSCPLAY1` | `BIOS_MSC_PLAY1` | `BIOS_AUDIO_PLAY_ONCE` |
+| `MSCPLAYR` | `BIOS_MSC_PLAYR` | `BIOS_AUDIO_PLAY_REPEAT` |
+| `MSCPLAYT` | `BIOS_MSC_PLAYT` | `BIOS_AUDIO_PLAY_FROM_TIME` |
+| `MSCSEEK` | `BIOS_MSC_SEEK` | `BIOS_AUDIO_SEEK` |
+| `MSCSEEKT` | `BIOS_MSC_SEEKT` | `BIOS_AUDIO_SEEK_TIME` |
+| `MSCSEEK1` | `BIOS_MSC_SEEK1` | `BIOS_AUDIO_SEEK_PLAY_ONCE` |
+| `ROMREAD` | `BIOS_ROM_READ` | `BIOS_CDROM_READ` |
+| `ROMSEEK` | `BIOS_ROM_SEEK` | `BIOS_CDROM_SEEK` |
+| `ROMREADN` | `BIOS_ROM_READN` | `BIOS_CDROM_READ_COUNT` |
+| `ROMREADE` | `BIOS_ROM_READE` | `BIOS_CDROM_READ_RANGE` |
+| `CDBCHK` | `BIOS_CDB_CHK` | `BIOS_CHECK_COMMAND` |
+| `CDBSTAT` | `BIOS_CDB_STAT` | `BIOS_GET_STATUS` |
+| `CDBTOCWRITE` | `BIOS_CDBTOCWRITE` | `BIOS_TOC_WRITE` |
+| `CDBTOCREAD` | `BIOS_CDBTOCREAD` | `BIOS_TOC_READ` |
+| `CDBPAUSE` | `BIOS_CDBPAUSE` | `BIOS_SET_PAUSE_TIMEOUT` |
+| `FDRSET` | `BIOS_FDR_SET` | `BIOS_FADER_SET` |
+| `FDRCHG` | `BIOS_FDR_CHG` | `BIOS_FADER_CHANGE` |
+| `CDCSTARTP` | `BIOS_CDC_STARTP` | `BIOS_CDC_START_P` |
+| `CDCSTAT` | `BIOS_CDC_STAT` | `BIOS_CDC_STATUS` |
+| `CDCREAD` | `BIOS_CDCREAD` | `BIOS_CDC_READ` |
+| `CDCTRN` | `BIOS_CDC_TRN` | `BIOS_CDC_TRANSFER` |
+| `CDCSETMODE` | `BIOS_CDCSETMODE` | `BIOS_CDC_SET_MODE` |
+| `SCDINIT` | `BIOS_SCDINIT` | `BIOS_SUBCODE_INIT` |
+| `SCDSTART` | `BIOS_SCDSTART` | `BIOS_SUBCODE_START` |
+| `SCDSTOP` | `BIOS_SCDSTOP` | `BIOS_SUBCODE_STOP` |
+| `SCDSTAT` | `BIOS_SCDSTAT` | `BIOS_SUBCODE_STATUS` |
+| `SCDREAD` | `BIOS_SCDREAD` | `BIOS_SUBCODE_READ` |
+| `SCDPQ` | `BIOS_SCDPQ` | `BIOS_SUBCODE_READ_PQ` |
+| `SCDPQL` | `BIOS_SCDPQL` | `BIOS_SUBCODE_READ_PQ_LAST` |
+| `LEDSET` | `BIOS_LEDSET` | `BIOS_LED_SET` |
+| `WONDERREQ` | `BIOS_WONDERREQ` | `BIOS_WONDER_REQUEST` |
+| `WONDERCHK` | `BIOS_WONDERCHK` | `BIOS_WONDER_CHECK` |
+| `CDBIOS` | `CDBIOS` | `BIOS_CALL_VECTOR` |
+| `WAITVSYNC` | `WAITVSYNC` | `BIOS_WAIT_VSYNC` |
+| `SETJMPTBL` | `SETJMPTBL` | `BIOS_SET_JUMP_TABLE` |
+| `CDSTAT` | `CDSTAT` | `BIOS_CD_STATUS` |
+| `BOOTSTAT` | `BOOTSTAT` | `BIOS_BOOT_STATUS` |
+| `USERMODE` | `USERMODE` | `BIOS_USER_MODE` |
+| `INT2FLAG` | `INT2FLAG` | `BIOS_INT2_FLAG` |
+| `_USERCALL0` to `_USERCALL3` | `USERCALL0` to `USERCALL3`, `SP_INIT` to `SP_USER` | `SP_INIT`, `SP_MAIN`, `SP_INT2`, `SP_USER` |
+
+`BIOS_CDC_START`, `BIOS_CDC_STOP`, `BIOS_CDC_ACK` and `BIOS_LED_*` keep their names.
+
+## BIOS C wrappers (`sub/bios.h`)
+
+| 1.x | 2.0 |
+|---|---|
+| `bios_msc_stop()` | `bios_audio_stop()` |
+| `bios_msc_pauseon()` | `bios_audio_pause()` |
+| `bios_msc_pauseoff()` | `bios_audio_resume()` |
+| `bios_msc_scanff()` | `bios_audio_scan_forward()` |
+| `bios_msc_scanfr()` | `bios_audio_scan_backward()` |
+| `bios_msc_scanoff()` | `bios_audio_scan_off()` |
+| `bios_msc_play()` | `bios_audio_play()` |
+| `bios_msc_play1()` | `bios_audio_play_once()` |
+| `bios_msc_playr()` | `bios_audio_play_repeat()` |
+| `bios_msc_playt()` | `bios_audio_play_from_time()` |
+| `bios_msc_seek()` | `bios_audio_seek()` |
+| `bios_msc_seekt()` | `bios_audio_seek_time()` |
+| `bios_msc_seek1()` | `bios_audio_seek_play_once()` |
+| `bios_rom_read()` | `bios_cdrom_read()` |
+| `bios_rom_readn()` | `bios_cdrom_read_count()` |
+| `bios_rom_reade()` | `bios_cdrom_read_range()` |
+| `bios_rom_seek()` | `bios_cdrom_seek()` |
+| `bios_rom_pauseon()` | `bios_cdrom_pause()` |
+| `bios_rom_pauseoff()` | `bios_cdrom_resume()` |
+| `bios_drv_open()` | `bios_drive_open()` |
+| `bios_cdb_chk()` | `bios_check_command()` |
+| `bios_cdb_stat()` | `bios_get_status()` |
+| `bios_fdr_set()` | `bios_fader_set()` |
+| `bios_fdr_chg()` | `bios_fader_change()` |
+| `bios_cdc_stat()` | `bios_cdc_status()` |
+| `bios_cdcread()` | `bios_cdc_read()` |
+| `bios_cdc_trn()` | `bios_cdc_transfer()` |
+| `bios_waitvsync()` | `bios_wait_vsync()` |
+
+## Backup RAM (`sub/bram.def.h`, `sub/bram.h`)
+
+| Sega | 1.x | 2.0 |
+|---|---|---|
+| `BURAM` | `BURAM` | `BRAM_CALL_VECTOR` |
+| `BRMINIT` | `BRMINIT` | `BRAM_INIT` |
+| `BRMSTAT` | `BRMSTAT` | `BRAM_STATUS` |
+| `BRMSERCH` | `BRMSERCH` | `BRAM_SEARCH` |
+| `BRMREAD` | `BRMREAD` | `BRAM_READ` |
+| `BRMWRITE` | `BRMWRITE` | `BRAM_WRITE` |
+| `BRMDEL` | `BRMDEL` | `BRAM_DELETE` |
+| `BRMFORMAT` | `BRMFORMAT` | `BRAM_FORMAT` |
+| `BRMDIR` | `BRMDIR` | `BRAM_DIRECTORY` |
+| `BRMVERIFY` | `BRMVERIFY` | `BRAM_VERIFY` |
+| `` | `BRM__UNKNOWN0` | `BRAM_UNKNOWN0` |
+| `` | `BRM__UNKNOWN1` | `BRAM_UNKNOWN1` |
+
+| 1.x | 2.0 |
+|---|---|
+| `bram_brminit` | `bram_init` |
+| `bram_brmstat` | `bram_status` |
+| `bram_brmserch` | `bram_search` |
+| `bram_brmread` | `bram_read` |
+| `bram_brmwrite` | `bram_write` |
+| `bram_brmdel` | `bram_delete` |
+| `bram_brmdir` | `bram_directory` |
+| `bram_brmformat` | `bram_format` |
+| `bram_brmverify` | `bram_verify` |
+| `BrminitRes` | `BramInitResult` |
+| `BrmstatRes` | `BramStatusResult` |
+| `BrmserchRes` | `BramSearchResult` |
+| `BrmreadRes` | `BramReadResult` |
+| `BrmverifyStatus` | `BramVerifyStatus` |
+| `brmstat_results` | `bram_status_result` |
+| `brmserch_results` | `bram_search_result` |
+| `brmread_results` | `bram_read_result` |
+
+## CD Boot (`sub/boot.def.h`, formerly `sub/cdboot.def.h`)
+
+| Sega | 1.x | 2.0 |
+|---|---|---|
+| `CDBOOT` | `CDBOOT` | `BOOT_CALL_VECTOR` |
+| `CBTINIT` | `CBTINIT` | `BOOT_INIT` |
+| `CBTINT` | `CBTINT` | `BOOT_INT` |
+| `CBTOPENDISC` | `CBTOPENDISC` | `BOOT_OPEN_DISC` |
+| `CBTOPENSTAT` | `CBTOPENSTAT` | `BOOT_OPEN_STATUS` |
+| `CBTCHKDISC` | `CBTCHKDISC` | `BOOT_CHECK_DISC` |
+| `CBTCHKSTAT` | `CBTCHKSTAT` | `BOOT_CHECK_STATUS` |
+| `CBTIPDISC` | `CBTIPDISC` | `BOOT_LOAD_IP` |
+| `CBTIPSTAT` | `CBTIPSTAT` | `BOOT_LOAD_IP_STATUS` |
+| `CBTSPDISC` | `CBTSPDISC` | `BOOT_LOAD_SP` |
+| `CBTSPSTAT` | `CBTSPSTAT` | `BOOT_LOAD_SP_STATUS` |
+
+## Assembly call macros (`sub/sub.macro.s`)
+
+| 1.x | 2.0 |
+|---|---|
+| `BIOSCALL #code` | `BIOS_CALL #code` |
+| `BURAM #code` | `BRAM_CALL #code` |
+| `CDBOOT #code` | `BOOT_CALL #code` |
