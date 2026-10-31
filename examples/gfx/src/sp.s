@@ -37,9 +37,9 @@ GLABEL sp_init
 1:BIOSCALL #BIOS_CDB_STAT
 	andi.b	#0xF0, (CDSTAT).w
 	bne			1b
-  CLEAR_COMM_REGS
+  GA_SUB_CLEAR_COMM_REGS
 	// Put Word RAM into 2M mode and assert control of it
-	andi.w	#~(GA_MASK_RETURN_2M | GA_MASK_WORDRAM_LAYOUT), GA_REG_MEMMODE
+	andi.w	#~(GA_SUB_MASK_RETURN_2M | GA_SUB_MASK_WORDRAM_LAYOUT), GA_SUB_REG_MEMMODE
 	// This sets up the CD-ROM access loop with initial settings. It only needs
 	// to be called once, here in sp_init
 	INIT_ACC_LOOP
@@ -77,16 +77,16 @@ GLABEL sp_main
 		monitoring COMCMD0/1
 	*/
 command_loop:
-  move.w	GA_REG_COMCMD0, d0
+  move.w	GA_SUB_REG_COMCMD0, d0
 	beq			command_loop
-	cmp.w		GA_REG_COMCMD0, d0
+	cmp.w		GA_SUB_REG_COMCMD0, d0
 	bne			command_loop
 	#move.w	d0, d1
-	move.w  GA_REG_COMCMD1, d1
+	move.w  GA_SUB_REG_COMCMD1, d1
 	add.w		d0, d0
 	move.w	command_tbl(pc,d0.w), d0
 	jsr			command_tbl(pc,d0.w)
-	//bclr		#INT1_GFX_BIT, ga_reg_intmask+1
+	//bclr		#INT1_GFX_BIT, ga_sub_reg_intmask+1
 	jra			command_loop
 
 /*
@@ -94,12 +94,12 @@ command_loop:
 	Main CPU the work is done and get the comm registers back in "sync."
 */
 command_complete_sync:
-	move.w	GA_REG_COMCMD0, GA_REG_COMSTAT0
-1:move.w	GA_REG_COMCMD0, d0
+	move.w	GA_SUB_REG_COMCMD0, GA_SUB_REG_COMSTAT0
+1:move.w	GA_SUB_REG_COMCMD0, d0
 	bne			1b
-	move.w	GA_REG_COMCMD0, d0
+	move.w	GA_SUB_REG_COMCMD0, d0
 	bne			1b
-	move.w	#0, GA_REG_COMSTAT0
+	move.w	#0, GA_SUB_REG_COMSTAT0
 	rts
 
 /*
@@ -123,14 +123,14 @@ cmd01_load_mmd:
   add.w d1,d1
 	move.w  mmd_file_tbl(pc,d1.w), d1
 	lea			mmd_file_tbl(pc,d1.w), a0
-	WAIT_2M
+	GA_SUB_WAIT_2M
 	lea			WORD_RAM_2M, a1
 	// load_file_ is a convenience function to get a file loaded. The filename is
 	// A0 and the destination buffer is in A1
 	jbsr		load_file_sub
 	cmpi.w  #CDROM_RESULT_OK, d0  // check final status
   bne     sp_fatal  // had an error, drop everything and freak out
-	GRANT_2M
+	GA_SUB_GRANT_2M
 	bra		command_complete_sync
 
 mmd_file_tbl:

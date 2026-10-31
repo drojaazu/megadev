@@ -161,17 +161,17 @@ void main()
   {
     // make sure that the Sub CPU controls 2M Word RAM before we request the
     // file
-    grant_2m();
+    ga_main_grant_2m();
 
     // In this example, we have the command for the Sub CPU stored in COMCMD0
     // and the command argument in COMCMD1. Command 1 will be "load a file"
     // and the argument will be the ID for that file, which is defined in
     // the SPX
     // Set the argument first
-    *ga_reg_comcmd1 = next_module;
+    *ga_main_reg_comcmd1 = next_module;
 
     // then set the command
-    *ga_reg_comcmd0 = CMD_LOAD_FILE;
+    *ga_main_reg_comcmd0 = CMD_LOAD_FILE;
 
     // wait for acknowledgment from the Sub CPU that the command was
     // received and will be acted on
@@ -180,18 +180,18 @@ void main()
       // the NOP is so GCC doesn't optimize the loop away
       // though since comstat is marked volatile it should be fine...
       asm("nop");
-    } while (*ga_reg_comstat0 == 0);
+    } while (*ga_main_reg_comstat0 == 0);
 
     // reset the command to none (0) once we have the acknowledgment
-    *ga_reg_comcmd0 = 0;
+    *ga_main_reg_comcmd0 = 0;
 
     // the Sub CPU side work will be complete when COMSTAT0 returns to 0
     do
     {
       asm("nop");
-    } while (*ga_reg_comstat0 != 0);
+    } while (*ga_main_reg_comstat0 != 0);
 
-    wait_2m();
+    ga_main_wait_2m();
 
     // Sub CPU side work is complete and the MMD should now be in 2M Word RAM
     // init_mmd() sets things up based on the MMD header then returns a pointer

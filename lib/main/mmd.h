@@ -16,7 +16,7 @@ static inline void const * init_mmd()
   register void const * mmd_entry;
   register u32          scratch_d0, scratch_a0, scratch_a1;
 
-  wait_2m();
+  ga_main_wait_2m();
 
   // clang-format off
 	asm volatile(
@@ -50,8 +50,8 @@ static inline void const * init_mmd()
 			[wrdram] "a"(WORD_RAM),
 			[mlevel4] "i"(EXVEC_LEVEL4),
 			[mlevel6] "i"(EXVEC_LEVEL6),
-			[ga_dmna] "i"(GA_BIT_DMNA),
-			[ga_memmode] "i"(GA_REG_MEMMODE)
+			[ga_dmna] "i"(GA_MAIN_BIT_DMNA),
+			[ga_memmode] "i"(GA_MAIN_REG_MEMMODE)
 		:
 			"cc");
   // clang-format on

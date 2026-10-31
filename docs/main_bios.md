@@ -739,7 +739,7 @@ Although this does not use the Predefined Comm Flag Semantics component directly
 
 ### `BIOS_SET_IFL2`
 
-Sets the IFL2 bit on ga_reg_memmode to trigger INT2 on the Sub side. Should be called during VBLANK only.
+Sets the IFL2 bit on ga_main_reg_memmode to trigger INT2 on the Sub side. Should be called during VBLANK only.
 
 ## Misc - Components
 
