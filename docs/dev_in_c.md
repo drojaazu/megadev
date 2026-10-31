@@ -33,17 +33,17 @@ The compiler may still accept some of these without a helper, such as 64-bit add
 
 ## Global Variable Initialization
 
-In short, statically allocated variables (such as global variables declared outside of function scope) are not automatically initialized even if you specify an initial value. For example, if the following declaration is at the global scope, outside of a function:
+Global and static variables are set up by startup code before `main` runs: those with an initial value receive it, and the rest are zeroed. The values are stored with the program and copied into RAM, since nothing else on the system does it.
 
-	u16 initial_value = 100;
+| Program | Startup code |
+|---|---|
+| Module (MMD or SMD) | `std_init.s`, or `main/ipx_init.s` for a module that copies itself into place (IPX). List it in the module's prerequisites. |
+| Cartridge | `md_init.s`, included by the project's `init.s`. It also clears all of Work RAM. |
+| Boot sector IP and SP | None. Initialized variables are already in place when the Boot ROM loads them, but zeroed variables are not cleared. |
 
-... then the value will not be set to 100 and will, instead, equal whatever already exists in memory at the location to which it was assigned by the linker.
+A module without startup code fails to link with `module has no init code`. A module that sets up its own RAM can opt out by defining `MODULE_NO_INIT`, for example with `GLOBAL_SYM(MODULE_NO_INIT, 1);` from `macro.h`; it must then clear and copy its variables itself, using the `BASIC_INIT` macro from `init.macro.s` or its own code.
 
-The technical reason for is that specifying a default value will simply include that value in the .data section of the executable binary. It is up to the program initialization to copy values from .data into memory before main() is called. Executable containers like ELF and PE include code to take care of this copying automatically, but retro consoles like the Mega Drive/CD do not use such execution containers. There is no automatic initialization utility and code execution begins immediately.
-
-Megadev includes a utility to copy the .data section into memory, in the `init.macro.s` file. Instead of using this directly, however, you may want to use either `main/ipx_init.s` or `std_init.s` for self-loading and standard modules respectively. Simply include this within the prerequisite list for your module and it will both zero out RAM and copy initialized variable data.
-
-Please see the makefile for the example projects.
+See the example projects' makefiles.
 
 ## Integer Types
 

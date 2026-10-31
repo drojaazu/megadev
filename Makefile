@@ -62,9 +62,9 @@ ASSERT_S := $(wildcard check/asserts/*.s)
 # Host compiler for the runtime library test; the runtime sources are plain C.
 HOST_CC ?= cc
 
-.PHONY: check check-projects check-headers check-asm check-link check-stack check-odr check-incremental check-inline check-asserts check-host docs clean $(PROJECTS)
+.PHONY: check check-projects check-headers check-asm check-link check-stack check-init check-init check-odr check-incremental check-inline check-asserts check-host docs clean $(PROJECTS)
 
-check: check-projects check-headers check-asm check-link check-stack check-odr check-incremental check-inline check-asserts check-host
+check: check-projects check-headers check-asm check-link check-stack check-init check-odr check-incremental check-inline check-asserts check-host
 	@printf '\ncheck: all passed\n'
 
 # ---------------------------------------------------------------------------
@@ -215,6 +215,26 @@ check-stack:
 	@$(STACK_LD) --defsym=STACK_TOP=0 --defsym=STACK_SIZE=0x24C -T cfg/module_mmd.ld $(CHECK_DIR)/stack_std_init_stack.o \
 	  $(CHECK_DIR)/stack_main.o -o $(CHECK_DIR)/stack_top.elf
 	@printf '== stack: init files set STACK_TOP; a stack at 0 links; the linker rejects 9 bad stacks\n'
+
+# A module links only with init code, or with MODULE_NO_INIT defined.
+check-init:
+	@mkdir -p $(CHECK_DIR)
+	@printf '.global main\nmain: rts\n' > $(CHECK_DIR)/init_main.s
+	@$(CC) -m68000 -c $(CHECK_DIR)/init_main.s -o $(CHECK_DIR)/init_main.o
+	@$(CC) $(CHECK_FLAGS) -DTARGET=MEGACD -x assembler-with-cpp -c lib/std_init.s -o $(CHECK_DIR)/init_std.o
+	@for ld in module_mmd module_smd; do \
+	  if $(STACK_LD) -T cfg/$$ld.ld $(CHECK_DIR)/init_main.o -o $(CHECK_DIR)/init.elf 2> $(CHECK_DIR)/init.err; then \
+	    printf 'FAIL init: %s linked a module without init code\n' $$ld; exit 1; fi; \
+	  grep -q 'no init code' $(CHECK_DIR)/init.err || { \
+	    printf 'FAIL init: %s: expected "no init code"\n' $$ld; cat $(CHECK_DIR)/init.err; exit 1; }; \
+	  $(STACK_LD) -T cfg/$$ld.ld $(CHECK_DIR)/init_std.o $(CHECK_DIR)/init_main.o -o $(CHECK_DIR)/init.elf || exit 1; \
+	  $(STACK_LD) --defsym=MODULE_NO_INIT=1 -T cfg/$$ld.ld $(CHECK_DIR)/init_main.o -o $(CHECK_DIR)/init.elf || exit 1; \
+	done
+	@printf '#include <macro.h>\nGLOBAL_SYM(MODULE_NO_INIT, 1);\n' > $(CHECK_DIR)/init_optout.c
+	@$(CC) $(CHECK_FLAGS) -DTARGET=MEGACD -c $(CHECK_DIR)/init_optout.c -o $(CHECK_DIR)/init_optout.o
+	@$(STACK_LD) -T cfg/module_smd.ld $(CHECK_DIR)/init_optout.o $(CHECK_DIR)/init_main.o -o $(CHECK_DIR)/init.elf || { \
+	  printf 'FAIL init: MODULE_NO_INIT from GLOBAL_SYM in C was not honored\n'; exit 1; }
+	@printf '== init: modules link only with init code or MODULE_NO_INIT\n'
 
 # ---------------------------------------------------------------------------
 # Loop 5: every library header can be included by two translation units that

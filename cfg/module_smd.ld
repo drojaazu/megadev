@@ -50,6 +50,11 @@ SECTIONS
     _RAM_DATA_LENGTH_LOOPSZ = ABSOLUTE(_RAM_DATA_LENGTH) >> 2;
   } > MODULE_RAM
 
+  /* Every module starts with init code (std_init.s or main/ipx_init.s), which
+  clears .bss and copies .data before main. A module that does its own setup
+  defines MODULE_NO_INIT. */
+  ASSERT(_INIT_LENGTH > 0 || DEFINED(MODULE_NO_INIT), "module has no init code: add std_init.s (or main/ipx_init.s) to its sources, or define MODULE_NO_INIT")
+
   /* If the module sets a stack (std_init_stack.s, main/ipx_init_stack.s), it
   must not run into the module. STACK_SIZE is optional; without it, only
   STACK_TOP itself is checked. */
