@@ -827,44 +827,77 @@
 #define VDP_REG_MODE4 VDP_REG0C
 
 /**
- * @def VDP_MASK_WIDTH_40CELL
+ * @def VDP_WIDTH_40CELL_MASK
  * @ingroup vdp_regs
  * @ingroup vdp_reg0C
- * @brief Screen Width / 40 Cell
+ * @brief Screen Width / 40 Cell. Bits 0 and 7 are both set, so this is a
+ * literal mask rather than a positioned field.
  */
-#define VDP_MASK_WIDTH_40CELL ((1 << 0) | (1 << 7))
+#define VDP_WIDTH_40CELL_MASK ((1 << 0) | (1 << 7))
 
 /**
- * @def VDP_MASK_SHADOW_HIGHLIGHT
+ * @def VDP_SHADOW_HIGHLIGHT_POS
  * @ingroup vdp_regs
  * @ingroup vdp_reg0C
- * @brief Enable Shadow/Highlight Mode
+ * @brief Enable Shadow/Highlight Mode, bit position
  */
-#define VDP_MASK_SHADOW_HIGHLIGHT (1 << 3)
+#define VDP_SHADOW_HIGHLIGHT_POS 3
 
 /**
- * @def VDP_MASK_INTERLACE_NONE
+ * @def VDP_SHADOW_HIGHLIGHT_MASK
  * @ingroup vdp_regs
  * @ingroup vdp_reg0C
- * @brief Interlace Mode / None
+ * @brief Enable Shadow/Highlight Mode, mask
  */
-#define VDP_MASK_INTERLACE_NONE (0b00 << 1)
+#define VDP_SHADOW_HIGHLIGHT_MASK (1 << VDP_SHADOW_HIGHLIGHT_POS)
 
 /**
- * @def VDP_MASK_INTERLACE_NORMAL
+ * @def VDP_INTERLACE_POS
  * @ingroup vdp_regs
  * @ingroup vdp_reg0C
- * @brief Interlace Mode / Normal
+ * @brief Interlace Mode field, bit position
  */
-#define VDP_MASK_INTERLACE_NORMAL (0b10 << 1)
+#define VDP_INTERLACE_POS 1
 
 /**
- * @def VDP_MASK_INTERLACE_DOUBLE
+ * @def VDP_INTERLACE_WIDTH
  * @ingroup vdp_regs
  * @ingroup vdp_reg0C
- * @brief Interlace Mode / Double
+ * @brief Interlace Mode field, width
  */
-#define VDP_MASK_INTERLACE_DOUBLE (0b11 << 1)
+#define VDP_INTERLACE_WIDTH 2
+
+/**
+ * @def VDP_INTERLACE_MASK
+ * @ingroup vdp_regs
+ * @ingroup vdp_reg0C
+ * @brief Interlace Mode field, mask
+ */
+#define VDP_INTERLACE_MASK FIELD_MASK(VDP_INTERLACE_POS, VDP_INTERLACE_WIDTH)
+
+/**
+ * @def VDP_INTERLACE_NONE
+ * @ingroup vdp_regs
+ * @ingroup vdp_reg0C
+ * @brief Interlace Mode / None; a value for the VDP_INTERLACE field, placed with FIELD_PREP
+ */
+#define VDP_INTERLACE_NONE 0b00
+
+/**
+ * @def VDP_INTERLACE_NORMAL
+ * @ingroup vdp_regs
+ * @ingroup vdp_reg0C
+ * @brief Interlace Mode / Normal; a value for the VDP_INTERLACE field
+ */
+#define VDP_INTERLACE_NORMAL 0b10
+
+/**
+ * @def VDP_INTERLACE_DOUBLE
+ * @ingroup vdp_regs
+ * @ingroup vdp_reg0C
+ * @brief Interlace Mode / Double; a value for the VDP_INTERLACE field
+ */
+#define VDP_INTERLACE_DOUBLE 0b11
 
 /**
  * @defgroup vdp_reg0D Main CPU / VDP / Register 0D (Horizontal Scroll Data VRAM
