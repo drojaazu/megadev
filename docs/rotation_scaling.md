@@ -323,5 +323,5 @@ The operation completes, and the level 1 interrupt fires, when the last dot of t
 
 - Register definitions: `lib/sub/gate_arr.def.h`, and [gate_array.md](gate_array.md)
 - Fixed-point helpers: `lib/fixed.h`, `lib/xform.h`
-- Worked example: `examples/transforms`
+- Worked examples: `examples/transforms` (the registers and a hand-driven trace vector), `examples/ground_plane` (a perspective ground plane with a camera)
 - Mega-CD Hardware Manual, Ver 1.0, rotation and scaling section, pages 35 to 54
