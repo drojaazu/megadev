@@ -22,7 +22,7 @@ At this point, you are ready to load files. There are four steps involved:
 - Set the appropriate access operation
 - Wait for the operation to complete
 
-You do not need to set the CDC device destination in the GA_REG_CDCMODE register. This will be done automatically depending on the chosen access operation.
+You do not need to set the CDC device destination in the GA_SUB_REG_CDCMODE register. This will be done automatically depending on the chosen access operation.
 
 ### Filename
 
@@ -44,7 +44,7 @@ As a quick example, you may have `title.mmd` on your local system. This will be 
 
 Please refer to the CDC section of the Mega CD Software Development documentation before or alongside this section.
 
-The buffer where your data will be stored must be specified in one of two ways depending on the transfer type. If you plan to use DMA, you will need to set the destination address in the `GA_DMAADDR` register. If you plan to use non-DMA transfer via the CDC host data register, you will need to set the address in the `file_buff` pointer.
+The buffer where your data will be stored must be specified in one of two ways depending on the transfer type. If you plan to use DMA, you will need to set the destination address in the `GA_SUB_REG_DMAADDR` register. If you plan to use non-DMA transfer via the CDC host data register, you will need to set the address in the `file_buff` pointer.
 
 ### Access Operation
 
