@@ -39,3 +39,7 @@ EXTENSION_MAPPING = s=C
 ALIASES += clobber="\warning REGISTER CLOBBERS: "
 ALIASES += aliases="^^Aliases: \ref "
 ALIASES += aliasof="^^Alias of \ref "
+
+# The name Sega's documentation uses for a system call or vector that Megadev
+# names descriptively; the Sega name is also kept as a #define synonym.
+ALIASES += segaalias="^^**Sega documentation name:** "
