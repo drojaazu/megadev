@@ -38,7 +38,7 @@
 LOCAL loop
 
 loop:
-  jsr     WAITVSYNC
+  jsr     BIOS_WAIT_VSYNC
   jbsr    check_status
   bcs     loop
 .endm

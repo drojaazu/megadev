@@ -64,7 +64,7 @@ load_file(u16 const access_operation, char const * load_filename, u8 * buffer)
 
   do
   {
-    bios_waitvsync();
+    bios_wait_vsync();
   } while (access_op != CDROM_IDLE);
 
   if (access_op_result == CDROM_RESULT_OK)

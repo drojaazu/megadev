@@ -23,10 +23,10 @@ GLABEL sp_init
   // it's important to drv_init/cdb_stat here even if bios already did it
   // otherwise there may be issues with CD audio track playback
   lea drv_init_tracklist, a0
-  BIOSCALL #BIOS_DRV_INIT
+  BIOS_CALL #BIOS_DRIVE_INIT
   // loop until done reading the disc TOC
-1:BIOSCALL #BIOS_CDB_STAT
-  andi.b   #0xF0, (CDSTAT).w
+1:BIOS_CALL #BIOS_GET_STATUS
+  andi.b   #0xF0, (BIOS_CD_STATUS).w
   bne      1b
   GA_SUB_CLEAR_COMM_REGS
   // Put Word RAM into 2M mode and assert control of it
@@ -87,7 +87,7 @@ GLABEL sp_fatal
   // make both LEDs blink (which is normally disallowed but Sega QA isn't
   // here to boss us around)
   moveq	#BIOS_LED_ERROR, d1
-  BIOSCALL #BIOS_LEDSET
+  BIOS_CALL #BIOS_LED_SET
 0:nop
   nop
   bra 0b
