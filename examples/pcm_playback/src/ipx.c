@@ -22,7 +22,7 @@ GLOBAL_SYM(MMD_DEST, WORK_RAM);
 
 void play_pcm()
 {
-  *ga_main_reg_comcmd0 = CMD_PLAY_PCM;
+  ga_main_reg_comcmd0 = CMD_PLAY_PCM;
 
   bios_print(
     "Playing...\xff",
@@ -30,13 +30,13 @@ void play_pcm()
      VRAM_W));
 
   // wait for the playing flag to clear
-  while (*ga_main_reg_comflags_sub & 0x80)
+  while (ga_main_reg_comflags_sub & 0x80)
     ;
 
-  while (*ga_main_reg_comstat0 == 0)
+  while (ga_main_reg_comstat0 == 0)
     ;
-  *ga_main_reg_comcmd0 = 0;
-  while (*ga_main_reg_comstat0 != 0)
+  ga_main_reg_comcmd0 = 0;
+  while (ga_main_reg_comstat0 != 0)
     ;
 
   bios_print(
@@ -51,11 +51,11 @@ void load_pcm()
     "Loading...\xff",
     (to_vdp_addr(BIOS_VDP_DEFAULT_PLANEA + VDP_PLANE_POS(1, 2, Width64)) |
      VRAM_W));
-  *ga_main_reg_comcmd0 = CMD_LOAD_PRGRAM;
-  while (*ga_main_reg_comstat0 == 0)
+  ga_main_reg_comcmd0 = CMD_LOAD_PRGRAM;
+  while (ga_main_reg_comstat0 == 0)
     ;
-  *ga_main_reg_comcmd0 = 0;
-  while (*ga_main_reg_comstat0 != 0)
+  ga_main_reg_comcmd0 = 0;
+  while (ga_main_reg_comstat0 != 0)
     ;
 
   play_pcm();

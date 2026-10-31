@@ -57,16 +57,16 @@ void main()
 
     do
     {
-      command = *ga_sub_reg_comcmd0;
+      command = ga_sub_reg_comcmd0;
     } while (command == 0);
 
-    if (command != *ga_sub_reg_comcmd0)
+    if (command != ga_sub_reg_comcmd0)
       continue;
 
-    param1 = *ga_sub_reg_comcmd1;
-    param2 = *ga_sub_reg_comcmd2;
-    param3 = *ga_sub_reg_comcmd3;
-    param4 = *ga_sub_reg_comcmd4;
+    param1 = ga_sub_reg_comcmd1;
+    param2 = ga_sub_reg_comcmd2;
+    param3 = ga_sub_reg_comcmd3;
+    param4 = ga_sub_reg_comcmd4;
 
     switch (command)
     {
@@ -88,20 +88,20 @@ void main()
 
     // not reaching here?
     asm(".global test_label3\ntest_label3:");
-    *ga_sub_reg_comstat0 = *ga_sub_reg_comcmd0;
+    ga_sub_reg_comstat0 = ga_sub_reg_comcmd0;
     do
     {
       asm("nop");
-      command = *ga_sub_reg_comcmd0;
+      command = ga_sub_reg_comcmd0;
     } while (command != 0);
 
     do
     {
       asm("nop");
-      command = *ga_sub_reg_comcmd0;
+      command = ga_sub_reg_comcmd0;
     } while (command != 0);
 
-    *ga_sub_reg_comstat0 = 0;
+    ga_sub_reg_comstat0 = 0;
 
   } while (1);
 }

@@ -637,7 +637,7 @@
 #define GA_SUB_REG_SUBCODEBUFIMG 0xFF8180
 
 /**
- * ga_sub_reg_cdcmode bit/mask settings
+ ga_sub_reg_cdcmode bit/mask settings
  */
 #define GA_SUB_BIT_CDCMODE_DD0 5
 #define GA_SUB_BIT_CDCMODE_DSR 6
