@@ -62,9 +62,9 @@ ASSERT_S := $(wildcard check/asserts/*.s)
 # Host compiler for the runtime library test; the runtime sources are plain C.
 HOST_CC ?= cc
 
-.PHONY: check check-projects check-headers check-asm check-link check-odr check-incremental check-inline check-asserts check-host docs clean $(PROJECTS)
+.PHONY: check check-projects check-headers check-asm check-link check-stack check-odr check-incremental check-inline check-asserts check-host docs clean $(PROJECTS)
 
-check: check-projects check-headers check-asm check-link check-odr check-incremental check-inline check-asserts check-host
+check: check-projects check-headers check-asm check-link check-stack check-odr check-incremental check-inline check-asserts check-host
 	@printf '\ncheck: all passed\n'
 
 # ---------------------------------------------------------------------------
@@ -170,6 +170,47 @@ check-link:
 	    printf 'FAIL link: expected an undefined %s\n' "$$h"; cat $(CHECK_DIR)/nolink.err; exit 1; }; \
 	done
 	@printf '== link: 64-bit and floating point arithmetic stop the link\n'
+
+# ---------------------------------------------------------------------------
+# The stack-setting init files load STACK_TOP just before entering main, and
+# the linker scripts reject a stack that does not fit.
+# ---------------------------------------------------------------------------
+STACK_LD = $(M68K_PREFIX)ld -nostdlib -z noexecstack \
+	--defsym=MMD_DEST=0 \
+	--defsym=MODULE_ROM_ORIGIN=0xFF0000 --defsym=MODULE_ROM_LENGTH=0x4000 \
+	--defsym=MODULE_RAM_ORIGIN=0xFFC000 --defsym=MODULE_RAM_LENGTH=0x1000
+
+check-stack:
+	@mkdir -p $(CHECK_DIR)
+	@printf '.global main\nmain: rts\n.bss\n.space 0x1000\n' > $(CHECK_DIR)/stack_main.s
+	@$(CC) -m68000 -c $(CHECK_DIR)/stack_main.s -o $(CHECK_DIR)/stack_main.o
+	@for s in std_init_stack main/ipx_init_stack; do \
+	  o=$(CHECK_DIR)/stack_$$(basename $$s).o; e=$$o.elf; \
+	  $(CC) $(CHECK_FLAGS) -DTARGET=MEGACD -x assembler-with-cpp -c lib/$$s.s -o $$o || exit 1; \
+	  if $(STACK_LD) -T cfg/module_mmd.ld $$o $(CHECK_DIR)/stack_main.o -o $$e 2>/dev/null; then \
+	    printf 'FAIL stack: %s linked without STACK_TOP\n' $$s; exit 1; fi; \
+	  $(STACK_LD) --defsym=STACK_TOP=0xFFC000 --defsym=STACK_SIZE=0x1000 -T cfg/module_mmd.ld $$o $(CHECK_DIR)/stack_main.o -o $$e || exit 1; \
+	  $(M68K_PREFIX)objdump -d --no-show-raw-insn -j .rom $$e | grep -A1 'moveal #16760832,%sp' | grep -q 'jmp' || { \
+	    printf 'FAIL stack: %s does not set sp just before entering main\n' $$s; exit 1; }; \
+	done
+	@o=$(CHECK_DIR)/stack_std_init_stack.o; \
+	for c in '0xFFC001 0 even' '0xFFC800 0 RAM' '0xFF0002 0 code' '0xFFD000 0x1800 RAM' '0xFF2000 0x2000 code' '0 0xFFF0 RAM' '0 0x1000 jump' '0xFFFD80 0 jump'; do \
+	  set -- $$c; \
+	  if $(STACK_LD) --defsym=STACK_TOP=$$1 --defsym=STACK_SIZE=$$2 -T cfg/module_mmd.ld $$o $(CHECK_DIR)/stack_main.o \
+	       -o $(CHECK_DIR)/stack_bad.elf 2> $(CHECK_DIR)/stack_bad.err; then \
+	    printf 'FAIL stack: top %s size %s linked\n' $$1 $$2; exit 1; fi; \
+	  grep -q "$$3" $(CHECK_DIR)/stack_bad.err || { \
+	    printf 'FAIL stack: top %s size %s: expected "%s"\n' $$1 $$2 $$3; cat $(CHECK_DIR)/stack_bad.err; exit 1; }; \
+	done
+	@# Projects define STACK_TOP in an object, not on the command line.
+	@printf '.global STACK_TOP\n.equ STACK_TOP, 0xFFC800\n' > $(CHECK_DIR)/stack_sym.s
+	@$(CC) -m68000 -c $(CHECK_DIR)/stack_sym.s -o $(CHECK_DIR)/stack_sym.o
+	@if $(STACK_LD) -T cfg/module_mmd.ld $(CHECK_DIR)/stack_std_init_stack.o $(CHECK_DIR)/stack_main.o \
+	     $(CHECK_DIR)/stack_sym.o -o $(CHECK_DIR)/stack_bad.elf 2>/dev/null; then \
+	  printf 'FAIL stack: a STACK_TOP defined in an object was not checked\n'; exit 1; fi
+	@$(STACK_LD) --defsym=STACK_TOP=0 --defsym=STACK_SIZE=0x24C -T cfg/module_mmd.ld $(CHECK_DIR)/stack_std_init_stack.o \
+	  $(CHECK_DIR)/stack_main.o -o $(CHECK_DIR)/stack_top.elf
+	@printf '== stack: init files set STACK_TOP; a stack at 0 links; the linker rejects 9 bad stacks\n'
 
 # ---------------------------------------------------------------------------
 # Loop 5: every library header can be included by two translation units that

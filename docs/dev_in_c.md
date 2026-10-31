@@ -97,6 +97,19 @@ There are some strategies we can employ to help mitigate the risk of an overflow
 
 - Try to keep the number of chained function calls to a minimum. A function calling a function calling a function calling a function will generate a stack frame for each call, which includes space for any local variables. If possible, call a function to do work on an object passed by pointer, then return and call the next pointer, and so on. Similarly, avoid recursive functions.
 
+### Moving the Stack
+
+A module that never returns can have its init code move the stack before `main` runs. In the prerequisite list for the module, use `std_init_stack.s` in place of `std_init.s`, or `main/ipx_init_stack.s` in place of `main/ipx_init.s`, then define the top of the stack with the rest of the module's layout. `STACK_SIZE` is optional:
+
+```c
+GLOBAL_SYM(STACK_TOP, 0xFFC000);
+GLOBAL_SYM(STACK_SIZE, 0x1000);
+```
+
+The link fails if `STACK_TOP` is missing or odd, if the stack overlaps the module's code or RAM, or if an MMD's stack overlaps the exception jump table at 0xFFFD00 to 0xFFFDB4. A `STACK_TOP` of 0 starts at the top of Work RAM, since the first push wraps around to 0xFFFFFC, and has 588 bytes above the jump table; that space is only free if you are not using the Main BIOS (see `megacd_dev.md`). Without `STACK_SIZE`, only `STACK_TOP` itself is checked. These checks only cover the module's size as linked. They cannot tell you how deep the stack gets at runtime, and they do not know about other modules or Boot ROM memory, so the stack still needs a place in your memory map.
+
+Do not use these with a module that returns to its caller, such as a module called by an IPX. The return address is on the old stack.
+
 ## Lack of "naked" function support
 
 One of the most frustrating aspects of working with GCC is the lack of flexibility in some (admittedly esoteric) aspects. Chief among these has been GCC's insistence on creating function prologue/epilogues for overlays (modules).
@@ -105,7 +118,7 @@ In summary, when a function is called, certain CPU registers may be modified as 
 
 The automatically generated epilogue/prologue may be unnecessary if the function in question is an entry for a module. The register push takes up valuable stack space in our limited RAM. Moreover, the compiler may also LINK the A6 register, which essentially removes that register from use. This is especially problematic since a number of Main BIOS calls make use of A6.
 
-A function lacking an epilogue and prologue is called "naked," and unfortunately GCC does not provide a way to specify a function as naked (at least not for the M68000 architecture). At this point, there doesn't seem to be a good solution for this. The stack can be manually reset by some inline ASM at the top of a function to recover the space used, but the (admitterly few) CPU cycles are still used for the push/pop. For BIOS calls using A6, we have wrapped these calls with a push/pop of A6, which keeps things stable but adds more CPU cycles...
+A function lacking an epilogue and prologue is called "naked," and unfortunately GCC does not provide a way to specify a function as naked (at least not for the M68000 architecture). At this point, there doesn't seem to be a good solution for this. Marking a function that never returns as `noreturn` removes the epilogue but not the pushes. The stack can be manually reset by some inline ASM at the top of a function to recover the space used, but the (admitterly few) CPU cycles are still used for the push, and it is only safe if the function has nothing on the stack: GCC addresses locals and spilled registers relative to SP, and counts the pushed registers in those offsets, so resetting SP moves them out from under the code. To give a module more stack room safely, see [Moving the Stack](#moving-the-stack), which happens before `main` is entered. For BIOS calls using A6, we have wrapped these calls with a push/pop of A6, which keeps things stable but adds more CPU cycles...
 
 If you need to be particular about speed, we recommend checking any BIOS calls being made that may use A6 and perhaps write your own inline ASM caller to deal with tha LINKed A6 issue more efficiently. Of course, this issue only applies to C programming; if you are developing in pure ASM, this is not a problem.
 
