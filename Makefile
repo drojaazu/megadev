@@ -60,9 +60,12 @@ INLINE_FLAGS := -O1 -fomit-frame-pointer
 ASSERT_C := $(wildcard check/asserts/*.c)
 ASSERT_S := $(wildcard check/asserts/*.s)
 
-.PHONY: check check-projects check-headers check-asm check-link check-odr check-incremental check-inline check-asserts docs clean $(PROJECTS)
+# Host compiler for the runtime library test; the runtime sources are plain C.
+HOST_CC ?= cc
 
-check: check-projects check-headers check-asm check-link check-odr check-incremental check-inline check-asserts
+.PHONY: check check-projects check-headers check-asm check-link check-odr check-incremental check-inline check-asserts check-host docs clean $(PROJECTS)
+
+check: check-projects check-headers check-asm check-link check-odr check-incremental check-inline check-asserts check-host
 	@printf '\ncheck: all passed\n'
 
 # ---------------------------------------------------------------------------
@@ -227,6 +230,19 @@ check-asserts:
 	done; \
 	n=$$(cat $(ASSERT_C) | grep -c '_Static_assert'); m=$$(cat $(ASSERT_S) | grep -c '^ASSERT_EQ'); \
 	[ $$fail = 0 ] && printf '== asserts: %s C and %s assembly assertions hold\n' "$$n" "$$m" || exit 1
+
+# ---------------------------------------------------------------------------
+# Loop 9: the freestanding C library subset computes the right answers. The
+# runtime sources compile for the host, where check/host/libc_test.c runs
+# them against known results. The only loop in which code executes.
+# ---------------------------------------------------------------------------
+check-host:
+	@mkdir -p $(CHECK_DIR)
+	@$(HOST_CC) -std=c11 -Wall -Wextra -Werror -nostdinc -Ilib \
+	  -I$$($(HOST_CC) -print-file-name=include) \
+	  check/host/libc_test.c -o $(CHECK_DIR)/libc_test
+	@$(CHECK_DIR)/libc_test
+	@printf '== host: libc subset passes %s checks\n' "$$(grep -c 'CHECK(' check/host/libc_test.c)"
 
 docs:
 	@rm -rf docs/html; mkdir -p $(CHECK_DIR)
