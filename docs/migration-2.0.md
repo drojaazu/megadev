@@ -10,6 +10,7 @@ This guide lists every change in Megadev 2.0 that requires a change to a project
 - Gate array register model
 - Serial control and VDP fields
 - Sub CPU system call names
+- C library subset
 
 ---
 
@@ -289,3 +290,18 @@ The Sub CPU BIOS, Backup RAM and CD Boot calls have descriptive names. Sega's do
 | `BIOSCALL #code` | `BIOS_CALL #code` |
 | `BURAM #code` | `BRAM_CALL #code` |
 | `CDBOOT #code` | `BOOT_CALL #code` |
+
+# C library subset
+
+Megadev now provides a freestanding subset of the C standard library (`string.h`, `stdlib.h`, `stdio.h`, `ctype.h`, `assert.h`); see the Standard Library section of `dev_in_c.md`. A standard name has standard semantics, which changes three 1.x functions:
+
+| 1.x | 2.0 |
+|---|---|
+| `strcpy` in `memory.h`, returning `void` | `strcpy` in `string.h`, returning the destination. Include `string.h`. |
+| `strcmp` in `str_util.h`, returning `bool` (true when equal) | `strcmp` in `string.h`, returning `int` (0 when equal). Code that tested `if (strcmp(a, b))` for equality must test `== 0`. |
+| `div`, `divu` and `div_t` in `math.h`, 32-by-16 hardware divides with 16-bit results | `divs16`, `divu16` and `Div16` in `math.h`. `div` and `div_t` in `stdlib.h` are the standard functions. |
+| `abs`, `abs16` in `math.h` | `abs` and `labs` in `stdlib.h` |
+
+`strcmpt`, the comparison with a caller-supplied terminator, keeps its name.
+
+`types.h` now defines `size_t`, `ptrdiff_t` and the `intN_t` types from the compiler's own type macros. On the 68000 they are the same sizes as before; `int32_t` is `int` rather than `long`, which only matters to code that printed or cast them by name.

@@ -4,19 +4,28 @@ Writing your code in C rather than raw assembly can make development much easier
 
 ## Standard Library
 
-There is no equivalent to a "standard library" like there is for PC development. This means common headers like `stdio.h` and `string.h` are not available. You literally only have C keywords available to you.
+There is no C standard library in the PC sense: no streams, no heap, no floating point, no locale. Megadev provides a small freestanding subset with standard names and standard semantics, so code written against it behaves as it would anywhere else. Everything in it is linked only when used.
 
-This development kit, Megadev, partially fills the role of standard library by providing helpful functions, defines and macros.
+| Header | Provides |
+|---|---|
+| `string.h` | `memcpy`, `memmove`, `memset`, `memcmp`, `strlen`, `strcmp`, `strncmp`, `strcpy`, `strncpy`, `strcat`, `strchr` |
+| `stdlib.h` | `abs`, `labs`, `div`, `ldiv`, `atoi`, `strtol`, `rand`, `srand`, `bsearch`, `qsort` |
+| `stdio.h` | `snprintf`, `vsnprintf`: integer conversions, `%c`, `%s`, field width, `-` and `0` flags, `l` modifier |
+| `ctype.h` | `isdigit`, `isalpha`, `isalnum`, `isspace`, `isupper`, `islower`, `isxdigit`, `toupper`, `tolower`, ASCII only |
+| `assert.h` | `assert`, reporting over the serial port; see below |
+| `types.h` | `size_t`, `ptrdiff_t`, the `intN_t` family and Megadev's `u8`, `s16` and so on |
 
-There is also the Main BIOS and Sub BIOS which provide a number of hardware utility functions.
+Deliberately absent: `malloc` and `free`, `printf` to a console, `FILE`, floating point, `setjmp`, wide characters, time and locale. A name from the C standard that Megadev does provide has the standard signature; Megadev's own routines have their own names. The 68000's 32-by-16 hardware divides, for example, are `divs16` and `divu16` in `math.h`, while `div` in `stdlib.h` is the standard function. The Boot ROM's print routines expect a string ending in `0xFF`, not `0x00`; see `str_util.h` for the helpers that produce that form.
 
-Development for a "bare metal" embedded system like the Mega Drive/Mega CD requires a paradigm shift away from PC development. Here, there is no console so there is no printf. There is no OS kernel managing memory, so there is no malloc/free. Anything you want to happen, you will need to write yourself.
+`qsort` is an insertion sort. It is small and needs no extra memory, but its cost grows with the square of the element count, so it is not for large arrays or for sorting every frame; a sort written for the element type will beat the callback per comparison.
 
 ### Functions the compiler calls on its own
 
-A few standard functions are always available, because GCC emits calls to them whether or not you write them, and regardless of `-nostdlib` and `-fno-builtin`. Copying or zero-initializing a large struct or array becomes a call to `memcpy` or `memset`, and 32-bit multiplication, division and modulo become calls to helper routines in libgcc, since the 68000 only multiplies 16-bit and divides 32-by-16 in hardware. Megadev provides `memcpy`, `memmove`, `memset` and `memcmp` with their standard signatures in `lib/runtime`, and links them together with libgcc into every image. Only the routines an image actually references are included, so an image that uses none of them pays nothing.
+A few standard functions are always available, because GCC emits calls to them whether or not you write them, and regardless of `-nostdlib` and `-fno-builtin`. Copying or zero-initializing a large struct or array becomes a call to `memcpy` or `memset`, and 32-bit multiplication, division and modulo become calls to helper routines in libgcc, since the 68000 only multiplies 16-bit and divides 32-by-16 in hardware. Megadev provides `memcpy`, `memmove`, `memset` and `memcmp` in `lib/runtime`, and links them together with libgcc into every image. Only the routines an image actually references are included.
 
-It is theoretically possible to use newlib, a reimplementation of much of the C standard library for embedded systems. However, we feel this is overkill for something like the relatively simple Mega Drive/CD system and thus have not done any integration testing with it. You are free to attempt this yourself, of course, and we welcome a report of your experience with it.
+### Assertions
+
+`assert(expr)` from `assert.h` does nothing when the expression is true. When it is false, it formats the file, line and expression and sends them over the serial port with `ext_tx`, then stops the CPU. The port must have been configured with `init_ext_port` first; see `main/comm.h` and the `serial_debug` example for the wiring. It is Main CPU only, since the serial port is a Main CPU peripheral. Define `NDEBUG` to compile assertions out.
 
 ## Global Variable Initialization
 

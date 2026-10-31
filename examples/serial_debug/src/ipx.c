@@ -7,6 +7,7 @@
 #include <main/memmap.h>
 #include <main/mmd.h>
 #include <memory.h>
+#include <string.h>
 #include <str_util.h>
 #include <system.h>
 #include <types.h>
