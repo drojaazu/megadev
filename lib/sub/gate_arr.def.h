@@ -17,7 +17,7 @@
  */
 
 /**
- * @def GA_REG_RESET
+ * @def GA_SUB_REG_RESET
  * @brief Sub CPU & Hardware Control
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_subctrl
@@ -40,41 +40,41 @@
  * @param Ver ROM Version
  * [read] ROM Version
  */
-#define GA_REG_RESET 0xFF8000
+#define GA_SUB_REG_RESET 0xFF8000
 
 /**
- * @def GA_LED_R
+ * @def GA_SUB_LED_R
  * @brief Red LED Control
- * @sa ga_reg_reset
+ * @sa ga_sub_reg_reset
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_subctrl
  */
-#define GA_LED_R (1 << 0)
+#define GA_SUB_LED_R (1 << 0)
 
 /**
- * @def GA_LED_G
+ * @def GA_SUB_LED_G
  * @brief Green LED Control
- * @sa ga_reg_reset
+ * @sa ga_sub_reg_reset
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_subctrl
  */
-#define GA_LED_G (1 << 1)
+#define GA_SUB_LED_G (1 << 1)
 
 /**
- * @def GA_MASK_VERSION
+ * @def GA_SUB_MASK_VERSION
  * @brief ROM Version
- * @sa ga_reg_reset
+ * @sa ga_sub_reg_reset
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_subctrl
  */
-#define GA_MASK_VERSION (0b1111 << 4)
+#define GA_SUB_MASK_VERSION (0b1111 << 4)
 
 /**
  * @defgroup ga_reg_sub_memmode Sub CPU / Gate Array / Registers / Memory Mode
  */
 
 /**
- * @def GA_REG_MEMMODE
+ * @def GA_SUB_REG_MEMMODE
  * @brief GA Reg 01 - Word RAM Memory Mode / RAM Write Protect / Priority Mode
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_memmode
@@ -94,37 +94,37 @@
  * In 1M mode: Change 1M block ownership
  *
  */
-#define GA_REG_MEMMODE 0xFF8002
+#define GA_SUB_REG_MEMMODE 0xFF8002
 
 #define BIT_GA_REG_RET  0
 #define BIT_GA_REG_DMNA 1
 #define BIT_GA_REG_MODE 2
 
 /**
- * @def GA_MASK_RETURN_2M
+ * @def GA_SUB_MASK_RETURN_2M
  * @brief GA Reg 01 - Change Word RAM ownership bitmask
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_memmode
  */
-#define GA_MASK_RETURN_2M (1 << BIT_GA_REG_RET)
+#define GA_SUB_MASK_RETURN_2M (1 << BIT_GA_REG_RET)
 
 /**
- * @def GA_MASK_DMNA
+ * @def GA_SUB_MASK_DMNA
  * @brief GA Reg 01 - Main CPU no Word RAM access flag bitmask
- * @sa ga_reg_memmode
+ * @sa ga_sub_reg_memmode
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_memmode
  */
-#define GA_MASK_DMNA (1 << BIT_GA_REG_DMNA)
+#define GA_SUB_MASK_DMNA (1 << BIT_GA_REG_DMNA)
 
 /**
- * @def GA_MASK_WORDRAM_LAYOUT
+ * @def GA_SUB_MASK_WORDRAM_LAYOUT
  * @brief GA Reg 01 - Word RAM layout bitmask
- * @sa ga_reg_memmode
+ * @sa ga_sub_reg_memmode
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_memmode
  */
-#define GA_MASK_WORDRAM_LAYOUT (1 << BIT_GA_REG_MODE)
+#define GA_SUB_MASK_WORDRAM_LAYOUT (1 << BIT_GA_REG_MODE)
 
 /**
  * @defgroup ga_reg_sub_cdcmode Sub CPU / Gate Array / Registers / CDC Mode &
@@ -132,7 +132,7 @@
  */
 
 /**
- * @def GA_REG_CDCMODE
+ * @def GA_SUB_REG_CDCMODE
  * @brief CDC Mode & CDC Registers #1
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cdcmode
@@ -159,7 +159,7 @@
  *
  *   All other values for DD are invalid.
  */
-#define GA_REG_CDCMODE 0xFF8004
+#define GA_SUB_REG_CDCMODE 0xFF8004
 
 /**
  * @defgroup ga_reg_sub_cdcregs2 Sub CPU / Gate Array / Registers / CDC
@@ -167,7 +167,7 @@
  */
 
 /**
- * @def GA_REG_CDCRS1
+ * @def GA_SUB_REG_CDCRS1
  * @brief CDC Registers #2
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cdcregs2
@@ -180,14 +180,14 @@
  * @param CD CDC register data
  * \n Details for this register can be found in the LC89510 manual
  */
-#define GA_REG_CDCRS1 0xFF8006
+#define GA_SUB_REG_CDCRS1 0xFF8006
 
 /**
  * @defgroup ga_reg_sub_cdcdata Sub CPU / Gate Array / Registers / CDC Host Data
  */
 
 /**
- * @def GA_REG_CDCHOSTDATA
+ * @def GA_SUB_REG_CDCHOSTDATA
  * @brief CDC Host Data
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cdcdata
@@ -201,7 +201,7 @@
  * [read] 2 bytes of data read by the CDC and ready to be transferred to
  * Main or Sub CPU memory
  */
-#define GA_REG_CDCHOSTDATA 0xFF8008
+#define GA_SUB_REG_CDCHOSTDATA 0xFF8008
 
 /**
  * @defgroup ga_reg_sub_dmaaddr Sub CPU / Gate Array / Registers / CDC DMA
@@ -209,7 +209,7 @@
  */
 
 /**
- * @def GA_REG_DMAADDR
+ * @def GA_SUB_REG_DMAADDR
  * @brief CDC DMA Address
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_dmaaddr
@@ -228,14 +228,14 @@
  *
  * Unused bits will be read as 0.
  */
-#define GA_REG_DMAADDR 0xFF800A
+#define GA_SUB_REG_DMAADDR 0xFF800A
 
 /**
  * @defgroup ga_reg_sub_stopwatch Sub CPU / Gate Array / Registers / Stopwatch
  */
 
 /**
- * @def GA_REG_STOPWATCH
+ * @def GA_SUB_REG_STOPWATCH
  * @brief Stopwatch
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_stopwatch
@@ -250,7 +250,7 @@
  * This is a general use timer, though it is primarily used for CDD/CDC
  * timing. Each tick is 30.72 microseconds.
  */
-#define GA_REG_STOPWATCH 0xFF800C
+#define GA_SUB_REG_STOPWATCH 0xFF800C
 
 /**
  * @defgroup ga_reg_sub_cpucomm Sub CPU / Gate Array / Registers / CPU
@@ -258,7 +258,7 @@
  */
 
 /**
- * @def GA_REG_COMFLAGS
+ * @def GA_SUB_REG_COMFLAGS
  * @brief Main/Sub CPU communication flags
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
@@ -271,137 +271,137 @@
  * CFM: Comm flags for Main CPU
  * CFS: Comm flags for Sub CPU
  */
-#define GA_REG_COMFLAGS 0xFF800E
+#define GA_SUB_REG_COMFLAGS 0xFF800E
 
 /**
- * @def GA_REG_COMCMD0
+ * @def GA_SUB_REG_COMCMD0
  * @brief Comm Command 0 (Main -> Sub)
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  *
  * @details R: 16 bit data
  */
-#define GA_REG_COMCMD0 0xFF8010
+#define GA_SUB_REG_COMCMD0 0xFF8010
 
 /**
- * @def GA_REG_COMCMD1
+ * @def GA_SUB_REG_COMCMD1
  * @brief Comm Command  (Main -> Sub)
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define GA_REG_COMCMD1 0xFF8012
+#define GA_SUB_REG_COMCMD1 0xFF8012
 
 /**
- * @def GA_REG_COMCMD2
+ * @def GA_SUB_REG_COMCMD2
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define GA_REG_COMCMD2 0xFF8014
+#define GA_SUB_REG_COMCMD2 0xFF8014
 
 /**
- * @def GA_REG_COMCMD3
+ * @def GA_SUB_REG_COMCMD3
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define GA_REG_COMCMD3 0xFF8016
+#define GA_SUB_REG_COMCMD3 0xFF8016
 
 /**
- * @def GA_REG_COMCMD4
+ * @def GA_SUB_REG_COMCMD4
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define GA_REG_COMCMD4 0xFF8018
+#define GA_SUB_REG_COMCMD4 0xFF8018
 
 /**
- * @def GA_REG_COMCMD5
+ * @def GA_SUB_REG_COMCMD5
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define GA_REG_COMCMD5 0xFF801A
+#define GA_SUB_REG_COMCMD5 0xFF801A
 
 /**
- * @def GA_REG_COMCMD6
+ * @def GA_SUB_REG_COMCMD6
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define GA_REG_COMCMD6 0xFF801C
+#define GA_SUB_REG_COMCMD6 0xFF801C
 
 /**
- * @def GA_REG_COMCMD7
+ * @def GA_SUB_REG_COMCMD7
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define GA_REG_COMCMD7 0xFF801E
+#define GA_SUB_REG_COMCMD7 0xFF801E
 
 /**
- * @def GA_REG_COMSTAT0
+ * @def GA_SUB_REG_COMSTAT0
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define GA_REG_COMSTAT0 0xFF8020
+#define GA_SUB_REG_COMSTAT0 0xFF8020
 
 /**
- * @def GA_REG_COMSTAT1
+ * @def GA_SUB_REG_COMSTAT1
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define GA_REG_COMSTAT1 0xFF8022
+#define GA_SUB_REG_COMSTAT1 0xFF8022
 
 /**
- * @def GA_REG_COMSTAT2
+ * @def GA_SUB_REG_COMSTAT2
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define GA_REG_COMSTAT2 0xFF8024
+#define GA_SUB_REG_COMSTAT2 0xFF8024
 
 /**
- * @def GA_REG_COMSTAT3
+ * @def GA_SUB_REG_COMSTAT3
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define GA_REG_COMSTAT3 0xFF8026
+#define GA_SUB_REG_COMSTAT3 0xFF8026
 
 /**
- * @def GA_REG_COMSTAT4
+ * @def GA_SUB_REG_COMSTAT4
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define GA_REG_COMSTAT4 0xFF8028
+#define GA_SUB_REG_COMSTAT4 0xFF8028
 
 /**
- * @def GA_REG_COMSTAT5
+ * @def GA_SUB_REG_COMSTAT5
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define GA_REG_COMSTAT5 0xFF802A
+#define GA_SUB_REG_COMSTAT5 0xFF802A
 
 /**
- * @def GA_REG_COMSTAT6
+ * @def GA_SUB_REG_COMSTAT6
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define GA_REG_COMSTAT6 0xFF802C
+#define GA_SUB_REG_COMSTAT6 0xFF802C
 
 /**
- * @def GA_REG_COMSTAT7
+ * @def GA_SUB_REG_COMSTAT7
  * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_cpucomm
  */
-#define GA_REG_COMSTAT7 0xFF802E
+#define GA_SUB_REG_COMSTAT7 0xFF802E
 
 /**
- * @def GA_REG_INT3TIMER
- * @sa ga_reg_comstat7
+ * @def GA_SUB_REG_INT3TIMER
+ * @sa ga_sub_reg_comstat7
  * @ingroup ga_regs_sub
  */
-#define GA_REG_INT3TIMER 0xFF8030
+#define GA_SUB_REG_INT3TIMER 0xFF8030
 
 /**
- * @def GA_REG_INTMASK
- * @sa ga_reg_intmask
+ * @def GA_SUB_REG_INTMASK
+ * @sa ga_sub_reg_intmask
  * @ingroup ga_regs_sub
  */
-#define GA_REG_INTMASK 0xFF8032
+#define GA_SUB_REG_INTMASK 0xFF8032
 
 #define BIT_GA_REG_INT1 1
 #define BIT_GA_REG_INT2 2
@@ -418,112 +418,112 @@
 #define MSK_GA_REG_INT6 1 << BIT_GA_REG_INT6
 
 /**
- * @def GA_REG_CDFADER
- * @sa ga_reg_cdfader
+ * @def GA_SUB_REG_CDFADER
+ * @sa ga_sub_reg_cdfader
  * @ingroup ga_regs_sub
  */
-#define GA_REG_CDFADER 0xFF8034
+#define GA_SUB_REG_CDFADER 0xFF8034
 
 /**
- * @def GA_REG_CDDCTRL
- * @sa ga_reg_cddctrl
+ * @def GA_SUB_REG_CDDCTRL
+ * @sa ga_sub_reg_cddctrl
  * @ingroup ga_regs_sub
  */
-#define GA_REG_CDDCTRL 0xFF8036
+#define GA_SUB_REG_CDDCTRL 0xFF8036
 
 /**
- * @def GA_REG_CDDCOMM0
- * @sa ga_reg_cddcomm0
+ * @def GA_SUB_REG_CDDCOMM0
+ * @sa ga_sub_reg_cddcomm0
  * @ingroup ga_regs_sub
  */
-#define GA_REG_CDDCOMM0 0xFF8038
+#define GA_SUB_REG_CDDCOMM0 0xFF8038
 
 /**
- * @def GA_REG_CDDCOMM1
- * @sa ga_reg_cddcomm1
+ * @def GA_SUB_REG_CDDCOMM1
+ * @sa ga_sub_reg_cddcomm1
  * @ingroup ga_regs_sub
  */
-#define GA_REG_CDDCOMM1 0xFF803A
+#define GA_SUB_REG_CDDCOMM1 0xFF803A
 
 /**
- * @def GA_REG_CDDCOMM2
- * @sa ga_reg_cddcomm2
+ * @def GA_SUB_REG_CDDCOMM2
+ * @sa ga_sub_reg_cddcomm2
  * @ingroup ga_regs_sub
  */
-#define GA_REG_CDDCOMM2 0xFF803C
+#define GA_SUB_REG_CDDCOMM2 0xFF803C
 
 /**
- * @def GA_REG_CDDCOMM3
- * @sa ga_reg_cddcomm2
+ * @def GA_SUB_REG_CDDCOMM3
+ * @sa ga_sub_reg_cddcomm2
  * @ingroup ga_regs_sub
  */
-#define GA_REG_CDDCOMM3 0xFF803E
+#define GA_SUB_REG_CDDCOMM3 0xFF803E
 
 /**
- * @def GA_REG_CDDCOMM4
- * @sa ga_reg_cddcomm4
+ * @def GA_SUB_REG_CDDCOMM4
+ * @sa ga_sub_reg_cddcomm4
  * @ingroup ga_regs_sub
  */
-#define GA_REG_CDDCOMM4 0xFF8040
+#define GA_SUB_REG_CDDCOMM4 0xFF8040
 
 /**
- * @def GA_REG_CDDCOMM5
- * @sa ga_reg_cddcomm5
+ * @def GA_SUB_REG_CDDCOMM5
+ * @sa ga_sub_reg_cddcomm5
  * @ingroup ga_regs_sub
  */
-#define GA_REG_CDDCOMM5 0xFF8042
+#define GA_SUB_REG_CDDCOMM5 0xFF8042
 
 /**
- * @def GA_REG_CDDCOMM6
- * @sa ga_reg_cddcomm6
+ * @def GA_SUB_REG_CDDCOMM6
+ * @sa ga_sub_reg_cddcomm6
  * @ingroup ga_regs_sub
  */
-#define GA_REG_CDDCOMM6 0xFF8044
+#define GA_SUB_REG_CDDCOMM6 0xFF8044
 
 /**
- * @def GA_REG_CDDCOMM7
- * @sa ga_reg_cddcomm7
+ * @def GA_SUB_REG_CDDCOMM7
+ * @sa ga_sub_reg_cddcomm7
  * @ingroup ga_regs_sub
  */
-#define GA_REG_CDDCOMM7 0xFF8046
+#define GA_SUB_REG_CDDCOMM7 0xFF8046
 
 /**
- * @def GA_REG_CDDCOMM8
- * @sa ga_reg_cddcomm8
+ * @def GA_SUB_REG_CDDCOMM8
+ * @sa ga_sub_reg_cddcomm8
  * @ingroup ga_regs_sub
  */
-#define GA_REG_CDDCOMM8 0xFF8048
+#define GA_SUB_REG_CDDCOMM8 0xFF8048
 
 /**
- * @def GA_REG_CDDCOMM9
- * @sa ga_reg_cddcomm9
+ * @def GA_SUB_REG_CDDCOMM9
+ * @sa ga_sub_reg_cddcomm9
  * @ingroup ga_regs_sub
  */
-#define GA_REG_CDDCOMM9 0xFF804A
+#define GA_SUB_REG_CDDCOMM9 0xFF804A
 
 /**
- * @def GA_REG_FONTCOLOR
- * @sa ga_reg_fontcolor
+ * @def GA_SUB_REG_FONTCOLOR
+ * @sa ga_sub_reg_fontcolor
  * @ingroup ga_regs_sub
  */
-#define GA_REG_FONTCOLOR 0xFF804C
+#define GA_SUB_REG_FONTCOLOR 0xFF804C
 
 /**
- * @def GA_REG_FONTBITS
- * @sa ga_reg_fontbits
+ * @def GA_SUB_REG_FONTBITS
+ * @sa ga_sub_reg_fontbits
  * @ingroup ga_regs_sub
  */
-#define GA_REG_FONTBITS 0xFF804E
+#define GA_SUB_REG_FONTBITS 0xFF804E
 
 /**
- * @def GA_REG_FONTDATA
- * @sa ga_reg_fontdata
+ * @def GA_SUB_REG_FONTDATA
+ * @sa ga_sub_reg_fontdata
  * @ingroup ga_regs_sub
  */
-#define GA_REG_FONTDATA 0xFF8050
+#define GA_SUB_REG_FONTDATA 0xFF8050
 
 /**
- * @def GA_REG_STAMPSIZE
+ * @def GA_SUB_REG_STAMPSIZE
  * @brief Stamp data sizes
  * @ingroup ga_regs_sub
  * @ingroup gfx_xform
@@ -543,23 +543,23 @@
  * @details R:
  */
 /**
- * @def GA_REG_STAMPSIZE
- * @sa ga_reg_stampsize
+ * @def GA_SUB_REG_STAMPSIZE
+ * @sa ga_sub_reg_stampsize
  * @ingroup ga_regs_sub
  */
-#define GA_REG_STAMPSIZE 0xFF8058
+#define GA_SUB_REG_STAMPSIZE 0xFF8058
 
-#define GA_BIT_STAMPSIZE_REPEAT       0
-#define GA_BIT_STAMPSIZE_32x32_STAMP  1
-#define GA_BIT_STAMPSIZE_16x16_SCREEN 2
+#define GA_SUB_BIT_STAMPSIZE_REPEAT       0
+#define GA_SUB_BIT_STAMPSIZE_32x32_STAMP  1
+#define GA_SUB_BIT_STAMPSIZE_16x16_SCREEN 2
 
-#define GA_MASK_STAMPSIZE_REPEAT       (1 << GA_BIT_STAMPSIZE_REPEAT)
-#define GA_MASK_STAMPSIZE_32x32_STAMP  (1 << GA_BIT_STAMPSIZE_32x32_STAMP)
-#define GA_MASK_STAMPSIZE_16x16_SCREEN (1 << GA_BIT_STAMPSIZE_16x16_SCREEN)
+#define GA_SUB_MASK_STAMPSIZE_REPEAT       (1 << GA_SUB_BIT_STAMPSIZE_REPEAT)
+#define GA_SUB_MASK_STAMPSIZE_32x32_STAMP  (1 << GA_SUB_BIT_STAMPSIZE_32x32_STAMP)
+#define GA_SUB_MASK_STAMPSIZE_16x16_SCREEN (1 << GA_SUB_BIT_STAMPSIZE_16x16_SCREEN)
 
 /**
- * @def GA_REG_STAMPMAPBASE
- * @sa ga_reg_stampmapbase
+ * @def GA_SUB_REG_STAMPMAPBASE
+ * @sa ga_sub_reg_stampmapbase
  * @ingroup ga_regs_sub
  * @note The location of the stamp map in Word RAM. The value you put in is the
  * offset relative to the start of Word RAM divided by 4. What the raw location
@@ -571,96 +571,96 @@
     32x32px stamps, 4096x4096px stamp map: Multiples of 0x8000
 
  */
-#define GA_REG_STAMPMAPBASE 0xFF805A
+#define GA_SUB_REG_STAMPMAPBASE 0xFF805A
 
 /**
- * @def GA_REG_IMGBUFVSIZE
- * @sa ga_reg_imgbufvsize
+ * @def GA_SUB_REG_IMGBUFVSIZE
+ * @sa ga_sub_reg_imgbufvsize
  * @ingroup ga_regs_sub
  */
-#define GA_REG_IMGBUFVSIZE 0xFF805C
+#define GA_SUB_REG_IMGBUFVSIZE 0xFF805C
 
 /**
- * @def GA_REG_IMGBUFSTART
- * @sa ga_reg_imgbufstart
+ * @def GA_SUB_REG_IMGBUFSTART
+ * @sa ga_sub_reg_imgbufstart
  * @ingroup ga_regs_sub
  */
-#define GA_REG_IMGBUFSTART 0xFF805E
+#define GA_SUB_REG_IMGBUFSTART 0xFF805E
 
 /**
- * @def GA_REG_IMGBUFOFFSET
- * @sa ga_reg_imgbufoffset
+ * @def GA_SUB_REG_IMGBUFOFFSET
+ * @sa ga_sub_reg_imgbufoffset
  * @ingroup ga_regs_sub
  */
-#define GA_REG_IMGBUFOFFSET 0xFF8060
+#define GA_SUB_REG_IMGBUFOFFSET 0xFF8060
 
 /**
- * @def GA_REG_IMGBUFHDOTSIZE
- * @sa ga_reg_imgbufhdotsize
+ * @def GA_SUB_REG_IMGBUFHDOTSIZE
+ * @sa ga_sub_reg_imgbufhdotsize
  * @ingroup ga_regs_sub
  */
-#define GA_REG_IMGBUFHDOTSIZE 0xFF8062
+#define GA_SUB_REG_IMGBUFHDOTSIZE 0xFF8062
 
 /**
- * @def GA_REG_IMGBUFVDOTSIZE
- * @sa ga_reg_imgbufvdotsize
+ * @def GA_SUB_REG_IMGBUFVDOTSIZE
+ * @sa ga_sub_reg_imgbufvdotsize
  * @ingroup ga_regs_sub
  */
-#define GA_REG_IMGBUFVDOTSIZE 0xFF8064
+#define GA_SUB_REG_IMGBUFVDOTSIZE 0xFF8064
 
 /**
- * @def GA_REG_TRACEVECTBASE
- * @sa ga_reg_tracevectbase
+ * @def GA_SUB_REG_TRACEVECTBASE
+ * @sa ga_sub_reg_tracevectbase
  * @ingroup ga_regs_sub
  */
-#define GA_REG_TRACEVECTBASE 0xFF8066
+#define GA_SUB_REG_TRACEVECTBASE 0xFF8066
 
 /**
- * @def GA_REG_SUBCODEADDR
- * @sa ga_reg_subcodeaddr
+ * @def GA_SUB_REG_SUBCODEADDR
+ * @sa ga_sub_reg_subcodeaddr
  * @ingroup ga_regs_sub
  */
-#define GA_REG_SUBCODEADDR 0xFF8068
+#define GA_SUB_REG_SUBCODEADDR 0xFF8068
 
 /**
- * @def GA_REG_SUBCODEBUF
- * @sa ga_reg_subcodebuf
+ * @def GA_SUB_REG_SUBCODEBUF
+ * @sa ga_sub_reg_subcodebuf
  * @ingroup ga_regs_sub
  */
-#define GA_REG_SUBCODEBUF 0xFF8100
+#define GA_SUB_REG_SUBCODEBUF 0xFF8100
 
 /**
- * @def GA_REG_SUBCODEBUFIMG
- * @sa ga_reg_subcodebufimg
+ * @def GA_SUB_REG_SUBCODEBUFIMG
+ * @sa ga_sub_reg_subcodebufimg
  * @ingroup ga_regs_sub
  */
-#define GA_REG_SUBCODEBUFIMG 0xFF8180
+#define GA_SUB_REG_SUBCODEBUFIMG 0xFF8180
 
 /**
- * ga_reg_cdcmode bit/mask settings
+ * ga_sub_reg_cdcmode bit/mask settings
  */
-#define GA_BIT_CDCMODE_DD0 5
-#define GA_BIT_CDCMODE_DSR 6
-#define GA_BIT_CDCMODE_EDT 7
+#define GA_SUB_BIT_CDCMODE_DD0 5
+#define GA_SUB_BIT_CDCMODE_DSR 6
+#define GA_SUB_BIT_CDCMODE_EDT 7
 
 // these aren't right...
 // TODO clean these up
-#define GA_BIT_CDC_MAINREAD 2
-#define GA_BIT_CDC_SUBREAD  3
-#define GA_BIT_CDC_PCMDMA   4
-#define GA_BIT_CDC_PRAMDMA  5
-#define GA_BIT_CDC_WRAMDMA  7
+#define GA_SUB_BIT_CDC_MAINREAD 2
+#define GA_SUB_BIT_CDC_SUBREAD  3
+#define GA_SUB_BIT_CDC_PCMDMA   4
+#define GA_SUB_BIT_CDC_PRAMDMA  5
+#define GA_SUB_BIT_CDC_WRAMDMA  7
 
 #define CDCMODE_CABITS           0x000F
 #define CDCMODE_DDBITS           0x0700
-#define GA_MASK_CDCMODE_DD0      1 << GA_BIT_CDCMODE_DD0
-#define GA_MASK_CDCMODE_DSR      1 << GA_BIT_CDCMODE_DSR
-#define GA_MASK_CDCMODE_EDT      1 << GA_BIT_CDCMODE_EDT
-#define GA_MASK_CDCMODE_MAINREAD 1 << GA_BIT_CDC_MAINREAD
-#define GA_MASK_CDCMODE_SUBREAD  1 << GA_BIT_CDC_SUBREAD
-#define GA_MASK_CDCMODE_PCMDMA   1 << GA_BIT_CDC_PCMDMA
-#define GA_MASK_CDCMODE_PRAMDMA  1 << GA_BIT_CDC_PRAMDMA
-#define GA_MASK_CDCMODE_WRAMDMA  1 << GA_BIT_CDC_WRAMDMA
+#define GA_SUB_MASK_CDCMODE_DD0      1 << GA_SUB_BIT_CDCMODE_DD0
+#define GA_SUB_MASK_CDCMODE_DSR      1 << GA_SUB_BIT_CDCMODE_DSR
+#define GA_SUB_MASK_CDCMODE_EDT      1 << GA_SUB_BIT_CDCMODE_EDT
+#define GA_SUB_MASK_CDCMODE_MAINREAD 1 << GA_SUB_BIT_CDC_MAINREAD
+#define GA_SUB_MASK_CDCMODE_SUBREAD  1 << GA_SUB_BIT_CDC_SUBREAD
+#define GA_SUB_MASK_CDCMODE_PCMDMA   1 << GA_SUB_BIT_CDC_PCMDMA
+#define GA_SUB_MASK_CDCMODE_PRAMDMA  1 << GA_SUB_BIT_CDC_PRAMDMA
+#define GA_SUB_MASK_CDCMODE_WRAMDMA  1 << GA_SUB_BIT_CDC_WRAMDMA
 
 #define CDC_DEST_MAINREAD 2
 #define CDC_DEST_SUBREAD  3

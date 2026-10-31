@@ -19,7 +19,7 @@ GLABEL sp_init
 1:BIOSCALL #BIOS_CDB_STAT
 	andi.b	#0xF0, (CDSTAT).w
 	bne			1b
-	CLEAR_COMM_REGS
+	GA_SUB_CLEAR_COMM_REGS
   rts
 
 drv_init_tracklist:

@@ -32,13 +32,13 @@ __attribute__((section(".init"))) void main()
 
     do
     {
-      cmd0 = *ga_reg_comcmd0;
+      cmd0 = *ga_sub_reg_comcmd0;
     } while (cmd0 == 0);
 
-    if (cmd0 != *ga_reg_comcmd0)
+    if (cmd0 != *ga_sub_reg_comcmd0)
       continue;
 
-    cmd1 = *ga_reg_comcmd1;
+    cmd1 = *ga_sub_reg_comcmd1;
 
     switch (cmd0)
     {
@@ -46,7 +46,7 @@ __attribute__((section(".init"))) void main()
       // load MMD
       case 1:
         load_file(CDROM_LOAD_CDC, filenames[cmd1], (u8 *) WORD_RAM_2M);
-        grant_2m();
+        ga_sub_grant_2m();
         if (access_op_result != CDROM_RESULT_OK)
         {
           sp_fatal();
@@ -58,8 +58,8 @@ __attribute__((section(".init"))) void main()
         asm("nop");
 
         bram_brminit(&brminit_info);
-        *ga_reg_comstat1 = brminit_info.bram_size;
-        *ga_reg_comstat2 = (u16) brminit_info.status;
+        *ga_sub_reg_comstat1 = brminit_info.bram_size;
+        *ga_sub_reg_comstat2 = (u16) brminit_info.status;
 
         break;
 
@@ -73,13 +73,13 @@ __attribute__((section(".init"))) void main()
         // null means file was not found
         if (search == NULL)
         {
-          *ga_reg_comstat1 = 0xFFFF;
+          *ga_sub_reg_comstat1 = 0xFFFF;
         }
         else
         {
-          *ga_reg_comstat1 = 0;
-          *ga_reg_comstat2 = search->filesize;
-          *ga_reg_comstat3 = search->mode;
+          *ga_sub_reg_comstat1 = 0;
+          *ga_sub_reg_comstat2 = search->filesize;
+          *ga_sub_reg_comstat3 = search->mode;
         }
 
         break;
@@ -87,71 +87,71 @@ __attribute__((section(".init"))) void main()
       // BRMREAD
       case 4:
 
-        wait_2m();
+        ga_sub_wait_2m();
 
         BrmreadRes * read =
           bram_brmread(file_info.filename, (u8 *) WORD_RAM_2M);
 
         if (! read->success)
         {
-          *ga_reg_comstat1 = 0xFFFF;
+          *ga_sub_reg_comstat1 = 0xFFFF;
         }
         else
         {
-          *ga_reg_comstat1 = 0;
-          *ga_reg_comstat2 = read->filesize;
-          *ga_reg_comstat3 = read->mode;
+          *ga_sub_reg_comstat1 = 0;
+          *ga_sub_reg_comstat2 = read->filesize;
+          *ga_sub_reg_comstat3 = read->mode;
         }
 
-        grant_2m();
+        ga_sub_grant_2m();
         break;
 
       // BRMWRITE
       case 5:
-        wait_2m();
+        ga_sub_wait_2m();
 
         if (! bram_brmwrite(&file_info, (u8 *) WORD_RAM_2M))
         {
-          *ga_reg_comstat1 = 0xFFFF;
+          *ga_sub_reg_comstat1 = 0xFFFF;
         }
-        grant_2m();
+        ga_sub_grant_2m();
         break;
 
       // bram stats
       case 6:
         asm("nop");
         BrmstatRes * stats = bram_brmstat();
-        *ga_reg_comstat1 = stats->filecount;
-        *ga_reg_comstat2 = stats->free;
+        *ga_sub_reg_comstat1 = stats->filecount;
+        *ga_sub_reg_comstat2 = stats->free;
         break;
 
       // brmdel
       case 7:
         asm("nop");
         if (bram_brmdel(&file_info.filename))
-          *ga_reg_comstat1 = 0;
+          *ga_sub_reg_comstat1 = 0;
         else
-          *ga_reg_comstat1 = 0xFFFF;
+          *ga_sub_reg_comstat1 = 0xFFFF;
         break;
 
       // brmdir
       case 8:
         asm("nop");
 
-        wait_2m();
+        ga_sub_wait_2m();
 
         if (! bram_brmdir("*\0", (u8 *) WORD_RAM_2M, 0, 0x100))
-          *ga_reg_comstat1 = 0xFFFF;
+          *ga_sub_reg_comstat1 = 0xFFFF;
         else
-          *ga_reg_comstat0 = 0;
+          *ga_sub_reg_comstat0 = 0;
 
-        grant_2m();
+        ga_sub_grant_2m();
         break;
 
       // load demo
       case 0xFE:
         load_file(CDROM_LOAD_CDC, "BRAMDEMO.MMD;1", (u8 *) WORD_RAM_2M);
-        grant_2m();
+        ga_sub_grant_2m();
         if (access_op_result != CDROM_RESULT_OK)
         {
           sp_fatal();
@@ -159,21 +159,21 @@ __attribute__((section(".init"))) void main()
         break;
     }
 
-    *ga_reg_comstat0 = *ga_reg_comcmd0;
+    *ga_sub_reg_comstat0 = *ga_sub_reg_comcmd0;
     do
     {
-      cmd0 = *ga_reg_comcmd0;
+      cmd0 = *ga_sub_reg_comcmd0;
     } while (cmd0 != 0);
 
     do
     {
-      cmd0 = *ga_reg_comcmd0;
+      cmd0 = *ga_sub_reg_comcmd0;
     } while (cmd0 != 0);
 
-    *ga_reg_comstat0 = 0;
-    *ga_reg_comstat1 = 0;
-    *ga_reg_comstat2 = 0;
-    *ga_reg_comstat3 = 0;
+    *ga_sub_reg_comstat0 = 0;
+    *ga_sub_reg_comstat1 = 0;
+    *ga_sub_reg_comstat2 = 0;
+    *ga_sub_reg_comstat3 = 0;
 
   } while (1);
 }

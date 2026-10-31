@@ -47,7 +47,7 @@ void main()
 {
   enable_interrupts();
 
-  wait_2m();
+  ga_sub_wait_2m();
 
   memset32(0, (u32 *) WORD_RAM_2M, 0x20000 * 2);
 
@@ -57,16 +57,16 @@ void main()
 
     do
     {
-      command = *ga_reg_comcmd0;
+      command = *ga_sub_reg_comcmd0;
     } while (command == 0);
 
-    if (command != *ga_reg_comcmd0)
+    if (command != *ga_sub_reg_comcmd0)
       continue;
 
-    param1 = *ga_reg_comcmd1;
-    param2 = *ga_reg_comcmd2;
-    param3 = *ga_reg_comcmd3;
-    param4 = *ga_reg_comcmd4;
+    param1 = *ga_sub_reg_comcmd1;
+    param2 = *ga_sub_reg_comcmd2;
+    param3 = *ga_sub_reg_comcmd3;
+    param4 = *ga_sub_reg_comcmd4;
 
     switch (command)
     {
@@ -74,7 +74,7 @@ void main()
       // load MMD
       case CMD_LOAD_FILE:
         load_file(CDROM_LOAD_CDC, filenames[param1], (u8 *) WORD_RAM_2M);
-        grant_2m();
+        ga_sub_grant_2m();
         if (access_op_result != CDROM_RESULT_OK)
         {
           sp_fatal();
@@ -88,20 +88,20 @@ void main()
 
     // not reaching here?
     asm(".global test_label3\ntest_label3:");
-    *ga_reg_comstat0 = *ga_reg_comcmd0;
+    *ga_sub_reg_comstat0 = *ga_sub_reg_comcmd0;
     do
     {
       asm("nop");
-      command = *ga_reg_comcmd0;
+      command = *ga_sub_reg_comcmd0;
     } while (command != 0);
 
     do
     {
       asm("nop");
-      command = *ga_reg_comcmd0;
+      command = *ga_sub_reg_comcmd0;
     } while (command != 0);
 
-    *ga_reg_comstat0 = 0;
+    *ga_sub_reg_comstat0 = 0;
 
   } while (1);
 }
@@ -133,24 +133,24 @@ void load_gfx()
 
 void redraw(s16 trace_x, s16 trace_y, s16 trace_dx, s16 trace_dy)
 {
-  wait_2m();
+  ga_sub_wait_2m();
   load_gfx();
-  // ga_reg_stampsize
-  // ga_reg_stampmapbase
-  // ga_reg_imgbufvsize
-  // ga_reg_imgbufstart
-  // ga_reg_imgbufoffset
-  // ga_reg_imgbufhdotsize
-  // ga_reg_imgbufvdotsize
-  // ga_reg_tracevectbase
+  // ga_sub_reg_stampsize
+  // ga_sub_reg_stampmapbase
+  // ga_sub_reg_imgbufvsize
+  // ga_sub_reg_imgbufstart
+  // ga_sub_reg_imgbufoffset
+  // ga_sub_reg_imgbufhdotsize
+  // ga_sub_reg_imgbufvdotsize
+  // ga_sub_reg_tracevectbase
 
-  ga_reg_stampmapbase = (u16) (STAMP_MAP_OFFSET / 4);
-  ga_reg_imgbufstart = (u16) (IMG_BUFFER_OFFSET / 4);
-  ga_reg_stampsize = GA_MASK_STAMPSIZE_REPEAT | GA_MASK_STAMPSIZE_32x32_STAMP;
-  ga_reg_imgbufvdotsize = IMG_HEIGHT;
-  ga_reg_imgbufhdotsize = IMG_WIDTH;
-  ga_reg_imgbufvsize = (IMG_HEIGHT / 8) - 1;
-  ga_reg_imgbufoffset = 0;
+  ga_sub_reg_stampmapbase = (u16) (STAMP_MAP_OFFSET / 4);
+  ga_sub_reg_imgbufstart = (u16) (IMG_BUFFER_OFFSET / 4);
+  ga_sub_reg_stampsize = GA_SUB_MASK_STAMPSIZE_REPEAT | GA_SUB_MASK_STAMPSIZE_32x32_STAMP;
+  ga_sub_reg_imgbufvdotsize = IMG_HEIGHT;
+  ga_sub_reg_imgbufhdotsize = IMG_WIDTH;
+  ga_sub_reg_imgbufvsize = (IMG_HEIGHT / 8) - 1;
+  ga_sub_reg_imgbufoffset = 0;
 
   for (u16 trace_table_line = 0; trace_table_line < IMG_HEIGHT;
        ++trace_table_line)
@@ -161,12 +161,12 @@ void redraw(s16 trace_x, s16 trace_y, s16 trace_dx, s16 trace_dy)
     (*trace_table)[trace_table_line].delta_y = trace_dy;
   }
 
-  ga_reg_tracevectbase = (u16) (TRACE_TABLE_OFFSET / 4);
+  ga_sub_reg_tracevectbase = (u16) (TRACE_TABLE_OFFSET / 4);
 
-  while (ga_reg_stampsize & 0x8000)
+  while (ga_sub_reg_stampsize & 0x8000)
   {
     asm("nop");
   }
 
-  grant_2m();
+  ga_sub_grant_2m();
 }
