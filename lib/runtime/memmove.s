@@ -12,7 +12,7 @@
 /**
  * @fn memmove
  * @brief void * memmove(void * dest, void const * src, size_t n)
- * @return dest
+ * @return dest, in both d0 and a0: m68k-elf callers read d0, m68k-linux-gnu a0
  *
  * @details
  * Byte copy with a 32-bit count. The regions may overlap: the copy runs
@@ -35,9 +35,10 @@ SUB memmove
   dbra    d1, 2b
   sub.l   #0x10000, d1
   bcc.s   2b
-  rts
+  bra.s   3f
 1:move.b  (a0)+, (a1)+
   dbra    d1, 1b
   sub.l   #0x10000, d1
   bcc.s   1b
-3:rts
+3:move.l  d0, a0
+  rts
