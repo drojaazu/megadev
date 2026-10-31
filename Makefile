@@ -42,7 +42,6 @@ ASM_STANDALONE_EXCLUDE := lib/cd_boot.s lib/md_header.s
 ASM_STANDALONE := $(filter-out $(ASM_STANDALONE_EXCLUDE),$(ASM_SOURCES))
 
 RUNTIME_SRC := $(wildcard lib/runtime/*.s lib/runtime/*.c)
-LIBGCC := $(shell $(CC) -print-libgcc-file-name)
 
 # Project and header used by the incremental rebuild check.
 INCR_PROJECT := examples/gfx
@@ -121,7 +120,9 @@ check-asm:
 # ---------------------------------------------------------------------------
 # Loop 4: every call the compiler emits on its own resolves at link time.
 # A translation unit that forces large struct copies and 32-bit arithmetic
-# is linked against lib/runtime and libgcc; no symbol may remain undefined.
+# is linked against lib/runtime alone; no symbol may remain undefined. 64-bit
+# and floating point arithmetic, which lib/runtime does not provide, must stop
+# the link.
 # ---------------------------------------------------------------------------
 check-link:
 	@rm -rf $(CHECK_DIR)/runtime && mkdir -p $(CHECK_DIR)/runtime
@@ -146,7 +147,7 @@ check-link:
 	done
 	@$(M68K_PREFIX)ar rcs $(CHECK_DIR)/libmegadev.a $(CHECK_DIR)/runtime/*.o
 	@$(M68K_PREFIX)ld -nostdlib -z noexecstack -T cfg/md_cart.ld $(CHECK_DIR)/link.o \
-	  $(CHECK_DIR)/libmegadev.a $(LIBGCC) -o $(CHECK_DIR)/link.elf
+	  $(CHECK_DIR)/libmegadev.a -o $(CHECK_DIR)/link.elf
 	@if $(M68K_PREFIX)nm -u $(CHECK_DIR)/link.elf | grep .; then \
 	  printf 'FAIL link: undefined symbols above\n'; exit 1; fi
 	@printf '== link: compiler-emitted calls resolve (%s)\n' \
@@ -156,6 +157,19 @@ check-link:
 	@if $(M68K_PREFIX)objdump -d -m m68k:68000 $(CHECK_DIR)/link.elf | grep -E '\.(short|word|long)'; then \
 	  printf 'FAIL link: instructions above are not 68000 instructions\n'; exit 1; fi
 	@printf '== link: runtime and compiler helpers are 68000 code\n'
+	@printf '%s\n' \
+	  'long long l; float f;' \
+	  'int main(void) { l = l * l; f = f + f; return 0; }' \
+	  > $(CHECK_DIR)/nolink.c
+	@$(CC) $(CHECK_FLAGS) -DTARGET=MEGADRIVE -O2 -c $(CHECK_DIR)/nolink.c -o $(CHECK_DIR)/nolink.o
+	@if $(M68K_PREFIX)ld -nostdlib -z noexecstack -T cfg/md_cart.ld $(CHECK_DIR)/nolink.o \
+	  $(CHECK_DIR)/libmegadev.a -o $(CHECK_DIR)/nolink.elf 2> $(CHECK_DIR)/nolink.err; then \
+	  printf 'FAIL link: 64-bit and floating point arithmetic linked\n'; exit 1; fi
+	@for h in __muldi3 __addsf3; do \
+	  grep -q "undefined reference to .$$h" $(CHECK_DIR)/nolink.err || { \
+	    printf 'FAIL link: expected an undefined %s\n' "$$h"; cat $(CHECK_DIR)/nolink.err; exit 1; }; \
+	done
+	@printf '== link: 64-bit and floating point arithmetic stop the link\n'
 
 # ---------------------------------------------------------------------------
 # Loop 5: every library header can be included by two translation units that

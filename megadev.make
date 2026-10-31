@@ -136,14 +136,15 @@ DEP_FLAGS:=-MMD -MP
 LD_FLAGS+= \
 	-nostdlib -z noexecstack
 
-# Runtime support the compiler expects to find: memcpy and friends from
-# lib/runtime, and the arithmetic helpers from libgcc. Built into an archive
-# per project so that only the members a link references are pulled in.
-LIBGCC:=$(shell $(CC) -print-libgcc-file-name)
+# Runtime support the compiler expects to find: memcpy and friends, and the
+# 32-bit arithmetic helpers, all from lib/runtime. Built into an archive per
+# project so that only the members a link references are pulled in. libgcc is
+# deliberately not linked: distribution builds are not 68000 code, so a helper
+# missing from lib/runtime must stop the link rather than crash on the console.
 RUNTIME_SRC:=$(wildcard $(LIB_PATH)/runtime/*.s $(LIB_PATH)/runtime/*.c)
 RUNTIME_OBJ:=$(patsubst $(LIB_PATH)/runtime/%,$(BUILD_PATH)/runtime/%.o,$(RUNTIME_SRC))
 RUNTIME_LIB:=$(BUILD_PATH)/libmegadev.a
-LD_LIBS:=$(RUNTIME_LIB) $(LIBGCC)
+LD_LIBS:=$(RUNTIME_LIB)
 
 $(BUILD_PATH)/runtime/%.s.o: $(LIB_PATH)/runtime/%.s
 	@mkdir -p $(dir $@)
@@ -287,14 +288,14 @@ $(BUILD_PATH)/security.s.o: $(MEGADEV_PATH)/lib/security.c
 	@$(CC) $(CC_FLAGS) $(DEP_FLAGS) $(INC) -c $< -o $@
 
 $(BUILD_PATH)/ip.bin.elf: $(BUILD_PATH)/security.s.o $(BUILD_PATH)/ip.s.o $(RUNTIME_LIB)
-	@$(LD) $(LD_FLAGS) -T$(CFG_PATH)/ip.ld -o$@ $^ $(LIBGCC)
+	@$(LD) $(LD_FLAGS) -T$(CFG_PATH)/ip.ld -o$@ $^
 	@$(NM) -n $@ > $(addprefix $(BUILD_PATH)/,$(addsuffix .sym,$(notdir $@)))
 
 $(BUILD_PATH)/sp.bin: $(BUILD_PATH)/sp.bin.elf
 	@$(OBJCPY) -O binary $< $@
 
 $(BUILD_PATH)/sp.bin.elf: $(BUILD_PATH)/sp_header.s.o $(BUILD_PATH)/sp.s.o $(RUNTIME_LIB)
-	@$(LD) $(LD_FLAGS) -T$(CFG_PATH)/sp.ld -o$@ $^ $(LIBGCC)
+	@$(LD) $(LD_FLAGS) -T$(CFG_PATH)/sp.ld -o$@ $^
 	@$(NM) -n $@ > $(addprefix $(BUILD_PATH)/,$(addsuffix .sym,$(notdir $@)))
 
 $(BUILD_PATH)/boot.bin: $(BUILD_PATH)/ip.bin $(BUILD_PATH)/sp.bin
