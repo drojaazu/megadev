@@ -146,7 +146,7 @@ void redraw(s16 trace_x, s16 trace_y, s16 trace_dx, s16 trace_dy)
 
   ga_sub_reg_stampmapbase = (u16) (STAMP_MAP_OFFSET / 4);
   ga_sub_reg_imgbufstart = (u16) (IMG_BUFFER_OFFSET / 4);
-  ga_sub_reg_stampsize = GA_SUB_MASK_STAMPSIZE_REPEAT | GA_SUB_MASK_STAMPSIZE_32x32_STAMP;
+  ga_sub_reg_stampsize = GA_SUB_STAMPSIZE_REPEAT_MASK | GA_SUB_STAMPSIZE_32x32_STAMP_MASK;
   ga_sub_reg_imgbufvdotsize = IMG_HEIGHT;
   ga_sub_reg_imgbufhdotsize = IMG_WIDTH;
   ga_sub_reg_imgbufvsize = (IMG_HEIGHT / 8) - 1;
@@ -163,7 +163,7 @@ void redraw(s16 trace_x, s16 trace_y, s16 trace_dx, s16 trace_dy)
 
   ga_sub_reg_tracevectbase = (u16) (TRACE_TABLE_OFFSET / 4);
 
-  while (ga_sub_reg_stampsize & 0x8000)
+  while (ga_sub_reg_gfxstat & GA_SUB_GRON_MASK)
   {
     asm("nop");
   }

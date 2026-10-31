@@ -6,7 +6,6 @@
  */
 
 #pragma once
-
 #include "main/gate_arr.def.h"
 
 /**
@@ -18,7 +17,7 @@
 LOCAL loop
 
 loop:
-	btst     #GA_MAIN_BIT_RETURN_2M, GA_MAIN_REG_MEMMODE+1
+	btst     #GA_MAIN_RETURN_2M_POS, GA_MAIN_REG_MEMMODE
 	beq      loop
 .endm
 
@@ -31,8 +30,8 @@ loop:
 LOCAL loop
 
 loop:
-  bset     #GA_MAIN_BIT_DMNA,GA_MAIN_REG_MEMMODE+1
-  btst     #GA_MAIN_BIT_DMNA,GA_MAIN_REG_MEMMODE+1
+  bset     #GA_MAIN_DMNA_POS,GA_MAIN_REG_MEMMODE
+  btst     #GA_MAIN_DMNA_POS,GA_MAIN_REG_MEMMODE
   beq      loop
 .endm
 
@@ -59,12 +58,17 @@ loop:
  * GA_MAIN_RESET
  * Pattern to reset gate array
  * Taken from Wonder Libary
+ *
+ * The gate array performs a forced reset only in response to this exact
+ * sequence of accesses, so the width and address of each one is load bearing --
+ * in particular the first must be a WORD write to 0xA12002, which is why it is
+ * written through GA_MAIN_REG_WP rather than as two byte writes.
  */
 .macro GA_MAIN_RESET
-  move.w   #0xFF00,GA_MAIN_REG_MEMMODE
-  move.b   #0x3,(GA_MAIN_REG_RESET + 1)
+  move.w   #0xFF00,GA_MAIN_REG_WP
+  move.b   #0x3,GA_MAIN_REG_SUBCPU
   nop
-  move.b   #0x3,(GA_MAIN_REG_RESET + 1)
-  move.b   #0x2,(GA_MAIN_REG_RESET + 1)
-  move.b   #0x0,(GA_MAIN_REG_RESET + 1)
+  move.b   #0x3,GA_MAIN_REG_SUBCPU
+  move.b   #0x2,GA_MAIN_REG_SUBCPU
+  move.b   #0x0,GA_MAIN_REG_SUBCPU
 .endm
