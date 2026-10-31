@@ -52,15 +52,15 @@
   // Restore interrupts to allow VBLANKs to fire and ultimately allow CD-ROM data to flow
   ENABLE_INTERRUPTS
 
-  GRANT_2M  // give Word RAM to Sub
-  move.w   #FILE_CYBERCITY, GA_REG_COMCMD1  // send the param to sub
-  move.w   #CMD_LOAD_FILE, GA_REG_COMCMD0	//send the command to sub
-0:tst.w    GA_REG_COMSTAT0			//wait for response on status reg #0
+  GA_MAIN_GRANT_2M  // give Word RAM to Sub
+  move.w   #FILE_CYBERCITY, GA_MAIN_REG_COMCMD1  // send the param to sub
+  move.w   #CMD_LOAD_FILE, GA_MAIN_REG_COMCMD0	//send the command to sub
+0:tst.w    GA_MAIN_REG_COMSTAT0			//wait for response on status reg #0
   beq      0b
-  move.w   #0, GA_REG_COMCMD0	//send idle command
-1:tst.w    GA_REG_COMSTAT0			//wait for response (wait for 0 from Sub)
+  move.w   #0, GA_MAIN_REG_COMCMD0	//send idle command
+1:tst.w    GA_MAIN_REG_COMSTAT0			//wait for response (wait for 0 from Sub)
   bne      1b
-  WAIT_2M
+  GA_MAIN_WAIT_2M
 
   // Everything is almost ready to go, so let's re-enable the display
   jbsr     BIOS_VDP_DISP_ENABLE

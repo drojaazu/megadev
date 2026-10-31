@@ -37,7 +37,7 @@ __attribute__((noreturn)) void main()
 {
 
   *bios_vblank_user = vblank_user;
-  grant_2m();
+  ga_main_grant_2m();
 
   memset8(0, (u8 *) &bios_sprlist, sizeof(bios_sprlist));
 
@@ -109,29 +109,29 @@ __attribute__((noreturn)) void main()
       trace_dy = to_xform_delta(0.0);
     }
 
-    grant_2m();
-    *ga_reg_comcmd1 = trace_x;
-    *ga_reg_comcmd2 = trace_y;
-    *ga_reg_comcmd3 = trace_dx;
-    *ga_reg_comcmd4 = trace_dy;
+    ga_main_grant_2m();
+    *ga_main_reg_comcmd1 = trace_x;
+    *ga_main_reg_comcmd2 = trace_y;
+    *ga_main_reg_comcmd3 = trace_dx;
+    *ga_main_reg_comcmd4 = trace_dy;
     
-    *ga_reg_comcmd0 = CMD_REDRAW;
+    *ga_main_reg_comcmd0 = CMD_REDRAW;
     do
     {
       // the NOP is so GCC doesn't optimize the loop away
       // though since comstat is marked volatile it should be fine...
       asm("nop");
-    } while (*ga_reg_comstat0 == 0);
+    } while (*ga_main_reg_comstat0 == 0);
 
-    *ga_reg_comcmd0 = 0;
+    *ga_main_reg_comcmd0 = 0;
 
     // the Sub CPU side work will be complete when COMSTAT0 returns to 0
     do
     {
       asm("nop");
-    } while (*ga_reg_comstat0 != 0);
+    } while (*ga_main_reg_comstat0 != 0);
 
-    wait_2m();
+    ga_main_wait_2m();
 
     bios_vblank_wait_default();
 
