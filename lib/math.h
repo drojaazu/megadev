@@ -9,10 +9,13 @@
 
 #include "types.h"
 
+/**
+ * @brief Quotient and remainder of a 32-by-16 divide
+ */
 typedef struct {
   s16 quot;
   s16 rem;
-} div_t;
+} Div16;
 
 /**
  * @brief Performs unsigned multiplication using MULU
@@ -35,11 +38,11 @@ static inline s32 mul(s16 multiplicand, s16 multiplier)
 }
 
 /**
- * @brief Performs unsigned division using DIVU
+ * @brief 32-by-16 unsigned divide with DIVU; quotient and remainder are 16 bits
  */
-static inline div_t divu(u32 dividend, u16 divisor)
+static inline Div16 divu16(u32 dividend, u16 divisor)
 {
-	div_t out;
+	Div16 out;
 	u32 result = dividend;
 	asm("divu.w %1, %0" : "+d"(result) : "d"(divisor) : "cc");
 	out.quot = result & 0x0000ffff;
@@ -48,11 +51,11 @@ static inline div_t divu(u32 dividend, u16 divisor)
 }
 
 /**
- * @brief Performs signed division using DIVS
+ * @brief 32-by-16 signed divide with DIVS; quotient and remainder are 16 bits
  */
-static inline div_t div(s32 dividend, s16 divisor)
+static inline Div16 divs16(s32 dividend, s16 divisor)
 {
-	div_t out;
+	Div16 out;
 	s32 result = dividend;
 	asm("divs.w %1, %0" : "+d"(result) : "d"(divisor) : "cc");
 	out.quot = (s16) (result & 0x0000ffff);
@@ -133,34 +136,4 @@ static inline u16 bcd(u16 value)
 		: "d"(temp)
 		: "cc");
 	return value;
-}
-
-static inline s32 abs(s32 val)
-{
-	asm(
-		"\
-			tst.l %0 \n\
-			bpl 1f \n\
-			neg.l %0 \n\
-		1: \n\
-		"
-		: "+d"(val)
-		:
-		: "cc");
-	return val;
-}
-
-static inline s16 abs16(s16 val)
-{
-	asm(
-		"\
-			tst.w %0 \n\
-			bpl 1f \n\
-			neg.w %0 \n\
-		1: \n\
-		"
-		: "+d"(val)
-		:
-		: "cc");
-	return val;
 }
