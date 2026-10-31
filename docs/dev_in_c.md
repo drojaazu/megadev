@@ -21,7 +21,7 @@ Deliberately absent: `malloc` and `free`, `printf` to a console, `FILE`, floatin
 
 ### Functions the compiler calls on its own
 
-A few standard functions are always available, because GCC emits calls to them whether or not you write them, and regardless of `-nostdlib` and `-fno-builtin`. Copying or zero-initializing a large struct or array becomes a call to `memcpy` or `memset`, and 32-bit multiplication, division and modulo become calls to helper routines in libgcc, since the 68000 only multiplies 16-bit and divides 32-by-16 in hardware. Megadev provides `memcpy`, `memmove`, `memset` and `memcmp` in `lib/runtime`, and links them together with libgcc into every image. Only the routines an image actually references are included.
+A few standard functions are always available, because GCC emits calls to them whether or not you write them, and regardless of `-nostdlib` and `-fno-builtin`. Copying or zero-initializing a large struct or array becomes a call to `memcpy` or `memset`, and 32-bit multiplication, division and modulo become calls to helper routines in libgcc, since the 68000 only multiplies 16-bit and divides 32-by-16 in hardware. Megadev provides `memcpy`, `memmove`, `memset` and `memcmp` in `lib/runtime`, and links them together with libgcc into every image. It also provides the 32-bit division and modulo helpers (`__udivsi3`, `__umodsi3`, `__divsi3`, `__modsi3`), which take precedence over libgcc's: the toolchain's copies are built for the 68020 and crash a 68000. Only the routines an image actually references are included.
 
 ### Assertions
 
