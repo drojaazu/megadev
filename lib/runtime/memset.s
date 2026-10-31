@@ -12,7 +12,7 @@
 /**
  * @fn memset
  * @brief void * memset(void * dest, int value, size_t n)
- * @return dest
+ * @return dest, in both d0 and a0: m68k-elf callers read d0, m68k-linux-gnu a0
  *
  * @details
  * Byte fill with a 32-bit count. Only the low byte of value is used.
@@ -28,4 +28,5 @@ SUB memset
   sub.l   #0x10000, d0
   bcc.s   1b
 2:move.l  4(sp), d0
+  move.l  d0, a0
   rts
