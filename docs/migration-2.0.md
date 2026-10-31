@@ -10,6 +10,7 @@ This guide lists every change in Megadev 2.0 that requires a change to a project
 - Serial control and VDP fields
 - Sub CPU system call names
 - C library subset
+- Module startup code
 
 ---
 
@@ -298,3 +299,16 @@ Megadev now provides a freestanding subset of the C standard library (`string.h`
 `strcmpt`, the comparison with a caller-supplied terminator, keeps its name.
 
 `types.h` now defines `size_t`, `ptrdiff_t` and the `intN_t` types from the compiler's own type macros. On the 68000 they are the same sizes as before; `int32_t` is `int` rather than `long`, which only matters to code that printed or cast them by name.
+
+# Module startup code
+
+## Every module must link startup code
+
+The module linker scripts (`cfg/module_mmd.ld`, `cfg/module_smd.ld`) now reject a module with no startup code, with the error `module has no init code`. In 1.x such a module linked, started at whichever function the compiler placed first, and left its global variables uninitialized.
+
+Add `std_init.s` to the module's prerequisites, or `main/ipx_init.s` for a self-loading module. A module that does its own RAM setup defines `MODULE_NO_INIT` instead:
+
+```c
+#include <macro.h>
+GLOBAL_SYM(MODULE_NO_INIT, 1);
+```
