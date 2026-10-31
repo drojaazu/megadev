@@ -28,7 +28,19 @@ In order to compile code for the Mega Drive/CD, you will need a build environmen
 
 The simplest way to set up such a build environment is to use a [dev container](https://containers.dev/). This is the modern, preferred method for development as it should work on any host platform (Windows, Linux, MacOS). (You will need Docker installed on your workstation in order to use this method.)
 
-The `new_project` directory includes `Dockerfile` and `.devcontainer.json` files to automatically spin up a development environment. Simply copy this directory into your personal workspace and open it in [VS Code](https://code.visualstudio.com/) or another IDE that supports dev containers and it should be automatically re-open as a container. The latest Megadev will be pulled from github and necessary supporttools will be installed. You are then ready to begin development!
+The `new_project` directory includes `Dockerfile` and `.devcontainer.json` files to automatically spin up a development environment. Simply copy this directory into your personal workspace and open it in [VS Code](https://code.visualstudio.com/) or another IDE that supports dev containers and it should be automatically re-open as a container. The latest Megadev will be pulled from github, necessary support tools will be installed, and the Megadev toolchain will be built, which can take a while the first time. You are then ready to begin development!
+
+### Megadev Toolchain
+
+Megadev is tested with one specific toolchain: binutils and GCC for the m68k-elf target, defaulting to the 68000, with any fixes the compiler needs applied. The dev container uses it. To build it yourself, run:
+
+```
+tools/build-toolchain.sh /path/to/install
+```
+
+The script lists what it needs in its header. Add the install location's `bin` directory to your `PATH` and set `M68K_PREFIX` to `m68k-elf-`.
+
+Other toolchains, such as the distro packages below, may work but are not tested. The two targets are not interchangeable: functions compiled for m68k-elf return pointers in D0, while those compiled for m68k-linux-gnu return them in A0, which matters to any assembly that returns a pointer to C.
 
 The default Dockerfile uses the Debian "slim" distro. Alternatively, there is a smaller Alpine Linux based `Dockerfile_alpine` within the `etc` subdirectory. If you want a super lean container, this is a good option. However, precompiled M68k-targeted GNU build tools are not available within the repo and must be built from scratch. This is done automatically when building the container the first time, but keep in mind that it does take a significant amount of time to compile.
 
