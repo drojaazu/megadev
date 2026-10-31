@@ -427,6 +427,8 @@ There are a number of additional documents in the `docs` subdirectory. We recomm
 
 `megacd_dev.md` - Considerations for program architecture and development on the Mega CD.
 
+`mode1.md` - Driving the Mega CD from a cartridge: memory map, starting the Sub CPU, and which Boot ROM calls work.
+
 `rotation_scaling.md` - The gate array's rotation and scaling hardware: data structures, registers, timing, and the mathematics of a pseudo-3D ground plane.
 
 `modules.md` - Discusses the modules concept and how to use them.

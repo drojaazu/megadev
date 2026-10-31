@@ -19,7 +19,7 @@ PROJECTS := $(wildcard examples/*/) new_project/
 HEADERS  := $(shell find lib -name '*.h' | sort)
 
 # Hardware targets a header must be valid for (see lib/build.def.h).
-TARGETS := MEGACD MEGADRIVE
+TARGETS := MEGACD MEGACD_MODE1 MEGADRIVE
 
 CC := $(M68K_PREFIX)gcc
 CHECK_DIR := build-check
