@@ -36,8 +36,8 @@ static inline void const * init_mmd()
   move.l   %[scratch_d0], %c[mlevel6]+2 \n\
 3:btst     #6, (%[wrdram]) \n\
   beq      4f \n\
-6:bset     #%c[ga_dmna], %c[ga_memmode]+1 \n\
-  btst     #%c[ga_dmna], %c[ga_memmode]+1 \n\
+6:bset     #%c[ga_dmna], %c[ga_memmode] \n\
+  btst     #%c[ga_dmna], %c[ga_memmode] \n\
   beq      6b \n\
 4: movea.l 8(%[wrdram]), %[mmd_entry] \n\
 	"
@@ -50,7 +50,7 @@ static inline void const * init_mmd()
 			[wrdram] "a"(WORD_RAM),
 			[mlevel4] "i"(EXVEC_LEVEL4),
 			[mlevel6] "i"(EXVEC_LEVEL6),
-			[ga_dmna] "i"(GA_MAIN_BIT_DMNA),
+			[ga_dmna] "i"(GA_MAIN_DMNA_POS),
 			[ga_memmode] "i"(GA_MAIN_REG_MEMMODE)
 		:
 			"cc");
