@@ -20,7 +20,7 @@ char const * filenames[3];
 
 BramFileInfo const file_info = {"BRMEX", 0, 1};
 
-BrminitRes brminit_info;
+BramInitResult brminit_info;
 
 __attribute__((section(".init"))) void main()
 {
@@ -53,23 +53,23 @@ __attribute__((section(".init"))) void main()
         }
         break;
 
-      // BRMINIT
+      // BRAM_INIT
       case 2:
         asm("nop");
 
-        bram_brminit(&brminit_info);
+        bram_init(&brminit_info);
         ga_sub_reg_comstat1 = brminit_info.bram_size;
         ga_sub_reg_comstat2 = (u16) brminit_info.status;
 
         break;
 
-      // BRMSERCH
+      // BRAM_SEARCH
       case 3:
         asm("nop");
 
         // the filename must fill up 11 bytes followed by a 0 terminator
         // for a total of 12 bytes
-        BrmserchRes * search = bram_brmserch(file_info.filename);
+        BramSearchResult * search = bram_search(file_info.filename);
         // null means file was not found
         if (search == NULL)
         {
@@ -84,13 +84,13 @@ __attribute__((section(".init"))) void main()
 
         break;
 
-      // BRMREAD
+      // BRAM_READ
       case 4:
 
         ga_sub_wait_2m();
 
-        BrmreadRes * read =
-          bram_brmread(file_info.filename, (u8 *) WORD_RAM_2M);
+        BramReadResult * read =
+          bram_read(file_info.filename, (u8 *) WORD_RAM_2M);
 
         if (! read->success)
         {
@@ -106,11 +106,11 @@ __attribute__((section(".init"))) void main()
         ga_sub_grant_2m();
         break;
 
-      // BRMWRITE
+      // BRAM_WRITE
       case 5:
         ga_sub_wait_2m();
 
-        if (! bram_brmwrite(&file_info, (u8 *) WORD_RAM_2M))
+        if (! bram_write(&file_info, (u8 *) WORD_RAM_2M))
         {
           ga_sub_reg_comstat1 = 0xFFFF;
         }
@@ -120,7 +120,7 @@ __attribute__((section(".init"))) void main()
       // bram stats
       case 6:
         asm("nop");
-        BrmstatRes * stats = bram_brmstat();
+        BramStatusResult * stats = bram_status();
         ga_sub_reg_comstat1 = stats->filecount;
         ga_sub_reg_comstat2 = stats->free;
         break;
@@ -128,7 +128,7 @@ __attribute__((section(".init"))) void main()
       // brmdel
       case 7:
         asm("nop");
-        if (bram_brmdel(&file_info.filename))
+        if (bram_delete(&file_info.filename))
           ga_sub_reg_comstat1 = 0;
         else
           ga_sub_reg_comstat1 = 0xFFFF;
@@ -140,7 +140,7 @@ __attribute__((section(".init"))) void main()
 
         ga_sub_wait_2m();
 
-        if (! bram_brmdir("*\0", (u8 *) WORD_RAM_2M, 0, 0x100))
+        if (! bram_directory("*\0", (u8 *) WORD_RAM_2M, 0, 0x100))
           ga_sub_reg_comstat1 = 0xFFFF;
         else
           ga_sub_reg_comstat0 = 0;

@@ -35,7 +35,7 @@ char val_buffer[5];
 
 static void bram_init()
 {
-  bios_print("Performing BRMINIT...\xff", print_xy(1, 1));
+  bios_print("Performing BRAM_INIT...\xff", print_xy(1, 1));
 
   ga_main_reg_comcmd0 = 2;
 
@@ -81,7 +81,7 @@ static void bram_init()
 static void brmstat()
 {
   bios_clear_tables();
-  bios_print("Performing BRMSTAT...\xff", print_xy(1, 1));
+  bios_print("Performing BRAM_STATUS...\xff", print_xy(1, 1));
 
   ga_main_reg_comcmd0 = 6;
 
@@ -106,7 +106,7 @@ static void brmstat()
 
 static bool brmserch()
 {
-  bios_print("Performing BRMSERCH...\xff", print_xy(1, 1));
+  bios_print("Performing BRAM_SEARCH...\xff", print_xy(1, 1));
 
   ga_main_reg_comcmd0 = 3;
 
@@ -215,7 +215,7 @@ static void brmread()
   if (! brmserch())
     return;
 
-  bios_print("Performing BRMREAD...\xff", print_xy(1, 6));
+  bios_print("Performing BRAM_READ...\xff", print_xy(1, 6));
 
   ga_main_grant_2m();
 
@@ -252,7 +252,7 @@ void brmdel()
 {
   bios_clear_tables();
 
-  bios_print("Performing BRMDEL...\xff", print_xy(1, 1));
+  bios_print("Performing BRAM_DELETE...\xff", print_xy(1, 1));
 
   ga_main_reg_comcmd0 = 7;
 
@@ -276,7 +276,7 @@ void brmdir()
 {
   bios_clear_tables();
 
-  bios_print("Performing BRMDIR...\xff", print_xy(1, 1));
+  bios_print("Performing BRAM_DIRECTORY...\xff", print_xy(1, 1));
 
   ga_main_grant_2m();
 
@@ -344,13 +344,13 @@ void main()
     bios_clear_tables();
 
     bios_print("BRAM Options\xff", print_xy(1, 1));
-    bios_print("BRMSTAT\xff", print_xy(3, 3));
-    bios_print("BRMDIR\xff", print_xy(3, 4));
-    bios_print("BRMREAD\xff", print_xy(3, 5));
-    bios_print("BRMWRITE\xff", print_xy(3, 6));
-    bios_print("BRMVERIFY\xff", print_xy(3, 7));
-    bios_print("BRMDEL\xff", print_xy(3, 8));
-    bios_print("BRMFORMAT\xff", print_xy(3, 9));
+    bios_print("BRAM_STATUS\xff", print_xy(3, 3));
+    bios_print("BRAM_DIRECTORY\xff", print_xy(3, 4));
+    bios_print("BRAM_READ\xff", print_xy(3, 5));
+    bios_print("BRAM_WRITE\xff", print_xy(3, 6));
+    bios_print("BRAM_VERIFY\xff", print_xy(3, 7));
+    bios_print("BRAM_DELETE\xff", print_xy(3, 8));
+    bios_print("BRAM_FORMAT\xff", print_xy(3, 9));
 
     do
     {

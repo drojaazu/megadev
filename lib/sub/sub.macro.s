@@ -10,6 +10,7 @@
 #include <sub/memmap.def.h>
 #include <sub/gate_arr.def.h>
 #include <sub/bios.def.h>
+#include <sub/bram.def.h>
 
 /**
  * @fn BRAM_CALL
