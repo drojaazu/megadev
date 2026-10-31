@@ -21,8 +21,8 @@
 SUB memcpy
   move.l  4(sp), a1
   move.l  8(sp), a0
-  move.l  12(sp), d1
   move.l  a1, d0
+  move.l  12(sp), d1
   beq.s   2f
   subq.l  #1, d1
 1:move.b  (a0)+, (a1)+
