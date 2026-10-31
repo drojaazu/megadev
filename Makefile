@@ -151,6 +151,11 @@ check-link:
 	  printf 'FAIL link: undefined symbols above\n'; exit 1; fi
 	@printf '== link: compiler-emitted calls resolve (%s)\n' \
 	  "$$($(M68K_PREFIX)nm -u $(CHECK_DIR)/link.o | awk '{print $$2}' | tr '\n' ' ')"
+	@# Disassembled as a strict 68000, any instruction from a later CPU shows
+	@# up as raw data words.
+	@if $(M68K_PREFIX)objdump -d -m m68k:68000 $(CHECK_DIR)/link.elf | grep -E '\.(short|word|long)'; then \
+	  printf 'FAIL link: instructions above are not 68000 instructions\n'; exit 1; fi
+	@printf '== link: runtime and compiler helpers are 68000 code\n'
 
 # ---------------------------------------------------------------------------
 # Loop 5: every library header can be included by two translation units that
