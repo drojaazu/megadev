@@ -6,34 +6,45 @@
  */
 
 #pragma once
-
 #include "gate_arr.def.h"
 #include <types.h>
 
 typedef u16 volatile * ga_sub_reg;
 
-#define ga_sub_reg_reset (*((ga_sub_reg) GA_SUB_REG_RESET))
+/**
+ * @typedef ga_sub_reg_ro
+ * @brief A register this CPU may read but not write
+ * @details Note that `ga_sub_reg const` does NOT mean this: it is a const pointer
+ * to a mutable register, which enforces nothing at the point of use.
+ */
+typedef u16 volatile const * ga_sub_reg_ro;
 
-#define ga_sub_reg_memmode (*((ga_sub_reg) GA_SUB_REG_MEMMODE))
+/**
+ * @typedef ga_sub_reg8
+ * @brief Pointer to one byte of a gate array register
+ * @details Registers are 16 bit, but several are routinely accessed a byte at
+ * a time; use with the _HI and _LO address definitions.
+ */
+typedef u8 volatile * ga_sub_reg8;
 
+/**
+ * @typedef ga_sub_reg8_ro
+ * @brief A byte register this CPU may read but not write
+ */
+typedef u8 volatile const * ga_sub_reg8_ro;
+
+#define ga_sub_reg_led (*((ga_sub_reg8) GA_SUB_REG_LED))
+#define ga_sub_reg_subctrl (*((ga_sub_reg8) GA_SUB_REG_SUBCTRL))
+#define ga_sub_reg_wp (*((ga_sub_reg8_ro) GA_SUB_REG_WP))
+#define ga_sub_reg_memmode (*((ga_sub_reg8) GA_SUB_REG_MEMMODE))
 #define ga_sub_reg_cdcmode (*((ga_sub_reg) GA_SUB_REG_CDCMODE))
-
 #define ga_sub_reg_cdcrs1 (*((ga_sub_reg) GA_SUB_REG_CDCRS1))
-
-#define ga_sub_reg_cdchostdata (*((ga_sub_reg) GA_SUB_REG_CDCHOSTDATA))
-
+#define ga_sub_reg_cdchostdata (*((ga_sub_reg_ro) GA_SUB_REG_CDCHOSTDATA))
 #define ga_sub_reg_dmaaddr (*((ga_sub_reg) GA_SUB_REG_DMAADDR))
-
 #define ga_sub_reg_stopwatch (*((ga_sub_reg) GA_SUB_REG_STOPWATCH))
-
-#define ga_sub_reg_comflags (*((ga_sub_reg const) GA_SUB_REG_COMFLAGS))
-
-#define ga_sub_reg_comflags_main (*((volatile const u8 *) GA_SUB_REG_COMFLAGS))
-
-#define ga_sub_reg_comflags_sub (*((volatile u8 *) GA_SUB_REG_COMFLAGS + 1))
-
-#define ga_sub_reg_comcmd0 (*((ga_sub_reg const) GA_SUB_REG_COMCMD0))
-
+#define ga_sub_reg_comflags_main (*((ga_sub_reg8_ro) GA_SUB_REG_COMFLAGS_MAIN))
+#define ga_sub_reg_comflags_sub (*((ga_sub_reg8) GA_SUB_REG_COMFLAGS_SUB))
+#define ga_sub_reg_comcmd0 (*((ga_sub_reg_ro) GA_SUB_REG_COMCMD0))
 /**
  * @def ga_sub_reg_comcmd1
  * @brief GA Reg 09 - Comm. command (Main -> Sub)
@@ -42,8 +53,7 @@ typedef u16 volatile * ga_sub_reg;
  *
  * @details R: 16 bit data
  */
-#define ga_sub_reg_comcmd1 (*((ga_sub_reg const) GA_SUB_REG_COMCMD1))
-
+#define ga_sub_reg_comcmd1 (*((ga_sub_reg_ro) GA_SUB_REG_COMCMD1))
 /**
  * @def ga_sub_reg_comcmd2
  * @brief GA Reg 0A - Comm. command (Main -> Sub)
@@ -52,8 +62,7 @@ typedef u16 volatile * ga_sub_reg;
  *
  * @details R: 16 bit data
  */
-#define ga_sub_reg_comcmd2 (*((ga_sub_reg const) GA_SUB_REG_COMCMD2))
-
+#define ga_sub_reg_comcmd2 (*((ga_sub_reg_ro) GA_SUB_REG_COMCMD2))
 /**
  * @def ga_sub_reg_comcmd3
  * @brief GA Reg 0B - Comm. command (Main -> Sub)
@@ -62,8 +71,7 @@ typedef u16 volatile * ga_sub_reg;
  *
  * @details R: 16 bit data
  */
-#define ga_sub_reg_comcmd3 (*((ga_sub_reg const) GA_SUB_REG_COMCMD3))
-
+#define ga_sub_reg_comcmd3 (*((ga_sub_reg_ro) GA_SUB_REG_COMCMD3))
 /**
  * @def ga_sub_reg_comcmd4
  * @brief GA Reg 0C - Comm. command (Main -> Sub)
@@ -72,8 +80,7 @@ typedef u16 volatile * ga_sub_reg;
  *
  * @details R: 16 bit data
  */
-#define ga_sub_reg_comcmd4 (*((ga_sub_reg const) GA_SUB_REG_COMCMD4))
-
+#define ga_sub_reg_comcmd4 (*((ga_sub_reg_ro) GA_SUB_REG_COMCMD4))
 /**
  * @def ga_sub_reg_comcmd5
  * @brief GA Reg 0D - Comm. command (Main -> Sub)
@@ -82,8 +89,7 @@ typedef u16 volatile * ga_sub_reg;
  *
  * @details R: 16 bit data
  */
-#define ga_sub_reg_comcmd5 (*((ga_sub_reg const) GA_SUB_REG_COMCMD5))
-
+#define ga_sub_reg_comcmd5 (*((ga_sub_reg_ro) GA_SUB_REG_COMCMD5))
 /**
  * @def ga_sub_reg_comcmd6
  * @brief GA Reg 0E - Comm. command (Main -> Sub)
@@ -92,8 +98,7 @@ typedef u16 volatile * ga_sub_reg;
  *
  * @details R: 16 bit data
  */
-#define ga_sub_reg_comcmd6 (*((ga_sub_reg const) GA_SUB_REG_COMCMD6))
-
+#define ga_sub_reg_comcmd6 (*((ga_sub_reg_ro) GA_SUB_REG_COMCMD6))
 /**
  * @def ga_sub_reg_comcmd7
  * @brief GA Reg 0F - Comm. command (Main -> Sub)
@@ -102,8 +107,7 @@ typedef u16 volatile * ga_sub_reg;
  *
  * @details R: 16 bit data
  */
-#define ga_sub_reg_comcmd7 (*((ga_sub_reg const) GA_SUB_REG_COMCMD7))
-
+#define ga_sub_reg_comcmd7 (*((ga_sub_reg_ro) GA_SUB_REG_COMCMD7))
 /**
  * @def ga_sub_reg_comstat0
  * @brief GA Reg 10 - Comm. status (Sub -> Main)
@@ -113,7 +117,6 @@ typedef u16 volatile * ga_sub_reg;
  * @details RW: 16 bit data
  */
 #define ga_sub_reg_comstat0 (*((ga_sub_reg) GA_SUB_REG_COMSTAT0))
-
 /**
  * @def ga_sub_reg_comstat1
  * @brief GA Reg 11 - Comm. status (Sub -> Main)
@@ -123,7 +126,6 @@ typedef u16 volatile * ga_sub_reg;
  * @details RW: 16 bit data
  */
 #define ga_sub_reg_comstat1 (*((ga_sub_reg) GA_SUB_REG_COMSTAT1))
-
 /**
  * @def ga_sub_reg_comstat2
  * @brief GA Reg 12 - Comm. status (Sub -> Main)
@@ -133,7 +135,6 @@ typedef u16 volatile * ga_sub_reg;
  * @details RW: 16 bit data
  */
 #define ga_sub_reg_comstat2 (*((ga_sub_reg) GA_SUB_REG_COMSTAT2))
-
 /**
  * @def ga_sub_reg_comstat3
  * @brief GA Reg 13 - Comm. status (Sub -> Main)
@@ -143,7 +144,6 @@ typedef u16 volatile * ga_sub_reg;
  * @details RW: 16 bit data
  */
 #define ga_sub_reg_comstat3 (*((ga_sub_reg) GA_SUB_REG_COMSTAT3))
-
 /**
  * @def ga_sub_reg_comstat4
  * @brief GA Reg 14 - Comm. status (Sub -> Main)
@@ -153,7 +153,6 @@ typedef u16 volatile * ga_sub_reg;
  * @details RW: 16 bit data
  */
 #define ga_sub_reg_comstat4 (*((ga_sub_reg) GA_SUB_REG_COMSTAT4))
-
 /**
  * @def ga_sub_reg_comstat5
  * @brief GA Reg 15 - Comm. status (Sub -> Main)
@@ -163,7 +162,6 @@ typedef u16 volatile * ga_sub_reg;
  * @details RW: 16 bit data
  */
 #define ga_sub_reg_comstat5 (*((ga_sub_reg) GA_SUB_REG_COMSTAT5))
-
 /**
  * @def ga_sub_reg_comstat6
  * @brief GA Reg 16 - Comm. status (Sub -> Main)
@@ -173,7 +171,6 @@ typedef u16 volatile * ga_sub_reg;
  * @details RW: 16 bit data
  */
 #define ga_sub_reg_comstat6 (*((ga_sub_reg) GA_SUB_REG_COMSTAT6))
-
 /**
  * @def ga_sub_reg_comstat7
  * @brief GA Reg 17 - Comm. status (Sub -> Main)
@@ -183,7 +180,6 @@ typedef u16 volatile * ga_sub_reg;
  * @details RW: 16 bit data
  */
 #define ga_sub_reg_comstat7 (*((ga_sub_reg) GA_SUB_REG_COMSTAT7))
-
 /**
  * @def ga_sub_reg_int3timer
  * @brief GA Reg 18 - Timer with interrupt
@@ -206,8 +202,7 @@ typedef u16 volatile * ga_sub_reg;
  * This does not seem to properly reflected in emulators, but initial tests on
  * hardware show it to be accurate
  */
-#define ga_sub_reg_int3timer (*((ga_sub_reg) GA_SUB_REG_INT3TIMER))
-
+#define ga_sub_reg_int3timer (*((ga_sub_reg8) GA_SUB_REG_INT3TIMER))
 /**
  * @def ga_sub_reg_intmask
  * @brief GA Reg 19 - Interrupt mask control
@@ -231,8 +226,7 @@ typedef u16 volatile * ga_sub_reg;
  *   5: CDC
  *   6: SUBCODE
  */
-#define ga_sub_reg_intmask (*((ga_sub_reg) GA_SUB_REG_INTMASK))
-
+#define ga_sub_reg_intmask (*((ga_sub_reg8) GA_SUB_REG_INTMASK))
 /**
  * @def ga_sub_reg_cdfader
  * @brief GA Reg 1A - CD Audio Fader
@@ -260,44 +254,16 @@ typedef u16 volatile * ga_sub_reg;
  * FDR_CHG BIOS functions.
  */
 #define ga_sub_reg_cdfader (*((ga_sub_reg) GA_SUB_REG_CDFADER))
-
 /**
  * @def ga_sub_reg_cddctrl
- * @brief GA Reg 1B - CDD Control
- * @sa GA_SUB_REG_CDDCTRL
+ * @copydoc GA_SUB_REG_CDDCTRL
  * @ingroup gatearray_sub
- *
- * @details
- * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
- * |-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|-:|
- * | |||||||D/M| |||||HOCK|DRS|DTS|
- *
- * DTS: Data Transfer Status
- * @details R: 1 - indicates data is being transferr from the communications
- * buffer to the CDD; W: 0 - abort the communication transfer (only 0 can be
- * written to this bit)
- *
- * DRS: Data Receive Status
- * @details R: 1 - indicates data is being transferr from the CDD to the
- * communications buffer; W: 0 - abort the communication transfer (only 0 can
- * be written to this bit)
- *
- * HOCK: Host Clock
- * @details: W: 1 - Starts communication with the CDD
- *
- * D/M: Data/Music
- * @details: R: 0 - CDD data is audio data; 1 - CDD data is ROM data
- *
- * @details Official documentation indicates this register is not intended
- * for direct access from user applications. Consider using BIOS functions
- * for CD drive functionality.
  */
 #define ga_sub_reg_cddctrl (*((ga_sub_reg) GA_SUB_REG_CDDCTRL))
-
 /**
- * @def ga_sub_reg_cddcomm0
+ * @def ga_sub_reg_cddstat0
  * @brief GA Reg 1C - CDD Communication
- * @sa GA_SUB_REG_CDDCOMM0
+ * @sa GA_SUB_REG_CDDSTAT0
  * @ingroup gatearray_sub
  *
  * @details See the documentation for more info
@@ -306,12 +272,11 @@ typedef u16 volatile * ga_sub_reg;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_sub_reg_cddcomm0 (*((ga_sub_reg) GA_SUB_REG_CDDCOMM0))
-
+#define ga_sub_reg_cddstat0 (*((ga_sub_reg) GA_SUB_REG_CDDSTAT0))
 /**
- * @def ga_sub_reg_cddcomm1
+ * @def ga_sub_reg_cddstat1
  * @brief GA Reg 1D - CDD Communication
- * @sa GA_SUB_REG_CDDCOMM1
+ * @sa GA_SUB_REG_CDDSTAT1
  * @ingroup gatearray_sub
  *
  * @details See the documentation for more info
@@ -320,12 +285,11 @@ typedef u16 volatile * ga_sub_reg;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_sub_reg_cddcomm1 (*((ga_sub_reg) GA_SUB_REG_CDDCOMM1))
-
+#define ga_sub_reg_cddstat1 (*((ga_sub_reg) GA_SUB_REG_CDDSTAT1))
 /**
- * @def ga_sub_reg_cddcomm2
+ * @def ga_sub_reg_cddstat2
  * @brief GA Reg 1E - CDD Communication
- * @sa GA_SUB_REG_CDDCOMM2
+ * @sa GA_SUB_REG_CDDSTAT2
  * @ingroup gatearray_sub
  *
  * @details See the documentation for more info
@@ -334,12 +298,11 @@ typedef u16 volatile * ga_sub_reg;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_sub_reg_cddcomm2 (*((ga_sub_reg) GA_SUB_REG_CDDCOMM2))
-
+#define ga_sub_reg_cddstat2 (*((ga_sub_reg) GA_SUB_REG_CDDSTAT2))
 /**
- * @def ga_sub_reg_cddcomm3
+ * @def ga_sub_reg_cddstat3
  * @brief GA Reg 1F - CDD Communication
- * @sa GA_SUB_REG_CDDCOMM3
+ * @sa GA_SUB_REG_CDDSTAT3
  * @ingroup gatearray_sub
  *
  * @details See the documentation for more info
@@ -348,12 +311,11 @@ typedef u16 volatile * ga_sub_reg;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_sub_reg_cddcomm3 (*((ga_sub_reg) GA_SUB_REG_CDDCOMM3))
-
+#define ga_sub_reg_cddstat3 (*((ga_sub_reg) GA_SUB_REG_CDDSTAT3))
 /**
- * @def ga_sub_reg_cddcomm4
+ * @def ga_sub_reg_cddstat4
  * @brief GA Reg 20 - CDD Communication
- * @sa GA_SUB_REG_CDDCOMM4
+ * @sa GA_SUB_REG_CDDSTAT4
  * @ingroup gatearray_sub
  *
  * @details See the documentation for more info
@@ -362,12 +324,11 @@ typedef u16 volatile * ga_sub_reg;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_sub_reg_cddcomm4 (*((ga_sub_reg) GA_SUB_REG_CDDCOMM4))
-
+#define ga_sub_reg_cddstat4 (*((ga_sub_reg) GA_SUB_REG_CDDSTAT4))
 /**
- * @def ga_sub_reg_cddcomm5
+ * @def ga_sub_reg_cddcmd0
  * @brief GA Reg 21 - CDD Communication
- * @sa GA_SUB_REG_CDDCOMM5
+ * @sa GA_SUB_REG_CDDCMD0
  * @ingroup gatearray_sub
  *
  * @details See the documentation for more info
@@ -376,12 +337,11 @@ typedef u16 volatile * ga_sub_reg;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_sub_reg_cddcomm5 (*((ga_sub_reg) GA_SUB_REG_CDDCOMM5))
-
+#define ga_sub_reg_cddcmd0 (*((ga_sub_reg) GA_SUB_REG_CDDCMD0))
 /**
- * @def ga_sub_reg_cddcomm6
+ * @def ga_sub_reg_cddcmd1
  * @brief GA Reg 22 - CDD Communication
- * @sa GA_SUB_REG_CDDCOMM6
+ * @sa GA_SUB_REG_CDDCMD1
  * @ingroup gatearray_sub
  *
  * @details See the documentation for more info
@@ -390,12 +350,11 @@ typedef u16 volatile * ga_sub_reg;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_sub_reg_cddcomm6 (*((ga_sub_reg) GA_SUB_REG_CDDCOMM6))
-
+#define ga_sub_reg_cddcmd1 (*((ga_sub_reg) GA_SUB_REG_CDDCMD1))
 /**
- * @def ga_sub_reg_cddcomm7
+ * @def ga_sub_reg_cddcmd2
  * @brief GA Reg 23 - CDD Communication
- * @sa GA_SUB_REG_CDDCOMM7
+ * @sa GA_SUB_REG_CDDCMD2
  * @ingroup gatearray_sub
  *
  * @details See the documentation for more info
@@ -404,12 +363,11 @@ typedef u16 volatile * ga_sub_reg;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_sub_reg_cddcomm7 (*((ga_sub_reg) GA_SUB_REG_CDDCOMM7))
-
+#define ga_sub_reg_cddcmd2 (*((ga_sub_reg) GA_SUB_REG_CDDCMD2))
 /**
- * @def ga_sub_reg_cddcomm8
+ * @def ga_sub_reg_cddcmd3
  * @brief GA Reg 24 - CDD Communication
- * @sa GA_SUB_REG_CDDCOMM8
+ * @sa GA_SUB_REG_CDDCMD3
  * @ingroup gatearray_sub
  *
  * @details See the documentation for more info
@@ -418,12 +376,11 @@ typedef u16 volatile * ga_sub_reg;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_sub_reg_cddcomm8 (*((ga_sub_reg) GA_SUB_REG_CDDCOMM8))
-
+#define ga_sub_reg_cddcmd3 (*((ga_sub_reg) GA_SUB_REG_CDDCMD3))
 /**
- * @def ga_sub_reg_cddcomm9
+ * @def ga_sub_reg_cddcmd4
  * @brief GA Reg 25 - CDD Communication
- * @sa GA_SUB_REG_CDDCOMM9
+ * @sa GA_SUB_REG_CDDCMD4
  * @ingroup gatearray_sub
  *
  * @details See the documentation for more info
@@ -432,8 +389,7 @@ typedef u16 volatile * ga_sub_reg;
  * for direct access from user applications. Consider using BIOS functions
  * for CD drive functionality.
  */
-#define ga_sub_reg_cddcomm9 (*((ga_sub_reg) GA_SUB_REG_CDDCOMM9))
-
+#define ga_sub_reg_cddcmd4 (*((ga_sub_reg) GA_SUB_REG_CDDCMD4))
 /**
  * @def ga_sub_reg_fontcolor
  * @brief GA Reg 26 - Font Color
@@ -451,8 +407,7 @@ typedef u16 volatile * ga_sub_reg;
  * SC10-13: Source Color Data for font bits set to 1
  * @details RW: Palette entry
  */
-#define ga_sub_reg_fontcolor (*((ga_sub_reg) GA_SUB_REG_FONTCOLOR))
-
+#define ga_sub_reg_fontcolor (*((ga_sub_reg8) GA_SUB_REG_FONTCOLOR))
 /**
  * @def ga_sub_reg_fontbits
  * @brief GA Reg 27 - 1bpp Font Data
@@ -460,7 +415,6 @@ typedef u16 volatile * ga_sub_reg;
  * @ingroup gatearray_sub
  */
 #define ga_sub_reg_fontbits (*((ga_sub_reg) GA_SUB_REG_FONTBITS))
-
 /**
  * @def ga_sub_reg_fontdata
  * @brief GA Reg 28 - 4bpp Font Data
@@ -471,15 +425,15 @@ typedef u16 volatile * ga_sub_reg;
  * This register is a group of four 16-bit values which represent
  * the 4bpp VDP tile data converted from the 1bpp data in @ref ga_sub_reg_fontbits
  */
-#define ga_sub_reg_fontdata (*((ga_sub_reg) GA_SUB_REG_FONTDATA))
-
+#define ga_sub_reg_fontdata (*((ga_sub_reg_ro) GA_SUB_REG_FONTDATA))
 /**
  * @def ga_sub_reg_stampsize
  * @brief GA Reg 29
  * @sa GA_SUB_REG_STAMPSIZE
  * @ingroup gatearray_sub
  */
-#define ga_sub_reg_stampsize (*((ga_sub_reg) GA_SUB_REG_STAMPSIZE))
+#define ga_sub_reg_gfxstat (*((ga_sub_reg8_ro) GA_SUB_REG_GFXSTAT))
+#define ga_sub_reg_stampsize (*((ga_sub_reg8) GA_SUB_REG_STAMPSIZE))
 
 /**
  * @def ga_sub_reg_stampmapbase
@@ -495,7 +449,7 @@ typedef u16 volatile * ga_sub_reg;
  * @sa GA_SUB_REG_IMGBUFVSIZE
  * @ingroup gatearray_sub
  */
-#define ga_sub_reg_imgbufvsize (*((ga_sub_reg) GA_SUB_REG_IMGBUFVSIZE))
+#define ga_sub_reg_imgbufvsize (*((ga_sub_reg8) GA_SUB_REG_IMGBUFVSIZE))
 
 /**
  * @def ga_sub_reg_imgbufstart
@@ -511,7 +465,7 @@ typedef u16 volatile * ga_sub_reg;
  * @sa GA_SUB_REG_IMGBUFOFFSET
  * @ingroup gatearray_sub
  */
-#define ga_sub_reg_imgbufoffset (*((ga_sub_reg) GA_SUB_REG_IMGBUFOFFSET))
+#define ga_sub_reg_imgbufoffset (*((ga_sub_reg8) GA_SUB_REG_IMGBUFOFFSET))
 
 /**
  * @def ga_sub_reg_imgbufhdotsize
@@ -543,8 +497,7 @@ typedef u16 volatile * ga_sub_reg;
  * @sa GA_SUB_REG_SUBCODEADDR
  * @ingroup gatearray_sub
  */
-#define ga_sub_reg_subcodeaddr (*((ga_sub_reg) GA_SUB_REG_SUBCODEADDR))
-
+#define ga_sub_reg_subcodeaddr (*((ga_sub_reg_ro) GA_SUB_REG_SUBCODEADDR))
 /**
  * @def ga_sub_reg_subcodebuf
  * @brief GA Reg 32 - Sub-code data buffer
@@ -555,7 +508,6 @@ typedef u16 volatile * ga_sub_reg;
  * Size: 64 x 16-bit words (128 bytes)
  */
 #define ga_sub_reg_subcodebuf (*((ga_sub_reg) GA_SUB_REG_SUBCODEBUF))
-
 /**
  * @def ga_sub_reg_subcodebufimg
  * @brief GA Reg 33
@@ -563,7 +515,6 @@ typedef u16 volatile * ga_sub_reg;
  * @ingroup gatearray_sub
  */
 #define ga_sub_reg_subcodebufimg (*((ga_sub_reg) GA_SUB_REG_SUBCODEBUFIMG))
-
 /**
  * @fn ga_sub_wait_2m
  * @brief Wait for Sub CPU access to 2M Word RAM
@@ -576,7 +527,7 @@ static inline void ga_sub_wait_2m()
 			beq 1b \n\
 		"
     :
-    : "i"(BIT_GA_REG_DMNA), "i"(GA_SUB_REG_MEMMODE + 1));
+    : "i"(GA_SUB_DMNA_POS), "i"(GA_SUB_REG_MEMMODE));
 }
 
 /**
@@ -592,7 +543,7 @@ static inline void ga_sub_grant_2m()
 			beq 1b \n\
 		"
     :
-    : "i"(BIT_GA_REG_RET), "i"(GA_SUB_REG_MEMMODE + 1));
+    : "i"(GA_SUB_RETURN_2M_POS), "i"(GA_SUB_REG_MEMMODE));
 }
 
 /**
@@ -608,7 +559,7 @@ static inline void ga_sub_set_1m()
 			beq 1b \n\
 		"
     :
-    : "i"(BIT_GA_REG_MODE), "i"(GA_SUB_REG_MEMMODE + 1));
+    : "i"(GA_SUB_WORDRAM_LAYOUT_POS), "i"(GA_SUB_REG_MEMMODE));
 }
 
 /**
@@ -624,7 +575,7 @@ static inline void ga_sub_set_2m()
 			bne 1b \n\
 		"
     :
-    : "i"(BIT_GA_REG_MODE), "i"(GA_SUB_REG_MEMMODE + 1));
+    : "i"(GA_SUB_WORDRAM_LAYOUT_POS), "i"(GA_SUB_REG_MEMMODE));
 }
 
 /**

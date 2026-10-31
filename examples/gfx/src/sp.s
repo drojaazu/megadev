@@ -39,7 +39,7 @@ GLABEL sp_init
 	bne			1b
   GA_SUB_CLEAR_COMM_REGS
 	// Put Word RAM into 2M mode and assert control of it
-	andi.w	#~(GA_SUB_MASK_RETURN_2M | GA_SUB_MASK_WORDRAM_LAYOUT), GA_SUB_REG_MEMMODE
+	andi.b	#~(GA_SUB_RETURN_2M_MASK | GA_SUB_WORDRAM_LAYOUT_MASK), GA_SUB_REG_MEMMODE
 	// This sets up the CD-ROM access loop with initial settings. It only needs
 	// to be called once, here in sp_init
 	INIT_ACC_LOOP
@@ -86,7 +86,7 @@ command_loop:
 	add.w		d0, d0
 	move.w	command_tbl(pc,d0.w), d0
 	jsr			command_tbl(pc,d0.w)
-	//bclr		#INT1_GFX_BIT, ga_sub_reg_intmask+1
+	//bclr		#INT1_GFX_BIT, ga_sub_reg_intmask
 	jra			command_loop
 
 /*
