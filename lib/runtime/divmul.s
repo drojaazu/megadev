@@ -2,19 +2,34 @@
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
  * @file runtime/divmul.s
- * @brief 32-bit divide and modulo helpers for the 68000
+ * @brief 32-bit multiply, divide and modulo helpers for the 68000
  *
  * @details
- * GCC calls __udivsi3, __umodsi3, __divsi3 and __modsi3 for 32-bit `/` and
- * `%`. The copies in the toolchain's libgcc are assembled for a 68020: the
- * modulo routines reach the divide routines with `bsr.l`, which a 68000
- * decodes as a branch to an odd address, so any 32-bit modulo faults. These
- * versions are linked ahead of libgcc. Arguments are on the stack, the result
- * is in D0, and D1/A0/A1 may be clobbered, as GCC expects. Division by zero
- * raises the 68000 zero divide exception, as it does with libgcc.
+ * GCC calls __mulsi3 for 32-bit `*`, and __udivsi3, __umodsi3, __divsi3 and
+ * __modsi3 for 32-bit `/` and `%`. These normally come from libgcc, but the
+ * toolchain's copy is assembled for a 68020 and Megadev does not link it: its
+ * modulo routines, for one, reach the divide routines with `bsr.l`, which a
+ * 68000 decodes as a branch to an odd address. Arguments are on the stack, the
+ * result is in D0, and D1/A0/A1 may be clobbered, as GCC expects. Division by
+ * zero raises the 68000 zero divide exception.
  */
 
 .section .text
+
+/* Low 32 bits of the product: (ah * bl + al * bh) << 16 + al * bl */
+.global __mulsi3
+__mulsi3:
+  move.w  4(sp), d0     // a high
+  mulu.w  10(sp), d0    // * b low
+  move.w  8(sp), d1     // b high
+  mulu.w  6(sp), d1     // * a low
+  add.w   d1, d0
+  swap    d0
+  clr.w   d0
+  move.w  6(sp), d1     // a low
+  mulu.w  10(sp), d1    // * b low
+  add.l   d1, d0
+  rts
 
 /*
  * Unsigned 32-bit divide

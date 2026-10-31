@@ -4,7 +4,7 @@ Writing your code in C rather than raw assembly can make development much easier
 
 ## Standard Library
 
-There is no C standard library in the PC sense: no streams, no heap, no floating point, no locale. Megadev provides a small freestanding subset with standard names and standard semantics, so code written against it behaves as it would anywhere else. Everything in it is linked only when used.
+There is no C standard library in the PC development sense: no streams, no heap, no floating point values, no locales. Megadev provides a small freestanding subset of stdlib functions with standard names and semantics. Calls are linked only when used.
 
 | Header | Provides |
 |---|---|
@@ -21,7 +21,11 @@ Deliberately absent: `malloc` and `free`, `printf` to a console, `FILE`, floatin
 
 ### Functions the compiler calls on its own
 
-A few standard functions are always available, because GCC emits calls to them whether or not you write them, and regardless of `-nostdlib` and `-fno-builtin`. Copying or zero-initializing a large struct or array becomes a call to `memcpy` or `memset`, and 32-bit multiplication, division and modulo become calls to helper routines in libgcc, since the 68000 only multiplies 16-bit and divides 32-by-16 in hardware. Megadev provides `memcpy`, `memmove`, `memset` and `memcmp` in `lib/runtime`, and links them together with libgcc into every image. It also provides the 32-bit division and modulo helpers (`__udivsi3`, `__umodsi3`, `__divsi3`, `__modsi3`), which take precedence over libgcc's: the toolchain's copies are built for the 68020 and crash a 68000. Only the routines an image actually references are included.
+A few standard functions are always available, because GCC emits calls to them whether or not you write them, and regardless of `-nostdlib` and `-fno-builtin`. Copying or zero-initializing a large struct or array becomes a call to `memcpy` or `memset`, and 32-bit multiplication, division and modulo become calls to helper routines, since the 68000 only multiplies 16-bit and divides 32-by-16 in hardware. Megadev provides `memcpy`, `memmove`, `memset` and `memcmp` in `lib/runtime`, along with the 32-bit helpers (`__mulsi3`, `__udivsi3`, `__umodsi3`, `__divsi3`, `__modsi3`), and links them when they are used.
+
+Megadev does not link libgcc, the compiler's own helper library, since prebuilt binaries may be inconsistent across repositories, and ultimately we cannot guarantee the library was built for the correct architecture. Megadev implements only the small subset of helper routines, so 64-bit integers and `float` and `double` values are not supported. 64-bit values should not be necessary on this hardware, and fixed-point numbers provide for fractional values.
+
+The compiler may still accept some of these without a helper, such as 64-bit addition or copying a `float`, but do not rely on these. Operations that need a helper, such as 64-bit multiplication or `float` addition, fail at link time with an error such as `undefined reference to '__muldi3'`.
 
 ### Assertions
 
