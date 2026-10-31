@@ -92,6 +92,7 @@ $(DISC_PATH)/ipx.mmd: \
 	ipx.c
 
 $(DISC_PATH)/spx.smd: \
+	std_init.s \
 	spx.c \
 	sub/pcm.s \
 	pcmplay_v2.s \
