@@ -58,9 +58,13 @@ INLINE_EXCLUDE := lib/main/comm.h
 # only valid under them.
 INLINE_FLAGS := -O1 -fomit-frame-pointer
 
-.PHONY: check check-projects check-headers check-asm check-link check-odr check-incremental check-inline docs clean $(PROJECTS)
+# Compile-time assertions about the hardware definitions (check/asserts).
+ASSERT_C := $(wildcard check/asserts/*.c)
+ASSERT_S := $(wildcard check/asserts/*.s)
 
-check: check-projects check-headers check-asm check-link check-odr check-incremental check-inline
+.PHONY: check check-projects check-headers check-asm check-link check-odr check-incremental check-inline check-asserts docs clean $(PROJECTS)
+
+check: check-projects check-headers check-asm check-link check-odr check-incremental check-inline check-asserts
 	@printf '\ncheck: all passed\n'
 
 # ---------------------------------------------------------------------------
@@ -205,6 +209,26 @@ check-inline:
 	done; \
 	x=$$(echo $(INLINE_EXCLUDE) | wc -w); \
 	[ $$fail = 0 ] && printf '== inline: %s functions instantiate, %s header(s) excluded\n' "$$total" "$$x" || exit 1
+
+# ---------------------------------------------------------------------------
+# Loop 8: the register definitions match the hardware manuals. check/asserts
+# holds _Static_assert units for C and .if/.error units for assembly; a wrong
+# address or bit position fails here instead of on hardware.
+# ---------------------------------------------------------------------------
+check-asserts:
+	@mkdir -p $(CHECK_DIR)
+	@fail=0; \
+	for c in $(ASSERT_C); do \
+	  $(CC) $(CHECK_FLAGS) -DTARGET=MEGACD -fsyntax-only "$$c" 2> $(CHECK_DIR)/assert.err \
+	    || { printf 'FAIL assert %s\n' "$$c"; cat $(CHECK_DIR)/assert.err; fail=1; }; \
+	done; \
+	for s in $(ASSERT_S); do \
+	  $(CC) $(CHECK_FLAGS) -DTARGET=MEGACD -Wa,--bitwise-or -x assembler-with-cpp -c "$$s" \
+	    -o $(CHECK_DIR)/assert.o 2> $(CHECK_DIR)/assert.err \
+	    || { printf 'FAIL assert %s\n' "$$s"; cat $(CHECK_DIR)/assert.err; fail=1; }; \
+	done; \
+	n=$$(cat $(ASSERT_C) | grep -c '_Static_assert'); m=$$(cat $(ASSERT_S) | grep -c '^ASSERT_EQ'); \
+	[ $$fail = 0 ] && printf '== asserts: %s C and %s assembly assertions hold\n' "$$n" "$$m" || exit 1
 
 docs:
 	@rm -rf docs/html; mkdir -p $(CHECK_DIR)
