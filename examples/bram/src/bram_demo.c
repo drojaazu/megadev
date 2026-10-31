@@ -24,9 +24,9 @@ GLOBAL_SYM(MMD_DEST, WORK_RAM);
   do                               \
   {                                \
     asm("nop");                    \
-  } while (*ga_main_reg_comstat0 == 0);
+  } while (ga_main_reg_comstat0 == 0);
 
-#define SUB_ACK *ga_main_reg_comcmd0 = 0;
+#define SUB_ACK ga_main_reg_comcmd0 = 0;
 
 #define print_xy(x, y) \
   (to_vdp_addr(BIOS_VDP_DEFAULT_PLANEA + VDP_PLANE_POS(x, y, Width64)) | VRAM_W)
@@ -37,15 +37,15 @@ static void bram_init()
 {
   bios_print("Performing BRMINIT...\xff", print_xy(1, 1));
 
-  *ga_main_reg_comcmd0 = 2;
+  ga_main_reg_comcmd0 = 2;
 
   SUB_WAIT
 
   // bram_size is the total space on the unit, returned as the number of
   // 4KB (0x1000 byte) blocks. So we multiplay by 0x1000 to get the 'actual'
   // total space available
-  int bram_size = (*ga_main_reg_comstat1) * 0x1000;
-  int status = *ga_main_reg_comstat2;
+  int bram_size = (ga_main_reg_comstat1) * 0x1000;
+  int status = ga_main_reg_comstat2;
 
   SUB_ACK
 
@@ -83,15 +83,15 @@ static void brmstat()
   bios_clear_tables();
   bios_print("Performing BRMSTAT...\xff", print_xy(1, 1));
 
-  *ga_main_reg_comcmd0 = 6;
+  ga_main_reg_comcmd0 = 6;
 
   SUB_WAIT
 
   // bram_size is the total space on the unit, returned as the number of
   // 4KB (0x1000 byte) blocks. So we multiplay by 0x1000 to get the 'actual'
   // total space available
-  u16 filecount = *ga_main_reg_comstat1;
-  u16 free = *ga_main_reg_comstat2;
+  u16 filecount = ga_main_reg_comstat1;
+  u16 free = ga_main_reg_comstat2;
 
   SUB_ACK
 
@@ -108,13 +108,13 @@ static bool brmserch()
 {
   bios_print("Performing BRMSERCH...\xff", print_xy(1, 1));
 
-  *ga_main_reg_comcmd0 = 3;
+  ga_main_reg_comcmd0 = 3;
 
   SUB_WAIT
 
-  u16 found = *ga_main_reg_comstat1;
-  u16 filesize = *ga_main_reg_comstat2;
-  u16 is_protected = *ga_main_reg_comstat3;
+  u16 found = ga_main_reg_comstat1;
+  u16 filesize = ga_main_reg_comstat2;
+  u16 is_protected = ga_main_reg_comstat3;
 
   SUB_ACK
 
@@ -188,11 +188,11 @@ static void brmwrite()
 
   ga_main_grant_2m();
 
-  *ga_main_reg_comcmd0 = 5;
+  ga_main_reg_comcmd0 = 5;
 
   SUB_WAIT
 
-  int success = *ga_main_reg_comstat1;
+  int success = ga_main_reg_comstat1;
 
   SUB_ACK
 
@@ -219,13 +219,13 @@ static void brmread()
 
   ga_main_grant_2m();
 
-  *ga_main_reg_comcmd0 = 4;
+  ga_main_reg_comcmd0 = 4;
 
   SUB_WAIT
 
-  int success = *ga_main_reg_comstat1;
-  int size = *ga_main_reg_comstat2;
-  int mode = *ga_main_reg_comstat3;
+  int success = ga_main_reg_comstat1;
+  int size = ga_main_reg_comstat2;
+  int mode = ga_main_reg_comstat3;
 
   SUB_ACK
 
@@ -254,11 +254,11 @@ void brmdel()
 
   bios_print("Performing BRMDEL...\xff", print_xy(1, 1));
 
-  *ga_main_reg_comcmd0 = 7;
+  ga_main_reg_comcmd0 = 7;
 
   SUB_WAIT
 
-  int success = *ga_main_reg_comstat1;
+  int success = ga_main_reg_comstat1;
 
   SUB_ACK
 
@@ -280,11 +280,11 @@ void brmdir()
 
   ga_main_grant_2m();
 
-  *ga_main_reg_comcmd0 = 8;
+  ga_main_reg_comcmd0 = 8;
 
   SUB_WAIT
 
-  int success = *ga_main_reg_comstat1;
+  int success = ga_main_reg_comstat1;
 
   SUB_ACK
 

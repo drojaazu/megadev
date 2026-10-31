@@ -168,10 +168,10 @@ void main()
     // and the argument will be the ID for that file, which is defined in
     // the SPX
     // Set the argument first
-    *ga_main_reg_comcmd1 = next_module;
+    ga_main_reg_comcmd1 = next_module;
 
     // then set the command
-    *ga_main_reg_comcmd0 = CMD_LOAD_FILE;
+    ga_main_reg_comcmd0 = CMD_LOAD_FILE;
 
     // wait for acknowledgment from the Sub CPU that the command was
     // received and will be acted on
@@ -180,16 +180,16 @@ void main()
       // the NOP is so GCC doesn't optimize the loop away
       // though since comstat is marked volatile it should be fine...
       asm("nop");
-    } while (*ga_main_reg_comstat0 == 0);
+    } while (ga_main_reg_comstat0 == 0);
 
     // reset the command to none (0) once we have the acknowledgment
-    *ga_main_reg_comcmd0 = 0;
+    ga_main_reg_comcmd0 = 0;
 
     // the Sub CPU side work will be complete when COMSTAT0 returns to 0
     do
     {
       asm("nop");
-    } while (*ga_main_reg_comstat0 != 0);
+    } while (ga_main_reg_comstat0 != 0);
 
     ga_main_wait_2m();
 

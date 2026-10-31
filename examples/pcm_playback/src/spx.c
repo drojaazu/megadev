@@ -41,13 +41,13 @@ __attribute__((section(".init"))) void main()
   {
     do
     {
-      command = *ga_sub_reg_comcmd0;
+      command = ga_sub_reg_comcmd0;
     } while (command == 0);
 
-    if (command != *ga_sub_reg_comcmd0)
+    if (command != ga_sub_reg_comcmd0)
       continue;
 
-    param1 = *ga_sub_reg_comcmd1;
+    param1 = ga_sub_reg_comcmd1;
 
     switch (command)
     {
@@ -79,30 +79,30 @@ __attribute__((section(".init"))) void main()
         // default VBLANK handler in the Main Boot ROM Library; see the
         // Predefined Comm Flag Semantics section of bootrom.md for more
         // info)
-        *ga_sub_reg_comflags_sub |= 0x80;
+        ga_sub_reg_comflags_sub |= 0x80;
         // pcm_playback((u8 *)PRG_RAM_BANK3, 0x39BC1);
         // pcm_playback((u8 *)PRG_RAM_BANK3, 0x40000);
         PCM_PLAYBACK_C((u8 *) PRG_RAM_BANK3, 0x40000);
         *((volatile u8 *) _PCM_CDISABLE) = 0xFF;
 
-        *ga_sub_reg_comflags_sub &= ~0x80;
+        ga_sub_reg_comflags_sub &= ~0x80;
         break;
     }
 
-    *ga_sub_reg_comstat0 = *ga_sub_reg_comcmd0;
+    ga_sub_reg_comstat0 = ga_sub_reg_comcmd0;
     do
     {
       asm("nop");
-      command = *ga_sub_reg_comcmd0;
+      command = ga_sub_reg_comcmd0;
     } while (command != 0);
 
     do
     {
       asm("nop");
-      command = *ga_sub_reg_comcmd0;
+      command = ga_sub_reg_comcmd0;
     } while (command != 0);
 
-    *ga_sub_reg_comstat0 = 0;
+    ga_sub_reg_comstat0 = 0;
 
   } while (1);
 }

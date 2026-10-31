@@ -63,3 +63,7 @@ The inline functions and assembly macros had no prefix at all and gain the full 
 | `RESET_GA` | `GA_MAIN_RESET` | (Main only) |
 
 Names outside the `GA_`/`ga_` families in these headers (`BIT_GA_REG_*`, `MSK_GA_REG_*`, `CDC_DEST_*`, `CDCMODE_*BITS`, `MEMMODE_*_MSK`) are unchanged here; they are renamed by the register field naming change described below.
+
+## Register accessors are values, not pointers
+
+Every `ga_main_reg_*` and `ga_sub_reg_*` accessor now names the register itself, so a register is read and written like a variable: `ga_main_reg_comcmd0 = 2;` and `x = ga_sub_reg_comstat1;`. In 1.x most accessors were pointers and needed a `*`. Remove the `*` at each use. Where a pointer to the register is wanted, take its address: `&ga_main_reg_comcmd0`. The generated code is identical.
