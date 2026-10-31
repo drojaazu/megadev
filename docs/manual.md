@@ -397,11 +397,21 @@ The `Makefile` at the root of the repository is maintainer tooling. It should no
 
 ## `make check`
 
-Run `make check` from the repository root before merging any branch. It must pass. It takes a few seconds and needs only the toolchain described under Build Environment; `M68K_PREFIX` must be set as for any build. It proves three things:
+Run `make check` from the repository root before merging any branch. It must pass. It takes about ten seconds and needs the toolchain described under Build Environment, with `M68K_PREFIX` set as for any build, plus a host C compiler (`HOST_CC`, default `cc`). It stops at the first failure. Each step can also be run alone, for example `make check-link`.
 
-1. **Every project builds.** Each example and `new_project` is built from clean through its own makefile, the same way a user project is built. The repository root is passed as `MEGADEV_PATH`, so no installation is required.
-2. **Every library header compiles alone.** Each `lib/**/*.h` is included into an otherwise empty translation unit and compiled with `-Wall -Wextra -Werror`, once per hardware target. A header that only works when something else was included first fails here.
-3. **Every library assembly file assembles alone.** Each `lib/**/*.s` is assembled by itself. Files that cannot assemble standalone by design, such as `cd_boot.s` which incbins a project's built binaries, are listed in the `Makefile` with a reason.
+| Step | Target | What it proves |
+|---|---|---|
+| 1 | `check-projects` | Every example and `new_project` builds from clean through its own makefile, the way a user project is built, and its disc image or cartridge and every file in `DISC_CONTENTS` exist and are not empty. The repository root is passed as `MEGADEV_PATH`, so no installation is required. |
+| 2 | `check-headers` | Every `lib/**/*.h` compiles alone with `-Wall -Wextra -Werror`, once per hardware target (`MEGACD`, `MEGACD_MODE1`, `MEGADRIVE`). A header that only works when something else was included first fails here. |
+| 3 | `check-asm` | Every `lib/**/*.s` assembles alone. Files that cannot by design, such as `cd_boot.s`, which includes a project's built binaries, are listed in the `Makefile` with a reason. |
+| 4 | `check-link` | Every function the compiler calls on its own (`memcpy`, 32-bit division, and so on) is provided by the runtime; the runtime and those helpers contain only 68000 instructions; a cartridge's initialized data is stored in ROM; 64-bit and floating point arithmetic fail to link. |
+| 5 | `check-stack` | The stack-setting init files set the stack just before `main`, and the module linker scripts reject a misplaced stack. |
+| 6 | `check-init` | A module links only with startup code or `MODULE_NO_INIT`. |
+| 7 | `check-odr` | Every header can be included by two translation units linked together, so no header defines storage or a non-static function. |
+| 8 | `check-incremental` | Header dependency tracking works: touching `lib/main/vdp.h` recompiles and relinks `examples/gfx`, and a second build does nothing. |
+| 9 | `check-inline` | Every `static inline` function in every header compiles when used. |
+| 10 | `check-asserts` | The register addresses and bit positions in the hardware definitions match the hardware manuals (`check/asserts`). |
+| 11 | `check-host` | The C library subset gives the right answers, compiled for and run on the host (`check/host/libc_test.c`). |
 
 `make clean` removes everything the gate produced.
 
