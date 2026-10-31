@@ -419,8 +419,12 @@ There are a number of additional documents in the `docs` subdirectory. We recomm
 
 `disc.md` - Explains how to master a proper disc image for the Mega CD.
 
+`gate_array.md` - Conventions for the gate array register definitions and the hardware's access width and bit operation restrictions, per register.
+
 `main_bios.md` - Goes into deep detail about using the Main BIOS and its many utility calls.
 
 `megacd_dev.md` - Considerations for program architecture and development on the Mega CD.
+
+`rotation_scaling.md` - The gate array's rotation and scaling hardware: data structures, registers, timing, and the mathematics of a pseudo-3D ground plane.
 
 `modules.md` - Discusses the modules concept and how to use them.
