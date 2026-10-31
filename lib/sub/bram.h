@@ -342,7 +342,7 @@ static inline enum BramVerifyStatus bram_verify(BramFileInfo const * params)
 		: "i"(BRAM_CALL_VECTOR), "d"(d0_fcode), "a"(A0)
 		: "a1");
 
-	return d0_result;
+	return (enum BramVerifyStatus) d0_result;
 }
 
 #ifdef __cplusplus
