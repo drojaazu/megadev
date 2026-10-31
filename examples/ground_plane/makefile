@@ -85,14 +85,14 @@ clean:
 	@rm -rf $(PROJECT_ID).iso $(DISC_PATH)/*.mmd $(DISC_PATH)/*.smd $(BUILD_PATH)/*
 
 $(DISC_PATH)/ipx.mmd: \
-	main/ipx_init.s \
+	main/ipx_init_stack.s \
 	ipx.res.s \
 	tables.s \
 	ipx.c \
 	main/io.macro.s
 
 $(DISC_PATH)/spx.smd: \
-	std_init.s \
+	std_init_stack.s \
 	spx.c \
 	tables.s \
 	ground.res.s \
