@@ -128,7 +128,7 @@ check-link:
 	@rm -rf $(CHECK_DIR)/runtime && mkdir -p $(CHECK_DIR)/runtime
 	@printf '%s\n' \
 	  'typedef struct { char b[400]; } big;' \
-	  'big g; unsigned long u; long s;' \
+	  'big g; unsigned long u; long s; int initialized = 1;' \
 	  'void copy(big * d, big const * s) { *d = *s; }' \
 	  'void zero(big * d) { *d = (big){0}; }' \
 	  'int same(big const * a, big const * b) { return __builtin_memcmp(a, b, sizeof *a); }' \
@@ -157,6 +157,10 @@ check-link:
 	@if $(M68K_PREFIX)objdump -d -m m68k:68000 $(CHECK_DIR)/link.elf | grep -E '\.(short|word|long)'; then \
 	  printf 'FAIL link: instructions above are not 68000 instructions\n'; exit 1; fi
 	@printf '== link: runtime and compiler helpers are 68000 code\n'
+	@lma=$$($(M68K_PREFIX)objdump -h $(CHECK_DIR)/link.elf | awk '$$2==".data"{print $$5}'); \
+	  if [ -z "$$lma" ] || [ $$((0x$$lma)) -ge $$((0x400000)) ]; then \
+	    printf 'FAIL link: cartridge .data has no load address in ROM (%s)\n' "$$lma"; exit 1; fi
+	@printf '== link: cartridge initialized data is stored in ROM\n'
 	@printf '%s\n' \
 	  'long long l; float f;' \
 	  'int main(void) { l = l * l; f = f + f; return 0; }' \
