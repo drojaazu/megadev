@@ -28,6 +28,14 @@
 #define MODE1_SP_DEST (MODE1_PRG_RAM + 0x6000)
 
 /**
+ * @brief Program RAM write protection set after unpacking the Sub BIOS
+ * @details Protects 0x0000 to 0x53FF, in units of 0x200 bytes. Every Boot ROM
+ * version writes this value; the space up to 0x6000 is the Sub BIOS's work
+ * area and must stay writable.
+ */
+#define MODE1_PRG_RAM_WP 0x2A
+
+/**
  * @brief Largest SP the Program RAM window can take from 0x6000
  */
 #define MODE1_SP_MAX_SIZE 0x1A000
