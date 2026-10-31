@@ -46,6 +46,17 @@ skip_tmss:
   dbra    d7, 1b
 
 skip_init:
+  // copy initialized data from ROM to RAM, on every reset so main always
+  // starts with the initial values
+  lea     _data_load, a0
+  lea     _data_org, a1
+  move.l  #_data_len, d7
+  addq.l  #1, d7
+  lsr.l   #1, d7
+  bra.s   2f
+1:move.w  (a0)+, (a1)+
+2:dbra    d7, 1b
+
   // initialize Z80 with a dummy program
   lea     z80_dummy_program, a0
   move.w  #(z80_dummy_program_end - z80_dummy_program - 1), d7

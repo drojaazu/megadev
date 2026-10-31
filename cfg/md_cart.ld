@@ -40,7 +40,9 @@ SECTIONS
 		_rom_len = ABSOLUTE(. - _rom_org);
   } > rom
 
-  .data 0xFF0000 : SUBALIGN(2)
+  /* Initialized data runs from RAM; its initial values are stored in ROM
+  after .text and copied by md_init.s. */
+  .data 0xFF0000 : AT ( LOADADDR(.text) + SIZEOF(.text) ) SUBALIGN(2)
   {
 		_ram_org = .;
 		_data_org = .;
@@ -57,5 +59,6 @@ SECTIONS
 		_bss_len = ABSOLUTE(. - _bss_org);
 	} > ram
 	_ram_len = _data_len + _bss_len;
+	_data_load = LOADADDR(.data);
 	
 }
