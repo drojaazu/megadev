@@ -26,7 +26,7 @@ CHECK_DIR := build-check
 
 # The flags megadev.make gives a project, minus the project-specific header
 # strings, which no library header depends on.
-CHECK_FLAGS := -m68000 -ffixed-a6 -imacros build.def.h -Ilib -Wa,-Ilib \
+CHECK_FLAGS := -m68000 -imacros build.def.h -Ilib -Wa,-Ilib \
 	-DPROJECT_ID=check -DREGION=US -DVIDEO=NTSC \
 	-fno-builtin -Wall -Wextra -Wno-main -Wa,--register-prefix-optional
 

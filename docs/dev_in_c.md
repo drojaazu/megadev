@@ -71,11 +71,13 @@ You can see a rather simple example of this sort of setup in the `new_project` e
 
 ## Register a6
 
-The compiler never uses address register a6. It is reserved with `-ffixed-a6` because the Boot ROM library treats a6 as scratch, so no C value can be kept there safely. The consequences for your code:
+GCC uses a6 as the frame pointer whenever it sets up a stack frame, which at `-O1` and above includes any function that takes the address of a local variable. The Boot ROM library uses a6 as a scratch register, so every Megadev wrapper for a Boot ROM or PCM call that changes a6 saves and restores it around the call.
 
-- Do not use a6 in inline assembly as a working register. Naming it in a clobber list does not protect it; the compiler cannot honor a clobber on a frame pointer, and silently ignores it.
-- Megadev's Boot ROM wrappers do not save and restore a6 around the call. Nothing the compiler generates needs it preserved.
-- Hand-written assembly that keeps a value in a6 across a call into C, or into a Boot ROM wrapper, must save it itself.
+The same applies to your own inline assembly:
+
+- Save and restore a6 inside the assembly if it calls a routine that changes a6, or uses a6 itself.
+- Do not rely on naming a6 in the clobber list. On m68k, GCC accepts the clobber and ignores it when a6 is the frame pointer, without a warning.
+- Do not bind a C variable to a6 with `register ... asm("a6")`.
 
 ## Stack Usage
 

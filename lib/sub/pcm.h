@@ -62,7 +62,9 @@ static inline void pcm_clear_ram_c()
 {
 	asm volatile(
 		"\
+		move.l a6, -(sp) \n\
 		jsr pcm_clear_ram \n\
+		move.l (sp)+, a6 \n\
 		"
 		:
 		:
@@ -83,7 +85,9 @@ static inline void pcm_config_channel_c(
 
 	asm volatile(
 		"\
+		move.l a6, -(sp) \n\
 		jsr pcm_config_channel \n\
+		move.l (sp)+, a6 \n\
 		"
 		: "+d"(d0_channel), "+a"(a5_settings)
 		: "d"(d0_channel), "a"(a5_settings));
