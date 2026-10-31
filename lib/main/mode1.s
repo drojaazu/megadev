@@ -159,12 +159,6 @@ SUB mode1_load_sub
   adda.l  d2, a0
   lea     MODE1_PRG_RAM, a1
   jbsr    Kos_Decomp
-  // write protect up to the next 0x200 boundary past its end
-  move.l  a1, d6
-  subi.l  #MODE1_PRG_RAM, d6
-  addi.l  #0x1FF, d6
-  lsr.l   #8, d6
-  lsr.l   #1, d6
 
   // place the SP
   movea.l a2, a0
@@ -176,7 +170,7 @@ SUB mode1_load_sub
   subq.l  #1, d1
 4:move.w  (a0)+, (a1)+
   dbra    d1, 4b
-5:move.b  d6, (GA_MAIN_REG_WP)
+5:move.b  #MODE1_PRG_RAM_WP, (GA_MAIN_REG_WP)
 
   // release reset, then the bus
   move.b  #(GA_MAIN_SUB_REQ_MASK | GA_MAIN_SUB_RESET_MASK), (a5)
