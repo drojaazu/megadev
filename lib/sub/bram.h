@@ -7,6 +7,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "types.h"
 #include <sub/bram.def.h>
 #include <sub/memmap.def.h>
@@ -340,3 +344,7 @@ static inline enum BramVerifyStatus bram_verify(BramFileInfo const * params)
 
 	return d0_result;
 }
+
+#ifdef __cplusplus
+}
+#endif

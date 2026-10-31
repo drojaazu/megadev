@@ -15,6 +15,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef NDEBUG
 
 #define assert(expr) ((void) 0)
@@ -40,4 +44,8 @@ static inline void megadev_assert_fail(char const * where, char const * expr)
 #define assert(expr) \
   ((expr) ? (void) 0 : megadev_assert_fail(__FILE__ ":" MEGADEV_ASSERT_STR(__LINE__), #expr))
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif

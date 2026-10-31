@@ -287,7 +287,7 @@ Megadev supports C (with GCC extensions) and M68000 ASM. These can be mixed free
 
 We do not yet support Z80 ASM for the Mega Drive's Z80 coprocessor, but this is on the roadmap.
 
-We do not officially support C++ as we do not feel it brings anything that would support embedded development better than native C does, but you are welcome to retool the makefile to get it working with gcc's C++ compiler.
+C++ is not supported. The kit, its examples and its template are C and assembly; the makefile has no rules for C++ sources, the entry code does not run global constructors, and no C++ runtime support is provided. The public headers carry `extern "C"` guards so that a project which adds its own C++ build rules can call into the kit, and that is the extent of it.
 
 We may explore support for clang (i.e. llvm) sometime in the future.
 

@@ -8,6 +8,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef short xform_pos;
 typedef short xform_delta;
 
@@ -23,3 +27,7 @@ typedef short xform_delta;
 
 #define to_xform_delta(value)                         \
 	((xform_delta) ((value) * (XFORM_DELTA_FRAC_MASK)))
+
+#ifdef __cplusplus
+}
+#endif

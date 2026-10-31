@@ -14,6 +14,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <types.h>
 
 typedef struct
@@ -98,3 +102,7 @@ void qsort(void * base, size_t count, size_t size,
 
 #define LONG_MAX __LONG_MAX__
 #define LONG_MIN (-LONG_MAX - 1L)
+
+#ifdef __cplusplus
+}
+#endif

@@ -8,6 +8,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <main/gate_arr.h>
 #include <main/memmap.h>
 
@@ -58,3 +62,7 @@ static inline void const * init_mmd()
 
   return mmd_entry;
 }
+
+#ifdef __cplusplus
+}
+#endif

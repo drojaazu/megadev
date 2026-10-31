@@ -7,6 +7,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "main/vdp.def.h"
 #include "types.h"
 
@@ -331,3 +335,7 @@ static inline void vdp_dma_transfer(char const * source, vdp_cmd dest, u16 const
 	);
   // clang-format on
 }
+
+#ifdef __cplusplus
+}
+#endif

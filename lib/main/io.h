@@ -7,6 +7,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "types.h"
 #include <main/io.def.h>
 
@@ -130,3 +134,7 @@ static inline u8 read_input_joypad(io_reg io_port)
 
 	return joypad_state;
 }
+
+#ifdef __cplusplus
+}
+#endif

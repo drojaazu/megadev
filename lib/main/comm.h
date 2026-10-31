@@ -14,6 +14,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <main/comm.def.h>
 #include <main/io.def.h>
 #include <main/z80.h>
@@ -121,3 +125,7 @@ static inline void ext_tx(u8 const tx_data)
   z80_release_bus();
   restore_interrupts(sr);
 }
+
+#ifdef __cplusplus
+}
+#endif

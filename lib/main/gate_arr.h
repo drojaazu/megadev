@@ -6,6 +6,10 @@
  */
 
 #pragma once
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "main/gate_arr.def.h"
 #include <types.h>
 
@@ -225,3 +229,7 @@ static inline void ga_main_reset()
     : [memmode] "i"(GA_MAIN_REG_WP), [reset] "i"(GA_MAIN_REG_SUBCPU)
     :);
 }
+
+#ifdef __cplusplus
+}
+#endif

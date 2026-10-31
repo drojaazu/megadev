@@ -25,6 +25,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "fixed.h"
 #include "main/bios.def.h"
 #include "main/vdp.h"
@@ -1480,3 +1484,7 @@ static inline void bios_dma_queue(DmaTransfer const * queue)
     : "i"(BIOS_DMA_QUEUE), "a"(a1_queue)
     : "d0", "d1", "d2", "d3");
 }
+
+#ifdef __cplusplus
+}
+#endif

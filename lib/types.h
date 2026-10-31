@@ -12,6 +12,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define NULL ((void *) 0)
 
 typedef __PTRDIFF_TYPE__ ptrdiff_t;
@@ -112,3 +116,7 @@ typedef uintptr_t			uptr;
 #define UINT8_MAX	 0xFF
 #define UINT16_MAX 0xFFFF
 #define UINT32_MAX 0xFFFFFFFF
+
+#ifdef __cplusplus
+}
+#endif

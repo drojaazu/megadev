@@ -7,6 +7,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "pcm.def.h"
 #include "types.h"
 
@@ -84,3 +88,7 @@ static inline void pcm_config_channel_c(
 		: "+d"(d0_channel), "+a"(a5_settings)
 		: "d"(d0_channel), "a"(a5_settings));
 };
+
+#ifdef __cplusplus
+}
+#endif

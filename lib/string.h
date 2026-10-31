@@ -15,6 +15,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <types.h>
 
 void * memcpy(void * dest, void const * src, size_t n);
@@ -29,3 +33,7 @@ char * strcpy(char * dest, char const * src);
 char * strncpy(char * dest, char const * src, size_t n);
 char * strcat(char * dest, char const * src);
 char * strchr(char const * s, int c);
+
+#ifdef __cplusplus
+}
+#endif

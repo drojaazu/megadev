@@ -7,6 +7,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "sub/bios.h"
 #include "sub/cdrom.def.h"
 #include "sub/memmap.h"
@@ -100,3 +104,7 @@ static inline FileInfo * find_file_c(char const * filename)
 
   return (FileInfo *) a0_fileinfo;
 }
+
+#ifdef __cplusplus
+}
+#endif

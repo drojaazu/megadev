@@ -7,6 +7,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "types.h"
 
 /**
@@ -137,3 +141,7 @@ static inline u16 bcd(u16 value)
 		: "cc");
 	return value;
 }
+
+#ifdef __cplusplus
+}
+#endif

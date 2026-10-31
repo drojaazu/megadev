@@ -7,6 +7,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <main/memmap.def.h>
 
 /**
@@ -46,3 +50,7 @@
  * @sa EXVEC_EXT
  */
 #define exvec_ext ((void(* volatile *)) EXVEC_EXT)
+
+#ifdef __cplusplus
+}
+#endif

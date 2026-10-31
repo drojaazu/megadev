@@ -8,8 +8,16 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <main/md_sys.def.h>
 
 #define hw_version (*((u8 const volatile *) HW_VERSION))
 
 #define tmss (*((u8 volatile *) TMSS))
+
+#ifdef __cplusplus
+}
+#endif

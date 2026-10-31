@@ -7,6 +7,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "types.h"
 #include "str_util.def.h"
 
@@ -80,3 +84,7 @@ strcmpt(char const * str1, char const * str2, char terminator)
   }
   return (*(const unsigned char *) str1 - *(const unsigned char *) str2) == 0;
 }
+
+#ifdef __cplusplus
+}
+#endif

@@ -7,6 +7,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef short f16;
 typedef long f32;
 
@@ -36,3 +40,7 @@ typedef unsigned long uf32;
 #define frac_to_uf32(value) ((uf32) ((value) * (FIX32_FRAC_MASK)))
 #define int_to_uf32(value) ((uf32) ((value) * (1UL << (FIX32_FRAC_BITS))))
 #define uf32_to_int(value) ((unsigned short) ((value) >> (FIX32_FRAC_BITS)))
+
+#ifdef __cplusplus
+}
+#endif
