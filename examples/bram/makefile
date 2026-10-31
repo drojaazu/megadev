@@ -93,5 +93,6 @@ $(DISC_PATH)/bramdemo.mmd: \
 	bram_demo.c
 
 $(DISC_PATH)/spx.smd: \
+	std_init.s \
 	spx.c \
 	$(BUILD_PATH)/sp.bin
