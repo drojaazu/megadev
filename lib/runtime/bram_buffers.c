@@ -9,6 +9,6 @@
 
 u8 bram_work_buff[0x640];
 u8 bram_string_buff[12];
-BrmstatRes brmstat_results;
-BrmserchRes brmserch_results;
-BrmreadRes brmread_results;
+BramStatusResult bram_status_result;
+BramSearchResult bram_search_result;
+BramReadResult bram_read_result;

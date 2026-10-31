@@ -8,13 +8,14 @@
 #pragma once
 
 /**
- * @def BURAM
+ * @def BRAM_CALL_VECTOR
  * @brief Backup RAM system calls vector
+ * @segaalias _BURAM
  */
-#define BURAM 0x005F16
+#define BRAM_CALL_VECTOR 0x005F16
 
 /**
- * @def BRMINIT
+ * @def BRAM_INIT
  * @brief Prepares to read/write from Backup RAM
  * @clobber d0-d1/a0
  *
@@ -30,11 +31,12 @@
  *   2: Other format
  * @param[out] A1.l Pointer to display strings
  *
+ * @segaalias BRMINIT
  */
-#define BRMINIT 0x0000
+#define BRAM_INIT 0x0000
 
 /**
- * @def BRMSTAT
+ * @def BRAM_STATUS
  * @brief Returns Backup RAM usage
  * @clobber None
  *
@@ -42,11 +44,12 @@
  * @param[out] D0.w Free space (in blocks of 0x1000 bytes)
  * @param[out] D1.w Number of files in directory
  *
+ * @segaalias BRMSTAT
  */
-#define BRMSTAT 0x0001
+#define BRAM_STATUS 0x0001
 
 /**
- * @def BRMSERCH
+ * @def BRAM_SEARCH
  * @brief Search for the requested file in Backup RAM
  * @clobber d0-d1/a0-a1
  *
@@ -61,11 +64,12 @@
  *
  *
  * @note The filenames are 11 ASCII characters terminated with 0
+ * @segaalias BRMSERCH
  */
-#define BRMSERCH 0x0002
+#define BRAM_SEARCH 0x0002
 
 /**
- * @def BRMREAD
+ * @def BRAM_READ
  * @brief Read data from Backup RAM
  * @clobber d0-d1/a0-a1
  *
@@ -81,11 +85,12 @@
  *     0: Normal
  *  0xFF: Data protected
  *
+ * @segaalias BRMREAD
  */
-#define BRMREAD 0x0003
+#define BRAM_READ 0x0003
 
 /**
- * @def BRMWRITE
+ * @def BRAM_WRITE
  * @brief Write data to Backup RAM
  * @clobber d0-d1/a0-a1
  *
@@ -109,34 +114,37 @@
  *
  * @note
  * Per Tech Bulletin #1, D1 should be set to 0 when calling this routine.
+ * @segaalias BRMWRITE
  */
-#define BRMWRITE 0x0004
+#define BRAM_WRITE 0x0004
 
 /**
- * @def BRMDEL
+ * @def BRAM_DELETE
  * @brief Deletes data in Backup RAM
  * @clobber d0-d1/a0-a1
  *
  * @param[in] A0.l Pointer to filename
  * @param[out] CC Delete success
  * @param[out] CS Delete failed
+ * @segaalias BRMDEL
  */
-#define BRMDEL 0x0005
+#define BRAM_DELETE 0x0005
 
 /**
- * @def BRMFORMAT
+ * @def BRAM_FORMAT
  * @brief Formats the Backup RAM
  * @clobber d0-d1/a0-a1
  *
  * @param[out] CC Format success
  * @param[out] CS Format failed
  *
- * @note Call BRMINIT before calling this function!
+ * @note Call BRAM_INIT before calling this function!
+ * @segaalias BRMFORMAT
  */
-#define BRMFORMAT 0x0006
+#define BRAM_FORMAT 0x0006
 
 /**
- * @def BRMDIR
+ * @def BRAM_DIRECTORY
  * @brief Reads Backup RAM directory
  * @clobber d0-d1/a0-a1
  *
@@ -160,11 +168,12 @@
  * pattern. So, to find all files beginning with 'SONIC', the value passed
  * should be 'SONIC*'. The value does not need to fill the full 11 bytes and can
  * terminate immediately after the asterisk.
+ * @segaalias BRMDIR
  */
-#define BRMDIR 0x0007
+#define BRAM_DIRECTORY 0x0007
 
 /**
- * @def BRMVERIFY
+ * @def BRAM_VERIFY
  * @brief Verify data written to Backup RAM
  * @clobber d0-d1/a0-a1
  *
@@ -182,8 +191,36 @@
  *                   0xFF: encoded (with protect function)
  *     block_size.w  0x00: 1 block = 0x40 bytes
  *                   0xFF: 1 block = 0x20 bytes
+ * @segaalias BRMVERIFY
  */
-#define BRMVERIFY 0x0008
+#define BRAM_VERIFY 0x0008
 
-#define BRM__UNKNOWN0 0x0009
-#define BRM__UNKNOWN1 0x000A
+#define BRAM_UNKNOWN0 0x0009
+#define BRAM_UNKNOWN1 0x000A
+
+/**
+ * @defgroup sub_bram_sega Sega documentation names
+ * @brief The names Sega's documentation uses for the definitions above
+ * @{
+ */
+/** @aliasof BRAM_CALL_VECTOR */
+#define BURAM BRAM_CALL_VECTOR
+/** @aliasof BRAM_INIT */
+#define BRMINIT BRAM_INIT
+/** @aliasof BRAM_STATUS */
+#define BRMSTAT BRAM_STATUS
+/** @aliasof BRAM_SEARCH */
+#define BRMSERCH BRAM_SEARCH
+/** @aliasof BRAM_READ */
+#define BRMREAD BRAM_READ
+/** @aliasof BRAM_WRITE */
+#define BRMWRITE BRAM_WRITE
+/** @aliasof BRAM_DELETE */
+#define BRMDEL BRAM_DELETE
+/** @aliasof BRAM_FORMAT */
+#define BRMFORMAT BRAM_FORMAT
+/** @aliasof BRAM_DIRECTORY */
+#define BRMDIR BRAM_DIRECTORY
+/** @aliasof BRAM_VERIFY */
+#define BRMVERIFY BRAM_VERIFY
+/** @} */

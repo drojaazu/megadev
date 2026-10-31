@@ -10,38 +10,40 @@
 #include <sub/memmap.def.h>
 #include <sub/gate_arr.def.h>
 #include <sub/bios.def.h>
+#include <sub/bram.def.h>
+#include <sub/boot.def.h>
 
 /**
- * @fn BURAM
- * @param fcode BRAM function code
- * @brief Call the specified internal Backup RAM function
+ * @fn BRAM_CALL
+ * @param fcode Backup RAM function code
+ * @brief Call a Backup RAM system function
  * @clobber d0
  */
-.macro BURAM fcode
+.macro BRAM_CALL fcode
 	move.w  \fcode, d0
-	jsr     BURAM
+	jsr     BRAM_CALL_VECTOR
 .endm
 
 /**
- * @fn BIOSCALL
+ * @fn BIOS_CALL
  * @param fcode BIOS function code
- * @brief Call the specified internal BIOS function
+ * @brief Call a BIOS system function
  * @clobber d0
  */
-.macro BIOSCALL fcode
+.macro BIOS_CALL fcode
 	move.w  \fcode, d0
-	jsr     CDBIOS
+	jsr     BIOS_CALL_VECTOR
 .endm
 
 /**
- * @fn CDBOOT
+ * @fn BOOT_CALL
  * @param fcode CD Boot function code
- * @brief Call the specified internal CD Boot function
+ * @brief Call a CD Boot system function
  * @clobber d0
  */
-.macro CDBOOT fcode
+.macro BOOT_CALL fcode
 	move.w  \fcode, d0
-	jsr     CDBOOT
+	jsr     BOOT_CALL_VECTOR
 .endm
 
 /**
