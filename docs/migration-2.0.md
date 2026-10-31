@@ -8,6 +8,7 @@ This guide lists every change in Megadev 2.0 that requires a change to a project
 - Registers
 - Gate array names
 - Gate array register model
+- Serial control and VDP fields
 
 ---
 
@@ -118,3 +119,16 @@ Registers with one unused byte are defined at the byte that is used: `GA_SUB_REG
 | `GA_SUB_BIT_CDC_*` | removed; the destination values are `GA_SUB_CDCMODE_DD_*` |
 
 Use the `GA_SUB_GRON_MASK` flag of `GA_SUB_REG_GFXSTAT` to wait for a graphics operation; the stamp size register no longer carries it.
+
+# Serial control and VDP fields
+
+The same field scheme applies to the serial control register in `main/io.def.h` and to VDP mode register 4 in `main/vdp.def.h`.
+
+| 1.x | 2.0 |
+|---|---|
+| `SCTRL_TX_FULL_BIT`, `SCTRL_TX_FULL` | `SCTRL_TX_FULL_POS`, `SCTRL_TX_FULL_MASK`; likewise `RX_READY`, `RX_ERR`, `RX_INT_ENABLE`, `SERIAL_OUT_ENABLE`, `SERIAL_IN_ENABLE` |
+| `SCTRL_SERIAL_ENABLE` | `SCTRL_SERIAL_ENABLE_MASK` |
+| `SCTRL_BAUD_300` and friends, pre-shifted | unshifted values for the `SCTRL_BAUD` field: write `FIELD_PREP(SCTRL_BAUD, SCTRL_BAUD_300)` |
+| `VDP_MASK_WIDTH_40CELL` | `VDP_WIDTH_40CELL_MASK` |
+| `VDP_MASK_SHADOW_HIGHLIGHT` | `VDP_SHADOW_HIGHLIGHT_MASK`, with `VDP_SHADOW_HIGHLIGHT_POS` |
+| `VDP_MASK_INTERLACE_NONE`, `_NORMAL`, `_DOUBLE`, pre-shifted | unshifted values for the `VDP_INTERLACE` field: write `FIELD_PREP(VDP_INTERLACE, VDP_INTERLACE_DOUBLE)` |
