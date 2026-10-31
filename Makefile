@@ -50,9 +50,7 @@ INCR_HEADER  := lib/main/vdp.h
 
 # Headers whose inline functions do not yet compile when instantiated. Each
 # entry needs a reason. This list may only shrink.
-#   lib/main/comm.h   ext_rx/ext_tx: lea with a memory destination (KB-46);
-#                     fixed by the serial comm rework
-INLINE_EXCLUDE := lib/main/comm.h
+INLINE_EXCLUDE :=
 
 # The optimization flags projects build with by default; some inline asm is
 # only valid under them.
