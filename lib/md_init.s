@@ -50,6 +50,10 @@ skip_init:
   lea     z80_dummy_program, a0
   move.w  #(z80_dummy_program_end - z80_dummy_program - 1), d7
   Z80_INIT
+#if TARGET == MEGACD_MODE1
+  // install the system vector table before interrupts can arrive
+  jbsr    mode1_init_vectors
+#endif
   ENABLE_INTERRUPTS
   jbra main
 
