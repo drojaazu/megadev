@@ -57,3 +57,5 @@ The Boot ROM library expects the RAM state a disc boot leaves behind. Before usi
 # Testing in an emulator
 
 An emulator attaches the Mega CD to a cartridge when the cartridge header's device support field contains `C`. `md_header.s` writes `JC` there when `TARGET` is `MEGACD_MODE1`. The emulator needs a Mega CD Boot ROM; BlastEm reads it from `cdbios.bin` next to its executable. MAME's Mega CD systems have no cartridge slot and cannot run Mode 1.
+
+The `mode1` example runs in BlastEm with every Mega CD, Wondermega, CDX and LaserActive Boot ROM version tested, Japanese and US, except the Mega-LD 1.05 Boot ROM: with it, the Sub CPU program does not start. Real hardware is untested.
