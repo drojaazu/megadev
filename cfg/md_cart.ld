@@ -1,22 +1,12 @@
 OUTPUT_ARCH(m68k)
 
-/* Main CPU Module (MMD)
-  The following should be defines as globals in your MMD program:
-	MMD_DEST - This is the location to which your MMD program (minus the 0x100
-	header) should be moved after it has been loaded into Word RAM. If it should
-	run from Word RAM, where it was loaded, set this to 0.
-	MODULE_ROM_ORIGIN - This is the base location from where your program will run.
-	It should match MMD_DEST *IF* that value is not set to 0. If it is set to 0,
-	set ORIGIN to 0x200100 (Word RAM) - the 0x100 accounts for the header space.
-	MODULE_ROM_LENGTH - The full size of the memory block in which your program
-	will run. This is NOT the length of the text section! (We need to think 
-	about renaming things...) For example, if you are running from Word RAM,
-	this should be (0x40000 - 0x100), for the whole 2M block minus the header
-	space. 
-	MODULE_RAM_ORIGIN - The base location for RAM storage
-	MODULE_RAM_LENGTH - The size of the block for RAM storage; similar notes as the
-	LENGTH section above
-	MMD_TEXT_SZ - This is the size of the program data (text section)
+/* Cartridge ROM
+
+  The project's init.s includes md_vectors.s, md_header.s and md_init.s and
+  defines INIT_SSP (initial stack pointer) and INIT_PC (entry point). The
+  vector table and header start the ROM; code and read-only data follow, then
+  the initial values of .data, which md_init.s copies to RAM. Optional:
+  STACK_SIZE, reserved below INIT_SSP when checking RAM use.
 */
 
 MEMORY

@@ -1,28 +1,23 @@
 OUTPUT_ARCH(m68k)
 
-/* Main CPU Module (MMD)
-  The following should be defines as globals in your MMD program:
-  MMD_DEST - This is the location to which your MMD program (minus the 0x100
-  header) should be moved after it has been loaded into Word RAM. If it should
-  run from Word RAM, where it was loaded, set this to 0.
-  MODULE_ROM_ORIGIN - This is the base location from where your program will run.
-  It should match MMD_DEST *IF* that value is not set to 0. If it is set to 0,
-  set ORIGIN to 0x200100 (Word RAM) - the 0x100 accounts for the header space.
-  MODULE_ROM_LENGTH - The full size of the memory block in which your program
-  will run. This is NOT the length of the text section! (We need to think 
-  about renaming things...) For example, if you are running from Word RAM,
-  this should be (0x40000 - 0x100), for the whole 2M block minus the header
-  space. 
-  MODULE_RAM_ORIGIN - The base location for RAM storage
-  MODULE_RAM_LENGTH - The size of the block for RAM storage; similar notes as the
-  LENGTH section above
-  MMD_TEXT_SZ - This is the size of the program data (text section)
+/* Main CPU module (MMD)
+
+  The module defines, usually with GLOBAL_SYM in C:
+    MMD_DEST           Where the loader copies the module after it is loaded
+                       into Word RAM; 0 to run it from Word RAM.
+    MODULE_ROM_ORIGIN  Where the module's code runs: MMD_DEST, or 0x200100 in
+                       Word RAM (after the 0x100-byte header) when MMD_DEST is 0.
+    MODULE_ROM_LENGTH  The size of the memory available for code, not the size
+                       of the code.
+    MODULE_RAM_ORIGIN  Where the module's variables are placed.
+    MODULE_RAM_LENGTH  The size of the memory available for variables.
+  Optional: MMD_FLAGS, hblank and vblank handlers (written to the header),
+  STACK_TOP and STACK_SIZE, MODULE_NO_INIT. Shared sections and checks are in
+  module_common.ld.
 */
 
 MEMORY
 {
-  /* Mega Drive RAM */
-  /* 0xFFF700 and up is used by the system - BIOS, stack, vectors, etc*/
   MODULE_ROM (rx): ORIGIN = MODULE_ROM_ORIGIN, LENGTH = MODULE_ROM_LENGTH
   MODULE_RAM (rw): ORIGIN = MODULE_RAM_ORIGIN, LENGTH = MODULE_RAM_LENGTH
 }

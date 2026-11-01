@@ -1,7 +1,11 @@
 OUTPUT_ARCH(m68k)
 
-/* Sub CPU Module (SMD)
-  Does not contain a header, but does specify ROM and RAM regions
+/* Sub CPU module (SMD)
+
+  No header: the file is the code, followed by the initial values of .data.
+  The module defines MODULE_ROM_ORIGIN, MODULE_ROM_LENGTH, MODULE_RAM_ORIGIN
+  and MODULE_RAM_LENGTH as for an MMD (see module_mmd.ld). Shared sections and
+  checks are in module_common.ld.
 */
 
 MEMORY
