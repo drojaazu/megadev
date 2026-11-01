@@ -40,6 +40,7 @@ SECTIONS
   {
     _BSS_ORIGIN = .;
     *(.bss*)
+    *(COMMON)
     . = ALIGN(4);
     _BSS_LENGTH = ABSOLUTE(. - _BSS_ORIGIN);
   } > SP

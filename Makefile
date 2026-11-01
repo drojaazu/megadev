@@ -62,9 +62,9 @@ ASSERT_S := $(wildcard check/asserts/*.s)
 # Host compiler for the runtime library test; the runtime sources are plain C.
 HOST_CC ?= cc
 
-.PHONY: check check-projects check-headers check-asm check-link check-stack check-init check-init check-odr check-incremental check-inline check-asserts check-host docs clean $(PROJECTS)
+.PHONY: check check-projects check-headers check-asm check-link check-stack check-init check-sections check-init check-odr check-incremental check-inline check-asserts check-host docs clean $(PROJECTS)
 
-check: check-projects check-headers check-asm check-link check-stack check-init check-odr check-incremental check-inline check-asserts check-host
+check: check-projects check-headers check-asm check-link check-stack check-init check-sections check-odr check-incremental check-inline check-asserts check-host
 	@printf '\ncheck: all passed\n'
 
 # ---------------------------------------------------------------------------
@@ -247,6 +247,24 @@ check-init:
 	@$(STACK_LD) -T cfg/module_smd.ld $(CHECK_DIR)/init_optout.o $(CHECK_DIR)/init_main.o -o $(CHECK_DIR)/init.elf || { \
 	  printf 'FAIL init: MODULE_NO_INIT from GLOBAL_SYM in C was not honored\n'; exit 1; }
 	@printf '== init: modules link only with init code or MODULE_NO_INIT\n'
+
+# Input sections the scripts must place: an assembly common symbol (.comm)
+# lands inside the zeroed region of every script.
+check-sections:
+	@mkdir -p $(CHECK_DIR)
+	@printf '.global main\nmain: rts\n.comm common_buf, 64\n' > $(CHECK_DIR)/sections_comm.s
+	@$(CC) -m68000 -c $(CHECK_DIR)/sections_comm.s -o $(CHECK_DIR)/sections_comm.o
+	@for c in 'module_mmd _BSS_ORIGIN _BSS_LENGTH' 'module_smd _BSS_ORIGIN _BSS_LENGTH' 'ip _BSS_ORIGIN _BSS_LENGTH' \
+	          'sp _BSS_ORIGIN _BSS_LENGTH' 'md_cart _bss_org _bss_len'; do \
+	  set -- $$c; e=$(CHECK_DIR)/sections_$$1.elf; \
+	  $(STACK_LD) --defsym=MODULE_NO_INIT=1 -T cfg/$$1.ld $(CHECK_DIR)/sections_comm.o -o $$e 2>/dev/null || { \
+	    printf 'FAIL sections: %s did not link\n' $$1; exit 1; }; \
+	  sym() { $(M68K_PREFIX)nm $$e | awk -v n=$$1 '$$3 == n { print "0x" $$1 }'; }; \
+	  buf=$$(sym common_buf); org=$$(sym $$2); len=$$(sym $$3); \
+	  [ $$((buf)) -ge $$((org)) ] && [ $$((buf + 64)) -le $$((org + len)) ] || { \
+	    printf 'FAIL sections: %s: common symbol at %s is outside the zeroed region %s + %s\n' $$1 $$buf $$org $$len; exit 1; }; \
+	done
+	@printf '== sections: common symbols are zeroed in every script\n'
 
 # ---------------------------------------------------------------------------
 # Loop 5: every library header can be included by two translation units that

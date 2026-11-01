@@ -25,6 +25,7 @@ offset in the module file at which the .rom section is stored. */
   {
     _BSS_ORIGIN = .;
     *(.bss*)
+    *(COMMON)
     . = ALIGN(4);
     _BSS_LENGTH = ABSOLUTE(. - _BSS_ORIGIN);
     _BSS_LENGTH_LOOPSZ = ABSOLUTE(_BSS_LENGTH) >> 2;

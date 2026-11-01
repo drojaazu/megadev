@@ -55,6 +55,7 @@ SECTIONS
 	{
 		_bss_org = .;
 		*(.bss*)
+		*(COMMON)
 		_bss_end = .;
 		_bss_len = ABSOLUTE(. - _bss_org);
 	} > ram
