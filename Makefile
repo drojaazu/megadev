@@ -82,7 +82,7 @@ $(PROJECTS):
 	  if [ ! -s "$@/$$f" ]; then printf 'FAIL %s: %s missing or empty\n' '$@' "$$f"; exit 1; fi; \
 	done
 	@# A cartridge header describes the ROM it is in, recomputed here
-	@# independently of tools/romfix.py.
+	@# independently of tools/romfix.sh.
 	@id=$$($(MAKE) -s -C '$@' print-PROJECT_ID); f='$@'/$$id.cart; \
 	if [ -f "$$f" ]; then \
 	  sz=$$(stat -c %s "$$f"); \

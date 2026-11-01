@@ -22,7 +22,7 @@
 .org 0x180, 0x20
 .ascii STR(HEADER_SOFTWARE_ID)
 .org 0x18E, 0x20
-// checksum, filled in after linking by tools/romfix.py
+// checksum, filled in after linking by tools/romfix.sh
 .word  0
 .org 0x190
 #if TARGET == MEGACD_MODE1
@@ -34,7 +34,7 @@
 #endif
 .org 0x1A0, 0x20
 .long 0x0
-// ROM end, filled in after linking by tools/romfix.py
+// ROM end, filled in after linking by tools/romfix.sh
 .long 0
 # TODO add variables for Extra Memory and Modem
 .ascii "            "
