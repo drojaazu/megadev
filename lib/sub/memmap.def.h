@@ -60,35 +60,42 @@
  */
 #define WORD_RAM_1M 0x0C0000 /*word RAM base in 1M bit mode*/
 
-#define EXVEC_ADDRERR	 0x005F40
-#define EXVEC_ILLEGAL	 0x005F46
-#define EXVEC_ZERODIV	 0x005F4C
-#define EXVEC_CHK			 0x005F52
-#define EXVEC_TRAPV		 0x005F58
-#define EXVEC_PRIVERR	 0x005F5E
-#define EXVEC_TRACE		 0x005F64
-#define EXVEC_LINE1010 0x005F6A
-#define EXVEC_LINE1111 0x005F70
-#define EXVEC_LEVEL1	 0x005F76 /* Graphics operation complete */
-#define EXVEC_LEVEL2	 0x005F7C /* INT 2 from Main CPU */
-#define EXVEC_LEVEL3	 0x005F82 /* GA Timer Interrupt */
-#define EXVEC_LEVEL4	 0x005F88 /* CDD complete */
-#define EXVEC_LEVEL5	 0x005F8E /* CDC complete */
-#define EXVEC_LEVEL6	 0x005F94 /* Subcode buffer full */
-#define EXVEC_LEVEL7	 0x005F9A
-#define EXVEC_TRAP0		 0x005FA0
-#define EXVEC_TRAP1		 0x005FA6
-#define EXVEC_TRAP2		 0x005FAC
-#define EXVEC_TRAP3		 0x005FB2
-#define EXVEC_TRAP4		 0x005FB8
-#define EXVEC_TRAP5		 0x005FBE
-#define EXVEC_TRAP6		 0x005FC4
-#define EXVEC_TRAP7		 0x005FCA
-#define EXVEC_TRAP8		 0x005FD0
-#define EXVEC_TRAP9		 0x005FD6
-#define EXVEC_TRAPA		 0x005FDC
-#define EXVEC_TRAPB		 0x005FE2
-#define EXVEC_TRAPC		 0x005FE8
-#define EXVEC_TRAPD		 0x005FEE
-#define EXVEC_TRAPE		 0x005FF4
-#define EXVEC_TRAPF		 0x005FFA
+/*
+ * Sub BIOS exception and interrupt jump table: one `jmp xxx.l` per vector,
+ * 0x5F40 to 0x5FFF. Each EXVEC_* names the address operand of its entry, as
+ * the Main CPU's do, so a handler is installed with
+ * move.l #handler, (EXVEC_LEVEL2). Vectors 3 to 11, the seven interrupt
+ * levels and the sixteen TRAPs; there is no bus error entry.
+ */
+#define EXVEC_ADDRERR	 0x005F42
+#define EXVEC_ILLEGAL	 0x005F48
+#define EXVEC_ZERODIV	 0x005F4E
+#define EXVEC_CHK			 0x005F54
+#define EXVEC_TRAPV		 0x005F5A
+#define EXVEC_PRIVERR	 0x005F60
+#define EXVEC_TRACE		 0x005F66
+#define EXVEC_LINE1010 0x005F6C
+#define EXVEC_LINE1111 0x005F72
+#define EXVEC_LEVEL1	 0x005F78 /* Graphics operation complete */
+#define EXVEC_LEVEL2	 0x005F7E /* INT 2 from Main CPU */
+#define EXVEC_LEVEL3	 0x005F84 /* GA Timer Interrupt */
+#define EXVEC_LEVEL4	 0x005F8A /* CDD complete */
+#define EXVEC_LEVEL5	 0x005F90 /* CDC complete */
+#define EXVEC_LEVEL6	 0x005F96 /* Subcode buffer full */
+#define EXVEC_LEVEL7	 0x005F9C
+#define EXVEC_TRAP0		 0x005FA2
+#define EXVEC_TRAP1		 0x005FA8
+#define EXVEC_TRAP2		 0x005FAE
+#define EXVEC_TRAP3		 0x005FB4
+#define EXVEC_TRAP4		 0x005FBA
+#define EXVEC_TRAP5		 0x005FC0
+#define EXVEC_TRAP6		 0x005FC6
+#define EXVEC_TRAP7		 0x005FCC
+#define EXVEC_TRAP8		 0x005FD2
+#define EXVEC_TRAP9		 0x005FD8
+#define EXVEC_TRAPA		 0x005FDE
+#define EXVEC_TRAPB		 0x005FE4
+#define EXVEC_TRAPC		 0x005FEA
+#define EXVEC_TRAPD		 0x005FF0
+#define EXVEC_TRAPE		 0x005FF6
+#define EXVEC_TRAPF		 0x005FFC

@@ -13,6 +13,7 @@ This guide lists every change in Megadev 2.0 that requires a change to a project
 - Module startup code
 - Linker script symbols
 - Resident modules
+- Exception vectors
 
 ---
 
@@ -339,3 +340,9 @@ Every linker script now defines the same layout symbols, listed in `docs/dev_in_
 A module that lists a resident module among its prerequisites links against the resident module's exports instead of the whole module, and `-z muldefs` is no longer used. A global function or variable defined in both modules now fails the link with `multiple definition`; in 1.x the module's own definition silently won. Rename one, make it `static`, or hide the resident module's copy with `__attribute__((visibility("hidden")))`.
 
 Layout symbols, linker script symbols, `main`, `init`, `hblank` and `vblank` are not exported and need no change. `GLOBAL_SYM` and the assembly `GLOBAL` macro now make their symbols hidden.
+
+# Exception vectors
+
+## Sub CPU EXVEC_* values point at the jump target
+
+In `sub/memmap.def.h`, each `EXVEC_*` now names the address operand of its jump table entry, two bytes past the entry, as the Main CPU's `EXVEC_*` always have. Install a handler with `move.l #handler, (EXVEC_LEVEL2)`. Code that added 2 to the old values should drop the addition.
