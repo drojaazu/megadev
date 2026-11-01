@@ -18,22 +18,26 @@ SECTIONS
 {
   .text (READONLY) : SUBALIGN(2)
   {
-		_TEXT_ORIGIN = .;
+    _ROM_ORIGIN = .;
     KEEP(*(.header*))
+    _TEXT_ORIGIN = .;
     *(.text*)
-    *(.rodata*)
     _TEXT_LENGTH = ABSOLUTE(. - _TEXT_ORIGIN);
+    _RODATA_ORIGIN = .;
+    *(.rodata*)
+    _RODATA_LENGTH = ABSOLUTE(. - _RODATA_ORIGIN);
+    _ROM_LENGTH = ABSOLUTE(. - _ROM_ORIGIN);
   } > SP
 
   /* The Boot ROM loads the SP as one image, so initialized data is stored
   where it runs, right after the code. */
   .data : SUBALIGN(2)
   {
-    _RAM_ORIGIN = .;
     _RAM_DATA_ORIGIN = .;
     *(.data*)
-		. = ALIGN(4);
+    . = ALIGN(4);
     _RAM_DATA_LENGTH = ABSOLUTE(. - _RAM_DATA_ORIGIN);
+    _RAM_DATA_LENGTH_LOOPSZ = ABSOLUTE(_RAM_DATA_LENGTH) >> 2;
   } > SP
 
   .bss : SUBALIGN(2)
@@ -43,8 +47,10 @@ SECTIONS
     *(COMMON)
     . = ALIGN(4);
     _BSS_LENGTH = ABSOLUTE(. - _BSS_ORIGIN);
+    _BSS_LENGTH_LOOPSZ = ABSOLUTE(_BSS_LENGTH) >> 2;
   } > SP
   _RAM_LENGTH = _RAM_DATA_LENGTH + _BSS_LENGTH;
 
+  _ROM_DATA_ORIGIN = _RAM_DATA_ORIGIN; /* initial values are already in place */
   INCLUDE no_constructors.ld
 }

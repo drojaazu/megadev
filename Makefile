@@ -206,7 +206,7 @@ check-stack:
 	  if $(STACK_LD) -T cfg/module_mmd.ld $$o $(CHECK_DIR)/stack_main.o -o $$e 2>/dev/null; then \
 	    printf 'FAIL stack: %s linked without STACK_TOP\n' $$s; exit 1; fi; \
 	  $(STACK_LD) --defsym=STACK_TOP=0xFFC000 --defsym=STACK_SIZE=0x1000 -T cfg/module_mmd.ld $$o $(CHECK_DIR)/stack_main.o -o $$e || exit 1; \
-	  $(M68K_PREFIX)objdump -d --no-show-raw-insn -j .rom $$e | grep -A1 'moveal #16760832,%sp' | grep -q 'jmp' || { \
+	  $(M68K_PREFIX)objdump -d --no-show-raw-insn -j .text $$e | grep -A1 'moveal #16760832,%sp' | grep -q 'jmp' || { \
 	    printf 'FAIL stack: %s does not set sp just before entering main\n' $$s; exit 1; }; \
 	done
 	@o=$(CHECK_DIR)/stack_std_init_stack.o; \
@@ -272,7 +272,7 @@ check-sections: check-init
 	@printf '.global main\nmain: rts\n.comm common_buf, 64\n' > $(CHECK_DIR)/sections_comm.s
 	@$(CC) -m68000 -c $(CHECK_DIR)/sections_comm.s -o $(CHECK_DIR)/sections_comm.o
 	@for c in 'module_mmd _BSS_ORIGIN _BSS_LENGTH' 'module_smd _BSS_ORIGIN _BSS_LENGTH' 'ip _BSS_ORIGIN _BSS_LENGTH' \
-	          'sp _BSS_ORIGIN _BSS_LENGTH' 'md_cart _bss_org _bss_len'; do \
+	          'sp _BSS_ORIGIN _BSS_LENGTH' 'md_cart _BSS_ORIGIN _BSS_LENGTH'; do \
 	  set -- $$c; e=$(CHECK_DIR)/sections_$$1.elf; \
 	  $(STACK_LD) --defsym=MODULE_NO_INIT=1 -T cfg/$$1.ld $(CHECK_DIR)/sections_comm.o -o $$e 2>/dev/null || { \
 	    printf 'FAIL sections: %s did not link\n' $$1; exit 1; }; \
@@ -280,6 +280,19 @@ check-sections: check-init
 	  buf=$$(sym common_buf); org=$$(sym $$2); len=$$(sym $$3); \
 	  [ $$((buf)) -ge $$((org)) ] && [ $$((buf + 64)) -le $$((org + len)) ] || { \
 	    printf 'FAIL sections: %s: common symbol at %s is outside the zeroed region %s + %s\n' $$1 $$buf $$org $$len; exit 1; }; \
+	done
+	@# Every script defines the same layout symbols, with consistent totals.
+	@for ld in module_mmd module_smd ip sp md_cart; do e=$(CHECK_DIR)/sections_$$ld.elf; \
+	  for n in _ROM_ORIGIN _ROM_LENGTH _TEXT_ORIGIN _TEXT_LENGTH _RODATA_ORIGIN _RODATA_LENGTH _ROM_DATA_ORIGIN \
+	           _RAM_DATA_ORIGIN _RAM_DATA_LENGTH _RAM_DATA_LENGTH_LOOPSZ _BSS_ORIGIN _BSS_LENGTH _BSS_LENGTH_LOOPSZ _RAM_LENGTH; do \
+	    $(M68K_PREFIX)nm $$e | awk -v n=$$n '$$3 == n { f = 1 } END { exit !f }' || { printf 'FAIL sections: %s does not define %s\n' $$ld $$n; exit 1; }; \
+	  done; \
+	  v() { echo $$(( 0x$$($(M68K_PREFIX)nm $$e | awk -v n=$$1 '$$3 == n { print $$1 }') )); }; \
+	  [ $$(v _RAM_LENGTH) = $$(( $$(v _RAM_DATA_LENGTH) + $$(v _BSS_LENGTH) )) ] && \
+	  [ $$(v _BSS_LENGTH_LOOPSZ) = $$(( $$(v _BSS_LENGTH) >> 2 )) ] && \
+	  [ $$(v _RAM_DATA_LENGTH_LOOPSZ) = $$(( $$(v _RAM_DATA_LENGTH) >> 2 )) ] && \
+	  [ $$(v _ROM_LENGTH) -ge $$(( $$(v _TEXT_LENGTH) + $$(v _RODATA_LENGTH) )) ] || { \
+	    printf 'FAIL sections: %s layout symbol totals are inconsistent\n' $$ld; exit 1; }; \
 	done
 	@printf 'int v;\n__attribute__((constructor)) static void c(void) { v = 1; }\n__attribute__((destructor)) static void d(void) { v = 0; }\nint main(void) { return v; }\n' > $(CHECK_DIR)/sections_ctor.c
 	@$(CC) $(CHECK_FLAGS) -DTARGET=MEGACD -O1 -c $(CHECK_DIR)/sections_ctor.c -o $(CHECK_DIR)/sections_ctor.o
@@ -306,7 +319,7 @@ check-sections: check-init
 	@$(STACK_LD) --gc-sections -T cfg/md_cart.ld $(CHECK_DIR)/sections_main.o $(CHECK_DIR)/sections_vec.o -o $(CHECK_DIR)/sections_gc.elf
 	@$(M68K_PREFIX)objdump -h $(CHECK_DIR)/sections_gc.elf | awk '$$2 == ".text" { exit !(strtonum("0x" $$3) >= 8) }' || { \
 	  printf 'FAIL sections: --gc-sections removed the cartridge vector table\n'; exit 1; }
-	@printf '== sections: common symbols are zeroed, static constructors stop the link, cartridge vectors start the ROM, --gc-sections keeps entry code\n'
+	@printf '== sections: every script defines the same layout symbols, zeroes common symbols and stops on static constructors; cartridge vectors start the ROM; --gc-sections keeps entry code\n'
 
 # ---------------------------------------------------------------------------
 # Loop 5: every library header can be included by two translation units that

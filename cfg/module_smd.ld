@@ -17,6 +17,6 @@ MEMORY
 SECTIONS
 {
   ENTRY(main)
-  _MODULE_ROM_LOAD = MODULE_ROM_ORIGIN; /* no header: .rom starts the file */
+  _MODULE_ROM_LOAD = MODULE_ROM_ORIGIN; /* no header: .text starts the file */
   INCLUDE module_common.ld
 }
