@@ -19,7 +19,7 @@ SECTIONS
   .text (READONLY) : SUBALIGN(2)
   {
 		_TEXT_ORIGIN = .;
-    *(.header*)
+    KEEP(*(.header*))
     *(.text*)
     *(.rodata*)
     _TEXT_LENGTH = ABSOLUTE(. - _TEXT_ORIGIN);

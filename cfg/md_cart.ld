@@ -32,6 +32,8 @@ SECTIONS
   {
     _rom_org = .;
 		_text_org = .;
+    /* the vector table and header (md_vectors.s, md_header.s) start the ROM */
+    KEEP(*(.vectors))
     *(.text*)
 		_text_end = .;
 		_text_len = ABSOLUTE(. - _text_org);

@@ -7,6 +7,9 @@
 
 #include "macro.s"
 
+// The vector table and the header that follows it (md_header.s) go in their
+// own section, which md_cart.ld places at address 0 whatever the source order.
+.section .vectors, "ax"
 .org 0
 
 dc.l INIT_SSP          // Initial stack pointer
