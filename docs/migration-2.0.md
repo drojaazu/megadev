@@ -346,3 +346,7 @@ Layout symbols, linker script symbols, `main`, `init`, `hblank` and `vblank` are
 ## Sub CPU EXVEC_* values point at the jump target
 
 In `sub/memmap.def.h`, each `EXVEC_*` now names the address operand of its jump table entry, two bytes past the entry, as the Main CPU's `EXVEC_*` always have. Install a handler with `move.l #handler, (EXVEC_LEVEL2)`. Code that added 2 to the old values should drop the addition.
+
+## Cartridge trace vector renamed
+
+`md_vectors.s` names the trace vector `EX_TRACE`, like the vectors around it. It was `EXEXVEC_TRACE`; rename the `GLOBAL` line in the project's `init.s`.
