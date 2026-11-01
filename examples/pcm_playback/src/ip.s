@@ -17,7 +17,7 @@
 
   // clear ram
   moveq    #0, d0
-  move.l   #_BSS_LENGTH, d1
+  move.l   #_BSS_LENGTH_LOOPSZ, d1
   lea      _BSS_ORIGIN, a0
   bra 1f
 0:move.l   d0, (a0)+
