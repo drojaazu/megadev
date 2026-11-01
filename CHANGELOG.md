@@ -21,6 +21,10 @@ replacement.
 - **Compiler runtime**: `memcpy`, `memmove`, `memset`, `memcmp`, and 32-bit
   multiply, divide and modulo helpers, which GCC calls on its own. Linked into
   every program automatically.
+- **Debug text without the Boot ROM** (`main/text.h`): `vdp_load_1bpp_tiles`
+  loads a 1bpp font, `text_print` prints a C string at a `VDP_PLANE_XY`
+  position. Includes `font8x8`, a public domain 8x8 ASCII font, for the Mega
+  Drive alone. `str_to_bios` converts a C string for `bios_print`.
 - **Cartridge header**: the build writes the ROM end address and checksum into
   the header of every cartridge (`tools/romfix.sh`).
 - **Layout symbols**: every linker script defines the same symbols describing
@@ -84,6 +88,8 @@ replacement.
   fail at link time instead of producing code that does not run on a 68000.
 - `sub/commsync.s`, `cfg/module_mmd_newwork.ld` and `cfg/module_bin.ld`,
   which did not assemble or were unused.
+- `lib/sysfont.1bpp.chr`, an unused copy of the Boot ROM font, which is
+  Sega's.
 
 ### Fixed
 
@@ -114,4 +120,6 @@ replacement.
 - The `pcm_playback` example builds from a fresh clone.
 - Example `clean` targets work.
 - The `bram` and `pcm_playback` Sub CPU modules initialize their variables.
+- The `bram` example prints its total size and status on the right rows, and
+  the total size in full.
 - Doxygen configuration: correct input paths, assembly sources included.

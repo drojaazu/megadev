@@ -10,9 +10,9 @@
  * an optional '-' or '0' flag, a field width, and the l length modifier. No
  * floating point.
  *
- * Output is NUL-terminated as in C. To print the result with the Boot ROM
- * routines, append the 0xFF terminator they expect (STRING_TERMINATOR in
- * str_util.def.h).
+ * Output is NUL-terminated as in C. Print it with text_print (main/text.h),
+ * or convert it with str_to_bios (str_util.h) for the Boot ROM print routines,
+ * which expect a 0xFF terminator.
  */
 
 #pragma once
