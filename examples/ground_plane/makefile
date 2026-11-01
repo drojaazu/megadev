@@ -86,6 +86,7 @@ clean:
 
 $(DISC_PATH)/ipx.mmd: \
 	main/ipx_init_stack.s \
+	exvec_main.s \
 	ipx.res.s \
 	tables.s \
 	ipx.c \

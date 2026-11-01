@@ -88,6 +88,7 @@ clean:
 
 $(DISC_PATH)/ipx.mmd: \
 	main/ipx_init.s \
+	exvec_main.s \
 	ipx.res.s \
 	ipx.c \
 	main/io.macro.s

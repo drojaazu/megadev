@@ -1,6 +1,7 @@
 #include "ipx.h"
 #include "shared.h"
 #include <main/bios.h>
+#include <main/exvec.h>
 #include <main/comm.h>
 #include <main/gate_arr.h>
 #include <main/io.h>
@@ -14,13 +15,13 @@
 #include <macro.h>
 #include <main/memmap.def.h>
 
-// Module layout: the IPX runs from Work RAM and stays resident; the ex*
-// modules import its symbols.
-GLOBAL_SYM(MODULE_ROM_ORIGIN, WORK_RAM);
-GLOBAL_SYM(MODULE_RAM_ORIGIN, 0xFFF500);
-GLOBAL_SYM(MODULE_ROM_LENGTH, MODULE_RAM_ORIGIN - MODULE_ROM_ORIGIN);
-GLOBAL_SYM(MODULE_RAM_LENGTH, 0x200);
-GLOBAL_SYM(MMD_DEST, WORK_RAM);
+// Module layout (Work RAM map in shared.h): the IPX runs from Work RAM and
+// stays resident; the ex* modules import its symbols.
+GLOBAL_SYM(MODULE_ROM_ORIGIN, IPX_ROM_ORIGIN);
+GLOBAL_SYM(MODULE_ROM_LENGTH, IPX_ROM_LENGTH);
+GLOBAL_SYM(MODULE_RAM_ORIGIN, IPX_RAM_ORIGIN);
+GLOBAL_SYM(MODULE_RAM_LENGTH, IPX_RAM_LENGTH);
+GLOBAL_SYM(MMD_DEST, IPX_ROM_ORIGIN);
 
 #define print_xy(x, y)                                                   \
   (to_vdp_addr(BIOS_VDP_DEFAULT_PLANEA + VDP_PLANE_POS(x, y, Width64)) | VRAM_W)
@@ -197,6 +198,9 @@ void main()
 {
   init_ext_port();
   *bios_vblank_user = vint_user;
+  // crash handler for Main CPU exceptions (docs/crash_handler.md)
+  exvec_install();
+
   *((volatile void *(*) ) EXVEC_LEVEL2) = INT2_EXT;
   // enable INT2 interrupts
   vdp_reg const vdp_mode3[] = {VDP_REG_MODE3 | VDP_EXTINT_ENABLE, 0};
@@ -218,6 +222,6 @@ void main()
   do
   {
     ga_main_grant_2m();
-
+    exvec_check_sub();
   } while (1);
 }
