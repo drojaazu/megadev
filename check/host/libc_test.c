@@ -32,6 +32,8 @@
 #include "../../lib/runtime/sort.c"
 #include "../../lib/runtime/strtol.c"
 #include "../../lib/runtime/string.c"
+#include "../../lib/runtime/text_expand.c"
+#include "../../lib/runtime/font8x8.c"
 
 /* The target's memcpy, memmove, memset and memcmp are 68000 assembly and cannot
  * run here; these are reference implementations with the same contract, so the
@@ -254,11 +256,28 @@ static void test_snprintf(void)
   CHECK(snprintf(buf, sizeof buf, "x%") == 1 && strcmp(buf, "x") == 0);   // trailing % is dropped
 }
 
+static void test_text(void)
+{
+  // 1bpp to 4bpp: leftmost pixel in bit 7 lands in the top nibble
+  CHECK(text_expand_row(0x00, 1, 0) == 0x00000000);
+  CHECK(text_expand_row(0xFF, 1, 0) == 0x11111111);
+  CHECK(text_expand_row(0x80, 0xF, 0) == 0xF0000000);
+  CHECK(text_expand_row(0x01, 0xF, 0) == 0x0000000F);
+  CHECK(text_expand_row(0xA5, 3, 2) == 0x32322323);
+  CHECK(text_expand_row(0x0F, 0x1E, 0x12) == 0x2222EEEE);  // colors are masked to 4 bits
+
+  // font8x8: 'A' starts with two set pixels at columns 2-3, space is empty
+  CHECK(font8x8['A' - 0x20][0] == 0x30);
+  CHECK(font8x8[0][0] == 0 && font8x8[0][7] == 0);
+  CHECK(font8x8['!' - 0x20][0] == 0x18);  // symmetric: centered in either bit order
+}
+
 int main(void)
 {
   test_string();
   test_stdlib();
   test_snprintf();
+  test_text();
   if (failures)
   {
     printf("libc test: %d failure(s)\n", failures);

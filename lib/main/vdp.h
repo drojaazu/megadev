@@ -172,6 +172,21 @@ typedef enum PlaneWidth
 #define VDP_PLANE_POS(x, y, width) (((y) * (width)) + ((x) << 1))
 
 /**
+ * @def VDP_PLANE_XY
+ * @brief VRAM write command for the cell at x/y of a plane
+ * @param plane_addr VRAM address of the plane's nametable
+ * @param x horizontal position in cells
+ * @param y vertical position in cells
+ * @param width width of the plane (PlaneWidth, in bytes)
+ *
+ * @details
+ * The position argument of text_print and bios_print. With the Boot ROM's
+ * default layout, plane A is at BIOS_VDP_DEFAULT_PLANEA and is Width64.
+ */
+#define VDP_PLANE_XY(plane_addr, x, y, width) \
+  (to_vdp_addr((plane_addr) + VDP_PLANE_POS(x, y, width)) | VRAM_W)
+
+/**
  * @fn to_vdp_addr_runtime
  * @brief Converts a 16 bit VRAM address into VDP format at runtime
  * @note Consider using the @ref to_vdp_addr macro instead to use compile time
