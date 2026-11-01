@@ -13,7 +13,7 @@ sp_header:
   .word   0x0100                  // version
   .word   0	                      // type
   .long   0                       // pointer to next module
-  .long   _TEXT_LENGTH          // module size - size of ROM section
+  .long   _ROM_LENGTH          // module size - size of ROM section
   .long   sp_jmptbl - sp_header   // offset to jump table
   .long   _RAM_LENGTH          // work ram size - size of RAM section
 

@@ -11,6 +11,7 @@ This guide lists every change in Megadev 2.0 that requires a change to a project
 - Sub CPU system call names
 - C library subset
 - Module startup code
+- Linker script symbols
 
 ---
 
@@ -312,3 +313,20 @@ Add `std_init.s` to the module's prerequisites, or `main/ipx_init.s` for a self-
 #include <macro.h>
 GLOBAL_SYM(MODULE_NO_INIT, 1);
 ```
+
+# Linker script symbols
+
+Every linker script now defines the same layout symbols, listed in `docs/dev_in_c.md` under Layout symbols. All lengths are in bytes.
+
+| 1.x | 2.0 |
+|---|---|
+| Cartridge `_rom_org`, `_rom_len` | `_ROM_ORIGIN`, `_ROM_LENGTH` |
+| Cartridge `_text_org`, `_text_len` | `_TEXT_ORIGIN`, `_TEXT_LENGTH` |
+| Cartridge `_data_org`, `_data_len` | `_RAM_DATA_ORIGIN`, `_RAM_DATA_LENGTH` |
+| Cartridge `_bss_org`, `_bss_len` | `_BSS_ORIGIN`, `_BSS_LENGTH` |
+| Cartridge `_ram_len` | `_RAM_LENGTH` |
+| Cartridge `_text_end`, `_rom_end`, `_data_end`, `_bss_end`, `_ram_org` | Removed; add the length to the origin |
+| IP and SP `_TEXT_ORIGIN`, `_TEXT_LENGTH` | Now cover the code only. The whole image, including the security block or SP header and read-only data, is `_ROM_ORIGIN`, `_ROM_LENGTH`. |
+| IP and SP `_RAM_DATA_LENGTH` | Now bytes, not longs |
+| IP and SP `_RAM_ORIGIN` | `_RAM_DATA_ORIGIN` |
+| Module `_ROM_LENGTH_LOOPSZ` | Removed |

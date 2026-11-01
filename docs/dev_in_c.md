@@ -47,6 +47,22 @@ A module without startup code fails to link with `module has no init code`. A mo
 
 See the example projects' makefiles.
 
+### Layout symbols
+
+Every linker script (`cfg/*.ld`) defines the same symbols describing the program's layout, for startup code and for programs that manage memory themselves. Lengths are in bytes; the `_LOOPSZ` forms are the length in longs, for a `dbf` loop.
+
+| Symbol | Meaning |
+|---|---|
+| `_ROM_ORIGIN`, `_ROM_LENGTH` | Everything stored ahead of the initial values of `.data`: entry code or header, code and read-only data |
+| `_TEXT_ORIGIN`, `_TEXT_LENGTH` | Code |
+| `_RODATA_ORIGIN`, `_RODATA_LENGTH` | Read-only data |
+| `_ROM_DATA_ORIGIN` | Where the initial values of `.data` are when startup code copies them. In the boot sector IP and SP, the same as `_RAM_DATA_ORIGIN`. |
+| `_RAM_DATA_ORIGIN`, `_RAM_DATA_LENGTH`, `_RAM_DATA_LENGTH_LOOPSZ` | Initialized variables |
+| `_BSS_ORIGIN`, `_BSS_LENGTH`, `_BSS_LENGTH_LOOPSZ` | Zeroed variables |
+| `_RAM_LENGTH` | `_RAM_DATA_LENGTH` plus `_BSS_LENGTH` |
+
+Modules also define `_INIT_ORIGIN` and `_INIT_LENGTH`, the startup code at the start of `_ROM_ORIGIN`.
+
 ## Integer Types
 
 We recommend *not* using the `int` type for integers. With gcc-m68k, int is four bytes in size, which may be a waste of space depending on the operation you are trying to perform. Memory usage should always be optimized.

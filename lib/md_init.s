@@ -49,9 +49,9 @@ skip_tmss:
 skip_init:
   // copy initialized data from ROM to RAM, on every reset so main always
   // starts with the initial values
-  lea     _data_load, a0
-  lea     _data_org, a1
-  move.l  #_data_len, d7
+  lea     _ROM_DATA_ORIGIN, a0
+  lea     _RAM_DATA_ORIGIN, a1
+  move.l  #_RAM_DATA_LENGTH, d7
   addq.l  #1, d7
   lsr.l   #1, d7
   bra.s   2f
