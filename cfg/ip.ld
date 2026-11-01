@@ -24,7 +24,17 @@ SECTIONS
     _TEXT_LENGTH = ABSOLUTE(. - _TEXT_ORIGIN);
   } > IP
 
-  .ram_bss : SUBALIGN(2)
+  /* The Boot ROM loads the IP as one image, so initialized data is stored
+  where it runs, right after the code. */
+  .data : SUBALIGN(2)
+  {
+    _RAM_ORIGIN = .;
+    _RAM_DATA_ORIGIN = .;
+    *(.data*)
+    . = ALIGN(4);
+    _RAM_DATA_LENGTH = ABSOLUTE(. - _RAM_DATA_ORIGIN);
+  } > IP
+  .bss : SUBALIGN(2)
   {
     _BSS_ORIGIN = .;
     *(.bss*)
@@ -32,16 +42,5 @@ SECTIONS
     _BSS_LENGTH = ABSOLUTE(. - _BSS_ORIGIN);
     _BSS_LENGTH_LOOPSZ = ABSOLUTE(_BSS_LENGTH) >> 2;
   } > IP
-
-  .data : AT ( ADDR(.text) + SIZEOF(.text) ) SUBALIGN(2)
-  {
-    _RAM_ORIGIN = .;
-    _RAM_DATA_ORIGIN = .;
-    *(.data*)
-    . = ALIGN(4);
-    _RAM_DATA_LENGTH = ABSOLUTE(. - _RAM_DATA_ORIGIN) >> 2;
-  } > IP
-
-  _RAM_LENGTH = _RAM_DATA_LENGTH + _BSS_LENGTH >> 2;
-
+  _RAM_LENGTH = _RAM_DATA_LENGTH + _BSS_LENGTH;
 }
