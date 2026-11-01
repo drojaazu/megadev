@@ -26,6 +26,10 @@ Z80_AS:=sjasmplus
 MKISOFS?=mkisofs
 ISO_FLAGS?=-iso-level 1 -pad -sysid "MEGA_CD" -appid "" -publisher "" -preparer ""
 
+# Font for the crash handler's report (main/exvec.h): KIT for font8x8, BIOS for
+# the Boot ROM's font (Mega CD and Mode 1 only).
+EXVEC_FONT?=KIT
+
 ################################################################################
 # STOP!
 # You should not need to change anything below this line unless you really,
@@ -134,6 +138,12 @@ AS_FLAGS+= \
 # Each compile writes a .d file listing the headers it included; they are
 # included at the end of this file so a header change rebuilds its users.
 DEP_FLAGS:=-MMD -MP
+ifeq ($(EXVEC_FONT),BIOS)
+  CC_FLAGS+= -DEXVEC_FONT_BIOS
+else ifneq ($(EXVEC_FONT),KIT)
+  $(error EXVEC_FONT must be KIT or BIOS, not "$(EXVEC_FONT)")
+endif
+
 LD_FLAGS+= \
 	-nostdlib -z noexecstack -L$(CFG_PATH)
 

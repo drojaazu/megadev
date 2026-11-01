@@ -21,6 +21,11 @@ replacement.
 - **Compiler runtime**: `memcpy`, `memmove`, `memset`, `memcmp`, and 32-bit
   multiply, divide and modulo helpers, which GCC calls on its own. Linked into
   every program automatically.
+- **Crash handler** (`main/exvec.h`, `sub/exvec.h`): on an exception, shows
+  the CPU state on screen and over the serial port. Main CPU on cartridges,
+  in Mode 1 and on the Mega CD; Sub CPU crashes are reported by the Main CPU.
+  `EXVEC_FONT` selects the kit's font or the Boot ROM's. See
+  `docs/crash_handler.md`.
 - **Debug text without the Boot ROM** (`main/text.h`): `vdp_load_1bpp_tiles`
   loads a 1bpp font, `text_print` prints a C string at a `VDP_PLANE_XY`
   position. Includes `font8x8`, a public domain 8x8 ASCII font, for the Mega
@@ -78,6 +83,8 @@ replacement.
 - Cartridges: the link fails if the ROM exceeds 4 MB, or if variables reach
   the stack (`INIT_SSP`, optional `STACK_SIZE`) or, in Mode 1, the system
   vector table.
+- Sub CPU `EXVEC_*` (`sub/memmap.def.h`) name the jump target in each entry,
+  as the Main CPU's do. The cartridge trace vector is `EX_TRACE`.
 - `math.h`: the 16-bit divides are `divs16` and `divu16`, returning `Div16`.
 - `build/` and `disc/` are created by the build; `make init` is no longer
   needed on a fresh clone. An unset `MEGADEV_PATH` is reported.
@@ -88,6 +95,7 @@ replacement.
   fail at link time instead of producing code that does not run on a 68000.
 - `sub/commsync.s`, `cfg/module_mmd_newwork.ld` and `cfg/module_bin.ld`,
   which did not assemble or were unused.
+- `main/cd_exception.s`, replaced by the crash handler.
 - `lib/sysfont.1bpp.chr`, an unused copy of the Boot ROM font, which is
   Sega's.
 
