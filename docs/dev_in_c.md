@@ -110,6 +110,8 @@ GLOBAL_SYM(STACK_SIZE, 0x1000);
 
 The link fails if `STACK_TOP` is missing or odd, if the stack overlaps the module's code or RAM, or if an MMD's stack overlaps the exception jump table at 0xFFFD00 to 0xFFFDB4. A `STACK_TOP` of 0 starts at the top of Work RAM, since the first push wraps around to 0xFFFFFC, and has 588 bytes above the jump table; that space is only free if you are not using the Main BIOS (see `megacd_dev.md`). Without `STACK_SIZE`, only `STACK_TOP` itself is checked. These checks only cover the module's size as linked. They cannot tell you how deep the stack gets at runtime, and they do not know about other modules or Boot ROM memory, so the stack still needs a place in your memory map.
 
+A cartridge's stack starts at `INIT_SSP`, defined in its `init.s`. The link fails if the cartridge's variables reach the stack, or reach `STACK_SIZE` bytes below `INIT_SSP` if `STACK_SIZE` is defined. A Mode 1 cartridge's variables and stack must also stay clear of the system vector table at 0xFFFD00 to 0xFFFDB4. The ROM must fit in the 4 MB of cartridge space.
+
 Do not use these with a module that returns to its caller, such as a module called by an IPX. The return address is on the old stack.
 
 ## Lack of "naked" function support
