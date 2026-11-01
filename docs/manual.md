@@ -287,7 +287,7 @@ Megadev supports C (with GCC extensions) and M68000 ASM. These can be mixed free
 
 We do not yet support Z80 ASM for the Mega Drive's Z80 coprocessor, but this is on the roadmap.
 
-C++ is not supported. The kit, its examples and its template are C and assembly; the makefile has no rules for C++ sources, the entry code does not run global constructors, and no C++ runtime support is provided.
+C++ is not supported. The kit, its examples and its template are C and assembly; the makefile has no rules for C++ sources, the entry code does not run global constructors, and no C++ runtime support is provided. A global object with a constructor or destructor fails to link with `static constructors and destructors are not supported`.
 
 The public headers can be included from C++: they carry `extern "C"` guards, so a C++ translation unit links against the kit's functions, and their definitions of `bool` and `NULL` take forms C++ accepts. That is the extent of it. A project that adds its own C++ build rules is responsible for everything else, including the compiler's own complaints about the headers, such as the C++17 warning about the `register` keyword, which the C code uses as intended.
 

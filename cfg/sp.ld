@@ -46,4 +46,5 @@ SECTIONS
   } > SP
   _RAM_LENGTH = _RAM_DATA_LENGTH + _BSS_LENGTH;
 
+  INCLUDE no_constructors.ld
 }
