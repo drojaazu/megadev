@@ -405,13 +405,14 @@ Run `make check` from the repository root before merging any branch. It must pas
 | 2 | `check-headers` | Every `lib/**/*.h` compiles alone with `-Wall -Wextra -Werror`, once per hardware target (`MEGACD`, `MEGACD_MODE1`, `MEGADRIVE`). A header that only works when something else was included first fails here. |
 | 3 | `check-asm` | Every `lib/**/*.s` assembles alone. Files that cannot by design, such as `cd_boot.s`, which includes a project's built binaries, are listed in the `Makefile` with a reason. |
 | 4 | `check-link` | Every function the compiler calls on its own (`memcpy`, 32-bit division, and so on) is provided by the runtime; the runtime and those helpers contain only 68000 instructions; a cartridge's initialized data is stored in ROM; 64-bit and floating point arithmetic fail to link. |
-| 5 | `check-stack` | The stack-setting init files set the stack just before `main`, and the module linker scripts reject a misplaced stack. |
+| 5 | `check-stack` | The stack-setting init files set the stack just before `main`; the module linker scripts reject a misplaced stack; the cartridge script rejects a ROM over 4 MB and RAM that reaches the stack or, in Mode 1, the system vector table. |
 | 6 | `check-init` | A module links only with startup code or `MODULE_NO_INIT`. |
-| 7 | `check-odr` | Every header can be included by two translation units linked together, so no header defines storage or a non-static function. |
-| 8 | `check-incremental` | Header dependency tracking works: touching `lib/main/vdp.h` recompiles and relinks `examples/gfx`, and a second build does nothing. |
-| 9 | `check-inline` | Every `static inline` function in every header compiles when used. |
-| 10 | `check-asserts` | The register addresses and bit positions in the hardware definitions match the hardware manuals (`check/asserts`). |
-| 11 | `check-host` | The C library subset gives the right answers, compiled for and run on the host (`check/host/libc_test.c`). |
+| 7 | `check-sections` | Every linker script places assembly common symbols in zeroed RAM and stops the link on static constructors; a cartridge's vector table starts the ROM whatever the source order; `--gc-sections` keeps entry code. |
+| 8 | `check-odr` | Every header can be included by two translation units linked together, so no header defines storage or a non-static function. |
+| 9 | `check-incremental` | Header dependency tracking works: touching `lib/main/vdp.h` recompiles and relinks `examples/gfx`, and a second build does nothing. |
+| 10 | `check-inline` | Every `static inline` function in every header compiles when used. |
+| 11 | `check-asserts` | The register addresses and bit positions in the hardware definitions match the hardware manuals (`check/asserts`). |
+| 12 | `check-host` | The C library subset gives the right answers, compiled for and run on the host (`check/host/libc_test.c`). |
 
 `make clean` removes everything the gate produced.
 
