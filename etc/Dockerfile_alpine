@@ -9,7 +9,8 @@ RUN \
 		clang16-extra-tools \
 		xxd \
 		xz \
-		cdrkit
+		cdrkit \
+		python3
 
 FROM base AS build
 
