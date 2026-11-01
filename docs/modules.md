@@ -17,30 +17,31 @@ Basically, we need to tell the linker at what memory offset the ROM and RAM sect
     MODULE_RAM_ORIGIN
     MODULE_RAM_LENGTH
 
-For example, if we want our module to run on the Main CPU from Word RAM in 2Mbit mode with 1.5 Mbits for program/data (ROM) and 0.5 Mbits for runtime memory (RAM), we would specify the values at file scope in the module's C source:
+For example, to run a module on the Main CPU in place in 2M Word RAM (256 KB at 0x200000), with the last 64 KB of Word RAM for its variables, we would specify the values at file scope in the module's C source:
 
     #include <macro.h>
-    #include <main/memmap.def.h>
 
-    GLOBAL_SYM(MODULE_ROM_ORIGIN, WORD_RAM);
-    GLOBAL_SYM(MODULE_ROM_LENGTH, 0x180000);
-    GLOBAL_SYM(MODULE_RAM_ORIGIN, 0x380000);
-    GLOBAL_SYM(MODULE_RAM_LENGTH, 0x80000);
+    GLOBAL_SYM(MMD_DEST, 0);
+    GLOBAL_SYM(MODULE_ROM_ORIGIN, 0x200100);
+    GLOBAL_SYM(MODULE_ROM_LENGTH, 0x30000 - 0x100);
+    GLOBAL_SYM(MODULE_RAM_ORIGIN, 0x230000);
+    GLOBAL_SYM(MODULE_RAM_LENGTH, 0x10000);
 
-`GLOBAL_SYM` (from `macro.h`) defines an absolute global symbol that the linker script reads; it takes no storage. `WORD_RAM` comes from `main/memmap.def.h`. A module written in assembly uses the equivalent `GLOBAL` macro from `macro.s`:
+`GLOBAL_SYM` (from `macro.h`) defines an absolute symbol that the linker script reads; it takes no storage. The code starts at 0x200100 rather than 0x200000 because of the module's 0x100-byte header; `MMD_DEST` is explained below. A module written in assembly uses the equivalent `GLOBAL` macro from `macro.s`:
 
-    GLOBAL MODULE_ROM_ORIGIN WORD_RAM
-    GLOBAL MODULE_ROM_LENGTH 0x180000
-    GLOBAL MODULE_RAM_ORIGIN 0x380000
-    GLOBAL MODULE_RAM_LENGTH 0x80000
+    GLOBAL MMD_DEST, 0
+    GLOBAL MODULE_ROM_ORIGIN, 0x200100
+    GLOBAL MODULE_ROM_LENGTH, 0x30000 - 0x100
+    GLOBAL MODULE_RAM_ORIGIN, 0x230000
+    GLOBAL MODULE_RAM_LENGTH, 0x10000
 
 Both produce the same symbol. A layout shared by several modules goes in its own small source file that each module lists; see `new_project/src/shared_mmd_layout.c`.
 
-In terms of object sections, .text and .rodata sections will be placed in ROM; .data and .bss will be placed in RAM. There is also a .init section which is guaranteed to be at the beginning of the ROM space. It's recommended only one routine be placed in .init and used as an entry point at a known address.
+In terms of object sections, .text and .rodata are placed in ROM, and .data and .bss in RAM. The .init section, which holds the module's startup code, is placed at the beginning of ROM.
 
 ## Module Entry and Execution Space
 
-There are two requirements which must appear somewhere in the module's code: an entry point and a destination address. The entry point is simple enough: a global symbol named `main`. (For C, this means a function with the signature `void main()`.)
+A module needs startup code, a `main` routine and a destination address. The startup code is `std_init.s`, or `main/ipx_init.s` for a module that copies itself into place; list it among the module's sources. It clears the module's variables and copies their initial values, then runs `main` (for C, `void main()`). A module without startup code fails to link; see `dev_in_c.md`.
 
 The destination address is a global symbol called `MMD_DEST`. It specifies to where in memory the module code should be copied before running. This is useful, for example, to copy a module into Work RAM after it has been loaded into Word RAM from the Sub CPU. However, if your code doesn't need to be moved and should run right where it is (which is usually Word RAM after being loaded), a destination is not necessary. In that case, `MMD_DEST` should be set to 0. (Note that `MMD_DEST` should always be defined, even if the value is 0.)
 
@@ -66,7 +67,7 @@ Megadev uses the MMD format which originates from Sonic CD. These are binaries w
     0x10.l Pointer to VBLANK handler
     0x14 to 0x100 Padding
 
-The most important entry here is the pointer to the main routine. After the module is loaded and set up, the code will jump to (not call) this routine. You can also specify a new HBLANK/VBLANK handler to be installed before the jump to main, though these are optional. All three of these values are automatically determined via the link script, which look for the main routine as a global function called `main` and the interrupt the handlers as global functions called `hblank` and `vblank`.
+The most important entry here is the pointer to the entry routine: the startup code's `init`, which runs `main`. After loading a module into Word RAM, a Main CPU program calls `init_mmd` (`main/mmd.h`), which copies the module to its runtime location if it has one, installs its HBLANK and VBLANK handlers if it has them, and returns the entry point to call. All three pointers are filled in by the linker script, from the symbols `init` (or `main`), `hblank` and `vblank`.
 
 The runtime location entry specifies the address from which the code will be executed. The MMD loader will first copy the binary portion of the module (i.e. everything after the header) to this address before calling main. If this value is zero, the code will not be moved and will execute in place wherever it is located. This destination address is specified by a global symbol called MMD_DEST. (Note that if this value is zero, so that the module is executed where it was initially loaded, you will need to account for the 0x100 header when determining the ROM origin. See the notes in the previous section.)
 
@@ -74,9 +75,9 @@ The module size is the size of the binary portion of the module, that is, the si
 
 There is only one bit in the flags value, bit #6, which will return Word RAM control to the Sub CPU before jumping to main. (This appears to be the only bit used by Sonic CD.) You are free to use the rest of the bits as you wish, but we may associate additional functions to the lower bits of the word someday, if necessary. The flags are specified by a global symbol called `MMD_FLAGS`. Specifying the flags is optional.
 
-This is followed by padding up to offset 0x100. This is not strictly necessary and we only do so because that's what Sonic CD does. You are free to extend into it with your own metadata (it would be a perfect place for identification text during debugging or for hidden "easter egg" text). You can reduce or remove it entirely if you wish, but you will need to modify the MMD loader code (in mmd.macro.s) and the .header section in the module LD script (module_mmd.ld) to account for the start of the module's binary section.
+This is followed by padding up to offset 0x100, as in Sonic CD. You are free to extend into it with your own metadata, such as identification text. To reduce or remove it, change the MMD loader (`init_mmd` in `main/mmd.h` and `INIT_MMD` in `main/mmd.macro.s`) and the .header section in `cfg/module_mmd.ld` to match.
 
-In summary, for a valid MMD module, you must specify an entry point by having a global function called `main` and you must specify a runtime address with a global symbol called MMD_DEST. You can also optionally specify a new HBLANK/VBLANK handler by having a global function called `hblank` and `vblank`, respectively, within your module code, and can also optionally specify optional flags with a global symbol called MMD_FLAGS.
+In summary, a valid MMD module has startup code, a global function called `main`, and a runtime address in a global symbol called `MMD_DEST`. Optionally it has HBLANK and VBLANK handlers, global functions called `hblank` and `vblank`, and flags in a global symbol called `MMD_FLAGS`.
 
 Let's look at a couple theoretical examples. Say we have a module we want to run from Main side's Work RAM. We already have a memory resident bit of code in Work RAM taking up the first 0x400 bytes, so we want this module to run from 0xFF0400. The runtime location (set in the MMD_DEST global symbol) will be 0xFF0400. The MMD loader will automatically move the binary portion of the module from Word RAM to 0xFF0400 and then jump to it.
 
@@ -84,34 +85,25 @@ Another example. We want the module to run from Word RAM (at 0x200000) this time
 
 As a general rule, then, MMD_DEST will match MODULE_ROM_ORIGIN except for when MMD_DEST is 0 (i.e. run from Word RAM) in which case MODULE_ROM_ORIGIN should be 0x200100 (for Main CPU) or 0x80100 (for Sub CPU).
 
-One thing we'd like to explore going forward is how to make this layout system more user friendly.
-
 ## Building modules
 
-A module is created from a .def file, which is simply a text file containig a list of source code filenames. Each of these files are compiled seperately then linked together to make the final module binary. Basically, a def file is a compilation script, similar in concept to a makefile. Each .def file generates one module. which will be written to the disc output directory as part of the build process.
+Each module is a rule in the project's makefile. The target is the module file in the disc directory, and the prerequisites are its source files, which are compiled separately and linked into the module. From `new_project`:
 
-There are three types of modules supported by Megadev: MMD (Main CPU side module), SMD (Sub CPU side module), and BIN (headerless or raw module). MMD and SMD files have the header described above and are functionally identical
+    $(DISC_PATH)/ex1.mmd: \
+    	shared_mmd_layout.c \
+    	std_init.s \
+    	ex1.c \
+    	ex1_res.s \
+    	$(DISC_PATH)/ipx.mmd
 
-If you follow the usual C standard where headers and implementations are split into .h and .c files respectively, keep in mind that `#include`ing a header in your source is not enough. The implementation of that header (that is, the matching .c file) should be included in the .def file for that module.
+The file name decides the type of module:
 
-Def files should end with `.mmd.def`, `.smd.def` or `.bin.def` depending on the type of module. Each line of the file should contain one filename without a path. Only source code files ending in .c and .s as well as module files (.mmd, .smd, .bin) for resident code are allowed. (We will discuss resident modules in the next section.)
+- `.mmd`: Main CPU module, with the header described above, linked with `cfg/module_mmd.ld`.
+- `.smd`: Sub CPU module, linked with `cfg/module_smd.ld`. It has no header: the file is the code, followed by the initial values of its variables, and it is run from its first byte, which is its startup code. In the examples, the SP loads it to its `MODULE_ROM_ORIGIN` and jumps there.
 
-For example, the title screen may be `title.mmd`, for which we will need `title.mmd.def` that has the list of all source code used in the module:
+Source files are found in the project's source directory and in the kit's `lib`, `lib/main` and `lib/sub` directories, so a kit file such as `main/ipx_init.s` is listed by its path below `lib`. Including a header in a source file does not add its implementation: list the matching `.c` or `.s` file among the module's prerequisites. A module file among the prerequisites, such as `ipx.mmd` above, is a resident module; see the next section.
 
-    title_memmap.s
-    title.c
-    title_res.s
-    graphics.c
-
-Those files will be compiled then linked together to create the final `title.mmd` on the disc.
-
-### Limitations
-
-Currently, there is an issue with the build system wherein source files that have been modified will not be recompiled when a simple `make` command. This is due to the implementation of the abstracted/generic build system. For now, when making your projects, it's generally a good idea to make clean and then do a make again:
-
-    make clean && make
-
-This will ensure all source files are always rebuilt. We would certain like to address this issue in the future, but for now, keep this in mind.
+Editing a source file or a header it includes rebuilds the modules that use it.
 
 ## Memory Resident Modules
 
@@ -137,6 +129,8 @@ Any other name defined in both modules fails the link with `multiple definition`
 The IP and SP can also be resident: list `$(BUILD_PATH)/ip.bin` or `$(BUILD_PATH)/sp.bin`. Sub CPU modules do this to use the CD-ROM routines in the SP.
 
 Do not attempt to "chain" multiple resident modules together in a series of reliance. All resident modules must be fully built first so they can be referenced by later modules. If one resident module relies on another resident module, there is no way to guarantee which will be built first, and the build process may fail. You can, however, have multiple resident modules and even load them at the same time (provided their memory space does not overlap), so long as they do not reference each other.
+
+A resident module and the modules that run with it are linked separately, so the linker cannot check that their memory does not overlap. Plan one memory map for all of them. `new_project` defines its Work RAM map once in `shared.h`, and both its IPX layout and the other modules' layout are derived from it.
 
 Ultimately, the best use of this feature is to keep things simple. The "program kernel" concept discussed in `program_design.md` is probably the best use case: one single resident binary per CPU that is loaded once early on and is present for the lifetime of the game.
 
@@ -172,10 +166,10 @@ Here is an example setup that does not use the Boot ROM at all:
 
 Expressed as Megadev definitions, this layout looks like this:
 
-GLOBAL MODULE_ROM_ORIGIN 0xFF0000
-GLOBAL MODULE_ROM_LENGTH 0xF000
-GLOBAL MODULE_RAM_ORIGIN 0xFFF000
-GLOBAL MODULE_RAM_LENGTH 0xB00
+    GLOBAL_SYM(MODULE_ROM_ORIGIN, 0xFF0000);
+    GLOBAL_SYM(MODULE_ROM_LENGTH, 0xF000);
+    GLOBAL_SYM(MODULE_RAM_ORIGIN, 0xFFF000);
+    GLOBAL_SYM(MODULE_RAM_LENGTH, 0xB00);
 
 ### With Boot ROM Functionality
 
