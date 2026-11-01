@@ -10,7 +10,6 @@ RUN \
 		gcc-m68k-linux-gnu \
 		libnewlib-dev \
 		genisoimage \
-		python3 \
 		xxd \
 		clang-format-19 \
 		&& \
