@@ -134,7 +134,7 @@ AS_FLAGS+= \
 # included at the end of this file so a header change rebuilds its users.
 DEP_FLAGS:=-MMD -MP
 LD_FLAGS+= \
-	-nostdlib -z noexecstack
+	-nostdlib -z noexecstack -L$(CFG_PATH)
 
 # Runtime support the compiler expects to find: memcpy and friends, and the
 # 32-bit arithmetic helpers, all from lib/runtime. Built into an archive per
