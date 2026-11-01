@@ -7,6 +7,7 @@
  */
 #include <main/bios.def.h>
 #include <main/bios.h>
+#include <main/exvec.h>
 #include <main/gate_arr.h>
 #include <main/memmap.h>
 #include <main/mode1.h>
@@ -79,6 +80,9 @@ void main()
   }
   print_at("MEGA CD: FOUND\xff", 2, 4);
 
+  // crash handler: Main CPU exceptions, and Sub CPU crashes reported below
+  exvec_install();
+
   u8 const result = mode1_load_sub(res_sp.data, res_sp.size);
   mode1_status = 0x0100 | result;
   print_at(result == MODE1_OK ? "SUB CPU: RUNNING\xff" : "SUB CPU: ERROR\xff", 2, 5);
@@ -92,6 +96,7 @@ void main()
   for (;;)
   {
     bios_vblank_wait_default();
+    exvec_check_sub();
     ++counter;
     ga_main_reg_comcmd0 = counter;
     mode1_echo = ga_main_reg_comstat0;

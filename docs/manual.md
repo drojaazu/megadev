@@ -429,6 +429,8 @@ There are a number of additional documents in the `docs` subdirectory. We recomm
 
 `cdrom.md` - Describes how to use the CD-ROM file access framework.
 
+`crash_handler.md` - Installing the crash handler, which shows the CPU state when the program fails, on both CPUs.
+
 `dev_in_c.md` - Discusses important concepts for developing code in C for an embedded system.
 
 `disc.md` - Explains how to master a proper disc image for the Mega CD.

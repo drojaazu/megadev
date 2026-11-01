@@ -350,3 +350,7 @@ In `sub/memmap.def.h`, each `EXVEC_*` now names the address operand of its jump 
 ## Cartridge trace vector renamed
 
 `md_vectors.s` names the trace vector `EX_TRACE`, like the vectors around it. It was `EXEXVEC_TRACE`; rename the `GLOBAL` line in the project's `init.s`.
+
+## Crash handler replaces cd_exception.s
+
+`main/cd_exception.s` is removed. Its replacement is the crash handler in `main/exvec.h` and `sub/exvec.h`, described in `docs/crash_handler.md`: `install_handlers` becomes `exvec_install`, and cartridges include `main/exvec_cart.s`.

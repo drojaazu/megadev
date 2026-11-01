@@ -36,6 +36,7 @@ $(PROJECT_ID).cart: \
 	init.s \
 	main.c \
 	mode1.s \
+	exvec_main.s \
 	kos_cmp.s
 
 $(BUILD_PATH)/init.s.o: $(BUILD_PATH)/sp.bin
