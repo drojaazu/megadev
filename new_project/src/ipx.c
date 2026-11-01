@@ -13,6 +13,7 @@ GLOBAL_SYM(MMD_DEST, IPX_ROM_ORIGIN);
 #include "ipx.h"
 #include "shared.h"
 #include <main/bios.h>
+#include <main/exvec.h>
 #include <main/gate_arr.h>
 #include <main/io.h>
 #include <main/memmap.h>
@@ -126,6 +127,8 @@ void process_particles()
 void vblank_user()
 {
   bios_copy_sprlist();
+  // show a Sub CPU crash while a module is running
+  exvec_check_sub();
 }
 
 // At this point, the full IPX binary has been copied to Work RAM and all
@@ -135,13 +138,17 @@ void main()
 {
 
   /*
-    The function pointer stored in bios_vblank_user is called on every VBLANK
-    interrupt when using the built-in handler in BIOS (BIOS_VBLANK_HANDLER,
-    which we set up in the IP). This is intended for VBLANK interval operations
-    specific to your program. Note that the BIOS_VBLANK_USERCALL_FLAG flag must
-    be set on bios_vblank_handler_flags
+    The function pointer stored in bios_vblank_user is called by the Boot ROM's
+    VBLANK handler (BIOS_VBLANK_HANDLER, which we set up in the IP) when
+    BIOS_MASK_DO_USERCALL is set in bios_vblank_handler_flags. The handler
+    clears the flags every VBLANK and bios_vblank_wait_default sets them again,
+    so it runs on frames where the program waits with that call, as the
+    modules do.
   */
   *bios_vblank_user = vblank_user;
+
+  // crash handler for Main CPU exceptions (docs/crash_handler.md)
+  exvec_install();
 
   next_module = FILE_EX1_MMD;
 
@@ -177,9 +184,8 @@ void main()
     // received and will be acted on
     do
     {
-      // the NOP is so GCC doesn't optimize the loop away
-      // though since comstat is marked volatile it should be fine...
-      asm("nop");
+      // the Sub CPU may crash while working on the command
+      exvec_check_sub();
     } while (ga_main_reg_comstat0 == 0);
 
     // reset the command to none (0) once we have the acknowledgment
@@ -188,7 +194,7 @@ void main()
     // the Sub CPU side work will be complete when COMSTAT0 returns to 0
     do
     {
-      asm("nop");
+      exvec_check_sub();
     } while (ga_main_reg_comstat0 != 0);
 
     ga_main_wait_2m();

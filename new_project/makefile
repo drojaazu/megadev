@@ -99,6 +99,7 @@ clean:
 $(DISC_PATH)/ipx.mmd: \
 	main/ipx_init.s \
 	ipx.c \
+	exvec_main.s \
 	io.macro.s
 
 $(DISC_PATH)/ex1.mmd: \
