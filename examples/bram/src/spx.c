@@ -11,6 +11,7 @@ GLOBAL_SYM(MODULE_RAM_LENGTH, 0x2000);
 #include <sub/cdrom.h>
 #include <sub/gate_arr.h>
 #include <sub/memmap.h>
+#include <system.h>
 
 void load_ipx();
 
@@ -22,8 +23,10 @@ BramFileInfo const file_info = {"BRMEX", 0, 1};
 
 BramInitResult brminit_info;
 
-__attribute__((section(".init"))) void main()
+void main()
 {
+  // std_init.s masks interrupts; the Sub BIOS needs them for CD-ROM access
+  enable_interrupts();
 
   register u16 cmd0, cmd1;
 
