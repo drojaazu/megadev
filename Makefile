@@ -191,7 +191,7 @@ check-link:
 # The stack-setting init files load STACK_TOP just before entering main, and
 # the linker scripts reject a stack that does not fit.
 # ---------------------------------------------------------------------------
-STACK_LD = $(M68K_PREFIX)ld -nostdlib -z noexecstack \
+STACK_LD = $(M68K_PREFIX)ld -nostdlib -z noexecstack -Lcfg \
 	--defsym=MMD_DEST=0 \
 	--defsym=MODULE_ROM_ORIGIN=0xFF0000 --defsym=MODULE_ROM_LENGTH=0x4000 \
 	--defsym=MODULE_RAM_ORIGIN=0xFFC000 --defsym=MODULE_RAM_LENGTH=0x1000
