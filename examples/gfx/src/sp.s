@@ -43,6 +43,9 @@ GLABEL sp_init
 	// This sets up the CD-ROM access loop with initial settings. It only needs
 	// to be called once, here in sp_init
 	INIT_ACC_LOOP
+
+	// Sub CPU crash handler; the Main CPU reports a crash (docs/crash_handler.md)
+	jbsr    exvec_install
 	rts
 
 drv_init_tracklist:
@@ -173,3 +176,5 @@ sp_fatal:
 mmd_cyber:
    .asciz "CYBER.MMD;1"
   .align 2
+
+#include "sub/exvec_sub.s"

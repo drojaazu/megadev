@@ -15,6 +15,7 @@
 #include "shared.h"
 #include "tables.h"
 #include <main/bios.h>
+#include <main/exvec.h>
 #include <main/gate_arr.h>
 #include <main/io.h>
 #include <main/memmap.h>
@@ -36,11 +37,11 @@
   RAM.
 */
 GLOBAL_SYM(MODULE_ROM_ORIGIN, WORK_RAM);
-GLOBAL_SYM(MODULE_RAM_ORIGIN, 0xFFF500);
+GLOBAL_SYM(MODULE_RAM_ORIGIN, 0xFFF000);
 GLOBAL_SYM(STACK_TOP, MODULE_RAM_ORIGIN);
 GLOBAL_SYM(STACK_SIZE, 0x400);
 GLOBAL_SYM(MODULE_ROM_LENGTH, STACK_TOP - STACK_SIZE - MODULE_ROM_ORIGIN);
-GLOBAL_SYM(MODULE_RAM_LENGTH, 0x200);
+GLOBAL_SYM(MODULE_RAM_LENGTH, 0x700);
 GLOBAL_SYM(MMD_DEST, WORK_RAM);
 
 #define TURN_RATE 2   /* sine table steps per frame */
@@ -85,6 +86,9 @@ static void camera_reset (void)
 __attribute__ ((noreturn)) void main()
 {
 	*bios_vblank_user = vblank_user;
+	// crash handler for Main CPU exceptions (docs/crash_handler.md)
+	exvec_install();
+
 	ga_main_grant_2m();
 
 	memset8 (0, (u8 *) &bios_sprlist, sizeof (bios_sprlist));
@@ -100,6 +104,7 @@ __attribute__ ((noreturn)) void main()
 	do
 	{
 		bios_vblank_wait (0);
+		exvec_check_sub();
 
 		/* s16 so the 68000's 16x16 multiply is used; s32 operands would call
 		 * __mulsi3 four times a frame for no benefit. */
@@ -150,18 +155,19 @@ __attribute__ ((noreturn)) void main()
 
 		do
 		{
-			asm("nop");
+			exvec_check_sub();
 		} while (ga_main_reg_comstat0 == 0);
 
 		ga_main_reg_comcmd0 = 0;
 
 		do
 		{
-			asm("nop");
+			exvec_check_sub();
 		} while (ga_main_reg_comstat0 != 0);
 
 		ga_main_wait_2m();
 		bios_vblank_wait_default();
+		exvec_check_sub();
 
 		bios_dma_xfer_word_ram (
 			tiles, (void const *) (WORD_RAM + 0x30000), (GROUND_SCREEN_W * GROUND_ROWS) / 2);

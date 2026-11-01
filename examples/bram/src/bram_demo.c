@@ -5,12 +5,13 @@
 // RAM follows it, leaving a little over 61 KB for ROM and 512 bytes of RAM.
 // MMD_DEST says where the module is copied after loading into Word RAM.
 GLOBAL_SYM(MODULE_ROM_ORIGIN, WORK_RAM);
-GLOBAL_SYM(MODULE_RAM_ORIGIN, 0xFFF500);
+GLOBAL_SYM(MODULE_RAM_ORIGIN, 0xFFF000);
 GLOBAL_SYM(MODULE_ROM_LENGTH, MODULE_RAM_ORIGIN - MODULE_ROM_ORIGIN);
-GLOBAL_SYM(MODULE_RAM_LENGTH, 0x200);
+GLOBAL_SYM(MODULE_RAM_LENGTH, 0x700);
 GLOBAL_SYM(MMD_DEST, WORK_RAM);
 
 #include <main/bios.h>
+#include <main/exvec.h>
 #include <main/gate_arr.h>
 #include <main/io.def.h>
 #include <main/memmap.h>
@@ -24,7 +25,7 @@ GLOBAL_SYM(MMD_DEST, WORK_RAM);
 #define SUB_WAIT                   \
   do                               \
   {                                \
-    asm("nop");                    \
+    exvec_check_sub();                    \
   } while (ga_main_reg_comstat0 == 0);
 
 #define SUB_ACK ga_main_reg_comcmd0 = 0;
@@ -149,6 +150,7 @@ static void brmwrite()
   do
   {
     bios_vblank_wait_default();
+    exvec_check_sub();
 
     // this is a great opportunity to show off the bios_input_delay function
     // in the boot rom library
@@ -317,6 +319,9 @@ void main()
   bios_palette[1] = 0xEEE;
   bios_vdp_update_flags |= BIOS_MASK_COPY_PALETTE;
 
+  // crash handler for Main CPU exceptions (docs/crash_handler.md)
+  exvec_install();
+
   // interrupts were disabled in the init section
   enable_interrupts();
 
@@ -326,6 +331,7 @@ void main()
   do
   {
     bios_vblank_wait_default();
+    exvec_check_sub();
   } while (! (bios_joy1_hit & PAD_START));
 
   s8 menupos = 0;
@@ -346,6 +352,7 @@ void main()
     do
     {
       bios_vblank_wait_default();
+      exvec_check_sub();
       for (int clearloop = 3; clearloop < 10; ++clearloop)
       {
         vdp_ctrl_32 = print_xy(1, clearloop);
@@ -399,6 +406,7 @@ void main()
     do
     {
       bios_vblank_wait_default();
+      exvec_check_sub();
     } while (! (bios_joy1_hit & PAD_START));
 
   } while (1);

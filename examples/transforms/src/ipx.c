@@ -5,15 +5,16 @@
 // RAM follows it, leaving a little over 61 KB for ROM and 512 bytes of RAM.
 // MMD_DEST says where the module is copied after loading into Word RAM.
 GLOBAL_SYM(MODULE_ROM_ORIGIN, WORK_RAM);
-GLOBAL_SYM(MODULE_RAM_ORIGIN, 0xFFF500);
+GLOBAL_SYM(MODULE_RAM_ORIGIN, 0xFFF000);
 GLOBAL_SYM(MODULE_ROM_LENGTH, MODULE_RAM_ORIGIN - MODULE_ROM_ORIGIN);
-GLOBAL_SYM(MODULE_RAM_LENGTH, 0x200);
+GLOBAL_SYM(MODULE_RAM_LENGTH, 0x700);
 GLOBAL_SYM(MMD_DEST, WORK_RAM);
 
 #include "ipx.h"
 #include "ipx.res.h"
 #include "shared.h"
 #include <main/bios.h>
+#include <main/exvec.h>
 #include <main/gate_arr.h>
 #include <main/io.h>
 #include <main/memmap.h>
@@ -37,6 +38,9 @@ __attribute__((noreturn)) void main()
 {
 
   *bios_vblank_user = vblank_user;
+  // crash handler for Main CPU exceptions (docs/crash_handler.md)
+  exvec_install();
+
   ga_main_grant_2m();
 
   memset8(0, (u8 *) &bios_sprlist, sizeof(bios_sprlist));
@@ -53,6 +57,7 @@ __attribute__((noreturn)) void main()
   do
   {
     bios_vblank_wait(0);
+    exvec_check_sub();
     if (bios_joy1_hold & PAD_RIGHT)
     {
       if (bios_joy1_hold & PAD_A)
@@ -120,7 +125,7 @@ __attribute__((noreturn)) void main()
     {
       // the NOP is so GCC doesn't optimize the loop away
       // though since comstat is marked volatile it should be fine...
-      asm("nop");
+      exvec_check_sub();
     } while (ga_main_reg_comstat0 == 0);
 
     ga_main_reg_comcmd0 = 0;
@@ -128,12 +133,13 @@ __attribute__((noreturn)) void main()
     // the Sub CPU side work will be complete when COMSTAT0 returns to 0
     do
     {
-      asm("nop");
+      exvec_check_sub();
     } while (ga_main_reg_comstat0 != 0);
 
     ga_main_wait_2m();
 
     bios_vblank_wait_default();
+    exvec_check_sub();
 
     bios_dma_xfer_word_ram(
       tiles, (void const *) (WORD_RAM + 0x30000), (32 * 32 * 32) / 2);

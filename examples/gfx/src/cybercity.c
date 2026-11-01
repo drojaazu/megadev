@@ -9,6 +9,7 @@ GLOBAL_SYM(MODULE_RAM_ORIGIN, 0xFFC000);
 GLOBAL_SYM(MODULE_RAM_LENGTH, 0xFFF700 - 0xFFC000);
 
 #include <main/bios.h>
+#include <main/exvec.h>
 #include <main/io.h>
 #include <main/memmap.h>
 #include <main/vdp.h>
@@ -120,6 +121,9 @@ __attribute__((noreturn)) void main()
   bios_vdp_disp_enable();
 
   *bios_vblank_user = vblank_user;
+  // crash handler for Main CPU exceptions (docs/crash_handler.md)
+  exvec_install();
+
 
   uf32 scroll_a = 0.0;
   uf32 scroll_b = 0.0;
@@ -128,6 +132,7 @@ __attribute__((noreturn)) void main()
   {
     bios_vblank_handler_flags = BIOS_MASK_COPY_SPRLIST;
     bios_vblank_wait_default();
+    exvec_check_sub();
 
     bios_process_entities(&sprobj_ship, bios_sprlist, 0, 0x1A);
 

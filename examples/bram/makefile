@@ -90,6 +90,7 @@ clean:
 
 $(DISC_PATH)/bramdemo.mmd: \
 	main/ipx_init.s \
+	exvec_main.s \
 	bram_demo.c
 
 $(DISC_PATH)/spx.smd: \
