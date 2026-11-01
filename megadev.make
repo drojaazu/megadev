@@ -13,6 +13,7 @@ M68K_PREFIX?=m68k-linux-gnu-
 CC:=$(M68K_PREFIX)gcc
 OBJCPY:=$(M68K_PREFIX)objcopy
 NM:=$(M68K_PREFIX)nm
+READELF:=$(M68K_PREFIX)readelf
 LD:=$(M68K_PREFIX)ld
 AS:=$(M68K_PREFIX)as
 AR:=$(M68K_PREFIX)ar
@@ -222,11 +223,16 @@ $(BUILD_PATH)/%.s.o: %.s
 	@mkdir -p $(dir $@)
 	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(DEP_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $< -o $@
 
-#%.mmd.elf: %.s %.c %.h
-#	@echo "mmd elf in: $^"
-#	@echo "mmd elf out: $@"
-#	echo "making mmd elf with: $^ $@"
-#	$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_mmd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(symref)) -o $@
+# Every module links lib/module_hidden.s, which keeps its entry points out of
+# the symbols it exports.
+MODULE_HIDDEN:=$(BUILD_PATH)/module_hidden.s.o
+
+# A program listed among a module's prerequisites is resident while the module
+# runs: the module links the program's exported symbols (tools/exports.sh) as
+# absolute addresses, so a name defined in both fails the link.
+$(BUILD_PATH)/%.exports.o: $(BUILD_PATH)/%.elf
+	@sh $(MEGADEV_PATH)/tools/exports.sh $(READELF) $< > $(@:.o=.s)
+	@$(CC) $(CC_FLAGS) $(AS_FLAGS) -x assembler -c $(@:.o=.s) -o $@
 
 %.mmd: $$(call MODULE_OBJS,$$^)
 # @echo "mmd in: $^"
@@ -240,8 +246,9 @@ $(BUILD_PATH)/%.s.o: %.s
 	@$(if $(BUILD_SRC), $(MAKE) -s $(BUILD_SRC))
 	$(call msg_info,Linking module $(notdir $@))
 	$(eval OUT_MOD_ELF:=$(addprefix $(BUILD_PATH)/,$(addsuffix .elf,$(notdir $@))))
-	@$(MAKE) -s $(RUNTIME_LIB)
-	@$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_mmd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(addsuffix .elf,$(addprefix $(BUILD_PATH)/,$(notdir $(symref))))) $(LD_LIBS) -o $(OUT_MOD_ELF)
+	$(eval BUILD_IMPORTS:=$(foreach mod,$(BUILD_MOD),$(BUILD_PATH)/$(notdir $(mod)).exports.o))
+	@$(MAKE) -s $(RUNTIME_LIB) $(MODULE_HIDDEN) $(BUILD_IMPORTS)
+	@$(LD) $(LD_FLAGS) -T $(CFG_PATH)/module_mmd.ld $(BUILD_SRC) $(MODULE_HIDDEN) $(BUILD_IMPORTS) $(LD_LIBS) -o $(OUT_MOD_ELF)
 	@$(NM) -n $(OUT_MOD_ELF) > $(addsuffix .sym,$(OUT_MOD_ELF))
 	@$(OBJCPY) -O binary $(OUT_MOD_ELF) $@
 
@@ -257,8 +264,9 @@ $(BUILD_PATH)/%.s.o: %.s
 	@$(if $(BUILD_SRC), $(MAKE) -s $(BUILD_SRC))
 	$(call msg_info,Linking module $(notdir $@))
 	$(eval OUT_MOD_ELF:=$(addprefix $(BUILD_PATH)/,$(addsuffix .elf,$(notdir $@))))
-	@$(MAKE) -s $(RUNTIME_LIB)
-	@$(LD) $(LD_FLAGS) -z muldefs -T $(CFG_PATH)/module_smd.ld $(BUILD_SRC) $(foreach symref,$(BUILD_MOD),-R $(addsuffix .elf,$(addprefix $(BUILD_PATH)/,$(notdir $(symref))))) $(LD_LIBS) -o $(OUT_MOD_ELF)
+	$(eval BUILD_IMPORTS:=$(foreach mod,$(BUILD_MOD),$(BUILD_PATH)/$(notdir $(mod)).exports.o))
+	@$(MAKE) -s $(RUNTIME_LIB) $(MODULE_HIDDEN) $(BUILD_IMPORTS)
+	@$(LD) $(LD_FLAGS) -T $(CFG_PATH)/module_smd.ld $(BUILD_SRC) $(MODULE_HIDDEN) $(BUILD_IMPORTS) $(LD_LIBS) -o $(OUT_MOD_ELF)
 	@$(NM) -n $(OUT_MOD_ELF) > $(addsuffix .sym,$(OUT_MOD_ELF))
 	@$(OBJCPY) -O binary $(OUT_MOD_ELF) $@
 

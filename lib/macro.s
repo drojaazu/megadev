@@ -29,6 +29,7 @@
 .macro GLOBAL name, value, align=2
   .align \align
   .global \name
+  .hidden \name
   .equ \name, \value
 .endm
 

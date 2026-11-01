@@ -36,7 +36,7 @@ SECTIONS
     . = 0x100;
   }
 
-  _MODULE_ROM_LOAD = ADDR(.header) + SIZEOF(.header); /* .text follows the header */
+  HIDDEN(_MODULE_ROM_LOAD = ADDR(.header) + SIZEOF(.header)); /* .text follows the header */
   INCLUDE module_common.ld
 
   /* The Boot ROM forwards exceptions through this table, with or without Main

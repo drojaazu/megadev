@@ -62,9 +62,9 @@ ASSERT_S := $(wildcard check/asserts/*.s)
 # Host compiler for the runtime library test; the runtime sources are plain C.
 HOST_CC ?= cc
 
-.PHONY: check check-projects check-headers check-asm check-link check-stack check-init check-sections check-init check-odr check-incremental check-inline check-asserts check-host docs clean $(PROJECTS)
+.PHONY: check check-projects check-headers check-asm check-link check-stack check-init check-sections check-resident check-init check-odr check-incremental check-inline check-asserts check-host docs clean $(PROJECTS)
 
-check: check-projects check-headers check-asm check-link check-stack check-init check-sections check-odr check-incremental check-inline check-asserts check-host
+check: check-projects check-headers check-asm check-link check-stack check-init check-sections check-resident check-odr check-incremental check-inline check-asserts check-host
 	@printf '\ncheck: all passed\n'
 
 # ---------------------------------------------------------------------------
@@ -320,6 +320,36 @@ check-sections: check-init
 	@$(M68K_PREFIX)objdump -h $(CHECK_DIR)/sections_gc.elf | awk '$$2 == ".text" { exit !(strtonum("0x" $$3) >= 8) }' || { \
 	  printf 'FAIL sections: --gc-sections removed the cartridge vector table\n'; exit 1; }
 	@printf '== sections: every script defines the same layout symbols, zeroes common symbols and stops on static constructors; cartridge vectors start the ROM; --gc-sections keeps entry code\n'
+
+# A module links against a resident one through the resident's exports
+# (tools/exports.sh): only symbols with default visibility are exported, so the
+# layout, entry points and linker script symbols every module defines do not
+# collide, and a name defined in both modules fails the link.
+RESIDENT_LD = $(M68K_PREFIX)ld -nostdlib -z noexecstack -Lcfg -T cfg/module_mmd.ld
+check-resident: check-init
+	@printf '#include <macro.h>\nGLOBAL_SYM(MMD_DEST, 0xFF0000);\nGLOBAL_SYM(MODULE_ROM_ORIGIN, 0xFF0000);\nGLOBAL_SYM(MODULE_ROM_LENGTH, 0x4000);\nGLOBAL_SYM(MODULE_RAM_ORIGIN, 0xFF8000);\nGLOBAL_SYM(MODULE_RAM_LENGTH, 0x1000);\nint shared_value;\nint shared_function(int x) { return x + shared_value; }\nvoid vblank(void) {}\nvoid main(void) { for (;;) shared_value++; }\n' > $(CHECK_DIR)/resident.c
+	@printf '#include <macro.h>\nGLOBAL_SYM(MMD_DEST, 0x200100);\nGLOBAL_SYM(MODULE_ROM_ORIGIN, 0x200100);\nGLOBAL_SYM(MODULE_ROM_LENGTH, 0x4000);\nGLOBAL_SYM(MODULE_RAM_ORIGIN, 0xFFA000);\nGLOBAL_SYM(MODULE_RAM_LENGTH, 0x1000);\nextern int shared_value;\nint shared_function(int);\nvoid vblank(void) {}\nvoid main(void) { shared_value = shared_function(1); }\n' > $(CHECK_DIR)/importer.c
+	@printf 'int shared_value = 3;\n' > $(CHECK_DIR)/duplicate.c
+	@$(CC) $(CHECK_FLAGS) -Wa,--bitwise-or -DTARGET=MEGACD -x assembler-with-cpp -c lib/module_hidden.s -o $(CHECK_DIR)/module_hidden.o
+	@for f in resident importer duplicate; do \
+	  $(CC) $(CHECK_FLAGS) -DTARGET=MEGACD -O1 -c $(CHECK_DIR)/$$f.c -o $(CHECK_DIR)/$$f.o || exit 1; done
+	@$(RESIDENT_LD) $(CHECK_DIR)/init_std.o $(CHECK_DIR)/resident.o $(CHECK_DIR)/module_hidden.o -o $(CHECK_DIR)/resident.elf
+	@sh tools/exports.sh $(M68K_PREFIX)readelf $(CHECK_DIR)/resident.elf > $(CHECK_DIR)/resident.exports.s
+	@exports=$$(awk '/^\.global/ { print $$2 }' $(CHECK_DIR)/resident.exports.s | sort | tr '\n' ' '); \
+	[ "$$exports" = "shared_function shared_value " ] || { \
+	  printf 'FAIL resident: exports are "%s", expected "shared_function shared_value "\n' "$$exports"; exit 1; }
+	@$(CC) -m68000 -c $(CHECK_DIR)/resident.exports.s -o $(CHECK_DIR)/resident.exports.o
+	@$(RESIDENT_LD) $(CHECK_DIR)/init_std.o $(CHECK_DIR)/importer.o $(CHECK_DIR)/module_hidden.o $(CHECK_DIR)/resident.exports.o \
+	  -o $(CHECK_DIR)/importer.elf || { printf 'FAIL resident: the importer did not link\n'; exit 1; }
+	@[ "$$($(M68K_PREFIX)nm $(CHECK_DIR)/importer.elf | awk '$$3 == "shared_value" { print $$1 }')" = \
+	   "$$($(M68K_PREFIX)nm $(CHECK_DIR)/resident.elf | awk '$$3 == "shared_value" { print $$1 }')" ] || { \
+	  printf 'FAIL resident: the importer does not use the resident shared_value\n'; exit 1; }
+	@if $(RESIDENT_LD) $(CHECK_DIR)/init_std.o $(CHECK_DIR)/importer.o $(CHECK_DIR)/duplicate.o $(CHECK_DIR)/module_hidden.o \
+	     $(CHECK_DIR)/resident.exports.o -o $(CHECK_DIR)/duplicate.elf 2> $(CHECK_DIR)/duplicate.err; then \
+	  printf 'FAIL resident: a name defined in both modules linked\n'; exit 1; fi
+	@grep -q "multiple definition of .shared_value" $(CHECK_DIR)/duplicate.err || { \
+	  printf 'FAIL resident: expected a multiple definition of shared_value\n'; cat $(CHECK_DIR)/duplicate.err; exit 1; }
+	@printf '== resident: modules export only default-visibility symbols; a name defined in both fails the link\n'
 
 # ---------------------------------------------------------------------------
 # Loop 5: every library header can be included by two translation units that

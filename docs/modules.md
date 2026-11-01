@@ -117,17 +117,24 @@ This will ensure all source files are always rebuilt. We would certain like to a
 
 It may be more efficient to keep a portion of program code or resources in memory as you load different modules throughout the lifetime of the game. For example, you can keep your small loading screen code/graphics in memory so it itself does not need to be re-loaded from disc each time. Or you can keep some useful global functions that are available to all your code, such as VDP utilities. Sonic CD does this by loading an extended IP (IPX) into Work RAM which acts as a small "master" program to load and run modules from Word RAM and provide some other utilities. Memory resident modules are the basis for the "program kernel" concept that is discussed in the `program_design.md` file.
 
-A memory resident module is built with a def file just like any other module. However, the modules which depend on it must specify it as a reference. This is done by including the resident module's filename in the def file. The resident module data will NOT be included in the output module, but will only be used as a reference when linking.
+A memory resident module is built like any other module. A module that runs while it is resident lists it among its prerequisites in the makefile. The resident module is not included in the output; the module links against the symbols it exports. From `new_project`, where each example module uses functions in the resident IPX:
 
-Returning to the title screen example above, let's say we have a kernel, `ipx.mmd`, resident in Work RAM and which contains some useful functions. In `title.mmd.def`, we would simple add the resident module's filename:
+    $(DISC_PATH)/ex1.mmd: \
+    	shared_mmd_layout.c \
+    	std_init.s \
+    	ex1.c \
+    	ex1_res.s \
+    	$(DISC_PATH)/ipx.mmd
 
-    title_memmap.s
-    title.c
-    title_res.s
-    graphics.c
-    ipx.mmd
+A resident module exports its global functions and variables. It does not export what every module defines for itself, so these never collide:
 
-There are two special cases for the IP and SP. Though they do not generate their own files on the disc, they can still be specified as a resident module with `ip.bin` and `sp.bin` in the def file.
+- layout symbols defined with `GLOBAL_SYM` (C) or `GLOBAL` (assembly)
+- the linker script symbols (`_BSS_ORIGIN` and the others listed in `dev_in_c.md`)
+- `main`, `init`, `hblank` and `vblank`
+
+Any other name defined in both modules fails the link with `multiple definition`. To keep a resident module's global private, declare it `static`, or give it hidden visibility: `__attribute__((visibility("hidden")))` in C, `.hidden` in assembly.
+
+The IP and SP can also be resident: list `$(BUILD_PATH)/ip.bin` or `$(BUILD_PATH)/sp.bin`. Sub CPU modules do this to use the CD-ROM routines in the SP.
 
 Do not attempt to "chain" multiple resident modules together in a series of reliance. All resident modules must be fully built first so they can be referenced by later modules. If one resident module relies on another resident module, there is no way to guarantee which will be built first, and the build process may fail. You can, however, have multiple resident modules and even load them at the same time (provided their memory space does not overlap), so long as they do not reference each other.
 
