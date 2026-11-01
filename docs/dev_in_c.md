@@ -58,6 +58,8 @@ Global and static variables are set up by startup code before `main` runs: those
 | Cartridge | `md_init.s`, included by the project's `init.s`. It also clears all of Work RAM. |
 | Boot sector IP and SP | None. Initialized variables are already in place when the Boot ROM loads them. Zeroed variables must be cleared by the program itself, as the examples do with `_BSS_ORIGIN` and `_BSS_LENGTH`. |
 
+The startup code masks interrupts before it runs `main`. A module that needs them enables them itself with `enable_interrupts`; a Sub CPU module must, because the Sub BIOS handles CD-ROM access in its interrupt handlers.
+
 A module without startup code fails to link with `module has no init code`. A module that sets up its own RAM can opt out by defining `MODULE_NO_INIT`, for example with `GLOBAL_SYM(MODULE_NO_INIT, 1);` from `macro.h`; it must then clear and copy its variables itself, using the `BASIC_INIT` macro from `init.macro.s` or its own code.
 
 See the example projects' makefiles.

@@ -12,6 +12,7 @@ GLOBAL_SYM(MODULE_RAM_LENGTH, 0x2000);
 #include <sub/cdrom.h>
 #include <sub/gate_arr.h>
 #include <sub/memmap.h>
+#include <system.h>
 #include <sub/pcm.h>
 
 // void PCM_PLAYBACK_C(u8 * pcm_data, u32 pcm_data_size);
@@ -33,8 +34,11 @@ static inline void PCM_PLAYBACK_C(u8 * pcm_data, u32 pcm_data_size)
 
 extern void sp_fatal();
 
-__attribute__((section(".init"))) void main()
+void main()
 {
+  // std_init.s masks interrupts; the Sub BIOS needs them for CD-ROM access
+  enable_interrupts();
+
   register u16 command, param1;
 
   do
