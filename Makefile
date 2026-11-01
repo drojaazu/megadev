@@ -226,7 +226,23 @@ check-stack:
 	  printf 'FAIL stack: a STACK_TOP defined in an object was not checked\n'; exit 1; fi
 	@$(STACK_LD) --defsym=STACK_TOP=0 --defsym=STACK_SIZE=0x24C -T cfg/module_mmd.ld $(CHECK_DIR)/stack_std_init_stack.o \
 	  $(CHECK_DIR)/stack_main.o -o $(CHECK_DIR)/stack_top.elf
-	@printf '== stack: init files set STACK_TOP; a stack at 0 links; the linker rejects 9 bad stacks\n'
+	@# Cartridges: the ROM fits cartridge space, RAM stays below the stack, and
+	@# in Mode 1 below the system vector table.
+	@printf '.global main\nmain: rts\n.space 0x400000\n' > $(CHECK_DIR)/cart_big.s
+	@$(CC) -m68000 -c $(CHECK_DIR)/cart_big.s -o $(CHECK_DIR)/cart_big.o
+	@if $(STACK_LD) -T cfg/md_cart.ld $(CHECK_DIR)/cart_big.o -o $(CHECK_DIR)/cart_bad.elf 2> $(CHECK_DIR)/cart_bad.err; then \
+	  printf 'FAIL stack: a cartridge larger than 4 MB linked\n'; exit 1; fi
+	@grep -q "not within region .rom" $(CHECK_DIR)/cart_bad.err || { printf 'FAIL stack: expected a rom region overflow\n'; cat $(CHECK_DIR)/cart_bad.err; exit 1; }
+	@printf '.global main\nmain: rts\n.bss\n.space 0xFE00\n' > $(CHECK_DIR)/cart_ram.s
+	@$(CC) -m68000 -c $(CHECK_DIR)/cart_ram.s -o $(CHECK_DIR)/cart_ram.o
+	@if $(STACK_LD) --defsym=INIT_SSP=0xFFF000 -T cfg/md_cart.ld $(CHECK_DIR)/cart_ram.o -o $(CHECK_DIR)/cart_bad.elf 2> $(CHECK_DIR)/cart_bad.err; then \
+	  printf 'FAIL stack: cartridge RAM overlapping the stack linked\n'; exit 1; fi
+	@grep -q 'overlaps the stack' $(CHECK_DIR)/cart_bad.err || { printf 'FAIL stack: expected the stack overlap error\n'; cat $(CHECK_DIR)/cart_bad.err; exit 1; }
+	@if $(STACK_LD) --defsym=INIT_SSP=0 --defsym=mode1_init_vectors=0x200 -T cfg/md_cart.ld $(CHECK_DIR)/cart_ram.o -o $(CHECK_DIR)/cart_bad.elf 2> $(CHECK_DIR)/cart_bad.err; then \
+	  printf 'FAIL stack: Mode 1 cartridge RAM over the system vector table linked\n'; exit 1; fi
+	@grep -q 'Mode 1: ' $(CHECK_DIR)/cart_bad.err || { printf 'FAIL stack: expected the Mode 1 vector table error\n'; cat $(CHECK_DIR)/cart_bad.err; exit 1; }
+	@$(STACK_LD) --defsym=INIT_SSP=0 -T cfg/md_cart.ld $(CHECK_DIR)/cart_ram.o -o $(CHECK_DIR)/cart_ok.elf
+	@printf '== stack: init files set STACK_TOP; a stack at 0 links; the linker rejects 9 bad module stacks and 3 bad cartridges\n'
 
 # A module links only with init code, or with MODULE_NO_INIT defined.
 check-init:
