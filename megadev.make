@@ -25,6 +25,10 @@ Z80_AS:=sjasmplus
 MKISOFS?=mkisofs
 ISO_FLAGS?=-iso-level 1 -pad -sysid "MEGA_CD" -appid "" -publisher "" -preparer ""
 
+# Python 3 interpreter, used to fill in the cartridge header's ROM end address
+# and checksum after linking (tools/romfix.py).
+PYTHON?=python3
+
 ################################################################################
 # STOP!
 # You should not need to change anything below this line unless you really,
@@ -277,6 +281,7 @@ $(BUILD_PATH)/%.s.o: %.s
 	@$(LD) $(LD_FLAGS) -T $(CFG_PATH)/md_cart.ld $(BUILD_SRC) $(LD_LIBS) -o $(OUT_CART_ELF)
 	@$(NM) -n $(OUT_CART_ELF) > $(addprefix $(BUILD_PATH)/,$(addsuffix .sym,$(notdir $@)))
 	@$(OBJCPY) -O binary $(OUT_CART_ELF) $@
+	@$(PYTHON) $(MEGADEV_PATH)/tools/romfix.py $@
 
 # special rules for boot sector binaries
 $(BUILD_PATH)/ip.bin: $(BUILD_PATH)/ip.bin.elf

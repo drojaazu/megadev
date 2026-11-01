@@ -22,7 +22,7 @@ You should have a basic technical familiarity with the hardware before even begi
 
 ## Build Environment
 
-In order to compile code for the Mega Drive/CD, you will need a build environment that targets the M68000 CPU architecture. Megadev is designed to be used with GNU [binutils](https://www.gnu.org/software/binutils/) and [gcc](https://www.gnu.org/software/gcc/) compiled with the m68k-elf target. In addition, you will need `mkisofs` to generate the .iso disc image for Mega CD games.
+In order to compile code for the Mega Drive/CD, you will need a build environment that targets the M68000 CPU architecture. Megadev is designed to be used with GNU [binutils](https://www.gnu.org/software/binutils/) and [gcc](https://www.gnu.org/software/gcc/) compiled with the m68k-elf target. In addition, you will need `mkisofs` to generate the .iso disc image for Mega CD games, and Python 3 to finish the header of a cartridge ROM.
 
 ### Docker / Dev Container
 
@@ -42,9 +42,11 @@ https://aur.archlinux.org/packages/m68k-elf-binutils/
 
 https://aur.archlinux.org/packages/m68k-elf-gcc/
 
-And install the following package from the standard repository:
+And install the following packages from the standard repository:
 
 `cdrtools`
+
+`python`
 
 #### Debian
 
@@ -55,6 +57,8 @@ Install the following packages from the standard repository:
 `gcc-m68k-linux-gnu`
 
 `genisoimage`
+
+`python3`
 
 ### Manual Installation - From Source Code
 
@@ -257,6 +261,10 @@ Applies to Mega CD only. Files to copy from `RES_PATH` into `DISC_PATH` before m
 #### `MKISOFS`
 
 The ISO mastering tool. Defaults to `mkisofs`; `genisoimage` and `xorrisofs` accept the same options.
+
+#### `PYTHON`
+
+The Python 3 interpreter. Defaults to `python3`. After linking a cartridge, the build runs `tools/romfix.py` with it to write the ROM end address and checksum into the header.
 
 #### `ISO_FLAGS`
 

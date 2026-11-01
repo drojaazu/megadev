@@ -81,6 +81,18 @@ $(PROJECTS):
 	for f in $$($(MAKE) -s -C '$@' print-DISC_CONTENTS) $$(cd '$@' && ls $$id.iso $$id.cart 2>/dev/null); do \
 	  if [ ! -s "$@/$$f" ]; then printf 'FAIL %s: %s missing or empty\n' '$@' "$$f"; exit 1; fi; \
 	done
+	@# A cartridge header describes the ROM it is in, recomputed here
+	@# independently of tools/romfix.py.
+	@id=$$($(MAKE) -s -C '$@' print-PROJECT_ID); f='$@'/$$id.cart; \
+	if [ -f "$$f" ]; then \
+	  sz=$$(stat -c %s "$$f"); \
+	  [ $$((sz % 2)) = 0 ] || { printf 'FAIL %s: odd size %s\n' "$$f" $$sz; exit 1; }; \
+	  end=$$(od -An -tx1 -j $$((0x1A4)) -N4 "$$f" | tr -d ' \n'); \
+	  [ "$$end" = "$$(printf '%08x' $$((sz - 1)))" ] || { printf 'FAIL %s: ROM end %s, size %s\n' "$$f" $$end $$sz; exit 1; }; \
+	  sum=$$(od -An -v -tu2 --endian=big -j 512 "$$f" | awk '{for (i = 1; i <= NF; i++) s += $$i} END {printf "%04x", s % 65536}'); \
+	  hdr=$$(od -An -tx1 -j $$((0x18E)) -N2 "$$f" | tr -d ' \n'); \
+	  [ "$$sum" = "$$hdr" ] || { printf 'FAIL %s: header checksum %s, computed %s\n' "$$f" $$hdr $$sum; exit 1; }; \
+	fi
 
 # ---------------------------------------------------------------------------
 # Loop 2: every library header compiles on its own, for every hardware target.
