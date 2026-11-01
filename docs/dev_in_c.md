@@ -39,7 +39,7 @@ Global and static variables are set up by startup code before `main` runs: those
 |---|---|
 | Module (MMD or SMD) | `std_init.s`, or `main/ipx_init.s` for a module that copies itself into place (IPX). List it in the module's prerequisites. |
 | Cartridge | `md_init.s`, included by the project's `init.s`. It also clears all of Work RAM. |
-| Boot sector IP and SP | None. Initialized variables are already in place when the Boot ROM loads them, but zeroed variables are not cleared. |
+| Boot sector IP and SP | None. Initialized variables are already in place when the Boot ROM loads them. Zeroed variables must be cleared by the program itself, as the examples do with `_BSS_ORIGIN` and `_BSS_LENGTH`. |
 
 A module without startup code fails to link with `module has no init code`. A module that sets up its own RAM can opt out by defining `MODULE_NO_INIT`, for example with `GLOBAL_SYM(MODULE_NO_INIT, 1);` from `macro.h`; it must then clear and copy its variables itself, using the `BASIC_INIT` macro from `init.macro.s` or its own code.
 

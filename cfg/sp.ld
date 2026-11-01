@@ -25,13 +25,15 @@ SECTIONS
     _TEXT_LENGTH = ABSOLUTE(. - _TEXT_ORIGIN);
   } > SP
 
-  .data : AT ( ADDR(.text) + SIZEOF(.text) ) SUBALIGN(2)
+  /* The Boot ROM loads the SP as one image, so initialized data is stored
+  where it runs, right after the code. */
+  .data : SUBALIGN(2)
   {
     _RAM_ORIGIN = .;
     _RAM_DATA_ORIGIN = .;
     *(.data*)
 		. = ALIGN(4);
-    _RAM_DATA_LENGTH = ABSOLUTE(. - _RAM_DATA_ORIGIN) >> 2;
+    _RAM_DATA_LENGTH = ABSOLUTE(. - _RAM_DATA_ORIGIN);
   } > SP
 
   .bss : SUBALIGN(2)
