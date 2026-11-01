@@ -6,6 +6,10 @@
 #include <main/vdp.h>
 #include <system.h>
 #include <types.h>
+#include <main/text.h>
+
+// font8x8 is loaded at tile 0x20, so a character's tile is its code
+#define TEXT_TILE 0x20
 
 extern u8      next_module;
 extern u8      res_bubbles_chr;
@@ -22,10 +26,7 @@ void main()
     res_bubbles_chr_sz >> 1);
   enable_interrupts();
 
-  bios_print(
-    "Module 3\xff",
-    (to_vdp_addr(VDP_PLANE_POS(1, 1, Width64) + BIOS_VDP_DEFAULT_PLANEA) |
-     VRAM_W));
+  text_print("Module 3", VDP_PLANE_XY(BIOS_VDP_DEFAULT_PLANEA, 1, 1, Width64), TEXT_TILE);
 
   init_particles(0x81, 0x85, 1, 1, 1, 1, 3, 1, 3, 1);
 

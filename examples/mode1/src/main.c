@@ -11,6 +11,7 @@
 #include <main/gate_arr.h>
 #include <main/memmap.h>
 #include <main/mode1.h>
+#include <main/text.h>
 #include <main/vdp.h>
 #include <stdio.h>
 #include <system.h>
@@ -27,20 +28,15 @@ extern DataChunk const res_sp;
 #define PLANE_A_ADDR 0xC000
 #define FONT_TILE    0x20
 
-#define print_at(str, x, y) \
-  bios_print((str), to_vdp_addr(VDP_PLANE_POS(x, y, Width64) + PLANE_A_ADDR) | VRAM_W)
+#define print_at(str, x, y) text_print((str), VDP_PLANE_XY(PLANE_A_ADDR, x, y, Width64), FONT_TILE)
 
 // Results, readable from an emulator debugger
 volatile u16 mode1_status; // 0x0100 | mode1_load_sub result, 0x00FF = no Mega CD
 volatile u16 mode1_echo;   // last COMSTAT0 value from the Sub CPU
 
-// fmt is a printf format; the output is terminated for bios_print
 static void print_value(char * buf, char const * fmt, u32 value, u8 x, u8 y)
 {
-  int len = snprintf(buf, 15, fmt, value);
-  if (len > 14)
-    len = 14;
-  buf[len] = '\xff';
+  snprintf(buf, 16, fmt, value);
   print_at(buf, x, y);
 }
 
@@ -59,9 +55,7 @@ void main()
   vdp_data = 0x0000;
   vdp_data = 0x0EEE;
 
-  void * font = mode1_find_font();
-  if (font)
-    bios_load_1bpp_tiles(font, 96, to_vdp_addr(tile_offset(FONT_TILE)) | VRAM_W, 0x00011011);
+  vdp_load_1bpp_tiles(font8x8, FONT8X8_CHARS, FONT_TILE, 1, 0);
 
   // the Boot ROM default registers leave the display off
   bios_vdp_disp_enable();
@@ -69,28 +63,28 @@ void main()
   *exvec_vblank = (void (*)) BIOS_VBLANK_HANDLER;
   enable_interrupts();
 
-  print_at("MODE 1 EXAMPLE\xff", 2, 2);
+  print_at("MODE 1 EXAMPLE", 2, 2);
 
   if (!mode1_detect())
   {
     mode1_status = 0x00FF;
-    print_at("MEGA CD: NOT FOUND\xff", 2, 4);
+    print_at("MEGA CD: NOT FOUND", 2, 4);
     for (;;)
       bios_vblank_wait_default();
   }
-  print_at("MEGA CD: FOUND\xff", 2, 4);
+  print_at("MEGA CD: FOUND", 2, 4);
 
   // crash handler: Main CPU exceptions, and Sub CPU crashes reported below
   exvec_install();
 
   u8 const result = mode1_load_sub(res_sp.data, res_sp.size);
   mode1_status = 0x0100 | result;
-  print_at(result == MODE1_OK ? "SUB CPU: RUNNING\xff" : "SUB CPU: ERROR\xff", 2, 5);
+  print_at(result == MODE1_OK ? "SUB CPU: RUNNING" : "SUB CPU: ERROR", 2, 5);
   print_value(buf, "%02X", result, 20, 5);
 
-  print_at("FRAME:\xff", 2, 7);
-  print_at("COMCMD0:\xff", 2, 8);
-  print_at("COMSTAT0:\xff", 2, 9);
+  print_at("FRAME:", 2, 7);
+  print_at("COMCMD0:", 2, 8);
+  print_at("COMSTAT0:", 2, 9);
 
   u16 counter = 0;
   for (;;)

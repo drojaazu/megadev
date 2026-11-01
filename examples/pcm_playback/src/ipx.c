@@ -20,15 +20,16 @@ GLOBAL_SYM(MMD_DEST, WORK_RAM);
 #include <main/vdp.h>
 #include <system.h>
 #include <types.h>
+#include <main/text.h>
+
+// font8x8 is loaded at tile 0x20, so a character's tile is its code
+#define TEXT_TILE 0x20
 
 void play_pcm()
 {
   ga_main_reg_comcmd0 = CMD_PLAY_PCM;
 
-  bios_print(
-    "Playing...\xff",
-    (to_vdp_addr(BIOS_VDP_DEFAULT_PLANEA + VDP_PLANE_POS(1, 2, Width64)) |
-     VRAM_W));
+  text_print("Playing...", VDP_PLANE_XY(BIOS_VDP_DEFAULT_PLANEA, 1, 2, Width64), TEXT_TILE);
 
   // wait for the playing flag to clear
   while (ga_main_reg_comflags_sub & 0x80)
@@ -40,18 +41,12 @@ void play_pcm()
   while (ga_main_reg_comstat0 != 0)
     exvec_check_sub();
 
-  bios_print(
-    "Done      \xff",
-    (to_vdp_addr(BIOS_VDP_DEFAULT_PLANEA + VDP_PLANE_POS(1, 2, Width64)) |
-     VRAM_W));
+  text_print("Done      ", VDP_PLANE_XY(BIOS_VDP_DEFAULT_PLANEA, 1, 2, Width64), TEXT_TILE);
 }
 
 void load_pcm()
 {
-  bios_print(
-    "Loading...\xff",
-    (to_vdp_addr(BIOS_VDP_DEFAULT_PLANEA + VDP_PLANE_POS(1, 2, Width64)) |
-     VRAM_W));
+  text_print("Loading...", VDP_PLANE_XY(BIOS_VDP_DEFAULT_PLANEA, 1, 2, Width64), TEXT_TILE);
   ga_main_reg_comcmd0 = CMD_LOAD_PRGRAM;
   while (ga_main_reg_comstat0 == 0)
     exvec_check_sub();
@@ -67,23 +62,17 @@ void main()
   // crash handler for Main CPU exceptions (docs/crash_handler.md)
   exvec_install();
 
-  bios_load_font_defaults();
+  vdp_load_1bpp_tiles(font8x8, FONT8X8_CHARS, TEXT_TILE, 1, 0);
   bios_palette[1] = 0xEEE;
   bios_vdp_update_flags |= BIOS_MASK_COPY_PALETTE;
   bios_vblank_wait_default();
   exvec_check_sub();
 
-  bios_print(
-    "PCM Audio Playback\xff",
-    (to_vdp_addr(BIOS_VDP_DEFAULT_PLANEA + VDP_PLANE_POS(1, 1, Width64)) |
-     VRAM_W));
+  text_print("PCM Audio Playback", VDP_PLANE_XY(BIOS_VDP_DEFAULT_PLANEA, 1, 1, Width64), TEXT_TILE);
 
   load_pcm();
 
-  bios_print(
-    "Press A to replay\xff",
-    (to_vdp_addr(BIOS_VDP_DEFAULT_PLANEA + VDP_PLANE_POS(1, 4, Width64)) |
-     VRAM_W));
+  text_print("Press A to replay", VDP_PLANE_XY(BIOS_VDP_DEFAULT_PLANEA, 1, 4, Width64), TEXT_TILE);
 
   // main loop
   while (true)

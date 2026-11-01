@@ -12,7 +12,7 @@
 
 /*
   Very simple Hello World example
-  We'll load the BIOS font and display some text
+  We'll load the kit font and display some text
 */
 
   // First, disable all interrupts while we get things set up
@@ -35,10 +35,18 @@
   move.l   #BIOS_VBLANK_HANDLER, (EXVEC_LEVEL6)
 
   /*
-    Now we'll load the internal Boot ROM font into the VDP with the default
-    settings
+    Load the kit's 8x8 font (font8x8) at tile 0x20, so a character's tile is
+    its code. The kit's text functions are C, which takes its arguments on the
+    stack, last argument first:
+    vdp_load_1bpp_tiles(font8x8, FONT8X8_CHARS, 0x20, fg 1, bg 0)
   */
-  jbsr BIOS_LOAD_FONT_DEFAULTS
+  move.l   #0, -(sp)
+  move.l   #1, -(sp)
+  move.l   #0x20, -(sp)
+  move.l   #96, -(sp)
+  pea      font8x8
+  jbsr     vdp_load_1bpp_tiles
+  lea      20(sp), sp
   
   // The font uses palette entry #1, so we'll manually set that to white
   move.l   #0xC0020000, (VDP_CTRL)
@@ -48,8 +56,12 @@
   move.w   #0x0205, d0
   jbsr     plane_xy_pos
 
-  lea str_hello, a1
-  jbsr     BIOS_PRINT
+  // text_print(str_hello, position in d0, 0x20)
+  move.l   #0x20, -(sp)
+  move.l   d0, -(sp)
+  pea      str_hello
+  jbsr     text_print
+  lea      12(sp), sp
 
   // we can finally turn the display output back on now that everything is
   // prepared
@@ -89,5 +101,5 @@ SUB plane_xy_pos
 
 .section .rodata
 str_hello:
-.ascii "Hello World!\xff"
+.asciz "Hello World!"
 
