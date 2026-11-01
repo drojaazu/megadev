@@ -401,7 +401,7 @@ Run `make check` from the repository root before merging any branch. It must pas
 
 | Step | Target | What it proves |
 |---|---|---|
-| 1 | `check-projects` | Every example and `new_project` builds from clean through its own makefile, the way a user project is built, and its disc image or cartridge and every file in `DISC_CONTENTS` exist and are not empty. The repository root is passed as `MEGADEV_PATH`, so no installation is required. |
+| 1 | `check-projects` | Every example and `new_project` builds from clean through its own makefile, the way a user project is built, and its disc image or cartridge and every file in `DISC_CONTENTS` exist and are not empty. A cartridge's header ROM end address and checksum are recomputed and must match. The repository root is passed as `MEGADEV_PATH`, so no installation is required. |
 | 2 | `check-headers` | Every `lib/**/*.h` compiles alone with `-Wall -Wextra -Werror`, once per hardware target (`MEGACD`, `MEGACD_MODE1`, `MEGADRIVE`). A header that only works when something else was included first fails here. |
 | 3 | `check-asm` | Every `lib/**/*.s` assembles alone. Files that cannot by design, such as `cd_boot.s`, which includes a project's built binaries, are listed in the `Makefile` with a reason. |
 | 4 | `check-link` | Every function the compiler calls on its own (`memcpy`, 32-bit division, and so on) is provided by the runtime; the runtime and those helpers contain only 68000 instructions; a cartridge's initialized data is stored in ROM; 64-bit and floating point arithmetic fail to link. |
