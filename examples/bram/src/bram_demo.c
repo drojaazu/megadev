@@ -16,6 +16,7 @@ GLOBAL_SYM(MMD_DEST, WORK_RAM);
 #include <main/memmap.h>
 #include <main/mmd.h>
 #include <main/vdp.h>
+#include <stdio.h>
 #include <str_util.h>
 #include <system.h>
 #include <types.h>
@@ -28,10 +29,16 @@ GLOBAL_SYM(MMD_DEST, WORK_RAM);
 
 #define SUB_ACK ga_main_reg_comcmd0 = 0;
 
-#define print_xy(x, y) \
-  (to_vdp_addr(BIOS_VDP_DEFAULT_PLANEA + VDP_PLANE_POS(x, y, Width64)) | VRAM_W)
+#define print_xy(x, y) VDP_PLANE_XY(BIOS_VDP_DEFAULT_PLANEA, x, y, Width64)
 
-char val_buffer[5];
+// Format a value with snprintf and print it with the Boot ROM print routine,
+// which needs the 0xFF terminator in place of C's NUL.
+static void print_value(char const * format, int value, u8 x, u8 y)
+{
+  char buffer[24];
+  snprintf(buffer, sizeof buffer, format, value);
+  bios_print(str_to_bios(buffer), print_xy(x, y));
+}
 
 static void bram_init()
 {
@@ -51,15 +58,11 @@ static void bram_init()
 
   bios_print("Total Size: \xff", print_xy(1, 2));
 
-  hextoa16(bram_size, val_buffer);
-
-  bios_print(val_buffer, print_xy(13, 3));
+  print_value("%d bytes", bram_size, 13, 2);
 
   bios_print("Status: \xff", print_xy(1, 3));
 
-  hextoa16(status, val_buffer);
-
-  bios_print(val_buffer, print_xy(13, 2));
+  print_value("%d", status, 13, 3);
 
   switch (status)
   {
@@ -96,12 +99,10 @@ static void brmstat()
   SUB_ACK
 
   bios_print("File count: \xff", print_xy(1, 3));
-  hextoa16(filecount, val_buffer);
-  bios_print(val_buffer, print_xy(13, 3));
+  print_value("%u", filecount, 13, 3);
 
   bios_print("Free blocks: \xff", print_xy(1, 4));
-  hextoa16(free, val_buffer);
-  bios_print(val_buffer, print_xy(13, 4));
+  print_value("%u", free, 13, 4);
 }
 
 static bool brmserch()
@@ -128,12 +129,10 @@ static bool brmserch()
     bios_print("File BRMEX found\xff", print_xy(1, 2));
 
     bios_print(" File size: \xff", print_xy(1, 3));
-    hextoa16(filesize, val_buffer);
-    bios_print(val_buffer, print_xy(13, 3));
+    print_value("%u", filesize, 13, 3);
 
     bios_print(" Protected? \xff", print_xy(1, 4));
-    hextoa16(is_protected, val_buffer);
-    bios_print(val_buffer, print_xy(13, 4));
+    print_value("%u", is_protected, 13, 4);
     return true;
   }
 }
@@ -180,8 +179,7 @@ static void brmwrite()
       writeval -= 0x100;
     }
 
-    hextoa16(writeval, val_buffer);
-    bios_print(val_buffer, print_xy(23, 2));
+    print_value("%04X", writeval, 23, 2);
   } while (! (bios_joy1_hit & PAD_START));
 
   *(u16 *) word_ram = writeval;
@@ -243,9 +241,7 @@ static void brmread()
 
   bios_print("Value read: \xff", print_xy(1, 9));
 
-  hextoa16(readval, val_buffer);
-
-  bios_print(val_buffer, print_xy(12, 9));
+  print_value("%04X", readval, 12, 9);
 }
 
 void brmdel()
@@ -308,8 +304,7 @@ void brmdir()
     filename = (char *) (word_ram + (file_idx * 16));
     filename[11] = 0xFF;
     bios_print(filename, print_xy(1, curr_y));
-    hextoa16(*(u16 *) (word_ram + (file_idx * 16) + 14), val_buffer);
-    bios_print(val_buffer, print_xy(16, curr_y));
+    print_value("%u", *(u16 *) (word_ram + (file_idx * 16) + 14), 16, curr_y);
     ++curr_y;
     ++file_idx;
   }
@@ -321,10 +316,6 @@ void main()
   bios_load_font_defaults();
   bios_palette[1] = 0xEEE;
   bios_vdp_update_flags |= BIOS_MASK_COPY_PALETTE;
-
-  // print strings end in 0xFF, so let's set up the value buffer so we don't
-  // have to mess with it later
-  val_buffer[4] = '\xff';
 
   // interrupts were disabled in the init section
   enable_interrupts();
