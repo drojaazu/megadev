@@ -5,7 +5,7 @@ offset in the module file at which the .rom section is stored. */
   .rom MODULE_ROM_ORIGIN : AT ( _MODULE_ROM_LOAD ) SUBALIGN(2)
   {
     _INIT_ORIGIN = .;
-    *(.init)
+    KEEP(*(.init))
     . = ALIGN(4);
     _INIT_LENGTH = ABSOLUTE(. - _INIT_ORIGIN);
     _TEXT_ORIGIN = .;

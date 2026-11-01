@@ -18,8 +18,10 @@ SECTIONS
   .text (READONLY) : SUBALIGN(2)
   {
     _TEXT_ORIGIN = .;
-    *(.security*)
-    *(.text*)
+    /* The security block runs straight into the IP code, which nothing else
+    references, so all of it is kept even with --gc-sections. */
+    KEEP(*(.security*))
+    KEEP(*(.text*))
     *(.rodata*)
     _TEXT_LENGTH = ABSOLUTE(. - _TEXT_ORIGIN);
   } > IP

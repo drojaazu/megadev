@@ -11,6 +11,7 @@
 #include "main/vdp.def.h"
 #include "main/z80.macro.s"
 
+.text
 .align 2
 
 z80_dummy_program:

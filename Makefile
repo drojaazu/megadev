@@ -251,7 +251,7 @@ check-init:
 # Input sections the scripts must handle: an assembly common symbol (.comm)
 # lands inside the zeroed region of every script, and a static constructor or
 # destructor stops the link.
-check-sections:
+check-sections: check-init
 	@mkdir -p $(CHECK_DIR)
 	@printf '.global main\nmain: rts\n.comm common_buf, 64\n' > $(CHECK_DIR)/sections_comm.s
 	@$(CC) -m68000 -c $(CHECK_DIR)/sections_comm.s -o $(CHECK_DIR)/sections_comm.o
@@ -274,7 +274,23 @@ check-sections:
 	  grep -q 'constructors and destructors are not supported' $(CHECK_DIR)/sections_ctor.err || { \
 	    printf 'FAIL sections: %s: expected the constructor error\n' $$ld; cat $(CHECK_DIR)/sections_ctor.err; exit 1; }; \
 	done
-	@printf '== sections: common symbols are zeroed and static constructors stop the link, in every script\n'
+	@# The cartridge vector table starts the ROM whatever the object order.
+	@printf '.global main\nmain: rts\n' > $(CHECK_DIR)/sections_main.s
+	@printf '.section .vectors, "ax"\n.long 0xFFFFFC00\n.long main\n' > $(CHECK_DIR)/sections_vec.s
+	@$(CC) -m68000 -c $(CHECK_DIR)/sections_main.s -o $(CHECK_DIR)/sections_main.o
+	@$(CC) -m68000 -c $(CHECK_DIR)/sections_vec.s -o $(CHECK_DIR)/sections_vec.o
+	@$(STACK_LD) -T cfg/md_cart.ld $(CHECK_DIR)/sections_main.o $(CHECK_DIR)/sections_vec.o -o $(CHECK_DIR)/sections_vec.elf
+	@$(M68K_PREFIX)objcopy -O binary $(CHECK_DIR)/sections_vec.elf $(CHECK_DIR)/sections_vec.bin
+	@[ "$$(od -An -tx1 -N4 $(CHECK_DIR)/sections_vec.bin | tr -d ' \n')" = fffffc00 ] || { \
+	  printf 'FAIL sections: the vector table does not start the cartridge ROM when linked after other code\n'; exit 1; }
+	@# --gc-sections keeps what nothing references but the hardware needs.
+	@$(STACK_LD) --gc-sections -T cfg/module_mmd.ld $(CHECK_DIR)/init_std.o $(CHECK_DIR)/init_main.o -o $(CHECK_DIR)/sections_gc.elf
+	@$(M68K_PREFIX)nm $(CHECK_DIR)/sections_gc.elf | grep -q ' T init$$' || { \
+	  printf 'FAIL sections: --gc-sections removed module init code\n'; exit 1; }
+	@$(STACK_LD) --gc-sections -T cfg/md_cart.ld $(CHECK_DIR)/sections_main.o $(CHECK_DIR)/sections_vec.o -o $(CHECK_DIR)/sections_gc.elf
+	@$(M68K_PREFIX)objdump -h $(CHECK_DIR)/sections_gc.elf | awk '$$2 == ".text" { exit !(strtonum("0x" $$3) >= 8) }' || { \
+	  printf 'FAIL sections: --gc-sections removed the cartridge vector table\n'; exit 1; }
+	@printf '== sections: common symbols are zeroed, static constructors stop the link, cartridge vectors start the ROM, --gc-sections keeps entry code\n'
 
 # ---------------------------------------------------------------------------
 # Loop 5: every library header can be included by two translation units that
