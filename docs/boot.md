@@ -2,6 +2,8 @@
 
 The IP (Initial Program) and SP (Sub Program) are small pieces of code that reside within the boot sector of the disc. They are the entry points for your program on the Main and Sub sides, respectively, and are loaded automatically by the Boot ROM on startup. The IP is loaded to 0xFF0000 (the start of the User block) on the main side, and the SP is loaded to 0x6000 (within PRG RAM block 0, at the end of the internal BIOS code) on the Sub side.
 
+The IP has room for only 3.5 KB, part of which is the security code, so in practice it does little: it sets up the VDP and interrupts, asks the SP to load a larger program from disc, and jumps to it. That program, the IPX, is an ordinary module and can be written in C. The SP does the same on the Sub side when it outgrows its space. `new_project/src/ip.s` is the annotated reference for this pattern, and every disc example follows it.
+
 The IP and SP should be written in assembly. This is because we want them small, predictable and optimal. Moreover, it's a good idea to include the CD-ROM access framework (if you plan to use it) in your SP, which is written in asm.
 
 (It *is* theoretically possible to write the IP/SP in C, compile it and the MMD/CDROM code seperately as objects, then link the two together, but considering the fact that the IP/SP are meant to be small init programs, we feel this is unnecessarily convoluted and that writing in C may yield code that is too big/not optimal.)

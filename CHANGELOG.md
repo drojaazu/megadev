@@ -26,8 +26,7 @@ replacement.
   in Mode 1 and on the Mega CD; Sub CPU crashes are reported by the Main CPU.
   `EXVEC_FONT` selects the kit's font or the Boot ROM's. See
   `docs/crash_handler.md`.
-  Every example and the `new_project` template install it, except
-  `hello_world`, whose IP has no room.
+  Every example and the `new_project` template install it.
 - **Debug text without the Boot ROM** (`main/text.h`): `vdp_load_1bpp_tiles`
   loads a 1bpp font, `text_print` prints a C string at a `VDP_PLANE_XY`
   position. Includes `font8x8`, a public domain 8x8 ASCII font, for the Mega
@@ -101,6 +100,8 @@ replacement.
 - `main/cd_exception.s`, replaced by the crash handler.
 - `lib/sysfont.1bpp.chr`, an unused copy of the Boot ROM font, which is
   Sega's.
+- The `hello_world` example. `docs/boot.md` describes the IP, and the
+  `new_project` IP is the annotated reference.
 
 ### Fixed
 
