@@ -18,9 +18,12 @@ GLOBAL_SYM(MMD_DEST, WORK_RAM);
 #include <main/mmd.h>
 #include <main/vdp.h>
 #include <stdio.h>
-#include <str_util.h>
 #include <system.h>
 #include <types.h>
+#include <main/text.h>
+
+// font8x8 is loaded at tile 0x20, so a character's tile is its code
+#define TEXT_TILE 0x20
 
 #define SUB_WAIT                   \
   do                               \
@@ -32,18 +35,17 @@ GLOBAL_SYM(MMD_DEST, WORK_RAM);
 
 #define print_xy(x, y) VDP_PLANE_XY(BIOS_VDP_DEFAULT_PLANEA, x, y, Width64)
 
-// Format a value with snprintf and print it with the Boot ROM print routine,
-// which needs the 0xFF terminator in place of C's NUL.
+// Format a value with snprintf and print it
 static void print_value(char const * format, int value, u8 x, u8 y)
 {
   char buffer[24];
   snprintf(buffer, sizeof buffer, format, value);
-  bios_print(str_to_bios(buffer), print_xy(x, y));
+  text_print(buffer, print_xy(x, y), TEXT_TILE);
 }
 
 static void bram_init()
 {
-  bios_print("Performing BRAM_INIT...\xff", print_xy(1, 1));
+  text_print("Performing BRAM_INIT...", print_xy(1, 1), TEXT_TILE);
 
   ga_main_reg_comcmd0 = 2;
 
@@ -57,27 +59,27 @@ static void bram_init()
 
   SUB_ACK
 
-  bios_print("Total Size: \xff", print_xy(1, 2));
+  text_print("Total Size: ", print_xy(1, 2), TEXT_TILE);
 
   print_value("%d bytes", bram_size, 13, 2);
 
-  bios_print("Status: \xff", print_xy(1, 3));
+  text_print("Status: ", print_xy(1, 3), TEXT_TILE);
 
   print_value("%d", status, 13, 3);
 
   switch (status)
   {
     case 0:
-      bios_print("BRAM not present or not detected!\xff", print_xy(1, 4));
+      text_print("BRAM not present or not detected!", print_xy(1, 4), TEXT_TILE);
       break;
     case 1:
-      bios_print("BRAM is not formatted!\xff", print_xy(1, 4));
+      text_print("BRAM is not formatted!", print_xy(1, 4), TEXT_TILE);
       break;
     case 2:
-      bios_print("BRAM is in a non-standard format!\xff", print_xy(1, 4));
+      text_print("BRAM is in a non-standard format!", print_xy(1, 4), TEXT_TILE);
       break;
     case 3:
-      bios_print("BRAM is formatted and ready to use!\xff", print_xy(1, 4));
+      text_print("BRAM is formatted and ready to use!", print_xy(1, 4), TEXT_TILE);
       break;
   }
 }
@@ -85,7 +87,7 @@ static void bram_init()
 static void brmstat()
 {
   bios_clear_tables();
-  bios_print("Performing BRAM_STATUS...\xff", print_xy(1, 1));
+  text_print("Performing BRAM_STATUS...", print_xy(1, 1), TEXT_TILE);
 
   ga_main_reg_comcmd0 = 6;
 
@@ -99,16 +101,16 @@ static void brmstat()
 
   SUB_ACK
 
-  bios_print("File count: \xff", print_xy(1, 3));
+  text_print("File count: ", print_xy(1, 3), TEXT_TILE);
   print_value("%u", filecount, 13, 3);
 
-  bios_print("Free blocks: \xff", print_xy(1, 4));
+  text_print("Free blocks: ", print_xy(1, 4), TEXT_TILE);
   print_value("%u", free, 13, 4);
 }
 
 static bool brmserch()
 {
-  bios_print("Performing BRAM_SEARCH...\xff", print_xy(1, 1));
+  text_print("Performing BRAM_SEARCH...", print_xy(1, 1), TEXT_TILE);
 
   ga_main_reg_comcmd0 = 3;
 
@@ -122,17 +124,17 @@ static bool brmserch()
 
   if (found == 0xFFFF)
   {
-    bios_print("File BRMEX not found\xff", print_xy(1, 2));
+    text_print("File BRMEX not found", print_xy(1, 2), TEXT_TILE);
     return false;
   }
   else
   {
-    bios_print("File BRMEX found\xff", print_xy(1, 2));
+    text_print("File BRMEX found", print_xy(1, 2), TEXT_TILE);
 
-    bios_print(" File size: \xff", print_xy(1, 3));
+    text_print(" File size: ", print_xy(1, 3), TEXT_TILE);
     print_value("%u", filesize, 13, 3);
 
-    bios_print(" Protected? \xff", print_xy(1, 4));
+    text_print(" Protected? ", print_xy(1, 4), TEXT_TILE);
     print_value("%u", is_protected, 13, 4);
     return true;
   }
@@ -144,7 +146,7 @@ static void brmwrite()
 
   u16 writeval = 0;
 
-  bios_print("Set a value to write: \xff", print_xy(1, 2));
+  text_print("Set a value to write: ", print_xy(1, 2), TEXT_TILE);
   u8 delayed_input_val = 0;
 
   do
@@ -200,11 +202,11 @@ static void brmwrite()
 
   if (success == 0xFFFF)
   {
-    bios_print("Error while writing file\xff", print_xy(1, 4));
+    text_print("Error while writing file", print_xy(1, 4), TEXT_TILE);
   }
   else
   {
-    bios_print("Write successful\xff", print_xy(1, 4));
+    text_print("Write successful", print_xy(1, 4), TEXT_TILE);
   }
 }
 
@@ -215,7 +217,7 @@ static void brmread()
   if (! brmserch())
     return;
 
-  bios_print("Performing BRAM_READ...\xff", print_xy(1, 6));
+  text_print("Performing BRAM_READ...", print_xy(1, 6), TEXT_TILE);
 
   ga_main_grant_2m();
 
@@ -233,15 +235,15 @@ static void brmread()
 
   if (success == 0xFFFF)
   {
-    bios_print("Error reading file\xff", print_xy(1, 7));
+    text_print("Error reading file", print_xy(1, 7), TEXT_TILE);
     return;
   }
 
   u16 readval = *(u16 *) word_ram;
 
-  bios_print("Success reading file\xff", print_xy(1, 7));
+  text_print("Success reading file", print_xy(1, 7), TEXT_TILE);
 
-  bios_print("Value read: \xff", print_xy(1, 9));
+  text_print("Value read: ", print_xy(1, 9), TEXT_TILE);
 
   print_value("%04X", readval, 12, 9);
 }
@@ -250,7 +252,7 @@ void brmdel()
 {
   bios_clear_tables();
 
-  bios_print("Performing BRAM_DELETE...\xff", print_xy(1, 1));
+  text_print("Performing BRAM_DELETE...", print_xy(1, 1), TEXT_TILE);
 
   ga_main_reg_comcmd0 = 7;
 
@@ -262,11 +264,11 @@ void brmdel()
 
   if (success == 0xFFFF)
   {
-    bios_print("Failed to delete file\xff", print_xy(1, 3));
+    text_print("Failed to delete file", print_xy(1, 3), TEXT_TILE);
   }
   else
   {
-    bios_print("File deleted successfully\xff", print_xy(1, 3));
+    text_print("File deleted successfully", print_xy(1, 3), TEXT_TILE);
   }
 }
 
@@ -274,7 +276,7 @@ void brmdir()
 {
   bios_clear_tables();
 
-  bios_print("Performing BRAM_DIRECTORY...\xff", print_xy(1, 1));
+  text_print("Performing BRAM_DIRECTORY...", print_xy(1, 1), TEXT_TILE);
 
   ga_main_grant_2m();
 
@@ -290,11 +292,11 @@ void brmdir()
 
   if (success == 0xFFFF)
   {
-    bios_print("Data too big for buffer\xff", print_xy(1, 3));
+    text_print("Data too big for buffer", print_xy(1, 3), TEXT_TILE);
     return;
   }
 
-  bios_print("Filename       Blocks\xff", print_xy(1, 3));
+  text_print("Filename       Blocks", print_xy(1, 3), TEXT_TILE);
 
   u16    file_idx = 0;
   u16    curr_y = 4;
@@ -304,8 +306,8 @@ void brmdir()
     if (*(u8 *) (word_ram + (file_idx * 16)) == 0)
       break;
     filename = (char *) (word_ram + (file_idx * 16));
-    filename[11] = 0xFF;
-    bios_print(filename, print_xy(1, curr_y));
+    filename[11] = '\0';
+    text_print(filename, print_xy(1, curr_y), TEXT_TILE);
     print_value("%u", *(u16 *) (word_ram + (file_idx * 16) + 14), 16, curr_y);
     ++curr_y;
     ++file_idx;
@@ -314,8 +316,8 @@ void brmdir()
 
 void main()
 {
-  // setup boot rom library font
-  bios_load_font_defaults();
+  // load the kit font for text
+  vdp_load_1bpp_tiles(font8x8, FONT8X8_CHARS, TEXT_TILE, 1, 0);
   bios_palette[1] = 0xEEE;
   bios_vdp_update_flags |= BIOS_MASK_COPY_PALETTE;
 
@@ -326,7 +328,7 @@ void main()
   enable_interrupts();
 
   bram_init();
-  bios_print("Press Start to continue...\xff", print_xy(1, 10));
+  text_print("Press Start to continue...", print_xy(1, 10), TEXT_TILE);
 
   do
   {
@@ -340,14 +342,14 @@ void main()
   {
     bios_clear_tables();
 
-    bios_print("BRAM Options\xff", print_xy(1, 1));
-    bios_print("BRAM_STATUS\xff", print_xy(3, 3));
-    bios_print("BRAM_DIRECTORY\xff", print_xy(3, 4));
-    bios_print("BRAM_READ\xff", print_xy(3, 5));
-    bios_print("BRAM_WRITE\xff", print_xy(3, 6));
-    bios_print("BRAM_VERIFY\xff", print_xy(3, 7));
-    bios_print("BRAM_DELETE\xff", print_xy(3, 8));
-    bios_print("BRAM_FORMAT\xff", print_xy(3, 9));
+    text_print("BRAM Options", print_xy(1, 1), TEXT_TILE);
+    text_print("BRAM_STATUS", print_xy(3, 3), TEXT_TILE);
+    text_print("BRAM_DIRECTORY", print_xy(3, 4), TEXT_TILE);
+    text_print("BRAM_READ", print_xy(3, 5), TEXT_TILE);
+    text_print("BRAM_WRITE", print_xy(3, 6), TEXT_TILE);
+    text_print("BRAM_VERIFY", print_xy(3, 7), TEXT_TILE);
+    text_print("BRAM_DELETE", print_xy(3, 8), TEXT_TILE);
+    text_print("BRAM_FORMAT", print_xy(3, 9), TEXT_TILE);
 
     do
     {
@@ -401,7 +403,7 @@ void main()
         break;
     }
 
-    bios_print("Press Start to continue...\xff", print_xy(1, 12));
+    text_print("Press Start to continue...", print_xy(1, 12), TEXT_TILE);
 
     do
     {

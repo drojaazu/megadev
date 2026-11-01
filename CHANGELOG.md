@@ -32,6 +32,7 @@ replacement.
   loads a 1bpp font, `text_print` prints a C string at a `VDP_PLANE_XY`
   position. Includes `font8x8`, a public domain 8x8 ASCII font, for the Mega
   Drive alone. `str_to_bios` converts a C string for `bios_print`.
+  The examples print with it: C strings, `snprintf` and `font8x8`.
 - **Cartridge header**: the build writes the ROM end address and checksum into
   the header of every cartridge (`tools/romfix.sh`).
 - **Layout symbols**: every linker script defines the same symbols describing

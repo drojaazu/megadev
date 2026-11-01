@@ -94,7 +94,6 @@ __attribute__ ((noreturn)) void main()
 	memset8 (0, (u8 *) &bios_sprlist, sizeof (bios_sprlist));
 	enable_interrupts();
 	bios_clear_vram();
-	bios_load_font_defaults();
 	bios_palette[1] = 0xEEE;
 	bios_vdp_update_flags |= BIOS_MASK_COPY_PALETTE;
 	bios_load_pal (&res_pal_stamps);

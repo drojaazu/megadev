@@ -14,6 +14,10 @@
 #include <types.h>
 #include <macro.h>
 #include <main/memmap.def.h>
+#include <main/text.h>
+
+// font8x8 is loaded at tile 0x20, so a character's tile is its code
+#define TEXT_TILE 0x20
 
 // Module layout (Work RAM map in shared.h): the IPX runs from Work RAM and
 // stays resident; the ex* modules import its symbols.
@@ -24,7 +28,7 @@ GLOBAL_SYM(MODULE_RAM_LENGTH, IPX_RAM_LENGTH);
 GLOBAL_SYM(MMD_DEST, IPX_ROM_ORIGIN);
 
 #define print_xy(x, y)                                                   \
-  (to_vdp_addr(BIOS_VDP_DEFAULT_PLANEA + VDP_PLANE_POS(x, y, Width64)) | VRAM_W)
+  VDP_PLANE_XY(BIOS_VDP_DEFAULT_PLANEA, x, y, Width64)
 
 u8 next_module;
 
@@ -207,11 +211,11 @@ void main()
   bios_load_vdp_regs(vdp_mode3);
 
   enable_interrupts();
-  bios_load_font_defaults();
+  vdp_load_1bpp_tiles(font8x8, FONT8X8_CHARS, TEXT_TILE, 1, 0);
   bios_palette[1] = 0xEEE;
   bios_vdp_update_flags |= BIOS_MASK_COPY_PALETTE;
 
-  bios_print("Serial Debugging\xff", print_xy(1, 1));
+  text_print("Serial Debugging", print_xy(1, 1), TEXT_TILE);
 
   // Announce ourselves on the serial link. Without this nothing is transmitted
   // until a command arrives, which makes the outbound path impossible to

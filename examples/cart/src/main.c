@@ -1,6 +1,7 @@
 #include "res.h"
 #include <main/io.h>
 #include <main/memmap.h>
+#include <main/text.h>
 #include <main/vdp.h>
 #include <memory.h>
 #include <system.h>
@@ -135,15 +136,12 @@ u16 const default_vdp_regs[] = {
   VDP_REG_WIN_HPOS,
   VDP_REG_WIN_VPOS};
 
-#define plane_xy(x, y)                                                \
-  (to_vdp_addr(VDP_PLANE_POS(x, y, Width64) + PLANE_A_ADDR) | VRAM_W)
+#define plane_xy(x, y) VDP_PLANE_XY(PLANE_A_ADDR, x, y, Width64)
 
-void print(char const * string, vdp_addr pos)
-{
-  vdp_ctrl_32 = pos;
-  while (*string != 0)
-    vdp_data = *string++;
-}
+// font8x8 is loaded at tile 0x20, so a character's tile is its code; the
+// logo's sprite tiles follow it at 0x80
+#define TEXT_TILE   0x20
+#define LETTER_TILE 0x80
 
 u8 counter;
 
@@ -168,14 +166,11 @@ void main()
   update_cram();
 
   init_joypads();
+  vdp_load_1bpp_tiles(font8x8, FONT8X8_CHARS, TEXT_TILE, 1, 0);
   vdp_regs[1] |= VDP_DMA_ENABLE;
   vdp_ctrl = vdp_regs[1];
   vdp_dma_transfer(
-    res_basic_font.data,
-    to_vdp_addr(tile_offset(0x20)),
-    (res_basic_font.size << 1));
-  vdp_dma_transfer(
-    res_letters.data, to_vdp_addr(tile_offset(0x60)), (res_letters.size << 1));
+    res_letters.data, to_vdp_addr(tile_offset(LETTER_TILE)), (res_letters.size << 1));
   vdp_regs[1] &= ~VDP_DMA_ENABLE;
   vdp_ctrl = vdp_regs[1];
 
@@ -184,7 +179,7 @@ void main()
 
   sprites[0].pos_x = base_pos_x;
   sprites[0].pos_y = base_pos_y;
-  sprites[0].tile = 96;
+  sprites[0].tile = LETTER_TILE;
   sprites[0].width = 3;
   sprites[0].height = 2;
   sprites[0].palette = 1;
@@ -192,7 +187,7 @@ void main()
 
   sprites[1].pos_x = sprites[0].pos_x + 32;
   sprites[1].pos_y = base_pos_y;
-  sprites[1].tile = 108;
+  sprites[1].tile = LETTER_TILE + 12;
   sprites[1].width = 3;
   sprites[1].height = 2;
   sprites[1].palette = 1;
@@ -200,7 +195,7 @@ void main()
 
   sprites[2].pos_x = sprites[1].pos_x + 32;
   sprites[2].pos_y = base_pos_y;
-  sprites[2].tile = 120;
+  sprites[2].tile = LETTER_TILE + 24;
   sprites[2].width = 3;
   sprites[2].height = 2;
   sprites[2].palette = 1;
@@ -208,7 +203,7 @@ void main()
 
   sprites[3].pos_x = sprites[2].pos_x + 32;
   sprites[3].pos_y = base_pos_y;
-  sprites[3].tile = 132;
+  sprites[3].tile = LETTER_TILE + 36;
   sprites[3].width = 3;
   sprites[3].height = 2;
   sprites[3].palette = 1;
@@ -216,7 +211,7 @@ void main()
 
   sprites[4].pos_x = sprites[3].pos_x + 32;
   sprites[4].pos_y = base_pos_y;
-  sprites[4].tile = 144;
+  sprites[4].tile = LETTER_TILE + 48;
   sprites[4].width = 3;
   sprites[4].height = 2;
   sprites[4].palette = 1;
@@ -224,7 +219,7 @@ void main()
 
   sprites[5].pos_x = sprites[4].pos_x + 32;
   sprites[5].pos_y = base_pos_y;
-  sprites[5].tile = 108;
+  sprites[5].tile = LETTER_TILE + 12;
   sprites[5].width = 3;
   sprites[5].height = 2;
   sprites[5].palette = 1;
@@ -232,7 +227,7 @@ void main()
 
   sprites[6].pos_x = sprites[5].pos_x + 32;
   sprites[6].pos_y = base_pos_y;
-  sprites[6].tile = 156;
+  sprites[6].tile = LETTER_TILE + 60;
   sprites[6].width = 3;
   sprites[6].height = 2;
   sprites[6].palette = 1;
@@ -244,7 +239,7 @@ void main()
 
   counter = 0;
   char const * subtitle = "MEGA DRIVE AND MEGA CD DEVELOPMENT KIT";
-  print(subtitle, plane_xy(1, 16));
+  text_print(subtitle, plane_xy(1, 16), TEXT_TILE);
   __asm__("main_loop:");
   u8  sin_pos = 0;
   u16 wait = 0;

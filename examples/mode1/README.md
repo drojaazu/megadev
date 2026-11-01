@@ -3,7 +3,8 @@
 A cartridge that drives the Mega CD (Mode 1). It detects the Boot ROM at
 0x400000, unpacks the Sub BIOS into Program RAM, loads its own Sub CPU program
 and then uses the Boot ROM library from the cartridge: default VDP registers,
-VRAM clear, the built-in font, text printing and the VBLANK handler.
+VRAM clear and the VBLANK handler. Text is printed with the kit's `text_print`
+and `font8x8` (`main/text.h`).
 
 The screen shows the detection result, the Sub CPU bring-up status, the BIOS
 frame counter and a value sent to the Sub CPU through COMCMD0 and echoed back

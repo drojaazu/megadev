@@ -9,7 +9,6 @@ typedef struct
   char data[];
 } DataChunk;
 
-extern DataChunk const res_basic_font;
 extern DataChunk const res_letters;
 
 extern u16 const res_megadev_pal[16];

@@ -20,6 +20,10 @@ GLOBAL_SYM(MMD_DEST, IPX_ROM_ORIGIN);
 #include <main/mmd.h>
 #include <system.h>
 #include <types.h>
+#include <main/text.h>
+
+// font8x8 is loaded at tile 0x20, so a character's tile is its code
+#define TEXT_TILE 0x20
 
 u8 next_module;
 
@@ -158,7 +162,7 @@ void main()
 
   // The modules only show some text, so we'll prepare the font for them here
   // so it doesn't need to happen in the module itself
-  bios_load_font_defaults();
+  vdp_load_1bpp_tiles(font8x8, FONT8X8_CHARS, TEXT_TILE, 1, 0);
 
   // The font uses palette entry #1, so we'll manually set that to white
   bios_palette[1] = 0xEEE;

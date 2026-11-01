@@ -5,6 +5,10 @@
 #include <main/memmap.h>
 #include <main/vdp.h>
 #include <system.h>
+#include <main/text.h>
+
+// font8x8 is loaded at tile 0x20, so a character's tile is its code
+#define TEXT_TILE 0x20
 
 extern u8      next_module;
 extern u8      res_rain_chr;
@@ -21,10 +25,7 @@ void main()
     res_rain_chr_sz >> 1);
   enable_interrupts();
 
-  bios_print(
-    "Module 1\xff",
-    (to_vdp_addr(VDP_PLANE_POS(1, 1, Width64) + BIOS_VDP_DEFAULT_PLANEA) |
-     VRAM_W));
+  text_print("Module 1", VDP_PLANE_XY(BIOS_VDP_DEFAULT_PLANEA, 1, 1, Width64), TEXT_TILE);
 
   // init_particles is defined in the ipx
   init_particles(0x81, 0x82, 0, 0, 0, 0, 3, 3, 5, 1);

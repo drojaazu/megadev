@@ -49,7 +49,6 @@ __attribute__((noreturn)) void main()
 
   bios_clear_vram();
 
-  bios_load_font_defaults();
   bios_palette[1] = 0xEEE;
   bios_vdp_update_flags |= BIOS_MASK_COPY_PALETTE;
   bios_load_pal(&res_pal_stamps);
