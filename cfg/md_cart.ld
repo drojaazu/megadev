@@ -21,45 +21,45 @@ SECTIONS
 	ENTRY(main)
 	.text 0x000000 : SUBALIGN(2)
   {
-    _ROM_ORIGIN = .;
+    HIDDEN(_ROM_ORIGIN = .);
     /* the vector table and header (md_vectors.s, md_header.s) start the ROM */
     KEEP(*(.vectors))
-    _TEXT_ORIGIN = .;
+    HIDDEN(_TEXT_ORIGIN = .);
     *(.text*)
-    _TEXT_LENGTH = ABSOLUTE(. - _TEXT_ORIGIN);
-    _RODATA_ORIGIN = .;
+    HIDDEN(_TEXT_LENGTH = ABSOLUTE(. - _TEXT_ORIGIN));
+    HIDDEN(_RODATA_ORIGIN = .);
     *(.rodata*)
-    _RODATA_LENGTH = ABSOLUTE(. - _RODATA_ORIGIN);
-    _ROM_LENGTH = ABSOLUTE(. - _ROM_ORIGIN);
+    HIDDEN(_RODATA_LENGTH = ABSOLUTE(. - _RODATA_ORIGIN));
+    HIDDEN(_ROM_LENGTH = ABSOLUTE(. - _ROM_ORIGIN));
   } > rom
 
   /* Initialized data runs from RAM; its initial values are stored in ROM
   after .text and copied by md_init.s. */
   .data 0xFF0000 : AT ( LOADADDR(.text) + SIZEOF(.text) ) SUBALIGN(2)
   {
-    _RAM_DATA_ORIGIN = .;
+    HIDDEN(_RAM_DATA_ORIGIN = .);
     *(.data*)
     . = ALIGN(4);
-    _RAM_DATA_LENGTH = ABSOLUTE(. - _RAM_DATA_ORIGIN);
-    _RAM_DATA_LENGTH_LOOPSZ = ABSOLUTE(_RAM_DATA_LENGTH) >> 2;
+    HIDDEN(_RAM_DATA_LENGTH = ABSOLUTE(. - _RAM_DATA_ORIGIN));
+    HIDDEN(_RAM_DATA_LENGTH_LOOPSZ = ABSOLUTE(_RAM_DATA_LENGTH) >> 2);
   } > ram
 
   .bss : SUBALIGN(2)
   {
-    _BSS_ORIGIN = .;
+    HIDDEN(_BSS_ORIGIN = .);
     *(.bss*)
     *(COMMON)
     . = ALIGN(4);
-    _BSS_LENGTH = ABSOLUTE(. - _BSS_ORIGIN);
-    _BSS_LENGTH_LOOPSZ = ABSOLUTE(_BSS_LENGTH) >> 2;
+    HIDDEN(_BSS_LENGTH = ABSOLUTE(. - _BSS_ORIGIN));
+    HIDDEN(_BSS_LENGTH_LOOPSZ = ABSOLUTE(_BSS_LENGTH) >> 2);
   } > ram
-  _RAM_LENGTH = _RAM_DATA_LENGTH + _BSS_LENGTH;
-  _ROM_DATA_ORIGIN = LOADADDR(.data);
+  HIDDEN(_RAM_LENGTH = _RAM_DATA_LENGTH + _BSS_LENGTH);
+  HIDDEN(_ROM_DATA_ORIGIN = LOADADDR(.data));
 
 	/* The stack grows down from INIT_SSP (0 is the top of RAM). The program's
 	RAM must stay below it, and below STACK_SIZE bytes of stack if that is set. */
-	_STACK_TOP = DEFINED(INIT_SSP) ? ((INIT_SSP - 1) & 0xFFFFFF) + 1 : 0x1000000;
-	_STACK_BASE = _STACK_TOP - (DEFINED(STACK_SIZE) ? STACK_SIZE : 0);
+	HIDDEN(_STACK_TOP = DEFINED(INIT_SSP) ? ((INIT_SSP - 1) & 0xFFFFFF) + 1 : 0x1000000);
+	HIDDEN(_STACK_BASE = _STACK_TOP - (DEFINED(STACK_SIZE) ? STACK_SIZE : 0));
 	ASSERT(_BSS_ORIGIN + _BSS_LENGTH <= _STACK_BASE, "the cartridge's RAM overlaps the stack (INIT_SSP, STACK_SIZE)")
 	/* Mode 1 keeps the system vector table at 0xFFFD00 to 0xFFFDB4
 	(main/mode1.s). */

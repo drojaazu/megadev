@@ -12,6 +12,7 @@ This guide lists every change in Megadev 2.0 that requires a change to a project
 - C library subset
 - Module startup code
 - Linker script symbols
+- Resident modules
 
 ---
 
@@ -330,3 +331,11 @@ Every linker script now defines the same layout symbols, listed in `docs/dev_in_
 | IP and SP `_RAM_DATA_LENGTH` | Now bytes, not longs |
 | IP and SP `_RAM_ORIGIN` | `_RAM_DATA_ORIGIN` |
 | Module `_ROM_LENGTH_LOOPSZ` | Removed |
+
+# Resident modules
+
+## Duplicate names are errors
+
+A module that lists a resident module among its prerequisites links against the resident module's exports instead of the whole module, and `-z muldefs` is no longer used. A global function or variable defined in both modules now fails the link with `multiple definition`; in 1.x the module's own definition silently won. Rename one, make it `static`, or hide the resident module's copy with `__attribute__((visibility("hidden")))`.
+
+Layout symbols, linker script symbols, `main`, `init`, `hblank` and `vblank` are not exported and need no change. `GLOBAL_SYM` and the assembly `GLOBAL` macro now make their symbols hidden.

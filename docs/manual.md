@@ -408,11 +408,12 @@ Run `make check` from the repository root before merging any branch. It must pas
 | 5 | `check-stack` | The stack-setting init files set the stack just before `main`; the module linker scripts reject a misplaced stack; the cartridge script rejects a ROM over 4 MB and RAM that reaches the stack or, in Mode 1, the system vector table. |
 | 6 | `check-init` | A module links only with startup code or `MODULE_NO_INIT`. |
 | 7 | `check-sections` | Every linker script places assembly common symbols in zeroed RAM and stops the link on static constructors; a cartridge's vector table starts the ROM whatever the source order; `--gc-sections` keeps entry code. |
-| 8 | `check-odr` | Every header can be included by two translation units linked together, so no header defines storage or a non-static function. |
-| 9 | `check-incremental` | Header dependency tracking works: touching `lib/main/vdp.h` recompiles and relinks `examples/gfx`, and a second build does nothing. |
-| 10 | `check-inline` | Every `static inline` function in every header compiles when used. |
-| 11 | `check-asserts` | The register addresses and bit positions in the hardware definitions match the hardware manuals (`check/asserts`). |
-| 12 | `check-host` | The C library subset gives the right answers, compiled for and run on the host (`check/host/libc_test.c`). |
+| 8 | `check-resident` | A module exports only its default-visibility symbols, so the layout, entry point and linker script symbols every module defines do not collide with a resident module's, and a name defined in both fails the link. |
+| 9 | `check-odr` | Every header can be included by two translation units linked together, so no header defines storage or a non-static function. |
+| 10 | `check-incremental` | Header dependency tracking works: touching `lib/main/vdp.h` recompiles and relinks `examples/gfx`, and a second build does nothing. |
+| 11 | `check-inline` | Every `static inline` function in every header compiles when used. |
+| 12 | `check-asserts` | The register addresses and bit positions in the hardware definitions match the hardware manuals (`check/asserts`). |
+| 13 | `check-host` | The C library subset gives the right answers, compiled for and run on the host (`check/host/libc_test.c`). |
 
 `make clean` removes everything the gate produced.
 

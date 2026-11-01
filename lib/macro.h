@@ -21,7 +21,8 @@ extern "C" {
  * @details
  * Creates an absolute, global symbol with the given value. It is a link-time
  * constant visible to the linker script, not a variable: it occupies no space
- * in any section. This is how a module declares its layout (MODULE_ROM_ORIGIN
+ * in any section. The symbol is hidden, so it is not exported to modules that
+ * link against this one (tools/exports.sh). This is how a module declares its layout (MODULE_ROM_ORIGIN
  * and friends) from a C source file; it is the counterpart of the GLOBAL
  * macro in macro.s and produces an identical symbol, so a layout may be
  * written in either language.
@@ -40,7 +41,7 @@ extern "C" {
  * @param value Integer value
  */
 #define GLOBAL_SYM(name, value) \
-  __asm__(".global " #name "\n\t.equ " #name ", " MEGADEV_STR(value))
+  __asm__(".global " #name "\n\t.hidden " #name "\n\t.equ " #name ", " MEGADEV_STR(value))
 
 #ifdef __cplusplus
 }
