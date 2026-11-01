@@ -10,6 +10,7 @@
 .section .text
 
 GLABEL sp_init
+  jbsr    exvec_install   // Sub CPU crash handler (sub/exvec.h)
   rts
 
 GLABEL sp_main
@@ -20,3 +21,5 @@ GLABEL sp_main
 GLABEL sp_int2
 GLABEL sp_user
   rts
+
+#include "sub/exvec_sub.s"
