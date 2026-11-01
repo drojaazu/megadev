@@ -62,4 +62,6 @@ SECTIONS
 	_ram_len = _data_len + _bss_len;
 	_data_load = LOADADDR(.data);
 	
+
+  INCLUDE no_constructors.ld
 }

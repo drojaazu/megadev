@@ -57,3 +57,5 @@ offset in the module file at which the .rom section is stored. */
   ASSERT(!(_STACK_TOP & 1), "STACK_TOP must be even")
   ASSERT(!_STACK_TOP || _STACK_BASE >= _IMAGE_ROM_END || _STACK_TOP <= _IMAGE_ROM_BASE, "stack overlaps the module's code")
   ASSERT(!_STACK_TOP || _STACK_BASE >= _IMAGE_RAM_END || _STACK_TOP <= _IMAGE_RAM_BASE, "stack overlaps the module's RAM")
+
+  INCLUDE no_constructors.ld

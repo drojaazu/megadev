@@ -158,7 +158,7 @@ check-link:
 	  esac; \
 	done
 	@$(M68K_PREFIX)ar rcs $(CHECK_DIR)/libmegadev.a $(CHECK_DIR)/runtime/*.o
-	@$(M68K_PREFIX)ld -nostdlib -z noexecstack -T cfg/md_cart.ld $(CHECK_DIR)/link.o \
+	@$(M68K_PREFIX)ld -nostdlib -z noexecstack -Lcfg -T cfg/md_cart.ld $(CHECK_DIR)/link.o \
 	  $(CHECK_DIR)/libmegadev.a -o $(CHECK_DIR)/link.elf
 	@if $(M68K_PREFIX)nm -u $(CHECK_DIR)/link.elf | grep .; then \
 	  printf 'FAIL link: undefined symbols above\n'; exit 1; fi
@@ -178,7 +178,7 @@ check-link:
 	  'int main(void) { l = l * l; f = f + f; return 0; }' \
 	  > $(CHECK_DIR)/nolink.c
 	@$(CC) $(CHECK_FLAGS) -DTARGET=MEGADRIVE -O2 -c $(CHECK_DIR)/nolink.c -o $(CHECK_DIR)/nolink.o
-	@if $(M68K_PREFIX)ld -nostdlib -z noexecstack -T cfg/md_cart.ld $(CHECK_DIR)/nolink.o \
+	@if $(M68K_PREFIX)ld -nostdlib -z noexecstack -Lcfg -T cfg/md_cart.ld $(CHECK_DIR)/nolink.o \
 	  $(CHECK_DIR)/libmegadev.a -o $(CHECK_DIR)/nolink.elf 2> $(CHECK_DIR)/nolink.err; then \
 	  printf 'FAIL link: 64-bit and floating point arithmetic linked\n'; exit 1; fi
 	@for h in __muldi3 __addsf3; do \
@@ -248,8 +248,9 @@ check-init:
 	  printf 'FAIL init: MODULE_NO_INIT from GLOBAL_SYM in C was not honored\n'; exit 1; }
 	@printf '== init: modules link only with init code or MODULE_NO_INIT\n'
 
-# Input sections the scripts must place: an assembly common symbol (.comm)
-# lands inside the zeroed region of every script.
+# Input sections the scripts must handle: an assembly common symbol (.comm)
+# lands inside the zeroed region of every script, and a static constructor or
+# destructor stops the link.
 check-sections:
 	@mkdir -p $(CHECK_DIR)
 	@printf '.global main\nmain: rts\n.comm common_buf, 64\n' > $(CHECK_DIR)/sections_comm.s
@@ -264,7 +265,16 @@ check-sections:
 	  [ $$((buf)) -ge $$((org)) ] && [ $$((buf + 64)) -le $$((org + len)) ] || { \
 	    printf 'FAIL sections: %s: common symbol at %s is outside the zeroed region %s + %s\n' $$1 $$buf $$org $$len; exit 1; }; \
 	done
-	@printf '== sections: common symbols are zeroed in every script\n'
+	@printf 'int v;\n__attribute__((constructor)) static void c(void) { v = 1; }\n__attribute__((destructor)) static void d(void) { v = 0; }\nint main(void) { return v; }\n' > $(CHECK_DIR)/sections_ctor.c
+	@$(CC) $(CHECK_FLAGS) -DTARGET=MEGACD -O1 -c $(CHECK_DIR)/sections_ctor.c -o $(CHECK_DIR)/sections_ctor.o
+	@for ld in module_mmd module_smd ip sp md_cart; do \
+	  if $(STACK_LD) --defsym=MODULE_NO_INIT=1 -T cfg/$$ld.ld $(CHECK_DIR)/sections_ctor.o -o $(CHECK_DIR)/sections_ctor.elf \
+	       2> $(CHECK_DIR)/sections_ctor.err; then \
+	    printf 'FAIL sections: %s linked a static constructor\n' $$ld; exit 1; fi; \
+	  grep -q 'constructors and destructors are not supported' $(CHECK_DIR)/sections_ctor.err || { \
+	    printf 'FAIL sections: %s: expected the constructor error\n' $$ld; cat $(CHECK_DIR)/sections_ctor.err; exit 1; }; \
+	done
+	@printf '== sections: common symbols are zeroed and static constructors stop the link, in every script\n'
 
 # ---------------------------------------------------------------------------
 # Loop 5: every library header can be included by two translation units that

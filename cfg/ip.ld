@@ -44,4 +44,6 @@ SECTIONS
     _BSS_LENGTH_LOOPSZ = ABSOLUTE(_BSS_LENGTH) >> 2;
   } > IP
   _RAM_LENGTH = _RAM_DATA_LENGTH + _BSS_LENGTH;
+
+  INCLUDE no_constructors.ld
 }

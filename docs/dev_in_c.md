@@ -27,6 +27,8 @@ Megadev does not link libgcc, the compiler's own helper library, since prebuilt 
 
 The compiler may still accept some of these without a helper, such as 64-bit addition or copying a `float`, but do not rely on these. Operations that need a helper, such as 64-bit multiplication or `float` addition, fail at link time with an error such as `undefined reference to '__muldi3'`.
 
+Functions marked `__attribute__((constructor))` or `__attribute__((destructor))` are not supported either: nothing calls them, so they fail at link time with `static constructors and destructors are not supported`.
+
 ### Assertions
 
 `assert(expr)` from `assert.h` does nothing when the expression is true. When it is false, it formats the file, line and expression and sends them over the serial port with `ext_tx`, then stops the CPU. The port must have been configured with `init_ext_port` first; see `main/comm.h` and the `serial_debug` example for the wiring. It is Main CPU only, since the serial port is a Main CPU peripheral. Define `NDEBUG` to compile assertions out.
