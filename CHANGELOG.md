@@ -108,6 +108,8 @@ replacement.
   produced a 16 MB ROM and the value was never set.
 - Cartridges boot regardless of the order of their source files.
 - IP: initialized variables are read from where they are stored.
+- Example and template SPs clear only their own zeroed variables. They
+  counted bytes while clearing longs, zeroing four times as much Program RAM.
 - SP header: the work RAM size is correct.
 - Variables from an assembly `.comm` directive are placed with the other
   zeroed variables and cleared.
