@@ -1,6 +1,6 @@
 # Migrating to Megadev 2.0
 
-This guide lists every change in Megadev 2.0 that requires a change to a project written against 1.x. Each entry gives what was renamed or removed, what replaces it, and any change in behavior. Entries are added as the changes land, so this file is complete for whatever version of `develop` it ships with.
+This guide lists every change in Megadev 2.0 that requires a change to a project written against 1.x. Each entry gives what was renamed or removed, what replaces it, and any change in behavior.
 
 # Contents
 
@@ -14,6 +14,7 @@ This guide lists every change in Megadev 2.0 that requires a change to a project
 - Linker script symbols
 - Resident modules
 - Exception vectors
+- Build and link
 
 ---
 
@@ -45,11 +46,11 @@ The Main CPU and Sub CPU see the gate array at different addresses, and 1.x used
 
 | Kind | 1.x | 2.0 Main CPU | 2.0 Sub CPU |
 |---|---|---|---|
-| Constants | `GA_REG_COMCMD0`, `GA_MASK_DMNA`, `GA_BIT_RETURN_2M` | `GA_MAIN_REG_COMCMD0`, `GA_MAIN_MASK_DMNA`, ... | `GA_SUB_REG_COMCMD0`, `GA_SUB_MASK_DMNA`, ... |
+| Register constants | `GA_REG_COMCMD0` | `GA_MAIN_REG_COMCMD0` | `GA_SUB_REG_COMCMD0` |
 | Register pointer type | `ga_reg` | `ga_main_reg` | `ga_sub_reg` |
 | Register accessors | `ga_reg_comcmd0`, `ga_reg_memmode` | `ga_main_reg_comcmd0`, `ga_main_reg_memmode` | `ga_sub_reg_comcmd0`, `ga_sub_reg_memmode` |
 
-Apply it mechanically: insert `MAIN_` or `SUB_` after `GA_`, and `main_` or `sub_` after `ga_`, according to which CPU the source file is built for. Values and addresses are unchanged.
+Apply it mechanically: insert `MAIN_` or `SUB_` after `GA_`, and `main_` or `sub_` after `ga_`, according to which CPU the source file is built for. Values and addresses are unchanged. Bit and mask constants also changed form; see Gate array register model.
 
 The inline functions and assembly macros had no prefix at all and gain the full one:
 
@@ -58,8 +59,8 @@ The inline functions and assembly macros had no prefix at all and gain the full 
 | `wait_2m()` | `ga_main_wait_2m()` | `ga_sub_wait_2m()` |
 | `grant_2m()` | `ga_main_grant_2m()` | `ga_sub_grant_2m()` |
 | `clear_comm_regs()` | `ga_main_clear_comm_regs()` | `ga_sub_clear_comm_regs()` |
-| `set_1m()`, `set_2m()` | `ga_main_set_1m()`, `ga_main_set_2m()` | (Main only) |
-| `reset_ga()` | (Sub only) | `ga_sub_reset()` |
+| `set_1m()`, `set_2m()` | (Sub only) | `ga_sub_set_1m()`, `ga_sub_set_2m()` |
+| `reset_ga()` | `ga_main_reset()` | (Main only) |
 | `WAIT_2M`, `GRANT_2M`, `CLEAR_COMM_REGS` | `GA_MAIN_WAIT_2M`, `GA_MAIN_GRANT_2M`, `GA_MAIN_CLEAR_COMM_REGS` | `GA_SUB_WAIT_2M`, `GA_SUB_GRANT_2M`, `GA_SUB_CLEAR_COMM_REGS` |
 | `RESET_GA` | `GA_MAIN_RESET` | (Main only) |
 
@@ -354,3 +355,24 @@ In `sub/memmap.def.h`, each `EXVEC_*` now names the address operand of its jump 
 ## Crash handler replaces cd_exception.s
 
 `main/cd_exception.s` is removed. Its replacement is the crash handler in `main/exvec.h` and `sub/exvec.h`, described in `docs/crash_handler.md`: `install_handlers` becomes `exvec_install`, and cartridges include `main/exvec_cart.s`.
+
+# Build and link
+
+## Code the 68000 cannot run fails to link
+
+libgcc is no longer linked. 64-bit integer arithmetic and floating point now fail at link time with an undefined reference, such as `__muldi3`, instead of linking code built for a later 68k. Use 32-bit types; 32-bit multiply, divide and modulo are provided by the kit.
+
+Static constructors and destructors, from C++ global objects or `__attribute__((constructor))`, also fail the link. In 1.x they were silently never run.
+
+## New link checks for cartridges
+
+A cartridge fails to link if the ROM exceeds 4 MB (`region 'rom' overflowed`), if its variables reach the stack, which ends at `INIT_SSP` and is `STACK_SIZE` bytes if set, or, in Mode 1, if its variables or stack reach the system vector table at 0xFFFD00. The last two errors name the overlap.
+
+## Removed files
+
+| 1.x | 2.0 |
+|---|---|
+| `cfg/module_bin.ld` | Removed. Build the module as `.mmd` or `.smd`. |
+| `cfg/module_mmd_newwork.ld` | Removed. Use `cfg/module_mmd.ld`. |
+| `sub/commsync.s` | Removed; it did not assemble. |
+| `sysfont.1bpp.chr` | Removed. Use the kit font, `font8x8.h`, or the Boot ROM font through `bios_load_font_defaults`. |
