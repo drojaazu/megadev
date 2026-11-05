@@ -5,7 +5,7 @@ The CD-ROM access wrapper provides a simplified method of retrieving data from d
 
 ## Setup
 
-CD-ROM access can only be done with the Sub CPU, meaning the wrapper can only be included with Sub CPU side code. It should be included in the SP and remain resident in memory.
+CD-ROM access can only be done with the Sub CPU, meaning the wrapper can only be included with Sub CPU side code. It should be included in the SP and remain resident in memory. It works the same from a Mode 1 cartridge's SP, with the differences listed in `docs/mode1.md`: the SP must initialize the drive itself, and INT2 comes from the cartridge program.
 
 Include `sub/cdrom.s` or `sub/cdrom.h` in your code. In your SP init subroutine (`sp_init`), prime the access loop by calling the `INIT_ACC_LOOP` macro.
 

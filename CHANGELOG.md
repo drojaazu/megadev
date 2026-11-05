@@ -11,8 +11,13 @@ replacement.
 - **Mode 1 support**: drive the Mega CD from a cartridge. Set
   `TARGET:=MEGACD_MODE1`. `main/mode1.h` detects the Mega CD, unpacks the Sub
   CPU BIOS from the Boot ROM, starts the Sub CPU with your program and builds
-  the system vector table. Tested in BlastEm with 18 Boot ROM versions. See
-  `docs/mode1.md` and the `mode1` example.
+  the system vector table. The Sub CPU reads the disc with the usual BIOS
+  calls and access loop; the `mode1` example loads a file into Word RAM by CPU
+  copy and by DMA and checks it. Tested in BlastEm with 22 Boot ROM versions.
+  See `docs/mode1.md` and the `mode1` example.
+- **`ISO_BOOT`**: the boot sector image the ISO is mastered with. Defaults to
+  the kit's boot sector for `MEGACD` and to none for `MEGACD_MODE1`, whose
+  disc is read by the cartridge rather than booted.
 - **C library subset**: `string.h`, `stdlib.h` (`abs`, `div`, `atoi`,
   `strtol`, `rand`, `qsort`, `bsearch` and others), `stdio.h` (`snprintf`,
   `vsnprintf`, integer conversions only), `ctype.h`, and `assert.h`, which

@@ -262,6 +262,10 @@ The ISO mastering tool. Defaults to `mkisofs`; `genisoimage` and `xorrisofs` acc
 
 Options passed to the mastering tool, replacing the defaults wholesale. The boot sector, volume ID and output file are always passed separately.
 
+#### `ISO_BOOT`
+
+The boot sector image written to the start of the disc. For `MEGACD` it defaults to the boot sector the build generates from `ip.s` and `sp.s`, which the Boot ROM needs to start the disc. For `MEGACD_MODE1` it defaults to empty: the cartridge program reads the disc and the Boot ROM never boots it, so a plain ISO 9660 image is mastered. Set it to `$(BUILD_PATH)/boot.bin` in a Mode 1 project to master a disc that also boots on its own.
+
 ### Restricted Settings
 
 The following are set automatically by Megadev and do not need to be modified. They are checked (in part) by hardware and changing them may make your game non-compliant/unbootable! They are provided for experimental purposes, but we do *not* recommend changing them! 

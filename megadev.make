@@ -26,6 +26,17 @@ Z80_AS:=sjasmplus
 MKISOFS?=mkisofs
 ISO_FLAGS?=-iso-level 1 -pad -sysid "MEGA_CD" -appid "" -publisher "" -preparer ""
 
+# Boot sector image written to the first 16 sectors of the ISO (mkisofs -G).
+# A MEGACD project needs the kit's boot sector (IP, SP and security block) to
+# boot from the disc. A MEGACD_MODE1 project's disc is read by the cartridge
+# program and is never booted, so it gets none; set ISO_BOOT to the MEGACD
+# default to master a disc that also boots on its own.
+ifeq ($(TARGET),MEGACD)
+	ISO_BOOT?=$(BUILD_PATH)/boot.bin
+else
+	ISO_BOOT?=
+endif
+
 # Font for the crash handler's report (main/exvec.h): KIT for font8x8, BIOS for
 # the Boot ROM's font (Mega CD and Mode 1 only).
 EXVEC_FONT?=KIT
@@ -325,12 +336,10 @@ $(BUILD_PATH)/boot.bin: $(BUILD_PATH)/ip.bin $(BUILD_PATH)/sp.bin
 
 
 
-# TODO make the ISO settings user configurable
-%.iso: $(BUILD_PATH)/boot.bin $(DISC_CONTENTS) $(DISC_FILES_UPDATES) $(DISC_DIR_UPDATES)
-
+%.iso: $(ISO_BOOT) $(DISC_CONTENTS) $(DISC_FILES_UPDATES) $(DISC_DIR_UPDATES)
 	$(call msg_info,Generating ISO image $(notdir $@))
 	@mkdir -p $(DISC_PATH)
-	@$(MKISOFS) -quiet $(ISO_FLAGS) -G $< -V "$(HEADER_VOL_ID)" -o $@ $(DISC_PATH)
+	@$(MKISOFS) -quiet $(ISO_FLAGS) $(if $(ISO_BOOT),-G $(ISO_BOOT)) -V "$(HEADER_VOL_ID)" -o $@ $(DISC_PATH)
 	$(call msg_done,Completed build of $(PROJECT_ID) ($(TARGET) / $(REGION) / $(VIDEO)))
 
 # `make print-NAME` shows the value of a variable, e.g. make print-DISC_CONTENTS

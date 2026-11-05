@@ -54,8 +54,20 @@ This is the same for every Boot ROM version checked: JP 1.00c, JP 2.00c, WonderM
 
 The Boot ROM library expects the RAM state a disc boot leaves behind. Before using it, load its defaults: `BIOS_LOAD_DEFAULT_VDP_REGS`, `BIOS_CLEAR_VRAM`, `BIOS_CLEAR_TABLES` and `BIOS_CLEAR_VSRAM`. The default VDP registers leave the display off; enable it with `BIOS_VDP_DISP_ENABLE`.
 
+# Disc access
+
+The Sub CPU reads the disc, with the Sub BIOS calls and the kit's access loop (`docs/cdrom.md`) exactly as on a disc boot. Three things differ from a disc program:
+
+- **The SP initializes the drive.** On a disc boot the Boot ROM has read the TOC before the SP runs. In Mode 1 nothing has: the SP calls `BIOS_DRIVE_INIT` and waits for the status to settle before the directory can be read. With no disc in the drive that call waits for one, so do it on request from the Main CPU rather than in `sp_init`, and give the Main CPU a timeout. A cartridge must run without a disc.
+- **INT2 comes from the cartridge.** The access loop advances on INT2, which the Main CPU raises through the gate array's IFL2 bit once per frame. `BIOS_VBLANK_HANDLER` does this in its comm sync; a program with its own VBLANK handler calls `BIOS_TRIGGER_IFL2` or `BIOS_SET_IFL2` itself. Keep bit 0 of the Sub CPU's comm flags clear or that sync loops.
+- **Word RAM is at 0x600000.** The addresses in `main/memmap.def.h` follow `TARGET`. Ownership works as usual: the Main CPU gives Word RAM to the Sub CPU with `ga_main_grant_2m` before a load into it, the Sub CPU hands it back with `ga_sub_grant_2m` after, and the Main CPU waits for `RET` before reading.
+
+The disc needs no boot sector: `ISO_BOOT` is empty for `MEGACD_MODE1`, so `make` masters a plain ISO 9660 image of `DISC_PATH`. Set `ISO_BOOT:=$(BUILD_PATH)/boot.bin`, and provide `ip.s` and `sp.s` for the disc, to master one that also boots on its own.
+
+The `mode1` example does all of this: on command from the Main CPU its SP initializes the drive, caches the root directory and loads `DATA.BIN` into Word RAM twice, by Sub CPU copy and by CDC DMA, and the Main CPU checks the content against a sum computed at build time.
+
 # Testing in an emulator
 
-An emulator attaches the Mega CD to a cartridge when the cartridge header's device support field contains `C`. `md_header.s` writes `JC` there when `TARGET` is `MEGACD_MODE1`. The emulator needs a Mega CD Boot ROM; BlastEm reads it from `cdbios.bin` next to its executable. MAME's Mega CD systems have no cartridge slot and cannot run Mode 1.
+An emulator attaches the Mega CD to a cartridge when the cartridge header's device support field contains `C`. `md_header.s` writes `JC` there when `TARGET` is `MEGACD_MODE1`. The emulator needs a Mega CD Boot ROM; BlastEm reads it from `cdbios.bin` next to its executable. A disc goes in as BlastEm's lock-on media: `blastem -o project.iso project.cart`. MAME's Mega CD systems have no cartridge slot and cannot run Mode 1.
 
-The `mode1` example runs in BlastEm with every Mega CD, Wondermega, CDX and LaserActive Boot ROM version tested, Japanese and US, except the Mega-LD 1.05 Boot ROM: with it, the Sub CPU program does not start. Real hardware is untested.
+The `mode1` example runs in BlastEm, with its disc attached, with every Mega CD, Wondermega, CDX and LaserActive Boot ROM version tested (22, Japanese and US), except the Mega-LD 1.05 Boot ROM: with it, the Sub CPU program does not start. Real hardware is untested.
