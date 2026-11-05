@@ -405,12 +405,6 @@ load_data_dma:
 
 load_data_dma_begin:
   move.b   cdc_dev_dest, (GA_SUB_REG_CDCMODE)
-  // Writing the destination reset GA_SUB_REG_DMAADDR, so it is set here, from
-  // filebuff: the offset within the destination memory. It advances with every
-  // sector, so a retry resumes where the data stopped.
-  move.l   filebuff, d0
-  lsr.l    #3, d0
-  move.w   d0, (GA_SUB_REG_DMAADDR)
   lea      cdread_sector_start, a0  // point to sector struct for BIOS_CDROM_READ_COUNT
 
   /*
@@ -439,7 +433,14 @@ load_data_dma_begin:
   bge      load_data_dma_begin   // and try again
   bra      load_data_dma_failure // failed after all attempts, return error
 
-3:BIOS_CALL   #BIOS_CDC_READ     // read out the data from the CDC to the destination
+  // The DMA address is set per sector, from filebuff (the offset within the
+  // destination memory, advanced with every sector), and only once the sector
+  // is in the CDC: writing the destination resets GA_SUB_REG_DMAADDR, and the
+  // 1.00 series Sub BIOS rewrites the destination when the read starts.
+3:move.l   filebuff, d0
+  lsr.l    #3, d0
+  move.w   d0, (GA_SUB_REG_DMAADDR)
+  BIOS_CALL   #BIOS_CDC_READ     // read out the data from the CDC to the destination
   bcs      4f      // data not ready, this really shouldn't happen since
                   // BIOS_CDC_STATUS said we were good; jump down & try again
   lsr      #8, d0  // the timecode for the loaded sector comes back in d0
