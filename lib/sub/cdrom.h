@@ -18,10 +18,12 @@ extern "C" {
 
 /**
  * @var filebuff
- * @brief Pointer to the buffer to store the output file
- * @details This is only used with the Sub CPU Direct Load operation!
- * For the DMA operations, use the ga_dmaaddr register to specify a
- * destination buffer.
+ * @brief Destination of the file
+ * @details For CDROM_LOAD_CDC, an address in the Sub CPU's memory map. For the
+ * DMA operations, the offset within the destination memory in bytes, a
+ * multiple of 8: into Word RAM, Program RAM or PCM wave RAM. The access loop
+ * writes GA_SUB_REG_DMAADDR itself after selecting the destination, because
+ * writing the destination resets that register.
  */
 extern u8 * filebuff;
 

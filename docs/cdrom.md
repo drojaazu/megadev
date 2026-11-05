@@ -44,7 +44,7 @@ As a quick example, you may have `title.mmd` on your local system. This will be 
 
 Please refer to the CDC section of the Mega CD Software Development documentation before or alongside this section.
 
-The buffer where your data will be stored must be specified in one of two ways depending on the transfer type. If you plan to use DMA, you will need to set the destination address in the `GA_SUB_REG_DMAADDR` register. If you plan to use non-DMA transfer via the CDC host data register, you will need to set the address in the `file_buff` pointer.
+The destination is set in `filebuff` for every operation. For `CDROM_LOAD_CDC`, the non-DMA transfer through the CDC host data register, it is an address in the Sub CPU's memory map. For the DMA operations it is the offset within the destination memory, in bytes and a multiple of 8: an offset into Word RAM, an address in Program RAM, or an offset into PCM wave RAM. Do not write `GA_SUB_REG_DMAADDR` yourself: selecting the destination resets that register, so the access loop writes it after the selection, from `filebuff`.
 
 ### Access Operation
 
@@ -59,7 +59,7 @@ CDROM_LOAD_PCM_DMA
 
 (Note that we do not currently support the Main CPU read option, mostly because it is not well understood.)
 
-CDROM_LOAD_CDC will load the data to any memory address available to the Sub CPU, while the DMA options transfer data to a specific device given a relative address specified in the GA DMA register. CDROM_LOAD_CDC is the easiest to work with as you can simply specify an absolute address and be done. The DMA options likely provide greater transfer speed (limited by the optical drive, of course), though what sort of speed advantages or if any bus access issues may occur are unknown.
+CDROM_LOAD_CDC will load the data to any memory address available to the Sub CPU, while the DMA options transfer data to a specific device at the relative address in `filebuff`. CDROM_LOAD_CDC is the easiest to work with as you can simply specify an absolute address and be done. The DMA options likely provide greater transfer speed (limited by the optical drive, of course), though what sort of speed advantages or if any bus access issues may occur are unknown.
 
 ### Wait for Completion
 
@@ -75,7 +75,7 @@ If the result is ok, your data should be ready in the buffer. The load fail resu
 
 ## Convenience Routines
 
-For simple file loads, you can use the `load_file_sub` convenience subroutine to package most of this up for you. Simply place the pointer to the filename in a0 and the pointer to the destination buffer in a1, call it, and check the result in d0.
+For simple file loads, you can use the `load_file_sub` convenience subroutine to package most of this up for you. Simply place the pointer to the filename in a0 and the pointer to the destination buffer in a1, call it, and check the result in d0. `load_file_prg_dma` does the same for a DMA load into Program RAM, with the destination address in a1.
 
 The `get_acc_op_result` routine will check if the access operation is still busy, with carry clear (cc) indicating the operation is complete and carry set (cs) indicating it is still in progress.
 

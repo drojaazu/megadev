@@ -14,6 +14,7 @@ This guide lists every change in Megadev 2.0 that requires a change to a project
 - Linker script symbols
 - Resident modules
 - Exception vectors
+- CD-ROM access loop
 - Build and link
 
 ---
@@ -355,6 +356,12 @@ In `sub/memmap.def.h`, each `EXVEC_*` now names the address operand of its jump 
 ## Crash handler replaces cd_exception.s
 
 `main/cd_exception.s` is removed. Its replacement is the crash handler in `main/exvec.h` and `sub/exvec.h`, described in `docs/crash_handler.md`: `install_handlers` becomes `exvec_install`, and cartridges include `main/exvec_cart.s`.
+
+# CD-ROM access loop
+
+## DMA loads take their destination from `filebuff`
+
+For `CDROM_LOAD_CDC_DMA`, `CDROM_LOAD_PRG_DMA` and `CDROM_LOAD_PCM_DMA`, set `filebuff` to the offset within the destination memory, a multiple of 8, instead of writing `GA_SUB_REG_DMAADDR`. The loop writes the register after it selects the destination, because that selection resets the register; in 1.x the address written beforehand was lost and every DMA load went to offset 0. `load_file_prg_dma` takes the destination in a1, like `load_file_sub`.
 
 # Build and link
 
