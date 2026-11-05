@@ -105,6 +105,11 @@ replacement.
 
 ### Fixed
 
+- CD-ROM access loop: DMA loads went to offset 0 of the destination. Writing
+  the CDC destination resets the DMA address register, and the loop wrote the
+  destination after the caller had set the address. The loop now sets the
+  register itself, from `filebuff`. A retried DMA read resumes at the next
+  sector instead of starting the file over.
 - Boot ROM calls that use A6 no longer corrupt the caller's stack frame.
 - `bios_detect_controller` returns the controller type from the correct
   register.

@@ -20,11 +20,11 @@
  * @fn load_file_prg_dma
  * @brief Convenience sub to load a file to PRG RAM via DMA
  * @param[in] A0.l Pointer to filename string
- * @note Be sure to set the destination in the GA_SUB_REG_DMAADDR register
- * beforehand
+ * @param[in] A1.l Destination address in Program RAM, a multiple of 8
  */
 load_file_prg_dma:
   move.w  #CDROM_LOAD_PRG_DMA, access_op
+  move.l  a1, filebuff
   jbra load_file
 
 /**
@@ -405,6 +405,12 @@ load_data_dma:
 
 load_data_dma_begin:
   move.b   cdc_dev_dest, (GA_SUB_REG_CDCMODE)
+  // Writing the destination reset GA_SUB_REG_DMAADDR, so it is set here, from
+  // filebuff: the offset within the destination memory. It advances with every
+  // sector, so a retry resumes where the data stopped.
+  move.l   filebuff, d0
+  lsr.l    #3, d0
+  move.w   d0, (GA_SUB_REG_DMAADDR)
   lea      cdread_sector_start, a0  // point to sector struct for BIOS_CDROM_READ_COUNT
 
   /*
@@ -467,7 +473,9 @@ load_data_dma_begin:
 9:BIOS_CALL   #BIOS_CDC_ACK          // send ack to CDC (required after every sector/frame)
   move.w   #6, read_timeout          // reset error counters for next sector
   move.w   #0x1E, read_retry_count
+  addi.l   #0x800, filebuff          // move the destination up a sector
   addq.w   #1, sectors_read_count    // add to the sectors loaded count
+  addq.l   #1, cdread_sector_start   // move to the next frame
   subq.l   #1, cdread_sector_count   // decrement remaining sector count
   bgt      2b                 // loop back if there are still frames pending
   move.w   #CDROM_RESULT_OK, access_op_result  // all data loaded!
