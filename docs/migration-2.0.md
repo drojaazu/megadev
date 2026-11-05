@@ -361,7 +361,7 @@ In `sub/memmap.def.h`, each `EXVEC_*` now names the address operand of its jump 
 
 ## DMA loads take their destination from `filebuff`
 
-For `CDROM_LOAD_CDC_DMA`, `CDROM_LOAD_PRG_DMA` and `CDROM_LOAD_PCM_DMA`, set `filebuff` to the offset within the destination memory, a multiple of 8, instead of writing `GA_SUB_REG_DMAADDR`. The loop writes the register after it selects the destination, because that selection resets the register; in 1.x the address written beforehand was lost and every DMA load went to offset 0. `load_file_prg_dma` takes the destination in a1, like `load_file_sub`.
+For `CDROM_LOAD_CDC_DMA`, `CDROM_LOAD_PRG_DMA` and `CDROM_LOAD_PCM_DMA`, set `filebuff` to the offset within the destination memory, a multiple of 8, instead of writing `GA_SUB_REG_DMAADDR`. The loop writes the register itself, per sector, just before each CDC read: selecting the destination resets the register, and the 1.00 series Sub BIOS reselects it when a read starts. In 1.x the address written beforehand was lost and every DMA load went to offset 0. `load_file_prg_dma` takes the destination in a1, like `load_file_sub`.
 
 # Build and link
 

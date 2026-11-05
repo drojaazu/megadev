@@ -44,7 +44,7 @@ As a quick example, you may have `title.mmd` on your local system. This will be 
 
 Please refer to the CDC section of the Mega CD Software Development documentation before or alongside this section.
 
-The destination is set in `filebuff` for every operation. For `CDROM_LOAD_CDC`, the non-DMA transfer through the CDC host data register, it is an address in the Sub CPU's memory map. For the DMA operations it is the offset within the destination memory, in bytes and a multiple of 8: an offset into Word RAM, an address in Program RAM, or an offset into PCM wave RAM. Do not write `GA_SUB_REG_DMAADDR` yourself: selecting the destination resets that register, so the access loop writes it after the selection, from `filebuff`.
+The destination is set in `filebuff` for every operation. For `CDROM_LOAD_CDC`, the non-DMA transfer through the CDC host data register, it is an address in the Sub CPU's memory map. For the DMA operations it is the offset within the destination memory, in bytes and a multiple of 8: an offset into Word RAM, an address in Program RAM, or an offset into PCM wave RAM. Do not write `GA_SUB_REG_DMAADDR` yourself: selecting the destination resets that register, and the 1.00 series Sub BIOS reselects it when a read starts, so the access loop writes the register before every CDC read, from `filebuff`.
 
 ### Access Operation
 
