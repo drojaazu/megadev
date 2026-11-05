@@ -39,31 +39,31 @@ EXVEC_FONT?=KIT
 #### Project Sanity Check & Defaults
 
 ifndef PROJECT_ID
-	$(error PROJECT_ID not set! Please set this variable in your makefile.)
+$(error PROJECT_ID not set! Please set this variable in your makefile.)
 endif
 
 ifndef TARGET
-	$(error TARGET not set! Please set this variable in your makefile.)
+$(error TARGET not set! Please set this variable in your makefile.)
 endif
 
 ifndef SRC_PATH
-	$(error SRC_PATH not set! Please set this variable in your makefile.)
+$(error SRC_PATH not set! Please set this variable in your makefile.)
 endif
 
 ifndef RES_PATH
-	$(error RES_PATH not set! Please set this variable in your makefile.)
+$(error RES_PATH not set! Please set this variable in your makefile.)
 endif
 
 ifndef BUILD_PATH
-	$(error BUILD_PATH not set! Please set this variable in your makefile.)
+$(error BUILD_PATH not set! Please set this variable in your makefile.)
 endif
 
 ifndef MEGADEV_PATH
-	$(error MEGADEV_PATH not set! It must point at the Megadev directory, e.g. /opt/megadev.)
+$(error MEGADEV_PATH not set! It must point at the Megadev directory, e.g. /opt/megadev.)
 endif
 
 ifeq ($(wildcard $(MEGADEV_PATH)/lib/build.def.h),)
-	$(error MEGADEV_PATH ($(MEGADEV_PATH)) does not contain the Megadev library.)
+$(error MEGADEV_PATH ($(MEGADEV_PATH)) does not contain the Megadev library.)
 endif
 
 REGION?=US
