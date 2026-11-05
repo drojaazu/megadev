@@ -85,7 +85,7 @@ cmd_load:
   bra     cmd_load_end
 
 cmd_load_dma:
-  move.w  #(SP_DMA_OFFSET >> 3), (GA_SUB_REG_DMAADDR)   // in 8 byte units
+  move.l  #SP_DMA_OFFSET, filebuff   // offset within Word RAM
   lea     data_filename, a0
   move.l  a0, filename
   move.w  #CDROM_LOAD_CDC_DMA, access_op
