@@ -144,3 +144,6 @@ replacement.
 - The `bram` example prints its total size and status on the right rows, and
   the total size in full.
 - Doxygen configuration: correct input paths, assembly sources included.
+- `megadev.make` reports a missing `PROJECT_ID`, `TARGET`, path variable or
+  library with its own message; the tab-indented `$(error)` lines made make
+  say "recipe commences before first target" instead.
