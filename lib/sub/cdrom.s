@@ -20,11 +20,11 @@
  * @fn load_file_prg_dma
  * @brief Convenience sub to load a file to PRG RAM via DMA
  * @param[in] A0.l Pointer to filename string
- * @note Be sure to set the destination in the GA_SUB_REG_DMAADDR register
- * beforehand
+ * @param[in] A1.l Destination address in Program RAM, a multiple of 8
  */
 load_file_prg_dma:
   move.w  #CDROM_LOAD_PRG_DMA, access_op
+  move.l  a1, filebuff
   jbra load_file
 
 /**
@@ -433,7 +433,14 @@ load_data_dma_begin:
   bge      load_data_dma_begin   // and try again
   bra      load_data_dma_failure // failed after all attempts, return error
 
-3:BIOS_CALL   #BIOS_CDC_READ     // read out the data from the CDC to the destination
+  // The DMA address is set per sector, from filebuff (the offset within the
+  // destination memory, advanced with every sector), and only once the sector
+  // is in the CDC: writing the destination resets GA_SUB_REG_DMAADDR, and the
+  // 1.00 series Sub BIOS rewrites the destination when the read starts.
+3:move.l   filebuff, d0
+  lsr.l    #3, d0
+  move.w   d0, (GA_SUB_REG_DMAADDR)
+  BIOS_CALL   #BIOS_CDC_READ     // read out the data from the CDC to the destination
   bcs      4f      // data not ready, this really shouldn't happen since
                   // BIOS_CDC_STATUS said we were good; jump down & try again
   lsr      #8, d0  // the timecode for the loaded sector comes back in d0
@@ -467,7 +474,9 @@ load_data_dma_begin:
 9:BIOS_CALL   #BIOS_CDC_ACK          // send ack to CDC (required after every sector/frame)
   move.w   #6, read_timeout          // reset error counters for next sector
   move.w   #0x1E, read_retry_count
+  addi.l   #0x800, filebuff          // move the destination up a sector
   addq.w   #1, sectors_read_count    // add to the sectors loaded count
+  addq.l   #1, cdread_sector_start   // move to the next frame
   subq.l   #1, cdread_sector_count   // decrement remaining sector count
   bgt      2b                 // loop back if there are still frames pending
   move.w   #CDROM_RESULT_OK, access_op_result  // all data loaded!
