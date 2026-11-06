@@ -44,19 +44,6 @@ void play_pcm()
   text_print("Done      ", VDP_PLANE_XY(BIOS_VDP_DEFAULT_PLANEA, 1, 2, Width64), TEXT_TILE);
 }
 
-void load_pcm()
-{
-  text_print("Loading...", VDP_PLANE_XY(BIOS_VDP_DEFAULT_PLANEA, 1, 2, Width64), TEXT_TILE);
-  ga_main_reg_comcmd0 = CMD_LOAD_PRGRAM;
-  while (ga_main_reg_comstat0 == 0)
-    exvec_check_sub();
-  ga_main_reg_comcmd0 = 0;
-  while (ga_main_reg_comstat0 != 0)
-    exvec_check_sub();
-
-  play_pcm();
-}
-
 void main()
 {
   // crash handler for Main CPU exceptions (docs/crash_handler.md)
@@ -70,7 +57,7 @@ void main()
 
   text_print("PCM Audio Playback", VDP_PLANE_XY(BIOS_VDP_DEFAULT_PLANEA, 1, 1, Width64), TEXT_TILE);
 
-  load_pcm();
+  play_pcm();
 
   text_print("Press A to replay", VDP_PLANE_XY(BIOS_VDP_DEFAULT_PLANEA, 1, 4, Width64), TEXT_TILE);
 

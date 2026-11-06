@@ -5,7 +5,6 @@
 #define SHARED_H
 
 #define CMD_LOAD_WORDRAM 1
-#define CMD_LOAD_PRGRAM  2
 #define CMD_PLAY_PCM     3
 
 #define FILE_IPX_MMD 0
