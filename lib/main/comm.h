@@ -25,7 +25,6 @@ extern "C" {
 #include <types.h>
 
 /**
- * @fn init_ext_port
  * @brief Configure the selected port for serial communication
  *
  * @details
@@ -56,7 +55,6 @@ static inline void init_ext_port()
 }
 
 /**
- * @fn ext_status
  * @brief Read the serial status register
  *
  * @details
@@ -75,7 +73,6 @@ static inline u8 ext_status()
 }
 
 /**
- * @fn ext_read_byte
  * @brief Read the receive register without waiting
  *
  * @details
@@ -94,7 +91,6 @@ static inline u8 ext_read_byte()
 }
 
 /**
- * @fn ext_rx
  * @brief Wait for a byte and return it
  *
  * @details
@@ -111,7 +107,6 @@ static inline u8 ext_rx()
 }
 
 /**
- * @fn ext_tx
  * @brief Send a byte, waiting for the transmitter to drain first
  */
 static inline void ext_tx(u8 const tx_data)

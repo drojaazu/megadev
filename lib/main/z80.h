@@ -14,10 +14,18 @@ extern "C" {
 #include "types.h"
 #include "z80.def.h"
 
+/** @brief Z80 RAM (Z80_RAM) as a byte pointer; take the bus first */
 #define z80_ram        ((volatile u8 *) Z80_RAM)
+/**
+ * @def z80_reg_busreq
+ * @brief Z80 bus request register (Z80_REG_BUSREQ) as a pointer
+ * @details Write Z80_BUS_REQUEST to take the bus, Z80_BUS_RELEASE to return it.
+ */
 #define z80_reg_busreq ((volatile u16 *) Z80_REG_BUSREQ)
+/** @brief Z80 reset register (Z80_REG_RESET) as a pointer */
 #define z80_reg_reset  ((volatile u16 *) Z80_REG_RESET)
 
+/** @brief Request the Z80 bus and wait until it is granted */
 static inline void z80_request_bus()
 {
   // clang-format off
@@ -37,6 +45,7 @@ static inline void z80_request_bus()
   // clang-format on
 }
 
+/** @brief Release the Z80 bus */
 static inline void z80_release_bus()
 {
   // clang-format off
@@ -53,6 +62,7 @@ static inline void z80_release_bus()
   // clang-format on
 }
 
+/** @brief Pulse the Z80 reset line */
 static inline void z80_reset_cpu()
 {
   // clang-format off

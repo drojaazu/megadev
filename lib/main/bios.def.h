@@ -36,6 +36,10 @@
  */
 
 /**
+ * @defgroup bios_unknown_main Main CPU / BIOS / Undocumented calls
+ */
+
+/**
  * @def BIOS_WORK_BUFFER
  * @ingroup bios_cmp
  * @sa bios_work_buffer
@@ -294,19 +298,19 @@
  */
 #define BIOS_VBLANK_HANDLER_FLAGS 0xFFFE26
 
-#define BIOS_BIT_COPY_SPRLIST 0
-#define BIOS_BIT_DO_USERCALL  1
+#define BIOS_BIT_COPY_SPRLIST 0 ///< Bit position of BIOS_MASK_COPY_SPRLIST
+#define BIOS_BIT_DO_USERCALL  1 ///< Bit position of BIOS_MASK_DO_USERCALL
 
 /**
- * @def BIOS_VBLANK_COPY_SPRLIST_FLAG
- * @brief
+ * @def BIOS_MASK_COPY_SPRLIST
+ * @brief VBLANK handler flag: copy the sprite list cache to the VDP
  * @note For use with @ref BIOS_VBLANK_HANDLER_FLAGS
  */
 #define BIOS_MASK_COPY_SPRLIST (1 << BIOS_BIT_COPY_SPRLIST)
 
 /**
- * @def BIOS_VBLANK_USERCALL_FLAG
- * @brief
+ * @def BIOS_MASK_DO_USERCALL
+ * @brief VBLANK handler flag: call the user VBLANK routine
  * @note For use with @ref BIOS_VBLANK_HANDLER_FLAGS
  */
 #define BIOS_MASK_DO_USERCALL (1 << BIOS_BIT_DO_USERCALL)
@@ -328,11 +332,13 @@
 
 /**
  * @def BIOS_VDP_UPDATE_FLAGS
+ * @brief Flags telling the VBLANK handler what to copy to the VDP; only bit 0
+ * is used by the library, the rest are free
  * @ingroup bios_vdp
  */
 #define BIOS_VDP_UPDATE_FLAGS 0xFFFE29
 
-#define BIOS_BIT_COPY_PALETTE 0
+#define BIOS_BIT_COPY_PALETTE 0 ///< BIOS_VDP_UPDATE_FLAGS bit: copy the palette cache to CRAM
 
 /**
  * @def BIOS_MASK_COPY_PALETTE
@@ -540,18 +546,21 @@
 
 /**
  * @def CONTROLLER_JOYPAD
+ * @brief Controller type: 3 or 6 button pad
  * @ingroup bios_input
  */
 #define CONTROLLER_JOYPAD 0x0D
 
 /**
  * @def CONTROLLER_MEGAMOUSE
+ * @brief Controller type: Mega Mouse
  * @ingroup bios_input
  */
 #define CONTROLLER_MEGAMOUSE 0x03
 
 /**
  * @def CONTROLLER_MULTITAP
+ * @brief Controller type: multitap
  * @ingroup bios_input
  */
 #define CONTROLLER_MULTITAP 0x07
@@ -1164,24 +1173,44 @@
 #define BIOS_UK_COMMFLAGS_RELATED 0x00034C
 #endif
 
+/**
+ * @def BIOS_UNKNOWN_35
+ * @brief Undocumented routine at slot 0x350; purpose unknown
+ * @ingroup bios_unknown_main
+ */
 #if TARGET == MEGACD_MODE1
 #define BIOS_UNKNOWN_35 0x400350
 #else
 #define BIOS_UNKNOWN_35 0x000350
 #endif
 
+/**
+ * @def BIOS_UNKNOWN_36
+ * @brief Undocumented routine at slot 0x354; purpose unknown
+ * @ingroup bios_unknown_main
+ */
 #if TARGET == MEGACD_MODE1
 #define BIOS_UNKNOWN_36 0x400354
 #else
 #define BIOS_UNKNOWN_36 0x000354
 #endif
 
+/**
+ * @def BIOS_UNKNOWN_37
+ * @brief Undocumented routine at slot 0x358; purpose unknown
+ * @ingroup bios_unknown_main
+ */
 #if TARGET == MEGACD_MODE1
 #define BIOS_UNKNOWN_37 0x400358
 #else
 #define BIOS_UNKNOWN_37 0x000358
 #endif
 
+/**
+ * @def BIOS_UNKNOWN_38
+ * @brief Undocumented routine at slot 0x35C; purpose unknown
+ * @ingroup bios_unknown_main
+ */
 #if TARGET == MEGACD_MODE1
 #define BIOS_UNKNOWN_38 0x40035C
 #else
@@ -1203,7 +1232,7 @@
 /**
  * @def BIOS_SEGA_LOGO
  * @brief Run the Sega logo startup code
- * @ingroup boot_system
+ * @ingroup bios_system
  *
  * @note This should never need to be called from inside the game. It is
  * called automatically as part of the security code during startup.
@@ -1278,6 +1307,11 @@
 #define BIOS_DMA_COPY 0x000374
 #endif
 
+/**
+ * @def BIOS_UNKNOWN_3D
+ * @brief Undocumented routine at slot 0x378; purpose unknown
+ * @ingroup bios_unknown_main
+ */
 #if TARGET == MEGACD_MODE1
 #define BIOS_UNKNOWN_3D 0x400378
 #else
@@ -1326,6 +1360,7 @@
 
 /**
  * @def BIOS_PAL_FADEOUT
+ * @brief Fade a palette range to black; see bios_pal_fadeout
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
@@ -1336,6 +1371,7 @@
 
 /**
  * @def BIOS_PAL_FADEIN
+ * @brief Fade the palette toward the target set by BIOS_SET_FADEIN_PAL
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
@@ -1346,6 +1382,7 @@
 
 /**
  * @def BIOS_SET_FADEIN_PAL
+ * @brief Set the target palette for BIOS_PAL_FADEIN; see bios_set_fadein_pal
  * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
@@ -1356,6 +1393,8 @@
 
 /**
  * @def BIOS_DMA_QUEUE
+ * @brief Process a list of DMA transfers from Word RAM; see bios_dma_queue
+ * @ingroup bios_vdp
  */
 #if TARGET == MEGACD_MODE1
 #define BIOS_DMA_QUEUE 0x400394
@@ -1363,18 +1402,33 @@
 #define BIOS_DMA_QUEUE 0x000394
 #endif
 
+/**
+ * @def BIOS_UNKNOWN_44
+ * @brief Undocumented routine at slot 0x398; refers to the Boot ROM by absolute address, so it does not work in Mode 1
+ * @ingroup bios_unknown_main
+ */
 #if TARGET == MEGACD_MODE1
 #define BIOS_UNKNOWN_44 0x400398
 #else
 #define BIOS_UNKNOWN_44 0x000398
 #endif
 
+/**
+ * @def BIOS_ADD_TIME_VALUES
+ * @brief Adds two time values; arguments not yet documented
+ * @ingroup bios_unknown_main
+ */
 #if TARGET == MEGACD_MODE1
 #define BIOS_ADD_TIME_VALUES 0x40039C
 #else
 #define BIOS_ADD_TIME_VALUES 0x00039C
 #endif
 
+/**
+ * @def BIOS_UNKNOWN_46
+ * @brief Undocumented routine at slot 0x3A0; purpose unknown
+ * @ingroup bios_unknown_main
+ */
 #if TARGET == MEGACD_MODE1
 #define BIOS_UNKNOWN_46 0x4003A0
 #else

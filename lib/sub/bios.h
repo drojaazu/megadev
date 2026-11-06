@@ -15,6 +15,10 @@ extern "C" {
 #include "sub/memmap.def.h"
 #include "types.h"
 
+/**
+ * @brief Wait for the next INT2 from the Main CPU, which it raises once per frame
+ * @sa BIOS_WAIT_VSYNC
+ */
 static inline void bios_wait_vsync()
 {
 	asm volatile(
@@ -26,7 +30,6 @@ static inline void bios_wait_vsync()
 }
 
 /**
- * @fn bios_audio_stop
  * @brief Stops playing CD audio if it is playing
  * @sa BIOS_AUDIO_STOP
  * @ingroup bios_cdda
@@ -44,13 +47,12 @@ static inline void bios_audio_stop()
 }
 
 /**
- * @fn bios_audio_pause
  * @brief Pauses the drive when a track is playing
  * @sa BIOS_AUDIO_PAUSE
  * @ingroup bios_cdda
  *
  * @note If the drive is left paused it will stop after a programmable delay
- * (see @ref _CDBPAUSE)
+ * (see @ref BIOS_SET_PAUSE_TIMEOUT)
  */
 static inline void bios_audio_pause()
 {
@@ -65,7 +67,6 @@ static inline void bios_audio_pause()
 }
 
 /**
- * @fn bios_audio_resume
  * @brief Resumes playing a track after a pause
  * @sa BIOS_AUDIO_RESUME
  * @ingroup bios_cdda
@@ -86,7 +87,6 @@ static inline void bios_audio_resume()
 };
 
 /**
- * @fn bios_audio_scan_forward
  * @brief Starts playing from the current position in fast forward
  * @sa BIOS_AUDIO_SCAN_FORWARD
  * @ingroup bios_cdda
@@ -104,7 +104,6 @@ static inline void bios_audio_scan_forward()
 };
 
 /**
- * @fn bios_audio_scan_backward
  * @brief Starts playing from the current position in fast reverse
  * @sa BIOS_AUDIO_SCAN_BACKWARD
  * @ingroup bios_cdda
@@ -122,7 +121,6 @@ static inline void bios_audio_scan_backward()
 };
 
 /**
- * @fn bios_audio_scan_off
  * @brief Returns to normal play mode
  * @sa BIOS_AUDIO_SCAN_OFF
  * @ingroup bios_cdda
@@ -143,7 +141,6 @@ static inline void bios_audio_scan_off()
 };
 
 /**
- * @fn bios_audio_play
  * @brief Starts CD audio playback at the specified track & continues playing
  * through subsequent tracks
  * @sa BIOS_AUDIO_PLAY
@@ -163,7 +160,6 @@ static inline void bios_audio_play(u16 const * track_number)
 };
 
 /**
- * @fn bios_audio_play_once
  * @brief Plays the specified track once then pauses
  * @sa BIOS_AUDIO_PLAY_ONCE
  * @ingroup bios_cdda
@@ -182,7 +178,6 @@ static inline void bios_audio_play_once(u16 const * track_number)
 };
 
 /**
- * @fn bios_audio_play_repeat
  * @brief Plays the specified track on repeat
  * @sa BIOS_AUDIO_PLAY_REPEAT
  * @ingroup bios_cdda
@@ -201,7 +196,6 @@ static inline void bios_audio_play_repeat(u16 const * track_number)
 };
 
 /**
- * @fn bios_audio_play_from_time
  * @brief Starts playing from the specified timecode
  * @sa BIOS_AUDIO_PLAY_FROM_TIME
  * @ingroup bios_cdda
@@ -220,7 +214,6 @@ static inline void bios_audio_play_from_time(u32 const * timecode)
 };
 
 /**
- * @fn bios_audio_seek
  * @brief Seeks to the beginning of the specified track and pauses
  * @sa BIOS_AUDIO_SEEK
  * @ingroup bios_cdda
@@ -239,7 +232,6 @@ static inline void bios_audio_seek(u16 const * track_number)
 };
 
 /**
- * @fn bios_audio_seek_time
  * @brief Seeks to a specified timecode
  * @sa BIOS_AUDIO_SEEK_TIME
  * @ingroup bios_cdda
@@ -258,7 +250,6 @@ static inline void bios_audio_seek_time(u32 const * timecode)
 };
 
 /**
- * @def bios_audio_seek_play_once
  * @brief Seek to the beginning of the selected track and pause; when BIOS
  * detects a pause state, the track is played once
  * @sa BIOS_AUDIO_SEEK_PLAY_ONCE
@@ -278,9 +269,8 @@ static inline void bios_audio_seek_play_once(u16 const * track_number)
 };
 
 /**
- * @fn bios_drive_open
  * @brief Opens the CD drive door
- * @ingroup sub_bios
+ * @ingroup bios_cdb
  * @sa BIOS_DRIVE_OPEN
  *
  * @note This is only applicable to Mega CD Model 1 hardware.
@@ -297,17 +287,20 @@ static inline void bios_drive_open()
 		: "cc", "a0", "a1");
 };
 
+/**
+ * @brief Parameters of bios_drive_init
+ * @ingroup bios_cdb
+ */
 typedef struct DriveInitParams
 {
-	u8 toc_track_number;
-	u8 last_track;
+	u8 toc_track_number; ///< First track to read the TOC for, usually 1
+	u8 last_track; ///< Last track to read, or 0xFF for all
 } DriveInitParams;
 
 /**
- * @fn bios_drive_init
  * @brief Closes the disk tray and reads the TOC from the CD
  * @sa BIOS_DRIVE_INIT
- * @ingroup sub_bios
+ * @ingroup bios_cdb
  *
  * @details
  * Pauses for 2 seconds after reading the TOC. Waits for a DRV_OPEN request if
@@ -328,7 +321,6 @@ bios_drive_init(struct DriveInitParams const * drive_init_params)
 };
 
 /**
- * @fn bios_cdrom_pause
  * @brief Stops reading data into the CDC and pauses
  * @sa BIOS_CDROM_PAUSE
  * @ingroup bios_cdrom
@@ -346,7 +338,6 @@ static inline void bios_cdrom_pause()
 };
 
 /**
- * @fn bios_cdrom_resume
  * @brief Resumes reading data into the CDC from the current logical sector
  * @sa BIOS_CDROM_RESUME
  * @ingroup bios_cdrom
@@ -364,7 +355,6 @@ static inline void bios_cdrom_resume()
 };
 
 /**
- * @fn bios_cdrom_read
  * @brief Begins reading data from the CDROM at the designated logical sector
  * @sa BIOS_CDROM_READ
  * @ingroup bios_cdrom
@@ -391,7 +381,6 @@ static inline void bios_cdrom_read(u32 const * sector_number)
 };
 
 /**
- * @def bios_cdrom_seek
  * @brief Seeks to the designated logical sector and pauses
  * @sa BIOS_CDROM_SEEK
  * @ingroup bios_cdrom
@@ -409,14 +398,17 @@ static inline void bios_cdrom_seek(u32 const * sector_number)
 		: "cc", "a1");
 };
 
+/**
+ * @brief Parameters of bios_cdrom_read_count and bios_cdrom_read_range
+ * @ingroup bios_cdrom
+ */
 struct RomreadParams
 {
-	u32 start_sector;
-	u32 sector_count;
+	u32 start_sector; ///< First logical sector
+	u32 sector_count; ///< Number of sectors (read_count), or the last sector (read_range)
 };
 
 /**
- * @def BIOS_CDROM_READ_COUNT
  * @brief Same function as @ref bios_cdrom_read but stops after reading the
  * requested number of sectors
  * @ingroup bios_cdrom
@@ -437,7 +429,6 @@ static inline void bios_cdrom_read_count(struct RomreadParams const * param)
 };
 
 /**
- * @def BIOS_CDROM_READ_RANGE
  * @ingroup bios_cdrom
  * @brief Same as @ref bios_cdrom_read, but reads between two logical sectors
  */
@@ -455,11 +446,9 @@ static inline void bios_cdrom_read_range(struct RomreadParams const * param)
 };
 
 /**
- * @def bios_check_command
  * @brief Query the BIOS on the status of the last command
  * @sa BIOS_CHECK_COMMAND
- *
- * @param[out] CC On clear, command is complete
+ * @return true if the command is complete
  */
 static inline bool bios_check_command()
 {
@@ -481,17 +470,22 @@ cmd_complete:
 	return true;
 };
 
+/**
+ * @brief Status returned by bios_get_status
+ * @details The layout of the CDBSTAT status table; see the BIOS manual for the
+ * field values.
+ * @ingroup bios_cdb
+ */
 struct BiosStatus
 {
-	u16 bios_status;
-	u16 led;
-	u8	cdd_status[20];
-	u32 volume;
-	u32 header;
+	u16 bios_status; ///< BIOS status word: high byte drive state, low byte BIOS state
+	u16 led; ///< LED state
+	u8	cdd_status[20]; ///< The last CDD status, 20 bytes
+	u32 volume; ///< Current fader volume
+	u32 header; ///< Disc header: absolute time of the current sector
 };
 
 /**
- * @def BIOS_GET_STATUS
  * @brief Retrieve CD BIOS status
  *
  * Please refer to the BIOS manual for details about the returned data
@@ -512,7 +506,6 @@ static inline struct BiosStatus const * bios_get_status()
 }
 
 /**
- * @def BIOS_FADER_SET
  * @brief Sets the audio volume
  * @sa BIOS_FADER_SET
  * @ingroup bios_fader
@@ -541,7 +534,6 @@ static inline void bios_fader_set(u16 const volume)
 };
 
 /**
- * @def bios_fader_change
  * @brief  Ramps the audio volume from its current level to a new level at
  * the requested rate
  * @sa BIOS_FADER_CHANGE
@@ -600,7 +592,6 @@ jsr %p1"
 };
 
 /**
- * @fn bios_cdc_status
  * @sa BIOS_CDC_STATUS
  */
 static inline void bios_cdc_status()

@@ -13,6 +13,9 @@ OUTPUT_DIRECTORY  = docs
 TAB_SIZE          = 2
 
 USE_MDFILE_AS_MAINPAGE = README.md
+MARKDOWN_ID_STYLE = GITHUB
+DISTRIBUTE_GROUP_DOC = YES
+TYPEDEF_HIDES_STRUCT = YES
 
 GENERATE_LATEX    = NO
 GENERATE_HTML     = YES
@@ -22,17 +25,20 @@ EXTRACT_STATIC    = YES
 ENABLE_PREPROCESSING = YES
 MACRO_EXPANSION      = YES
 EXPAND_ONLY_PREDEF   = YES
-PREDEFINED           = "TARGET=MEGACD"
+PREDEFINED           = "TARGET=MEGACD" "__attribute__(x)="
 
 # Prose documentation lives in docs/. RECURSIVE would also sweep in the
 # generated HTML, hence the EXCLUDE.
+# Headers and docs/*.md are the reference. Assembly sources are not Doxygen
+# input: Doxygen cannot parse them, and their routines are documented through
+# their C wrappers and docs/asm_api.md. Implementation files (lib/runtime, the
+# security block) are not either; their headers are.
 INPUT             = README.md docs lib
-EXCLUDE           = docs/html
+EXCLUDE           = docs/html lib/runtime lib/security.c
 
 # Assembly files are mapped to C so the documentation blocks in .s files are
 # parsed. Doxygen reads the comment blocks and skips the mnemonics.
-FILE_PATTERNS     = *.h *.s *.c *.md
-EXTENSION_MAPPING = s=C
+FILE_PATTERNS     = *.h *.md
 
 # Megadev-specific commands. Every custom command used in the source must be
 # declared here, or it renders as literal text.

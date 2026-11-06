@@ -258,12 +258,12 @@
 
 /**
  * @defgroup vdp_reg00 Main CPU / VDP / Register 00 (Mode Register 1)
+ * @ingroup vdp_regs
  */
 
 /**
  * @def VDP_REG00
  * @brief Mode Register 1
- * @ingroup vdp_regs
  * @ingroup vdp_reg00
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -289,7 +289,6 @@
 
 /**
  * @def VDP_REG_MODE1
- * @ingroup vdp_regs
  * @ingroup vdp_reg00
  * @aliasof VDP_REG00
  */
@@ -298,7 +297,6 @@
 /**
  * @def VDP_DISPLAY_DISABLE
  * @brief Disable Display
- * @ingroup vdp_regs
  * @ingroup vdp_reg00
  */
 #define VDP_DISPLAY_DISABLE (1 << 0)
@@ -306,7 +304,6 @@
 /**
  * @def VDP_HVCOUNTER_FREEZE
  * @brief Freeze HV Counter
- * @ingroup vdp_regs
  * @ingroup vdp_reg00
  *
  */
@@ -315,7 +312,6 @@
 /**
  * @def VDP_HICOLOR_ENABLE
  * @brief Enable 9 bit Color Mode
- * @ingroup vdp_regs
  * @ingroup vdp_reg00
  *
  */
@@ -324,7 +320,6 @@
 /**
  * @def VDP_HBLANK_ENABLE
  * @brief Enable HBLANK Interrupts
- * @ingroup vdp_regs
  * @ingroup vdp_reg00
  *
  */
@@ -333,19 +328,18 @@
 /**
  * @def VDP_LEFT_COL_BLANK
  * @brief Blank leftmost 8 pixels to background color
- * @ingroup vdp_regs
  * @ingroup vdp_reg00
  */
 #define VDP_LEFT_COL_BLANK (1 << 5)
 
 /**
  * @defgroup vdp_reg01 Main CPU / VDP / Register 01 (Mode Register 2)
+ * @ingroup vdp_regs
  */
 
 /**
  * @def VDP_REG01
  * @brief Mode Register 2
- * @ingroup vdp_regs
  * @ingroup vdp_reg01
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -375,7 +369,6 @@
 
 /**
  * @def VDP_REG_MODE2
- * @ingroup vdp_regs
  * @ingroup vdp_reg01
  * @aliasof VDP_REG01
  */
@@ -384,7 +377,6 @@
 /**
  * @def VDP_MD_DISPLAY_MODE
  * @brief Display Mode
- * @ingroup vdp_regs
  * @ingroup vdp_reg01
  */
 #define VDP_MD_DISPLAY_MODE (1 << 2)
@@ -392,7 +384,6 @@
 /**
  * @def VDP_PAL_VIDEO
  * @brief Enable PAL video mode
- * @ingroup vdp_regs
  * @ingroup vdp_reg01
  */
 #define VDP_PAL_VIDEO (1 << 3)
@@ -400,7 +391,6 @@
 /**
  * @def VDP_DMA_ENABLE
  * @brief Enable DMA Operations
- * @ingroup vdp_regs
  * @ingroup vdp_reg01
  */
 #define VDP_DMA_ENABLE (1 << 4)
@@ -408,7 +398,6 @@
 /**
  * @def VDP_VBLANK_ENABLE
  * @brief Enable VBLANK Interrupts
- * @ingroup vdp_regs
  * @ingroup vdp_reg01
  */
 #define VDP_VBLANK_ENABLE (1 << 5)
@@ -416,7 +405,6 @@
 /**
  * @def VDP_DISPLAY_ENABLE
  * @brief Enable Display Output
- * @ingroup vdp_regs
  * @ingroup vdp_reg01
  */
 #define VDP_DISPLAY_ENABLE (1 << 6)
@@ -424,7 +412,6 @@
 /**
  * @def VDP_128K_VRAM_ENABLE
  * @brief Enable 128k VRAM Mode
- * @ingroup vdp_regs
  * @ingroup vdp_reg01
  */
 #define VDP_128K_VRAM_ENABLE (1 << 7)
@@ -432,12 +419,12 @@
 /**
  * @defgroup vdp_reg02 Main CPU / VDP / Register 02 (Plane A Name Table VRAM
  * Address)
+ * @ingroup vdp_regs
  */
 
 /**
  * @def VDP_REG02
  * @brief Plane A Name Table VRAM Address
- * @ingroup vdp_regs
  * @ingroup vdp_reg02
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -457,7 +444,6 @@
 
 /**
  * @def VDP_REG_PLA_ADDR
- * @ingroup vdp_regs
  * @ingroup vdp_reg02
  * @aliasof VDP_REG02
  */
@@ -466,12 +452,12 @@
 /**
  * @defgroup vdp_reg03 Main CPU / VDP / Register 03 (Window Name Table VRAM
  * Address)
+ * @ingroup vdp_regs
  */
 
 /**
  * @def VDP_REG03
  * @brief Window Name Table VRAM Address
- * @ingroup vdp_regs
  * @ingroup vdp_reg03
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -494,7 +480,6 @@
 
 /**
  * @def VDP_REG_WIN_ADDR
- * @ingroup vdp_regs
  * @ingroup vdp_reg03
  * @aliasof VDP_REG03
  */
@@ -503,12 +488,12 @@
 /**
  * @defgroup vdp_reg04 Main CPU / VDP / Register 04 (Plane B Name Table VRAM
  * Address)
+ * @ingroup vdp_regs
  */
 
 /**
  * @def VDP_REG04
  * @brief Plane B Name Table VRAM Address
- * @ingroup vdp_regs
  * @ingroup vdp_reg04
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -528,7 +513,6 @@
 
 /**
  * @def VDP_REG_PLB_ADDR
- * @ingroup vdp_regs
  * @ingroup vdp_reg04
  * @aliasof VDP_REG04
  */
@@ -536,12 +520,12 @@
 
 /**
  * @defgroup vdp_reg05 Main CPU / VDP / Register 05 (Sprite Table VRAM Address)
+ * @ingroup vdp_regs
  */
 
 /**
  * @def VDP_REG05
  * @brief Sprite Table VRAM Address
- * @ingroup vdp_regs
  * @ingroup vdp_reg05
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -556,13 +540,12 @@
  * of 0x400
  * @note ST7 is used with 128k VRAM only
  *
- * @asliases VDP_REG_SPR_ADDR
+ * @aliases VDP_REG_SPR_ADDR
  */
 #define VDP_REG05 0x8500
 
 /**
  * @def VDP_REG_SPR_ADDR
- * @ingroup vdp_regs
  * @ingroup vdp_reg05
  * @aliasof VDP_REG05
  */
@@ -571,12 +554,12 @@
 /**
  * @defgroup vdp_reg06 Main CPU / VDP / Register 06 (Sprite Table VRAM Address
  * for 128k VRAM)
+ * @ingroup vdp_regs
  */
 
 /**
  * @def VDP_REG06
  * @brief Sprite Table VRAM Address (for 128k VRAM)
- * @ingroup vdp_regs
  * @ingroup vdp_reg06
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -593,7 +576,6 @@
 
 /**
  * @def VDP_REG_SPR_ADDR2
- * @ingroup vdp_regs
  * @ingroup vdp_reg06
  * @aliasof VDP_REG06
  */
@@ -601,12 +583,12 @@
 
 /**
  * @defgroup vdp_reg07 Main CPU / VDP / Register 07 (Background Color)
+ * @ingroup vdp_regs
  */
 
 /**
  * @def VDP_REG07
  * @brief Background Color
- * @ingroup vdp_regs
  * @ingroup vdp_reg07
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -622,7 +604,6 @@
 
 /**
  * @def VDP_REG_BGCOLOR
- * @ingroup vdp_regs
  * @ingroup vdp_reg07
  * @aliasof VDP_REG07
  */
@@ -631,12 +612,12 @@
 /**
  * @defgroup vdp_reg08 Main CPU / VDP / Register 08 (Mark III/Master System
  * horizontal scroll)
+ * @ingroup vdp_regs
  */
 
 /**
  * @def VDP_REG08
  * @brief Mark III/Master System horizontal scroll
- * @ingroup vdp_regs
  * @ingroup vdp_reg08
  * @note Unused for standard Mega Drive operation
  *
@@ -646,7 +627,6 @@
 
 /**
  * @def VDP_REG_M3_HSCROLL
- * @ingroup vdp_regs
  * @ingroup vdp_reg08
  * @aliasof VDP_REG08
  */
@@ -655,12 +635,12 @@
 /**
  * @defgroup vdp_reg09 Main CPU / VDP / Register 09 (Mark III/Master System
  * vertical scroll)
+ * @ingroup vdp_regs
  */
 
 /**
  * @def VDP_REG09
  * @brief Mark III/Master System vertical scroll register
- * @ingroup vdp_regs
  * @ingroup vdp_reg09
  * @note Unused for standard Mega Drive operation
  *
@@ -670,7 +650,6 @@
 
 /**
  * @def VDP_REG_M3_VSROLL
- * @ingroup vdp_regs
  * @ingroup vdp_reg09
  * @aliasof VDP_REG09
  */
@@ -678,11 +657,11 @@
 
 /**
  * @defgroup vdp_reg0A Main CPU / VDP / Register 0A (HBLANK Interrupt Counter)
+ * @ingroup vdp_regs
  */
 
 /**
  * @def VDP_REG0A
- * @ingroup vdp_regs
  * @ingroup vdp_reg0A
  * @brief HBLANK Interrupt Counter
  * @details
@@ -698,7 +677,6 @@
 
 /**
  * @def VDP_REG_HBLANK_COUNT
- * @ingroup vdp_regs
  * @ingroup vdp_reg0A
  * @aliasof VDP_REG0A
  */
@@ -706,12 +684,12 @@
 
 /**
  * @defgroup vdp_reg0B Main CPU / VDP / Register 0B (Mode Register 3)
+ * @ingroup vdp_regs
  */
 
 /**
  * @def VDP_REG0B
  * @brief Mode Register 3
- * @ingroup vdp_regs
  * @ingroup vdp_reg0B
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -739,7 +717,6 @@
 
 /**
  * @def VDP_REG_MODE3
- * @ingroup vdp_regs
  * @ingroup vdp_reg0B
  * @aliasof VDP_REG0B
  */
@@ -747,7 +724,6 @@
 
 /**
  * @def VDP_VSCROLL_MODE
- * @ingroup vdp_regs
  * @ingroup vdp_reg0B
  * @brief Vertical Scrolling Mode
  */
@@ -755,7 +731,6 @@
 
 /**
  * @def VDP_EXTINT_ENABLE
- * @ingroup vdp_regs
  * @ingroup vdp_reg0B
  * @brief Enable External Interrupts
  */
@@ -763,7 +738,6 @@
 
 /**
  * @def VDP_HSCROLL_FULLSCREEN
- * @ingroup vdp_regs
  * @ingroup vdp_reg0B
  * @brief Horizontal Scroll Mode / Full Screen
  */
@@ -771,7 +745,6 @@
 
 /**
  * @def VDP_HSCROLL_TILE
- * @ingroup vdp_regs
  * @ingroup vdp_reg0B
  * @brief Horizontal Scroll Mode / Per Tile
  */
@@ -779,7 +752,6 @@
 
 /**
  * @def VDP_HSCROLL_PIXEL
- * @ingroup vdp_regs
  * @ingroup vdp_reg0B
  * @brief Horizontal Scroll Mode / Per Pixel
  */
@@ -787,12 +759,12 @@
 
 /**
  * @defgroup vdp_reg0C Main CPU / VDP / Register 0C (Mode Register 4)
+ * @ingroup vdp_regs
  */
 
 /**
  * @def VDP_REG0C
  * @brief Mode Register 4
- * @ingroup vdp_regs
  * @ingroup vdp_reg0C
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -820,7 +792,6 @@
 
 /**
  * @def VDP_REG_MODE4
- * @ingroup vdp_regs
  * @ingroup vdp_reg0C
  * @aliasof VDP_REG0C
  */
@@ -828,7 +799,6 @@
 
 /**
  * @def VDP_WIDTH_40CELL_MASK
- * @ingroup vdp_regs
  * @ingroup vdp_reg0C
  * @brief Screen Width / 40 Cell. Bits 0 and 7 are both set, so this is a
  * literal mask rather than a positioned field.
@@ -837,7 +807,6 @@
 
 /**
  * @def VDP_SHADOW_HIGHLIGHT_POS
- * @ingroup vdp_regs
  * @ingroup vdp_reg0C
  * @brief Enable Shadow/Highlight Mode, bit position
  */
@@ -845,7 +814,6 @@
 
 /**
  * @def VDP_SHADOW_HIGHLIGHT_MASK
- * @ingroup vdp_regs
  * @ingroup vdp_reg0C
  * @brief Enable Shadow/Highlight Mode, mask
  */
@@ -853,7 +821,6 @@
 
 /**
  * @def VDP_INTERLACE_POS
- * @ingroup vdp_regs
  * @ingroup vdp_reg0C
  * @brief Interlace Mode field, bit position
  */
@@ -861,7 +828,6 @@
 
 /**
  * @def VDP_INTERLACE_WIDTH
- * @ingroup vdp_regs
  * @ingroup vdp_reg0C
  * @brief Interlace Mode field, width
  */
@@ -869,7 +835,6 @@
 
 /**
  * @def VDP_INTERLACE_MASK
- * @ingroup vdp_regs
  * @ingroup vdp_reg0C
  * @brief Interlace Mode field, mask
  */
@@ -877,7 +842,6 @@
 
 /**
  * @def VDP_INTERLACE_NONE
- * @ingroup vdp_regs
  * @ingroup vdp_reg0C
  * @brief Interlace Mode / None; a value for the VDP_INTERLACE field, placed with FIELD_PREP
  */
@@ -885,7 +849,6 @@
 
 /**
  * @def VDP_INTERLACE_NORMAL
- * @ingroup vdp_regs
  * @ingroup vdp_reg0C
  * @brief Interlace Mode / Normal; a value for the VDP_INTERLACE field
  */
@@ -893,7 +856,6 @@
 
 /**
  * @def VDP_INTERLACE_DOUBLE
- * @ingroup vdp_regs
  * @ingroup vdp_reg0C
  * @brief Interlace Mode / Double; a value for the VDP_INTERLACE field
  */
@@ -902,12 +864,12 @@
 /**
  * @defgroup vdp_reg0D Main CPU / VDP / Register 0D (Horizontal Scroll Data VRAM
  * Address)
+ * @ingroup vdp_regs
  */
 
 /**
  * @def VDP_REG0D
  * @brief Horizontal Scroll Data VRAM Address
- * @ingroup vdp_regs
  * @ingroup vdp_reg0D
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -927,7 +889,6 @@
 
 /**
  * @def VDP_REG_HS_ADDR
- * @ingroup vdp_regs
  * @ingroup vdp_reg0D
  * @aliasof VDP_REG0D
  */
@@ -936,12 +897,12 @@
 /**
  * @defgroup vdp_reg0E Main CPU / VDP / Register 0B (Plane A/B Name Table VRAM
  * Address for 128k VRAM)
+ * @ingroup vdp_regs
  */
 
 /**
  * @def VDP_REG0E
  * @brief Plane A/B Name Table VRAM Address (for 128k VRAM)
- * @ingroup vdp_regs
  * @ingroup vdp_reg0E
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -959,7 +920,6 @@
 
 /**
  * @def VDP_REG_PL_ADDR2
- * @ingroup vdp_regs
  * @ingroup vdp_reg0E
  * @aliasof VDP_REG0E
  */
@@ -967,12 +927,12 @@
 
 /**
  * @defgroup vdp_reg0F Main CPU / VDP / Register 0F (Auto-Increment Value)
+ * @ingroup vdp_regs
  */
 
 /**
  * @def VDP_REG0F
  * @brief Auto-Increment Value
- * @ingroup vdp_regs
  * @ingroup vdp_reg0F
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -993,7 +953,6 @@
 
 /**
  * @def VDP_REG_AUTOINC
- * @ingroup vdp_regs
  * @ingroup vdp_reg0F
  * @aliasof VDP_REG0F
  */
@@ -1001,12 +960,12 @@
 
 /**
  * @defgroup vdp_reg10 Main CPU / VDP / Register 10 (Plane Dimensions)
+ * @ingroup vdp_regs
  */
 
 /**
  * @def VDP_REG10
  * @brief Plane Dimensions
- * @ingroup vdp_regs
  * @ingroup vdp_reg10
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -1033,7 +992,6 @@
 
 /**
  * @def VDP_REG_PL_SIZE
- * @ingroup vdp_regs
  * @ingroup vdp_reg10
  * @aliasof VDP_REG10
  */
@@ -1041,7 +999,6 @@
 
 /**
  * @def VDP_PL_W32
- * @ingroup vdp_regs
  * @ingroup vdp_reg10
  * @brief Plane Dimensions / Width 32
  * @sa VDP_REG10
@@ -1050,7 +1007,6 @@
 
 /**
  * @def VDP_PL_W64
- * @ingroup vdp_regs
  * @ingroup vdp_reg10
  * @brief Plane Dimensions / Width 64
  * @sa VDP_REG10
@@ -1059,7 +1015,6 @@
 
 /**
  * @def VDP_PL_W128
- * @ingroup vdp_regs
  * @ingroup vdp_reg10
  * @brief Plane Dimensions / Width 128
  * @sa VDP_REG10
@@ -1068,7 +1023,6 @@
 
 /**
  * @def VDP_PL_H32
- * @ingroup vdp_regs
  * @ingroup vdp_reg10
  * @brief Plane Dimensions / Height 32
  * @sa VDP_REG10
@@ -1077,7 +1031,6 @@
 
 /**
  * @def VDP_PL_H64
- * @ingroup vdp_regs
  * @ingroup vdp_reg10
  * @brief Plane Dimensions / Height 64
  * @sa VDP_REG10
@@ -1086,7 +1039,6 @@
 
 /**
  * @def VDP_PL_H128
- * @ingroup vdp_regs
  * @ingroup vdp_reg10
  * @brief Plane Dimensions / Height 128
  * @sa VDP_REG10
@@ -1095,7 +1047,6 @@
 
 /**
  * @def VDP_PL_32x32
- * @ingroup vdp_regs
  * @ingroup vdp_reg10
  * @brief Plane Dimensions / Width 32 Height 32
  * @sa VDP_REG10
@@ -1104,7 +1055,6 @@
 
 /**
  * @def VDP_PL_32x64
- * @ingroup vdp_regs
  * @ingroup vdp_reg10
  * @brief Plane Dimensions / Width 32 Height 64
  * @sa VDP_REG10
@@ -1113,7 +1063,6 @@
 
 /**
  * @def VDP_PL_32x128
- * @ingroup vdp_regs
  * @ingroup vdp_reg10
  * @brief Plane Dimensions / Width 32 Height 128
  * @sa VDP_REG10
@@ -1122,7 +1071,6 @@
 
 /**
  * @def VDP_PL_64x32
- * @ingroup vdp_regs
  * @ingroup vdp_reg10
  * @brief Plane Dimensions / Width 64 Height 32
  * @sa VDP_REG10
@@ -1131,7 +1079,6 @@
 
 /**
  * @def VDP_PL_64x64
- * @ingroup vdp_regs
  * @ingroup vdp_reg10
  * @brief Plane Dimensions / Width 64 Height 64
  * @sa VDP_REG10
@@ -1140,7 +1087,6 @@
 
 /**
  * @def VDP_PL_64x128
- * @ingroup vdp_regs
  * @ingroup vdp_reg10
  * @brief Plane Dimensions / Width 64 Height 128
  * @sa VDP_REG10
@@ -1149,7 +1095,6 @@
 
 /**
  * @def VDP_PL_128x32
- * @ingroup vdp_regs
  * @ingroup vdp_reg10
  * @brief Plane Dimensions / Width 128 Height 32
  * @sa VDP_REG10
@@ -1159,12 +1104,12 @@
 /**
  * @defgroup vdp_reg11 Main CPU / VDP / Register 11 (Window Plane Horizontal
  * Position)
+ * @ingroup vdp_regs
  */
 
 /**
  * @def VDP_REG11
  * @brief Window Plane Horizontal Position
- * @ingroup vdp_regs
  * @ingroup vdp_reg11
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -1183,7 +1128,6 @@
 
 /**
  * @def VDP_REG_WIN_HPOS
- * @ingroup vdp_regs
  * @ingroup vdp_reg11
  * @aliasof VDP_REG11
  */
@@ -1192,12 +1136,12 @@
 /**
  * @defgroup vdp_reg12 Main CPU / VDP / Register 12 (Window Plane Vertical
  * Position)
+ * @ingroup vdp_regs
  */
 
 /**
  * @def VDP_REG12
  * @brief Window Plane Vertical Position
- * @ingroup vdp_regs
  * @ingroup vdp_reg12
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -1216,7 +1160,6 @@
 
 /**
  * @def VDP_REG_WIN_VPOS
- * @ingroup vdp_regs
  * @ingroup vdp_reg12
  * @aliasof VDP_REG12
  */
@@ -1224,12 +1167,12 @@
 
 /**
  * @defgroup vdp_reg13 Main CPU / VDP / Register 13 (DMA Length Low Byte)
+ * @ingroup vdp_regs
  */
 
 /**
  * @def VDP_REG13
  * @brief DMA Length (Low Byte)
- * @ingroup vdp_regs
  * @ingroup vdp_reg13
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -1244,7 +1187,6 @@
 
 /**
  * @def VDP_REG_DMA_SZ1
- * @ingroup vdp_regs
  * @ingroup vdp_reg13
  * @aliasof VDP_REG13
  */
@@ -1252,12 +1194,12 @@
 
 /**
  * @defgroup vdp_reg14 Main CPU / VDP / Register 14 (DMA Length High Byte)
+ * @ingroup vdp_regs
  */
 
 /**
  * @def VDP_REG14
  * @brief DMA Length (High Byte)
- * @ingroup vdp_regs
  * @ingroup vdp_reg14
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -1272,7 +1214,6 @@
 
 /**
  * @def VDP_REG_DMA_SZ2
- * @ingroup vdp_regs
  * @ingroup vdp_reg14
  * @aliasof VDP_REG14
  */
@@ -1280,12 +1221,12 @@
 
 /**
  * @defgroup vdp_reg15 Main CPU / VDP / Register 15 (DMA Source Low Byte)
+ * @ingroup vdp_regs
  */
 
 /**
  * @def VDP_REG15
  * @brief DMA Source (Low Byte)
- * @ingroup vdp_regs
  * @ingroup vdp_reg15
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -1300,7 +1241,6 @@
 
 /**
  * @def VDP_REG_DMA_SRC1
- * @ingroup vdp_regs
  * @ingroup vdp_reg15
  * @aliasof VDP_REG15
  */
@@ -1308,12 +1248,12 @@
 
 /**
  * @defgroup vdp_reg16 Main CPU / VDP / Register 16 (DMA Source Mid Byte)
+ * @ingroup vdp_regs
  */
 
 /**
  * @def VDP_REG16
  * @brief DMA Source (Mid Byte)
- * @ingroup vdp_regs
  * @ingroup vdp_reg16
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -1328,7 +1268,6 @@
 
 /**
  * @def VDP_REG_DMA_SRC2
- * @ingroup vdp_regs
  * @ingroup vdp_reg16
  * @aliasof VDP_REG16
  */
@@ -1336,12 +1275,12 @@
 
 /**
  * @defgroup vdp_reg17 Main CPU / VDP / Register 17 (DMA Source High Byte)
+ * @ingroup vdp_regs
  */
 
 /**
  * @def VDP_REG17
  * @brief DMA Source (High Byte)
- * @ingroup vdp_regs
  * @ingroup vdp_reg17
  * @details
  * | 7| 6| 5| 4| 3| 2| 1| 0|
@@ -1360,28 +1299,29 @@
 
 /**
  * @def VDP_REG_DMA_SRC3
- * @ingroup vdp_regs
  * @ingroup vdp_reg17
  * @aliasof VDP_REG17
  */
 #define VDP_REG_DMA_SRC3 VDP_REG17
 
-// some simple colors for quick reference
-#define COLOR_BLACK 0b000000000000
-#define COLOR_WHITE 0b111011101110
-#define COLOR_BLUE  0b111000000000
-#define COLOR_GREEN 0b000011100000
-#define COLOR_RED   0b000000001110
+/** @name Common colors, in CRAM format (0000 BBB0 GGG0 RRR0) */
+///@{
+#define COLOR_BLACK 0b000000000000 ///< Black
+#define COLOR_WHITE 0b111011101110 ///< White
+#define COLOR_BLUE  0b111000000000 ///< Blue
+#define COLOR_GREEN 0b000011100000 ///< Green
+#define COLOR_RED   0b000000001110 ///< Red
+///@}
 
 /**
- * @def VRAMPTR
+ * @def vram_addr_from_tileidx
  * @brief Returns VRAM address for the given tile index
  * (assuming tile data begins at 0 in VRAM)
  */
 #define vram_addr_from_tileidx(tile_idx) ((tile_idx) << 5)
 
 /**
- * @def TILEIDX
+ * @def tileidx_from_vram_addr
  * @brief Returns tile index for the given VRAM address
  * (assuming tile data begins at 0 in VRAM)
  */

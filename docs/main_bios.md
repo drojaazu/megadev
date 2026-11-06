@@ -2,8 +2,9 @@ Main BIOS
 ================
 
 1. [Introduction](#introduction)
-2. [Using The Main BIOS Calls](#using-the-main-bios-calls)
-3. [Taxonomy](#taxonomy)
+2. [Main BIOS Mysteries](#main-bios-mysteries)
+3. [Using The Main BIOS Calls](#using-the-main-bios-calls)
+4. [Memory Usage](#memory-usage)
 
 # Introduction
 
@@ -49,9 +50,9 @@ It seems unlikely that we are missing any English paperwork. For whatever lucky 
 
 While there is no printed, dedicated document to the topic, we do have some brief mentions of the Main BIOS located within "Sega CD Technical Bulletin #3." One section says this (emphasis added):
 
-> ### 3. The status after booting is completed.
+> **3. The status after booting is completed.**
 >
-> #### Main Side
+> **Main Side**
 >
 > The loading occurs from the beginning of WORK RAM. The stack is  
 > $FFFD00. The RAM's usage status is as follows. Please refer to the  

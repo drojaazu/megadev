@@ -59,6 +59,13 @@ replacement.
 
 ### Changed
 
+- Reference documentation (`make docs`): every header member is documented
+  and Doxygen reports no warnings, down from about 1200. Assembly sources are
+  no longer Doxygen input (Doxygen cannot parse them); their routines are
+  documented through their C wrappers, and `docs/asm_api.md` gives the
+  assembly caller's view: registers in, registers out, registers clobbered,
+  and the macros. Implementation files (`lib/runtime`, the security block)
+  are not input either.
 - Gate array names carry their CPU side: `GA_MAIN_*` / `GA_SUB_*`,
   `ga_main_*` / `ga_sub_*`. A program can include both sides, as Mode 1
   requires.
@@ -110,6 +117,9 @@ replacement.
 
 ### Fixed
 
+- `to_vram_addr_runtime` returned its argument unchanged: a commented-out
+  instruction in its inline assembly had commented out the whole routine.
+  Nothing in the kit called it.
 - CD-ROM access loop: DMA loads went to offset 0 of the destination. Writing
   the CDC destination resets the DMA address register, and the loop wrote the
   destination after the caller had set the address. The loop now sets the

@@ -20,34 +20,40 @@ extern "C" {
 
 #include <types.h>
 
+/** @brief Result of div */
 typedef struct
 {
-  int quot;
-  int rem;
+  int quot; ///< Quotient
+  int rem;  ///< Remainder
 } div_t;
 
+/** @brief Result of ldiv */
 typedef struct
 {
-  long quot;
-  long rem;
+  long quot; ///< Quotient
+  long rem;  ///< Remainder
 } ldiv_t;
 
+/** @brief Absolute value */
 static inline int abs(int value)
 {
   return value < 0 ? -value : value;
 }
 
+/** @brief Absolute value */
 static inline long labs(long value)
 {
   return value < 0 ? -value : value;
 }
 
+/** @brief Quotient and remainder of numer / denom, truncating toward zero */
 static inline div_t div(int numer, int denom)
 {
   div_t out = {numer / denom, numer % denom};
   return out;
 }
 
+/** @brief Quotient and remainder of numer / denom, truncating toward zero */
 static inline ldiv_t ldiv(long numer, long denom)
 {
   ldiv_t out = {numer / denom, numer % denom};
@@ -100,8 +106,8 @@ void * bsearch(void const * key, void const * base, size_t count, size_t size,
 void qsort(void * base, size_t count, size_t size,
   int (*compare)(void const *, void const *));
 
-#define LONG_MAX __LONG_MAX__
-#define LONG_MIN (-LONG_MAX - 1L)
+#define LONG_MAX __LONG_MAX__ ///< Largest long
+#define LONG_MIN (-LONG_MAX - 1L) ///< Smallest long
 
 #ifdef __cplusplus
 }

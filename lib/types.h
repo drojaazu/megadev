@@ -16,20 +16,27 @@
 extern "C" {
 #endif
 
+/** @brief Null pointer constant */
 #ifdef __cplusplus
 #define NULL nullptr
 #else
 #define NULL ((void *) 0)
 #endif
 
+/** @brief Signed result of subtracting two pointers */
 typedef __PTRDIFF_TYPE__ ptrdiff_t;
 
+/** @brief Unsigned size of an object, as sizeof yields */
 typedef __SIZE_TYPE__ size_t;
 
 #ifndef __cplusplus
+/** @brief Boolean type, as stdbool.h defines it */
 #define bool													_Bool
+/** @brief Boolean true */
 #define true													1
+/** @brief Boolean false */
 #define false													0
+/** @brief Set once bool, true and false are defined, as stdbool.h does */
 #define __bool_true_false_are_defined 1
 #endif
 
@@ -105,23 +112,27 @@ typedef __UINT32_TYPE__ uint32_t;
  */
 typedef uint32_t u32;
 
+/** @brief Signed integer wide enough to hold a pointer */
 typedef __INTPTR_TYPE__ intptr_t;
+/** @brief Signed integer wide enough to hold a pointer */
 typedef intptr_t		sptr;
 
+/** @brief Unsigned integer wide enough to hold a pointer */
 typedef __UINTPTR_TYPE__ uintptr_t;
+/** @brief Unsigned integer wide enough to hold a pointer */
 typedef uintptr_t			uptr;
 
-#define INT8_MIN	(-0x7F - 1)
-#define INT16_MIN (-0x7FFF - 1)
-#define INT32_MIN (-0x7FFFFFFF - 1)
+#define INT8_MIN	(-0x7F - 1) ///< Smallest s8
+#define INT16_MIN (-0x7FFF - 1) ///< Smallest s16
+#define INT32_MIN (-0x7FFFFFFF - 1) ///< Smallest s32
 
-#define INT8_MAX	0x7F
-#define INT16_MAX 0x7FFF
-#define INT32_MAX 0x7FFFFFFF
+#define INT8_MAX	0x7F ///< Largest s8
+#define INT16_MAX 0x7FFF ///< Largest s16
+#define INT32_MAX 0x7FFFFFFF ///< Largest s32
 
-#define UINT8_MAX	 0xFF
-#define UINT16_MAX 0xFFFF
-#define UINT32_MAX 0xFFFFFFFF
+#define UINT8_MAX	 0xFF ///< Largest u8
+#define UINT16_MAX 0xFFFF ///< Largest u16
+#define UINT32_MAX 0xFFFFFFFF ///< Largest u32
 
 #ifdef __cplusplus
 }

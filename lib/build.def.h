@@ -8,23 +8,31 @@
 
 #pragma once
 
-// For use with the TARGET definition
-#define MEGADRIVE 0
-#define MEGACD 1
-#define MEGACD_MODE1 2
+/** @name TARGET values, from the project makefile */
+///@{
+#define MEGADRIVE 0    ///< Mega Drive cartridge, no Mega CD
+#define MEGACD 1       ///< Mega CD disc
+#define MEGACD_MODE1 2 ///< Cartridge driving a Mega CD (docs/mode1.md)
+///@}
 
-// For use with the REGION definition
-#define JP 0
-#define US 1
-#define EU 2
+/** @name REGION values, from the project makefile */
+///@{
+#define JP 0 ///< Japan
+#define US 1 ///< North America
+#define EU 2 ///< Europe
+///@}
 
-// For use with the VIDEO definition
-#define NTSC 0
-#define PAL 1
+/** @name VIDEO values, from the project makefile */
+///@{
+#define NTSC 0 ///< 60 Hz, 224 lines
+#define PAL 1  ///< 50 Hz, 240 lines available
+///@}
 
-// For use with VRAM_SIZE definition
-#define VRAM_64K 0
-#define VRAM_128K 1
+/** @name VRAM_SIZE values, from the project makefile */
+///@{
+#define VRAM_64K 0  ///< Standard 64 KB of VRAM
+#define VRAM_128K 1 ///< 128 KB VRAM, a development hardware modification
+///@}
 
 /**
  * @defgroup bitfields Register field helpers

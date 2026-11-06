@@ -15,6 +15,13 @@ extern "C" {
 #include <main/gate_arr.h>
 #include <main/memmap.h>
 
+/**
+ * @brief Prepare a Main CPU module (MMD) that the Sub CPU has loaded into Word RAM
+ * @details Waits for Word RAM, copies the module to its destination if the
+ * header asks for it, installs its HBLANK and VBLANK handlers, and hands Word
+ * RAM back to the Sub CPU if the header's flag says so. See docs/modules.md.
+ * @return The module's entry point, to be called
+ */
 static inline void const * init_mmd()
 {
   register void const * mmd_entry;

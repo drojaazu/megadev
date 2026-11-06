@@ -34,90 +34,100 @@ extern "C" {
 #include "main/vdp.h"
 #include "types.h"
 
+/**
+ * @brief One sprite of a SpriteLayout: position relative to the entity, size,
+ * attributes and first tile
+ * @details The Boot ROM's entity routine turns each mapping into a VDP sprite
+ * table entry. The layout matches the sprite attribute table, with the
+ * position fields relative to the entity instead of absolute.
+ * @ingroup bios_vdp
+ */
 struct SpriteMapping
 {
-  s8 relpos_y;
-  u8           : 4;
-  u8  width    : 2;
-  u8  height   : 2;
-  u8  priority : 1;
-  u8  pal_line : 2;
-  u8  v_flip   : 1;
-  u8  h_flip   : 1;
-  u16 chridx   : 11;
-  s8  relpos_x;
-  s8  mirrored_relpos_x;
+  s8 relpos_y; ///< Vertical offset from the entity position
+  u8           : 4; ///< Unused
+  u8  width    : 2; ///< Width in tiles minus 1 (0 to 3)
+  u8  height   : 2; ///< Height in tiles minus 1 (0 to 3)
+  u8  priority : 1; ///< Sprite priority bit
+  u8  pal_line : 2; ///< Palette line (0 to 3)
+  u8  v_flip   : 1; ///< Vertical flip
+  u8  h_flip   : 1; ///< Horizontal flip
+  u16 chridx   : 11; ///< First tile index
+  s8  relpos_x; ///< Horizontal offset from the entity position
+  s8  mirrored_relpos_x; ///< Horizontal offset used when the entity is flipped (ENTITY_HFLIP)
 } __attribute__((__packed__));
 
+/**
+ * @brief The sprites that make up an entity's appearance
+ * @ingroup bios_vdp
+ */
 typedef struct SpriteLayout
 {
-  u8 mapping_count;
+  u8 mapping_count; ///< Number of entries in mappings
   // this byte is a bit of a mystery: it is copied to 0x19 of the Entity
   // and if the h flip flag is set, it will add +1 to the value in the object.
   // It does not have any effect on the object and its purpose is unknown
-  u8                   unknown;
-  struct SpriteMapping mappings[];
+  u8                   unknown; ///< Copied into Entity::unknown; purpose unknown, see the comment above
+  struct SpriteMapping mappings[]; ///< The sprites, mapping_count of them
 } SpriteLayout;
 
-// BIOS defined Entity display flags
-#define ENTITY_HFLIP 1 << 7
-#define ENTITY_HIDE  1 << 1
+/** @name Entity display flags (Entity::display_flags)
+ * @ingroup bios_vdp */
+///@{
+#define ENTITY_HFLIP 1 << 7 ///< Draw the entity mirrored horizontally
+#define ENTITY_HIDE  1 << 1 ///< Do not draw the entity
+///@}
 
-// size: 26 bytes
+/**
+ * @brief A sprite object for the Boot ROM's entity routine (bios_process_entities)
+ * @details 26 bytes; a program may append its own fields and pass the real
+ * size as obj_size. The position and movement are 16.16 fixed point.
+ * @ingroup bios_vdp
+ */
 typedef struct
 {
-  u16 enable        : 1;
-  u16 jmptbl_offset : 15;
+  u16 enable        : 1; ///< Entity is active
+  u16 jmptbl_offset : 15; ///< Offset into the entity jump table (BIOS_ENTITY_ROUTINES)
   // uses the display flags defined above; the rest of the bits are user
   // definable
-  u8 display_flags;
+  u8 display_flags; ///< ENTITY_HFLIP, ENTITY_HIDE; the other bits are free
   // this byte is not used by blib, so presumably it can be used however
   // you'd like
-  u8                          user;
-  struct SpriteLayout const * layout;
+  u8                          user; ///< Not used by the Boot ROM; free for the program
+  struct SpriteLayout const * layout; ///< Sprites to draw
 
-  f32 pos_x;
-  f32 pos_y;
-  f32 move_x;
-  f32 move_y;
+  f32 pos_x; ///< Horizontal position
+  f32 pos_y; ///< Vertical position
+  f32 move_x; ///< Added to pos_x every frame
+  f32 move_y; ///< Added to pos_y every frame
   // this byte is ORed on to the byte starting with the priority
   // bit in the SpriteMapping struct
-  u8 sprite_flags;
+  u8 sprite_flags; ///< ORed into the attribute byte of every sprite (priority, palette, flips)
   // the second byte of the SpriteLayout header is copied here
-  u8 unknown;
+  u8 unknown; ///< Copy of SpriteLayout::unknown, plus 1 when flipped
 } Entity;
 
 /**
- * @struct Palette
- * cram_offset - address in CRAM to load palette - that is, the palette index
- * length - the number of colors in the palette to load MINUS ONE
- *
+ * @brief Palette data for the Boot ROM's palette routines
  * @ingroup bios_vdp
  */
 typedef struct Palette
 {
-  u8  cram_offset;
-  u8  length; // length in words (i.e. color entries) MINUS ONE
-  s16 colors[];
+  u8  cram_offset; ///< CRAM address to load at, in colors (the palette index)
+  u8  length;      ///< Number of colors minus 1
+  s16 colors[];    ///< The colors, in CRAM format
 } Palette;
 
 /**
- * @def* bios_work_buffer
+ * @def bios_work_buffer
  * @brief Work RAM for graphics decompression routines
  * @sa BIOS_WORK_BUFFER
  * @ingroup bios_cmp
  */
 #define bios_work_buffer (*((s8(*)[0x200]) BIOS_WORK_BUFFER))
 
-// TODO check that the LEN/SZ's in this section can be replaced with sizeof()
 /**
- * @def BIOS_WORK_BUFFER_LEN
- * @brief Size of @ref bios_work_buffer
- */
-// #define BIOS_WORK_BUFFER_LEN 0x200
-
-/**
- * @def Sprite* bios_sprlist
+ * @def bios_sprlist
  * @brief Sprite list buffer
  * @ingroup bios_vdp
  * @sa BIOS_SPRITE_CACHE
@@ -131,7 +141,7 @@ typedef struct Palette
 // #define bios_sprlist_len 0x280
 
 /**
- * @def s16* bios_palette
+ * @def bios_palette
  * @brief CRAM (palette) buffer
  * @ingroup bios_vdp
  * @sa BIOS_PALETTE_CACHE
@@ -143,7 +153,7 @@ typedef struct Palette
 /**
  * @def bios_pal1
  * @brief Palette line #0 buffer
- * @ingroup bios_vdplib/main
+ * @ingroup bios_vdp
  * @sa BIOS_PAL1
  */
 #define bios_pal1 (*((s16(*)[16]) BIOS_PAL1))
@@ -173,7 +183,7 @@ typedef struct Palette
 #define bios_pal4 (*((s16(*)[16]) BIOS_PAL4))
 
 /**
- * @def void* bios_vblank_user
+ * @def bios_vblank_user
  * @brief Pointer to the VBLANK_USER routine used in the Boot ROM VBLANK
  * handler.
  * @sa BIOS_VBLANK_USER
@@ -181,7 +191,7 @@ typedef struct Palette
 #define bios_vblank_user ((void(* volatile *)) BIOS_VBLANK_USER)
 
 /**
- * @def* bios_vdp_regs
+ * @def bios_vdp_regs
  * @brief VDP registers buffer
  * @ingroup bios_vdp
  *
@@ -204,14 +214,14 @@ typedef struct Palette
 #define bios_comflags_main ((volatile u8 *) BIOS_COMMFLAGS_MAIN_CACHE)
 
 /**
- * @def const bios_comflags_sub
+ * @def bios_comflags_sub
  * @brief GA comm flags for Sub CPU buffer
  * @sa BIOS_COMMFLAGS_SUB_CACHE
  */
 #define bios_comflags_sub ((volatile u8 const *) BIOS_COMMFLAGS_SUB_CACHE)
 
 /**
- * @def* bios_comcmd
+ * @def bios_comcmd
  * @brief Array of cached GA COMCMD (Main -> Sub) registers
  * @sa BIOS_COMCMD
  */
@@ -403,7 +413,6 @@ typedef struct Palette
 #define bios_fadein_step (*((volatile u16 *) BIOS_FADEIN_STEP))
 
 /**
- * @def BIOS_FADEIN_TARGET_PAL
  * @brief Pointer to the target fade in palette
  * @sa BIOS_FADEIN_TARGET_PAL
  * @ingroup bios_vdp
@@ -411,7 +420,6 @@ typedef struct Palette
 #define bios_fadein_target_pal (*((u8 *) BIOS_FADEIN_TARGET_PAL))
 
 /**
- * @fn bios_entry
  * @brief Jump to internal user BIOS
  * @ingroup bios_system
  * @warning Register clobbers not yet documented!
@@ -429,7 +437,6 @@ static inline void bios_entry()
 }
 
 /**
- * @fn bios_reset
  * @brief Perform a system reset
  * @ingroup bios_system
  * @warning Register clobbers not yet documented!
@@ -453,7 +460,6 @@ static inline void bios_reset()
 }
 
 /**
- * @fn bios_init
  * @brief Initialize system
  * @ingroup bios_system
  * @warning Register clobbers not yet documented!
@@ -472,7 +478,6 @@ static inline void bios_init()
 }
 
 /**
- * @fn bios_init_sp
  * @brief System init with stack pointer set
  * @ingroup bios_system
  * @warning Register clobbers not yet documented!
@@ -490,7 +495,6 @@ static inline void bios_init_sp()
 }
 
 /**
- * @fn bios_vblank_handler
  * @brief Vertical Blank interrupt handler
  * @ingroup bios_int
  *
@@ -509,7 +513,6 @@ static inline void bios_vblank_handler()
 }
 
 /**
- * @fn bios_set_hblank
  * @brief Sets the HBLANK vector
  * @ingroup bios_int
  *
@@ -532,7 +535,6 @@ static inline void bios_set_hblank(void * hblank_handler)
 }
 
 /**
- * @fn BIOS_READ_JOYPAD
  * @brief Update state of P1/P2 controllers
  * @ingroup bios_input
  */
@@ -549,6 +551,10 @@ static inline void bios_read_joypad()
     : "d6", "d7", "a5");
 }
 
+/**
+ * @brief Controller types bios_detect_controller reports
+ * @ingroup bios_input
+ */
 typedef enum ControllerType
 {
   Joypad = CONTROLLER_JOYPAD,
@@ -557,7 +563,6 @@ typedef enum ControllerType
 } ControllerType;
 
 /**
- * @def bios_detect_controller
  * @brief Detect the type of controller plugged in
  * @ingroup bios_input
  * @param io_data_port Joypad data port (io_data1 or io_data2)
@@ -586,7 +591,6 @@ static inline u8 bios_detect_controller(u8 volatile * io_data_port)
 }
 
 /**
- * @fn bios_clear_vram
  * @brief Clear all of VRAM and VSRAM via DMA Fill
  * @ingroup bios_vdp
  *
@@ -609,7 +613,6 @@ static inline void bios_clear_vram()
 }
 
 /**
- * @fn bios_clear_tables
  * @brief Clear nametables and sprite list
  * @ingroup bios_vdp
  *
@@ -629,7 +632,6 @@ static inline void bios_clear_tables()
 }
 
 /**
- * @fn bios_clear_vsram
  * @brief Clear VSRAM
  * @ingroup bios_vdp
  */
@@ -645,7 +647,6 @@ static inline void bios_clear_vsram()
 }
 
 /**
- * @fn bios_load_vdp_regs_default
  * @brief Loads the Boot ROM default VDP register defaults
  * @ingroup bios_vdp
  * @details
@@ -696,7 +697,6 @@ static inline void bios_load_vdp_regs_default()
 }
 
 /**
- * @fn bios_load_vdp_regs
  * @brief Load values into multiple VDP registers
  * @ingroup bios_vdp
  *
@@ -719,7 +719,6 @@ static inline void bios_load_vdp_regs(vdp_reg const * vdp_reg_data)
 }
 
 /**
- * @fn bios_vdp_fill
  * @brief Fill a region of VDP memory with a value
  * @ingroup bios_vdp
  *
@@ -740,7 +739,6 @@ static inline void bios_vdp_fill(u32 vdp_addr, u16 length, u16 value)
 }
 
 /**
- * @fn bios_vdp_fill_clear
  * @brief Fill a region of VDP memory with 0
  * @ingroup bios_vdp
  *
@@ -761,7 +759,6 @@ static inline void bios_vdp_fill_clear(u32 vdp_addr, u16 length)
 }
 
 /**
- * @fn bios_dma_fill_clear
  * @brief Fill a region of VDP memory with zero
  * @ingroup bios_vdp
  * @sa BIOS_DMA_FILL_CLEAR
@@ -782,7 +779,6 @@ static inline void bios_dma_fill_clear(u32 vdp_addr, u16 length)
 }
 
 /**
- * @fn bios_dma_fill
  * @brief Fill a region of VDP memory with a value
  * @sa BIOS_DMA_FILL
  * @ingroup bios_vdp
@@ -804,7 +800,6 @@ static inline void bios_dma_fill(u32 vdp_addr, u16 length, u16 value)
 }
 
 /**
- * @fn bios_load_map
  * @brief Fill a region of a nametable with map data
  * @sa BIOS_LOAD_MAP
  * @ingroup bios_vdp
@@ -830,7 +825,6 @@ static inline void bios_load_map(
 }
 
 /**
- * @fn bios_set_hblank_workram
  * @brief Sets the HBLANK vector for a Work RAM destination
  * @sa BIOS_SET_HBLANK_WORK_RAM
  * @ingroup bios_int
@@ -864,7 +858,6 @@ static inline void bios_set_hblank_workram(void * hblank_handler)
 }
 
 /**
- * @fn bios_disable_hblank
  * @brief Disables horizontal interrupts on the VDP
  * @ingroup bios_int
  *
@@ -925,7 +918,6 @@ static inline void bios_vdp_disp_disable()
 }
 
 /**
- * @fn bios_vblank_wait_default
  * @brief Wait for VBLANK interrupt with default flags
  * @ingroup bios_int
  * @sa BIOS_VBLANK_WAIT_DEFAULT
@@ -949,7 +941,6 @@ static inline void bios_vblank_wait_default()
 }
 
 /**
- * @fn bios_vblank_wait
  * @brief Wait for VBLANK interrupt
  * @ingroup bios_int
  * @sa BIOS_VBLANK_WAIT
@@ -970,16 +961,14 @@ static inline void bios_vblank_wait(u8 flags)
 }
 
 /**
- * @fn bios_pal_fadeout
  * @brief Fade a range of the color palette to black
  * @ingroup bios_vdp
  *
- * @param[in] D0.w Palette index (*byte* offset, not word!)
- * @param[in] D1.w Length (In *words*, not bytes!)
- * @param[out] Z Palette incomplete
+ * @param palette_index First color, as a CRAM color index
+ * @param length Number of colors
+ * @return true when the fade is complete, false while it is still in progress
  *
- * @details If Z is set, the palette fade process is not yet complete
- * and subroutine should be called again on the next loop iteration.
+ * @details Call once per frame until it returns true.
  *
  * @note Sets the palette update flag on _GFX_REFRESH
  */
@@ -1005,7 +994,6 @@ fade_complete:
 }
 
 /**
- * @fn bios_load_font_defaults
  * @brief Load the internal 1bpp ASCII font with default settings
  * @ingroup bios_misc
  *
@@ -1025,7 +1013,6 @@ static inline void bios_load_font_defaults()
 };
 
 /**
- * @fn bios_load_1bpp_tiles
  * @brief Load the 1bpp graphics into VDP
  * @ingroup bios_misc
  */
@@ -1047,13 +1034,11 @@ static inline void bios_load_1bpp_tiles(
 };
 
 /**
- * @fn bios_input_delay
  * @brief Generates a brief delay after initially pressing the D-pad
  * @ingroup bios_input
  *
- * @param[in] A1.l Pointer to byte which will hold the output D-pad value
- * @param[in] D0.w If 0, use P1 input; if non-zero, use P2 input
- * @ingroup bios_input
+ * @param[in] input Pointer to the byte which will hold the output D-pad value (A1)
+ * @param[in] use_2p If false, use P1 input; if true, use P2 input (D0)
  *
  * @details
  * This is useful for working with cursors on menus as it creates a brief
@@ -1075,6 +1060,17 @@ static inline void bios_input_repeat_delay(u8 * input, bool use_2p)
     : "cc", "d1", "a5");
 }
 
+/**
+ * @brief Fill a region of a nametable with consecutive tiles
+ * @details Writes a width by height block of tile indices starting at chridx,
+ * row by row, so that a stamp (an image stored as consecutive tiles) appears
+ * in place.
+ * @param width Width in tiles
+ * @param height Height in tiles
+ * @param dest Nametable address of the top left tile
+ * @param chridx First tile index
+ * @ingroup bios_vdp
+ */
 static inline void
 bios_load_stamp_tilemap(u16 width, u16 height, vdp_addr dest, u16 chridx)
 {
@@ -1093,7 +1089,6 @@ bios_load_stamp_tilemap(u16 width, u16 height, vdp_addr dest, u16 chridx)
 }
 
 /**
- * @fn bios_clear_comm
  * @brief Clears all Gate Array communication registers
  * @ingroup bios_comm
  *
@@ -1114,12 +1109,11 @@ static inline void bios_clear_comm()
 }
 
 /**
- * @fn bios_print
  * @brief Displays an ASCII string
  * @ingroup bios_misc
  *
- * @param[in] A1.l Pointer to string
- * @param[in] D0.l VRAM destination (vdp_addr)
+ * @param string The string, 0xFF terminated (see str_to_bios)
+ * @param pos Nametable position as a VDP command (VDP_PLANE_XY)
  *
  * @details Strings are terminated with 0xFF and use 0x00 for newline.
  * The value in BIOS_FONT_TILE_BASE is added to each character byte, but no
@@ -1142,12 +1136,11 @@ static inline void bios_print(char const * string, vdp_cmd pos)
 };
 
 /**
- * @fn bios_plane_fill
  * @brief Fill a region of a nametable with a value
- * @param[in] D0.l Address (vdp_addr format)
- * @param[in] D1.w Width
- * @param[in] D2.w Height
- * @param[in] D3.w Value
+ * @param pos Nametable position of the top left tile, as a VDP command
+ * @param width Width in tiles
+ * @param height Height in tiles
+ * @param value Nametable entry to write
  * @ingroup bios_vdp
  */
 static inline void
@@ -1170,11 +1163,10 @@ bios_plane_fill(vdp_cmd pos, u16 width, u16 height, u16 value)
 };
 
 /**
- * @fn bios_dma_xfer
  * @brief Performs a data transfer to VRAM via DMA
- * @param[in] D0.l VRAM destination address (vdp_addr format)
- * @param[in] D1.l Source address
- * @param[in] D2.w Length (in words)
+ * @param dest VRAM destination as a VDP command
+ * @param source Source address
+ * @param length Length in words
  * @ingroup bios_vdp
  */
 static inline void bios_dma_xfer(vdp_cmd dest, u8 const * source, u16 length)
@@ -1195,11 +1187,10 @@ static inline void bios_dma_xfer(vdp_cmd dest, u8 const * source, u16 length)
 };
 
 /**
- * @fn bios_dma_xfer_word_ram
  * @brief Performs a data transfer from Word RAM to VRAM via DMA
- * @param[in] D0.l VRAM destination (vdp_addr format)
- * @param[in] D1.l Source address
- * @param[in] D2.w Length (in words)
+ * @param dest VRAM destination as a VDP command
+ * @param source Source address in Word RAM
+ * @param length Length in words
  * @ingroup bios_vdp
  *
  * @details There is a well-documented issue with performing a DMA transfer from
@@ -1225,11 +1216,10 @@ static inline void bios_dma_xfer_word_ram(
 };
 
 /**
- * @fn bios_dma_copy
  * @brief Copy data within VRAM via DMA
- * @param[in] D0.l Destination VRAM address (vdp_addr)
- * @param[in] D1.w Source VRAM address
- * @param[in] D2.w Length
+ * @param vdpptr_dest Destination VRAM address as a VDP command
+ * @param source Source VRAM address
+ * @param length Length in bytes
  * @ingroup bios_vdp
  */
 static inline void bios_dma_copy(u32 vdpptr_dest, u16 source, u16 length)
@@ -1250,7 +1240,6 @@ static inline void bios_dma_copy(u32 vdpptr_dest, u16 source, u16 length)
 };
 
 /**
- * @fn bios_copy_sprlist
  * @brief Copies sprite list buffer to VDP via DMA
  * @ingroup bios_vdp
  *
@@ -1270,10 +1259,9 @@ static inline void bios_copy_sprlist()
 };
 
 /**
- * @fn bios_clear_ram
  * @brief Clear a region of memory
- * @param[in] A0.l Pointer to memory region
- * @param[in] D7.l Size to clear (in longs) MINUS 1
+ * @param address Start of the region, long aligned
+ * @param long_count Size in longs minus 1
  * @ingroup bios_misc
  */
 static inline void bios_clear_ram(void * address, u32 long_count)
@@ -1292,9 +1280,8 @@ static inline void bios_clear_ram(void * address, u32 long_count)
 };
 
 /**
- * @fn bios_load_pal
  * @brief Load palette to RAM buffer
- * @param[in] A1.l Pointer to palette data structure
+ * @param pal_data The palette
  * @ingroup bios_vdp
  *
  * @details The color palette is loaded but the "Palette Update" flag is not set
@@ -1313,9 +1300,8 @@ static inline void bios_load_pal(Palette const * pal_data)
 };
 
 /**
- * @fn bios_load_pal_update
  * @brief Load palette to RAM buffer and set Palette Update flag
- * @param[in] A1.l Pointer to palette data structure
+ * @param pal_data The palette
  * @ingroup bios_vdp
  */
 static inline void bios_load_pal_update(Palette const * pal_data)
@@ -1332,7 +1318,6 @@ static inline void bios_load_pal_update(Palette const * pal_data)
 };
 
 /**
- * @fn bios_copy_pal
  * @brief Transfer palette cache to CRAM via DMA
  * @ingroup bios_vdp
  *
@@ -1350,12 +1335,11 @@ static inline void bios_copy_pal()
 };
 
 /**
- * @fn bios_process_entities
  * @brief Update/display sprite objects
- * @param[in] A0.l Pointer to object arrayq
- * @param[in] A1.l Pointer to sprite list buffer
- * @param[in] D0.w Number of objects (minus 1)
- * @param[in] D1.w Object size
+ * @param obj_array The entities
+ * @param sprtbl_cache Sprite table cache to fill (bios_sprlist)
+ * @param obj_count Number of entities minus 1
+ * @param obj_size Size of one entity in bytes (sizeof(Entity) plus any program fields)
  * @ingroup bios_vdp
  */
 static inline void bios_process_entities(
@@ -1379,10 +1363,9 @@ static inline void bios_process_entities(
 };
 
 /**
- * @fn bios_prng_mod
  * @brief Generate a new random number limited with the given modulus
- * @param[in] D0.w Modulus
- * @param[out] D0.w Random number between 0 and modulus
+ * @param modulo Modulus
+ * @return Random number from 0 to modulo - 1
  * @ingroup bios_misc
  *
  * @details The modulus can be used to specify an upper boundary of the random
@@ -1410,7 +1393,6 @@ static inline u16 bios_prng_mod(u16 const modulo)
 };
 
 /**
- * @fn bios_prng
  * @brief Generate a new random number
  * @ingroup bios_misc
  *
@@ -1428,9 +1410,8 @@ static inline void bios_prng()
 };
 
 /**
- * @fn bios_set_fadein_pal
  * @brief Sets the target color palette for a fadein
- * @param[in] A1.l Pointer to target palette structure
+ * @param palette The target palette
  * @ingroup bios_vdp
  *
  * @note This must be called before using bios_pal_fadein
@@ -1449,7 +1430,6 @@ static inline void bios_set_fadein_pal(Palette const * palette)
 };
 
 /**
- * @fn bios_pal_fadein
  * @brief Fade a range of the color palette from black
  * @ingroup bios_vdp
  *
@@ -1477,16 +1457,20 @@ static inline void bios_pal_fadein()
 /**
  * For use with bios_dma_queue
  */
+/**
+ * @brief One entry of a bios_dma_queue list
+ * @ingroup bios_vdp
+ */
 typedef struct DmaTransfer
 {
-  u16 length;
-  u32 vdp_addr;
-  u32 source;
+  u16 length; ///< Length in words
+  u32 vdp_addr; ///< VRAM destination as a VDP command
+  u32 source; ///< Source address
 } DmaTransfer;
 
 /**
  * @brief Transfer queued VDP bound data via DMA
- * @param[in] A1.l Pointer to queue
+ * @param[in] queue Pointer to the queue (A1)
  * @ingroup bios_vdp
  *
  * @details The queue is an array of DMA transfer entries in this format:
