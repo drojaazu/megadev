@@ -14,15 +14,15 @@ extern "C" {
 #include "pcm.def.h"
 #include "types.h"
 
-#define PCM_ENV			 ((volatile u8 *) _PCM_ENV)
-#define PCM_PAN			 ((volatile u8 *) _PCM_PAN)
-#define PCM_FDL			 ((volatile u8 *) _PCM_FDL)
-#define PCM_FDH			 ((volatile u8 *) _PCM_FDH)
-#define PCM_LSL			 ((volatile u8 *) _PCM_LSL)
-#define PCM_LSH			 ((volatile u8 *) _PCM_LSH)
-#define PCM_ST			 ((u8 volatile *) _PCM_ST)
-#define PCM_CTRL		 ((volatile u8 *) _PCM_CTRL)
-#define PCM_CDISABLE ((volatile u8 *) _PCM_CDISABLE)
+#define PCM_ENV			 ((volatile u8 *) _PCM_ENV) ///< @copybrief _PCM_ENV
+#define PCM_PAN			 ((volatile u8 *) _PCM_PAN) ///< @copybrief _PCM_PAN
+#define PCM_FDL			 ((volatile u8 *) _PCM_FDL) ///< @copybrief _PCM_FDL
+#define PCM_FDH			 ((volatile u8 *) _PCM_FDH) ///< @copybrief _PCM_FDH
+#define PCM_LSL			 ((volatile u8 *) _PCM_LSL) ///< @copybrief _PCM_LSL
+#define PCM_LSH			 ((volatile u8 *) _PCM_LSH) ///< @copybrief _PCM_LSH
+#define PCM_ST			 ((u8 volatile *) _PCM_ST) ///< @copybrief _PCM_ST
+#define PCM_CTRL		 ((volatile u8 *) _PCM_CTRL) ///< @copybrief _PCM_CTRL
+#define PCM_CDISABLE ((volatile u8 *) _PCM_CDISABLE) ///< @copybrief _PCM_CDISABLE
 
 /**
  * @def WAVEBANK
@@ -35,7 +35,7 @@ extern "C" {
 /**
  * @def CHANNEL
  * @brief Generate the PCM control register setting to select a given channel
- * @param cb channel id (1 to 8)
+ * @param ch channel id (1 to 8)
  */
 #define CHANNEL(ch) (0xC0 | ((ch - 1) & 7))
 
@@ -45,17 +45,16 @@ extern "C" {
  */
 typedef struct PcmChannelSettings
 {
-	u8 envelope;
-	u8 panning;
-	u8 frequencyLo;
-	u8 frequencyHi;
-	u8 loopPointLo;
-	u8 loopPointHi;
-	u8 start;
+	u8 envelope;    ///< Envelope (volume), 0 to 0xFF
+	u8 panning;     ///< Panning: low nibble left, high nibble right
+	u8 frequencyLo; ///< Frequency delta, low byte
+	u8 frequencyHi; ///< Frequency delta, high byte
+	u8 loopPointLo; ///< Loop start address, low byte
+	u8 loopPointHi; ///< Loop start address, high byte
+	u8 start;       ///< Start address, high byte
 } PcmChannelSettings;
 
 /**
- * @fn pcm_clear_ram_c
  * @brief Clear all PCM RAM
  */
 static inline void pcm_clear_ram_c()
@@ -72,7 +71,6 @@ static inline void pcm_clear_ram_c()
 };
 
 /**
- * @fn pcm_config_channel_c
  * @brief Configure a PCM channel
  * @param ctrlregChannel Channel index
  * @param settings Pointer to PcmChannelSettings

@@ -30,7 +30,6 @@ static inline void enable_interrupts()
 }
 
 /**
- * @fn mask_interrupts
  * @brief Disable all interrupt levels and return the previous status register
  *
  * @details
@@ -47,7 +46,6 @@ static inline u16 mask_interrupts()
 }
 
 /**
- * @fn restore_interrupts
  * @brief Restore a status register saved by @ref mask_interrupts
  */
 static inline void restore_interrupts(u16 const sr)
@@ -55,11 +53,13 @@ static inline void restore_interrupts(u16 const sr)
 	asm volatile("move.w %0, %%sr" : : "d"(sr) : "cc");
 }
 
+/** @brief Issue the RESET instruction: pulses the reset line to the peripherals, the CPU itself keeps running */
 static inline void cpu_reset()
 {
 	asm("reset");
 }
 
+/** @brief Halt the CPU with interrupts disabled; only a reset leaves this state */
 static inline void cpu_stop()
 {
 	asm("stop #0x700");

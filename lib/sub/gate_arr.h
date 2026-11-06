@@ -13,6 +13,7 @@ extern "C" {
 #include "gate_arr.def.h"
 #include <types.h>
 
+/** @brief Pointer to a 16 bit gate array register */
 typedef u16 volatile * ga_sub_reg;
 
 /**
@@ -37,22 +38,34 @@ typedef u8 volatile * ga_sub_reg8;
  */
 typedef u8 volatile const * ga_sub_reg8_ro;
 
+/** @copydoc GA_SUB_REG_LED */
 #define ga_sub_reg_led (*((ga_sub_reg8) GA_SUB_REG_LED))
+/** @copydoc GA_SUB_REG_SUBCTRL */
 #define ga_sub_reg_subctrl (*((ga_sub_reg8) GA_SUB_REG_SUBCTRL))
+/** @copydoc GA_SUB_REG_WP */
 #define ga_sub_reg_wp (*((ga_sub_reg8_ro) GA_SUB_REG_WP))
+/** @copydoc GA_SUB_REG_MEMMODE */
 #define ga_sub_reg_memmode (*((ga_sub_reg8) GA_SUB_REG_MEMMODE))
+/** @copydoc GA_SUB_REG_CDCMODE */
 #define ga_sub_reg_cdcmode (*((ga_sub_reg) GA_SUB_REG_CDCMODE))
+/** @copydoc GA_SUB_REG_CDCRS1 */
 #define ga_sub_reg_cdcrs1 (*((ga_sub_reg) GA_SUB_REG_CDCRS1))
+/** @copydoc GA_SUB_REG_CDCHOSTDATA */
 #define ga_sub_reg_cdchostdata (*((ga_sub_reg_ro) GA_SUB_REG_CDCHOSTDATA))
+/** @copydoc GA_SUB_REG_DMAADDR */
 #define ga_sub_reg_dmaaddr (*((ga_sub_reg) GA_SUB_REG_DMAADDR))
+/** @copydoc GA_SUB_REG_STOPWATCH */
 #define ga_sub_reg_stopwatch (*((ga_sub_reg) GA_SUB_REG_STOPWATCH))
+/** @copydoc GA_SUB_REG_COMFLAGS_MAIN */
 #define ga_sub_reg_comflags_main (*((ga_sub_reg8_ro) GA_SUB_REG_COMFLAGS_MAIN))
+/** @copydoc GA_SUB_REG_COMFLAGS_SUB */
 #define ga_sub_reg_comflags_sub (*((ga_sub_reg8) GA_SUB_REG_COMFLAGS_SUB))
+/** @copydoc GA_SUB_REG_COMCMD0 */
 #define ga_sub_reg_comcmd0 (*((ga_sub_reg_ro) GA_SUB_REG_COMCMD0))
 /**
  * @def ga_sub_reg_comcmd1
  * @brief GA Reg 09 - Comm. command (Main -> Sub)
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  * @sa GA_SUB_REG_COMCMD1
  *
  * @details R: 16 bit data
@@ -61,7 +74,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
 /**
  * @def ga_sub_reg_comcmd2
  * @brief GA Reg 0A - Comm. command (Main -> Sub)
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  * @sa GA_SUB_REG_COMCMD2
  *
  * @details R: 16 bit data
@@ -70,7 +83,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
 /**
  * @def ga_sub_reg_comcmd3
  * @brief GA Reg 0B - Comm. command (Main -> Sub)
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  * @sa GA_SUB_REG_COMCMD3
  *
  * @details R: 16 bit data
@@ -79,7 +92,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
 /**
  * @def ga_sub_reg_comcmd4
  * @brief GA Reg 0C - Comm. command (Main -> Sub)
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  * @sa GA_SUB_REG_COMCMD4
  *
  * @details R: 16 bit data
@@ -88,7 +101,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
 /**
  * @def ga_sub_reg_comcmd5
  * @brief GA Reg 0D - Comm. command (Main -> Sub)
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  * @sa GA_SUB_REG_COMCMD5
  *
  * @details R: 16 bit data
@@ -97,7 +110,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
 /**
  * @def ga_sub_reg_comcmd6
  * @brief GA Reg 0E - Comm. command (Main -> Sub)
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  * @sa GA_SUB_REG_COMCMD6
  *
  * @details R: 16 bit data
@@ -106,7 +119,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
 /**
  * @def ga_sub_reg_comcmd7
  * @brief GA Reg 0F - Comm. command (Main -> Sub)
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  * @sa GA_SUB_REG_COMCMD7
  *
  * @details R: 16 bit data
@@ -115,7 +128,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
 /**
  * @def ga_sub_reg_comstat0
  * @brief GA Reg 10 - Comm. status (Sub -> Main)
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  * @sa GA_SUB_REG_COMSTAT0
  *
  * @details RW: 16 bit data
@@ -124,7 +137,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
 /**
  * @def ga_sub_reg_comstat1
  * @brief GA Reg 11 - Comm. status (Sub -> Main)
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  * @sa GA_SUB_REG_COMSTAT1
  *
  * @details RW: 16 bit data
@@ -133,7 +146,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
 /**
  * @def ga_sub_reg_comstat2
  * @brief GA Reg 12 - Comm. status (Sub -> Main)
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  * @sa GA_SUB_REG_COMSTAT2
  *
  * @details RW: 16 bit data
@@ -142,7 +155,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
 /**
  * @def ga_sub_reg_comstat3
  * @brief GA Reg 13 - Comm. status (Sub -> Main)
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  * @sa GA_SUB_REG_COMSTAT3
  *
  * @details RW: 16 bit data
@@ -151,7 +164,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
 /**
  * @def ga_sub_reg_comstat4
  * @brief GA Reg 14 - Comm. status (Sub -> Main)
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  * @sa GA_SUB_REG_COMSTAT4
  *
  * @details RW: 16 bit data
@@ -160,7 +173,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
 /**
  * @def ga_sub_reg_comstat5
  * @brief GA Reg 15 - Comm. status (Sub -> Main)
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  * @sa GA_SUB_REG_COMSTAT5
  *
  * @details RW: 16 bit data
@@ -169,7 +182,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
 /**
  * @def ga_sub_reg_comstat6
  * @brief GA Reg 16 - Comm. status (Sub -> Main)
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  * @sa GA_SUB_REG_COMSTAT6
  *
  * @details RW: 16 bit data
@@ -178,7 +191,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
 /**
  * @def ga_sub_reg_comstat7
  * @brief GA Reg 17 - Comm. status (Sub -> Main)
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  * @sa GA_SUB_REG_COMSTAT7
  *
  * @details RW: 16 bit data
@@ -188,7 +201,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
  * @def ga_sub_reg_int3timer
  * @brief GA Reg 18 - Timer with interrupt
  * @sa GA_SUB_REG_INT3TIMER
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -211,7 +224,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
  * @def ga_sub_reg_intmask
  * @brief GA Reg 19 - Interrupt mask control
  * @sa GA_SUB_REG_INTMASK
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -235,7 +248,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
  * @def ga_sub_reg_cdfader
  * @brief GA Reg 1A - CD Audio Fader
  * @sa GA_SUB_REG_CDFADER
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -261,14 +274,14 @@ typedef u8 volatile const * ga_sub_reg8_ro;
 /**
  * @def ga_sub_reg_cddctrl
  * @copydoc GA_SUB_REG_CDDCTRL
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  */
 #define ga_sub_reg_cddctrl (*((ga_sub_reg) GA_SUB_REG_CDDCTRL))
 /**
  * @def ga_sub_reg_cddstat0
  * @brief GA Reg 1C - CDD Communication
  * @sa GA_SUB_REG_CDDSTAT0
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  *
  * @details See the documentation for more info
  *
@@ -281,7 +294,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
  * @def ga_sub_reg_cddstat1
  * @brief GA Reg 1D - CDD Communication
  * @sa GA_SUB_REG_CDDSTAT1
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  *
  * @details See the documentation for more info
  *
@@ -294,7 +307,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
  * @def ga_sub_reg_cddstat2
  * @brief GA Reg 1E - CDD Communication
  * @sa GA_SUB_REG_CDDSTAT2
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  *
  * @details See the documentation for more info
  *
@@ -307,7 +320,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
  * @def ga_sub_reg_cddstat3
  * @brief GA Reg 1F - CDD Communication
  * @sa GA_SUB_REG_CDDSTAT3
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  *
  * @details See the documentation for more info
  *
@@ -320,7 +333,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
  * @def ga_sub_reg_cddstat4
  * @brief GA Reg 20 - CDD Communication
  * @sa GA_SUB_REG_CDDSTAT4
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  *
  * @details See the documentation for more info
  *
@@ -333,7 +346,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
  * @def ga_sub_reg_cddcmd0
  * @brief GA Reg 21 - CDD Communication
  * @sa GA_SUB_REG_CDDCMD0
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  *
  * @details See the documentation for more info
  *
@@ -346,7 +359,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
  * @def ga_sub_reg_cddcmd1
  * @brief GA Reg 22 - CDD Communication
  * @sa GA_SUB_REG_CDDCMD1
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  *
  * @details See the documentation for more info
  *
@@ -359,7 +372,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
  * @def ga_sub_reg_cddcmd2
  * @brief GA Reg 23 - CDD Communication
  * @sa GA_SUB_REG_CDDCMD2
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  *
  * @details See the documentation for more info
  *
@@ -372,7 +385,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
  * @def ga_sub_reg_cddcmd3
  * @brief GA Reg 24 - CDD Communication
  * @sa GA_SUB_REG_CDDCMD3
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  *
  * @details See the documentation for more info
  *
@@ -385,7 +398,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
  * @def ga_sub_reg_cddcmd4
  * @brief GA Reg 25 - CDD Communication
  * @sa GA_SUB_REG_CDDCMD4
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  *
  * @details See the documentation for more info
  *
@@ -398,7 +411,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
  * @def ga_sub_reg_fontcolor
  * @brief GA Reg 26 - Font Color
  * @sa GA_SUB_REG_FONTCOLOR
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  *
  * @details
  * | F| E| D| C| B| A| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
@@ -416,34 +429,30 @@ typedef u8 volatile const * ga_sub_reg8_ro;
  * @def ga_sub_reg_fontbits
  * @brief GA Reg 27 - 1bpp Font Data
  * @sa GA_SUB_REG_FONTBITS
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  */
 #define ga_sub_reg_fontbits (*((ga_sub_reg) GA_SUB_REG_FONTBITS))
 /**
  * @def ga_sub_reg_fontdata
  * @brief GA Reg 28 - 4bpp Font Data
  * @sa GA_SUB_REG_FONTDATA
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  *
  * @details
  * This register is a group of four 16-bit values which represent
  * the 4bpp VDP tile data converted from the 1bpp data in @ref ga_sub_reg_fontbits
  */
 #define ga_sub_reg_fontdata (*((ga_sub_reg_ro) GA_SUB_REG_FONTDATA))
-/**
- * @def ga_sub_reg_stampsize
- * @brief GA Reg 29
- * @sa GA_SUB_REG_STAMPSIZE
- * @ingroup gatearray_sub
- */
+/** @copydoc GA_SUB_REG_GFXSTAT */
 #define ga_sub_reg_gfxstat (*((ga_sub_reg8_ro) GA_SUB_REG_GFXSTAT))
+/** @copydoc GA_SUB_REG_STAMPSIZE */
 #define ga_sub_reg_stampsize (*((ga_sub_reg8) GA_SUB_REG_STAMPSIZE))
 
 /**
  * @def ga_sub_reg_stampmapbase
  * @brief GA Reg 2A
  * @sa GA_SUB_REG_STAMPMAPBASE
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  */
 #define ga_sub_reg_stampmapbase (*((ga_sub_reg) GA_SUB_REG_STAMPMAPBASE))
 
@@ -451,7 +460,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
  * @def ga_sub_reg_imgbufvsize
  * @brief GA Reg 2B
  * @sa GA_SUB_REG_IMGBUFVSIZE
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  */
 #define ga_sub_reg_imgbufvsize (*((ga_sub_reg8) GA_SUB_REG_IMGBUFVSIZE))
 
@@ -459,7 +468,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
  * @def ga_sub_reg_imgbufstart
  * @brief GA Reg 2C
  * @sa GA_SUB_REG_IMGBUFSTART
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  */
 #define ga_sub_reg_imgbufstart (*((ga_sub_reg) GA_SUB_REG_IMGBUFSTART))
 
@@ -467,7 +476,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
  * @def ga_sub_reg_imgbufoffset
  * @brief GA Reg 2D
  * @sa GA_SUB_REG_IMGBUFOFFSET
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  */
 #define ga_sub_reg_imgbufoffset (*((ga_sub_reg8) GA_SUB_REG_IMGBUFOFFSET))
 
@@ -475,7 +484,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
  * @def ga_sub_reg_imgbufhdotsize
  * @brief GA Reg 2E
  * @sa GA_SUB_REG_IMGBUFHDOTSIZE
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  */
 #define ga_sub_reg_imgbufhdotsize (*((ga_sub_reg) GA_SUB_REG_IMGBUFHDOTSIZE))
 
@@ -483,7 +492,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
  * @def ga_sub_reg_imgbufvdotsize
  * @brief GA Reg 2F
  * @sa GA_SUB_REG_IMGBUFVDOTSIZE
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  */
 #define ga_sub_reg_imgbufvdotsize (*((ga_sub_reg) GA_SUB_REG_IMGBUFVDOTSIZE))
 
@@ -491,7 +500,7 @@ typedef u8 volatile const * ga_sub_reg8_ro;
  * @def ga_sub_reg_tracevectbase
  * @brief GA Reg 30
  * @sa GA_SUB_REG_TRACEVECTBASE
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  */
 #define ga_sub_reg_tracevectbase (*((ga_sub_reg) GA_SUB_REG_TRACEVECTBASE))
 
@@ -499,14 +508,14 @@ typedef u8 volatile const * ga_sub_reg8_ro;
  * @def ga_sub_reg_subcodeaddr
  * @brief GA Reg 31
  * @sa GA_SUB_REG_SUBCODEADDR
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  */
 #define ga_sub_reg_subcodeaddr (*((ga_sub_reg_ro) GA_SUB_REG_SUBCODEADDR))
 /**
  * @def ga_sub_reg_subcodebuf
  * @brief GA Reg 32 - Sub-code data buffer
  * @sa GA_SUB_REG_SUBCODEBUF
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  *
  * @details
  * Size: 64 x 16-bit words (128 bytes)
@@ -516,11 +525,10 @@ typedef u8 volatile const * ga_sub_reg8_ro;
  * @def ga_sub_reg_subcodebufimg
  * @brief GA Reg 33
  * @sa GA_SUB_REG_SUBCODEBUFIMG
- * @ingroup gatearray_sub
+ * @ingroup ga_regs_sub
  */
 #define ga_sub_reg_subcodebufimg (*((ga_sub_reg) GA_SUB_REG_SUBCODEBUFIMG))
 /**
- * @fn ga_sub_wait_2m
  * @brief Wait for Sub CPU access to 2M Word RAM
  */
 static inline void ga_sub_wait_2m()
@@ -535,7 +543,6 @@ static inline void ga_sub_wait_2m()
 }
 
 /**
- * @fn ga_sub_grant_2m
  * @brief Grant 2M Word RAM access to the Main CPU and wait for confirmation
  */
 static inline void ga_sub_grant_2m()
@@ -551,7 +558,6 @@ static inline void ga_sub_grant_2m()
 }
 
 /**
- * @fn ga_sub_set_1m
  * @brief Set Word RAM layout to 1M/1M
  */
 static inline void ga_sub_set_1m()
@@ -567,7 +573,6 @@ static inline void ga_sub_set_1m()
 }
 
 /**
- * @fn ga_sub_set_2m
  * @brief Set Word RAM layout to 2M
  */
 static inline void ga_sub_set_2m()
@@ -583,7 +588,6 @@ static inline void ga_sub_set_2m()
 }
 
 /**
- * @fn ga_sub_clear_comm_regs
  * Clears the comm status registers (COMSTAT) and flags (COMFLAGS)
  */
 static inline void ga_sub_clear_comm_regs()

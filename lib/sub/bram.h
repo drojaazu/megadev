@@ -15,15 +15,20 @@ extern "C" {
 #include <sub/bram.def.h>
 #include <sub/memmap.def.h>
 
+/** @brief Work area the Backup RAM manager requires (lib/runtime/bram_buffers.c) */
 extern u8 bram_work_buff[0x640];
+/** @brief Buffer for the display strings bram_init returns */
 extern u8 bram_string_buff[12];
 
+/**
+ * @brief Backup RAM state reported by bram_init
+ */
 enum BramStatus
 {
-	SegaFormatted = 3,
-	NoRam = 0,
-	Unformatted = 1,
-	OtherFormat = 2
+	SegaFormatted = 3, ///< Formatted for the Mega CD; usable
+	NoRam = 0, ///< No Backup RAM present
+	Unformatted = 1, ///< Present but not formatted
+	OtherFormat = 2 ///< Formatted by something else
 };
 
 /**
@@ -32,13 +37,12 @@ enum BramStatus
  */
 typedef struct BramInitResult
 {
-	u16							bram_size;
-	enum BramStatus status;
-	char *					strings;
+	u16							bram_size; ///< Size in blocks of 64 bytes
+	enum BramStatus status; ///< State of the Backup RAM
+	char *					strings; ///< Display strings (bram_string_buff)
 } BramInitResult;
 
 /**
- * @def bram_init
  * @sa BRAM_INIT
  *
  * @note The return status is normally only valid when there is an error, and
@@ -81,14 +85,14 @@ static inline void bram_init(BramInitResult * init_status)
  */
 typedef struct BramStatusResult
 {
-	u16 free;
-	u16 filecount;
+	u16 free; ///< Free space in blocks
+	u16 filecount; ///< Number of files
 } BramStatusResult;
 
+/** @brief Where bram_status leaves its result */
 extern BramStatusResult bram_status_result;
 
 /**
- * @def bram_status
  * @sa BRAM_STATUS
  */
 static inline BramStatusResult * bram_status()
@@ -112,17 +116,20 @@ static inline BramStatusResult * bram_status()
 	return &bram_status_result;
 }
 
+/**
+ * @brief Results of bram_search
+ */
 typedef struct BramSearchResult
 {
-	u16	 filesize;
-	u16	 mode;
-	u8 * dataptr;
+	u16	 filesize; ///< Size in blocks
+	u16	 mode; ///< 0 normal, 0xFF protected (encoded)
+	u8 * dataptr; ///< Start of the file data in Backup RAM
 } BramSearchResult;
 
+/** @brief Where bram_search leaves its result */
 extern BramSearchResult bram_search_result;
 
 /**
- * @def bram_search
  * @sa BRAM_SEARCH
  */
 static inline BramSearchResult * bram_search(char const * filename)
@@ -157,17 +164,20 @@ static inline BramSearchResult * bram_search(char const * filename)
 	return &bram_search_result;
 }
 
+/**
+ * @brief Results of bram_read
+ */
 typedef struct BramReadResult
 {
-	bool success;
-	u16	 filesize;
-	u8	 mode;
+	bool success; ///< The file was read
+	u16	 filesize; ///< Size in blocks
+	u8	 mode; ///< 0 normal, 0xFF protected (encoded)
 } BramReadResult;
 
+/** @brief Where bram_read leaves its result */
 extern BramReadResult bram_read_result;
 
 /**
- * @def bram_read
  * @sa BRAM_READ
  */
 static inline BramReadResult * bram_read(char const * filename, u8 * buffer)
@@ -203,11 +213,14 @@ static inline BramReadResult * bram_read(char const * filename, u8 * buffer)
 	return &bram_read_result;
 }
 
+/**
+ * @brief File description for bram_write, bram_delete and bram_verify
+ */
 typedef struct BramFileInfo
 {
-	char const filename[11];
-	u8				 mode;
-	u16				 blocksize;
+	char const filename[11]; ///< File name, 11 characters, space padded
+	u8				 mode; ///< 0 normal, 0xFF protected (encoded)
+	u16				 blocksize; ///< Size in blocks
 } BramFileInfo;
 
 /**
@@ -315,11 +328,14 @@ failed:
 	return false;
 }
 
+/**
+ * @brief Result of bram_verify
+ */
 enum BramVerifyStatus
 {
-	NoMatch = -1,
-	FileNotFound = 0,
-	Match = 1
+	NoMatch = -1, ///< File content differs
+	FileNotFound = 0, ///< No such file
+	Match = 1 ///< File content matches
 };
 
 /**

@@ -14,6 +14,7 @@ extern "C" {
 #include "types.h"
 #include "str_util.def.h"
 
+/** @brief ASCII digit for the low nibble of value: '0' to '9', 'A' to 'F' */
 static inline u8 _hextoa(register u8 value)
 {
   value &= 0x0f;
@@ -25,7 +26,7 @@ static inline u8 _hextoa(register u8 value)
 }
 
 /**
- * @fn Convert an 8 bit value to a hexadecimal ASCII string
+ * @brief Convert an 8 bit value to a hexadecimal ASCII string
  */
 static inline void hextoa8(register u8 value, register char * const string)
 {
@@ -38,7 +39,7 @@ static inline void hextoa8(register u8 value, register char * const string)
 }
 
 /**
- * @fn Convert a 16 bit value to a hexadecimal ASCII string
+ * @brief Convert a 16 bit value to a hexadecimal ASCII string
  */
 static inline void hextoa16(register u16 value, register char * const string)
 {
@@ -55,7 +56,7 @@ static inline void hextoa16(register u16 value, register char * const string)
 }
 
 /**
- * @fn Convert a 32 bit value to a hexadecimal ASCII string
+ * @brief Convert a 32 bit value to a hexadecimal ASCII string
  */
 static inline void hextoa32(register u32 value, register char * const string)
 {
@@ -74,6 +75,13 @@ static inline void hextoa32(register u32 value, register char * const string)
   *output = STRING_TERMINATOR;
 }
 
+/**
+ * @brief Compare two strings up to a terminator character
+ * @param str1 String ended by terminator
+ * @param str2 String to compare with
+ * @param terminator The character that ends str1, in place of 0
+ * @return true if equal up to the terminator
+ */
 static inline bool
 strcmpt(char const * str1, char const * str2, char terminator)
 {

@@ -7,4 +7,5 @@
 
 #pragma once
 
+/** @brief Backup RAM cartridge manager entry in the system vector table */
 #define BRAM_CART 0xFFFDAE

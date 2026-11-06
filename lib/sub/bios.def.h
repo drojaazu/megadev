@@ -36,7 +36,7 @@
  */
 
 /**
- * @defgroup bios_misc Sub CPU / BIOS / Misc
+ * @defgroup bios_misc_sub Sub CPU / BIOS / Misc
  */
 
 /**
@@ -61,9 +61,9 @@
  */
 #define BIOS_USER_MODE 0x005EA6
 
-/*
+/**
  * @def BIOS_CD_STATUS
- * @brief Contains the status after calling @ref _CDB_STAT
+ * @brief Contains the status after calling @ref BIOS_GET_STATUS
  * @segaalias _CDSTAT
  */
 #define BIOS_CD_STATUS 0x005E80
@@ -225,7 +225,7 @@
 /**
  * @def BIOS_DRIVE_OPEN
  * @sa bios_drive_open
- * @ingroup bios_misc
+ * @ingroup bios_misc_sub
  * @clobber d0-d1/a0-a1
  * @segaalias DRVOPEN
  */
@@ -681,7 +681,7 @@
  * @def BIOS_LED_SET
  * @brief Controls the status LEDs on the front of the CD unit
  * @clobber d0-d1/a0-a1
- * @ingroup bios_misc
+ * @ingroup bios_misc_sub
  *
  * @param[in] D1.w Status code
  *
@@ -702,14 +702,17 @@
  */
 #define BIOS_LED_SET 0x0095
 
-#define BIOS_LED_READY   0
-#define BIOS_LED_DISCIN  1
-#define BIOS_LED_ACCESS  2
-#define BIOS_LED_STANDBY 3
-#define BIOS_LED_ERROR   4
-#define BIOS_LED_MODE5   5
-#define BIOS_LED_MODE6   6
-#define BIOS_LED_MODE7   7
+/** @name LED modes for BIOS_LED_SET; see the table above */
+///@{
+#define BIOS_LED_READY   0 ///< Ready: green on, red off
+#define BIOS_LED_DISCIN  1 ///< Disc in: green on, red on
+#define BIOS_LED_ACCESS  2 ///< Access: green on, red blinking
+#define BIOS_LED_STANDBY 3 ///< Standby: green blinking, red off
+#define BIOS_LED_ERROR   4 ///< Error: both blinking
+#define BIOS_LED_MODE5   5 ///< Reserved: green blinking, red on
+#define BIOS_LED_MODE6   6 ///< Reserved: green off, red blinking
+#define BIOS_LED_MODE7   7 ///< Reserved: green off, red on
+///@}
 
 /**
  * @def BIOS_CDC_SET_MODE

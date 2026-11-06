@@ -15,8 +15,8 @@ extern "C" {
 #include <types.h>
 
 /**
- * @def word_ram
- * @sa WORD_RAM
+ * @brief Program RAM as a byte pointer
+ * @sa PRG_RAM
  */
 #define prg_ram ((volatile char *) PRG_RAM)
 
@@ -32,10 +32,17 @@ extern "C" {
  */
 #define word_ram_1m ((volatile char *) WORD_RAM_1M)
 
-#define DMAADDR_WORDRAM1M(addr) (((addr) & 0x3FFF) >> 3)
-#define DMAADDR_WORDRAM2M(addr) (((addr) & 0x7FFF) >> 3)
-#define DMAADDR_PCM(addr)       (((addr) & 0x03FF) >> 3)
-#define DMAADDR_PRGRAM(addr)    ((addr) >> 3)
+/**
+ * @name CDC DMA address register values
+ * @brief Convert a destination address into the value GA_SUB_REG_DMAADDR takes:
+ * the address in 8 byte units, limited to the destination's size
+ */
+///@{
+#define DMAADDR_WORDRAM1M(addr) (((addr) & 0x3FFF) >> 3) ///< Word RAM in 1M mode
+#define DMAADDR_WORDRAM2M(addr) (((addr) & 0x7FFF) >> 3) ///< Word RAM in 2M mode
+#define DMAADDR_PCM(addr)       (((addr) & 0x03FF) >> 3) ///< PCM wave RAM
+#define DMAADDR_PRGRAM(addr)    ((addr) >> 3)            ///< Program RAM
+///@}
 
 #ifdef __cplusplus
 }

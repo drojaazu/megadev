@@ -13,6 +13,7 @@
 
 /**
  * @defgroup ioports_p Main CPU / I/O Ports / Parallel Mode
+ * @ingroup ioports
  */
 
 /**
@@ -24,20 +25,19 @@
  * SACBRLDU. This format is used the Mega CD's Main BIOS IO calls as well as
  * the read_input_joypad function in Megadev.
  */
-#define PAD_UP    (1 << 0)
-#define PAD_DOWN  (1 << 1)
-#define PAD_LEFT  (1 << 2)
-#define PAD_RIGHT (1 << 3)
-#define PAD_A     (1 << 6)
-#define PAD_B     (1 << 4)
-#define PAD_C     (1 << 5)
-#define PAD_ABC   (PAD_A | PAD_B | PAD_C)
-#define PAD_START (1 << 7)
+#define PAD_UP    (1 << 0) ///< D-pad up
+#define PAD_DOWN  (1 << 1) ///< D-pad down
+#define PAD_LEFT  (1 << 2) ///< D-pad left
+#define PAD_RIGHT (1 << 3) ///< D-pad right
+#define PAD_A     (1 << 6) ///< A button
+#define PAD_B     (1 << 4) ///< B button
+#define PAD_C     (1 << 5) ///< C button
+#define PAD_ABC   (PAD_A | PAD_B | PAD_C) ///< Any of A, B, C
+#define PAD_START (1 << 7) ///< Start button
 
 /**
  * @def IO_DATA1
  * @brief IO Data Port for Terminal 1
- * @ingroup ioports
  * @ingroup ioports_p
  */
 #define IO_DATA1 0xA10003
@@ -45,7 +45,6 @@
 /**
  * @def IO_DATA2
  * @brief IO Data Port for Terminal 2
- * @ingroup ioports
  * @ingroup ioports_p
  */
 #define IO_DATA2 0xA10005
@@ -129,7 +128,7 @@
 
 /**
  * @def CTRL_INT
- * @brief IO Control Port / INT2 on \TH enable.
+ * @brief IO Control Port / INT2 on TH enable.
  * @ingroup ioports_p
  */
 #define CTRL_INT (1 << 7)

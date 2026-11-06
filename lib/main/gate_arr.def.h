@@ -141,6 +141,7 @@
 /**
  * @defgroup ga_reg_main_subctrl Main CPU / Gate Array / Registers / Sub CPU
  * Control
+ * @ingroup ga_regs_main
  */
 
 /**
@@ -200,49 +201,44 @@
 
 
 /**
- * @def GA_MAIN_SUB_RESET_MASK
  * @brief Sub CPU Reset
- * @ingroup ga_regs_main
  * @ingroup ga_reg_main_subctrl
  */
+///@{
 #define GA_MAIN_SUB_RESET_POS 0
 #define GA_MAIN_SUB_RESET_MASK (1 << GA_MAIN_SUB_RESET_POS)
+///@}
 
 /**
- * @def GA_MAIN_SUB_REQ_MASK
  * @brief Sub CPU Bus Access Request
- * @ingroup ga_regs_main
  * @ingroup ga_reg_main_subctrl
  */
+///@{
 #define GA_MAIN_SUB_REQ_POS 1
 #define GA_MAIN_SUB_REQ_MASK (1 << GA_MAIN_SUB_REQ_POS)
+///@}
 
 /**
- * @def GA_MAIN_RAISE_INT2_POS
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_subctrl
- */
-#define GA_MAIN_RAISE_INT2_POS 0
-
-/**
- * @def GA_MAIN_SUB_REQ_MASK
  * @brief Raise INT2 on Sub CPU
- * @ingroup ga_regs_main
  * @ingroup ga_reg_main_subctrl
  */
+///@{
+#define GA_MAIN_RAISE_INT2_POS 0
 #define GA_MAIN_RAISE_INT2_MASK (1 << GA_MAIN_RAISE_INT2_POS)
+///@}
 
 /**
- * @def GA_MAIN_INT2_MASKING_MASK
  * @brief INT2 Masking on Sub CPU
- * @ingroup ga_regs_main
  * @ingroup ga_reg_main_subctrl
  */
+///@{
 #define GA_MAIN_INT2_MASKING_POS 7
 #define GA_MAIN_INT2_MASKING_MASK (1 << GA_MAIN_INT2_MASKING_POS)
+///@}
 
 /**
  * @defgroup ga_reg_main_memmode Main CPU / Gate Array / Registers / Memory Mode
+ * @ingroup ga_regs_main
  */
 
 /**
@@ -298,61 +294,50 @@
 #define GA_MAIN_REG_MEMMODE 0xA12003
 
 
-/**
- * @def GA_MAIN_RETURN_2M_POS
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_memmode
- */
+/** @brief Bit position of GA_MAIN_RETURN_2M_MASK @ingroup ga_reg_main_memmode */
 #define GA_MAIN_RETURN_2M_POS 0
 
 /**
  * @def GA_MAIN_RETURN_2M_MASK
  * @brief Give Word RAM control to Main CPU
- * @ingroup ga_regs_main
  * @ingroup ga_reg_main_memmode
  */
 #define GA_MAIN_RETURN_2M_MASK (1 << GA_MAIN_RETURN_2M_POS)
 
-/**
- * @def GA_MAIN_DMNA_POS
- * @ingroup ga_regs_main
- * @ingroup ga_reg_main_memmode
- */
+/** @brief Bit position of GA_MAIN_DMNA_MASK @ingroup ga_reg_main_memmode */
 #define GA_MAIN_DMNA_POS 1
 
 /**
  * @def GA_MAIN_DMNA_MASK
  * @brief Main CPU will not access Word RAM
- * @ingroup ga_regs_main
  * @ingroup ga_reg_main_memmode
  */
 #define GA_MAIN_DMNA_MASK (1 << GA_MAIN_DMNA_POS)
 
 /**
- * @def GA_MAIN_WORDRAM_LAYOUT_MASK
  * @brief Word RAM layout
- * @ingroup ga_regs_main
  * @ingroup ga_reg_main_memmode
  */
+///@{
 #define GA_MAIN_WORDRAM_LAYOUT_POS 2
 #define GA_MAIN_WORDRAM_LAYOUT_MASK (1 << GA_MAIN_WORDRAM_LAYOUT_POS)
+///@}
 
 /**
- * @def GA_MAIN_MEMMODE_BANK_MASK
  * @brief Program RAM bank select
  * @details
  * The Main CPU sees only 128kB of the 512kB of Program RAM at a time, as a
  * window at 0x020000. This field selects which of the four banks appears
  * there. Only meaningful while the Sub CPU is stopped or has granted the bus.
- * @ingroup ga_regs_main
  * @ingroup ga_reg_main_memmode
  */
+///@{
 #define GA_MAIN_MEMMODE_BANK_POS 6
 #define GA_MAIN_MEMMODE_BANK_WIDTH 2
 #define GA_MAIN_MEMMODE_BANK_MASK FIELD_MASK(GA_MAIN_MEMMODE_BANK_POS, GA_MAIN_MEMMODE_BANK_WIDTH)
+///@}
 
 /**
- * @def GA_MAIN_WP_MASK
  * @brief Program RAM write protect
  * @details
  * Protects the bottom of Program RAM from Main CPU writes in units of 512
@@ -360,15 +345,17 @@
  * 0x01FDFF in total. This is how the Sub CPU's resident code is shielded from
  * a stray write by the Main side.
  * @note A byte register, so a single byte write sets the whole field.
- * @ingroup ga_regs_main
  * @ingroup ga_reg_main_memmode
  */
+///@{
 #define GA_MAIN_WP_POS 0
 #define GA_MAIN_WP_WIDTH 8
 #define GA_MAIN_WP_MASK FIELD_MASK(GA_MAIN_WP_POS, GA_MAIN_WP_WIDTH)
+///@}
 
 /**
  * @defgroup ga_reg_main_cdcmode Main CPU / Gate Array / Registers / CDC Mode
+ * @ingroup ga_regs_main
  */
 
 /**
@@ -403,54 +390,59 @@
 #define GA_MAIN_REG_CDCMODE 0xA12004
 
 /**
- * @def GA_MAIN_CDC_DEST_MASK
  * @brief CDC data destination device
  * @details
  * Where the CDC sends the data it reads off the disc. The Main CPU may read
  * this field but only the Sub CPU may set it.
  * @sa GA_MAIN_CDC_DEST_MAIN, GA_MAIN_CDC_DEST_SUB, GA_MAIN_CDC_DEST_PCM, GA_MAIN_CDC_DEST_PRG,
  * GA_MAIN_CDC_DEST_WORD
- * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cdcmode
  */
+///@{
 #define GA_MAIN_CDC_DEST_POS 0
 #define GA_MAIN_CDC_DEST_WIDTH 3
 #define GA_MAIN_CDC_DEST_MASK FIELD_MASK(GA_MAIN_CDC_DEST_POS, GA_MAIN_CDC_DEST_WIDTH)
+///@}
 
 /**
- * @def GA_MAIN_CDC_DSR_MASK
  * @brief Data set ready
  * @details R: A word from the CDC is waiting in GA_MAIN_REG_CDCHOSTDATA.
  * @sa GA_MAIN_REG_CDCMODE
- * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cdcmode
  */
+///@{
 #define GA_MAIN_CDC_DSR_POS 6
 #define GA_MAIN_CDC_DSR_MASK (1 << GA_MAIN_CDC_DSR_POS)
+///@}
 
 /**
- * @def GA_MAIN_CDC_EDT_MASK
  * @brief End of data transfer
  * @details R: Every byte has been transferred out of the CDC.
  * @sa GA_MAIN_REG_CDCMODE
- * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cdcmode
  */
+///@{
 #define GA_MAIN_CDC_EDT_POS 7
 #define GA_MAIN_CDC_EDT_MASK (1 << GA_MAIN_CDC_EDT_POS)
+///@}
 
+/**
+ * @def GA_MAIN_CDC_DEST_MAIN
+ * @brief CDC data is read by the Main CPU through GA_MAIN_REG_CDCHOSTDATA
+ * @ingroup ga_reg_main_cdcmode
+ */
 #define GA_MAIN_CDC_DEST_MAIN 0b010
 
 /**
  * @def GA_MAIN_CDC_DEST_SUB
- * @ingroup ga_regs_main
+ * @brief CDC data is read by the Sub CPU
  * @ingroup ga_reg_main_cdcmode
  */
 #define GA_MAIN_CDC_DEST_SUB 0b011
 
 /**
  * @def GA_MAIN_CDC_DEST_PCM
- * @ingroup ga_regs_main
+ * @brief CDC data goes to PCM wave RAM by DMA
  * @ingroup ga_reg_main_cdcmode
  */
 #define GA_MAIN_CDC_DEST_PCM 0b100
@@ -458,14 +450,13 @@
 /**
  * @def GA_MAIN_CDC_DEST_PRG
  * @brief CDC data goes to Program RAM by DMA
- * @ingroup ga_regs_main
  * @ingroup ga_reg_main_cdcmode
  */
 #define GA_MAIN_CDC_DEST_PRG 0b101
 
 /**
  * @def GA_MAIN_CDC_DEST_WORD
- * @ingroup ga_regs_main
+ * @brief CDC data goes to Word RAM by DMA
  * @ingroup ga_reg_main_cdcmode
  */
 #define GA_MAIN_CDC_DEST_WORD 0b111
@@ -473,6 +464,7 @@
 /**
  * @defgroup ga_reg_main_hblankvect Main CPU / Gate Array / Registers / HBLANK
  * Vector
+ * @ingroup ga_regs_main
  */
 
 /**
@@ -503,6 +495,7 @@
 /**
  * @defgroup ga_reg_main_cdcdata Main CPU / Gate Array / Registers / CDC Host
  * Data
+ * @ingroup ga_regs_main
  */
 
 /**
@@ -530,6 +523,11 @@
 #define GA_MAIN_REG_CDCHOSTDATA 0xA12008
 
 /**
+ * @defgroup ga_reg_main_05 Main CPU / Gate Array / Register 05 (0xA1200A) - Reserved
+ * @ingroup ga_regs_main
+ */
+
+/**
  * @def GA_MAIN_REG_SYSRESERVED
  * @brief Reserved by the system
  * @details 0xA1200A is documented only as reserved. Do not use it.
@@ -539,6 +537,7 @@
 
 /**
  * @defgroup ga_reg_main_stopwatch Main CPU / Gate Array / Registers / Stopwatch
+ * @ingroup ga_regs_main
  */
 
 /**
@@ -570,6 +569,7 @@
 /**
  * @defgroup ga_reg_main_cpucomm Main CPU / Gate Array / Registers / CPU
  * Communication
+ * @ingroup ga_regs_main
  */
 
 /**

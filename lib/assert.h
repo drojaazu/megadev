@@ -21,6 +21,7 @@ extern "C" {
 
 #ifdef NDEBUG
 
+/** @brief Does nothing: assertions are compiled out when NDEBUG is defined */
 #define assert(expr) ((void) 0)
 
 #else
@@ -29,9 +30,16 @@ extern "C" {
 #include <stdio.h>
 #include <system.h>
 
+/** @brief Stringize x without expanding it; MEGADEV_ASSERT_STR expands first */
 #define MEGADEV_ASSERT_STR_(x) #x
+/** @brief Stringize x after macro expansion, used for __LINE__ */
 #define MEGADEV_ASSERT_STR(x) MEGADEV_ASSERT_STR_(x)
 
+/**
+ * @brief Report a failed assertion over the serial port and stop the CPU
+ * @param where File and line, as "file:line"
+ * @param expr The assertion's text
+ */
 static inline void megadev_assert_fail(char const * where, char const * expr)
 {
   char text[96];
@@ -41,6 +49,7 @@ static inline void megadev_assert_fail(char const * where, char const * expr)
   cpu_stop();
 }
 
+/** @brief Stop with a report on the serial port if expr is false */
 #define assert(expr) \
   ((expr) ? (void) 0 : megadev_assert_fail(__FILE__ ":" MEGADEV_ASSERT_STR(__LINE__), #expr))
 

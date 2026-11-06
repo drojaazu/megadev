@@ -281,6 +281,7 @@
 /**
  * @defgroup ga_reg_sub_subctrl Sub CPU / Gate Array / Registers / Sub CPU &
  * Hardware Control
+ * @ingroup ga_regs_sub
  */
 
 /**
@@ -344,57 +345,58 @@
 
 
 /**
- * @def GA_SUB_LED_R_MASK
  * @brief Red LED Control
  * @details
  * Drives the red element of the LED on the front of the unit. Free for
  * application use; the Sub BIOS does not touch it after boot.
  * @sa ga_sub_reg_led
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_subctrl
  */
+///@{
 #define GA_SUB_LED_R_POS 0
 #define GA_SUB_LED_R_MASK (1 << GA_SUB_LED_R_POS)
+///@}
 
 /**
- * @def GA_SUB_LED_G_MASK
  * @brief Green LED Control
  * @details
  * Drives the green element of the LED on the front of the unit. Free for
  * application use; the Sub BIOS does not touch it after boot.
  * @sa ga_sub_reg_led
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_subctrl
  */
+///@{
 #define GA_SUB_LED_G_POS 1
 #define GA_SUB_LED_G_MASK (1 << GA_SUB_LED_G_POS)
+///@}
 
 /**
- * @def GA_SUB_VERSION_MASK
  * @brief Gate array chip version
  * @sa ga_sub_reg_subctrl
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_subctrl
  */
+///@{
 #define GA_SUB_VERSION_POS 4
 #define GA_SUB_VERSION_WIDTH 4
 #define GA_SUB_VERSION_MASK FIELD_MASK(GA_SUB_VERSION_POS, GA_SUB_VERSION_WIDTH)
+///@}
 
 /**
- * @def GA_SUB_PERIPH_RESET_MASK
  * @brief Peripheral reset
  * @details Write 0 to reset the peripheral; reads 1 once it is operable again.
  * @warning This is bit 0 of GA_SUB_REG_SUBCTRL, not of GA_SUB_REG_LED. Writing it
  * through an accessor for the LED byte resets the peripheral.
  * @sa ga_sub_reg_subctrl
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_subctrl
  */
+///@{
 #define GA_SUB_PERIPH_RESET_POS 0
 #define GA_SUB_PERIPH_RESET_MASK (1 << GA_SUB_PERIPH_RESET_POS)
+///@}
 
 /**
  * @defgroup ga_reg_sub_memmode Sub CPU / Gate Array / Registers / Memory Mode
+ * @ingroup ga_regs_sub
  */
 
 /**
@@ -459,15 +461,13 @@
  */
 #define GA_SUB_REG_MEMMODE 0xFF8003
 
-
-#define GA_SUB_RETURN_2M_POS 0
-#define GA_SUB_DMNA_POS 1
-#define GA_SUB_WORDRAM_LAYOUT_POS 2
+#define GA_SUB_RETURN_2M_POS 0      ///< Bit position of GA_SUB_RETURN_2M_MASK
+#define GA_SUB_DMNA_POS 1           ///< Bit position of GA_SUB_DMNA_MASK
+#define GA_SUB_WORDRAM_LAYOUT_POS 2 ///< Bit position of GA_SUB_WORDRAM_LAYOUT_MASK
 
 /**
  * @def GA_SUB_RETURN_2M_MASK
  * @brief GA Reg 01 - Change Word RAM ownership bitmask
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_memmode
  */
 #define GA_SUB_RETURN_2M_MASK (1 << GA_SUB_RETURN_2M_POS)
@@ -476,7 +476,6 @@
  * @def GA_SUB_DMNA_MASK
  * @brief GA Reg 01 - Main CPU no Word RAM access flag bitmask
  * @sa ga_sub_reg_memmode
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_memmode
  */
 #define GA_SUB_DMNA_MASK (1 << GA_SUB_DMNA_POS)
@@ -485,13 +484,11 @@
  * @def GA_SUB_WORDRAM_LAYOUT_MASK
  * @brief GA Reg 01 - Word RAM layout bitmask
  * @sa ga_sub_reg_memmode
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_memmode
  */
 #define GA_SUB_WORDRAM_LAYOUT_MASK (1 << GA_SUB_WORDRAM_LAYOUT_POS)
 
 /**
- * @def GA_SUB_PRIORITY_MASK
  * @brief Word RAM priority mode
  * @details
  * Governs which pixels a Sub CPU write into Word RAM is allowed to change.
@@ -506,31 +503,33 @@
  * @warning The fourth value is prohibited by the hardware documentation and has
  * no defined behaviour.
  * @sa ga_sub_reg_memmode
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_memmode
  */
+///@{
 #define GA_SUB_PRIORITY_POS 3
 #define GA_SUB_PRIORITY_WIDTH 2
 #define GA_SUB_PRIORITY_MASK FIELD_MASK(GA_SUB_PRIORITY_POS, GA_SUB_PRIORITY_WIDTH)
+///@}
 
-#define GA_SUB_PRIORITY_OFF 0b00
-#define GA_SUB_PRIORITY_UNDERWRITE 0b01
-#define GA_SUB_PRIORITY_OVERWRITE 0b10
+#define GA_SUB_PRIORITY_OFF 0b00 ///< Priority mode off: graphics writes are plain writes
+#define GA_SUB_PRIORITY_UNDERWRITE 0b01 ///< Underwrite: a write only lands where the destination dot is 0
+#define GA_SUB_PRIORITY_OVERWRITE 0b10 ///< Overwrite: a write only lands where the source dot is not 0
 
 /**
- * @def GA_SUB_WP_MASK
  * @brief Program RAM write protect blocks
  * @sa ga_sub_reg_wp
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_memmode
  */
+///@{
 #define GA_SUB_WP_POS 0
 #define GA_SUB_WP_WIDTH 8
 #define GA_SUB_WP_MASK FIELD_MASK(GA_SUB_WP_POS, GA_SUB_WP_WIDTH)
+///@}
 
 /**
  * @defgroup ga_reg_sub_cdcmode Sub CPU / Gate Array / Registers / CDC Mode &
  * CDC Registers #1
+ * @ingroup ga_regs_sub
  */
 
 /**
@@ -577,18 +576,17 @@
 #define GA_SUB_REG_CDCMODE 0xFF8004
 
 /**
- * @def GA_SUB_CDCMODE_CA_MASK
  * @brief CDC register address
  * @sa GA_SUB_REG_CDCMODE
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_02
  */
+///@{
 #define GA_SUB_CDCMODE_CA_POS 0
 #define GA_SUB_CDCMODE_CA_WIDTH 4
 #define GA_SUB_CDCMODE_CA_MASK FIELD_MASK(GA_SUB_CDCMODE_CA_POS, GA_SUB_CDCMODE_CA_WIDTH)
+///@}
 
 /**
- * @def GA_SUB_CDCMODE_DD_MASK
  * @brief CDC device destination
  * @details
  * Where the CDC sends the data it reads. Values are stored unshifted; place
@@ -607,56 +605,58 @@
  * @warning The DMA destinations apply only while the target memory is attached
  * to the Sub CPU. DMA cannot be performed into memory attached to the Main CPU.
  * @sa GA_SUB_REG_CDCMODE
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_02
  */
+///@{
 #define GA_SUB_CDCMODE_DD_POS 8
 #define GA_SUB_CDCMODE_DD_WIDTH 3
 #define GA_SUB_CDCMODE_DD_MASK FIELD_MASK(GA_SUB_CDCMODE_DD_POS, GA_SUB_CDCMODE_DD_WIDTH)
+///@}
 
-#define GA_SUB_CDCMODE_DD_MAINREAD 0b010
-#define GA_SUB_CDCMODE_DD_SUBREAD 0b011
-#define GA_SUB_CDCMODE_DD_PCMDMA 0b100
-#define GA_SUB_CDCMODE_DD_PRGDMA 0b101
-#define GA_SUB_CDCMODE_DD_WRAMDMA 0b111
+#define GA_SUB_CDCMODE_DD_MAINREAD 0b010 ///< CDC data read by the Main CPU through its host data register
+#define GA_SUB_CDCMODE_DD_SUBREAD 0b011 ///< CDC data read by the Sub CPU through GA_SUB_REG_CDCHOSTDATA
+#define GA_SUB_CDCMODE_DD_PCMDMA 0b100 ///< CDC data by DMA into PCM wave RAM
+#define GA_SUB_CDCMODE_DD_PRGDMA 0b101 ///< CDC data by DMA into Program RAM
+#define GA_SUB_CDCMODE_DD_WRAMDMA 0b111 ///< CDC data by DMA into Word RAM
 
 /**
- * @def GA_SUB_CDCMODE_UBR_MASK
  * @brief Upper byte ready
  * @sa GA_SUB_REG_CDCMODE
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_02
  */
+///@{
 #define GA_SUB_CDCMODE_UBR_POS 13
 #define GA_SUB_CDCMODE_UBR_MASK (1 << GA_SUB_CDCMODE_UBR_POS)
+///@}
 
 /**
- * @def GA_SUB_CDCMODE_DSR_MASK
  * @brief Data set ready
  * @note In the high byte of the register, so use FIELD_BYTE and FIELD_BPOS to
  * reach it with BTST.
  * @sa GA_SUB_REG_CDCMODE
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_02
  */
+///@{
 #define GA_SUB_CDCMODE_DSR_POS 14
 #define GA_SUB_CDCMODE_DSR_MASK (1 << GA_SUB_CDCMODE_DSR_POS)
+///@}
 
 /**
- * @def GA_SUB_CDCMODE_EDT_MASK
  * @brief End of data transfer
  * @note In the high byte of the register, so use FIELD_BYTE and FIELD_BPOS to
  * reach it with BTST.
  * @sa GA_SUB_REG_CDCMODE
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_02
  */
+///@{
 #define GA_SUB_CDCMODE_EDT_POS 15
 #define GA_SUB_CDCMODE_EDT_MASK (1 << GA_SUB_CDCMODE_EDT_POS)
+///@}
 
 /**
- * @defgroup ga_reg_sub_cdcregs2 Sub CPU / Gate Array / Registers / CDC
+ * @defgroup ga_reg_sub_cdcregs Sub CPU / Gate Array / Registers / CDC
  * Registers #2
+ * @ingroup ga_regs_sub
  */
 
 /**
@@ -684,18 +684,19 @@
 #define GA_SUB_REG_CDCRS1 0xFF8006
 
 /**
- * @def GA_SUB_CDCRS1_CD_MASK
  * @brief Selected CDC register data
  * @sa GA_SUB_REG_CDCRS1
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_03
  */
+///@{
 #define GA_SUB_CDCRS1_CD_POS 0
 #define GA_SUB_CDCRS1_CD_WIDTH 8
 #define GA_SUB_CDCRS1_CD_MASK FIELD_MASK(GA_SUB_CDCRS1_CD_POS, GA_SUB_CDCRS1_CD_WIDTH)
+///@}
 
 /**
  * @defgroup ga_reg_sub_cdcdata Sub CPU / Gate Array / Registers / CDC Host Data
+ * @ingroup ga_regs_sub
  */
 
 /**
@@ -729,6 +730,7 @@
 /**
  * @defgroup ga_reg_sub_dmaaddr Sub CPU / Gate Array / Registers / CDC DMA
  * Address
+ * @ingroup ga_regs_sub
  */
 
 /**
@@ -767,6 +769,7 @@
 
 /**
  * @defgroup ga_reg_sub_stopwatch Sub CPU / Gate Array / Registers / Stopwatch
+ * @ingroup ga_regs_sub
  */
 
 /**
@@ -795,21 +798,22 @@
 #define GA_SUB_REG_STOPWATCH 0xFF800C
 
 /**
- * @def GA_SUB_STOPWATCH_SW_MASK
  * @brief Stopwatch counter value, 12 bits
  * @details The counter is 0 to 4095; the top four bits of the register are
  * unused. Mask a read with this, or the unused bits come back with it.
  * @sa ga_sub_reg_stopwatch
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_06
  */
+///@{
 #define GA_SUB_STOPWATCH_SW_POS 0
 #define GA_SUB_STOPWATCH_SW_WIDTH 12
 #define GA_SUB_STOPWATCH_SW_MASK FIELD_MASK(GA_SUB_STOPWATCH_SW_POS, GA_SUB_STOPWATCH_SW_WIDTH)
+///@}
 
 /**
  * @defgroup ga_reg_sub_cpucomm Sub CPU / Gate Array / Registers / CPU
  * Communication
+ * @ingroup ga_regs_sub
  */
 
 /**
@@ -880,84 +884,98 @@
 
 /**
  * @def GA_SUB_REG_COMCMD2
+ * @brief Communication command 2: written by the Main CPU, read here
  * @ingroup ga_reg_sub_10
  */
 #define GA_SUB_REG_COMCMD2 0xFF8014
 
 /**
  * @def GA_SUB_REG_COMCMD3
+ * @brief Communication command 3: written by the Main CPU, read here
  * @ingroup ga_reg_sub_11
  */
 #define GA_SUB_REG_COMCMD3 0xFF8016
 
 /**
  * @def GA_SUB_REG_COMCMD4
+ * @brief Communication command 4: written by the Main CPU, read here
  * @ingroup ga_reg_sub_12
  */
 #define GA_SUB_REG_COMCMD4 0xFF8018
 
 /**
  * @def GA_SUB_REG_COMCMD5
+ * @brief Communication command 5: written by the Main CPU, read here
  * @ingroup ga_reg_sub_13
  */
 #define GA_SUB_REG_COMCMD5 0xFF801A
 
 /**
  * @def GA_SUB_REG_COMCMD6
+ * @brief Communication command 6: written by the Main CPU, read here
  * @ingroup ga_reg_sub_14
  */
 #define GA_SUB_REG_COMCMD6 0xFF801C
 
 /**
  * @def GA_SUB_REG_COMCMD7
+ * @brief Communication command 7: written by the Main CPU, read here
  * @ingroup ga_reg_sub_15
  */
 #define GA_SUB_REG_COMCMD7 0xFF801E
 
 /**
  * @def GA_SUB_REG_COMSTAT0
+ * @brief Communication status 0: written here, read by the Main CPU
  * @ingroup ga_reg_sub_16
  */
 #define GA_SUB_REG_COMSTAT0 0xFF8020
 
 /**
  * @def GA_SUB_REG_COMSTAT1
+ * @brief Communication status 1: written here, read by the Main CPU
  * @ingroup ga_reg_sub_17
  */
 #define GA_SUB_REG_COMSTAT1 0xFF8022
 
 /**
  * @def GA_SUB_REG_COMSTAT2
+ * @brief Communication status 2: written here, read by the Main CPU
  * @ingroup ga_reg_sub_18
  */
 #define GA_SUB_REG_COMSTAT2 0xFF8024
 
 /**
  * @def GA_SUB_REG_COMSTAT3
+ * @brief Communication status 3: written here, read by the Main CPU
  * @ingroup ga_reg_sub_19
  */
 #define GA_SUB_REG_COMSTAT3 0xFF8026
 
 /**
  * @def GA_SUB_REG_COMSTAT4
+ * @brief Communication status 4: written here, read by the Main CPU
  * @ingroup ga_reg_sub_20
  */
 #define GA_SUB_REG_COMSTAT4 0xFF8028
 
 /**
  * @def GA_SUB_REG_COMSTAT5
+ * @brief Communication status 5: written here, read by the Main CPU
  * @ingroup ga_reg_sub_21
  */
 #define GA_SUB_REG_COMSTAT5 0xFF802A
 
 /**
  * @def GA_SUB_REG_COMSTAT6
+ * @brief Communication status 6: written here, read by the Main CPU
  * @ingroup ga_reg_sub_22
  */
 #define GA_SUB_REG_COMSTAT6 0xFF802C
 
 /**
  * @def GA_SUB_REG_COMSTAT7
+ * @brief Communication status 7: written here, read by the Main CPU
  * @ingroup ga_reg_sub_23
  */
 #define GA_SUB_REG_COMSTAT7 0xFF802E
@@ -1025,19 +1043,26 @@
  */
 #define GA_SUB_REG_INTMASK 0xFF8033
 
-#define GA_SUB_INT1_POS 1
-#define GA_SUB_INT2_POS 2
-#define GA_SUB_INT3_POS 3
-#define GA_SUB_INT4_POS 4
-#define GA_SUB_INT5_POS 5
-#define GA_SUB_INT6_POS 6
+/**
+ * @name Interrupt enable bits of GA_SUB_REG_INTMASK
+ * @brief Bit n enables interrupt level n; see the table above for the sources.
+ * @ingroup ga_reg_sub_25
+ */
+///@{
+#define GA_SUB_INT1_POS 1 ///< Level 1: graphics operation complete
+#define GA_SUB_INT2_POS 2 ///< Level 2: INT2 from the Main CPU
+#define GA_SUB_INT3_POS 3 ///< Level 3: gate array timer
+#define GA_SUB_INT4_POS 4 ///< Level 4: CDD
+#define GA_SUB_INT5_POS 5 ///< Level 5: CDC
+#define GA_SUB_INT6_POS 6 ///< Level 6: sub-code buffer full
 
-#define GA_SUB_INT1_MASK (1 << GA_SUB_INT1_POS)
-#define GA_SUB_INT2_MASK (1 << GA_SUB_INT2_POS)
-#define GA_SUB_INT3_MASK (1 << GA_SUB_INT3_POS)
-#define GA_SUB_INT4_MASK (1 << GA_SUB_INT4_POS)
-#define GA_SUB_INT5_MASK (1 << GA_SUB_INT5_POS)
-#define GA_SUB_INT6_MASK (1 << GA_SUB_INT6_POS)
+#define GA_SUB_INT1_MASK (1 << GA_SUB_INT1_POS) ///< Level 1 enable
+#define GA_SUB_INT2_MASK (1 << GA_SUB_INT2_POS) ///< Level 2 enable
+#define GA_SUB_INT3_MASK (1 << GA_SUB_INT3_POS) ///< Level 3 enable
+#define GA_SUB_INT4_MASK (1 << GA_SUB_INT4_POS) ///< Level 4 enable
+#define GA_SUB_INT5_MASK (1 << GA_SUB_INT5_POS) ///< Level 5 enable
+#define GA_SUB_INT6_MASK (1 << GA_SUB_INT6_POS) ///< Level 6 enable
+///@}
 
 /**
  * @def GA_SUB_REG_CDFADER
@@ -1082,55 +1107,55 @@
 #define GA_SUB_REG_CDFADER 0xFF8034
 
 /**
- * @def GA_SUB_CDFADER_FD_MASK
  * @brief Fade volume data (decay depth)
  * @details Larger is quieter. See GA_SUB_REG_CDFADER for the scale and the ramp
  * timing.
  * @sa ga_sub_reg_cdfader
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_26
  */
+///@{
 #define GA_SUB_CDFADER_FD_POS 4
 #define GA_SUB_CDFADER_FD_WIDTH 11
 #define GA_SUB_CDFADER_FD_MASK FIELD_MASK(GA_SUB_CDFADER_FD_POS, GA_SUB_CDFADER_FD_WIDTH)
+///@}
 
 /**
- * @def GA_SUB_CDFADER_EFDT_MASK
  * @brief End of fade data transfer; 1 while the previous value is still going
  * out to the fader, 0 when a new one may be set
  * @details The only readable field of this register.
  * @sa ga_sub_reg_cdfader
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_26
  */
+///@{
 #define GA_SUB_CDFADER_EFDT_POS 15
 #define GA_SUB_CDFADER_EFDT_MASK (1 << GA_SUB_CDFADER_EFDT_POS)
+///@}
 
 /**
- * @def GA_SUB_CDFADER_DEF_MASK
  * @brief De-emphasis selection; see GA_SUB_REG_CDFADER for the value table
  * @sa ga_sub_reg_cdfader
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_26
  */
+///@{
 #define GA_SUB_CDFADER_DEF_POS 2
 #define GA_SUB_CDFADER_DEF_WIDTH 2
 #define GA_SUB_CDFADER_DEF_MASK FIELD_MASK(GA_SUB_CDFADER_DEF_POS, GA_SUB_CDFADER_DEF_WIDTH)
+///@}
 
-#define GA_SUB_CDFADER_DEF_OFF 0b00
-#define GA_SUB_CDFADER_DEF_44100 0b01
-#define GA_SUB_CDFADER_DEF_32000 0b10
-#define GA_SUB_CDFADER_DEF_48000 0b11
+#define GA_SUB_CDFADER_DEF_OFF 0b00 ///< De-emphasis off
+#define GA_SUB_CDFADER_DEF_44100 0b01 ///< De-emphasis for 44.1 kHz
+#define GA_SUB_CDFADER_DEF_32000 0b10 ///< De-emphasis for 32 kHz
+#define GA_SUB_CDFADER_DEF_48000 0b11 ///< De-emphasis for 48 kHz
 
 /**
- * @def GA_SUB_CDFADER_SSF_MASK
  * @brief Spindle speed; 0 normal, 1 double speed playback
  * @sa ga_sub_reg_cdfader
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_26
  */
+///@{
 #define GA_SUB_CDFADER_SSF_POS 1
 #define GA_SUB_CDFADER_SSF_MASK (1 << GA_SUB_CDFADER_SSF_POS)
+///@}
 
 /**
  * @def GA_SUB_REG_CDDCTRL
@@ -1170,46 +1195,46 @@
 #define GA_SUB_REG_CDDCTRL 0xFF8036
 
 /**
- * @def GA_SUB_CDDCTRL_DTS_MASK
  * @brief Data transmission status
  * @sa GA_SUB_REG_CDDCTRL
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_27
  */
+///@{
 #define GA_SUB_CDDCTRL_DTS_POS 0
 #define GA_SUB_CDDCTRL_DTS_MASK (1 << GA_SUB_CDDCTRL_DTS_POS)
+///@}
 
 /**
- * @def GA_SUB_CDDCTRL_DRS_MASK
  * @brief Data receiving status
  * @sa GA_SUB_REG_CDDCTRL
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_27
  */
+///@{
 #define GA_SUB_CDDCTRL_DRS_POS 1
 #define GA_SUB_CDDCTRL_DRS_MASK (1 << GA_SUB_CDDCTRL_DRS_POS)
+///@}
 
 /**
- * @def GA_SUB_CDDCTRL_HOCK_MASK
  * @brief Host clock; 0 to 1 starts CDD communication
  * @sa GA_SUB_REG_CDDCTRL
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_27
  */
+///@{
 #define GA_SUB_CDDCTRL_HOCK_POS 2
 #define GA_SUB_CDDCTRL_HOCK_MASK (1 << GA_SUB_CDDCTRL_HOCK_POS)
+///@}
 
 /**
- * @def GA_SUB_CDDCTRL_DM_MASK
  * @brief Data or music; read only
  * @note In the high byte, so use FIELD_BYTE and FIELD_BPOS to reach it with a
  * bit opcode.
  * @sa GA_SUB_REG_CDDCTRL
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_27
  */
+///@{
 #define GA_SUB_CDDCTRL_DM_POS 8
 #define GA_SUB_CDDCTRL_DM_MASK (1 << GA_SUB_CDDCTRL_DM_POS)
+///@}
 
 /**
  * @def GA_SUB_REG_CDDSTAT0
@@ -1497,24 +1522,26 @@
 #define GA_SUB_REG_CDDCMD4 0xFF804A
 
 /**
- * @def GA_SUB_CDDCOMM_HI_MASK
  * @brief The even-numbered nibble of a CDD communication register
  * @sa GA_SUB_REG_CDDSTAT0
  * @ingroup ga_regs_sub
  */
+///@{
 #define GA_SUB_CDDCOMM_HI_POS 8
 #define GA_SUB_CDDCOMM_HI_WIDTH 4
 #define GA_SUB_CDDCOMM_HI_MASK FIELD_MASK(GA_SUB_CDDCOMM_HI_POS, GA_SUB_CDDCOMM_HI_WIDTH)
+///@}
 
 /**
- * @def GA_SUB_CDDCOMM_LO_MASK
  * @brief The odd-numbered nibble of a CDD communication register
  * @sa GA_SUB_REG_CDDSTAT0
  * @ingroup ga_regs_sub
  */
+///@{
 #define GA_SUB_CDDCOMM_LO_POS 0
 #define GA_SUB_CDDCOMM_LO_WIDTH 4
 #define GA_SUB_CDDCOMM_LO_MASK FIELD_MASK(GA_SUB_CDDCOMM_LO_POS, GA_SUB_CDDCOMM_LO_WIDTH)
+///@}
 
 /**
  * @def GA_SUB_REG_FONTCOLOR
@@ -1544,26 +1571,26 @@
 #define GA_SUB_REG_FONTCOLOR 0xFF804D
 
 /**
- * @def GA_SUB_FONTCOLOR_0_MASK
  * @brief Colour substituted for a source bit of 0
  * @sa GA_SUB_REG_FONTCOLOR
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_38
  */
+///@{
 #define GA_SUB_FONTCOLOR_0_POS 0
 #define GA_SUB_FONTCOLOR_0_WIDTH 4
 #define GA_SUB_FONTCOLOR_0_MASK FIELD_MASK(GA_SUB_FONTCOLOR_0_POS, GA_SUB_FONTCOLOR_0_WIDTH)
+///@}
 
 /**
- * @def GA_SUB_FONTCOLOR_1_MASK
  * @brief Colour substituted for a source bit of 1
  * @sa GA_SUB_REG_FONTCOLOR
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_38
  */
+///@{
 #define GA_SUB_FONTCOLOR_1_POS 4
 #define GA_SUB_FONTCOLOR_1_WIDTH 4
 #define GA_SUB_FONTCOLOR_1_MASK FIELD_MASK(GA_SUB_FONTCOLOR_1_POS, GA_SUB_FONTCOLOR_1_WIDTH)
+///@}
 
 /**
  * @def GA_SUB_REG_FONTBITS
@@ -1643,14 +1670,14 @@
 #define GA_SUB_REG_GFXSTAT 0xFF8058
 
 /**
- * @def GA_SUB_GRON_MASK
  * @brief Graphics operation in progress
  * @sa GA_SUB_REG_GFXSTAT
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_44
  */
+///@{
 #define GA_SUB_GRON_POS 7
 #define GA_SUB_GRON_MASK (1 << GA_SUB_GRON_POS)
+///@}
 
 /**
  * @def GA_SUB_REG_STAMPSIZE
@@ -1679,13 +1706,13 @@
  */
 #define GA_SUB_REG_STAMPSIZE 0xFF8059
 
-#define GA_SUB_STAMPSIZE_REPEAT_POS 0
-#define GA_SUB_STAMPSIZE_32x32_STAMP_POS 1
-#define GA_SUB_STAMPSIZE_16x16_SCREEN_POS 2
+#define GA_SUB_STAMPSIZE_REPEAT_POS 0 ///< Bit position of GA_SUB_STAMPSIZE_REPEAT_MASK
+#define GA_SUB_STAMPSIZE_32x32_STAMP_POS 1 ///< Bit position of GA_SUB_STAMPSIZE_32x32_STAMP_MASK
+#define GA_SUB_STAMPSIZE_16x16_SCREEN_POS 2 ///< Bit position of GA_SUB_STAMPSIZE_16x16_SCREEN_MASK
 
-#define GA_SUB_STAMPSIZE_REPEAT_MASK (1 << GA_SUB_STAMPSIZE_REPEAT_POS)
-#define GA_SUB_STAMPSIZE_32x32_STAMP_MASK (1 << GA_SUB_STAMPSIZE_32x32_STAMP_POS)
-#define GA_SUB_STAMPSIZE_16x16_SCREEN_MASK (1 << GA_SUB_STAMPSIZE_16x16_SCREEN_POS)
+#define GA_SUB_STAMPSIZE_REPEAT_MASK (1 << GA_SUB_STAMPSIZE_REPEAT_POS) ///< RPT: the stamp map repeats at its edges instead of reading as 0
+#define GA_SUB_STAMPSIZE_32x32_STAMP_MASK (1 << GA_SUB_STAMPSIZE_32x32_STAMP_POS) ///< STS: stamps are 32x32 dots instead of 16x16
+#define GA_SUB_STAMPSIZE_16x16_SCREEN_MASK (1 << GA_SUB_STAMPSIZE_16x16_SCREEN_POS) ///< SMS: the map is sixteen screens square (4096x4096 dots) instead of one
 
 /**
  * @def GA_SUB_REG_STAMPMAPBASE
@@ -1738,17 +1765,17 @@
  */
 
 /**
- * @def STAMP_SNO_MASK
  * @brief Stamp number
  * @warning With 32x32 stamps the two low bits must be 0, since each stamp then
  * covers four 16x16 generator slots.
  */
+///@{
 #define STAMP_SNO_POS 0
-#define STAMP_SNO_WIDTH 11
-#define STAMP_SNO_MASK FIELD_MASK(STAMP_SNO_POS, STAMP_SNO_WIDTH)
+#define STAMP_SNO_WIDTH 11 ///< Width of the stamp number field
+#define STAMP_SNO_MASK FIELD_MASK(STAMP_SNO_POS, STAMP_SNO_WIDTH) ///< Stamp number field
+///@}
 
 /**
- * @def STAMP_ROTATE_MASK
  * @brief Rotation applied to this stamp, in 90 degree steps, counter-clockwise
  *
  * @details Rotation is applied to the stamp **before** @ref STAMP_HFLIP_MASK.
@@ -1756,22 +1783,24 @@
  * @warning Use the STAMP_ROTATE_* values below; do not derive them from the
  * field width. 90 and 180 are not in the order the bit numbering implies.
  */
+///@{
 #define STAMP_ROTATE_POS 13
-#define STAMP_ROTATE_WIDTH 2
-#define STAMP_ROTATE_MASK FIELD_MASK(STAMP_ROTATE_POS, STAMP_ROTATE_WIDTH)
+#define STAMP_ROTATE_WIDTH 2 ///< Width of the rotation field
+#define STAMP_ROTATE_MASK FIELD_MASK(STAMP_ROTATE_POS, STAMP_ROTATE_WIDTH) ///< Rotation field
+///@}
 
-/* RT1, RT0 */
-#define STAMP_ROTATE_0 0b00	  /* RT0=0, RT1=0 */
-#define STAMP_ROTATE_90 0b10  /* RT0=0, RT1=1 */
-#define STAMP_ROTATE_180 0b01 /* RT0=1, RT1=0 */
-#define STAMP_ROTATE_270 0b11 /* RT0=1, RT1=1 */
+#define STAMP_ROTATE_0 0b00 ///< No rotation (RT1=0, RT0=0)
+#define STAMP_ROTATE_90 0b10 ///< 90 degrees counter-clockwise (RT1=1, RT0=0)
+#define STAMP_ROTATE_180 0b01 ///< 180 degrees (RT1=0, RT0=1)
+#define STAMP_ROTATE_270 0b11 ///< 270 degrees counter-clockwise (RT1=1, RT0=1)
 
 /**
- * @def STAMP_HFLIP_MASK
  * @brief Mirror the stamp horizontally
  */
+///@{
 #define STAMP_HFLIP_POS 15
-#define STAMP_HFLIP_MASK (1 << STAMP_HFLIP_POS)
+#define STAMP_HFLIP_MASK (1 << STAMP_HFLIP_POS) ///< Mirror the stamp horizontally
+///@}
 
 /** @} */
 
@@ -1798,15 +1827,15 @@
 #define GA_SUB_REG_IMGBUFVSIZE 0xFF805D
 
 /**
- * @def GA_SUB_IMGBUF_VCS_MASK
  * @brief Image buffer height in cells, stored as height - 1
  * @sa GA_SUB_REG_IMGBUFVSIZE
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_46
  */
+///@{
 #define GA_SUB_IMGBUF_VCS_POS 0
 #define GA_SUB_IMGBUF_VCS_WIDTH 5
 #define GA_SUB_IMGBUF_VCS_MASK FIELD_MASK(GA_SUB_IMGBUF_VCS_POS, GA_SUB_IMGBUF_VCS_WIDTH)
+///@}
 
 /**
  * @def GA_SUB_REG_IMGBUFSTART
@@ -1854,26 +1883,26 @@
 #define GA_SUB_REG_IMGBUFOFFSET 0xFF8061
 
 /**
- * @def GA_SUB_IMGBUF_DOT_MASK
  * @brief Starting dot within the first line
  * @sa GA_SUB_REG_IMGBUFOFFSET
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_48
  */
+///@{
 #define GA_SUB_IMGBUF_DOT_POS 0
 #define GA_SUB_IMGBUF_DOT_WIDTH 3
 #define GA_SUB_IMGBUF_DOT_MASK FIELD_MASK(GA_SUB_IMGBUF_DOT_POS, GA_SUB_IMGBUF_DOT_WIDTH)
+///@}
 
 /**
- * @def GA_SUB_IMGBUF_LN_MASK
  * @brief Starting line within the first cell
  * @sa GA_SUB_REG_IMGBUFOFFSET
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_48
  */
+///@{
 #define GA_SUB_IMGBUF_LN_POS 3
 #define GA_SUB_IMGBUF_LN_WIDTH 3
 #define GA_SUB_IMGBUF_LN_MASK FIELD_MASK(GA_SUB_IMGBUF_LN_POS, GA_SUB_IMGBUF_LN_WIDTH)
+///@}
 
 /**
  * @def GA_SUB_REG_IMGBUFHDOTSIZE
@@ -1901,15 +1930,15 @@
 #define GA_SUB_REG_IMGBUFHDOTSIZE 0xFF8062
 
 /**
- * @def GA_SUB_IMGBUF_HW_MASK
  * @brief Horizontal dots written per line
  * @sa GA_SUB_REG_IMGBUFHDOTSIZE
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_49
  */
+///@{
 #define GA_SUB_IMGBUF_HW_POS 0
 #define GA_SUB_IMGBUF_HW_WIDTH 9
 #define GA_SUB_IMGBUF_HW_MASK FIELD_MASK(GA_SUB_IMGBUF_HW_POS, GA_SUB_IMGBUF_HW_WIDTH)
+///@}
 
 /**
  * @def GA_SUB_REG_IMGBUFVDOTSIZE
@@ -1941,15 +1970,15 @@
 #define GA_SUB_REG_IMGBUFVDOTSIZE 0xFF8064
 
 /**
- * @def GA_SUB_IMGBUF_VW_MASK
  * @brief Vertical dots remaining to write
  * @sa GA_SUB_REG_IMGBUFVDOTSIZE
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_50
  */
+///@{
 #define GA_SUB_IMGBUF_VW_POS 0
 #define GA_SUB_IMGBUF_VW_WIDTH 8
 #define GA_SUB_IMGBUF_VW_MASK FIELD_MASK(GA_SUB_IMGBUF_VW_POS, GA_SUB_IMGBUF_VW_WIDTH)
+///@}
 
 /**
  * @def GA_SUB_REG_TRACEVECTBASE
@@ -2023,29 +2052,29 @@
 #define GA_SUB_REG_SUBCODEADDR 0xFF8068
 
 /**
- * @def GA_SUB_SUBCODE_STA_MASK
  * @brief Sub-code top address: where the next incoming byte will be written
  * @details Read only. Occupies bits 6 through 1, so the value is the address
  * already shifted up by one.
  * @sa ga_sub_reg_subcodeaddr
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_52
  */
+///@{
 #define GA_SUB_SUBCODE_STA_POS 1
 #define GA_SUB_SUBCODE_STA_WIDTH 6
 #define GA_SUB_SUBCODE_STA_MASK FIELD_MASK(GA_SUB_SUBCODE_STA_POS, GA_SUB_SUBCODE_STA_WIDTH)
+///@}
 
 /**
- * @def GA_SUB_SUBCODE_SAOR_MASK
  * @brief Sub-code address overrun; set once 32 bytes have been written, cleared
  * by the next SYNC
  * @details Read only.
  * @sa ga_sub_reg_subcodeaddr
- * @ingroup ga_regs_sub
  * @ingroup ga_reg_sub_52
  */
+///@{
 #define GA_SUB_SUBCODE_SAOR_POS 7
 #define GA_SUB_SUBCODE_SAOR_MASK (1 << GA_SUB_SUBCODE_SAOR_POS)
+///@}
 
 /**
  * @def GA_SUB_REG_SUBCODEBUF
@@ -2075,8 +2104,8 @@
  */
 #define GA_SUB_REG_SUBCODEBUFIMG 0xFF8180
 
-#define CDC_DEST_MAINREAD 2
-#define CDC_DEST_SUBREAD  3
-#define CDC_DEST_PCMDMA   4
-#define CDC_DEST_PRAMDMA  5
-#define CDC_DEST_WRAMDMA  7
+#define CDC_DEST_MAINREAD 2 ///< CDC destination, as written to the CDC mode byte: Main CPU read
+#define CDC_DEST_SUBREAD  3 ///< CDC destination: Sub CPU read
+#define CDC_DEST_PCMDMA   4 ///< CDC destination: PCM wave RAM by DMA
+#define CDC_DEST_PRAMDMA  5 ///< CDC destination: Program RAM by DMA
+#define CDC_DEST_WRAMDMA  7 ///< CDC destination: Word RAM by DMA

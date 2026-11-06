@@ -17,8 +17,8 @@ extern "C" {
  * @brief Quotient and remainder of a 32-by-16 divide
  */
 typedef struct {
-  s16 quot;
-  s16 rem;
+  s16 quot; ///< Quotient
+  s16 rem;  ///< Remainder
 } Div16;
 
 /**
@@ -123,6 +123,10 @@ static inline s16 divs_round(s32 dividend, s16 divisor)
 	return quotient;
 }
 
+/**
+ * @brief Convert a binary value of 0 to 99 to packed BCD
+ * @details The CD BIOS takes time values (minutes, seconds, frames) in BCD.
+ */
 static inline u16 bcd(u16 value)
 {
 	u16 temp;

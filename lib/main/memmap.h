@@ -38,14 +38,12 @@ extern "C" {
 #define exvec_vblank ((void(* volatile *)) EXVEC_VBLANK)
 
 /**
- * @def exvec_vblank
  * @brief HBLANK system interrupt vector
  * @sa EXVEC_HBLANK
  */
 #define exvec_hblank ((void(* volatile *)) EXVEC_HBLANK)
 
 /**
- * @def exvec_vblank
  * @brief External port interrupt vector
  * @sa EXVEC_EXT
  */

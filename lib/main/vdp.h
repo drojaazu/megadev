@@ -45,33 +45,39 @@ typedef u32 vdp_cmd;
  */
 typedef u16 vdp_reg;
 
+/**
+ * @brief One entry of the VDP sprite attribute table
+ */
 typedef struct Sprite
 {
-  s16          : 6;
-  s16 pos_y    : 10;
-  s16          : 4;
-  s16 width    : 2;
-  s16 height   : 2;
-  s16          : 1;
-  s16 next     : 7;
-  s16 priority : 1;
-  s16 palette  : 2;
-  s16 v_flip   : 1;
-  s16 h_flip   : 1;
-  s16 tile     : 11;
-  s16          : 7;
-  s16 pos_x    : 9;
+  s16          : 6; ///< Unused
+  s16 pos_y    : 10; ///< Vertical position, 128 is the top of the screen
+  s16          : 4; ///< Unused
+  s16 width    : 2; ///< Width in tiles minus 1
+  s16 height   : 2; ///< Height in tiles minus 1
+  s16          : 1; ///< Unused
+  s16 next     : 7; ///< Index of the next sprite in the display list, 0 ends it
+  s16 priority : 1; ///< Priority over the planes
+  s16 palette  : 2; ///< Palette line
+  s16 v_flip   : 1; ///< Vertical flip
+  s16 h_flip   : 1; ///< Horizontal flip
+  s16 tile     : 11; ///< First tile index
+  s16          : 7; ///< Unused
+  s16 pos_x    : 9; ///< Horizontal position, 128 is the left edge of the screen
 } Sprite;
 
+/**
+ * @brief A sprite table entry with word, byte and long views of its 8 bytes
+ */
 typedef union SpriteEx
 {
-  u32    as_u32[2];
-  u16    as_u16[4];
-  u8     as_u8[8];
-  s32    as_s32[2];
-  s16    as_s16[4];
-  s8     as_s8[8];
-  Sprite as_struct;
+  u32    as_u32[2]; ///< Two unsigned longs
+  u16    as_u16[4]; ///< Four unsigned words
+  u8     as_u8[8]; ///< Eight unsigned bytes
+  s32    as_s32[2]; ///< Two signed longs
+  s16    as_s16[4]; ///< Four signed words
+  s8     as_s8[8]; ///< Eight signed bytes
+  Sprite as_struct; ///< The fields
 } SpriteEx;
 
 /**
@@ -88,7 +94,7 @@ typedef union SpriteEx
 /**
  * @def vdp_ctrl
  * @brief VDP Control Port
- * @ingroup vbp_port
+ * @ingroup vdp_port
  * @aliasof vdp_ctrl_16
  */
 #define vdp_ctrl vdp_ctrl_16
@@ -117,7 +123,7 @@ typedef union SpriteEx
 /**
  * @def vdp_data
  * @brief VDP Data Port
- * @ingroup vbp_port
+ * @ingroup vdp_port
  * @aliasof vdp_data_16
  */
 #define vdp_data vdp_data_16
@@ -144,8 +150,10 @@ typedef union SpriteEx
  */
 #define vdp_hvcounter (*((u16 volatile *) VDP_HVCOUNTER))
 
+/** @brief Vertical position byte of the HV counter */
 #define vdp_hvcounter_v (*((u8 volatile *) VDP_HVCOUNTER))
 
+/** @brief Horizontal position byte of the HV counter */
 #define vdp_hvcounter_h (*((u8 volatile *) (VDP_HVCOUNTER + 1)))
 
 /**
@@ -187,9 +195,8 @@ typedef enum PlaneWidth
   (to_vdp_addr((plane_addr) + VDP_PLANE_POS(x, y, width)) | VRAM_W)
 
 /**
- * @fn to_vdp_addr_runtime
  * @brief Converts a 16 bit VRAM address into VDP format at runtime
- * @note Consider using the @ref to_vdp_addr macro instead to use compile time
+ * @note Consider using the to_vdp_addr macro instead to use compile time
  * evaluation if available
  */
 static inline vdp_addr to_vdp_addr_runtime(u16 addr)
@@ -215,7 +222,6 @@ static inline vdp_addr to_vdp_addr_runtime(u16 addr)
 }
 
 /**
- * @fn to_vram_addr_runtime
  * @brief Converts a VDP format address to a 16 bit VRAM address at runtime
  */
 static inline u16 to_vram_addr_runtime(vdp_addr vdp_addr)
@@ -225,11 +231,10 @@ static inline u16 to_vram_addr_runtime(vdp_addr vdp_addr)
   // clang-format off
 	asm(
 		"\
-  #andi.l  #0x3FFF000C, %[vram_addr] \
-  ror.w    #2, %[vram_addr] \
-  lsr.l    #8, %[vram_addr] \
-  lsr.l    #6, %[vram_addr] \
-  ror.w    #2, %[vram_addr] \
+  ror.w    #2, %[vram_addr] \n\
+  lsr.l    #8, %[vram_addr] \n\
+  lsr.l    #6, %[vram_addr] \n\
+  ror.w    #2, %[vram_addr] \n\
 		"
 		:
 			[vram_addr] "+d"(vram_addr)
@@ -255,6 +260,7 @@ static inline u16 to_vram_addr_runtime(vdp_addr vdp_addr)
 
 // TODO: create similar macro for to_vram_addr
 
+/** @brief VRAM byte offset of a tile index (32 bytes per tile) */
 #define tile_offset(tile_index) ((tile_index) << 5)
 
 // the below is causing weird breakage when compiling...
@@ -300,7 +306,6 @@ void vdp_dma_fill(
 */
 
 /**
- * @fn vdp_dma_transfer
  * @ingroup vdp
  * @warning Setting/clearing the DMA Enable bit on VDP Mode Register 2 is the
  * responsibility of the user

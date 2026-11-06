@@ -195,8 +195,8 @@
  */
 #define BRAM_VERIFY 0x0008
 
-#define BRAM_UNKNOWN0 0x0009
-#define BRAM_UNKNOWN1 0x000A
+#define BRAM_UNKNOWN0 0x0009 ///< Undocumented Backup RAM function 9
+#define BRAM_UNKNOWN1 0x000A ///< Undocumented Backup RAM function 10
 
 /**
  * @defgroup sub_bram_sega Sega documentation names

@@ -44,10 +44,10 @@
  * @brief Return values of mode1_load_sub
  */
 #define MODE1_OK 0
-#define MODE1_ERR_NO_MEGACD 1  /* no Boot ROM at BOOT_ROM */
-#define MODE1_ERR_NO_LOADER 2  /* Sub BIOS image not found in the Boot ROM */
-#define MODE1_ERR_SUB_TIMEOUT 3 /* Sub CPU did not come up */
-#define MODE1_ERR_SP_SIZE 4    /* SP larger than MODE1_SP_MAX_SIZE */
+#define MODE1_ERR_NO_MEGACD 1 ///< No Boot ROM at BOOT_ROM
+#define MODE1_ERR_NO_LOADER 2 ///< Sub BIOS image not found in the Boot ROM
+#define MODE1_ERR_SUB_TIMEOUT 3 ///< Sub CPU did not come up
+#define MODE1_ERR_SP_SIZE 4 ///< SP larger than MODE1_SP_MAX_SIZE
 
 /**
  * @brief Number of polls of the Sub side comm flags before giving up

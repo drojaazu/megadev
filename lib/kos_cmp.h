@@ -15,8 +15,18 @@ extern "C" {
 
 #include "types.h"
 
+/**
+ * @brief Kosinski decompressor (lib/kos_cmp.s)
+ * @details Assembly entry: A0 source, A1 destination; clobbers d2-d6. Call it
+ * from C through dcmp_kosinski.
+ */
 extern void Kos_Decomp();
 
+/**
+ * @brief Decompress Kosinski data
+ * @param src Compressed data
+ * @param dst Destination buffer, large enough for the decompressed size
+ */
 static inline void dcmp_kosinski(void * src, void * dst)
 {
 	register u32 A0 asm("a0") = (u32) src;

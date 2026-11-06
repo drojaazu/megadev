@@ -11,7 +11,9 @@
 extern "C" {
 #endif
 
+/** @brief Stringize x without expanding it; MEGADEV_STR expands first */
 #define _MEGADEV_STR(x) #x
+/** @brief Stringize x after macro expansion */
 #define MEGADEV_STR(x) _MEGADEV_STR(x)
 
 /**

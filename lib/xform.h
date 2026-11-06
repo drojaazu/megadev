@@ -38,9 +38,9 @@ typedef u16 xform_pos;
  */
 typedef s16 xform_delta;
 
-#define XFORM_POS_INT_BITS 13
-#define XFORM_POS_FRAC_BITS (16 - XFORM_POS_INT_BITS)
-#define XFORM_POS_SCALE (1 << XFORM_POS_FRAC_BITS)
+#define XFORM_POS_INT_BITS 13 ///< Integer bits of a trace vector start position
+#define XFORM_POS_FRAC_BITS (16 - XFORM_POS_INT_BITS) ///< Fractional bits of a trace vector start position
+#define XFORM_POS_SCALE (1 << XFORM_POS_FRAC_BITS) ///< One dot, as a start position
 
 /**
  * @def to_xform_pos
@@ -50,8 +50,8 @@ typedef s16 xform_delta;
 
 /** @brief Magnitude bits of a step; bit 15 is the sign */
 #define XFORM_DELTA_INT_BITS 4
-#define XFORM_DELTA_FRAC_BITS 11
-#define XFORM_DELTA_SCALE (1 << XFORM_DELTA_FRAC_BITS)
+#define XFORM_DELTA_FRAC_BITS 11 ///< Fractional bits of a trace vector step
+#define XFORM_DELTA_SCALE (1 << XFORM_DELTA_FRAC_BITS) ///< One dot, as a step
 
 /**
  * @def XFORM_DELTA_MAX
@@ -73,7 +73,6 @@ typedef s16 xform_delta;
 
 
 /**
- * @fn xform_delta_negate
  * @brief Reverse the direction of a step
  * @details Plain negation. Retained only so call sites read symmetrically with
  * to_xform_delta().

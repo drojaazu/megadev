@@ -14,6 +14,7 @@ extern "C" {
 #include "types.h"
 #include <main/io.def.h>
 
+/** @brief Pointer to an I/O port register */
 typedef u8 volatile * io_reg;
 
 /**
@@ -96,6 +97,7 @@ typedef u8 volatile * io_reg;
  */
 #define time_mapping (*((u8(*)[0x100]) TIME_MAPPING))
 
+/** @brief Set both control ports up for a 3 button pad: TH as output */
 static inline void init_joypads()
 {
 	asm(
@@ -108,6 +110,11 @@ static inline void init_joypads()
 		: "cc");
 }
 
+/**
+ * @brief Read a 3 button pad
+ * @param io_port Data port of the controller (io_data1 or io_data2)
+ * @return Button states in SACBRLDU order (PAD_*), 1 = pressed
+ */
 static inline u8 read_input_joypad(io_reg io_port)
 {
 	register u32 scratch_d;

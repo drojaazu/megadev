@@ -24,10 +24,10 @@
  */
 #define HW_VERSION 0x0A10001
 
-#define HW_REV				 (0b111 << 0)
-#define EXT_PERIPHERAL (1 << 5)
-#define HW_CLOCK			 (1 << 6)
-#define HW_REGION			 (1 << 7)
+#define HW_REV				 (0b111 << 0) ///< Hardware revision field (VER0-3)
+#define EXT_PERIPHERAL (1 << 5) ///< Expansion unit: 0 connected, 1 not connected
+#define HW_CLOCK			 (1 << 6) ///< Clock: 0 NTSC (7.67 MHz), 1 PAL (7.60 MHz)
+#define HW_REGION			 (1 << 7) ///< Region: 0 Japan, 1 Europe or US
 
 /**
  * @def TMSS_VDP_UNLOCK

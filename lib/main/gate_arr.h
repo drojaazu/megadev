@@ -13,6 +13,7 @@ extern "C" {
 #include "main/gate_arr.def.h"
 #include <types.h>
 
+/** @brief Pointer to a 16 bit gate array register */
 typedef u16 volatile * ga_main_reg;
 
 /**
@@ -41,18 +42,21 @@ typedef u8 volatile const * ga_main_reg8_ro;
  * @sa GA_MAIN_REG_COMFLAGS_MAIN, GA_MAIN_REG_COMFLAGS_SUB
  */
 #define ga_main_reg_comflags_main (*((ga_main_reg8) GA_MAIN_REG_COMFLAGS_MAIN))
+/** @copydoc GA_MAIN_REG_COMFLAGS_SUB */
 #define ga_main_reg_comflags_sub (*((ga_main_reg8_ro) GA_MAIN_REG_COMFLAGS_SUB))
 /**
  * @copydoc GA_MAIN_REG_INT2
  *
  */
 #define ga_main_reg_int2 (*((ga_main_reg8) GA_MAIN_REG_INT2))
+/** @copydoc GA_MAIN_REG_SUBCPU */
 #define ga_main_reg_subcpu (*((ga_main_reg8) GA_MAIN_REG_SUBCPU))
 /**
  * @copydoc GA_MAIN_REG_WP
  *
  */
 #define ga_main_reg_wp (*((ga_main_reg8) GA_MAIN_REG_WP))
+/** @copydoc GA_MAIN_REG_MEMMODE */
 #define ga_main_reg_memmode (*((ga_main_reg8) GA_MAIN_REG_MEMMODE))
 /**
  * @copydoc GA_MAIN_REG_CDCMODE
@@ -156,7 +160,6 @@ typedef u8 volatile const * ga_main_reg8_ro;
  */
 #define ga_main_reg_comstat7 (*((ga_main_reg_ro) GA_MAIN_REG_COMSTAT7))
 /**
- * @fn ga_main_wait_2m
  * Wait for Main CPU access to 2M Word RAM
  */
 static inline void ga_main_wait_2m()
@@ -172,7 +175,6 @@ static inline void ga_main_wait_2m()
 }
 
 /**
- * @fn ga_main_grant_2m
  * Grant 2M Word RAM access to the Sub CPU and wait for confirmation
  */
 static inline void ga_main_grant_2m()
@@ -189,7 +191,6 @@ static inline void ga_main_grant_2m()
 }
 
 /**
- * @fn ga_main_clear_comm_regs
  * Clears the Main comm registers (COMCMD) and flags
  */
 static inline void ga_main_clear_comm_regs()
@@ -211,7 +212,6 @@ static inline void ga_main_clear_comm_regs()
 }
 
 /**
- * @fn ga_main_reset
  * Perform a system reset
  */
 static inline void ga_main_reset()
