@@ -7,9 +7,10 @@ VRAM clear and the VBLANK handler. Text is printed with the kit's `text_print`
 and `font8x8` (`main/text.h`).
 
 With a disc in the drive, the Main CPU has the Sub CPU initialize the drive,
-read the root directory and load `DATA.BIN` into Word RAM twice: by Sub CPU
-copy and by CDC DMA. It then sums the words it finds in Word RAM and compares
-them with the sum the build computed from the file. Without a disc the drive
+read the root directory and load `DATA.BIN` three times: into Word RAM by Sub
+CPU copy and by CDC DMA, and into Program RAM by CDC DMA. It sums the words it
+finds in Word RAM, and takes the Sub CPU's sum of the Program RAM copy, and
+compares each with the sum the build computed from the file. Without a disc the drive
 init never completes; the Main CPU times out, reports `DISC: TIMEOUT` and the
 rest keeps running.
 
@@ -23,8 +24,8 @@ through COMSTAT0, the Sub CPU's INT2 count, and the disc results.
 
 Variables hold the same results for an emulator debugger (addresses in
 `build/mode1.cart.sym`): `mode1_status`, `mode1_echo`, `mode1_disc`,
-`mode1_load`, `mode1_load_sum`, `mode1_load_dma`, `mode1_load_dma_sum` and
-`mode1_file_size`. A disc result is `0x0100 | result byte` from the access
+`mode1_load`, `mode1_load_sum`, `mode1_load_dma`, `mode1_load_dma_sum`,
+`mode1_load_prg`, `mode1_load_prg_sum` and `mode1_file_size`. A disc result is `0x0100 | result byte` from the access
 loop (`0x0164` is success), or `0x02FF` timeout, `0x02FE` Word RAM not
 returned, `0x02FD` content mismatch.
 

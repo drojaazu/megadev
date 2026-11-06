@@ -48,6 +48,8 @@ volatile u16 mode1_load_sum;     // word sum of the copy-loaded file, read from 
 volatile u16 mode1_load_dma;     // DMA load: 0x0100 | result, or DISC_*
 volatile u16 mode1_load_dma_sum; // word sum of the DMA-loaded file
 volatile u16 mode1_file_size;    // low word of the file size the Sub CPU reported
+volatile u16 mode1_load_prg;     // Program RAM DMA load: 0x0100 | result, or DISC_*
+volatile u16 mode1_load_prg_sum; // word sum of that file, computed by the Sub CPU
 
 // Main CPU side failures, distinct from the Sub CPU's 0x01xx results
 #define DISC_TIMEOUT 0x02FF // no answer from the Sub CPU (no disc: drive init never ends)
@@ -200,8 +202,9 @@ void main()
   print_at("DISC:", 2, 12);
   print_at("LOAD:", 2, 13);
   print_at("DMA:", 2, 14);
-  print_at("SUM:", 2, 15);
-  print_value(buf, "%04X", DATA_SUM, 22, 15);
+  print_at("PRG:", 2, 15);
+  print_at("SUM:", 2, 16);
+  print_value(buf, "%04X", DATA_SUM, 27, 16);
 
   // Disc: drive init and the root directory, then the file twice
   if (result == MODE1_OK)
@@ -213,10 +216,20 @@ void main()
     {
       mode1_load = load_and_check(SP_CMD_LOAD, 0, &mode1_load_sum);
       print_at(disc_text(mode1_load), 12, 13);
-      print_value(buf, "%04X", mode1_load_sum, 12, 15);
+      print_value(buf, "%04X", mode1_load_sum, 12, 16);
       mode1_load_dma = load_and_check(SP_CMD_LOAD_DMA, SP_DMA_OFFSET, &mode1_load_dma_sum);
       print_at(disc_text(mode1_load_dma), 12, 14);
-      print_value(buf, "%04X", mode1_load_dma_sum, 17, 15);
+      print_value(buf, "%04X", mode1_load_dma_sum, 17, 16);
+      // Program RAM: the Sub CPU sums it, the Main CPU cannot see it
+      mode1_load_prg = sub_command(SP_CMD_LOAD_PRG);
+      if (mode1_load_prg == (0x0100 | CDROM_RESULT_OK))
+      {
+        mode1_load_prg_sum = ga_main_reg_comstat3;
+        if (mode1_load_prg_sum != DATA_SUM)
+          mode1_load_prg = DISC_BAD_SUM;
+      }
+      print_at(disc_text(mode1_load_prg), 12, 15);
+      print_value(buf, "%04X", mode1_load_prg_sum, 22, 16);
     }
   }
 
