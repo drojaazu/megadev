@@ -13,6 +13,8 @@
  *   SP_CMD_LOAD      DATA.BIN;1 to Word RAM by Sub CPU copy, then hand Word
  *                    RAM to the Main CPU (COMSTAT3: file size in bytes)
  *   SP_CMD_LOAD_DMA  the same by CDC DMA, at Word RAM offset SP_DMA_OFFSET
+ *   SP_CMD_LOAD_PRG  DATA.BIN;1 into Program RAM at SP_PRG_OFFSET by CDC DMA;
+ *                    the Sub CPU sums the words it finds there (COMSTAT3)
  *
  * The result byte is the access loop's: CDROM_RESULT_OK or an error.
  */
@@ -60,6 +62,8 @@ GLABEL sp_main
   beq     cmd_load
   cmpi.w  #SP_CMD_LOAD_DMA, d0
   beq     cmd_load_dma
+  cmpi.w  #SP_CMD_LOAD_PRG, d0
+  beq     cmd_load_prg
   move.w  #SP_RESULT_BAD_CMD, d1
   bra     cmd_done
 
@@ -98,6 +102,24 @@ cmd_load_end:
 3:bset    #GA_SUB_RETURN_2M_POS, (GA_SUB_REG_MEMMODE)
   btst    #GA_SUB_RETURN_2M_POS, (GA_SUB_REG_MEMMODE)
   beq     3b
+
+cmd_load_prg:
+  move.l  #SP_PRG_OFFSET, filebuff   // address in Program RAM
+  lea     data_filename, a0
+  move.l  a0, filename
+  move.w  #CDROM_LOAD_PRG_DMA, access_op
+  WAIT_FOR_ACC_OP
+  move.w  d0, d1
+  // sum the words that arrived, for the Main CPU to compare
+  lea     PRG_RAM + SP_PRG_OFFSET, a0
+  move.l  filesize, d2
+  lsr.l   #1, d2
+  moveq   #0, d0
+4:add.w   (a0)+, d0
+  subq.l  #1, d2
+  bne     4b
+  move.w  d0, (GA_SUB_REG_COMSTAT3)
+  bra     cmd_done
 
 cmd_done:
   move.w  (GA_SUB_REG_COMCMD1), d0

@@ -96,5 +96,4 @@ $(DISC_PATH)/spx.smd: \
 	std_init.s \
 	spx.c \
 	sub/pcm.s \
-	pcmplay_v2.s \
 	$(BUILD_PATH)/sp.bin

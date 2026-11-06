@@ -44,7 +44,7 @@ As a quick example, you may have `title.mmd` on your local system. This will be 
 
 Please refer to the CDC section of the Mega CD Software Development documentation before or alongside this section.
 
-The destination is set in `filebuff` for every operation. For `CDROM_LOAD_CDC`, the non-DMA transfer through the CDC host data register, it is an address in the Sub CPU's memory map. For the DMA operations it is the offset within the destination memory, in bytes and a multiple of 8: an offset into Word RAM, an address in Program RAM, or an offset into PCM wave RAM. Do not write `GA_SUB_REG_DMAADDR` yourself: selecting the destination resets that register, and the 1.00 series Sub BIOS reselects it when a read starts, so the access loop writes the register before every CDC read, from `filebuff`.
+The destination is set in `filebuff` for every operation. For `CDROM_LOAD_CDC`, the non-DMA transfer through the CDC host data register, it is an address in the Sub CPU's memory map. For the DMA operations it is the offset within the destination memory, in bytes and a multiple of 8: an offset into Word RAM, an address in Program RAM, or, for wave RAM, an offset into the 8 KB window the Sub CPU sees of the selected bank, where every wave RAM byte sits at an odd address, so twice the offset within the bank. A sector therefore advances the wave RAM destination by 0x1000, and a bank takes exactly two. Do not write `GA_SUB_REG_DMAADDR` yourself: selecting the destination resets that register, and the 1.00 series Sub BIOS reselects it when a read starts, so the access loop writes the register before every CDC read, from `filebuff`.
 
 ### Access Operation
 
@@ -60,6 +60,12 @@ CDROM_LOAD_PCM_DMA
 (Note that we do not currently support the Main CPU read option, mostly because it is not well understood.)
 
 CDROM_LOAD_CDC will load the data to any memory address available to the Sub CPU, while the DMA options transfer data to a specific device at the relative address in `filebuff`. CDROM_LOAD_CDC is the easiest to work with as you can simply specify an absolute address and be done. The DMA options likely provide greater transfer speed (limited by the optical drive, of course), though what sort of speed advantages or if any bus access issues may occur are unknown.
+
+### Loading Part of a File
+
+Two more variables select a part of the file: `part_offset`, the first sector to read counted from the start of the file, and `part_count`, how many sectors to read. With `part_count` at 0, the default, an operation loads the whole file and `part_offset` is ignored. With a count, the operation reads exactly that many sectors, whether or not the file is that long, and `filesize` reports the part's size. The loop does not reset either variable, so set them before every operation; in C, `load_file` clears the count and `load_file_part` sets both.
+
+Parts are how data is streamed: a file larger than its destination is read a few sectors at a time into the region that is not in use, as `examples/pcm_playback` does with the PCM chip's wave RAM. They are also the only way to use the PCM DMA destination for anything larger than 4 KB: the DMA address register reaches one wave RAM bank, so a PCM DMA load is at most two sectors into the bank selected with `PCM_CTRL`.
 
 ### Wait for Completion
 

@@ -8,6 +8,12 @@ replacement.
 
 ### Added
 
+- **Partial loads and streaming**: the CD-ROM access loop loads part of a
+  file, `part_count` sectors from `part_offset`, into any destination
+  (`load_file_part`). The `pcm_playback` example now streams its audio from
+  the disc straight into the PCM chip's wave RAM by DMA, one 4 KB bank at a
+  time while the other half plays, instead of staging 256 KB in Program RAM.
+  The `mode1` example also loads its file into Program RAM by DMA.
 - **Mode 1 support**: drive the Mega CD from a cartridge. Set
   `TARGET:=MEGACD_MODE1`. `main/mode1.h` detects the Mega CD, unpacks the Sub
   CPU BIOS from the Boot ROM, starts the Sub CPU with your program and builds
@@ -117,6 +123,12 @@ replacement.
 
 ### Fixed
 
+- CD-ROM access loop: a PCM wave RAM DMA destination advanced by 2 KB per
+  sector where the hardware counts 4 KB, the Sub CPU's view of the bank, so
+  the second sector of a bank overwrote the first's second half.
+  `DMAADDR_PCM` masked to 1 KB for the same reason.
+- `find_file_c` returned NULL for a file that exists and corrupted the stack
+  with an `rts` inside inlined asm; nothing in the kit had called it.
 - CD-ROM access loop, found by review: discs with more than one sector of
   root directory entries (about 60 files) had a corrupt directory cache; the
   DMA path mis-predicted the sector frame at every 75th sector and at random
