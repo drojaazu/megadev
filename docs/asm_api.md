@@ -148,7 +148,7 @@ Unless a row says otherwise, a routine clobbers nothing but the registers listed
 | `find_file` | a0.l: file name | CC and a0.l: the directory entry; CS: not found | d0, d1, a1, a2 | Look a file up in the cached root directory. |
 | `check_status` | | CS: busy; CC: idle, with d0.w the result and d1 the size in bytes (or sectors read on a load failure) | | Poll the loop. |
 
-The variables `access_op`, `access_op_result`, `filename`, `filebuff` and `filesize` are global; `sub/cdrom.h` documents them. For the DMA operations `filebuff` holds the destination offset within the target memory; the loop writes the DMA address register itself.
+The variables `access_op`, `access_op_result`, `filename`, `filebuff`, `filesize`, `part_offset` and `part_count` are global; `sub/cdrom.h` documents them. For the DMA operations `filebuff` holds the destination offset within the target memory (for wave RAM, in the Sub CPU's 8 KB view of the bank); the loop writes the DMA address register itself. `part_count` sectors from `part_offset` load part of a file; 0 loads it all.
 
 ## PCM, `sub/pcm.s`
 

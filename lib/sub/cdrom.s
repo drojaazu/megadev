@@ -188,18 +188,25 @@ load_process:
   movea.l (filename), a0
   jbsr    find_file                        // get file info from dir cache
   bcs     load_proc_notfound               // jump down if file not found
-  move.l  14(a0), cdread_sector_start      // get start sector
-  move.l  18(a0), d1                       // get file size (bytes)
+  move.l  14(a0), d0                       // start sector of the file
+  add.l   part_offset, d0                  // plus the requested offset into it
+  move.l  d0, cdread_sector_start
+  move.l  part_count, d1
+  beq     0f                               // 0: the whole file
+  // a part: part_count sectors, reported as that many bytes
+  move.l  d1, cdread_sector_count
+  lsl.l   #8, d1
+  lsl.l   #3, d1                           // sectors * 0x800
   move.l  d1, filesize
-  /*get the file size in sectors by 'dividing' by 2048*/
-  /*TODO: access_op_load_dir actually uses divu... use that here too?*/
-  // or can't we just shift right 11 bits...?
-  move.l  #1, cdread_sector_count          // file must be at least 1 sector
-0:subi.l  #0x800, d1                       // subtract 2K bytes (1 sector)
-  ble     1f                               // we've hit the end of the file
-  addq.l  #1, cdread_sector_count          // add 1 to the sector count
+  bra     1f
+0:move.l  18(a0), d1                       // file size (bytes)
+  move.l  d1, filesize
+  // size in sectors, rounding up; a file is at least one sector
+  move.l  #1, cdread_sector_count
+0:subi.l  #0x800, d1
+  ble     1f
+  addq.l  #1, cdread_sector_count
   bra     0b
-test_label:
 1:movea.l load_method_ptr, a0
   jbsr    (a0)                             // actually load some data
 3:move.w  #CDROM_IDLE, access_op           // set the acc loop back to idle
@@ -486,7 +493,13 @@ load_data_dma_begin:
 9:BIOS_CALL   #BIOS_CDC_ACK          // send ack to CDC (required after every sector/frame)
   move.w   #6, read_timeout          // reset error counters for next sector
   move.w   #0x1E, read_retry_count
-  addi.l   #0x800, filebuff          // move the destination up a sector
+  addi.l   #0x800, filebuff          // move the destination up a sector...
+  cmpi.b   #CDC_DEST_PCMDMA, cdc_dev_dest
+  bne      10f
+  addi.l   #0x800, filebuff          // ...twice for wave RAM: the DMA address
+                                     // counts the Sub CPU's view, where every
+                                     // wave RAM byte sits at an odd address
+10:
   addq.w   #1, sectors_read_count    // add to the sectors loaded count
   addq.l   #1, cdread_sector_start   // move to the next frame
   subq.l   #1, cdread_sector_count   // decrement remaining sector count
@@ -532,6 +545,16 @@ filebuff: .long 0
 
 .global filesize
 filesize: .long 0
+
+/**
+ * Part of a file to load: part_offset sectors into the file, part_count
+ * sectors. part_count 0 loads the whole file and ignores part_offset. Set
+ * before each operation; the loop does not reset them.
+ */
+.global part_offset
+part_offset: .long 0
+.global part_count
+part_count: .long 0
 
 .global access_op
 access_op: .word 0
