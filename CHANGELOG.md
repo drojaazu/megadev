@@ -117,6 +117,13 @@ replacement.
 
 ### Fixed
 
+- CD-ROM access loop, found by review: discs with more than one sector of
+  root directory entries (about 60 files) had a corrupt directory cache; the
+  DMA path mis-predicted the sector frame at every 75th sector and at random
+  (uncleared extend flag), and yielded a frame per sector so it could not keep
+  up with the drive; a retry on either path rewrote the CDC destination with a
+  transfer possibly in flight, spraying a sector into the destination at
+  offset 0. The loop now reads 80 sectors by DMA with no retries.
 - `to_vram_addr_runtime` returned its argument unchanged: a commented-out
   instruction in its inline assembly had commented out the whole routine.
   Nothing in the kit called it.

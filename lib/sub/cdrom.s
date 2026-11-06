@@ -98,8 +98,8 @@ find_file:
  * @param[out] CS Access op in progress
  * @param[out] CC Access op complete (access loop is idle)
  * @param[out] D0.w Result code (if op is complete)
- * @param[out] D1.w Size of file in bytes (if result is OK); number of sectors
- * read (if result not OK)
+ * @param[out] D1.l Size of file in bytes (if result is OK); D1.w number of
+ * sectors read (if result not OK)
  */
 check_status:
   cmpi.w  #CDROM_IDLE, access_op    // if status is anything but idle
@@ -248,11 +248,10 @@ access_op_load_dir:
   bsr     load_data_sub                    // actually get data
   cmpi    #CDROM_RESULT_LOAD_FAIL, access_op_result  // any issues?
   beq     cdacc_loop_loaddir_err           // if so, jump down
-  lea     dir_cache, a0    
-  move.w  dir_entry_count, d0              // this will be 0 on the sector
-  mulu.w  #0x20, d0                        // each file entry is 0x20 bytes
-  # TODO: shift left by 5 instead of mulu?
-  adda.l  d0, a0                           // move up to the latest file entry offset
+  lea     dir_cache, a0
+  move.w  dir_entry_count, d0              // entries cached from earlier sectors
+  mulu.w  #22, d0                          // each cache entry is 22 bytes
+  adda.l  d0, a0                           // continue after them
   lea     sector_buffer, a1
   moveq   #0, d0
 2:move.b  0(a1), d0                        // no more entries? (size is 0)
@@ -294,9 +293,12 @@ load_data_sub:
   POP     return_ptr
   move.w  #0, sectors_read_count
   move.w  #0x1E, read_retry_count
+  // Select the destination once per operation. Writing it resets the gate
+  // array's transfer circuit, so a retry must not repeat it while a transfer
+  // may still be in flight; the retry path stops the CDC first.
+  move.b  cdc_dev_dest, (GA_SUB_REG_CDCMODE)
 
 load_data_begin:
-  move.b  cdc_dev_dest, (GA_SUB_REG_CDCMODE)
   lea     cdread_sector_start, a0 // point to sector struct for BIOS_CDROM_READ_COUNT
 
   /*
@@ -354,9 +356,7 @@ load_data_begin:
 7:subq.w   #1, read_retry_count  /*frame count didn't match, retry*/
   bge      load_data_begin
   bra      load_data_failure
-  /*why set ccr here? Calling code expected a status value in RAM, not condition code.
-  Probably leftover from example code...?*/
-8:move     #0, ccr
+8:move     #0, ccr   /* abcd below adds X; clear it */
   moveq    #1, d1    /*prepare to move to next frame*/
   abcd     d1, d0    /*d0 has cdc_frame_check (as BCD), add one to it*/
   move.b   d0, cdc_frame_check      /*TODO: check if this can be re-arranged*/
@@ -402,9 +402,12 @@ load_data_dma:
   POP      return_ptr
   move.w   #0, sectors_read_count
   move.w   #0x1E, read_retry_count
+  // Destination once per operation (see load_data_sub). On a retry the CDC is
+  // stopped below before anything else, so no DMA is in flight when the
+  // address register is next written.
+  move.b   cdc_dev_dest, (GA_SUB_REG_CDCMODE)
 
 load_data_dma_begin:
-  move.b   cdc_dev_dest, (GA_SUB_REG_CDCMODE)
   lea      cdread_sector_start, a0  // point to sector struct for BIOS_CDROM_READ_COUNT
 
   /*
@@ -452,17 +455,26 @@ load_data_dma_begin:
   bge      load_data_dma_begin   // and try again
   bra      load_data_dma_failure // failed after all attempts, return error
 
-6:move.w   #6, read_timeout  // next we want the signal from the CDC that 
-  													 // everything is done
-7:bsr      accloop_reentry   // give it some time...
-  btst     #FIELD_BPOS(GA_SUB_CDCMODE_EDT), FIELD_BYTE(GA_SUB_REG_CDCMODE, GA_SUB_CDCMODE_EDT)  // check that the EDT bit is set
+  // Wait for the end of the transfer (EDT). A sector's DMA takes well under a
+  // frame, so spin first and yield to the next INT2 only if it is still busy:
+  // yielding once per sector would cap the loop at 60 sectors a second, below
+  // the drive's 75, and the CDC buffer would overflow (KB-60).
+6:move.w   #6, read_timeout
+7:move.w   #0x7FF, d0
+5:btst     #FIELD_BPOS(GA_SUB_CDCMODE_EDT), FIELD_BYTE(GA_SUB_REG_CDCMODE, GA_SUB_CDCMODE_EDT)
+  dbne     d0, 5b
+  bne      55f
+  bsr      accloop_reentry   // still busy: come back next INT2
+  btst     #FIELD_BPOS(GA_SUB_CDCMODE_EDT), FIELD_BYTE(GA_SUB_REG_CDCMODE, GA_SUB_CDCMODE_EDT)
   beq      0f               // not set yet, retry
+55:
   move.b   (cdc_frame_check), d0  // CDC is done, let's prepare for next frame
   moveq    #1, d1                 // grab the error check value
+  move     #0, ccr                // abcd adds X; the lsr above may have set it
   abcd     d1, d0                 // and BCD add 1 to it, because we are going
                                  // to expect the next frame (sector)
-  cmp.b    #0x76, d0              // have we exceeded the 75th frame?
-  bne      8f                     // no, jump down
+  cmp.b    #0x75, d0              // frames run 0 to 74 (BCD)
+  bne      8f                     // not at the end of the second, jump down
   moveq    #0, d0                 // yes, reset expected frame to 0
 8:move.b   d0, (cdc_frame_check)  // cache our expected frame
   bra      9f                     // and keep it moving!
