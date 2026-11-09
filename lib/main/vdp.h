@@ -19,7 +19,7 @@ extern "C" {
  * @brief Semantic typedef for a VRAM address *not* in VDP Control Port format
  *
  */
-typedef u16 vram_addr;
+typedef uint16_t vram_addr;
 
 /**
  * @typedef vdp_addr
@@ -27,7 +27,7 @@ typedef u16 vram_addr;
  *        Control port (32-bit).
  *
  */
-typedef u32 vdp_addr;
+typedef uint32_t vdp_addr;
 
 /**
  * @typedef vdp_cmd
@@ -35,7 +35,7 @@ typedef u32 vdp_addr;
  *        for use on the VDP Control port (32-bit).
  *
  */
-typedef u32 vdp_cmd;
+typedef uint32_t vdp_cmd;
 
 /**
  * @typedef vdp_reg
@@ -43,39 +43,40 @@ typedef u32 vdp_cmd;
  *        use on the VDP Control port (16-bit).
  *
  */
-typedef u16 vdp_reg;
+typedef uint16_t vdp_reg;
 
 /**
  * @brief One entry of the VDP sprite attribute table
  */
 typedef struct Sprite {
-  s16          : 6;  ///< Unused
-  s16 pos_y    : 10; ///< Vertical position, 128 is the top of the screen
-  s16          : 4;  ///< Unused
-  s16 width    : 2;  ///< Width in tiles minus 1
-  s16 height   : 2;  ///< Height in tiles minus 1
-  s16          : 1;  ///< Unused
-  s16 next     : 7; ///< Index of the next sprite in the display list, 0 ends it
-  s16 priority : 1; ///< Priority over the planes
-  s16 palette  : 2; ///< Palette line
-  s16 v_flip   : 1; ///< Vertical flip
-  s16 h_flip   : 1; ///< Horizontal flip
-  s16 tile     : 11; ///< First tile index
-  s16          : 7;  ///< Unused
-  s16 pos_x    : 9; ///< Horizontal position, 128 is the left edge of the screen
+  int16_t        : 6;  ///< Unused
+  int16_t pos_y  : 10; ///< Vertical position, 128 is the top of the screen
+  int16_t        : 4;  ///< Unused
+  int16_t width  : 2;  ///< Width in tiles minus 1
+  int16_t height : 2;  ///< Height in tiles minus 1
+  int16_t        : 1;  ///< Unused
+  int16_t next : 7; ///< Index of the next sprite in the display list, 0 ends it
+  int16_t priority : 1;  ///< Priority over the planes
+  int16_t palette  : 2;  ///< Palette line
+  int16_t v_flip   : 1;  ///< Vertical flip
+  int16_t h_flip   : 1;  ///< Horizontal flip
+  int16_t tile     : 11; ///< First tile index
+  int16_t          : 7;  ///< Unused
+  int16_t pos_x
+    : 9; ///< Horizontal position, 128 is the left edge of the screen
 } Sprite;
 
 /**
  * @brief A sprite table entry with word, byte and long views of its 8 bytes
  */
 typedef union SpriteEx {
-  u32    as_u32[2]; ///< Two unsigned longs
-  u16    as_u16[4]; ///< Four unsigned words
-  u8     as_u8[8];  ///< Eight unsigned bytes
-  s32    as_s32[2]; ///< Two signed longs
-  s16    as_s16[4]; ///< Four signed words
-  s8     as_s8[8];  ///< Eight signed bytes
-  Sprite as_struct; ///< The fields
+  uint32_t as_u32[2]; ///< Two unsigned longs
+  uint16_t as_u16[4]; ///< Four unsigned words
+  uint8_t  as_u8[8];  ///< Eight unsigned bytes
+  int32_t  as_s32[2]; ///< Two signed longs
+  int16_t  as_s16[4]; ///< Four signed words
+  int8_t   as_s8[8];  ///< Eight signed bytes
+  Sprite   as_struct; ///< The fields
 } SpriteEx;
 
 /**
@@ -87,7 +88,7 @@ typedef union SpriteEx {
  *
  * @sa VDP_CTRL
  */
-#define vdp_ctrl_16 (*(u16 volatile *) VDP_CTRL)
+#define vdp_ctrl_16 (*(uint16_t volatile *) VDP_CTRL)
 
 /**
  * @def vdp_ctrl
@@ -105,7 +106,7 @@ typedef union SpriteEx {
  *
  * @sa VDP_CTRL
  */
-#define vdp_ctrl_32 (*((u32 volatile *) VDP_CTRL))
+#define vdp_ctrl_32 (*((uint32_t volatile *) VDP_CTRL))
 
 /**
  * @def vdp_data_16
@@ -116,7 +117,7 @@ typedef union SpriteEx {
  *
  * @sa VDP_DATA
  */
-#define vdp_data_16 (*((u16 volatile *) VDP_DATA))
+#define vdp_data_16 (*((uint16_t volatile *) VDP_DATA))
 
 /**
  * @def vdp_data
@@ -134,7 +135,7 @@ typedef union SpriteEx {
  *
  * @sa VDP_DATA
  */
-#define vdp_data_32 (*((u32 volatile *) VDP_DATA))
+#define vdp_data_32 (*((uint32_t volatile *) VDP_DATA))
 
 /**
  * @def vdp_hvcounter
@@ -146,13 +147,13 @@ typedef union SpriteEx {
  *
  * @sa VDP_HVCOUNTER
  */
-#define vdp_hvcounter (*((u16 volatile *) VDP_HVCOUNTER))
+#define vdp_hvcounter (*((uint16_t volatile *) VDP_HVCOUNTER))
 
 /** @brief Vertical position byte of the HV counter */
-#define vdp_hvcounter_v (*((u8 volatile *) VDP_HVCOUNTER))
+#define vdp_hvcounter_v (*((uint8_t volatile *) VDP_HVCOUNTER))
 
 /** @brief Horizontal position byte of the HV counter */
-#define vdp_hvcounter_h (*((u8 volatile *) (VDP_HVCOUNTER + 1)))
+#define vdp_hvcounter_h (*((uint8_t volatile *) (VDP_HVCOUNTER + 1)))
 
 /**
  * @enum PlaneWidth
@@ -196,9 +197,9 @@ typedef enum PlaneWidth {
  * @note Consider using the to_vdp_addr macro instead to use compile time
  * evaluation if available
  */
-static inline vdp_addr to_vdp_addr_runtime(u16 addr)
+static inline vdp_addr to_vdp_addr_runtime(uint16_t addr)
 {
-  vdp_addr vdp_addr = (u32) addr;
+  vdp_addr vdp_addr = (uint32_t) addr;
 
   // clang-format off
 	asm(
@@ -221,9 +222,9 @@ static inline vdp_addr to_vdp_addr_runtime(u16 addr)
 /**
  * @brief Converts a VDP format address to a 16 bit VRAM address at runtime
  */
-static inline u16 to_vram_addr_runtime(vdp_addr vdp_addr)
+static inline uint16_t to_vram_addr_runtime(vdp_addr vdp_addr)
 {
-  u32 vram_addr = vdp_addr;
+  uint32_t vram_addr = vdp_addr;
 
   // clang-format off
 	asm(
@@ -241,7 +242,7 @@ static inline u16 to_vram_addr_runtime(vdp_addr vdp_addr)
 	);
   // clang-format on
 
-  return (u16) vram_addr;
+  return (uint16_t) vram_addr;
 }
 
 /**
@@ -264,10 +265,10 @@ static inline u16 to_vram_addr_runtime(vdp_addr vdp_addr)
 /*
 void vdp_dma_fill(
   vdp_cmd		dest,
-  u16 const count,
-  u8 const	value)
+  uint16_t const count,
+  uint8_t const	value)
 {
-  register u32 scratch_d, scratch_a;
+  register uint32_t scratch_d, scratch_a;
 
   // clang-format off
   asm volatile(
@@ -308,9 +309,9 @@ void vdp_dma_fill(
  * responsibility of the user
  */
 static inline void
-vdp_dma_transfer(char const * source, vdp_cmd dest, u16 const length)
+vdp_dma_transfer(char const * source, vdp_cmd dest, uint16_t const length)
 {
-  register u32 scratch_d, scratch_a;
+  register uint32_t scratch_d, scratch_a;
 
   // clang-format off
 	asm volatile(

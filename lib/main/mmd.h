@@ -25,7 +25,7 @@ extern "C" {
 static inline void const * init_mmd()
 {
   register void const * mmd_entry;
-  register u32          scratch_d0, scratch_a0, scratch_a1;
+  register uint32_t     scratch_d0, scratch_a0, scratch_a1;
 
   ga_main_wait_2m();
 

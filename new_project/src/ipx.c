@@ -1,4 +1,5 @@
 #include "shared.h"
+#include "shortcuts.h"
 #include <macro.h>
 
 // Module layout (Work RAM map in shared.h): code at the start of Work RAM,

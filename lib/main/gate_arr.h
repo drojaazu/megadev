@@ -14,7 +14,7 @@ extern "C" {
 #include <types.h>
 
 /** @brief Pointer to a 16 bit gate array register */
-typedef u16 volatile * ga_main_reg;
+typedef uint16_t volatile * ga_main_reg;
 
 /**
  * @typedef ga_main_reg_ro
@@ -22,7 +22,7 @@ typedef u16 volatile * ga_main_reg;
  * @details Note that `ga_main_reg const` does NOT mean this: it is a const
  * pointer to a mutable register, which enforces nothing at the point of use.
  */
-typedef u16 volatile const * ga_main_reg_ro;
+typedef uint16_t volatile const * ga_main_reg_ro;
 
 /**
  * @typedef ga_main_reg8
@@ -30,13 +30,13 @@ typedef u16 volatile const * ga_main_reg_ro;
  * @details Registers are 16 bit, but several are routinely accessed a byte at
  * a time; use with the _HI and _LO address definitions.
  */
-typedef u8 volatile * ga_main_reg8;
+typedef uint8_t volatile * ga_main_reg8;
 
 /**
  * @typedef ga_main_reg8_ro
  * @brief A byte register this CPU may read but not write
  */
-typedef u8 volatile const * ga_main_reg8_ro;
+typedef uint8_t volatile const * ga_main_reg8_ro;
 
 /**
  * @sa GA_MAIN_REG_COMFLAGS_MAIN, GA_MAIN_REG_COMFLAGS_SUB
@@ -195,7 +195,7 @@ static inline void ga_main_grant_2m()
  */
 static inline void ga_main_clear_comm_regs()
 {
-  register u32 scratch_d, scratch_a;
+  register uint32_t scratch_d, scratch_a;
 
   asm volatile(
     "\

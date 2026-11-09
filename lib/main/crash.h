@@ -39,15 +39,16 @@ extern "C" {
  * @brief CPU state saved by the crash handlers (layout in crash.def.h)
  */
 typedef struct CrashState {
-  u16 vector;      ///< Exception number (EXVEC_ID_*)
-  u16 sr;          ///< Status register when it occurred
-  u32 pc;          ///< Program counter pushed by the CPU
-  u32 access_addr; ///< Bus and address errors: the faulting access
-  u16 access_info; ///< Bus and address errors: R/W, I/N and function code bits
-  u16 ir;          ///< Bus and address errors: the instruction word
-  u32 d[8];        ///< D0 to D7
-  u32 a[8];        ///< A0 to A6, and A7 before the exception
-  u32 stack[CRASH_STACK_LONGS]; ///< The stack from A7 upward
+  uint16_t vector;      ///< Exception number (EXVEC_ID_*)
+  uint16_t sr;          ///< Status register when it occurred
+  uint32_t pc;          ///< Program counter pushed by the CPU
+  uint32_t access_addr; ///< Bus and address errors: the faulting access
+  uint16_t
+    access_info; ///< Bus and address errors: R/W, I/N and function code bits
+  uint16_t ir;   ///< Bus and address errors: the instruction word
+  uint32_t d[8]; ///< D0 to D7
+  uint32_t a[8]; ///< A0 to A6, and A7 before the exception
+  uint32_t stack[CRASH_STACK_LONGS]; ///< The stack from A7 upward
 } CrashState;
 
 /**

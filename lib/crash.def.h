@@ -36,16 +36,16 @@
  * @brief Byte offsets into a snapshot (CrashState in main/crash.h)
  * @{
  */
-#define CRASH_VECTOR      0   ///< u16: exception number
-#define CRASH_SR          2   ///< u16: status register when it occurred
-#define CRASH_PC          4   ///< u32: program counter pushed by the CPU
-#define CRASH_ACCESS_ADDR 8   ///< u32: bus/addr errors: the access
-#define CRASH_ACCESS_INFO 12  ///< u16: bus/addr errors: R/W, I/N, FC
-#define CRASH_IR          14  ///< u16: bus/addr errors: instruction
-#define CRASH_D           16  ///< u32[8]: D0 to D7
-#define CRASH_A           48  ///< u32[8]: A0 to A6, and A7 before the exception
-#define CRASH_STACK       80  ///< u32[8]: the stack from A7 upward
-#define CRASH_SIZE        112 ///< Size of a snapshot in bytes
+#define CRASH_VECTOR      0  ///< uint16_t: exception number
+#define CRASH_SR          2  ///< uint16_t: status register when it occurred
+#define CRASH_PC          4  ///< uint32_t: program counter pushed by the CPU
+#define CRASH_ACCESS_ADDR 8  ///< uint32_t: bus/addr errors: the access
+#define CRASH_ACCESS_INFO 12 ///< uint16_t: bus/addr errors: R/W, I/N, FC
+#define CRASH_IR          14 ///< uint16_t: bus/addr errors: instruction
+#define CRASH_D           16 ///< uint32_t[8]: D0 to D7
+#define CRASH_A     48  ///< uint32_t[8]: A0 to A6, and A7 before the exception
+#define CRASH_STACK 80  ///< uint32_t[8]: the stack from A7 upward
+#define CRASH_SIZE  112 ///< Size of a snapshot in bytes
 /** @} */
 
 /**

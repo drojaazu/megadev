@@ -1,6 +1,7 @@
 #ifndef MEGADEV__IPXSPX_EXAMPLE_IPX_H
 #define MEGADEV__IPXSPX_EXAMPLE_IPX_H
 
+#include "shortcuts.h"
 #include <types.h>
 
 enum Status { Falling = 1, Ending = 2, Null = 0 };

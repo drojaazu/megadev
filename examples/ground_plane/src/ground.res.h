@@ -1,4 +1,5 @@
 
+#include "shortcuts.h"
 #include "types.h"
 #include <main/bios.h>
 

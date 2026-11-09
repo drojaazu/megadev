@@ -18,6 +18,7 @@
 
 #include "ground.res.h"
 #include "shared.h"
+#include "shortcuts.h"
 #include "tables.h"
 #include <cpu.h>
 #include <macro.h>

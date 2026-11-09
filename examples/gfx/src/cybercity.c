@@ -1,3 +1,4 @@
+#include "shortcuts.h"
 #include <macro.h>
 
 // Module layout: run in place from 2M Word RAM, RAM in Work RAM below the

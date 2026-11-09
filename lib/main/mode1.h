@@ -24,7 +24,7 @@ extern "C" {
  */
 static inline bool mode1_detect()
 {
-  register u32 D0 asm("d0");
+  register uint32_t D0 asm("d0");
   asm volatile("jsr mode1_detect" : "=d"(D0) : : "cc");
   return D0 != 0;
 }
@@ -37,7 +37,7 @@ static inline bool mode1_detect()
  */
 static inline void * mode1_find_font()
 {
-  register u32 A1 asm("a1");
+  register uint32_t A1 asm("a1");
   asm volatile("jsr mode1_find_font" : "=a"(A1) : : "d0", "d1", "cc");
   return (void *) A1;
 }
@@ -48,15 +48,15 @@ static inline void * mode1_find_font()
  * @param size Size of the SP binary in bytes
  * @return MODE1_OK or a MODE1_ERR_* value
  */
-static inline u8 mode1_load_sub(void const * sp, u32 size)
+static inline uint8_t mode1_load_sub(void const * sp, uint32_t size)
 {
-  register u32 A0 asm("a0") = (u32) sp;
-  register u32 D0 asm("d0") = size;
+  register uint32_t A0 asm("a0") = (uint32_t) sp;
+  register uint32_t D0 asm("d0") = size;
   asm volatile("jsr mode1_load_sub"
                : "+d"(D0), "+a"(A0)
                :
                : "d1", "a1", "cc", "memory");
-  return (u8) D0;
+  return (uint8_t) D0;
 }
 
 #ifdef __cplusplus

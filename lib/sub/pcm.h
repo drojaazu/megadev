@@ -14,21 +14,23 @@ extern "C" {
 #include "pcm.def.h"
 #include "types.h"
 
-#define pcmreg_envelope \
-  ((volatile u8 *) PCMREG_ENVELOPE)             ///< @copybrief PCMREG_ENVELOPE
-#define pcmreg_pan ((volatile u8 *) PCMREG_PAN) ///< @copybrief PCMREG_PAN
-#define pcmreg_fade_lo                                            \
-  ((volatile u8 *) PCMREG_FADE_LO) ///< @copybrief PCMREG_FADE_LO
-#define pcmreg_fade_hi                                            \
-  ((volatile u8 *) PCMREG_FADE_HI) ///< @copybrief PCMREG_FADE_HI
-#define pcmreg_loop_lo                                            \
-  ((volatile u8 *) PCMREG_LOOP_LO) ///< @copybrief PCMREG_LOOP_LO
-#define pcmreg_loop_hi                                            \
-  ((volatile u8 *) PCMREG_LOOP_HI) ///< @copybrief PCMREG_LOOP_HI
-#define pcmreg_start ((u8 volatile *) PCMREG_START) ///< @copybrief PCMREG_START
-#define pcmreg_ctrl  ((volatile u8 *) PCMREG_CTRL)  ///< @copybrief PCMREG_CTRL
-#define pcmreg_ch_disable                                               \
-  ((volatile u8 *) PCMREG_CH_DISABLE) ///< @copybrief PCMREG_CH_DISABLE
+#define pcmreg_envelope                                                  \
+  ((volatile uint8_t *) PCMREG_ENVELOPE) ///< @copybrief PCMREG_ENVELOPE
+#define pcmreg_pan ((volatile uint8_t *) PCMREG_PAN) ///< @copybrief PCMREG_PAN
+#define pcmreg_fade_lo                                                 \
+  ((volatile uint8_t *) PCMREG_FADE_LO) ///< @copybrief PCMREG_FADE_LO
+#define pcmreg_fade_hi                                                 \
+  ((volatile uint8_t *) PCMREG_FADE_HI) ///< @copybrief PCMREG_FADE_HI
+#define pcmreg_loop_lo                                                 \
+  ((volatile uint8_t *) PCMREG_LOOP_LO) ///< @copybrief PCMREG_LOOP_LO
+#define pcmreg_loop_hi                                                 \
+  ((volatile uint8_t *) PCMREG_LOOP_HI) ///< @copybrief PCMREG_LOOP_HI
+#define pcmreg_start                                               \
+  ((uint8_t volatile *) PCMREG_START) ///< @copybrief PCMREG_START
+#define pcmreg_ctrl                                              \
+  ((volatile uint8_t *) PCMREG_CTRL) ///< @copybrief PCMREG_CTRL
+#define pcmreg_ch_disable                                                    \
+  ((volatile uint8_t *) PCMREG_CH_DISABLE) ///< @copybrief PCMREG_CH_DISABLE
 
 /**
  * @def WAVEBANK
@@ -50,13 +52,13 @@ extern "C" {
  * @brief PCM channel register values
  */
 typedef struct PcmChannelSettings {
-  u8 envelope;      ///< Envelope (volume), 0 to 0xFF
-  u8 panning;       ///< Panning: low nibble left, high nibble right
-  u8 freq_lo;       ///< Frequency delta, low byte
-  u8 freq_hi;       ///< Frequency delta, high byte
-  u8 loop_point_lo; ///< Loop start address, low byte
-  u8 loop_point_hi; ///< Loop start address, high byte
-  u8 start_point;   ///< Start address, high byte
+  uint8_t envelope;      ///< Envelope (volume), 0 to 0xFF
+  uint8_t panning;       ///< Panning: low nibble left, high nibble right
+  uint8_t freq_lo;       ///< Frequency delta, low byte
+  uint8_t freq_hi;       ///< Frequency delta, high byte
+  uint8_t loop_point_lo; ///< Loop start address, low byte
+  uint8_t loop_point_hi; ///< Loop start address, high byte
+  uint8_t start_point;   ///< Start address, high byte
 } PcmChannelSettings;
 
 /**
@@ -81,10 +83,10 @@ static inline void pcm_clear_ram_c()
  * @param settings Pointer to PcmChannelSettings
  */
 static inline void pcm_config_channel_c(
-  u8 const ctrlregChannel, PcmChannelSettings const * settings)
+  uint8_t const ctrlregChannel, PcmChannelSettings const * settings)
 {
-  register u8  d0_channel asm("d0") = ctrlregChannel;
-  register u32 a5_settings asm("a5") = (u32) settings;
+  register uint8_t  d0_channel asm("d0") = ctrlregChannel;
+  register uint32_t a5_settings asm("a5") = (uint32_t) settings;
 
   asm volatile(
     "\

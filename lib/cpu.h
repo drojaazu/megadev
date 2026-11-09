@@ -18,7 +18,7 @@ extern "C" {
  */
 static inline void disable_interrupts()
 {
-	asm("ori #0x700,sr");
+  asm("ori #0x700,sr");
 }
 
 /**
@@ -26,7 +26,7 @@ static inline void disable_interrupts()
  */
 static inline void enable_interrupts()
 {
-	asm("andi #0xF8FF,sr");
+  asm("andi #0xF8FF,sr");
 }
 
 /**
@@ -38,31 +38,31 @@ static inline void enable_interrupts()
  * caller's state and so nests safely. Use it in any routine that may run both
  * from the main program and from an interrupt handler.
  */
-static inline u16 mask_interrupts()
+static inline uint16_t mask_interrupts()
 {
-	u16 sr;
-	asm volatile("move.w %%sr, %0 \n\t ori #0x700, %%sr" : "=d"(sr) : : "cc");
-	return sr;
+  uint16_t sr;
+  asm volatile("move.w %%sr, %0 \n\t ori #0x700, %%sr" : "=d"(sr) : : "cc");
+  return sr;
 }
 
 /**
  * @brief Restore a status register saved by @ref mask_interrupts
  */
-static inline void restore_interrupts(u16 const sr)
+static inline void restore_interrupts(uint16_t const sr)
 {
-	asm volatile("move.w %0, %%sr" : : "d"(sr) : "cc");
+  asm volatile("move.w %0, %%sr" : : "d"(sr) : "cc");
 }
 
 /** @brief Issue the RESET instruction: pulses the reset line to the peripherals, the CPU itself keeps running */
 static inline void cpu_reset()
 {
-	asm("reset");
+  asm("reset");
 }
 
 /** @brief Halt the CPU with interrupts disabled; only a reset leaves this state */
 static inline void cpu_stop()
 {
-	asm("stop #0x700");
+  asm("stop #0x700");
 }
 
 #ifdef __cplusplus

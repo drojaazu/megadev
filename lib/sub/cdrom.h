@@ -26,7 +26,7 @@ extern "C" {
  * GA_SUB_REG_DMAADDR itself after selecting the destination, because writing
  * the destination resets that register.
  */
-extern u8 * filebuff;
+extern uint8_t * filebuff;
 
 /**
  * @brief Pointer to the zero-terminated filename string
@@ -39,24 +39,24 @@ extern char const * filename;
  * @brief Place an access operation value in this variable to begin
  * a load process
  */
-extern volatile u16 access_op;
+extern volatile uint16_t access_op;
 
 /**
  * @brief Contains the status of an access operation after it has completed
  */
-extern volatile u16 access_op_result;
+extern volatile uint16_t access_op_result;
 
 /**
  * @brief Size of the last succesfully loaded file, in bytes
  */
-extern volatile u32 filesize;
+extern volatile uint32_t filesize;
 
 /**
  * @var part_offset
  * @brief Sectors into the file at which the next load operation starts
  * @details Ignored when part_count is 0. The loop does not reset it.
  */
-extern volatile u32 part_offset;
+extern volatile uint32_t part_offset;
 
 /**
  * @var part_count
@@ -65,7 +65,7 @@ extern volatile u32 part_offset;
  * part_offset, whether or not the file is that long. The loop does not reset
  * it: load_file sets it to 0, load_file_part sets both.
  */
-extern volatile u32 part_count;
+extern volatile uint32_t part_count;
 
 /**
  * @brief Load a file from the disc and wait for it
@@ -75,8 +75,8 @@ extern volatile u32 part_count;
  * the destination memory for the DMA operations (see filebuff)
  * @return File size in bytes, or 0 on failure (see access_op_result)
  */
-static inline u32
-load_file(u16 const access_operation, char const * load_filename, u8 * buffer)
+static inline uint32_t load_file(
+  uint16_t const access_operation, char const * load_filename, uint8_t * buffer)
 {
   if (access_operation == 0)
     return CDROM_RESULT_OK;
@@ -109,12 +109,12 @@ load_file(u16 const access_operation, char const * load_filename, u8 * buffer)
  * For a PCM DMA destination the count is at most 2: the DMA address register
  * reaches one 4 KB wave RAM bank.
  */
-static inline u32 load_file_part(
-  u16 const    access_operation,
-  char const * load_filename,
-  u8 *         buffer,
-  u32          sector_offset,
-  u32          sector_count)
+static inline uint32_t load_file_part(
+  uint16_t const access_operation,
+  char const *   load_filename,
+  uint8_t *      buffer,
+  uint32_t       sector_offset,
+  uint32_t       sector_count)
 {
   filename = load_filename;
   filebuff = buffer;
@@ -137,8 +137,8 @@ static inline u32 load_file_part(
  */
 typedef struct FileInfo {
   char const filename[14]; ///< FILENAME.EXT;1, space padded
-  u32        offset;       ///< First sector
-  u32        size;         ///< Size in bytes
+  uint32_t   offset;       ///< First sector
+  uint32_t   size;         ///< Size in bytes
 } FileInfo;
 
 /**
@@ -147,8 +147,8 @@ typedef struct FileInfo {
  */
 static inline FileInfo * find_file_c(char const * filename)
 {
-  register u32 A0 asm("a0") = (u32) filename;
-  register u8  not_found;
+  register uint32_t A0 asm("a0") = (uint32_t) filename;
+  register uint8_t  not_found;
 
   // find_file: a0 in is the name, a0 out the entry; carry set means not found
   asm volatile(

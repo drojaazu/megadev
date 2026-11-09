@@ -26,7 +26,7 @@ extern "C" {
 /**
  * @brief The font, indexed by character minus 0x20
  */
-extern u8 const sysfont[SYSFONT_CHARS][8];
+extern uint8_t const sysfont[SYSFONT_CHARS][8];
 
 #ifdef __cplusplus
 }

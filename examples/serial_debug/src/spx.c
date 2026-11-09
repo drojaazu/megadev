@@ -1,5 +1,6 @@
 
 #include "shared.h"
+#include "shortcuts.h"
 #include <cpu.h>
 #include <macro.h>
 #include <sub/cdrom.h>

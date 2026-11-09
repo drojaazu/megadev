@@ -18,10 +18,10 @@
 extern "C" {
 #endif
 
+#include <cpu.h>
 #include <main/comm.def.h>
 #include <main/io.def.h>
 #include <main/z80.h>
-#include <cpu.h>
 #include <types.h>
 
 /**
@@ -35,7 +35,7 @@ extern "C" {
  */
 static inline void init_ext_port()
 {
-  u16 const sr = mask_interrupts();
+  uint16_t const sr = mask_interrupts();
   z80_request_bus();
   asm volatile(
     "\
@@ -63,11 +63,11 @@ static inline void init_ext_port()
  * SCTRL_RX_ERR_MASK and SCTRL_TX_FULL_MASK. Poll with this rather than reading
  * the register directly.
  */
-static inline u8 ext_status()
+static inline uint8_t ext_status()
 {
-  u16 const sr = mask_interrupts();
+  uint16_t const sr = mask_interrupts();
   z80_request_bus();
-  u8 const status = *((u8 volatile *) EXT_SCTRL);
+  uint8_t const status = *((uint8_t volatile *) EXT_SCTRL);
   z80_release_bus();
   restore_interrupts(sr);
   return status;
@@ -81,11 +81,11 @@ static inline u8 ext_status()
  * @ref ext_status. Read the status before the data register: reading RxData
  * clears the ready and error bits.
  */
-static inline u8 ext_read_byte()
+static inline uint8_t ext_read_byte()
 {
-  u16 const sr = mask_interrupts();
+  uint16_t const sr = mask_interrupts();
   z80_request_bus();
-  u8 const rx_data = *((u8 volatile *) EXT_RXDATA);
+  uint8_t const rx_data = *((uint8_t volatile *) EXT_RXDATA);
   z80_release_bus();
   restore_interrupts(sr);
   return rx_data;
@@ -99,7 +99,7 @@ static inline u8 ext_read_byte()
  * quality matters, poll @ref ext_status and test SCTRL_RX_ERR_MASK before
  * calling @ref ext_read_byte.
  */
-static inline u8 ext_rx()
+static inline uint8_t ext_rx()
 {
   while (! (ext_status() & SCTRL_RX_READY_MASK))
     ;
@@ -110,14 +110,14 @@ static inline u8 ext_rx()
 /**
  * @brief Send a byte, waiting for the transmitter to drain first
  */
-static inline void ext_tx(u8 const tx_data)
+static inline void ext_tx(uint8_t const tx_data)
 {
   while (ext_status() & SCTRL_TX_FULL_MASK)
     ;
 
-  u16 const sr = mask_interrupts();
+  uint16_t const sr = mask_interrupts();
   z80_request_bus();
-  *((u8 volatile *) EXT_TXDATA) = tx_data;
+  *((uint8_t volatile *) EXT_TXDATA) = tx_data;
   z80_release_bus();
   restore_interrupts(sr);
 }

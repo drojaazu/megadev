@@ -9,7 +9,6 @@
  * program's settings or on Boot ROM state.
  */
 
-#include <sysfont.h>
 #include <main/comm.h>
 #include <main/crash.h>
 #include <main/gate_arr.h>
@@ -17,6 +16,7 @@
 #include <main/text.h>
 #include <main/vdp.h>
 #include <stdio.h>
+#include <sysfont.h>
 
 #ifdef CRASH_FONT_BIOS
 #if TARGET == MEGADRIVE
@@ -28,9 +28,9 @@
 #define CRASH_PLANE     0xC000
 #define CRASH_FONT_TILE 0x20
 
-static u8 crash_row;
+static uint8_t crash_row;
 
-static char const * crash_name(u16 id)
+static char const * crash_name(uint16_t id)
 {
   switch (id) {
     case EXVEC_ID_BUS_ERROR:
@@ -68,11 +68,12 @@ static char const * crash_name(u16 id)
 // lea xxx.l, a1.
 static void const * crash_font(void)
 {
-  u16 const * slot = (u16 const *) BIOS_LOAD_FONT;
-  u16 const * p = (u16 const *) ((u8 const *) slot + 2 + (s16) slot[1]);
-  for (u8 i = 0; i < 16; ++i, ++p)
+  uint16_t const * slot = (uint16_t const *) BIOS_LOAD_FONT;
+  uint16_t const * p =
+    (uint16_t const *) ((uint8_t const *) slot + 2 + (int16_t) slot[1]);
+  for (uint8_t i = 0; i < 16; ++i, ++p)
     if (*p == 0x43F9)
-      return (void const *) (BOOT_ROM + (((u32) p[1] << 16) | p[2]));
+      return (void const *) (BOOT_ROM + (((uint32_t) p[1] << 16) | p[2]));
   return sysfont;
 }
 #else
@@ -81,7 +82,7 @@ static void const * crash_font(void)
 
 static void crash_screen(void)
 {
-  static u16 const regs[] = {
+  static uint16_t const regs[] = {
     0x8004, // mode 1
     0x8144, // mode 2: display on, mode 5, no interrupts, no DMA
     0x8200 | (CRASH_PLANE / 0x400), // plane A
@@ -99,7 +100,7 @@ static void crash_screen(void)
 
   while (vdp_ctrl & 2) // wait for any DMA to finish
     ;
-  for (u8 i = 0; i < sizeof regs / sizeof regs[0]; ++i)
+  for (uint8_t i = 0; i < sizeof regs / sizeof regs[0]; ++i)
     vdp_ctrl = regs[i];
 
   vdp_ctrl_32 = CRAM_W;
@@ -110,9 +111,9 @@ static void crash_screen(void)
 
   // planes A and B filled with spaces; sprite and scroll tables cleared
   vdp_ctrl_32 = to_vdp_addr(CRASH_PLANE) | VRAM_W;
-  for (u16 n = 0x3000 / 2; n; --n)
+  for (uint16_t n = 0x3000 / 2; n; --n)
     vdp_data = CRASH_FONT_TILE;
-  for (u16 n = 0x1000 / 2; n; --n)
+  for (uint16_t n = 0x1000 / 2; n; --n)
     vdp_data = 0;
 
   vdp_load_1bpp_tiles(crash_font(), SYSFONT_CHARS, CRASH_FONT_TILE, 1, 0);
@@ -123,9 +124,9 @@ static void crash_line(char const * text)
   text_print(
     text, VDP_PLANE_XY(CRASH_PLANE, 1, crash_row, Width64), CRASH_FONT_TILE);
   ++crash_row;
-  if (*(u8 volatile *) EXT_SCTRL & SCTRL_SERIAL_OUT_ENABLE_MASK) {
+  if (*(uint8_t volatile *) EXT_SCTRL & SCTRL_SERIAL_OUT_ENABLE_MASK) {
     for (; *text; ++text)
-      ext_tx((u8) *text);
+      ext_tx((uint8_t) *text);
     ext_tx('\r');
     ext_tx('\n');
   }
@@ -151,7 +152,7 @@ void crash_report(CrashState const * snapshot, char const * cpu)
   if (
     snapshot->vector == EXVEC_ID_BUS_ERROR ||
     snapshot->vector == EXVEC_ID_ADDRESS_ERROR) {
-    u16 const info = snapshot->access_info;
+    uint16_t const info = snapshot->access_info;
     // function code: 1 and 5 are data, 2 and 6 are program fetches
     snprintf(
       buf,
@@ -166,7 +167,7 @@ void crash_report(CrashState const * snapshot, char const * cpu)
     crash_line(buf);
   }
   crash_line("");
-  for (u8 i = 0; i < 8; ++i) {
+  for (uint8_t i = 0; i < 8; ++i) {
     snprintf(
       buf,
       sizeof buf,
@@ -179,7 +180,7 @@ void crash_report(CrashState const * snapshot, char const * cpu)
   }
   crash_line("");
   crash_line("STACK");
-  for (u8 i = 0; i < CRASH_STACK_LONGS; i += 4) {
+  for (uint8_t i = 0; i < CRASH_STACK_LONGS; i += 4) {
     snprintf(
       buf,
       sizeof buf,
@@ -200,7 +201,8 @@ void crash_check_sub(void)
   if (ga_main_reg_comstat5 != CRASH_SUB_SIGNAL)
     return;
 
-  u32 const addr = ((u32) ga_main_reg_comstat6 << 16) | ga_main_reg_comstat7;
+  uint32_t const addr =
+    ((uint32_t) ga_main_reg_comstat6 << 16) | ga_main_reg_comstat7;
 
   // take the Sub CPU's bus without resetting it, and select the Program RAM
   // bank that holds the snapshot
@@ -210,11 +212,11 @@ void crash_check_sub(void)
   ga_main_reg_memmode = (ga_main_reg_memmode & GA_MAIN_DMNA_MASK) |
                         FIELD_PREP(GA_MAIN_MEMMODE_BANK, addr >> 17);
 
-  CrashState          snapshot;
-  u8 const volatile * src =
-    (u8 const volatile *) (PRG_RAM_1M + (addr & 0x1FFFF));
-  u8 * dst = (u8 *) &snapshot;
-  for (u8 i = 0; i < sizeof snapshot; ++i)
+  CrashState               snapshot;
+  uint8_t const volatile * src =
+    (uint8_t const volatile *) (PRG_RAM_1M + (addr & 0x1FFFF));
+  uint8_t * dst = (uint8_t *) &snapshot;
+  for (uint8_t i = 0; i < sizeof snapshot; ++i)
     dst[i] = src[i];
 
   crash_report(&snapshot, "SUB");

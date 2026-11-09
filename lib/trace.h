@@ -27,7 +27,7 @@ extern "C" {
  * @details Unsigned. Covers 0 to 8191 with 1/8 dot precision. Sampling outside
  * the stamp map either wraps or reads 0, depending on GA_SUB_STAMPSIZE_REPEAT_MASK.
  */
-typedef u16 trace_pos;
+typedef uint16_t trace_pos;
 
 /**
  * @typedef trace_delta
@@ -36,11 +36,14 @@ typedef u16 trace_pos;
  * @details Ordinary signed two's complement, so normal C arithmetic on it is
  * correct.
  */
-typedef s16 trace_delta;
+typedef int16_t trace_delta;
 
 #define TRACE_POS_INT_BITS 13 ///< Integer bits of a trace vector start position
-#define TRACE_POS_FRAC_BITS (16 - TRACE_POS_INT_BITS) ///< Fractional bits of a trace vector start position
-#define TRACE_POS_SCALE (1 << TRACE_POS_FRAC_BITS) ///< One dot, as a start position
+#define TRACE_POS_FRAC_BITS                                                  \
+  (16 -                                                                      \
+   TRACE_POS_INT_BITS) ///< Fractional bits of a trace vector start position
+#define TRACE_POS_SCALE                                        \
+  (1 << TRACE_POS_FRAC_BITS) ///< One dot, as a start position
 
 /**
  * @def to_trace_pos
@@ -49,7 +52,7 @@ typedef s16 trace_delta;
 #define to_trace_pos(value) ((trace_pos) ((value) * (TRACE_POS_SCALE)))
 
 /** @brief Magnitude bits of a step; bit 15 is the sign */
-#define TRACE_DELTA_INT_BITS 4
+#define TRACE_DELTA_INT_BITS  4
 #define TRACE_DELTA_FRAC_BITS 11 ///< Fractional bits of a trace vector step
 #define TRACE_DELTA_SCALE (1 << TRACE_DELTA_FRAC_BITS) ///< One dot, as a step
 
@@ -71,15 +74,14 @@ typedef s16 trace_delta;
  */
 #define to_trace_delta(value) ((trace_delta) ((value) * TRACE_DELTA_SCALE))
 
-
 /**
  * @brief Reverse the direction of a step
  * @details Plain negation. Retained only so call sites read symmetrically with
  * to_trace_delta().
  */
-static inline trace_delta trace_delta_negate (trace_delta value)
+static inline trace_delta trace_delta_negate(trace_delta value)
 {
-	return (trace_delta) -value;
+  return (trace_delta) -value;
 }
 
 #ifdef __cplusplus

@@ -6,6 +6,7 @@
  * VBLANK handler. With a disc in the drive, has the Sub CPU load DATA.BIN
  * into Word RAM, by CPU copy and by DMA, and checks what arrived.
  */
+#include "shortcuts.h"
 #include <cpu.h>
 #include <main/bios.def.h>
 #include <main/bios.h>
