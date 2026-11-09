@@ -333,6 +333,10 @@ Megadev now provides a freestanding subset of the C standard library (`string.h`
 
 `types.h` now defines `size_t`, `ptrdiff_t` and the `intN_t` types from the compiler's own type macros. On the 68000 they are the same sizes as before; `int32_t` is `int` rather than `long`, which only matters to code that printed or cast them by name.
 
+## Fixed point: `FRAC_MASK` is `ONE`
+
+`FIX16_FRAC_MASK` and `FIX32_FRAC_MASK` in `fixed.h` were `1 << FRAC_BITS`, the value 1.0 rather than a mask, and are now `FIX16_ONE` and `FIX32_ONE`. The `*_to_int` macros return `int8_t`, `uint8_t`, `int16_t` or `uint16_t` rather than `char`, `unsigned char`, `short` or `unsigned short`, and the `f16`, `uf16`, `f32` and `uf32` typedefs are the `intN_t` types; sizes are unchanged.
+
 ## Shorthand integer types removed
 
 `types.h` no longer defines `u8`, `u16`, `u32`, `s8`, `s16`, `s32`, `sptr` or `uptr`. The kit's headers use `uint8_t`, `int16_t` and the other `intN_t` names throughout. A project that used the shorthand can either switch to the standard names or define the shorthand itself; the examples do the latter in a `src/shortcuts.h` that can be copied as is.
