@@ -15,6 +15,9 @@
 extern "C" {
 #endif
 
+/** @addtogroup libc
+ *  @{ */
+
 /** @brief c is '0' to '9' */
 static inline int isdigit(int c)
 {
@@ -69,6 +72,8 @@ static inline int tolower(int c)
 {
   return isupper(c) ? c + ('a' - 'A') : c;
 }
+
+/** @} */
 
 #ifdef __cplusplus
 }

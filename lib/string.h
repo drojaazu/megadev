@@ -19,6 +19,9 @@
 extern "C" {
 #endif
 
+/** @addtogroup libc
+ *  @{ */
+
 #include <types.h>
 
 /** @brief Copy n bytes from src to dest; the regions must not overlap
@@ -63,6 +66,8 @@ char * strcat(char * dest, char const * src);
 /** @brief Find the first occurrence of c in s
  * @return Pointer to it, or NULL */
 char * strchr(char const * s, int c);
+
+/** @} */
 
 #ifdef __cplusplus
 }

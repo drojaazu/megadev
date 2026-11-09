@@ -21,6 +21,9 @@
 extern "C" {
 #endif
 
+/** @addtogroup libc
+ *  @{ */
+
 #include <stdarg.h>
 #include <types.h>
 
@@ -36,6 +39,8 @@ int vsnprintf(char * buf, size_t n, char const * fmt, va_list args);
  * @return The length the full output would have had
  */
 int snprintf(char * buf, size_t n, char const * fmt, ...);
+
+/** @} */
 
 #ifdef __cplusplus
 }
