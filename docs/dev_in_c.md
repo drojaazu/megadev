@@ -2,6 +2,10 @@
 
 Writing your code in C rather than raw assembly can make development much easier.  However, there are some things you should keep in mind, especially if you are coming from a history development on PC.
 
+## Language Standard
+
+The kit and every project built with `megadev.make` are compiled as C23 with GNU extensions, `-std=gnu23`, which requires GCC 14 or later. `bool`, `true`, `false`, `nullptr`, `constexpr`, `typeof` and `auto` are keywords, binary literals and digit separators are available, and `[[maybe_unused]]` and the other standard attributes work. `#embed`, which includes a file's bytes as an initializer, arrived in GCC 15: the kit does not use it, so that GCC 14 remains sufficient, but a project built with GCC 15 or later may. Mind that the compiler chooses the type and alignment of an `#embed` array, so a resource that the hardware or a DMA needs on an even address still wants an explicit `alignas(2)`.
+
 ## Standard Library
 
 There is no C standard library in the PC development sense: no streams, no heap, no floating point values, no locales. Megadev provides a small freestanding subset of stdlib functions with standard names and semantics. Calls are linked only when used.
@@ -13,7 +17,7 @@ There is no C standard library in the PC development sense: no streams, no heap,
 | `stdio.h` | `snprintf`, `vsnprintf`: integer conversions, `%c`, `%s`, field width, `-` and `0` flags, `l` modifier |
 | `ctype.h` | `isdigit`, `isalpha`, `isalnum`, `isspace`, `isupper`, `islower`, `isxdigit`, `toupper`, `tolower`, ASCII only |
 | `assert.h` | `assert`, reporting over the serial port; see below |
-| `types.h` | `size_t`, `ptrdiff_t`, `bool` and the `intN_t` family |
+| `types.h` | `size_t`, `ptrdiff_t` and the `intN_t` family; `bool`, `true` and `false` are keywords in C23 |
 
 Deliberately absent: `malloc` and `free`, `printf` to a console, `FILE`, floating point, `setjmp`, wide characters, time and locale. A name from the C standard that Megadev does provide has the standard signature; Megadev's own routines have their own names. The 68000's 32-by-16 hardware divides, for example, are `divs16` and `divu16` in `math.h`, while `div` in `stdlib.h` is the standard function. The Boot ROM's print routines expect a string ending in `0xFF`, not `0x00`; `str_to_bios` in `str_util.h` converts a C string, such as `snprintf` output, to that form.
 

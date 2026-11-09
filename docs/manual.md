@@ -22,7 +22,7 @@ You should have a basic technical familiarity with the hardware before even begi
 
 ## Build Environment
 
-In order to compile code for the Mega Drive/CD, you will need a build environment that targets the M68000 CPU architecture. Megadev is designed to be used with GNU [binutils](https://www.gnu.org/software/binutils/) and [gcc](https://www.gnu.org/software/gcc/) compiled with the m68k-elf target. In addition, you will need `mkisofs` to generate the .iso disc image for Mega CD games.
+In order to compile code for the Mega Drive/CD, you will need a build environment that targets the M68000 CPU architecture. Megadev is designed to be used with GNU [binutils](https://www.gnu.org/software/binutils/) and [gcc](https://www.gnu.org/software/gcc/) compiled with the m68k-elf target. **GCC 14 or later is required**: the kit is compiled as C23 (`-std=gnu23`). In addition, you will need `mkisofs` to generate the .iso disc image for Mega CD games.
 
 ### Docker / Dev Container
 
@@ -287,7 +287,7 @@ This section will go over Megadev's features and how to use them.
 
 ## Supported Languages/Compilers
 
-Megadev supports C (with GCC extensions) and M68000 ASM. These can be mixed freely.
+Megadev supports C and M68000 ASM. These can be mixed freely. C is compiled as C23 with GNU extensions (`-std=gnu23`), which needs GCC 14 or later; `bool`, `true`, `false`, `nullptr` and `constexpr` are keywords. `#embed` needs GCC 15 and the kit itself does not use it, but a project built with a newer compiler may.
 
 We do not yet support Z80 ASM for the Mega Drive's Z80 coprocessor, but this is on the roadmap.
 
