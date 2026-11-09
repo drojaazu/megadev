@@ -99,8 +99,7 @@ clean:
 $(DISC_PATH)/ipx.mmd: \
 	main/ipx_init.s \
 	ipx.c \
-	crash_main.s \
-	io.macro.s
+	crash_main.s
 
 $(DISC_PATH)/ex1.mmd: \
 	shared_mmd_layout.c \

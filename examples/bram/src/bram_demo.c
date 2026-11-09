@@ -231,6 +231,10 @@ static void brmread()
 
   text_print("Success reading file", print_xy(1, 7), TEXT_TILE);
 
+  char info[40];
+  snprintf(info, sizeof info, "Size: %d blocks  Mode: %02X", size, mode);
+  text_print(info, print_xy(1, 8), TEXT_TILE);
+
   text_print("Value read: ", print_xy(1, 9), TEXT_TILE);
 
   print_value("%04X", readval, 12, 9);
