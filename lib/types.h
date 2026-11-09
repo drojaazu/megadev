@@ -39,16 +39,12 @@ typedef __PTRDIFF_TYPE__ ptrdiff_t;
 /** @brief Unsigned size of an object, as sizeof yields */
 typedef __SIZE_TYPE__ size_t;
 
-#ifndef __cplusplus
-/** @brief Boolean type, as stdbool.h defines it */
-#define bool _Bool
-/** @brief Boolean true */
-#define true 1
-/** @brief Boolean false */
-#define false 0
-/** @brief Set once bool, true and false are defined, as stdbool.h does */
+/**
+ * @brief Set as stdbool.h sets it; bool, true and false are C23 keywords
+ * @details The kit is compiled as C23 (`-std=gnu23`), so no definitions are
+ * needed. Code that needs stdbool.h for another compiler can include it.
+ */
 #define __bool_true_false_are_defined 1
-#endif
 
 /**
  * @typedef int8_t

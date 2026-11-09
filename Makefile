@@ -26,7 +26,7 @@ CHECK_DIR := build-check
 
 # The flags megadev.make gives a project, minus the project-specific header
 # strings, which no library header depends on.
-CHECK_FLAGS := -m68000 -imacros build.def.h -Ilib -Wa,-Ilib \
+CHECK_FLAGS := -m68000 -std=gnu23 -imacros build.def.h -Ilib -Wa,-Ilib \
 	-DPROJECT_ID=check -DREGION=US -DVIDEO=NTSC \
 	-fno-builtin -Wall -Wextra -Wno-main -Wa,--register-prefix-optional
 
@@ -437,7 +437,7 @@ check-asserts:
 # ---------------------------------------------------------------------------
 check-host:
 	@mkdir -p $(CHECK_DIR)
-	@$(HOST_CC) -std=c11 -Wall -Wextra -Werror -nostdinc -Ilib \
+	@$(HOST_CC) -std=c23 -Wall -Wextra -Werror -nostdinc -Ilib \
 	  -I$$($(HOST_CC) -print-file-name=include) \
 	  check/host/libc_test.c -o $(CHECK_DIR)/libc_test
 	@$(CHECK_DIR)/libc_test

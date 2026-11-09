@@ -85,6 +85,9 @@ replacement.
   `BRAM_SEARCH`, ...). Sega's names remain as aliases. `sub/cdboot.def.h` is
   now `sub/boot.def.h`.
 - Assembly macro files end in `.macro.s`.
+- C is compiled as C23 with GNU extensions (`-std=gnu23`), so `bool`, `true`
+  and `false` are keywords and `types.h` no longer defines them. GCC 14 or
+  later is required.
 - `fixed.h`: `FIX16_ONE` and `FIX32_ONE` replace `FIX16_FRAC_MASK` and
   `FIX32_FRAC_MASK`, which were the value 1.0 and not masks. The types and
   the `*_to_int` results are `intN_t` types; sizes are unchanged.
