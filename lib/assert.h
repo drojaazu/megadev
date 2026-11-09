@@ -19,6 +19,9 @@
 extern "C" {
 #endif
 
+/** @addtogroup libc
+ *  @{ */
+
 #ifdef NDEBUG
 
 /** @brief Does nothing: assertions are compiled out when NDEBUG is defined */
@@ -57,6 +60,8 @@ static inline void megadev_assert_fail(char const * where, char const * expr)
      : megadev_assert_fail(__FILE__ ":" MEGADEV_ASSERT_STR(__LINE__), #expr))
 
 #endif
+
+/** @} */
 
 #ifdef __cplusplus
 }

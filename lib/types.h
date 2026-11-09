@@ -16,6 +16,16 @@
 extern "C" {
 #endif
 
+/**
+ * @defgroup libc C library subset
+ * @brief The freestanding subset of the hosted C library that Megadev
+ * provides: `types.h`, `string.h`, `stdlib.h`, `stdio.h`, `ctype.h` and
+ * `assert.h`. A standard name has its standard signature and semantics.
+ * See the Standard Library section of `docs/dev_in_c.md` for what is
+ * deliberately absent.
+ * @{
+ */
+
 /** @brief Null pointer constant */
 #ifdef __cplusplus
 #define NULL nullptr
@@ -93,6 +103,8 @@ typedef __UINTPTR_TYPE__ uintptr_t;
 #define UINT8_MAX  0xFF       ///< Largest uint8_t
 #define UINT16_MAX 0xFFFF     ///< Largest uint16_t
 #define UINT32_MAX 0xFFFFFFFF ///< Largest uint32_t
+
+/** @} */
 
 #ifdef __cplusplus
 }

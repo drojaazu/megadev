@@ -415,3 +415,4 @@ A cartridge fails to link if the ROM exceeds 4 MB (`region 'rom' overflowed`), i
 | `cfg/module_mmd_newwork.ld` | Removed. Use `cfg/module_mmd.ld`. |
 | `sub/commsync.s` | Removed; it did not assemble. |
 | `sysfont.1bpp.chr` | Removed. Use the kit font, `sysfont.h`, or the Boot ROM font through `bios_load_font_defaults`. |
+| `str_util.s`, and `hextoa8`, `hextoa16`, `hextoa32` in `str_util.h` | Removed. Format with `snprintf` (`%02X`, `%04X`, `%08lX`) and, for the Boot ROM print routines, `str_to_bios`. The assembly routines were not in the runtime library in any case. |

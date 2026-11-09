@@ -2,7 +2,7 @@
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
  * @file str_util.h
- * @brief C wrappers for hex string conversion functions
+ * @brief String helpers beyond the C library
  */
 
 #pragma once
@@ -13,68 +13,6 @@ extern "C" {
 
 #include "str_util.def.h"
 #include "types.h"
-
-/** @brief ASCII digit for the low nibble of value: '0' to '9', 'A' to 'F' */
-static inline uint8_t _hextoa(register uint8_t value)
-{
-  value &= 0x0f;
-  if (value <= 9)
-    value += 0x30;
-  else
-    value += 0x37;
-  return value;
-}
-
-/**
- * @brief Convert an 8 bit value to a hexadecimal ASCII string
- */
-static inline void hextoa8(register uint8_t value, register char * const string)
-{
-  register char * output = string;
-  asm("rol.b #4, %[value]" : [value] "+d"(value));
-  *output++ = _hextoa(value);
-  asm("rol.b #4, %[value]" : [value] "+d"(value));
-  *output++ = _hextoa(value);
-  *output = STRING_TERMINATOR;
-}
-
-/**
- * @brief Convert a 16 bit value to a hexadecimal ASCII string
- */
-static inline void
-hextoa16(register uint16_t value, register char * const string)
-{
-  register char * output = string;
-  asm("rol.w #4, %[value]" : [value] "+d"(value));
-  *output++ = _hextoa(value);
-  asm("rol.w #4, %[value]" : [value] "+d"(value));
-  *output++ = _hextoa(value);
-  asm("rol.w #4, %[value]" : [value] "+d"(value));
-  *output++ = _hextoa(value);
-  asm("rol.w #4, %[value]" : [value] "+d"(value));
-  *output++ = _hextoa(value);
-  *output = STRING_TERMINATOR;
-}
-
-/**
- * @brief Convert a 32 bit value to a hexadecimal ASCII string
- */
-static inline void
-hextoa32(register uint32_t value, register char * const string)
-{
-  register char * output = string;
-  for (uint8_t i = 0; i < 2; ++i) {
-    asm("rol.l #4, %[value]" : [value] "+d"(value));
-    *output++ = _hextoa(value);
-    asm("rol.l #4, %[value]" : [value] "+d"(value));
-    *output++ = _hextoa(value);
-    asm("rol.l #4, %[value]" : [value] "+d"(value));
-    *output++ = _hextoa(value);
-    asm("rol.l #4, %[value]" : [value] "+d"(value));
-    *output++ = _hextoa(value);
-  }
-  *output = STRING_TERMINATOR;
-}
 
 /**
  * @brief Compare two strings up to a terminator character

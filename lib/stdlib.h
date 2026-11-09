@@ -18,6 +18,9 @@
 extern "C" {
 #endif
 
+/** @addtogroup libc
+ *  @{ */
+
 #include <types.h>
 
 /** @brief Result of div */
@@ -108,6 +111,8 @@ void qsort(void * base, size_t count, size_t size,
 
 #define LONG_MAX __LONG_MAX__ ///< Largest long
 #define LONG_MIN (-LONG_MAX - 1L) ///< Smallest long
+
+/** @} */
 
 #ifdef __cplusplus
 }

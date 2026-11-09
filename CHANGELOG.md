@@ -72,6 +72,8 @@ replacement.
   assembly caller's view: registers in, registers out, registers clobbered,
   and the macros. Implementation files (`lib/runtime`, the security block)
   are not input either.
+  The C library subset is one Doxygen module, `libc`, so every emulated
+  standard function is listed on one page.
 - Gate array names carry their CPU side: `GA_MAIN_*` / `GA_SUB_*`,
   `ga_main_*` / `ga_sub_*`. A program can include both sides, as Mode 1
   requires.
@@ -120,6 +122,9 @@ replacement.
 - `sub/commsync.s`, `cfg/module_mmd_newwork.ld` and `cfg/module_bin.ld`,
   which did not assemble or were unused.
 - `main/cd_exception.s`, replaced by the crash handler.
+- `str_util.s` and the C `hextoa8`, `hextoa16` and `hextoa32`. Format with
+  `snprintf` (`%02X`, `%04X`, `%08lX`) and convert the result for the Boot
+  ROM with `str_to_bios`. `strcmpt` and `str_to_bios` remain in `str_util.h`.
 - `lib/sysfont.1bpp.chr`, an unused copy of the Boot ROM font, which is
   Sega's.
 - The `hello_world` example. `docs/boot.md` describes the IP, and the
@@ -170,12 +175,11 @@ replacement.
 - `memset` and `memcpy` handle lengths of 0 and over 64 KB.
 - Serial status flags tested the wrong bits; `ext_tx` and `ext_rx` did not
   compile; the serial init macro called macros that do not exist.
-- C `hextoa` writes the 0xFF terminator the Boot ROM print routines expect.
 - Headers that defined functions or variables no longer cause duplicate
   symbols when included from two files.
 - Several inline wrappers that failed to compile when used now compile.
 - `cd_exception.s` links (misspelled vector name).
-- `vdp.s` and `str_util.s` assemble.
+- `vdp.s` assembles.
 - The `pcm_playback` example builds from a fresh clone.
 - Example `clean` targets work.
 - The `bram` and `pcm_playback` Sub CPU modules initialize their variables.
