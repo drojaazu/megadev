@@ -333,6 +333,10 @@ Megadev now provides a freestanding subset of the C standard library (`string.h`
 
 `types.h` now defines `size_t`, `ptrdiff_t` and the `intN_t` types from the compiler's own type macros. On the 68000 they are the same sizes as before; `int32_t` is `int` rather than `long`, which only matters to code that printed or cast them by name.
 
+## Shorthand integer types removed
+
+`types.h` no longer defines `u8`, `u16`, `u32`, `s8`, `s16`, `s32`, `sptr` or `uptr`. The kit's headers use `uint8_t`, `int16_t` and the other `intN_t` names throughout. A project that used the shorthand can either switch to the standard names or define the shorthand itself; the examples do the latter in a `src/shortcuts.h` that can be copied as is.
+
 # Module startup code
 
 ## Every module must link startup code

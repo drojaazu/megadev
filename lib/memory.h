@@ -23,7 +23,7 @@ extern "C" {
  */
 /** @brief Fill length bytes at dest with value
  * @details Inline 68000 loop; a length of 0 does nothing. */
-static inline void memset8(u8 value, void * dest, u32 length)
+static inline void memset8(uint8_t value, void * dest, uint32_t length)
 {
   if (length == 0)
     return;
@@ -45,7 +45,7 @@ static inline void memset8(u8 value, void * dest, u32 length)
  */
 /** @brief Fill length words at dest with value
  * @details Inline 68000 loop; a length of 0 does nothing. */
-static inline void memset16(u16 value, void * dest, u32 length)
+static inline void memset16(uint16_t value, void * dest, uint32_t length)
 {
   if (length == 0)
     return;
@@ -67,7 +67,7 @@ static inline void memset16(u16 value, void * dest, u32 length)
  */
 /** @brief Fill length longs at dest with value
  * @details Inline 68000 loop; a length of 0 does nothing. */
-static inline void memset32(u32 value, void * dest, u32 length)
+static inline void memset32(uint32_t value, void * dest, uint32_t length)
 {
   if (length == 0)
     return;
@@ -89,7 +89,7 @@ static inline void memset32(u32 value, void * dest, u32 length)
  */
 /** @brief Copy length bytes from src to dest
  * @details Inline 68000 loop; a length of 0 does nothing. */
-static inline void memcpy8(u8 * src, u8 * dest, u32 length)
+static inline void memcpy8(uint8_t * src, uint8_t * dest, uint32_t length)
 {
   if (length == 0)
     return;
@@ -111,7 +111,8 @@ static inline void memcpy8(u8 * src, u8 * dest, u32 length)
  */
 /** @brief Copy length words from src to dest
  * @details Inline 68000 loop; a length of 0 does nothing. */
-static inline void memcpy16(u16 const * src, u16 * dest, u32 length)
+static inline void
+memcpy16(uint16_t const * src, uint16_t * dest, uint32_t length)
 {
   if (length == 0)
     return;
@@ -133,7 +134,8 @@ static inline void memcpy16(u16 const * src, u16 * dest, u32 length)
  */
 /** @brief Copy length longs from src to dest
  * @details Inline 68000 loop; a length of 0 does nothing. */
-static inline void memcpy32(u32 const * src, u32 * dest, u32 length)
+static inline void
+memcpy32(uint32_t const * src, uint32_t * dest, uint32_t length)
 {
   if (length == 0)
     return;

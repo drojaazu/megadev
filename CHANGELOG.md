@@ -83,6 +83,10 @@ replacement.
   `BRAM_SEARCH`, ...). Sega's names remain as aliases. `sub/cdboot.def.h` is
   now `sub/boot.def.h`.
 - Assembly macro files end in `.macro.s`.
+- `types.h` defines only the standard names: `size_t`, `ptrdiff_t`, `bool`
+  and the `intN_t` family. The `u8`/`s8` to `u32`/`s32` shorthand and
+  `sptr`/`uptr` are gone from the kit; the examples define the shorthand they
+  use in their own `src/shortcuts.h`.
 - Module layouts can be declared in C with `GLOBAL_SYM` (`macro.h`).
   `GLOBAL_SYM` and the assembly `GLOBAL` macro make their symbols hidden.
 - Resident modules: a module links against a resident module's exported

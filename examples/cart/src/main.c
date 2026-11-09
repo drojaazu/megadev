@@ -1,4 +1,5 @@
 #include "res.h"
+#include "shortcuts.h"
 #include <cpu.h>
 #include <main/io.h>
 #include <main/memmap.h>

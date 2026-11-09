@@ -14,7 +14,7 @@ extern "C" {
 #include <types.h>
 
 /** @brief Pointer to a 16 bit gate array register */
-typedef u16 volatile * ga_sub_reg;
+typedef uint16_t volatile * ga_sub_reg;
 
 /**
  * @typedef ga_sub_reg_ro
@@ -22,7 +22,7 @@ typedef u16 volatile * ga_sub_reg;
  * @details Note that `ga_sub_reg const` does NOT mean this: it is a const pointer
  * to a mutable register, which enforces nothing at the point of use.
  */
-typedef u16 volatile const * ga_sub_reg_ro;
+typedef uint16_t volatile const * ga_sub_reg_ro;
 
 /**
  * @typedef ga_sub_reg8
@@ -30,13 +30,13 @@ typedef u16 volatile const * ga_sub_reg_ro;
  * @details Registers are 16 bit, but several are routinely accessed a byte at
  * a time; use with the _HI and _LO address definitions.
  */
-typedef u8 volatile * ga_sub_reg8;
+typedef uint8_t volatile * ga_sub_reg8;
 
 /**
  * @typedef ga_sub_reg8_ro
  * @brief A byte register this CPU may read but not write
  */
-typedef u8 volatile const * ga_sub_reg8_ro;
+typedef uint8_t volatile const * ga_sub_reg8_ro;
 
 /** @copydoc GA_SUB_REG_LED */
 #define ga_sub_reg_led (*((ga_sub_reg8) GA_SUB_REG_LED))

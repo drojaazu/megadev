@@ -1,5 +1,6 @@
 #include "ipx.h"
 #include "shared.h"
+#include "shortcuts.h"
 #include <cpu.h>
 #include <main/bios.h>
 #include <main/io.def.h>

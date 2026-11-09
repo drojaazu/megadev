@@ -1,6 +1,7 @@
 #ifndef RES_H
 #define RES_H
 
+#include "shortcuts.h"
 #include "types.h"
 
 typedef struct {

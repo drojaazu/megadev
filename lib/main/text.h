@@ -27,8 +27,8 @@
 extern "C" {
 #endif
 
-#include <sysfont.h>
 #include <main/vdp.h>
+#include <sysfont.h>
 #include <types.h>
 
 /**
@@ -38,7 +38,7 @@ extern "C" {
  * @param bg Palette index (0 to 15) for clear pixels
  * @return The row as written to VRAM, the leftmost pixel in the top nibble
  */
-u32 text_expand_row(u8 bits, u8 fg, u8 bg);
+uint32_t text_expand_row(uint8_t bits, uint8_t fg, uint8_t bg);
 
 /**
  * @brief Load 1bpp 8x8 tiles into VRAM as 4bpp tiles
@@ -53,7 +53,11 @@ u32 text_expand_row(u8 bits, u8 fg, u8 bg);
  * @endcode
  */
 void vdp_load_1bpp_tiles(
-  void const * src, u16 count, u16 tile_index, u8 fg, u8 bg);
+  void const * src,
+  uint16_t     count,
+  uint16_t     tile_index,
+  uint8_t      fg,
+  uint8_t      bg);
 
 /**
  * @brief Write a NUL-terminated string to a plane
@@ -68,7 +72,7 @@ void vdp_load_1bpp_tiles(
  * text_print(buf, VDP_PLANE_XY(0xC000, 1, 1, Width64), 0x20);
  * @endcode
  */
-void text_print(char const * string, vdp_cmd pos, u16 tile_base);
+void text_print(char const * string, vdp_cmd pos, uint16_t tile_base);
 
 #ifdef __cplusplus
 }

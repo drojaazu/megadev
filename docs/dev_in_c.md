@@ -13,7 +13,7 @@ There is no C standard library in the PC development sense: no streams, no heap,
 | `stdio.h` | `snprintf`, `vsnprintf`: integer conversions, `%c`, `%s`, field width, `-` and `0` flags, `l` modifier |
 | `ctype.h` | `isdigit`, `isalpha`, `isalnum`, `isspace`, `isupper`, `islower`, `isxdigit`, `toupper`, `tolower`, ASCII only |
 | `assert.h` | `assert`, reporting over the serial port; see below |
-| `types.h` | `size_t`, `ptrdiff_t`, the `intN_t` family and Megadev's `u8`, `s16` and so on |
+| `types.h` | `size_t`, `ptrdiff_t`, `bool` and the `intN_t` family |
 
 Deliberately absent: `malloc` and `free`, `printf` to a console, `FILE`, floating point, `setjmp`, wide characters, time and locale. A name from the C standard that Megadev does provide has the standard signature; Megadev's own routines have their own names. The 68000's 32-by-16 hardware divides, for example, are `divs16` and `divu16` in `math.h`, while `div` in `stdlib.h` is the standard function. The Boot ROM's print routines expect a string ending in `0xFF`, not `0x00`; `str_to_bios` in `str_util.h` converts a C string, such as `snprintf` output, to that form.
 
@@ -84,7 +84,7 @@ Modules also define `_INIT_ORIGIN` and `_INIT_LENGTH`, the startup code at the s
 
 We recommend *not* using the `int` type for integers. With gcc-m68k, int is four bytes in size, which may be a waste of space depending on the operation you are trying to perform. Memory usage should always be optimized.
 
-Instead, use the sized types (`char`, `short`, `long`) or better yet their typedefs for clarity (`s8`/`u8`, `s16`/`u16`, `s32`/`u32`). 
+Instead, use the sized types (`char`, `short`, `long`) or better yet the `intN_t` typedefs from `types.h` (`int8_t`/`uint8_t`, `int16_t`/`uint16_t`, `int32_t`/`uint32_t`). 
 
 ## Fractional Types
 

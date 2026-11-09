@@ -14,9 +14,9 @@ extern "C" {
 
 #include <main/md_sys.def.h>
 
-#define hw_version (*((u8 const volatile *) HW_VERSION))
+#define hw_version (*((uint8_t const volatile *) HW_VERSION))
 
-#define tmss (*((u8 volatile *) TMSS))
+#define tmss (*((uint8_t volatile *) TMSS))
 
 #ifdef __cplusplus
 }

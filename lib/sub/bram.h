@@ -16,9 +16,9 @@ extern "C" {
 #include <sub/memmap.def.h>
 
 /** @brief Work area the Backup RAM manager requires (lib/runtime/bram_buffers.c) */
-extern u8 bram_work_buff[0x640];
+extern uint8_t bram_work_buff[0x640];
 /** @brief Buffer for the display strings bram_init returns */
-extern u8 bram_string_buff[12];
+extern uint8_t bram_string_buff[12];
 
 /**
  * @brief Backup RAM state reported by bram_init
@@ -35,7 +35,7 @@ enum BramStatus {
  * @brief Results of bram_init
  */
 typedef struct BramInitResult {
-  u16             bram_size; ///< Size in blocks of 64 bytes
+  uint16_t        bram_size; ///< Size in blocks of 64 bytes
   enum BramStatus status;    ///< State of the Backup RAM
   char *          strings;   ///< Display strings (bram_string_buff)
 } BramInitResult;
@@ -51,12 +51,12 @@ typedef struct BramInitResult {
  */
 static inline void bram_init(BramInitResult * init_status)
 {
-  register u32 a0_bram_work_buff asm("a0") = (u32) bram_work_buff;
-  register u32 a1_bram_string_buff asm("a1") = (u32) bram_string_buff;
-  register u16 d0_fcode asm("d0") = BRAM_INIT;
+  register uint32_t a0_bram_work_buff asm("a0") = (uint32_t) bram_work_buff;
+  register uint32_t a1_bram_string_buff asm("a1") = (uint32_t) bram_string_buff;
+  register uint16_t d0_fcode asm("d0") = BRAM_INIT;
 
-  register u16 d0_bram_size asm("d0");
-  register u16 d1_bram_status asm("d1");
+  register uint16_t d0_bram_size asm("d0");
+  register uint16_t d1_bram_status asm("d1");
 
   asm(
     "\
@@ -82,8 +82,8 @@ static inline void bram_init(BramInitResult * init_status)
  * @brief Results of bram_status
  */
 typedef struct BramStatusResult {
-  u16 free;      ///< Free space in blocks
-  u16 filecount; ///< Number of files
+  uint16_t free;      ///< Free space in blocks
+  uint16_t filecount; ///< Number of files
 } BramStatusResult;
 
 /** @brief Where bram_status leaves its result */
@@ -94,11 +94,11 @@ extern BramStatusResult bram_status_result;
  */
 static inline BramStatusResult * bram_status()
 {
-  register u16 d0_fcode asm("d0") = BRAM_STATUS;
-  register u32 a1_bram_string_buff asm("a1") = (u32) bram_string_buff;
+  register uint16_t d0_fcode asm("d0") = BRAM_STATUS;
+  register uint32_t a1_bram_string_buff asm("a1") = (uint32_t) bram_string_buff;
 
-  register u16 d0_free asm("d0");
-  register u16 d1_filecount asm("d1");
+  register uint16_t d0_free asm("d0");
+  register uint16_t d1_filecount asm("d1");
 
   asm(
     "\
@@ -117,9 +117,9 @@ static inline BramStatusResult * bram_status()
  * @brief Results of bram_search
  */
 typedef struct BramSearchResult {
-  u16  filesize; ///< Size in blocks
-  u16  mode;     ///< 0 normal, 0xFF protected (encoded)
-  u8 * dataptr;  ///< Start of the file data in Backup RAM
+  uint16_t  filesize; ///< Size in blocks
+  uint16_t  mode;     ///< 0 normal, 0xFF protected (encoded)
+  uint8_t * dataptr;  ///< Start of the file data in Backup RAM
 } BramSearchResult;
 
 /** @brief Where bram_search leaves its result */
@@ -130,12 +130,12 @@ extern BramSearchResult bram_search_result;
  */
 static inline BramSearchResult * bram_search(char const * filename)
 {
-  register u16          d0_fcode asm("d0") = BRAM_SEARCH;
+  register uint16_t     d0_fcode asm("d0") = BRAM_SEARCH;
   register void const * a0_filename asm("a0") = filename;
 
-  register u16    d0_filesize asm("d0");
-  register u16    d1_filemode asm("d1");
-  register void * a0_dataptr asm("a0");
+  register uint16_t d0_filesize asm("d0");
+  register uint16_t d1_filemode asm("d1");
+  register void *   a0_dataptr asm("a0");
 
   // if the file is not found, we'll return null
   // the user should check that the dataptr member of the struct
@@ -154,7 +154,7 @@ static inline BramSearchResult * bram_search(char const * filename)
   if (a0_dataptr == NULL)
     return NULL;
 
-  bram_search_result.dataptr = (u8 *) a0_dataptr;
+  bram_search_result.dataptr = (uint8_t *) a0_dataptr;
   bram_search_result.filesize = d0_filesize;
   bram_search_result.mode = d1_filemode;
   return &bram_search_result;
@@ -164,9 +164,9 @@ static inline BramSearchResult * bram_search(char const * filename)
  * @brief Results of bram_read
  */
 typedef struct BramReadResult {
-  bool success;  ///< The file was read
-  u16  filesize; ///< Size in blocks
-  u8   mode;     ///< 0 normal, 0xFF protected (encoded)
+  bool     success;  ///< The file was read
+  uint16_t filesize; ///< Size in blocks
+  uint8_t  mode;     ///< 0 normal, 0xFF protected (encoded)
 } BramReadResult;
 
 /** @brief Where bram_read leaves its result */
@@ -175,14 +175,15 @@ extern BramReadResult bram_read_result;
 /**
  * @sa BRAM_READ
  */
-static inline BramReadResult * bram_read(char const * filename, u8 * buffer)
+static inline BramReadResult *
+bram_read(char const * filename, uint8_t * buffer)
 {
-  register u16 d0_fcode asm("d0") = BRAM_READ;
-  register u32 a0_filename asm("a0") = (u32) filename;
-  register u32 a1_buffer asm("a1") = (u32) buffer;
+  register uint16_t d0_fcode asm("d0") = BRAM_READ;
+  register uint32_t a0_filename asm("a0") = (uint32_t) filename;
+  register uint32_t a1_buffer asm("a1") = (uint32_t) buffer;
 
-  register u16 d0_size asm("d0");
-  register u8  d1_mode asm("d1");
+  register uint16_t d0_size asm("d0");
+  register uint8_t  d1_mode asm("d1");
 
   asm(
     "\
@@ -210,18 +211,18 @@ static inline BramReadResult * bram_read(char const * filename, u8 * buffer)
  */
 typedef struct BramFileInfo {
   char const filename[11]; ///< File name, 11 characters, space padded
-  u8         mode;         ///< 0 normal, 0xFF protected (encoded)
-  u16        blocksize;    ///< Size in blocks
+  uint8_t    mode;         ///< 0 normal, 0xFF protected (encoded)
+  uint16_t   blocksize;    ///< Size in blocks
 } BramFileInfo;
 
 /**
  * @sa BRAM_WRITE
  */
-static inline bool bram_write(BramFileInfo const * params, u8 const * data)
+static inline bool bram_write(BramFileInfo const * params, uint8_t const * data)
 {
-  register u16 d0_fcode asm("d0") = BRAM_WRITE;
-  register u32 a0_params asm("a0") = (u32) params;
-  register u32 a1_data asm("a1") = (u32) data;
+  register uint16_t d0_fcode asm("d0") = BRAM_WRITE;
+  register uint32_t a0_params asm("a0") = (uint32_t) params;
+  register uint32_t a1_data asm("a1") = (uint32_t) data;
 
   asm goto(
     "\
@@ -246,8 +247,8 @@ failed:
  */
 static inline bool bram_delete(char const (*filename)[11])
 {
-  register u16 D0 asm("d0") = BRAM_DELETE;
-  register u32 A0 asm("a0") = (u32) filename;
+  register uint16_t D0 asm("d0") = BRAM_DELETE;
+  register uint32_t A0 asm("a0") = (uint32_t) filename;
 
   asm goto(
     "\
@@ -269,12 +270,16 @@ failed:
  * @sa BRAM_DIRECTORY
  */
 static inline bool bram_directory(
-  char const * filename, u8 * dirbuffer, u16 const fileskip, u16 const dirsize)
+  char const *   filename,
+  uint8_t *      dirbuffer,
+  uint16_t const fileskip,
+  uint16_t const dirsize)
 {
-  register u16 d0_fcode asm("d0") = BRAM_DIRECTORY;
-  register u32 a0_filename asm("a0") = (u32) filename;
-  register u32 a1_dirbuffer asm("a1") = (u32) dirbuffer;
-  register u32 d1_params asm("d1") = (u32) ((fileskip << 16) + dirsize);
+  register uint16_t d0_fcode asm("d0") = BRAM_DIRECTORY;
+  register uint32_t a0_filename asm("a0") = (uint32_t) filename;
+  register uint32_t a1_dirbuffer asm("a1") = (uint32_t) dirbuffer;
+  register uint32_t d1_params asm("d1") =
+    (uint32_t) ((fileskip << 16) + dirsize);
 
   asm goto(
     "\
@@ -301,7 +306,7 @@ too_large:
  */
 static inline bool bram_format()
 {
-  register u16 D0 asm("d0") = BRAM_FORMAT;
+  register uint16_t D0 asm("d0") = BRAM_FORMAT;
 
   asm goto(
     "\
@@ -333,9 +338,9 @@ enum BramVerifyStatus {
  */
 static inline enum BramVerifyStatus bram_verify(BramFileInfo const * params)
 {
-  register u16 d0_fcode asm("d0") = BRAM_VERIFY;
-  register u32 A0 asm("a0") = (u32) params;
-  register u16 d0_result asm("d0");
+  register uint16_t d0_fcode asm("d0") = BRAM_VERIFY;
+  register uint32_t A0 asm("a0") = (uint32_t) params;
+  register uint16_t d0_result asm("d0");
 
   asm(
     "\

@@ -11,11 +11,11 @@
 extern "C" {
 #endif
 
-#include "types.h"
 #include "str_util.def.h"
+#include "types.h"
 
 /** @brief ASCII digit for the low nibble of value: '0' to '9', 'A' to 'F' */
-static inline u8 _hextoa(register u8 value)
+static inline uint8_t _hextoa(register uint8_t value)
 {
   value &= 0x0f;
   if (value <= 9)
@@ -28,7 +28,7 @@ static inline u8 _hextoa(register u8 value)
 /**
  * @brief Convert an 8 bit value to a hexadecimal ASCII string
  */
-static inline void hextoa8(register u8 value, register char * const string)
+static inline void hextoa8(register uint8_t value, register char * const string)
 {
   register char * output = string;
   asm("rol.b #4, %[value]" : [value] "+d"(value));
@@ -41,7 +41,8 @@ static inline void hextoa8(register u8 value, register char * const string)
 /**
  * @brief Convert a 16 bit value to a hexadecimal ASCII string
  */
-static inline void hextoa16(register u16 value, register char * const string)
+static inline void
+hextoa16(register uint16_t value, register char * const string)
 {
   register char * output = string;
   asm("rol.w #4, %[value]" : [value] "+d"(value));
@@ -58,11 +59,11 @@ static inline void hextoa16(register u16 value, register char * const string)
 /**
  * @brief Convert a 32 bit value to a hexadecimal ASCII string
  */
-static inline void hextoa32(register u32 value, register char * const string)
+static inline void
+hextoa32(register uint32_t value, register char * const string)
 {
   register char * output = string;
-  for (u8 i = 0; i < 2; ++i)
-  {
+  for (uint8_t i = 0; i < 2; ++i) {
     asm("rol.l #4, %[value]" : [value] "+d"(value));
     *output++ = _hextoa(value);
     asm("rol.l #4, %[value]" : [value] "+d"(value));
@@ -85,8 +86,7 @@ static inline void hextoa32(register u32 value, register char * const string)
 static inline bool
 strcmpt(char const * str1, char const * str2, char terminator)
 {
-  while (*str1 != terminator && (*str1 == *str2))
-  {
+  while (*str1 != terminator && (*str1 == *str2)) {
     str1++;
     str2++;
   }

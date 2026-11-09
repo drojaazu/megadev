@@ -36,7 +36,7 @@ static inline void bios_wait_vsync()
  */
 static inline void bios_audio_stop()
 {
-  register u16 D0 asm("d0") = BIOS_AUDIO_STOP;
+  register uint16_t D0 asm("d0") = BIOS_AUDIO_STOP;
 
   asm volatile(
     "\
@@ -56,7 +56,7 @@ static inline void bios_audio_stop()
  */
 static inline void bios_audio_pause()
 {
-  register u16 D0 asm("d0") = BIOS_AUDIO_PAUSE;
+  register uint16_t D0 asm("d0") = BIOS_AUDIO_PAUSE;
 
   asm volatile(
     "\
@@ -76,7 +76,7 @@ static inline void bios_audio_pause()
  */
 static inline void bios_audio_resume()
 {
-  register u16 D0 asm("d0") = BIOS_AUDIO_RESUME;
+  register uint16_t D0 asm("d0") = BIOS_AUDIO_RESUME;
 
   asm volatile(
     "\
@@ -93,7 +93,7 @@ static inline void bios_audio_resume()
  */
 static inline void bios_audio_scan_forward()
 {
-  register u16 D0 asm("d0") = BIOS_AUDIO_SCAN_FORWARD;
+  register uint16_t D0 asm("d0") = BIOS_AUDIO_SCAN_FORWARD;
 
   asm volatile(
     "\
@@ -110,7 +110,7 @@ static inline void bios_audio_scan_forward()
  */
 static inline void bios_audio_scan_backward()
 {
-  register u16 D0 asm("d0") = BIOS_AUDIO_SCAN_BACKWARD;
+  register uint16_t D0 asm("d0") = BIOS_AUDIO_SCAN_BACKWARD;
 
   asm volatile(
     "\
@@ -130,7 +130,7 @@ static inline void bios_audio_scan_backward()
  */
 static inline void bios_audio_scan_off()
 {
-  register u16 D0 asm("d0") = BIOS_AUDIO_SCAN_OFF;
+  register uint16_t D0 asm("d0") = BIOS_AUDIO_SCAN_OFF;
 
   asm volatile(
     "\
@@ -146,10 +146,10 @@ static inline void bios_audio_scan_off()
  * @sa BIOS_AUDIO_PLAY
  * @ingroup bios_cdda
  */
-static inline void bios_audio_play(u16 const * track_number)
+static inline void bios_audio_play(uint16_t const * track_number)
 {
-  register u16 D0 asm("d0") = BIOS_AUDIO_PLAY;
-  register u32 A0 asm("a0") = (u32) track_number;
+  register uint16_t D0 asm("d0") = BIOS_AUDIO_PLAY;
+  register uint32_t A0 asm("a0") = (uint32_t) track_number;
 
   asm volatile(
     "\
@@ -164,10 +164,10 @@ static inline void bios_audio_play(u16 const * track_number)
  * @sa BIOS_AUDIO_PLAY_ONCE
  * @ingroup bios_cdda
  */
-static inline void bios_audio_play_once(u16 const * track_number)
+static inline void bios_audio_play_once(uint16_t const * track_number)
 {
-  register u16 D0 asm("d0") = BIOS_AUDIO_PLAY_ONCE;
-  register u32 A0 asm("a0") = (u32) track_number;
+  register uint16_t D0 asm("d0") = BIOS_AUDIO_PLAY_ONCE;
+  register uint32_t A0 asm("a0") = (uint32_t) track_number;
 
   asm volatile(
     "\
@@ -182,10 +182,10 @@ static inline void bios_audio_play_once(u16 const * track_number)
  * @sa BIOS_AUDIO_PLAY_REPEAT
  * @ingroup bios_cdda
  */
-static inline void bios_audio_play_repeat(u16 const * track_number)
+static inline void bios_audio_play_repeat(uint16_t const * track_number)
 {
-  register u16 D0 asm("d0") = BIOS_AUDIO_PLAY_REPEAT;
-  register u32 A0 asm("a0") = (u32) track_number;
+  register uint16_t D0 asm("d0") = BIOS_AUDIO_PLAY_REPEAT;
+  register uint32_t A0 asm("a0") = (uint32_t) track_number;
 
   asm volatile(
     "\
@@ -200,10 +200,10 @@ static inline void bios_audio_play_repeat(u16 const * track_number)
  * @sa BIOS_AUDIO_PLAY_FROM_TIME
  * @ingroup bios_cdda
  */
-static inline void bios_audio_play_from_time(u32 const * timecode)
+static inline void bios_audio_play_from_time(uint32_t const * timecode)
 {
-  register u16 D0 asm("d0") = BIOS_AUDIO_PLAY_FROM_TIME;
-  register u32 A0 asm("a0") = (u32) timecode;
+  register uint16_t D0 asm("d0") = BIOS_AUDIO_PLAY_FROM_TIME;
+  register uint32_t A0 asm("a0") = (uint32_t) timecode;
 
   asm volatile(
     "\
@@ -218,10 +218,10 @@ static inline void bios_audio_play_from_time(u32 const * timecode)
  * @sa BIOS_AUDIO_SEEK
  * @ingroup bios_cdda
  */
-static inline void bios_audio_seek(u16 const * track_number)
+static inline void bios_audio_seek(uint16_t const * track_number)
 {
-  register u16 D0 asm("d0") = BIOS_AUDIO_SEEK;
-  register u32 A0 asm("a0") = (u32) track_number;
+  register uint16_t D0 asm("d0") = BIOS_AUDIO_SEEK;
+  register uint32_t A0 asm("a0") = (uint32_t) track_number;
 
   asm volatile(
     "\
@@ -236,10 +236,10 @@ static inline void bios_audio_seek(u16 const * track_number)
  * @sa BIOS_AUDIO_SEEK_TIME
  * @ingroup bios_cdda
  */
-static inline void bios_audio_seek_time(u32 const * timecode)
+static inline void bios_audio_seek_time(uint32_t const * timecode)
 {
-  register u16 D0 asm("d0") = BIOS_AUDIO_SEEK_TIME;
-  register u32 A0 asm("a0") = (u32) timecode;
+  register uint16_t D0 asm("d0") = BIOS_AUDIO_SEEK_TIME;
+  register uint32_t A0 asm("a0") = (uint32_t) timecode;
 
   asm volatile(
     "\
@@ -255,10 +255,10 @@ static inline void bios_audio_seek_time(u32 const * timecode)
  * @sa BIOS_AUDIO_SEEK_PLAY_ONCE
  * @ingroup bios_cdda
  */
-static inline void bios_audio_seek_play_once(u16 const * track_number)
+static inline void bios_audio_seek_play_once(uint16_t const * track_number)
 {
-  register u16 D0 asm("d0") = BIOS_AUDIO_SEEK_PLAY_ONCE;
-  register u32 A0 asm("a0") = (u32) track_number;
+  register uint16_t D0 asm("d0") = BIOS_AUDIO_SEEK_PLAY_ONCE;
+  register uint32_t A0 asm("a0") = (uint32_t) track_number;
 
   asm volatile(
     "\
@@ -277,7 +277,7 @@ static inline void bios_audio_seek_play_once(u16 const * track_number)
  */
 static inline void bios_drive_open()
 {
-  register u16 D0 asm("d0") = BIOS_DRIVE_OPEN;
+  register uint16_t D0 asm("d0") = BIOS_DRIVE_OPEN;
 
   asm volatile(
     "\
@@ -292,8 +292,8 @@ static inline void bios_drive_open()
  * @ingroup bios_cdb
  */
 typedef struct DriveInitParams {
-  u8 toc_track_number; ///< First track to read the TOC for, usually 1
-  u8 last_track;       ///< Last track to read, or 0xFF for all
+  uint8_t toc_track_number; ///< First track to read the TOC for, usually 1
+  uint8_t last_track;       ///< Last track to read, or 0xFF for all
 } DriveInitParams;
 
 /**
@@ -308,8 +308,8 @@ typedef struct DriveInitParams {
 static inline void
 bios_drive_init(struct DriveInitParams const * drive_init_params)
 {
-  register u16 D0 asm("d0") = BIOS_DRIVE_INIT;
-  register u32 a0_drv_init_param asm("a0") = (u32) drive_init_params;
+  register uint16_t D0 asm("d0") = BIOS_DRIVE_INIT;
+  register uint32_t a0_drv_init_param asm("a0") = (uint32_t) drive_init_params;
 
   asm volatile(
     "\
@@ -326,7 +326,7 @@ bios_drive_init(struct DriveInitParams const * drive_init_params)
  */
 static inline void bios_cdrom_pause()
 {
-  register u16 D0 asm("d0") = BIOS_CDROM_PAUSE;
+  register uint16_t D0 asm("d0") = BIOS_CDROM_PAUSE;
 
   asm volatile(
     "\
@@ -343,7 +343,7 @@ static inline void bios_cdrom_pause()
  */
 static inline void bios_cdrom_resume()
 {
-  register u16 D0 asm("d0") = BIOS_CDROM_RESUME;
+  register uint16_t D0 asm("d0") = BIOS_CDROM_RESUME;
 
   asm volatile(
     "\
@@ -366,10 +366,10 @@ static inline void bios_cdrom_resume()
  * ROM_READ actually pre-seeks by 2 sectors, but doesn't start passing data
  * to the CDC until the desired sector is reached.
  */
-static inline void bios_cdrom_read(u32 const * sector_number)
+static inline void bios_cdrom_read(uint32_t const * sector_number)
 {
-  register u16 D0 asm("d0") = BIOS_CDROM_READ;
-  register u32 A0 asm("a0") = (u32) sector_number;
+  register uint16_t D0 asm("d0") = BIOS_CDROM_READ;
+  register uint32_t A0 asm("a0") = (uint32_t) sector_number;
 
   asm volatile(
     "\
@@ -384,10 +384,10 @@ static inline void bios_cdrom_read(u32 const * sector_number)
  * @sa BIOS_CDROM_SEEK
  * @ingroup bios_cdrom
  */
-static inline void bios_cdrom_seek(u32 const * sector_number)
+static inline void bios_cdrom_seek(uint32_t const * sector_number)
 {
-  register u16 D0 asm("d0") = BIOS_CDROM_SEEK;
-  register u32 A0 asm("a0") = (u32) sector_number;
+  register uint16_t D0 asm("d0") = BIOS_CDROM_SEEK;
+  register uint32_t A0 asm("a0") = (uint32_t) sector_number;
 
   asm volatile(
     "\
@@ -402,8 +402,8 @@ static inline void bios_cdrom_seek(u32 const * sector_number)
  * @ingroup bios_cdrom
  */
 struct RomreadParams {
-  u32 start_sector; ///< First logical sector
-  u32
+  uint32_t start_sector; ///< First logical sector
+  uint32_t
     sector_count; ///< Number of sectors (read_count), or the last sector (read_range)
 };
 
@@ -416,8 +416,8 @@ struct RomreadParams {
  */
 static inline void bios_cdrom_read_count(struct RomreadParams const * param)
 {
-  register u16 D0 asm("d0") = BIOS_CDROM_READ_COUNT;
-  register u32 A0 asm("a0") = (u32) param;
+  register uint16_t D0 asm("d0") = BIOS_CDROM_READ_COUNT;
+  register uint32_t A0 asm("a0") = (uint32_t) param;
 
   asm volatile(
     "\
@@ -433,8 +433,8 @@ static inline void bios_cdrom_read_count(struct RomreadParams const * param)
  */
 static inline void bios_cdrom_read_range(struct RomreadParams const * param)
 {
-  register u16 D0 asm("d0") = BIOS_CDROM_READ_RANGE;
-  register u32 A0 asm("a0") = (u32) param;
+  register uint16_t D0 asm("d0") = BIOS_CDROM_READ_RANGE;
+  register uint32_t A0 asm("a0") = (uint32_t) param;
 
   asm volatile(
     "\
@@ -451,7 +451,7 @@ static inline void bios_cdrom_read_range(struct RomreadParams const * param)
  */
 static inline bool bios_check_command()
 {
-  register u16 D0 asm("d0") = BIOS_CHECK_COMMAND;
+  register uint16_t D0 asm("d0") = BIOS_CHECK_COMMAND;
 
   asm goto(
     "\
@@ -476,12 +476,12 @@ cmd_complete:
  * @ingroup bios_cdb
  */
 struct BiosStatus {
-  u16
+  uint16_t
     bios_status; ///< BIOS status word: high byte drive state, low byte BIOS state
-  u16 led;       ///< LED state
-  u8  cdd_status[20]; ///< The last CDD status, 20 bytes
-  u32 volume;         ///< Current fader volume
-  u32 header;         ///< Disc header: absolute time of the current sector
+  uint16_t led;            ///< LED state
+  uint8_t  cdd_status[20]; ///< The last CDD status, 20 bytes
+  uint32_t volume;         ///< Current fader volume
+  uint32_t header;         ///< Disc header: absolute time of the current sector
 };
 
 /**
@@ -491,8 +491,8 @@ struct BiosStatus {
  */
 static inline struct BiosStatus const * bios_get_status()
 {
-  register u16 D0 asm("d0") = BIOS_GET_STATUS;
-  register u32 A0 asm("a0");
+  register uint16_t D0 asm("d0") = BIOS_GET_STATUS;
+  register uint32_t A0 asm("a0");
 
   asm volatile(
     "\
@@ -519,10 +519,10 @@ static inline struct BiosStatus const * bios_get_status()
  * @note There is a delay of up to 13ms before the volume begins to change
  * and another 23ms for the new volume level to take effect.
  */
-static inline void bios_fader_set(u16 const volume)
+static inline void bios_fader_set(uint16_t const volume)
 {
-  register u16       D0 asm("d0") = BIOS_FADER_SET;
-  register u16 const D1 asm("d1") = volume;
+  register uint16_t       D0 asm("d0") = BIOS_FADER_SET;
+  register uint16_t const D1 asm("d1") = volume;
 
   asm volatile(
     "\
@@ -547,10 +547,10 @@ static inline void bios_fader_set(u16 const volume)
  *
  * @note There is a delay of up to 13ms before the volume begins to change.
  */
-static inline void bios_fader_change(u32 const volume)
+static inline void bios_fader_change(uint32_t const volume)
 {
-  register u16 D0 asm("d0") = BIOS_FADER_CHANGE;
-  register u32 D1 asm("d1") = volume;
+  register uint16_t D0 asm("d0") = BIOS_FADER_CHANGE;
+  register uint32_t D1 asm("d1") = volume;
 
   asm volatile(
     "\
@@ -565,7 +565,7 @@ static inline void bios_fader_change(u32 const volume)
  */
 static inline void bios_cdc_start()
 {
-  register u16 D0 asm("d0") = BIOS_CDC_START;
+  register uint16_t D0 asm("d0") = BIOS_CDC_START;
 
   asm volatile(
     "\
@@ -580,7 +580,7 @@ static inline void bios_cdc_start()
  */
 static inline void bios_cdc_stop()
 {
-  register u16 D0 asm("d0") = BIOS_CDC_STOP;
+  register uint16_t D0 asm("d0") = BIOS_CDC_STOP;
 
   asm volatile(
     "\
@@ -595,7 +595,7 @@ jsr %p1"
  */
 static inline void bios_cdc_status()
 {
-  register u16 D0 asm("d0") = BIOS_CDC_STATUS;
+  register uint16_t D0 asm("d0") = BIOS_CDC_STATUS;
 
   asm volatile(
     "\
@@ -611,7 +611,7 @@ jsr %p1"
 // headaches with asm goto and output operands... we'll come back to this later.
 /*
 static inline bool bios_cdc_read() {
-	register u16 D0 asm("d0") = BIOS_CDC_READ;
+	register uint16_t D0 asm("d0") = BIOS_CDC_READ;
 
 				asm goto(R"(jsr %p1)"
 																				 : "+d"(D0)
@@ -628,11 +628,12 @@ sector_ready:
 /**
  * @sa BIOS_CDC_TRANSFER
  */
-static inline void bios_cdc_transfer(u8 * sector_dest, u8 * header_dest)
+static inline void
+bios_cdc_transfer(uint8_t * sector_dest, uint8_t * header_dest)
 {
-  register u16  D0 asm("d0") = BIOS_CDC_TRANSFER;
-  register u8 * a0_sector_dest asm("a0") = sector_dest;
-  register u8 * a1_header_dest asm("a1") = header_dest;
+  register uint16_t  D0 asm("d0") = BIOS_CDC_TRANSFER;
+  register uint8_t * a0_sector_dest asm("a0") = sector_dest;
+  register uint8_t * a1_header_dest asm("a1") = header_dest;
 
   asm volatile(
     "\
@@ -647,7 +648,7 @@ jsr %p3"
  */
 static inline void bios_cdc_ack()
 {
-  register u16 D0 asm("d0") = BIOS_CDC_ACK;
+  register uint16_t D0 asm("d0") = BIOS_CDC_ACK;
 
   asm volatile(
     "\

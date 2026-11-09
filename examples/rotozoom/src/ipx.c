@@ -1,3 +1,4 @@
+#include "shortcuts.h"
 #include <macro.h>
 #include <main/memmap.def.h>
 
