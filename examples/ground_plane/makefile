@@ -89,8 +89,7 @@ $(DISC_PATH)/ipx.mmd: \
 	crash_main.s \
 	ipx.res.s \
 	tables.s \
-	ipx.c \
-	main/io.macro.s
+	ipx.c
 
 $(DISC_PATH)/spx.smd: \
 	std_init_stack.s \

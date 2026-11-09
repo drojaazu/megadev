@@ -164,8 +164,6 @@ __attribute__((interrupt)) void INT2_EXT()
   if (c == '\n') {
     ext_tx('\r');
 
-    char cmd = *rx_buffer;
-
     if (strcmpt(rx_buffer, "peek", ' ')) {
       strcpy(tx_buffer, "got a peek");
       transmit();
