@@ -1,4 +1,4 @@
-# transforms
+# rotozoom
 
 This is an example of the scaling, zoom, and rotation capabilities of the Mega CD's graphics processor.
 

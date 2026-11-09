@@ -93,7 +93,7 @@ Four words per output line, at the address written to `GA_SUB_REG_TRACEVECTBASE`
 | 2 | X step per output pixel | signed, 4 integer bits, 11 fractional |
 | 3 | Y step per output pixel | signed, 4 integer bits, 11 fractional |
 
-The table holds one entry per output line, so it is `Vdot x 8` bytes. The steps are ordinary two's complement, so normal arithmetic on them is correct and a negative step is a negative number. `lib/xform.h` provides `to_xform_pos` and `to_xform_delta` for the two formats.
+The table holds one entry per output line, so it is `Vdot x 8` bytes. The steps are ordinary two's complement, so normal arithmetic on them is correct and a negative step is a negative number. `lib/trace.h` provides `to_trace_pos` and `to_trace_delta` for the two formats.
 
 The formats impose hard limits:
 
@@ -322,6 +322,6 @@ The operation completes, and the level 1 interrupt fires, when the last dot of t
 # References
 
 - Register definitions: `lib/sub/gate_arr.def.h`, and [gate_array.md](gate_array.md)
-- Fixed-point helpers: `lib/fixed.h`, `lib/xform.h`
-- Worked examples: `examples/transforms` (the registers and a hand-driven trace vector), `examples/ground_plane` (a perspective ground plane with a camera)
+- Fixed-point helpers: `lib/fixed.h`, `lib/trace.h`
+- Worked examples: `examples/rotozoom` (the registers and a hand-driven trace vector), `examples/ground_plane` (a perspective ground plane with a camera)
 - Mega-CD Hardware Manual, Ver 1.0, rotation and scaling section, pages 35 to 54

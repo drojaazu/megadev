@@ -25,28 +25,26 @@ long strtol(char const * s, char ** end, int base)
     ++p;
 
   int negative = 0;
-  if (*p == '+' || *p == '-')
-  {
+  if (*p == '+' || *p == '-') {
     negative = *p == '-';
     ++p;
   }
 
-  if ((base == 0 || base == 16) && p[0] == '0' && (p[1] == 'x' || p[1] == 'X')
-    && isxdigit(p[2]))
-  {
+  if (
+    (base == 0 || base == 16) && p[0] == '0' && (p[1] == 'x' || p[1] == 'X') &&
+    isxdigit(p[2])) {
     base = 16;
     p += 2;
-  }
-  else if (base == 0)
+  } else if (base == 0)
     base = p[0] == '0' ? 8 : 10;
 
   // Accumulate as an unsigned magnitude, clamping on overflow
-  unsigned long const limit = negative ? (unsigned long) LONG_MAX + 1 : (unsigned long) LONG_MAX;
+  unsigned long const limit =
+    negative ? (unsigned long) LONG_MAX + 1 : (unsigned long) LONG_MAX;
   unsigned long value = 0;
-  int overflow = 0;
-  char const * start = p;
-  for (;; ++p)
-  {
+  int           overflow = 0;
+  char const *  start = p;
+  for (;; ++p) {
     int const d = digit_value(*p);
     if (d >= base)
       break;
@@ -56,8 +54,7 @@ long strtol(char const * s, char ** end, int base)
       value = value * (unsigned long) base + (unsigned long) d;
   }
 
-  if (p == start)
-  {
+  if (p == start) {
     // No digits: nothing consumed
     if (end)
       *end = (char *) s;
@@ -74,4 +71,3 @@ int atoi(char const * s)
 {
   return (int) strtol(s, NULL, 10);
 }
-

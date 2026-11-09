@@ -17,8 +17,7 @@ size_t strlen(char const * s)
 
 int strcmp(char const * a, char const * b)
 {
-  while (*a && *a == *b)
-  {
+  while (*a && *a == *b) {
     ++a;
     ++b;
   }
@@ -27,8 +26,7 @@ int strcmp(char const * a, char const * b)
 
 int strncmp(char const * a, char const * b, size_t n)
 {
-  while (n && *a && *a == *b)
-  {
+  while (n && *a && *a == *b) {
     ++a;
     ++b;
     --n;
@@ -47,8 +45,7 @@ char * strcpy(char * dest, char const * src)
 char * strncpy(char * dest, char const * src, size_t n)
 {
   char * d = dest;
-  while (n && *src)
-  {
+  while (n && *src) {
     *d++ = *src++;
     --n;
   }
@@ -66,11 +63,10 @@ char * strcat(char * dest, char const * src)
 char * strchr(char const * s, int c)
 {
   char const ch = (char) c;
-  for (;; ++s)
-  {
+  for (;; ++s) {
     if (*s == ch)
       return (char *) s;
-    if (!*s)
+    if (! *s)
       return NULL;
   }
 }

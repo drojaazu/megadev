@@ -11,8 +11,8 @@
 extern "C" {
 #endif
 
-#include "main/vdp.def.h"
-#include "types.h"
+#include <main/vdp.def.h>
+#include <types.h>
 
 /**
  * @typedef vram_addr
@@ -48,35 +48,33 @@ typedef u16 vdp_reg;
 /**
  * @brief One entry of the VDP sprite attribute table
  */
-typedef struct Sprite
-{
-  s16          : 6; ///< Unused
+typedef struct Sprite {
+  s16          : 6;  ///< Unused
   s16 pos_y    : 10; ///< Vertical position, 128 is the top of the screen
-  s16          : 4; ///< Unused
-  s16 width    : 2; ///< Width in tiles minus 1
-  s16 height   : 2; ///< Height in tiles minus 1
-  s16          : 1; ///< Unused
+  s16          : 4;  ///< Unused
+  s16 width    : 2;  ///< Width in tiles minus 1
+  s16 height   : 2;  ///< Height in tiles minus 1
+  s16          : 1;  ///< Unused
   s16 next     : 7; ///< Index of the next sprite in the display list, 0 ends it
   s16 priority : 1; ///< Priority over the planes
   s16 palette  : 2; ///< Palette line
   s16 v_flip   : 1; ///< Vertical flip
   s16 h_flip   : 1; ///< Horizontal flip
   s16 tile     : 11; ///< First tile index
-  s16          : 7; ///< Unused
+  s16          : 7;  ///< Unused
   s16 pos_x    : 9; ///< Horizontal position, 128 is the left edge of the screen
 } Sprite;
 
 /**
  * @brief A sprite table entry with word, byte and long views of its 8 bytes
  */
-typedef union SpriteEx
-{
+typedef union SpriteEx {
   u32    as_u32[2]; ///< Two unsigned longs
   u16    as_u16[4]; ///< Four unsigned words
-  u8     as_u8[8]; ///< Eight unsigned bytes
+  u8     as_u8[8];  ///< Eight unsigned bytes
   s32    as_s32[2]; ///< Two signed longs
   s16    as_s16[4]; ///< Four signed words
-  s8     as_s8[8]; ///< Eight signed bytes
+  s8     as_s8[8];  ///< Eight signed bytes
   Sprite as_struct; ///< The fields
 } SpriteEx;
 
@@ -162,8 +160,7 @@ typedef union SpriteEx
  * width in bytes
  * @note Use with VDP_PLANE_POS helper below
  */
-typedef enum PlaneWidth
-{
+typedef enum PlaneWidth {
   Width32 = 64,
   Width64 = 128,
   Width128 = 256
@@ -191,7 +188,7 @@ typedef enum PlaneWidth
  * The position argument of text_print and bios_print. With the Boot ROM's
  * default layout, plane A is at BIOS_VDP_DEFAULT_PLANEA and is Width64.
  */
-#define VDP_PLANE_XY(plane_addr, x, y, width) \
+#define VDP_PLANE_XY(plane_addr, x, y, width)                       \
   (to_vdp_addr((plane_addr) + VDP_PLANE_POS(x, y, width)) | VRAM_W)
 
 /**
@@ -310,7 +307,8 @@ void vdp_dma_fill(
  * @warning Setting/clearing the DMA Enable bit on VDP Mode Register 2 is the
  * responsibility of the user
  */
-static inline void vdp_dma_transfer(char const * source, vdp_cmd dest, u16 const length)
+static inline void
+vdp_dma_transfer(char const * source, vdp_cmd dest, u16 const length)
 {
   register u32 scratch_d, scratch_a;
 

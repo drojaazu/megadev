@@ -1,8 +1,8 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file font8x8.h
- * @brief 8x8 ASCII font, characters 0x20 to 0x7F (lib/runtime/font8x8.c)
+ * @file sysfont.h
+ * @brief 8x8 ASCII font, characters 0x20 to 0x7F (lib/runtime/sysfont.c)
  *
  * @details
  * One byte per row, eight rows per character, the leftmost pixel in bit 7.
@@ -19,14 +19,14 @@ extern "C" {
 #include "types.h"
 
 /**
- * @brief Number of characters in font8x8, 0x20 (space) to 0x7F
+ * @brief Number of characters in sysfont, 0x20 (space) to 0x7F
  */
-#define FONT8X8_CHARS 96
+#define SYSFONT_CHARS 96
 
 /**
  * @brief The font, indexed by character minus 0x20
  */
-extern u8 const font8x8[FONT8X8_CHARS][8];
+extern u8 const sysfont[SYSFONT_CHARS][8];
 
 #ifdef __cplusplus
 }

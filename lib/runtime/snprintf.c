@@ -8,11 +8,10 @@
 #include <stdio.h>
 #include <string.h>
 
-typedef struct
-{
+typedef struct {
   char * buf;
-  size_t n;      // buffer size, including the terminator
-  size_t count;  // characters the full output would have
+  size_t n;     // buffer size, including the terminator
+  size_t count; // characters the full output would have
 } Sink;
 
 static void put(Sink * s, char c)
@@ -28,10 +27,11 @@ static void pad(Sink * s, int count, char c)
     put(s, c);
 }
 
-static void put_field(Sink * s, char const * text, int len, int width, int left, char fill)
+static void
+put_field(Sink * s, char const * text, int len, int width, int left, char fill)
 {
   int const padding = width - len;
-  if (!left)
+  if (! left)
     pad(s, padding, fill);
   while (len-- > 0)
     put(s, *text++);
@@ -44,19 +44,16 @@ int vsnprintf(char * buf, size_t n, char const * fmt, va_list args)
   Sink s = {buf, n, 0};
   char digits[sizeof(unsigned long) * 3 + 2];
 
-  for (; *fmt; ++fmt)
-  {
-    if (*fmt != '%')
-    {
+  for (; *fmt; ++fmt) {
+    if (*fmt != '%') {
       put(&s, *fmt);
       continue;
     }
     ++fmt;
 
-    int left = 0;
+    int  left = 0;
     char fill = ' ';
-    for (;; ++fmt)
-    {
+    for (;; ++fmt) {
       if (*fmt == '-')
         left = 1;
       else if (*fmt == '0')
@@ -70,64 +67,55 @@ int vsnprintf(char * buf, size_t n, char const * fmt, va_list args)
       width = width * 10 + (*fmt++ - '0');
 
     int is_long = 0;
-    if (*fmt == 'l')
-    {
+    if (*fmt == 'l') {
       is_long = 1;
       ++fmt;
     }
 
-    switch (*fmt)
-    {
+    switch (*fmt) {
       case 'd':
       case 'i':
       case 'u':
       case 'x':
-      case 'X':
-      {
-        int const is_signed = *fmt == 'd' || *fmt == 'i';
+      case 'X': {
+        int const           is_signed = *fmt == 'd' || *fmt == 'i';
         unsigned long const base = (*fmt == 'x' || *fmt == 'X') ? 16 : 10;
-        char const hex_a = *fmt == 'X' ? 'A' : 'a';
-        unsigned long value;
-        int negative = 0;
-        if (is_signed)
-        {
+        char const          hex_a = *fmt == 'X' ? 'A' : 'a';
+        unsigned long       value;
+        int                 negative = 0;
+        if (is_signed) {
           long const v = is_long ? va_arg(args, long) : va_arg(args, int);
           negative = v < 0;
           value = negative ? 0UL - (unsigned long) v : (unsigned long) v;
-        }
-        else
-          value = is_long ? va_arg(args, unsigned long) : va_arg(args, unsigned int);
+        } else
+          value =
+            is_long ? va_arg(args, unsigned long) : va_arg(args, unsigned int);
 
         int len = 0;
-        do
-        {
+        do {
           unsigned long const d = value % base;
-          digits[sizeof digits - 1 - len++] = (char) (d < 10 ? '0' + d : hex_a + d - 10);
+          digits[sizeof digits - 1 - len++] =
+            (char) (d < 10 ? '0' + d : hex_a + d - 10);
           value /= base;
         } while (value);
 
-        if (negative)
-        {
-          if (fill == '0' && !left)
-          {
+        if (negative) {
+          if (fill == '0' && ! left) {
             // Sign before the zero padding
             put(&s, '-');
             --width;
-          }
-          else
+          } else
             digits[sizeof digits - 1 - len++] = '-';
         }
         put_field(&s, digits + sizeof digits - len, len, width, left, fill);
         break;
       }
-      case 'c':
-      {
+      case 'c': {
         char const c = (char) va_arg(args, int);
         put_field(&s, &c, 1, width, left, ' ');
         break;
       }
-      case 's':
-      {
+      case 's': {
         char const * const str = va_arg(args, char const *);
         put_field(&s, str, (int) strlen(str), width, left, ' ');
         break;
@@ -136,7 +124,7 @@ int vsnprintf(char * buf, size_t n, char const * fmt, va_list args)
         put(&s, '%');
         break;
       case '\0':
-        --fmt;  // let the loop see the terminator
+        --fmt; // let the loop see the terminator
         break;
       default:
         // Unknown conversion: emit it literally

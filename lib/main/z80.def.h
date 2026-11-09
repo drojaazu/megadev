@@ -13,7 +13,8 @@
  * @defgroup z80 Main CPU / Z80
  */
 
-#define Z80_RAM 0xA00000 ///< Z80 sound RAM, as seen by the Main CPU (bus request needed)
+#define Z80_RAM                                                             \
+  0xA00000 ///< Z80 sound RAM, as seen by the Main CPU (bus request needed)
 
 #define Z80_RAM_SIZE 0x2000 ///< Size of the Z80 RAM in bytes
 
@@ -25,7 +26,9 @@
 
 #define Z80_FM2_DATA 0xA04003 ///< YM2612 register data, channels 4 to 6
 
-#define Z80_BANK 0xA06000 ///< Z80 bank register: the 32 KB of 68000 space the Z80 sees at 0x8000
+#define Z80_BANK                                                            \
+  0xA06000 ///< Z80 bank register: the 32 KB of 68000 space the Z80 sees at
+           ///< 0x8000
 
 #define Z80_PSG 0xA07F11 ///< SN76489 PSG write port, in the Z80 address space
 

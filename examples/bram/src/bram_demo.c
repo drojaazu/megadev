@@ -11,24 +11,22 @@ GLOBAL_SYM(MODULE_RAM_LENGTH, 0x700);
 GLOBAL_SYM(MMD_DEST, WORK_RAM);
 
 #include <main/bios.h>
-#include <main/exvec.h>
+#include <main/crash.h>
 #include <main/gate_arr.h>
 #include <main/io.def.h>
 #include <main/memmap.h>
-#include <main/mmd.h>
+#include <main/text.h>
 #include <main/vdp.h>
 #include <stdio.h>
-#include <system.h>
+#include <cpu.h>
 #include <types.h>
-#include <main/text.h>
 
-// font8x8 is loaded at tile 0x20, so a character's tile is its code
+// The system font is loaded at tile 0x20, so a character's tile is its code
 #define TEXT_TILE 0x20
 
-#define SUB_WAIT                   \
-  do                               \
-  {                                \
-    exvec_check_sub();                    \
+#define SUB_WAIT                       \
+  do {                                 \
+    crash_check_sub();                 \
   } while (ga_main_reg_comstat0 == 0);
 
 #define SUB_ACK ga_main_reg_comcmd0 = 0;
@@ -67,19 +65,21 @@ static void bram_init()
 
   print_value("%d", status, 13, 3);
 
-  switch (status)
-  {
+  switch (status) {
     case 0:
-      text_print("BRAM not present or not detected!", print_xy(1, 4), TEXT_TILE);
+      text_print(
+        "BRAM not present or not detected!", print_xy(1, 4), TEXT_TILE);
       break;
     case 1:
       text_print("BRAM is not formatted!", print_xy(1, 4), TEXT_TILE);
       break;
     case 2:
-      text_print("BRAM is in a non-standard format!", print_xy(1, 4), TEXT_TILE);
+      text_print(
+        "BRAM is in a non-standard format!", print_xy(1, 4), TEXT_TILE);
       break;
     case 3:
-      text_print("BRAM is formatted and ready to use!", print_xy(1, 4), TEXT_TILE);
+      text_print(
+        "BRAM is formatted and ready to use!", print_xy(1, 4), TEXT_TILE);
       break;
   }
 }
@@ -122,13 +122,10 @@ static bool brmserch()
 
   SUB_ACK
 
-  if (found == 0xFFFF)
-  {
+  if (found == 0xFFFF) {
     text_print("File BRMEX not found", print_xy(1, 2), TEXT_TILE);
     return false;
-  }
-  else
-  {
+  } else {
     text_print("File BRMEX found", print_xy(1, 2), TEXT_TILE);
 
     text_print(" File size: ", print_xy(1, 3), TEXT_TILE);
@@ -149,10 +146,9 @@ static void brmwrite()
   text_print("Set a value to write: ", print_xy(1, 2), TEXT_TILE);
   u8 delayed_input_val = 0;
 
-  do
-  {
+  do {
     bios_vblank_wait_default();
-    exvec_check_sub();
+    crash_check_sub();
 
     // this is a great opportunity to show off the bios_input_delay function
     // in the boot rom library
@@ -165,21 +161,17 @@ static void brmwrite()
     // of the value changing way too quickly
     bios_input_repeat_delay(&delayed_input_val, false);
 
-    if (delayed_input_val & PAD_UP)
-    {
+    if (delayed_input_val & PAD_UP) {
       ++writeval;
     }
-    if (delayed_input_val & PAD_DOWN)
-    {
+    if (delayed_input_val & PAD_DOWN) {
       --writeval;
     }
 
-    if (delayed_input_val & PAD_RIGHT)
-    {
+    if (delayed_input_val & PAD_RIGHT) {
       writeval += 0x100;
     }
-    if (delayed_input_val & PAD_LEFT)
-    {
+    if (delayed_input_val & PAD_LEFT) {
       writeval -= 0x100;
     }
 
@@ -200,12 +192,9 @@ static void brmwrite()
 
   ga_main_wait_2m();
 
-  if (success == 0xFFFF)
-  {
+  if (success == 0xFFFF) {
     text_print("Error while writing file", print_xy(1, 4), TEXT_TILE);
-  }
-  else
-  {
+  } else {
     text_print("Write successful", print_xy(1, 4), TEXT_TILE);
   }
 }
@@ -233,8 +222,7 @@ static void brmread()
 
   ga_main_wait_2m();
 
-  if (success == 0xFFFF)
-  {
+  if (success == 0xFFFF) {
     text_print("Error reading file", print_xy(1, 7), TEXT_TILE);
     return;
   }
@@ -262,12 +250,9 @@ void brmdel()
 
   SUB_ACK
 
-  if (success == 0xFFFF)
-  {
+  if (success == 0xFFFF) {
     text_print("Failed to delete file", print_xy(1, 3), TEXT_TILE);
-  }
-  else
-  {
+  } else {
     text_print("File deleted successfully", print_xy(1, 3), TEXT_TILE);
   }
 }
@@ -290,8 +275,7 @@ void brmdir()
 
   ga_main_wait_2m();
 
-  if (success == 0xFFFF)
-  {
+  if (success == 0xFFFF) {
     text_print("Data too big for buffer", print_xy(1, 3), TEXT_TILE);
     return;
   }
@@ -301,8 +285,7 @@ void brmdir()
   u16    file_idx = 0;
   u16    curr_y = 4;
   char * filename;
-  while (1)
-  {
+  while (1) {
     if (*(u8 *) (word_ram + (file_idx * 16)) == 0)
       break;
     filename = (char *) (word_ram + (file_idx * 16));
@@ -317,12 +300,12 @@ void brmdir()
 void main()
 {
   // load the kit font for text
-  vdp_load_1bpp_tiles(font8x8, FONT8X8_CHARS, TEXT_TILE, 1, 0);
+  vdp_load_1bpp_tiles(sysfont, SYSFONT_CHARS, TEXT_TILE, 1, 0);
   bios_palette[1] = 0xEEE;
   bios_vdp_update_flags |= BIOS_MASK_COPY_PALETTE;
 
   // crash handler for Main CPU exceptions (docs/crash_handler.md)
-  exvec_install();
+  crash_install();
 
   // interrupts were disabled in the init section
   enable_interrupts();
@@ -330,16 +313,14 @@ void main()
   bram_init();
   text_print("Press Start to continue...", print_xy(1, 10), TEXT_TILE);
 
-  do
-  {
+  do {
     bios_vblank_wait_default();
-    exvec_check_sub();
+    crash_check_sub();
   } while (! (bios_joy1_hit & PAD_START));
 
   s8 menupos = 0;
 
-  do
-  {
+  do {
     bios_clear_tables();
 
     text_print("BRAM Options", print_xy(1, 1), TEXT_TILE);
@@ -351,28 +332,24 @@ void main()
     text_print("BRAM_DELETE", print_xy(3, 8), TEXT_TILE);
     text_print("BRAM_FORMAT", print_xy(3, 9), TEXT_TILE);
 
-    do
-    {
+    do {
       bios_vblank_wait_default();
-      exvec_check_sub();
-      for (int clearloop = 3; clearloop < 10; ++clearloop)
-      {
+      crash_check_sub();
+      for (int clearloop = 3; clearloop < 10; ++clearloop) {
         vdp_ctrl_32 = print_xy(1, clearloop);
         vdp_data_16 = 0;
       }
       vdp_ctrl_32 = print_xy(1, menupos + 3);
       vdp_data_16 = '>';
 
-      if ((bios_joy1_hit & PAD_DOWN))
-      {
+      if ((bios_joy1_hit & PAD_DOWN)) {
         ++menupos;
         if (menupos > 6)
           menupos = 0;
         continue;
       }
 
-      if ((bios_joy1_hit & PAD_UP))
-      {
+      if ((bios_joy1_hit & PAD_UP)) {
         --menupos;
         if (menupos < 0)
           menupos = 6;
@@ -380,8 +357,7 @@ void main()
       }
     } while (! (bios_joy1_hit & PAD_START));
 
-    switch (menupos)
-    {
+    switch (menupos) {
       case 0:
         brmstat();
         break;
@@ -405,10 +381,9 @@ void main()
 
     text_print("Press Start to continue...", print_xy(1, 12), TEXT_TILE);
 
-    do
-    {
+    do {
       bios_vblank_wait_default();
-      exvec_check_sub();
+      crash_check_sub();
     } while (! (bios_joy1_hit & PAD_START));
 
   } while (1);

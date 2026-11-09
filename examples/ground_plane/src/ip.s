@@ -7,7 +7,7 @@
 #include <main/gate_arr.def.h>
 #include <main/vdp.def.h>
 #include <macro.s>
-#include <system.macro.s>
+#include <cpu.macro.s>
 #include "shared.h"
 
   // First, disable all interrupts while we do some basic init

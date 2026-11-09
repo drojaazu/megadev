@@ -1,22 +1,22 @@
 #include "ipx.h"
 #include "shared.h"
+#include <cpu.h>
+#include <macro.h>
 #include <main/bios.h>
-#include <main/exvec.h>
 #include <main/comm.h>
+#include <main/crash.h>
 #include <main/gate_arr.h>
 #include <main/io.h>
+#include <main/memmap.def.h>
 #include <main/memmap.h>
 #include <main/mmd.h>
-#include <memory.h>
-#include <string.h>
-#include <str_util.h>
-#include <system.h>
-#include <types.h>
-#include <macro.h>
-#include <main/memmap.def.h>
 #include <main/text.h>
+#include <memory.h>
+#include <str_util.h>
+#include <string.h>
+#include <types.h>
 
-// font8x8 is loaded at tile 0x20, so a character's tile is its code
+// The system font is loaded at tile 0x20, so a character's tile is its code
 #define TEXT_TILE 0x20
 
 // Module layout (Work RAM map in shared.h): the IPX runs from Work RAM and
@@ -27,8 +27,7 @@ GLOBAL_SYM(MODULE_RAM_ORIGIN, IPX_RAM_ORIGIN);
 GLOBAL_SYM(MODULE_RAM_LENGTH, IPX_RAM_LENGTH);
 GLOBAL_SYM(MMD_DEST, IPX_ROM_ORIGIN);
 
-#define print_xy(x, y)                                                   \
-  VDP_PLANE_XY(BIOS_VDP_DEFAULT_PLANEA, x, y, Width64)
+#define print_xy(x, y) VDP_PLANE_XY(BIOS_VDP_DEFAULT_PLANEA, x, y, Width64)
 
 u8 next_module;
 
@@ -86,23 +85,18 @@ void init_particles(
 
 void process_particles()
 {
-  for (u8 iter = 0; iter < 16; ++iter)
-  {
+  for (u8 iter = 0; iter < 16; ++iter) {
 
-    if (particles[iter].status == Null)
-    {
+    if (particles[iter].status == Null) {
       init_particle(iter);
       continue;
     }
 
-    if (particles[iter].status == Ending)
-    {
+    if (particles[iter].status == Ending) {
       // ending animation
-      if (particles[iter].timer > 0)
-      {
+      if (particles[iter].timer > 0) {
         --particles[iter].timer;
-        if (particles[iter].timer == 0)
-        {
+        if (particles[iter].timer == 0) {
           particles[iter].status = Null;
         }
         // goto update_sprites;
@@ -116,10 +110,8 @@ void process_particles()
       goto update_sprites;
     }
 
-    if (particles[iter].status == Falling)
-    {
-      if (particles[iter].pos_y >= particles[iter].end_at)
-      {
+    if (particles[iter].status == Falling) {
+      if (particles[iter].pos_y >= particles[iter].end_at) {
         // reached its final destination
         particles[iter].status = Ending;
         continue;
@@ -157,37 +149,30 @@ __attribute__((interrupt)) void INT2_EXT()
   // waiting; RERR flags a framing/overrun error, in which case the byte is
   // discarded rather than echoed into the command buffer.
   u8 const status = ext_status();
-  if (!(status & SCTRL_RX_READY_MASK) || (status & SCTRL_RX_ERR_MASK))
+  if (! (status & SCTRL_RX_READY_MASK) || (status & SCTRL_RX_ERR_MASK))
     return;
 
   char const c = (char) ext_read_byte();
 
   ext_tx((u8) c); // echo
-  if (rx_buffer_at >= ((char *) rx_buffer + 32))
-  {
+  if (rx_buffer_at >= ((char *) rx_buffer + 32)) {
     memset8(0, rx_buffer, 32);
     rx_buffer_at = rx_buffer;
   }
   *rx_buffer_at++ = c;
 
-  if (c == '\n')
-  {
+  if (c == '\n') {
     ext_tx('\r');
 
     char cmd = *rx_buffer;
 
-    if (strcmpt(rx_buffer, "peek", ' '))
-    {
+    if (strcmpt(rx_buffer, "peek", ' ')) {
       strcpy(tx_buffer, "got a peek");
       transmit();
-    }
-    else if (strcmpt(rx_buffer, "poke", ' '))
-    {
+    } else if (strcmpt(rx_buffer, "poke", ' ')) {
       strcpy(tx_buffer, "got a poke");
       transmit();
-    }
-    else
-    {
+    } else {
       strcpy(tx_buffer, "invalid");
       transmit();
     }
@@ -203,7 +188,7 @@ void main()
   init_ext_port();
   *bios_vblank_user = vint_user;
   // crash handler for Main CPU exceptions (docs/crash_handler.md)
-  exvec_install();
+  crash_install();
 
   *((volatile void *(*) ) EXVEC_LEVEL2) = INT2_EXT;
   // enable INT2 interrupts
@@ -211,7 +196,7 @@ void main()
   bios_load_vdp_regs(vdp_mode3);
 
   enable_interrupts();
-  vdp_load_1bpp_tiles(font8x8, FONT8X8_CHARS, TEXT_TILE, 1, 0);
+  vdp_load_1bpp_tiles(sysfont, SYSFONT_CHARS, TEXT_TILE, 1, 0);
   bios_palette[1] = 0xEEE;
   bios_vdp_update_flags |= BIOS_MASK_COPY_PALETTE;
 
@@ -223,9 +208,8 @@ void main()
   strcpy(tx_buffer, "megadev serial debug ready\r\n");
   transmit();
 
-  do
-  {
+  do {
     ga_main_grant_2m();
-    exvec_check_sub();
+    crash_check_sub();
   } while (1);
 }

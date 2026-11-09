@@ -24,4 +24,3 @@ int rand(void)
   rand_state = x;
   return (int) (x & RAND_MAX);
 }
-

@@ -38,10 +38,14 @@ extern "C" {
  * the address in 8 byte units, limited to the destination's size
  */
 ///@{
-#define DMAADDR_WORDRAM1M(addr) (((addr) & 0x3FFF) >> 3) ///< Word RAM in 1M mode
-#define DMAADDR_WORDRAM2M(addr) (((addr) & 0x7FFF) >> 3) ///< Word RAM in 2M mode
-#define DMAADDR_PCM(addr)       (((addr) & 0x1FFF) >> 3) ///< PCM wave RAM: addr in the Sub CPU's 8 KB bank window (twice the wave RAM offset)
-#define DMAADDR_PRGRAM(addr)    ((addr) >> 3)            ///< Program RAM
+#define DMAADDR_WORDRAM1M(addr)                     \
+  (((addr) & 0x3FFF) >> 3) ///< Word RAM in 1M mode
+#define DMAADDR_WORDRAM2M(addr)                     \
+  (((addr) & 0x7FFF) >> 3) ///< Word RAM in 2M mode
+#define DMAADDR_PCM(addr) \
+  (((addr) & 0x1FFF) >>   \
+   3) ///< PCM wave RAM: addr in the Sub CPU's 8 KB bank window (twice the wave RAM offset)
+#define DMAADDR_PRGRAM(addr) ((addr) >> 3) ///< Program RAM
 ///@}
 
 #ifdef __cplusplus

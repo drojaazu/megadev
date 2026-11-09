@@ -12,8 +12,9 @@
 /**
  * @fn INIT_JOYPADS
  * @brief Sets up Player 1 and 2 terminals for standard reads
- * @details Sets TH pin to write mode for Control port for each normally used terminal. Note that this does not
- *       do any work on the third terminal on old MD models, normally used for serial comm.
+ * @details Sets TH pin to write mode for Control port for each normally used
+ * terminal. Note that this does notapply to the third terminal on old MD
+ * models, which is normally used for serial comm.
  * @clobber a0
  */
 .macro INIT_JOYPADS

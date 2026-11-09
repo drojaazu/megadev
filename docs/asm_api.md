@@ -44,13 +44,13 @@ Unless a row says otherwise, a routine clobbers nothing but the registers listed
 | `HEX2BCD` | d0.w in: a value 0 to 99; d0.w out: the value as packed BCD. Clobbers d1. |
 | `COMPARE_STRING` | a1, a2: strings; d1: length minus 1. Sets Z if the first `d1 + 1` bytes match. Registers are preserved. |
 
-`system.macro.s`
+`cpu.macro.s`
 
 | Macro | Purpose |
 |---|---|
 | `DISABLE_INTERRUPTS` | `ori #0x700, sr` |
 | `ENABLE_INTERRUPTS` | `andi #0xF8FF, sr` |
-| `cpu_stop` | `stop #0x700`: halt with interrupts disabled |
+| `CPU_STOP` | `stop #0x700`: halt with interrupts disabled |
 | `PUSH reg` / `POP reg` | Push or pop one register |
 | `PUSHM regs` / `POPM regs` | `movem` a register list to or from the stack |
 
@@ -119,11 +119,11 @@ Unless a row says otherwise, a routine clobbers nothing but the registers listed
 |---|---|---|---|
 | `INIT_MMD` | a0: the module's entry point | d0, a0 to a2 | Prepare an MMD the Sub CPU has loaded to the start of Word RAM: copy it to its destination if asked, install its interrupt handlers, hand Word RAM back if its header says so. `docs/modules.md`. |
 
-## Crash handler, `main/exvec_main.s` and `main/exvec_cart.s`
+## Crash handler, `main/crash_main.s` and `main/crash_cart.s`
 
 | Routine | Purpose |
 |---|---|
-| `exvec_install` | Install the Main CPU handlers in the system vector table (Mega CD and Mode 1). Cartridges include `exvec_cart.s` instead, which points the ROM vectors at the handlers at link time. |
+| `crash_install` | Install the Main CPU handlers in the system vector table (Mega CD and Mode 1). Cartridges include `crash_cart.s` instead, which points the ROM vectors at the handlers at link time. |
 | `exvec_address_or_illegal` | The entry the Boot ROM shares between address errors and illegal instructions; it tells them apart by the frame. Not called directly. |
 
 `docs/crash_handler.md` has the rest.
@@ -157,11 +157,11 @@ The variables `access_op`, `access_op_result`, `filename`, `filebuff`, `filesize
 | `pcm_clear_ram` | | d0 to d2, a6 | Silence every channel and zero all 16 wave RAM banks. |
 | `pcm_config_channel` | d0.b: channel selector (`CHANNEL(n)`); a5.l: seven register values (`PcmChannelSettings`) | d0, a5, a6 | Write a channel's envelope, pan, frequency, loop point and start registers. |
 
-## Crash handler, `sub/exvec_sub.s`
+## Crash handler, `sub/crash_sub.s`
 
 | Routine | Purpose |
 |---|---|
-| `exvec_install` | Install the Sub CPU handlers in the Sub BIOS jump table. The Main CPU reports a Sub CPU crash through `exvec_check_sub`. |
+| `crash_install` | Install the Sub CPU handlers in the Sub BIOS jump table. The Main CPU reports a Sub CPU crash through `crash_check_sub`. |
 
 # Compiler runtime
 

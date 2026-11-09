@@ -843,7 +843,8 @@
 /**
  * @def VDP_INTERLACE_NONE
  * @ingroup vdp_reg0C
- * @brief Interlace Mode / None; a value for the VDP_INTERLACE field, placed with FIELD_PREP
+ * @brief Interlace Mode / None; a value for the VDP_INTERLACE field, placed
+ * with FIELD_PREP
  */
 #define VDP_INTERLACE_NONE 0b00
 

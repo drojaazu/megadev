@@ -12,7 +12,7 @@ GLOBAL_SYM(MODULE_RAM_LENGTH, 0x2000);
 #include <sub/gate_arr.h>
 #include <sub/memmap.h>
 #include <sub/pcm.h>
-#include <system.h>
+#include <cpu.h>
 
 /*
  * The audio is streamed from the disc. The PCM chip plays channel 1 through
@@ -39,16 +39,22 @@ volatile u16 stream_sum;
 
 static u8 play_bank()
 {
-  return *((volatile u8 *) _PCM_PLAY_CH1_H) >> 4;
+  return *((volatile u8 *) PCM_PLAY_CH1_HI) >> 4;
 }
 
 // Load the given 4 KB of the file into the given bank
 static void load_bank(u8 bank, u32 chunk)
 {
-  *PCM_CTRL = WAVEBANK(bank);
-  if (load_file_part(CDROM_LOAD_PCM_DMA, PCM_FILE, (u8 *) 0, chunk * BANK_SECTORS, BANK_SECTORS) == 0)
+  *pcmreg_ctrl = WAVEBANK(bank);
+  if (
+    load_file_part(
+      CDROM_LOAD_PCM_DMA,
+      PCM_FILE,
+      (u8 *) 0,
+      chunk * BANK_SECTORS,
+      BANK_SECTORS) == 0)
     sp_fatal();
-  volatile u8 const * wave = (volatile u8 const *) (_PCM_RAM + 1);
+  volatile u8 const * wave = (volatile u8 const *) (PCM_RAM + 1);
   for (u16 i = 0; i < 0x1000; ++i)
     stream_sum += wave[i << 1];
 }
@@ -74,11 +80,10 @@ static void stream_pcm()
   // default VBLANK handler in the Main Boot ROM Library; see the Predefined
   // Comm Flag Semantics section of main_bios.md)
   ga_sub_reg_comflags_sub |= 0x80;
-  *PCM_CDISABLE = 0xFE; // channel 1 on
+  *pcmreg_ch_disable = 0xFE; // channel 1 on
 
   // fill whichever half the play head is not in
-  for (; chunk < chunks; ++chunk)
-  {
+  for (; chunk < chunks; ++chunk) {
     u8 const bank = chunk % BANKS;
     while ((play_bank() >> 3) == (bank >> 3))
       ;
@@ -91,7 +96,7 @@ static void stream_pcm()
     ;
   while ((play_bank() >> 3) == last_half)
     ;
-  *PCM_CDISABLE = 0xFF;
+  *pcmreg_ch_disable = 0xFF;
   ga_sub_reg_comflags_sub &= ~0x80;
   ga_sub_reg_comstat3 = stream_sum;
 }
@@ -103,10 +108,8 @@ void main()
 
   register u16 command, param1;
 
-  do
-  {
-    do
-    {
+  do {
+    do {
       command = ga_sub_reg_comcmd0;
     } while (command == 0);
 
@@ -115,13 +118,11 @@ void main()
 
     param1 = ga_sub_reg_comcmd1;
 
-    switch (command)
-    {
+    switch (command) {
       case CMD_LOAD_WORDRAM:
         load_file(CDROM_LOAD_CDC, filenames[param1], (u8 *) WORD_RAM_2M);
         ga_sub_grant_2m();
-        if (access_op_result != CDROM_RESULT_OK)
-        {
+        if (access_op_result != CDROM_RESULT_OK) {
           sp_fatal();
         }
         break;
@@ -132,14 +133,12 @@ void main()
     }
 
     ga_sub_reg_comstat0 = ga_sub_reg_comcmd0;
-    do
-    {
+    do {
       asm("nop");
       command = ga_sub_reg_comcmd0;
     } while (command != 0);
 
-    do
-    {
+    do {
       asm("nop");
       command = ga_sub_reg_comcmd0;
     } while (command != 0);

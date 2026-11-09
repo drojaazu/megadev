@@ -25,15 +25,15 @@
  * SACBRLDU. This format is used the Mega CD's Main BIOS IO calls as well as
  * the read_input_joypad function in Megadev.
  */
-#define PAD_UP    (1 << 0) ///< D-pad up
-#define PAD_DOWN  (1 << 1) ///< D-pad down
-#define PAD_LEFT  (1 << 2) ///< D-pad left
-#define PAD_RIGHT (1 << 3) ///< D-pad right
-#define PAD_A     (1 << 6) ///< A button
-#define PAD_B     (1 << 4) ///< B button
-#define PAD_C     (1 << 5) ///< C button
+#define PAD_UP    (1 << 0)                ///< D-pad up
+#define PAD_DOWN  (1 << 1)                ///< D-pad down
+#define PAD_LEFT  (1 << 2)                ///< D-pad left
+#define PAD_RIGHT (1 << 3)                ///< D-pad right
+#define PAD_A     (1 << 6)                ///< A button
+#define PAD_B     (1 << 4)                ///< B button
+#define PAD_C     (1 << 5)                ///< C button
 #define PAD_ABC   (PAD_A | PAD_B | PAD_C) ///< Any of A, B, C
-#define PAD_START (1 << 7) ///< Start button
+#define PAD_START (1 << 7)                ///< Start button
 
 /**
  * @def IO_DATA1
@@ -240,7 +240,8 @@
 
 /**
  * @def SCTRL_RX_INT_ENABLE_POS
- * @brief IO Serial Control Register / Enable INT2 on data receipt flag, bit position
+ * @brief IO Serial Control Register / Enable INT2 on data receipt flag, bit
+ * position
  * @ingroup ioports_s
  */
 #define SCTRL_RX_INT_ENABLE_POS 3
@@ -285,7 +286,8 @@
  * @brief IO Serial Control Register / Enable serial input and output
  * @ingroup ioports_s
  */
-#define SCTRL_SERIAL_ENABLE_MASK (SCTRL_SERIAL_OUT_ENABLE_MASK | SCTRL_SERIAL_IN_ENABLE_MASK)
+#define SCTRL_SERIAL_ENABLE_MASK                               \
+  (SCTRL_SERIAL_OUT_ENABLE_MASK | SCTRL_SERIAL_IN_ENABLE_MASK)
 
 /**
  * @def SCTRL_BAUD_POS
@@ -310,28 +312,32 @@
 
 /**
  * @def SCTRL_BAUD_300
- * @brief Baud rate 300; a value for the SCTRL_BAUD field, placed with FIELD_PREP
+ * @brief Baud rate 300; a value for the SCTRL_BAUD field, placed with
+ * FIELD_PREP
  * @ingroup ioports_s
  */
 #define SCTRL_BAUD_300 0b11
 
 /**
  * @def SCTRL_BAUD_1200
- * @brief Baud rate 1200; a value for the SCTRL_BAUD field, placed with FIELD_PREP
+ * @brief Baud rate 1200; a value for the SCTRL_BAUD field, placed with
+ * FIELD_PREP
  * @ingroup ioports_s
  */
 #define SCTRL_BAUD_1200 0b10
 
 /**
  * @def SCTRL_BAUD_2400
- * @brief Baud rate 2400; a value for the SCTRL_BAUD field, placed with FIELD_PREP
+ * @brief Baud rate 2400; a value for the SCTRL_BAUD field, placed with
+ * FIELD_PREP
  * @ingroup ioports_s
  */
 #define SCTRL_BAUD_2400 0b01
 
 /**
  * @def SCTRL_BAUD_4800
- * @brief Baud rate 4800; a value for the SCTRL_BAUD field, placed with FIELD_PREP
+ * @brief Baud rate 4800; a value for the SCTRL_BAUD field, placed with
+ * FIELD_PREP
  * @ingroup ioports_s
  */
 #define SCTRL_BAUD_4800 0b00

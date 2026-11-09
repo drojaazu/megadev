@@ -2,8 +2,7 @@
 #include "types.h"
 #include <main/bios.h>
 
-typedef struct
-{
+typedef struct {
   u32  size;
   char data[];
 } DataChunk;

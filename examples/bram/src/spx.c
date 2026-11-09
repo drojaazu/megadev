@@ -11,7 +11,7 @@ GLOBAL_SYM(MODULE_RAM_LENGTH, 0x2000);
 #include <sub/cdrom.h>
 #include <sub/gate_arr.h>
 #include <sub/memmap.h>
-#include <system.h>
+#include <cpu.h>
 
 void load_ipx();
 
@@ -30,11 +30,9 @@ void main()
 
   register u16 cmd0, cmd1;
 
-  do
-  {
+  do {
 
-    do
-    {
+    do {
       cmd0 = ga_sub_reg_comcmd0;
     } while (cmd0 == 0);
 
@@ -43,15 +41,12 @@ void main()
 
     cmd1 = ga_sub_reg_comcmd1;
 
-    switch (cmd0)
-    {
-
+    switch (cmd0) {
       // load MMD
       case 1:
         load_file(CDROM_LOAD_CDC, filenames[cmd1], (u8 *) WORD_RAM_2M);
         ga_sub_grant_2m();
-        if (access_op_result != CDROM_RESULT_OK)
-        {
+        if (access_op_result != CDROM_RESULT_OK) {
           sp_fatal();
         }
         break;
@@ -74,12 +69,9 @@ void main()
         // for a total of 12 bytes
         BramSearchResult * search = bram_search(file_info.filename);
         // null means file was not found
-        if (search == NULL)
-        {
+        if (search == NULL) {
           ga_sub_reg_comstat1 = 0xFFFF;
-        }
-        else
-        {
+        } else {
           ga_sub_reg_comstat1 = 0;
           ga_sub_reg_comstat2 = search->filesize;
           ga_sub_reg_comstat3 = search->mode;
@@ -95,12 +87,9 @@ void main()
         BramReadResult * read =
           bram_read(file_info.filename, (u8 *) WORD_RAM_2M);
 
-        if (! read->success)
-        {
+        if (! read->success) {
           ga_sub_reg_comstat1 = 0xFFFF;
-        }
-        else
-        {
+        } else {
           ga_sub_reg_comstat1 = 0;
           ga_sub_reg_comstat2 = read->filesize;
           ga_sub_reg_comstat3 = read->mode;
@@ -113,8 +102,7 @@ void main()
       case 5:
         ga_sub_wait_2m();
 
-        if (! bram_write(&file_info, (u8 *) WORD_RAM_2M))
-        {
+        if (! bram_write(&file_info, (u8 *) WORD_RAM_2M)) {
           ga_sub_reg_comstat1 = 0xFFFF;
         }
         ga_sub_grant_2m();
@@ -155,21 +143,18 @@ void main()
       case 0xFE:
         load_file(CDROM_LOAD_CDC, "BRAMDEMO.MMD;1", (u8 *) WORD_RAM_2M);
         ga_sub_grant_2m();
-        if (access_op_result != CDROM_RESULT_OK)
-        {
+        if (access_op_result != CDROM_RESULT_OK) {
           sp_fatal();
         }
         break;
     }
 
     ga_sub_reg_comstat0 = ga_sub_reg_comcmd0;
-    do
-    {
+    do {
       cmd0 = ga_sub_reg_comcmd0;
     } while (cmd0 != 0);
 
-    do
-    {
+    do {
       cmd0 = ga_sub_reg_comcmd0;
     } while (cmd0 != 0);
 

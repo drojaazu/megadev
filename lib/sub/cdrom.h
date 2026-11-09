@@ -86,8 +86,7 @@ load_file(u16 const access_operation, char const * load_filename, u8 * buffer)
   part_count = 0;
   access_op = access_operation;
 
-  do
-  {
+  do {
     bios_wait_vsync();
   } while (access_op != CDROM_IDLE);
 
@@ -110,8 +109,12 @@ load_file(u16 const access_operation, char const * load_filename, u8 * buffer)
  * For a PCM DMA destination the count is at most 2: the DMA address register
  * reaches one 4 KB wave RAM bank.
  */
-static inline u32 load_file_part(u16 const access_operation,
-  char const * load_filename, u8 * buffer, u32 sector_offset, u32 sector_count)
+static inline u32 load_file_part(
+  u16 const    access_operation,
+  char const * load_filename,
+  u8 *         buffer,
+  u32          sector_offset,
+  u32          sector_count)
 {
   filename = load_filename;
   filebuff = buffer;
@@ -119,8 +122,7 @@ static inline u32 load_file_part(u16 const access_operation,
   part_count = sector_count;
   access_op = access_operation;
 
-  do
-  {
+  do {
     bios_wait_vsync();
   } while (access_op != CDROM_IDLE);
 
@@ -133,8 +135,7 @@ static inline u32 load_file_part(u16 const access_operation,
 /**
  * @brief A root directory entry as the access loop caches it
  */
-typedef struct FileInfo
-{
+typedef struct FileInfo {
   char const filename[14]; ///< FILENAME.EXT;1, space padded
   u32        offset;       ///< First sector
   u32        size;         ///< Size in bytes

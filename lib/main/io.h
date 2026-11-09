@@ -100,14 +100,14 @@ typedef u8 volatile * io_reg;
 /** @brief Set both control ports up for a 3 button pad: TH as output */
 static inline void init_joypads()
 {
-	asm(
-		"\
+  asm(
+    "\
   move.b   #%c[ctrl_pc6], (%c[ctrl1]) \n\
   move.b   #%c[ctrl_pc6], (%c[ctrl2]) \n\
 		"
-		:
-		: [ctrl_pc6] "i"(CTRL_PC6), [ctrl1] "i"(IO_CTRL1), [ctrl2] "i"(IO_CTRL2)
-		: "cc");
+    :
+    : [ctrl_pc6] "i"(CTRL_PC6), [ctrl1] "i"(IO_CTRL1), [ctrl2] "i"(IO_CTRL2)
+    : "cc");
 }
 
 /**
@@ -117,11 +117,11 @@ static inline void init_joypads()
  */
 static inline u8 read_input_joypad(io_reg io_port)
 {
-	register u32 scratch_d;
-	register u8	 joypad_state;
+  register u32 scratch_d;
+  register u8  joypad_state;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
   move.b   #%c[ctrl_pc6], (%[io_port]) \n\
   nop \n\
   nop \n\
@@ -135,11 +135,11 @@ static inline u8 read_input_joypad(io_reg io_port)
   lsl.b    #2, %[scratch_d] \n\
   or.b     d1, %[joypad_state] \n\
 		"
-		: [joypad_state] "=d"(joypad_state), [scratch_d] "=&d"(scratch_d)
-		: [io_port] "a"(io_port), [ctrl_pc6] "i"(CTRL_PC6)
-		: "cc");
+    : [joypad_state] "=d"(joypad_state), [scratch_d] "=&d"(scratch_d)
+    : [io_port] "a"(io_port), [ctrl_pc6] "i"(CTRL_PC6)
+    : "cc");
 
-	return joypad_state;
+  return joypad_state;
 }
 
 #ifdef __cplusplus

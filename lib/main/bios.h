@@ -42,32 +42,32 @@ extern "C" {
  * position fields relative to the entity instead of absolute.
  * @ingroup bios_vdp
  */
-struct SpriteMapping
-{
-  s8 relpos_y; ///< Vertical offset from the entity position
-  u8           : 4; ///< Unused
-  u8  width    : 2; ///< Width in tiles minus 1 (0 to 3)
-  u8  height   : 2; ///< Height in tiles minus 1 (0 to 3)
-  u8  priority : 1; ///< Sprite priority bit
-  u8  pal_line : 2; ///< Palette line (0 to 3)
-  u8  v_flip   : 1; ///< Vertical flip
-  u8  h_flip   : 1; ///< Horizontal flip
+struct SpriteMapping {
+  s8 relpos_y;       ///< Vertical offset from the entity position
+  u8           : 4;  ///< Unused
+  u8  width    : 2;  ///< Width in tiles minus 1 (0 to 3)
+  u8  height   : 2;  ///< Height in tiles minus 1 (0 to 3)
+  u8  priority : 1;  ///< Sprite priority bit
+  u8  pal_line : 2;  ///< Palette line (0 to 3)
+  u8  v_flip   : 1;  ///< Vertical flip
+  u8  h_flip   : 1;  ///< Horizontal flip
   u16 chridx   : 11; ///< First tile index
-  s8  relpos_x; ///< Horizontal offset from the entity position
-  s8  mirrored_relpos_x; ///< Horizontal offset used when the entity is flipped (ENTITY_HFLIP)
+  s8  relpos_x;      ///< Horizontal offset from the entity position
+  s8
+    mirrored_relpos_x; ///< Horizontal offset used when the entity is flipped (ENTITY_HFLIP)
 } __attribute__((__packed__));
 
 /**
  * @brief The sprites that make up an entity's appearance
  * @ingroup bios_vdp
  */
-typedef struct SpriteLayout
-{
+typedef struct SpriteLayout {
   u8 mapping_count; ///< Number of entries in mappings
   // this byte is a bit of a mystery: it is copied to 0x19 of the Entity
   // and if the h flip flag is set, it will add +1 to the value in the object.
   // It does not have any effect on the object and its purpose is unknown
-  u8                   unknown; ///< Copied into Entity::unknown; purpose unknown, see the comment above
+  u8
+    unknown; ///< Copied into Entity::unknown; purpose unknown, see the comment above
   struct SpriteMapping mappings[]; ///< The sprites, mapping_count of them
 } SpriteLayout;
 
@@ -84,25 +84,26 @@ typedef struct SpriteLayout
  * size as obj_size. The position and movement are 16.16 fixed point.
  * @ingroup bios_vdp
  */
-typedef struct
-{
-  u16 enable        : 1; ///< Entity is active
-  u16 jmptbl_offset : 15; ///< Offset into the entity jump table (BIOS_ENTITY_ROUTINES)
+typedef struct {
+  u16 enable : 1; ///< Entity is active
+  u16 jmptbl_offset
+    : 15; ///< Offset into the entity jump table (BIOS_ENTITY_ROUTINES)
   // uses the display flags defined above; the rest of the bits are user
   // definable
   u8 display_flags; ///< ENTITY_HFLIP, ENTITY_HIDE; the other bits are free
   // this byte is not used by blib, so presumably it can be used however
   // you'd like
-  u8                          user; ///< Not used by the Boot ROM; free for the program
+  u8 user; ///< Not used by the Boot ROM; free for the program
   struct SpriteLayout const * layout; ///< Sprites to draw
 
-  f32 pos_x; ///< Horizontal position
-  f32 pos_y; ///< Vertical position
+  f32 pos_x;  ///< Horizontal position
+  f32 pos_y;  ///< Vertical position
   f32 move_x; ///< Added to pos_x every frame
   f32 move_y; ///< Added to pos_y every frame
   // this byte is ORed on to the byte starting with the priority
   // bit in the SpriteMapping struct
-  u8 sprite_flags; ///< ORed into the attribute byte of every sprite (priority, palette, flips)
+  u8
+    sprite_flags; ///< ORed into the attribute byte of every sprite (priority, palette, flips)
   // the second byte of the SpriteLayout header is copied here
   u8 unknown; ///< Copy of SpriteLayout::unknown, plus 1 when flipped
 } Entity;
@@ -111,8 +112,7 @@ typedef struct
  * @brief Palette data for the Boot ROM's palette routines
  * @ingroup bios_vdp
  */
-typedef struct Palette
-{
+typedef struct Palette {
   u8  cram_offset; ///< CRAM address to load at, in colors (the palette index)
   u8  length;      ///< Number of colors minus 1
   s16 colors[];    ///< The colors, in CRAM format
@@ -555,8 +555,7 @@ static inline void bios_read_joypad()
  * @brief Controller types bios_detect_controller reports
  * @ingroup bios_input
  */
-typedef enum ControllerType
-{
+typedef enum ControllerType {
   Joypad = CONTROLLER_JOYPAD,
   MegaMouse = CONTROLLER_MEGAMOUSE,
   MultiTap = CONTROLLER_MULTITAP
@@ -1461,11 +1460,10 @@ static inline void bios_pal_fadein()
  * @brief One entry of a bios_dma_queue list
  * @ingroup bios_vdp
  */
-typedef struct DmaTransfer
-{
-  u16 length; ///< Length in words
+typedef struct DmaTransfer {
+  u16 length;   ///< Length in words
   u32 vdp_addr; ///< VRAM destination as a VDP command
-  u32 source; ///< Source address
+  u32 source;   ///< Source address
 } DmaTransfer;
 
 /**

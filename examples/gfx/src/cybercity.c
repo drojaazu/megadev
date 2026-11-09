@@ -9,7 +9,7 @@ GLOBAL_SYM(MODULE_RAM_ORIGIN, 0xFFC000);
 GLOBAL_SYM(MODULE_RAM_LENGTH, 0xFFF700 - 0xFFC000);
 
 #include <main/bios.h>
-#include <main/exvec.h>
+#include <main/crash.h>
 #include <main/io.h>
 #include <main/memmap.h>
 #include <main/vdp.h>
@@ -122,17 +122,15 @@ __attribute__((noreturn)) void main()
 
   *bios_vblank_user = vblank_user;
   // crash handler for Main CPU exceptions (docs/crash_handler.md)
-  exvec_install();
-
+  crash_install();
 
   uf32 scroll_a = 0.0;
   uf32 scroll_b = 0.0;
 
-  do
-  {
+  do {
     bios_vblank_handler_flags = BIOS_MASK_COPY_SPRLIST;
     bios_vblank_wait_default();
-    exvec_check_sub();
+    crash_check_sub();
 
     bios_process_entities(&sprobj_ship, bios_sprlist, 0, 0x1A);
 
@@ -145,8 +143,7 @@ __attribute__((noreturn)) void main()
     vdp_data_16 = uf32_to_int(scroll_a);
     vdp_data_16 = uf32_to_int(scroll_b);
 
-    if (bios_joy1_hold & PAD_RIGHT)
-    {
+    if (bios_joy1_hold & PAD_RIGHT) {
       // ship_parts.pos_x += frac_to_uf32(3);
       sprobj_ship.display_flags = 0;
       sprobj_ship.move_x += frac_to_f32(0.2);
@@ -154,8 +151,7 @@ __attribute__((noreturn)) void main()
         sprobj_ship.move_x = frac_to_f32(4);
     }
 
-    if (bios_joy1_hold & PAD_LEFT)
-    {
+    if (bios_joy1_hold & PAD_LEFT) {
       // ship_parts.pos_x -= frac_to_f32(3);
       sprobj_ship.display_flags = 0x80;
       sprobj_ship.move_x -= frac_to_f32(0.2);
@@ -163,13 +159,11 @@ __attribute__((noreturn)) void main()
         sprobj_ship.move_x = frac_to_f32(-4);
     }
 
-    if (bios_joy1_hold & PAD_UP)
-    {
+    if (bios_joy1_hold & PAD_UP) {
       sprobj_ship.pos_y -= frac_to_uf32(3);
     }
 
-    if (bios_joy1_hold & PAD_DOWN)
-    {
+    if (bios_joy1_hold & PAD_DOWN) {
       sprobj_ship.pos_y += frac_to_uf32(3);
     }
 

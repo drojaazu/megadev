@@ -32,17 +32,17 @@ replacement.
 - **Compiler runtime**: `memcpy`, `memmove`, `memset`, `memcmp`, and 32-bit
   multiply, divide and modulo helpers, which GCC calls on its own. Linked into
   every program automatically.
-- **Crash handler** (`main/exvec.h`, `sub/exvec.h`): on an exception, shows
+- **Crash handler** (`main/crash.h`, `sub/crash.h`): on an exception, shows
   the CPU state on screen and over the serial port. Main CPU on cartridges,
   in Mode 1 and on the Mega CD; Sub CPU crashes are reported by the Main CPU.
-  `EXVEC_FONT` selects the kit's font or the Boot ROM's. See
+  `CRASH_FONT` selects the kit's font or the Boot ROM's. See
   `docs/crash_handler.md`.
   Every example and the `new_project` template install it.
 - **Debug text without the Boot ROM** (`main/text.h`): `vdp_load_1bpp_tiles`
   loads a 1bpp font, `text_print` prints a C string at a `VDP_PLANE_XY`
-  position. Includes `font8x8`, a public domain 8x8 ASCII font, for the Mega
+  position. Includes the system font (`sysfont`), a public domain 8x8 ASCII font, for the Mega
   Drive alone. `str_to_bios` converts a C string for `bios_print`.
-  The examples print with it: C strings, `snprintf` and `font8x8`.
+  The examples print with it: C strings, `snprintf` and the system font.
 - **Cartridge header**: the build writes the ROM end address and checksum into
   the header of every cartridge (`tools/romfix.sh`).
 - **Layout symbols**: every linker script defines the same symbols describing

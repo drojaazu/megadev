@@ -6,7 +6,7 @@
 #include <main/gate_arr.macro.s>
 #include <main/main.macro.s>
 #include <macro.s>
-#include <system.macro.s>
+#include <cpu.macro.s>
 #include "shared.h"
 
 /*

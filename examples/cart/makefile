@@ -83,6 +83,6 @@ clean:
 $(PROJECT_ID).cart: \
 	init.s \
 	main.c \
-	exvec_main.s \
+	crash_main.s \
 	sine.s \
 	res.s 

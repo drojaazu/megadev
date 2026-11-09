@@ -89,7 +89,7 @@ clean:
 
 $(DISC_PATH)/ipx.mmd: \
 	main/ipx_init.s \
-	exvec_main.s \
+	crash_main.s \
 	ipx.c
 
 $(DISC_PATH)/spx.smd: \

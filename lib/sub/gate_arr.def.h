@@ -343,7 +343,6 @@
  */
 #define GA_SUB_REG_SUBCTRL 0xFF8001
 
-
 /**
  * @brief Red LED Control
  * @details
@@ -353,7 +352,7 @@
  * @ingroup ga_reg_sub_subctrl
  */
 ///@{
-#define GA_SUB_LED_R_POS 0
+#define GA_SUB_LED_R_POS  0
 #define GA_SUB_LED_R_MASK (1 << GA_SUB_LED_R_POS)
 ///@}
 
@@ -366,7 +365,7 @@
  * @ingroup ga_reg_sub_subctrl
  */
 ///@{
-#define GA_SUB_LED_G_POS 1
+#define GA_SUB_LED_G_POS  1
 #define GA_SUB_LED_G_MASK (1 << GA_SUB_LED_G_POS)
 ///@}
 
@@ -376,7 +375,7 @@
  * @ingroup ga_reg_sub_subctrl
  */
 ///@{
-#define GA_SUB_VERSION_POS 4
+#define GA_SUB_VERSION_POS   4
 #define GA_SUB_VERSION_WIDTH 4
 #define GA_SUB_VERSION_MASK FIELD_MASK(GA_SUB_VERSION_POS, GA_SUB_VERSION_WIDTH)
 ///@}
@@ -390,7 +389,7 @@
  * @ingroup ga_reg_sub_subctrl
  */
 ///@{
-#define GA_SUB_PERIPH_RESET_POS 0
+#define GA_SUB_PERIPH_RESET_POS  0
 #define GA_SUB_PERIPH_RESET_MASK (1 << GA_SUB_PERIPH_RESET_POS)
 ///@}
 
@@ -461,9 +460,10 @@
  */
 #define GA_SUB_REG_MEMMODE 0xFF8003
 
-#define GA_SUB_RETURN_2M_POS 0      ///< Bit position of GA_SUB_RETURN_2M_MASK
-#define GA_SUB_DMNA_POS 1           ///< Bit position of GA_SUB_DMNA_MASK
-#define GA_SUB_WORDRAM_LAYOUT_POS 2 ///< Bit position of GA_SUB_WORDRAM_LAYOUT_MASK
+#define GA_SUB_RETURN_2M_POS 0 ///< Bit position of GA_SUB_RETURN_2M_MASK
+#define GA_SUB_DMNA_POS      1 ///< Bit position of GA_SUB_DMNA_MASK
+#define GA_SUB_WORDRAM_LAYOUT_POS                   \
+  2 ///< Bit position of GA_SUB_WORDRAM_LAYOUT_MASK
 
 /**
  * @def GA_SUB_RETURN_2M_MASK
@@ -506,14 +506,18 @@
  * @ingroup ga_reg_sub_memmode
  */
 ///@{
-#define GA_SUB_PRIORITY_POS 3
+#define GA_SUB_PRIORITY_POS   3
 #define GA_SUB_PRIORITY_WIDTH 2
-#define GA_SUB_PRIORITY_MASK FIELD_MASK(GA_SUB_PRIORITY_POS, GA_SUB_PRIORITY_WIDTH)
+#define GA_SUB_PRIORITY_MASK                             \
+  FIELD_MASK(GA_SUB_PRIORITY_POS, GA_SUB_PRIORITY_WIDTH)
 ///@}
 
-#define GA_SUB_PRIORITY_OFF 0b00 ///< Priority mode off: graphics writes are plain writes
-#define GA_SUB_PRIORITY_UNDERWRITE 0b01 ///< Underwrite: a write only lands where the destination dot is 0
-#define GA_SUB_PRIORITY_OVERWRITE 0b10 ///< Overwrite: a write only lands where the source dot is not 0
+#define GA_SUB_PRIORITY_OFF                                     \
+  0b00 ///< Priority mode off: graphics writes are plain writes
+#define GA_SUB_PRIORITY_UNDERWRITE                                        \
+  0b01 ///< Underwrite: a write only lands where the destination dot is 0
+#define GA_SUB_PRIORITY_OVERWRITE                                       \
+  0b10 ///< Overwrite: a write only lands where the source dot is not 0
 
 /**
  * @brief Program RAM write protect blocks
@@ -521,9 +525,9 @@
  * @ingroup ga_reg_sub_memmode
  */
 ///@{
-#define GA_SUB_WP_POS 0
+#define GA_SUB_WP_POS   0
 #define GA_SUB_WP_WIDTH 8
-#define GA_SUB_WP_MASK FIELD_MASK(GA_SUB_WP_POS, GA_SUB_WP_WIDTH)
+#define GA_SUB_WP_MASK  FIELD_MASK(GA_SUB_WP_POS, GA_SUB_WP_WIDTH)
 ///@}
 
 /**
@@ -581,9 +585,10 @@
  * @ingroup ga_reg_sub_02
  */
 ///@{
-#define GA_SUB_CDCMODE_CA_POS 0
+#define GA_SUB_CDCMODE_CA_POS   0
 #define GA_SUB_CDCMODE_CA_WIDTH 4
-#define GA_SUB_CDCMODE_CA_MASK FIELD_MASK(GA_SUB_CDCMODE_CA_POS, GA_SUB_CDCMODE_CA_WIDTH)
+#define GA_SUB_CDCMODE_CA_MASK                               \
+  FIELD_MASK(GA_SUB_CDCMODE_CA_POS, GA_SUB_CDCMODE_CA_WIDTH)
 ///@}
 
 /**
@@ -608,15 +613,18 @@
  * @ingroup ga_reg_sub_02
  */
 ///@{
-#define GA_SUB_CDCMODE_DD_POS 8
+#define GA_SUB_CDCMODE_DD_POS   8
 #define GA_SUB_CDCMODE_DD_WIDTH 3
-#define GA_SUB_CDCMODE_DD_MASK FIELD_MASK(GA_SUB_CDCMODE_DD_POS, GA_SUB_CDCMODE_DD_WIDTH)
+#define GA_SUB_CDCMODE_DD_MASK                               \
+  FIELD_MASK(GA_SUB_CDCMODE_DD_POS, GA_SUB_CDCMODE_DD_WIDTH)
 ///@}
 
-#define GA_SUB_CDCMODE_DD_MAINREAD 0b010 ///< CDC data read by the Main CPU through its host data register
-#define GA_SUB_CDCMODE_DD_SUBREAD 0b011 ///< CDC data read by the Sub CPU through GA_SUB_REG_CDCHOSTDATA
-#define GA_SUB_CDCMODE_DD_PCMDMA 0b100 ///< CDC data by DMA into PCM wave RAM
-#define GA_SUB_CDCMODE_DD_PRGDMA 0b101 ///< CDC data by DMA into Program RAM
+#define GA_SUB_CDCMODE_DD_MAINREAD                                        \
+  0b010 ///< CDC data read by the Main CPU through its host data register
+#define GA_SUB_CDCMODE_DD_SUBREAD                                        \
+  0b011 ///< CDC data read by the Sub CPU through GA_SUB_REG_CDCHOSTDATA
+#define GA_SUB_CDCMODE_DD_PCMDMA  0b100 ///< CDC data by DMA into PCM wave RAM
+#define GA_SUB_CDCMODE_DD_PRGDMA  0b101 ///< CDC data by DMA into Program RAM
 #define GA_SUB_CDCMODE_DD_WRAMDMA 0b111 ///< CDC data by DMA into Word RAM
 
 /**
@@ -625,7 +633,7 @@
  * @ingroup ga_reg_sub_02
  */
 ///@{
-#define GA_SUB_CDCMODE_UBR_POS 13
+#define GA_SUB_CDCMODE_UBR_POS  13
 #define GA_SUB_CDCMODE_UBR_MASK (1 << GA_SUB_CDCMODE_UBR_POS)
 ///@}
 
@@ -637,7 +645,7 @@
  * @ingroup ga_reg_sub_02
  */
 ///@{
-#define GA_SUB_CDCMODE_DSR_POS 14
+#define GA_SUB_CDCMODE_DSR_POS  14
 #define GA_SUB_CDCMODE_DSR_MASK (1 << GA_SUB_CDCMODE_DSR_POS)
 ///@}
 
@@ -649,7 +657,7 @@
  * @ingroup ga_reg_sub_02
  */
 ///@{
-#define GA_SUB_CDCMODE_EDT_POS 15
+#define GA_SUB_CDCMODE_EDT_POS  15
 #define GA_SUB_CDCMODE_EDT_MASK (1 << GA_SUB_CDCMODE_EDT_POS)
 ///@}
 
@@ -689,9 +697,10 @@
  * @ingroup ga_reg_sub_03
  */
 ///@{
-#define GA_SUB_CDCRS1_CD_POS 0
+#define GA_SUB_CDCRS1_CD_POS   0
 #define GA_SUB_CDCRS1_CD_WIDTH 8
-#define GA_SUB_CDCRS1_CD_MASK FIELD_MASK(GA_SUB_CDCRS1_CD_POS, GA_SUB_CDCRS1_CD_WIDTH)
+#define GA_SUB_CDCRS1_CD_MASK                              \
+  FIELD_MASK(GA_SUB_CDCRS1_CD_POS, GA_SUB_CDCRS1_CD_WIDTH)
 ///@}
 
 /**
@@ -805,9 +814,10 @@
  * @ingroup ga_reg_sub_06
  */
 ///@{
-#define GA_SUB_STOPWATCH_SW_POS 0
+#define GA_SUB_STOPWATCH_SW_POS   0
 #define GA_SUB_STOPWATCH_SW_WIDTH 12
-#define GA_SUB_STOPWATCH_SW_MASK FIELD_MASK(GA_SUB_STOPWATCH_SW_POS, GA_SUB_STOPWATCH_SW_WIDTH)
+#define GA_SUB_STOPWATCH_SW_MASK                                 \
+  FIELD_MASK(GA_SUB_STOPWATCH_SW_POS, GA_SUB_STOPWATCH_SW_WIDTH)
 ///@}
 
 /**
@@ -1114,9 +1124,10 @@
  * @ingroup ga_reg_sub_26
  */
 ///@{
-#define GA_SUB_CDFADER_FD_POS 4
+#define GA_SUB_CDFADER_FD_POS   4
 #define GA_SUB_CDFADER_FD_WIDTH 11
-#define GA_SUB_CDFADER_FD_MASK FIELD_MASK(GA_SUB_CDFADER_FD_POS, GA_SUB_CDFADER_FD_WIDTH)
+#define GA_SUB_CDFADER_FD_MASK                               \
+  FIELD_MASK(GA_SUB_CDFADER_FD_POS, GA_SUB_CDFADER_FD_WIDTH)
 ///@}
 
 /**
@@ -1127,7 +1138,7 @@
  * @ingroup ga_reg_sub_26
  */
 ///@{
-#define GA_SUB_CDFADER_EFDT_POS 15
+#define GA_SUB_CDFADER_EFDT_POS  15
 #define GA_SUB_CDFADER_EFDT_MASK (1 << GA_SUB_CDFADER_EFDT_POS)
 ///@}
 
@@ -1137,12 +1148,13 @@
  * @ingroup ga_reg_sub_26
  */
 ///@{
-#define GA_SUB_CDFADER_DEF_POS 2
+#define GA_SUB_CDFADER_DEF_POS   2
 #define GA_SUB_CDFADER_DEF_WIDTH 2
-#define GA_SUB_CDFADER_DEF_MASK FIELD_MASK(GA_SUB_CDFADER_DEF_POS, GA_SUB_CDFADER_DEF_WIDTH)
+#define GA_SUB_CDFADER_DEF_MASK                                \
+  FIELD_MASK(GA_SUB_CDFADER_DEF_POS, GA_SUB_CDFADER_DEF_WIDTH)
 ///@}
 
-#define GA_SUB_CDFADER_DEF_OFF 0b00 ///< De-emphasis off
+#define GA_SUB_CDFADER_DEF_OFF   0b00 ///< De-emphasis off
 #define GA_SUB_CDFADER_DEF_44100 0b01 ///< De-emphasis for 44.1 kHz
 #define GA_SUB_CDFADER_DEF_32000 0b10 ///< De-emphasis for 32 kHz
 #define GA_SUB_CDFADER_DEF_48000 0b11 ///< De-emphasis for 48 kHz
@@ -1153,7 +1165,7 @@
  * @ingroup ga_reg_sub_26
  */
 ///@{
-#define GA_SUB_CDFADER_SSF_POS 1
+#define GA_SUB_CDFADER_SSF_POS  1
 #define GA_SUB_CDFADER_SSF_MASK (1 << GA_SUB_CDFADER_SSF_POS)
 ///@}
 
@@ -1200,7 +1212,7 @@
  * @ingroup ga_reg_sub_27
  */
 ///@{
-#define GA_SUB_CDDCTRL_DTS_POS 0
+#define GA_SUB_CDDCTRL_DTS_POS  0
 #define GA_SUB_CDDCTRL_DTS_MASK (1 << GA_SUB_CDDCTRL_DTS_POS)
 ///@}
 
@@ -1210,7 +1222,7 @@
  * @ingroup ga_reg_sub_27
  */
 ///@{
-#define GA_SUB_CDDCTRL_DRS_POS 1
+#define GA_SUB_CDDCTRL_DRS_POS  1
 #define GA_SUB_CDDCTRL_DRS_MASK (1 << GA_SUB_CDDCTRL_DRS_POS)
 ///@}
 
@@ -1220,7 +1232,7 @@
  * @ingroup ga_reg_sub_27
  */
 ///@{
-#define GA_SUB_CDDCTRL_HOCK_POS 2
+#define GA_SUB_CDDCTRL_HOCK_POS  2
 #define GA_SUB_CDDCTRL_HOCK_MASK (1 << GA_SUB_CDDCTRL_HOCK_POS)
 ///@}
 
@@ -1232,7 +1244,7 @@
  * @ingroup ga_reg_sub_27
  */
 ///@{
-#define GA_SUB_CDDCTRL_DM_POS 8
+#define GA_SUB_CDDCTRL_DM_POS  8
 #define GA_SUB_CDDCTRL_DM_MASK (1 << GA_SUB_CDDCTRL_DM_POS)
 ///@}
 
@@ -1527,9 +1539,10 @@
  * @ingroup ga_regs_sub
  */
 ///@{
-#define GA_SUB_CDDCOMM_HI_POS 8
+#define GA_SUB_CDDCOMM_HI_POS   8
 #define GA_SUB_CDDCOMM_HI_WIDTH 4
-#define GA_SUB_CDDCOMM_HI_MASK FIELD_MASK(GA_SUB_CDDCOMM_HI_POS, GA_SUB_CDDCOMM_HI_WIDTH)
+#define GA_SUB_CDDCOMM_HI_MASK                               \
+  FIELD_MASK(GA_SUB_CDDCOMM_HI_POS, GA_SUB_CDDCOMM_HI_WIDTH)
 ///@}
 
 /**
@@ -1538,9 +1551,10 @@
  * @ingroup ga_regs_sub
  */
 ///@{
-#define GA_SUB_CDDCOMM_LO_POS 0
+#define GA_SUB_CDDCOMM_LO_POS   0
 #define GA_SUB_CDDCOMM_LO_WIDTH 4
-#define GA_SUB_CDDCOMM_LO_MASK FIELD_MASK(GA_SUB_CDDCOMM_LO_POS, GA_SUB_CDDCOMM_LO_WIDTH)
+#define GA_SUB_CDDCOMM_LO_MASK                               \
+  FIELD_MASK(GA_SUB_CDDCOMM_LO_POS, GA_SUB_CDDCOMM_LO_WIDTH)
 ///@}
 
 /**
@@ -1576,9 +1590,10 @@
  * @ingroup ga_reg_sub_38
  */
 ///@{
-#define GA_SUB_FONTCOLOR_0_POS 0
+#define GA_SUB_FONTCOLOR_0_POS   0
 #define GA_SUB_FONTCOLOR_0_WIDTH 4
-#define GA_SUB_FONTCOLOR_0_MASK FIELD_MASK(GA_SUB_FONTCOLOR_0_POS, GA_SUB_FONTCOLOR_0_WIDTH)
+#define GA_SUB_FONTCOLOR_0_MASK                                \
+  FIELD_MASK(GA_SUB_FONTCOLOR_0_POS, GA_SUB_FONTCOLOR_0_WIDTH)
 ///@}
 
 /**
@@ -1587,9 +1602,10 @@
  * @ingroup ga_reg_sub_38
  */
 ///@{
-#define GA_SUB_FONTCOLOR_1_POS 4
+#define GA_SUB_FONTCOLOR_1_POS   4
 #define GA_SUB_FONTCOLOR_1_WIDTH 4
-#define GA_SUB_FONTCOLOR_1_MASK FIELD_MASK(GA_SUB_FONTCOLOR_1_POS, GA_SUB_FONTCOLOR_1_WIDTH)
+#define GA_SUB_FONTCOLOR_1_MASK                                \
+  FIELD_MASK(GA_SUB_FONTCOLOR_1_POS, GA_SUB_FONTCOLOR_1_WIDTH)
 ///@}
 
 /**
@@ -1675,7 +1691,7 @@
  * @ingroup ga_reg_sub_44
  */
 ///@{
-#define GA_SUB_GRON_POS 7
+#define GA_SUB_GRON_POS  7
 #define GA_SUB_GRON_MASK (1 << GA_SUB_GRON_POS)
 ///@}
 
@@ -1706,13 +1722,22 @@
  */
 #define GA_SUB_REG_STAMPSIZE 0xFF8059
 
-#define GA_SUB_STAMPSIZE_REPEAT_POS 0 ///< Bit position of GA_SUB_STAMPSIZE_REPEAT_MASK
-#define GA_SUB_STAMPSIZE_32x32_STAMP_POS 1 ///< Bit position of GA_SUB_STAMPSIZE_32x32_STAMP_MASK
-#define GA_SUB_STAMPSIZE_16x16_SCREEN_POS 2 ///< Bit position of GA_SUB_STAMPSIZE_16x16_SCREEN_MASK
+#define GA_SUB_STAMPSIZE_REPEAT_POS                   \
+  0 ///< Bit position of GA_SUB_STAMPSIZE_REPEAT_MASK
+#define GA_SUB_STAMPSIZE_32x32_STAMP_POS                   \
+  1 ///< Bit position of GA_SUB_STAMPSIZE_32x32_STAMP_MASK
+#define GA_SUB_STAMPSIZE_16x16_SCREEN_POS                   \
+  2 ///< Bit position of GA_SUB_STAMPSIZE_16x16_SCREEN_MASK
 
-#define GA_SUB_STAMPSIZE_REPEAT_MASK (1 << GA_SUB_STAMPSIZE_REPEAT_POS) ///< RPT: the stamp map repeats at its edges instead of reading as 0
-#define GA_SUB_STAMPSIZE_32x32_STAMP_MASK (1 << GA_SUB_STAMPSIZE_32x32_STAMP_POS) ///< STS: stamps are 32x32 dots instead of 16x16
-#define GA_SUB_STAMPSIZE_16x16_SCREEN_MASK (1 << GA_SUB_STAMPSIZE_16x16_SCREEN_POS) ///< SMS: the map is sixteen screens square (4096x4096 dots) instead of one
+#define GA_SUB_STAMPSIZE_REPEAT_MASK \
+  (1                                 \
+   << GA_SUB_STAMPSIZE_REPEAT_POS) ///< RPT: the stamp map repeats at its edges instead of reading as 0
+#define GA_SUB_STAMPSIZE_32x32_STAMP_MASK \
+  (1                                      \
+   << GA_SUB_STAMPSIZE_32x32_STAMP_POS) ///< STS: stamps are 32x32 dots instead of 16x16
+#define GA_SUB_STAMPSIZE_16x16_SCREEN_MASK \
+  (1                                       \
+   << GA_SUB_STAMPSIZE_16x16_SCREEN_POS) ///< SMS: the map is sixteen screens square (4096x4096 dots) instead of one
 
 /**
  * @def GA_SUB_REG_STAMPMAPBASE
@@ -1770,9 +1795,10 @@
  * covers four 16x16 generator slots.
  */
 ///@{
-#define STAMP_SNO_POS 0
+#define STAMP_SNO_POS   0
 #define STAMP_SNO_WIDTH 11 ///< Width of the stamp number field
-#define STAMP_SNO_MASK FIELD_MASK(STAMP_SNO_POS, STAMP_SNO_WIDTH) ///< Stamp number field
+#define STAMP_SNO_MASK                                               \
+  FIELD_MASK(STAMP_SNO_POS, STAMP_SNO_WIDTH) ///< Stamp number field
 ///@}
 
 /**
@@ -1784,13 +1810,14 @@
  * field width. 90 and 180 are not in the order the bit numbering implies.
  */
 ///@{
-#define STAMP_ROTATE_POS 13
+#define STAMP_ROTATE_POS   13
 #define STAMP_ROTATE_WIDTH 2 ///< Width of the rotation field
-#define STAMP_ROTATE_MASK FIELD_MASK(STAMP_ROTATE_POS, STAMP_ROTATE_WIDTH) ///< Rotation field
+#define STAMP_ROTATE_MASK                                              \
+  FIELD_MASK(STAMP_ROTATE_POS, STAMP_ROTATE_WIDTH) ///< Rotation field
 ///@}
 
-#define STAMP_ROTATE_0 0b00 ///< No rotation (RT1=0, RT0=0)
-#define STAMP_ROTATE_90 0b10 ///< 90 degrees counter-clockwise (RT1=1, RT0=0)
+#define STAMP_ROTATE_0   0b00 ///< No rotation (RT1=0, RT0=0)
+#define STAMP_ROTATE_90  0b10 ///< 90 degrees counter-clockwise (RT1=1, RT0=0)
 #define STAMP_ROTATE_180 0b01 ///< 180 degrees (RT1=0, RT0=1)
 #define STAMP_ROTATE_270 0b11 ///< 270 degrees counter-clockwise (RT1=1, RT0=1)
 
@@ -1799,7 +1826,8 @@
  */
 ///@{
 #define STAMP_HFLIP_POS 15
-#define STAMP_HFLIP_MASK (1 << STAMP_HFLIP_POS) ///< Mirror the stamp horizontally
+#define STAMP_HFLIP_MASK                                    \
+  (1 << STAMP_HFLIP_POS) ///< Mirror the stamp horizontally
 ///@}
 
 /** @} */
@@ -1832,9 +1860,10 @@
  * @ingroup ga_reg_sub_46
  */
 ///@{
-#define GA_SUB_IMGBUF_VCS_POS 0
+#define GA_SUB_IMGBUF_VCS_POS   0
 #define GA_SUB_IMGBUF_VCS_WIDTH 5
-#define GA_SUB_IMGBUF_VCS_MASK FIELD_MASK(GA_SUB_IMGBUF_VCS_POS, GA_SUB_IMGBUF_VCS_WIDTH)
+#define GA_SUB_IMGBUF_VCS_MASK                               \
+  FIELD_MASK(GA_SUB_IMGBUF_VCS_POS, GA_SUB_IMGBUF_VCS_WIDTH)
 ///@}
 
 /**
@@ -1888,9 +1917,10 @@
  * @ingroup ga_reg_sub_48
  */
 ///@{
-#define GA_SUB_IMGBUF_DOT_POS 0
+#define GA_SUB_IMGBUF_DOT_POS   0
 #define GA_SUB_IMGBUF_DOT_WIDTH 3
-#define GA_SUB_IMGBUF_DOT_MASK FIELD_MASK(GA_SUB_IMGBUF_DOT_POS, GA_SUB_IMGBUF_DOT_WIDTH)
+#define GA_SUB_IMGBUF_DOT_MASK                               \
+  FIELD_MASK(GA_SUB_IMGBUF_DOT_POS, GA_SUB_IMGBUF_DOT_WIDTH)
 ///@}
 
 /**
@@ -1899,9 +1929,10 @@
  * @ingroup ga_reg_sub_48
  */
 ///@{
-#define GA_SUB_IMGBUF_LN_POS 3
+#define GA_SUB_IMGBUF_LN_POS   3
 #define GA_SUB_IMGBUF_LN_WIDTH 3
-#define GA_SUB_IMGBUF_LN_MASK FIELD_MASK(GA_SUB_IMGBUF_LN_POS, GA_SUB_IMGBUF_LN_WIDTH)
+#define GA_SUB_IMGBUF_LN_MASK                              \
+  FIELD_MASK(GA_SUB_IMGBUF_LN_POS, GA_SUB_IMGBUF_LN_WIDTH)
 ///@}
 
 /**
@@ -1935,9 +1966,10 @@
  * @ingroup ga_reg_sub_49
  */
 ///@{
-#define GA_SUB_IMGBUF_HW_POS 0
+#define GA_SUB_IMGBUF_HW_POS   0
 #define GA_SUB_IMGBUF_HW_WIDTH 9
-#define GA_SUB_IMGBUF_HW_MASK FIELD_MASK(GA_SUB_IMGBUF_HW_POS, GA_SUB_IMGBUF_HW_WIDTH)
+#define GA_SUB_IMGBUF_HW_MASK                              \
+  FIELD_MASK(GA_SUB_IMGBUF_HW_POS, GA_SUB_IMGBUF_HW_WIDTH)
 ///@}
 
 /**
@@ -1975,9 +2007,10 @@
  * @ingroup ga_reg_sub_50
  */
 ///@{
-#define GA_SUB_IMGBUF_VW_POS 0
+#define GA_SUB_IMGBUF_VW_POS   0
 #define GA_SUB_IMGBUF_VW_WIDTH 8
-#define GA_SUB_IMGBUF_VW_MASK FIELD_MASK(GA_SUB_IMGBUF_VW_POS, GA_SUB_IMGBUF_VW_WIDTH)
+#define GA_SUB_IMGBUF_VW_MASK                              \
+  FIELD_MASK(GA_SUB_IMGBUF_VW_POS, GA_SUB_IMGBUF_VW_WIDTH)
 ///@}
 
 /**
@@ -2059,9 +2092,10 @@
  * @ingroup ga_reg_sub_52
  */
 ///@{
-#define GA_SUB_SUBCODE_STA_POS 1
+#define GA_SUB_SUBCODE_STA_POS   1
 #define GA_SUB_SUBCODE_STA_WIDTH 6
-#define GA_SUB_SUBCODE_STA_MASK FIELD_MASK(GA_SUB_SUBCODE_STA_POS, GA_SUB_SUBCODE_STA_WIDTH)
+#define GA_SUB_SUBCODE_STA_MASK                                \
+  FIELD_MASK(GA_SUB_SUBCODE_STA_POS, GA_SUB_SUBCODE_STA_WIDTH)
 ///@}
 
 /**
@@ -2072,7 +2106,7 @@
  * @ingroup ga_reg_sub_52
  */
 ///@{
-#define GA_SUB_SUBCODE_SAOR_POS 7
+#define GA_SUB_SUBCODE_SAOR_POS  7
 #define GA_SUB_SUBCODE_SAOR_MASK (1 << GA_SUB_SUBCODE_SAOR_POS)
 ///@}
 
@@ -2104,8 +2138,9 @@
  */
 #define GA_SUB_REG_SUBCODEBUFIMG 0xFF8180
 
-#define CDC_DEST_MAINREAD 2 ///< CDC destination, as written to the CDC mode byte: Main CPU read
-#define CDC_DEST_SUBREAD  3 ///< CDC destination: Sub CPU read
-#define CDC_DEST_PCMDMA   4 ///< CDC destination: PCM wave RAM by DMA
-#define CDC_DEST_PRAMDMA  5 ///< CDC destination: Program RAM by DMA
-#define CDC_DEST_WRAMDMA  7 ///< CDC destination: Word RAM by DMA
+#define CDC_DEST_MAINREAD                                                \
+  2 ///< CDC destination, as written to the CDC mode byte: Main CPU read
+#define CDC_DEST_SUBREAD 3 ///< CDC destination: Sub CPU read
+#define CDC_DEST_PCMDMA  4 ///< CDC destination: PCM wave RAM by DMA
+#define CDC_DEST_PRAMDMA 5 ///< CDC destination: Program RAM by DMA
+#define CDC_DEST_WRAMDMA 7 ///< CDC destination: Word RAM by DMA

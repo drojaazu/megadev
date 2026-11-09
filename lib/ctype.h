@@ -51,7 +51,8 @@ static inline int isxdigit(int c)
   return isdigit(c) || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
 }
 
-/** @brief c is a space, tab, newline, vertical tab, form feed or carriage return */
+/** @brief c is a space, tab, newline, vertical tab, form feed or carriage
+ * return */
 static inline int isspace(int c)
 {
   return c == ' ' || (c >= '\t' && c <= '\r');

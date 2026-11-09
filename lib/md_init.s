@@ -5,7 +5,7 @@
  * @brief common Mega Drive init routines
  */
 
-#include <system.macro.s>
+#include <cpu.macro.s>
 #include "main/md_sys.def.h"
 #include "main/io.def.h"
 #include "main/vdp.def.h"

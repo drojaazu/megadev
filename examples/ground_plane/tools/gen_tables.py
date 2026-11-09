@@ -3,7 +3,7 @@
 
 Two tables, both indexed by output row, plus one sine table.
 
-    zf[r]   the ground distance for row r, in xform_pos units (1/8 dot)
+    zf[r]   the ground distance for row r, in trace_pos units (1/8 dot)
     zk[r]   that same distance times the horizontal scale, in step units
             (1/2048 of a source dot per output pixel)
     sin[a]  sine, Q15, over a full turn
@@ -28,8 +28,8 @@ HORIZON_GAP = 24        # rows between the true horizon and the first drawn row
 CAMERA_K = 22000        # combined camera height and focal length
 H_SCALE = 1.7           # horizontal field of view
 
-POS_SCALE = 8           # xform_pos: Q13.3
-STEP_SCALE = 2048       # xform_delta: Q4.11
+POS_SCALE = 8           # trace_pos: Q13.3
+STEP_SCALE = 2048       # trace_delta: Q4.11
 STEP_MAX = 16.0
 SIN_ENTRIES = 256
 
@@ -78,10 +78,10 @@ def main():
 .section .rodata
 #include <macro.s>
 
-/* Ground distance per row, in 1/8 dot units (xform_pos). */
+/* Ground distance per row, in 1/8 dot units (trace_pos). */
 {words("ground_zf", zf)}
 
-/* Step per row before rotation, in 1/2048 dot units (xform_delta). */
+/* Step per row before rotation, in 1/2048 dot units (trace_delta). */
 {words("ground_zk", zk)}
 
 /* sin(a) in Q15 over a full turn of {SIN_ENTRIES} steps. cos is the same table

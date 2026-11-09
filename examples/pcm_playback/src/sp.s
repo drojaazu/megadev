@@ -35,7 +35,7 @@ GLABEL sp_init
   INIT_ACC_LOOP
 
   // Sub CPU crash handler; the Main CPU reports a crash (docs/crash_handler.md)
-  jbsr    exvec_install
+  jbsr    crash_install
   rts
 
 drv_init_tracklist:
@@ -98,4 +98,4 @@ GLABEL sp_fatal
 GLABEL sp_user
   rts
 
-#include "sub/exvec_sub.s"
+#include "sub/crash_sub.s"

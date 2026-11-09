@@ -87,6 +87,6 @@ clean:
 
 $(DISC_PATH)/cyber.mmd: \
 	main/ipx_init.s \
-	exvec_main.s \
+	crash_main.s \
 	cybercity.c \
 	cybercity.res.s

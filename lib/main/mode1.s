@@ -8,12 +8,12 @@
  * Main CPU only. Requires kos_cmp.s in the same program.
  */
 
-#include "macro.s"
-#include "main/memmap.def.h"
-#include "main/gate_arr.def.h"
-#include "main/gate_arr.macro.s"
-#include "main/bios.def.h"
-#include "main/mode1.def.h"
+#include <macro.s>
+#include <main/memmap.def.h>
+#include <main/gate_arr.def.h>
+#include <main/gate_arr.macro.s>
+#include <main/bios.def.h>
+#include <main/mode1.def.h>
 
 #define SEGA_SIGNATURE 0x53454741 /* "SEGA" */
 #define JMP_ABS_L 0x4EF9

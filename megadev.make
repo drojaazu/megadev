@@ -37,9 +37,9 @@ else
 	ISO_BOOT?=
 endif
 
-# Font for the crash handler's report (main/exvec.h): KIT for font8x8, BIOS for
+# Font for the crash handler's report (main/crash.h): KIT for the system font, BIOS for
 # the Boot ROM's font (Mega CD and Mode 1 only).
-EXVEC_FONT?=KIT
+CRASH_FONT?=KIT
 
 ################################################################################
 # STOP!
@@ -149,10 +149,10 @@ AS_FLAGS+= \
 # Each compile writes a .d file listing the headers it included; they are
 # included at the end of this file so a header change rebuilds its users.
 DEP_FLAGS:=-MMD -MP
-ifeq ($(EXVEC_FONT),BIOS)
-  CC_FLAGS+= -DEXVEC_FONT_BIOS
-else ifneq ($(EXVEC_FONT),KIT)
-  $(error EXVEC_FONT must be KIT or BIOS, not "$(EXVEC_FONT)")
+ifeq ($(CRASH_FONT),BIOS)
+  CC_FLAGS+= -DCRASH_FONT_BIOS
+else ifneq ($(CRASH_FONT),KIT)
+  $(error CRASH_FONT must be KIT or BIOS, not "$(CRASH_FONT)")
 endif
 
 LD_FLAGS+= \

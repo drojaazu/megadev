@@ -15,13 +15,13 @@
  */
 GLABEL pcm_clear_ram
   // disable channels
-  move.b   #0xFF, _PCM_CDISABLE
+  move.b   #0xFF, PCMREG_CH_DISABLE
   moveq    #0, d0
   move.b   #0x80, d1
 
-1:move.b   d1, _PCM_CTRL
+1:move.b   d1, PCMREG_CTRL
   move.w   #0xFFF, d2
-  lea      _PCM_RAM + 1, a6
+  lea      PCM_RAM + 1, a6
 
 2:move.b   #0, (a6)
   addq     #2, a6
@@ -39,8 +39,8 @@ GLABEL pcm_clear_ram
  * @clobber d0/a5-a6
  */
 GLABEL pcm_config_channel
-  lea      _PCM_ENV, a6
-  move.b   d0, _PCM_CTRL
+  lea      PCMREG_ENVELOPE, a6
+  move.b   d0, PCMREG_CTRL
   moveq    #6, d0
 1:move.b   (a5)+, (a6)
   // short pause to wait for the change to take effect

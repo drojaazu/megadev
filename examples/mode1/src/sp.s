@@ -36,7 +36,7 @@
 GLABEL sp_init
   INIT_ACC_LOOP
   GA_SUB_CLEAR_COMM_REGS
-  jbsr    exvec_install   // Sub CPU crash handler (sub/exvec.h)
+  jbsr    crash_install   // Sub CPU crash handler (sub/crash.h)
   rts
 
 // The access loop must be pumped last: it returns to the BIOS by itself.
@@ -138,4 +138,4 @@ data_filename:
   .asciz "DATA.BIN;1"
 .align 2
 
-#include "sub/exvec_sub.s"
+#include "sub/crash_sub.s"

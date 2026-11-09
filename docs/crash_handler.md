@@ -26,21 +26,21 @@ The handler saves the registers, moves to its own 512-byte stack, sets up the VD
 
 # Main CPU
 
-The program assembles `exvec_main.s`.
+The program assembles `crash_main.s`.
 
-**Cartridge, including Mode 1.** Include `main/exvec_cart.s` in the project's `init.s` after `md_vectors.s`, in place of the `GLOBAL` lines for the exception vectors, as the `cart` example does. The ROM vector table then points at the handlers.
+**Cartridge, including Mode 1.** Include `main/crash_cart.s` in the project's `init.s` after `md_vectors.s`, in place of the `GLOBAL` lines for the exception vectors, as the `cart` example does. The ROM vector table then points at the handlers.
 
-**Mega CD.** Call `exvec_install` (`main/exvec.h`). It writes the handlers into the system vector table at 0xFFFD00. The Boot ROM shares one entry between address errors and illegal instructions, and the handler tells them apart from the stack frame. Bus errors go to the Boot ROM's reset code and are not caught. A Mode 1 program whose vectors lead to the system vector table, like the `mode1` example, can use `exvec_install` too.
+**Mega CD.** Call `crash_install` (`main/crash.h`). It writes the handlers into the system vector table at 0xFFFD00. The Boot ROM shares one entry between address errors and illegal instructions, and the handler tells them apart from the stack frame. Bus errors go to the Boot ROM's reset code and are not caught. A Mode 1 program whose vectors lead to the system vector table, like the `mode1` example, can use `crash_install` too.
 
 # Sub CPU
 
-Include `sub/exvec_sub.s` in the SP and call `exvec_install` (`sub/exvec.h`) from `sp_init`, after the Sub BIOS has built its jump table.
+Include `sub/crash_sub.s` in the SP and call `crash_install` (`sub/crash.h`) from `sp_init`, after the Sub BIOS has built its jump table.
 
-The Sub CPU has no display. Its handler saves the CPU state in Program RAM, signals the Main CPU through COMSTAT5 to COMSTAT7 and halts. Call `exvec_check_sub` (`main/exvec.h`) on the Main CPU regularly, for example once per frame. After a Sub CPU crash, it takes the Sub CPU's bus, reads the saved state and shows the report with `SUB` in place of `MAIN`.
+The Sub CPU has no display. Its handler saves the CPU state in Program RAM, signals the Main CPU through COMSTAT5 to COMSTAT7 and halts. Call `crash_check_sub` (`main/crash.h`) on the Main CPU regularly, for example once per frame. After a Sub CPU crash, it takes the Sub CPU's bus, reads the saved state and shows the report with `SUB` in place of `MAIN`.
 
 # Font
 
-The report uses `font8x8` by default. Set `EXVEC_FONT:=BIOS` in the project's makefile to use the Boot ROM's font instead, on the Mega CD or in Mode 1. The font is read from the Boot ROM, so the Boot ROM library does not need to be in a working state.
+The report uses the system font by default. Set `CRASH_FONT:=BIOS` in the project's makefile to use the Boot ROM's font instead, on the Mega CD or in Mode 1. The font is read from the Boot ROM, so the Boot ROM library does not need to be in a working state.
 
 # Memory
 

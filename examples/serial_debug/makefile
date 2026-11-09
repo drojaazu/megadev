@@ -90,7 +90,7 @@ clean:
 
 $(DISC_PATH)/ipx.mmd: \
 	main/ipx_init.s \
-	exvec_main.s \
+	crash_main.s \
 	ipx.c \
 	io.macro.s
 

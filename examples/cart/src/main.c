@@ -1,10 +1,10 @@
 #include "res.h"
+#include <cpu.h>
 #include <main/io.h>
 #include <main/memmap.h>
 #include <main/text.h>
 #include <main/vdp.h>
 #include <memory.h>
-#include <system.h>
 
 #define PLANE_A_ADDR    0x2000
 #define PLANE_B_ADDR    0x4000
@@ -69,8 +69,7 @@ void clear_vram()
 void update_sprites()
 {
   vdp_ctrl_32 = to_vdp_addr(SPRITE_TBL_ADDR) | VRAM_W;
-  for (u8 i = 0; i < 80; ++i)
-  {
+  for (u8 i = 0; i < 80; ++i) {
     vdp_data_32 = ((SpriteEx) sprites[i]).as_u32[0];
     vdp_data_32 = ((SpriteEx) sprites[i]).as_u32[1];
   }
@@ -138,7 +137,7 @@ u16 const default_vdp_regs[] = {
 
 #define plane_xy(x, y) VDP_PLANE_XY(PLANE_A_ADDR, x, y, Width64)
 
-// font8x8 is loaded at tile 0x20, so a character's tile is its code; the
+// The system font is loaded at tile 0x20, so a character's tile is its code; the
 // logo's sprite tiles follow it at 0x80
 #define TEXT_TILE   0x20
 #define LETTER_TILE 0x80
@@ -166,11 +165,13 @@ void main()
   update_cram();
 
   init_joypads();
-  vdp_load_1bpp_tiles(font8x8, FONT8X8_CHARS, TEXT_TILE, 1, 0);
+  vdp_load_1bpp_tiles(sysfont, SYSFONT_CHARS, TEXT_TILE, 1, 0);
   vdp_regs[1] |= VDP_DMA_ENABLE;
   vdp_ctrl = vdp_regs[1];
   vdp_dma_transfer(
-    res_letters.data, to_vdp_addr(tile_offset(LETTER_TILE)), (res_letters.size << 1));
+    res_letters.data,
+    to_vdp_addr(tile_offset(LETTER_TILE)),
+    (res_letters.size << 1));
   vdp_regs[1] &= ~VDP_DMA_ENABLE;
   vdp_ctrl = vdp_regs[1];
 
@@ -244,8 +245,7 @@ void main()
   u8  sin_pos = 0;
   u16 wait = 0;
 
-  while (1)
-  {
+  while (1) {
     while (! vblank_done)
       asm("nop");
     vblank_done = false;
@@ -259,8 +259,7 @@ void main()
     if (p1_hold & PAD_DOWN)
       ++base_pos_y;
 
-    if (wait >= 1)
-    {
+    if (wait >= 1) {
       sprites[0].pos_x = base_pos_x;
       sprites[0].pos_y = base_pos_y + (sintab[sin_pos] >> 4);
       sprites[1].pos_x = sprites[0].pos_x + 32;
@@ -277,9 +276,7 @@ void main()
       sprites[6].pos_y = base_pos_y + (sintab[sin_pos + 48] >> 4);
       sin_pos += 8;
       wait = 0;
-    }
-    else
-    {
+    } else {
       wait++;
     }
     update_sprites();

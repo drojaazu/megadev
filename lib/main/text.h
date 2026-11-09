@@ -8,7 +8,7 @@
  * A minimal path for debug text that works on the Mega Drive alone, in Mode
  * 1 and in Mega CD programs, with or without the Boot ROM library:
  *
- * - vdp_load_1bpp_tiles expands a 1bpp font (font8x8, or the Boot ROM font
+ * - vdp_load_1bpp_tiles expands a 1bpp font (the system font, or the Boot ROM font
  *   from mode1_find_font) into VRAM in chosen colors
  * - text_print writes a NUL-terminated string at a plane position from
  *   VDP_PLANE_XY, as formatted by snprintf
@@ -27,9 +27,9 @@
 extern "C" {
 #endif
 
-#include "font8x8.h"
-#include "main/vdp.h"
-#include "types.h"
+#include <sysfont.h>
+#include <main/vdp.h>
+#include <types.h>
 
 /**
  * @brief Expand one row of 1bpp pixels to a row of a 4bpp tile
@@ -49,10 +49,11 @@ u32 text_expand_row(u8 bits, u8 fg, u8 bg);
  * @param bg Palette index (0 to 15) for clear pixels
  *
  * @code
- * vdp_load_1bpp_tiles(font8x8, FONT8X8_CHARS, 0x20, 1, 0);
+ * vdp_load_1bpp_tiles(sysfont, SYSFONT_CHARS, 0x20, 1, 0);
  * @endcode
  */
-void vdp_load_1bpp_tiles(void const * src, u16 count, u16 tile_index, u8 fg, u8 bg);
+void vdp_load_1bpp_tiles(
+  void const * src, u16 count, u16 tile_index, u8 fg, u8 bg);
 
 /**
  * @brief Write a NUL-terminated string to a plane

@@ -6,12 +6,9 @@
  *
  * @details
  * GCC calls __mulsi3 for 32-bit `*`, and __udivsi3, __umodsi3, __divsi3 and
- * __modsi3 for 32-bit `/` and `%`. These normally come from libgcc, but the
- * toolchain's copy is assembled for a 68020 and Megadev does not link it: its
- * modulo routines, for one, reach the divide routines with `bsr.l`, which a
- * 68000 decodes as a branch to an odd address. Arguments are on the stack, the
- * result is in D0, and D1/A0/A1 may be clobbered, as GCC expects. Division by
- * zero raises the 68000 zero divide exception.
+ * __modsi3 for 32-bit `/` and `%`. Arguments are on the stack, the result is
+ * in D0, and D1/A0/A1 may be clobbered, as GCC expects. Division by zero
+ * raises the 68000 zero divide exception.
  */
 
 .section .text

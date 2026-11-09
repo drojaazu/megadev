@@ -29,7 +29,7 @@ Every macro-only assembly file now ends in `.macro.s`; the plural `.macros.s` is
 |---|---|
 | `macros.s` | `macro.s` |
 | `init.macros.s` | `init.macro.s` |
-| `system.macros.s` | `system.macro.s` |
+| `system.macros.s` | `cpu.macro.s` (see below) |
 | `main/comm.macros.s` | `main/comm.macro.s` |
 | `main/gate_arr.macros.s` | `main/gate_arr.macro.s` |
 | `main/io.macros.s` | `main/io.macro.s` |
@@ -38,6 +38,34 @@ Every macro-only assembly file now ends in `.macro.s`; the plural `.macros.s` is
 | `main/z80.macros.s` | `main/z80.macro.s` |
 
 The contents of the files are unchanged.
+
+## `system.h` is `cpu.h`
+
+The interrupt masking and `cpu_reset`/`cpu_stop` helpers are 68000 status
+register operations, so the header and its assembly twin are named for the
+CPU: `system.h` is `cpu.h` and `system.macros.s` is `cpu.macro.s`. The
+contents are unchanged except the assembly `cpu_stop` macro, which is now
+`CPU_STOP` like the macros beside it.
+
+## `xform.h` is `trace.h`
+
+The rotation and scaling helpers are named after the trace vector table they
+describe. The example that drives the table by hand is `examples/rotozoom`,
+formerly `examples/transforms`.
+
+| 1.x | 2.0 |
+|---|---|
+| `xform.h` | `trace.h` |
+| `xform_pos`, `xform_delta` | `trace_pos`, `trace_delta` |
+| `to_xform_pos()`, `to_xform_delta()` | `to_trace_pos()`, `to_trace_delta()` |
+| `XFORM_POS_INT_BITS`, `XFORM_POS_FRAC_BITS` | `TRACE_POS_INT_BITS`, `TRACE_POS_FRAC_BITS` |
+| `XFORM_POS_FRAC_MASK` | `TRACE_POS_SCALE` |
+| `XFORM_DELTA_INT_BITS`, `XFORM_DELTA_FRAC_BITS` | `TRACE_DELTA_INT_BITS`, `TRACE_DELTA_FRAC_BITS` |
+| `XFORM_DELTA_FRAC_MASK` | `TRACE_DELTA_SCALE` |
+
+The scale values are unchanged: 8 for a position and 2048 for a step.
+`trace_pos` is now unsigned, and a step is described as a sign bit plus 4
+magnitude bits rather than 5 integer bits. `TRACE_DELTA_MAX` is new.
 
 # Gate array names
 
@@ -355,7 +383,7 @@ In `sub/memmap.def.h`, each `EXVEC_*` now names the address operand of its jump 
 
 ## Crash handler replaces cd_exception.s
 
-`main/cd_exception.s` is removed. Its replacement is the crash handler in `main/exvec.h` and `sub/exvec.h`, described in `docs/crash_handler.md`: `install_handlers` becomes `exvec_install`, and cartridges include `main/exvec_cart.s`.
+`main/cd_exception.s` is removed. Its replacement is the crash handler in `main/crash.h` and `sub/crash.h`, described in `docs/crash_handler.md`: `install_handlers` becomes `crash_install`, and cartridges include `main/crash_cart.s`.
 
 # CD-ROM access loop
 
@@ -382,4 +410,4 @@ A cartridge fails to link if the ROM exceeds 4 MB (`region 'rom' overflowed`), i
 | `cfg/module_bin.ld` | Removed. Build the module as `.mmd` or `.smd`. |
 | `cfg/module_mmd_newwork.ld` | Removed. Use `cfg/module_mmd.ld`. |
 | `sub/commsync.s` | Removed; it did not assemble. |
-| `sysfont.1bpp.chr` | Removed. Use the kit font, `font8x8.h`, or the Boot ROM font through `bios_load_font_defaults`. |
+| `sysfont.1bpp.chr` | Removed. Use the kit font, `sysfont.h`, or the Boot ROM font through `bios_load_font_defaults`. |

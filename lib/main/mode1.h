@@ -15,8 +15,8 @@
 extern "C" {
 #endif
 
-#include "main/mode1.def.h"
-#include "types.h"
+#include <main/mode1.def.h>
+#include <types.h>
 
 /**
  * @brief Check for a Mega CD

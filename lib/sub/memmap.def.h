@@ -69,36 +69,37 @@
  * levels and the sixteen TRAPs; there is no bus error entry.
  */
 ///@{
-#define EXVEC_ADDRERR	 0x005F42 ///< Address error
-#define EXVEC_ILLEGAL	 0x005F48 ///< Illegal instruction
-#define EXVEC_ZERODIV	 0x005F4E ///< Division by zero
-#define EXVEC_CHK			 0x005F54 ///< CHK instruction out of bounds
-#define EXVEC_TRAPV		 0x005F5A ///< TRAPV with overflow set
-#define EXVEC_PRIVERR	 0x005F60 ///< Privileged instruction in user mode
-#define EXVEC_TRACE		 0x005F66 ///< Trace
+#define EXVEC_ADDRERR  0x005F42 ///< Address error
+#define EXVEC_ILLEGAL  0x005F48 ///< Illegal instruction
+#define EXVEC_ZERODIV  0x005F4E ///< Division by zero
+#define EXVEC_CHK      0x005F54 ///< CHK instruction out of bounds
+#define EXVEC_TRAPV    0x005F5A ///< TRAPV with overflow set
+#define EXVEC_PRIVERR  0x005F60 ///< Privileged instruction in user mode
+#define EXVEC_TRACE    0x005F66 ///< Trace
 #define EXVEC_LINE1010 0x005F6C ///< Line 1010 emulator (A-line opcode)
 #define EXVEC_LINE1111 0x005F72 ///< Line 1111 emulator (F-line opcode)
-#define EXVEC_LEVEL1	 0x005F78 ///< Level 1 interrupt: graphics operation complete
-#define EXVEC_LEVEL2	 0x005F7E ///< Level 2 interrupt: INT2 from the Main CPU
-#define EXVEC_LEVEL3	 0x005F84 ///< Level 3 interrupt: gate array timer
-#define EXVEC_LEVEL4	 0x005F8A ///< Level 4 interrupt: CDD complete
-#define EXVEC_LEVEL5	 0x005F90 ///< Level 5 interrupt: CDC complete
-#define EXVEC_LEVEL6	 0x005F96 ///< Level 6 interrupt: sub-code buffer full
-#define EXVEC_LEVEL7	 0x005F9C ///< Level 7 interrupt: unused
-#define EXVEC_TRAP0		 0x005FA2 ///< TRAP #0
-#define EXVEC_TRAP1		 0x005FA8 ///< TRAP #1
-#define EXVEC_TRAP2		 0x005FAE ///< TRAP #2
-#define EXVEC_TRAP3		 0x005FB4 ///< TRAP #3
-#define EXVEC_TRAP4		 0x005FBA ///< TRAP #4
-#define EXVEC_TRAP5		 0x005FC0 ///< TRAP #5
-#define EXVEC_TRAP6		 0x005FC6 ///< TRAP #6
-#define EXVEC_TRAP7		 0x005FCC ///< TRAP #7
-#define EXVEC_TRAP8		 0x005FD2 ///< TRAP #8
-#define EXVEC_TRAP9		 0x005FD8 ///< TRAP #9
-#define EXVEC_TRAPA		 0x005FDE ///< TRAP #10
-#define EXVEC_TRAPB		 0x005FE4 ///< TRAP #11
-#define EXVEC_TRAPC		 0x005FEA ///< TRAP #12
-#define EXVEC_TRAPD		 0x005FF0 ///< TRAP #13
-#define EXVEC_TRAPE		 0x005FF6 ///< TRAP #14
-#define EXVEC_TRAPF		 0x005FFC ///< TRAP #15
+#define EXVEC_LEVEL1                                           \
+  0x005F78 ///< Level 1 interrupt: graphics operation complete
+#define EXVEC_LEVEL2 0x005F7E ///< Level 2 interrupt: INT2 from the Main CPU
+#define EXVEC_LEVEL3 0x005F84 ///< Level 3 interrupt: gate array timer
+#define EXVEC_LEVEL4 0x005F8A ///< Level 4 interrupt: CDD complete
+#define EXVEC_LEVEL5 0x005F90 ///< Level 5 interrupt: CDC complete
+#define EXVEC_LEVEL6 0x005F96 ///< Level 6 interrupt: sub-code buffer full
+#define EXVEC_LEVEL7 0x005F9C ///< Level 7 interrupt: unused
+#define EXVEC_TRAP0  0x005FA2 ///< TRAP #0
+#define EXVEC_TRAP1  0x005FA8 ///< TRAP #1
+#define EXVEC_TRAP2  0x005FAE ///< TRAP #2
+#define EXVEC_TRAP3  0x005FB4 ///< TRAP #3
+#define EXVEC_TRAP4  0x005FBA ///< TRAP #4
+#define EXVEC_TRAP5  0x005FC0 ///< TRAP #5
+#define EXVEC_TRAP6  0x005FC6 ///< TRAP #6
+#define EXVEC_TRAP7  0x005FCC ///< TRAP #7
+#define EXVEC_TRAP8  0x005FD2 ///< TRAP #8
+#define EXVEC_TRAP9  0x005FD8 ///< TRAP #9
+#define EXVEC_TRAPA  0x005FDE ///< TRAP #10
+#define EXVEC_TRAPB  0x005FE4 ///< TRAP #11
+#define EXVEC_TRAPC  0x005FEA ///< TRAP #12
+#define EXVEC_TRAPD  0x005FF0 ///< TRAP #13
+#define EXVEC_TRAPE  0x005FF6 ///< TRAP #14
+#define EXVEC_TRAPF  0x005FFC ///< TRAP #15
 ///@}

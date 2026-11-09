@@ -1,13 +1,13 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file exvec_cart.s
+ * @file crash_cart.s
  * @brief Point a cartridge's exception vectors at the crash handler
  *
  * @details
  * Include in the project's init.s, after md_vectors.s, in place of the GLOBAL
- * lines for these vectors (main/exvec.h). The program must also assemble
- * main/exvec_main.s.
+ * lines for these vectors (main/crash.h). The program must also assemble
+ * main/crash_main.s.
  */
 
 #include "macro.s"

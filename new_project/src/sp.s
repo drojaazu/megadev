@@ -56,7 +56,7 @@ GLABEL sp_init
   INIT_ACC_LOOP
 
   // Sub CPU crash handler; the IPX reports a crash (docs/crash_handler.md)
-  jbsr     exvec_install
+  jbsr     crash_install
   rts
 
 drv_init_tracklist:
@@ -120,4 +120,4 @@ GLABEL sp_user
 // Here we include the CD-ROM file access code
 #include <sub/cdrom.s>
 
-#include "sub/exvec_sub.s"
+#include "sub/crash_sub.s"

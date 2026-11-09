@@ -10,9 +10,9 @@
 
 /** @name TARGET values, from the project makefile */
 ///@{
-#define MEGADRIVE 0    ///< Mega Drive cartridge, no Mega CD
-#define MEGACD 1       ///< Mega CD disc
-#define MEGACD_MODE1 2 ///< Cartridge driving a Mega CD (docs/mode1.md)
+#define MEGADRIVE    0 ///< Mega Drive cartridge, no Mega CD
+#define MEGACD       1 ///< Mega CD disc
+#define MEGACD_MODE1 2 ///< Cartridge driving a Mega CD
 ///@}
 
 /** @name REGION values, from the project makefile */
@@ -25,13 +25,13 @@
 /** @name VIDEO values, from the project makefile */
 ///@{
 #define NTSC 0 ///< 60 Hz, 224 lines
-#define PAL 1  ///< 50 Hz, 240 lines available
+#define PAL  1 ///< 50 Hz, 240 lines
 ///@}
 
 /** @name VRAM_SIZE values, from the project makefile */
 ///@{
-#define VRAM_64K 0  ///< Standard 64 KB of VRAM
-#define VRAM_128K 1 ///< 128 KB VRAM, a development hardware modification
+#define VRAM_64K  0 ///< Standard 64 KB of VRAM
+#define VRAM_128K 1 ///< 128 KB VRAM (only for Teradrive or modified Megadrive)
 ///@}
 
 /**
@@ -39,7 +39,8 @@
  * @brief Build masks, and insert or extract register fields
  *
  * @details
- * A register field is described by constants named `<SUBSYSTEM>_<FIELD>_<ASPECT>`:
+ * A register field is described by constants named
+ * `<SUBSYSTEM>_<FIELD>_<ASPECT>`:
  *
  * - `_POS`   the bit position of the field's low bit; also the operand for
  *            btst, bset and bclr
@@ -84,7 +85,8 @@
  * therefore be addressed through its high byte: the 68000 is big-endian, so
  * bits 15..8 are at the register address and bits 7..0 at the next byte.
  *
- *     btst #FIELD_BPOS(GA_SUB_CDCMODE_EDT), FIELD_BYTE(GA_SUB_REG_CDCMODE, GA_SUB_CDCMODE_EDT)
+ *     btst #FIELD_BPOS(GA_SUB_CDCMODE_EDT), FIELD_BYTE(GA_SUB_REG_CDCMODE,
+ * GA_SUB_CDCMODE_EDT)
  *
  * Written as arithmetic because GNU as has no conditional operator.
  */

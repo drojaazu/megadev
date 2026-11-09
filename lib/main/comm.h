@@ -21,7 +21,7 @@ extern "C" {
 #include <main/comm.def.h>
 #include <main/io.def.h>
 #include <main/z80.h>
-#include <system.h>
+#include <cpu.h>
 #include <types.h>
 
 /**
@@ -45,7 +45,8 @@ static inline void init_ext_port()
 	"
     :
     : [sctrl_settings] "i"(
-        SCTRL_SERIAL_ENABLE_MASK | SCTRL_RX_INT_ENABLE_MASK | FIELD_PREP(SCTRL_BAUD, EXT_BAUD)),
+        SCTRL_SERIAL_ENABLE_MASK | SCTRL_RX_INT_ENABLE_MASK |
+        FIELD_PREP(SCTRL_BAUD, EXT_BAUD)),
       [ext_sctrl] "i"(EXT_SCTRL),
       [ext_data] "i"(EXT_DATA),
       [ext_ctrl] "i"(EXT_CTRL)
@@ -100,7 +101,7 @@ static inline u8 ext_read_byte()
  */
 static inline u8 ext_rx()
 {
-  while (!(ext_status() & SCTRL_RX_READY_MASK))
+  while (! (ext_status() & SCTRL_RX_READY_MASK))
     ;
 
   return ext_read_byte();

@@ -23,11 +23,11 @@ Deliberately absent: `malloc` and `free`, `printf` to a console, `FILE`, floatin
 
 `main/text.h` puts text on screen without the Boot ROM, so it works on the Mega Drive alone, in Mode 1 and in Mega CD programs:
 
-- `vdp_load_1bpp_tiles` expands a 1bpp font into VRAM in two palette colors. `font8x8` (`font8x8.h`) is a public domain 8x8 font of the printable ASCII characters; in a Mega CD program, the Boot ROM's font works as well.
+- `vdp_load_1bpp_tiles` expands a 1bpp font into VRAM in two palette colors. `sysfont` (`sysfont.h`) is a public domain 8x8 font of the printable ASCII characters; in a Mega CD program, the Boot ROM's font works as well.
 - `text_print` writes a NUL-terminated string, such as `snprintf` output, at a position from `VDP_PLANE_XY` in `main/vdp.h`.
 
 ```c
-vdp_load_1bpp_tiles(font8x8, FONT8X8_CHARS, 0x20, 1, 0);
+vdp_load_1bpp_tiles(sysfont, SYSFONT_CHARS, 0x20, 1, 0);
 snprintf(buf, sizeof buf, "Lives %u", lives);
 text_print(buf, VDP_PLANE_XY(0xC000, 1, 1, Width64), 0x20);
 ```

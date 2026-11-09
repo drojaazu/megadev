@@ -13,16 +13,16 @@ GLOBAL_SYM(MMD_DEST, WORK_RAM);
 #include "ipx.h"
 #include "ipx.res.h"
 #include "shared.h"
+#include <cpu.h>
 #include <main/bios.h>
-#include <main/exvec.h>
+#include <main/crash.h>
 #include <main/gate_arr.h>
 #include <main/io.h>
 #include <main/memmap.h>
 #include <main/mmd.h>
 #include <memory.h>
-#include <system.h>
+#include <trace.h>
 #include <types.h>
-#include <xform.h>
 
 void vblank_user()
 {
@@ -32,14 +32,14 @@ void vblank_user()
 
 vdp_cmd tiles = to_vdp_addr(vram_addr_from_tileidx(0x80)) | VRAM_W;
 
-s16 trace_x = to_xform_pos(0.0), trace_y = to_xform_pos(0.0),
-    trace_dx = to_xform_delta(1.0), trace_dy = to_xform_delta(0.0);
+s16 trace_x = to_trace_pos(0.0), trace_y = to_trace_pos(0.0),
+    trace_dx = to_trace_delta(1.0), trace_dy = to_trace_delta(0.0);
 __attribute__((noreturn)) void main()
 {
 
   *bios_vblank_user = vblank_user;
   // crash handler for Main CPU exceptions (docs/crash_handler.md)
-  exvec_install();
+  crash_install();
 
   ga_main_grant_2m();
 
@@ -53,64 +53,46 @@ __attribute__((noreturn)) void main()
   bios_vdp_update_flags |= BIOS_MASK_COPY_PALETTE;
   bios_load_pal(&res_pal_stamps);
 
-  do
-  {
+  do {
     bios_vblank_wait(0);
-    exvec_check_sub();
-    if (bios_joy1_hold & PAD_RIGHT)
-    {
-      if (bios_joy1_hold & PAD_A)
-      {
-        trace_dx -= to_xform_delta(0.05);
-      }
-      else
-      {
-        trace_x -= to_xform_pos(0.5);
+    crash_check_sub();
+    if (bios_joy1_hold & PAD_RIGHT) {
+      if (bios_joy1_hold & PAD_A) {
+        trace_dx -= to_trace_delta(0.05);
+      } else {
+        trace_x -= to_trace_pos(0.5);
       }
     }
 
-    if (bios_joy1_hold & PAD_LEFT)
-    {
-      if (bios_joy1_hold & PAD_A)
-      {
-        trace_dx += to_xform_delta(0.05);
-      }
-      else
-      {
-        trace_x += to_xform_pos(0.5);
+    if (bios_joy1_hold & PAD_LEFT) {
+      if (bios_joy1_hold & PAD_A) {
+        trace_dx += to_trace_delta(0.05);
+      } else {
+        trace_x += to_trace_pos(0.5);
       }
     }
 
-    if (bios_joy1_hold & PAD_UP)
-    {
-      if (bios_joy1_hold & PAD_A)
-      {
-        trace_dy += to_xform_delta(0.05);
-      }
-      else
-      {
-        trace_y += to_xform_pos(0.5);
+    if (bios_joy1_hold & PAD_UP) {
+      if (bios_joy1_hold & PAD_A) {
+        trace_dy += to_trace_delta(0.05);
+      } else {
+        trace_y += to_trace_pos(0.5);
       }
     }
 
-    if (bios_joy1_hold & PAD_DOWN)
-    {
-      if (bios_joy1_hold & PAD_A)
-      {
-        trace_dy -= to_xform_delta(0.05);
-      }
-      else
-      {
-        trace_y -= to_xform_pos(0.5);
+    if (bios_joy1_hold & PAD_DOWN) {
+      if (bios_joy1_hold & PAD_A) {
+        trace_dy -= to_trace_delta(0.05);
+      } else {
+        trace_y -= to_trace_pos(0.5);
       }
     }
 
-    if (bios_joy1_hit & PAD_C)
-    {
-      trace_x = to_xform_pos(0.0);
-      trace_y = to_xform_pos(0.0);
-      trace_dx = to_xform_delta(1.0);
-      trace_dy = to_xform_delta(0.0);
+    if (bios_joy1_hit & PAD_C) {
+      trace_x = to_trace_pos(0.0);
+      trace_y = to_trace_pos(0.0);
+      trace_dx = to_trace_delta(1.0);
+      trace_dy = to_trace_delta(0.0);
     }
 
     ga_main_grant_2m();
@@ -118,27 +100,25 @@ __attribute__((noreturn)) void main()
     ga_main_reg_comcmd2 = trace_y;
     ga_main_reg_comcmd3 = trace_dx;
     ga_main_reg_comcmd4 = trace_dy;
-    
+
     ga_main_reg_comcmd0 = CMD_REDRAW;
-    do
-    {
+    do {
       // the NOP is so GCC doesn't optimize the loop away
       // though since comstat is marked volatile it should be fine...
-      exvec_check_sub();
+      crash_check_sub();
     } while (ga_main_reg_comstat0 == 0);
 
     ga_main_reg_comcmd0 = 0;
 
     // the Sub CPU side work will be complete when COMSTAT0 returns to 0
-    do
-    {
-      exvec_check_sub();
+    do {
+      crash_check_sub();
     } while (ga_main_reg_comstat0 != 0);
 
     ga_main_wait_2m();
 
     bios_vblank_wait_default();
-    exvec_check_sub();
+    crash_check_sub();
 
     bios_dma_xfer_word_ram(
       tiles, (void const *) (WORD_RAM + 0x30000), (32 * 32 * 32) / 2);

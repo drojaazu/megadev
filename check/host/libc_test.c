@@ -33,7 +33,7 @@
 #include "../../lib/runtime/strtol.c"
 #include "../../lib/runtime/string.c"
 #include "../../lib/runtime/text_expand.c"
-#include "../../lib/runtime/font8x8.c"
+#include "../../lib/runtime/sysfont.c"
 
 /* The target's memcpy, memmove, memset and memcmp are 68000 assembly and cannot
  * run here; these are reference implementations with the same contract, so the
@@ -266,10 +266,10 @@ static void test_text(void)
   CHECK(text_expand_row(0xA5, 3, 2) == 0x32322323);
   CHECK(text_expand_row(0x0F, 0x1E, 0x12) == 0x2222EEEE);  // colors are masked to 4 bits
 
-  // font8x8: 'A' starts with two set pixels at columns 2-3, space is empty
-  CHECK(font8x8['A' - 0x20][0] == 0x30);
-  CHECK(font8x8[0][0] == 0 && font8x8[0][7] == 0);
-  CHECK(font8x8['!' - 0x20][0] == 0x18);  // symmetric: centered in either bit order
+  // the system font: 'A' starts with two set pixels at columns 2-3, space is empty
+  CHECK(sysfont['A' - 0x20][0] == 0x30);
+  CHECK(sysfont[0][0] == 0 && sysfont[0][7] == 0);
+  CHECK(sysfont['!' - 0x20][0] == 0x18);  // symmetric: centered in either bit order
 }
 
 int main(void)

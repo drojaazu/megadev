@@ -15,7 +15,7 @@ extern "C" {
 #include "z80.def.h"
 
 /** @brief Z80 RAM (Z80_RAM) as a byte pointer; take the bus first */
-#define z80_ram        ((volatile u8 *) Z80_RAM)
+#define z80_ram ((volatile u8 *) Z80_RAM)
 /**
  * @def z80_reg_busreq
  * @brief Z80 bus request register (Z80_REG_BUSREQ) as a pointer
@@ -23,7 +23,7 @@ extern "C" {
  */
 #define z80_reg_busreq ((volatile u16 *) Z80_REG_BUSREQ)
 /** @brief Z80 reset register (Z80_REG_RESET) as a pointer */
-#define z80_reg_reset  ((volatile u16 *) Z80_REG_RESET)
+#define z80_reg_reset ((volatile u16 *) Z80_REG_RESET)
 
 /** @brief Request the Z80 bus and wait until it is granted */
 static inline void z80_request_bus()
@@ -88,8 +88,8 @@ static inline void z80_reset_cpu()
 /**
  * @note z80_program_size is the size of the data in bytes MINUS ONE
  */
-static inline void z80_init(
-  register void const * z80_program, register u16 const z80_program_size)
+static inline void
+z80_init(register void const * z80_program, register u16 const z80_program_size)
 {
   register u32 scratch_a1;
 

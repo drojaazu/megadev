@@ -1,12 +1,12 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file system.s
+ * @file cpu.macro.s
  * @brief CPU System Control Operations
  */
 
-#ifndef SYSTEM_S
-#define SYSTEM_S
+#ifndef CPU_MACRO_S
+#define CPU_MACRO_S
 
 .macro DISABLE_INTERRUPTS
   ori #0x700, sr
@@ -16,7 +16,7 @@
   andi #0xF8FF, sr
 .endm
 
-.macro cpu_stop
+.macro CPU_STOP
   stop #0x700
 .endm
 

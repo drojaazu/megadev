@@ -4,7 +4,7 @@ A cartridge that drives the Mega CD (Mode 1). It detects the Boot ROM at
 0x400000, unpacks the Sub BIOS into Program RAM, loads its own Sub CPU program
 and then uses the Boot ROM library from the cartridge: default VDP registers,
 VRAM clear and the VBLANK handler. Text is printed with the kit's `text_print`
-and `font8x8` (`main/text.h`).
+and the system font (`main/text.h`).
 
 With a disc in the drive, the Main CPU has the Sub CPU initialize the drive,
 read the root directory and load `DATA.BIN` three times: into Word RAM by Sub

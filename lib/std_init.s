@@ -6,7 +6,7 @@
  */
 
 #include <macro.s>
-#include <system.macro.s>
+#include <cpu.macro.s>
 #include <init.macro.s>
 
 .section .init

@@ -16,119 +16,143 @@
  */
 
 /**
- * @defgroup ga_reg_main_00 Main CPU / Gate Array / Register 00 (0xA12000) - Sub CPU Control
+ * @defgroup ga_reg_main_00 Main CPU / Gate Array / Register 00 (0xA12000) - Sub
+ * CPU Control
  * @ingroup ga_reg_main_subctrl
  */
 
 /**
- * @defgroup ga_reg_main_01 Main CPU / Gate Array / Register 01 (0xA12002) - Memory Mode
+ * @defgroup ga_reg_main_01 Main CPU / Gate Array / Register 01 (0xA12002) -
+ * Memory Mode
  * @ingroup ga_reg_main_memmode
  */
 
 /**
- * @defgroup ga_reg_main_02 Main CPU / Gate Array / Register 02 (0xA12004) - CDC Mode
+ * @defgroup ga_reg_main_02 Main CPU / Gate Array / Register 02 (0xA12004) - CDC
+ * Mode
  * @ingroup ga_reg_main_cdcmode
  */
 
 /**
- * @defgroup ga_reg_main_03 Main CPU / Gate Array / Register 03 (0xA12006) - HBLANK Vector
+ * @defgroup ga_reg_main_03 Main CPU / Gate Array / Register 03 (0xA12006) -
+ * HBLANK Vector
  * @ingroup ga_reg_main_hblankvect
  */
 
 /**
- * @defgroup ga_reg_main_04 Main CPU / Gate Array / Register 04 (0xA12008) - CDC Host Data
+ * @defgroup ga_reg_main_04 Main CPU / Gate Array / Register 04 (0xA12008) - CDC
+ * Host Data
  * @ingroup ga_reg_main_cdcdata
  */
 
 /**
- * @defgroup ga_reg_main_06 Main CPU / Gate Array / Register 06 (0xA1200C) - Stop watch
+ * @defgroup ga_reg_main_06 Main CPU / Gate Array / Register 06 (0xA1200C) -
+ * Stop watch
  * @ingroup ga_reg_main_stopwatch
  */
 
 /**
- * @defgroup ga_reg_main_07 Main CPU / Gate Array / Register 07 (0xA1200E) - CPU Communication Flags
+ * @defgroup ga_reg_main_07 Main CPU / Gate Array / Register 07 (0xA1200E) - CPU
+ * Communication Flags
  * @ingroup ga_reg_main_cpucomm
  */
 
 /**
- * @defgroup ga_reg_main_08 Main CPU / Gate Array / Register 08 (0xA12010) - Comm Command 0 (Main -> Sub)
+ * @defgroup ga_reg_main_08 Main CPU / Gate Array / Register 08 (0xA12010) -
+ * Comm Command 0 (Main -> Sub)
  * @ingroup ga_reg_main_cpucomm
  */
 
 /**
- * @defgroup ga_reg_main_09 Main CPU / Gate Array / Register 09 (0xA12012) - Comm Command 1 (Main -> Sub)
+ * @defgroup ga_reg_main_09 Main CPU / Gate Array / Register 09 (0xA12012) -
+ * Comm Command 1 (Main -> Sub)
  * @ingroup ga_reg_main_cpucomm
  */
 
 /**
- * @defgroup ga_reg_main_10 Main CPU / Gate Array / Register 10 (0xA12014) - Comm Command 2 (Main -> Sub)
+ * @defgroup ga_reg_main_10 Main CPU / Gate Array / Register 10 (0xA12014) -
+ * Comm Command 2 (Main -> Sub)
  * @ingroup ga_reg_main_cpucomm
  */
 
 /**
- * @defgroup ga_reg_main_11 Main CPU / Gate Array / Register 11 (0xA12016) - Comm Command 3 (Main -> Sub)
+ * @defgroup ga_reg_main_11 Main CPU / Gate Array / Register 11 (0xA12016) -
+ * Comm Command 3 (Main -> Sub)
  * @ingroup ga_reg_main_cpucomm
  */
 
 /**
- * @defgroup ga_reg_main_12 Main CPU / Gate Array / Register 12 (0xA12018) - Comm Command 4 (Main -> Sub)
+ * @defgroup ga_reg_main_12 Main CPU / Gate Array / Register 12 (0xA12018) -
+ * Comm Command 4 (Main -> Sub)
  * @ingroup ga_reg_main_cpucomm
  */
 
 /**
- * @defgroup ga_reg_main_13 Main CPU / Gate Array / Register 13 (0xA1201A) - Comm Command 5 (Main -> Sub)
+ * @defgroup ga_reg_main_13 Main CPU / Gate Array / Register 13 (0xA1201A) -
+ * Comm Command 5 (Main -> Sub)
  * @ingroup ga_reg_main_cpucomm
  */
 
 /**
- * @defgroup ga_reg_main_14 Main CPU / Gate Array / Register 14 (0xA1201C) - Comm Command 6 (Main -> Sub)
+ * @defgroup ga_reg_main_14 Main CPU / Gate Array / Register 14 (0xA1201C) -
+ * Comm Command 6 (Main -> Sub)
  * @ingroup ga_reg_main_cpucomm
  */
 
 /**
- * @defgroup ga_reg_main_15 Main CPU / Gate Array / Register 15 (0xA1201E) - Comm Command 7 (Main -> Sub)
+ * @defgroup ga_reg_main_15 Main CPU / Gate Array / Register 15 (0xA1201E) -
+ * Comm Command 7 (Main -> Sub)
  * @ingroup ga_reg_main_cpucomm
  */
 
 /**
- * @defgroup ga_reg_main_16 Main CPU / Gate Array / Register 16 (0xA12020) - Comm Status 0 (Main -> Sub)
+ * @defgroup ga_reg_main_16 Main CPU / Gate Array / Register 16 (0xA12020) -
+ * Comm Status 0 (Main -> Sub)
  * @ingroup ga_reg_main_cpucomm
  */
 
 /**
- * @defgroup ga_reg_main_17 Main CPU / Gate Array / Register 17 (0xA12022) - Comm Status 1 (Main -> Sub)
+ * @defgroup ga_reg_main_17 Main CPU / Gate Array / Register 17 (0xA12022) -
+ * Comm Status 1 (Main -> Sub)
  * @ingroup ga_reg_main_cpucomm
  */
 
 /**
- * @defgroup ga_reg_main_18 Main CPU / Gate Array / Register 18 (0xA12024) - Comm Status 2 (Main -> Sub)
+ * @defgroup ga_reg_main_18 Main CPU / Gate Array / Register 18 (0xA12024) -
+ * Comm Status 2 (Main -> Sub)
  * @ingroup ga_reg_main_cpucomm
  */
 
 /**
- * @defgroup ga_reg_main_19 Main CPU / Gate Array / Register 19 (0xA12026) - Comm Status 3 (Main -> Sub)
+ * @defgroup ga_reg_main_19 Main CPU / Gate Array / Register 19 (0xA12026) -
+ * Comm Status 3 (Main -> Sub)
  * @ingroup ga_reg_main_cpucomm
  */
 
 /**
- * @defgroup ga_reg_main_20 Main CPU / Gate Array / Register 20 (0xA12028) - Comm Status 4 (Main -> Sub)
+ * @defgroup ga_reg_main_20 Main CPU / Gate Array / Register 20 (0xA12028) -
+ * Comm Status 4 (Main -> Sub)
  * @ingroup ga_reg_main_cpucomm
  */
 
 /**
- * @defgroup ga_reg_main_21 Main CPU / Gate Array / Register 21 (0xA1202A) - Comm Status 5 (Main -> Sub)
+ * @defgroup ga_reg_main_21 Main CPU / Gate Array / Register 21 (0xA1202A) -
+ * Comm Status 5 (Main -> Sub)
  * @ingroup ga_reg_main_cpucomm
  */
 
 /**
- * @defgroup ga_reg_main_22 Main CPU / Gate Array / Register 22 (0xA1202C) - Comm Status 6 (Main -> Sub)
+ * @defgroup ga_reg_main_22 Main CPU / Gate Array / Register 22 (0xA1202C) -
+ * Comm Status 6 (Main -> Sub)
  * @ingroup ga_reg_main_cpucomm
  */
 
 /**
- * @defgroup ga_reg_main_23 Main CPU / Gate Array / Register 23 (0xA1202E) - Comm Status 7 (Main -> Sub)
+ * @defgroup ga_reg_main_23 Main CPU / Gate Array / Register 23 (0xA1202E) -
+ * Comm Status 7 (Main -> Sub)
  * @ingroup ga_reg_main_cpucomm
  */
+
 /**
  * @defgroup ga_regs_main Main CPU / Gate Array / Registers
  *
@@ -199,13 +223,12 @@
  */
 #define GA_MAIN_REG_SUBCPU 0xA12001
 
-
 /**
  * @brief Sub CPU Reset
  * @ingroup ga_reg_main_subctrl
  */
 ///@{
-#define GA_MAIN_SUB_RESET_POS 0
+#define GA_MAIN_SUB_RESET_POS  0
 #define GA_MAIN_SUB_RESET_MASK (1 << GA_MAIN_SUB_RESET_POS)
 ///@}
 
@@ -214,7 +237,7 @@
  * @ingroup ga_reg_main_subctrl
  */
 ///@{
-#define GA_MAIN_SUB_REQ_POS 1
+#define GA_MAIN_SUB_REQ_POS  1
 #define GA_MAIN_SUB_REQ_MASK (1 << GA_MAIN_SUB_REQ_POS)
 ///@}
 
@@ -223,7 +246,7 @@
  * @ingroup ga_reg_main_subctrl
  */
 ///@{
-#define GA_MAIN_RAISE_INT2_POS 0
+#define GA_MAIN_RAISE_INT2_POS  0
 #define GA_MAIN_RAISE_INT2_MASK (1 << GA_MAIN_RAISE_INT2_POS)
 ///@}
 
@@ -232,7 +255,7 @@
  * @ingroup ga_reg_main_subctrl
  */
 ///@{
-#define GA_MAIN_INT2_MASKING_POS 7
+#define GA_MAIN_INT2_MASKING_POS  7
 #define GA_MAIN_INT2_MASKING_MASK (1 << GA_MAIN_INT2_MASKING_POS)
 ///@}
 
@@ -293,8 +316,8 @@
  */
 #define GA_MAIN_REG_MEMMODE 0xA12003
 
-
-/** @brief Bit position of GA_MAIN_RETURN_2M_MASK @ingroup ga_reg_main_memmode */
+/** @brief Bit position of GA_MAIN_RETURN_2M_MASK @ingroup ga_reg_main_memmode
+ */
 #define GA_MAIN_RETURN_2M_POS 0
 
 /**
@@ -319,7 +342,7 @@
  * @ingroup ga_reg_main_memmode
  */
 ///@{
-#define GA_MAIN_WORDRAM_LAYOUT_POS 2
+#define GA_MAIN_WORDRAM_LAYOUT_POS  2
 #define GA_MAIN_WORDRAM_LAYOUT_MASK (1 << GA_MAIN_WORDRAM_LAYOUT_POS)
 ///@}
 
@@ -332,9 +355,10 @@
  * @ingroup ga_reg_main_memmode
  */
 ///@{
-#define GA_MAIN_MEMMODE_BANK_POS 6
+#define GA_MAIN_MEMMODE_BANK_POS   6
 #define GA_MAIN_MEMMODE_BANK_WIDTH 2
-#define GA_MAIN_MEMMODE_BANK_MASK FIELD_MASK(GA_MAIN_MEMMODE_BANK_POS, GA_MAIN_MEMMODE_BANK_WIDTH)
+#define GA_MAIN_MEMMODE_BANK_MASK                                  \
+  FIELD_MASK(GA_MAIN_MEMMODE_BANK_POS, GA_MAIN_MEMMODE_BANK_WIDTH)
 ///@}
 
 /**
@@ -348,9 +372,9 @@
  * @ingroup ga_reg_main_memmode
  */
 ///@{
-#define GA_MAIN_WP_POS 0
+#define GA_MAIN_WP_POS   0
 #define GA_MAIN_WP_WIDTH 8
-#define GA_MAIN_WP_MASK FIELD_MASK(GA_MAIN_WP_POS, GA_MAIN_WP_WIDTH)
+#define GA_MAIN_WP_MASK  FIELD_MASK(GA_MAIN_WP_POS, GA_MAIN_WP_WIDTH)
 ///@}
 
 /**
@@ -394,14 +418,15 @@
  * @details
  * Where the CDC sends the data it reads off the disc. The Main CPU may read
  * this field but only the Sub CPU may set it.
- * @sa GA_MAIN_CDC_DEST_MAIN, GA_MAIN_CDC_DEST_SUB, GA_MAIN_CDC_DEST_PCM, GA_MAIN_CDC_DEST_PRG,
- * GA_MAIN_CDC_DEST_WORD
+ * @sa GA_MAIN_CDC_DEST_MAIN, GA_MAIN_CDC_DEST_SUB, GA_MAIN_CDC_DEST_PCM,
+ * GA_MAIN_CDC_DEST_PRG, GA_MAIN_CDC_DEST_WORD
  * @ingroup ga_reg_main_cdcmode
  */
 ///@{
-#define GA_MAIN_CDC_DEST_POS 0
+#define GA_MAIN_CDC_DEST_POS   0
 #define GA_MAIN_CDC_DEST_WIDTH 3
-#define GA_MAIN_CDC_DEST_MASK FIELD_MASK(GA_MAIN_CDC_DEST_POS, GA_MAIN_CDC_DEST_WIDTH)
+#define GA_MAIN_CDC_DEST_MASK                              \
+  FIELD_MASK(GA_MAIN_CDC_DEST_POS, GA_MAIN_CDC_DEST_WIDTH)
 ///@}
 
 /**
@@ -411,7 +436,7 @@
  * @ingroup ga_reg_main_cdcmode
  */
 ///@{
-#define GA_MAIN_CDC_DSR_POS 6
+#define GA_MAIN_CDC_DSR_POS  6
 #define GA_MAIN_CDC_DSR_MASK (1 << GA_MAIN_CDC_DSR_POS)
 ///@}
 
@@ -422,7 +447,7 @@
  * @ingroup ga_reg_main_cdcmode
  */
 ///@{
-#define GA_MAIN_CDC_EDT_POS 7
+#define GA_MAIN_CDC_EDT_POS  7
 #define GA_MAIN_CDC_EDT_MASK (1 << GA_MAIN_CDC_EDT_POS)
 ///@}
 
@@ -523,7 +548,8 @@
 #define GA_MAIN_REG_CDCHOSTDATA 0xA12008
 
 /**
- * @defgroup ga_reg_main_05 Main CPU / Gate Array / Register 05 (0xA1200A) - Reserved
+ * @defgroup ga_reg_main_05 Main CPU / Gate Array / Register 05 (0xA1200A) -
+ * Reserved
  * @ingroup ga_regs_main
  */
 

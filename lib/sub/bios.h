@@ -21,12 +21,12 @@ extern "C" {
  */
 static inline void bios_wait_vsync()
 {
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p0"
-		:
-		: "i"(BIOS_WAIT_VSYNC)
-		: "cc");
+    :
+    : "i"(BIOS_WAIT_VSYNC)
+    : "cc");
 }
 
 /**
@@ -36,14 +36,14 @@ static inline void bios_wait_vsync()
  */
 static inline void bios_audio_stop()
 {
-	register u16 D0 asm("d0") = BIOS_AUDIO_STOP;
+  register u16 D0 asm("d0") = BIOS_AUDIO_STOP;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p1"
-		: "+d"(D0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0)
-		: "cc", "a0", "a1");
+    : "+d"(D0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0)
+    : "cc", "a0", "a1");
 }
 
 /**
@@ -56,14 +56,14 @@ static inline void bios_audio_stop()
  */
 static inline void bios_audio_pause()
 {
-	register u16 D0 asm("d0") = BIOS_AUDIO_PAUSE;
+  register u16 D0 asm("d0") = BIOS_AUDIO_PAUSE;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p1"
-		: "+d"(D0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0)
-		: "cc", "a0", "a1");
+    : "+d"(D0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0)
+    : "cc", "a0", "a1");
 }
 
 /**
@@ -76,14 +76,14 @@ static inline void bios_audio_pause()
  */
 static inline void bios_audio_resume()
 {
-	register u16 D0 asm("d0") = BIOS_AUDIO_RESUME;
+  register u16 D0 asm("d0") = BIOS_AUDIO_RESUME;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p1"
-		: "+d"(D0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0)
-		: "cc", "a0", "a1");
+    : "+d"(D0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0)
+    : "cc", "a0", "a1");
 };
 
 /**
@@ -93,14 +93,14 @@ static inline void bios_audio_resume()
  */
 static inline void bios_audio_scan_forward()
 {
-	register u16 D0 asm("d0") = BIOS_AUDIO_SCAN_FORWARD;
+  register u16 D0 asm("d0") = BIOS_AUDIO_SCAN_FORWARD;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p1"
-		: "+d"(D0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0)
-		: "cc", "a0", "a1");
+    : "+d"(D0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0)
+    : "cc", "a0", "a1");
 };
 
 /**
@@ -110,14 +110,14 @@ static inline void bios_audio_scan_forward()
  */
 static inline void bios_audio_scan_backward()
 {
-	register u16 D0 asm("d0") = BIOS_AUDIO_SCAN_BACKWARD;
+  register u16 D0 asm("d0") = BIOS_AUDIO_SCAN_BACKWARD;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p1"
-		: "+d"(D0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0)
-		: "cc", "a0", "a1");
+    : "+d"(D0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0)
+    : "cc", "a0", "a1");
 };
 
 /**
@@ -130,14 +130,14 @@ static inline void bios_audio_scan_backward()
  */
 static inline void bios_audio_scan_off()
 {
-	register u16 D0 asm("d0") = BIOS_AUDIO_SCAN_OFF;
+  register u16 D0 asm("d0") = BIOS_AUDIO_SCAN_OFF;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p1"
-		: "+d"(D0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0)
-		: "cc", "a0", "a1");
+    : "+d"(D0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0)
+    : "cc", "a0", "a1");
 };
 
 /**
@@ -148,15 +148,15 @@ static inline void bios_audio_scan_off()
  */
 static inline void bios_audio_play(u16 const * track_number)
 {
-	register u16 D0 asm("d0") = BIOS_AUDIO_PLAY;
-	register u32 A0 asm("a0") = (u32) track_number;
+  register u16 D0 asm("d0") = BIOS_AUDIO_PLAY;
+  register u32 A0 asm("a0") = (u32) track_number;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p2"
-		: "+d"(D0), "+a"(A0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(A0)
-		: "cc", "a1");
+    : "+d"(D0), "+a"(A0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(A0)
+    : "cc", "a1");
 };
 
 /**
@@ -166,15 +166,15 @@ static inline void bios_audio_play(u16 const * track_number)
  */
 static inline void bios_audio_play_once(u16 const * track_number)
 {
-	register u16 D0 asm("d0") = BIOS_AUDIO_PLAY_ONCE;
-	register u32 A0 asm("a0") = (u32) track_number;
+  register u16 D0 asm("d0") = BIOS_AUDIO_PLAY_ONCE;
+  register u32 A0 asm("a0") = (u32) track_number;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p2"
-		: "+d"(D0), "+a"(A0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(A0)
-		: "cc", "a1");
+    : "+d"(D0), "+a"(A0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(A0)
+    : "cc", "a1");
 };
 
 /**
@@ -184,15 +184,15 @@ static inline void bios_audio_play_once(u16 const * track_number)
  */
 static inline void bios_audio_play_repeat(u16 const * track_number)
 {
-	register u16 D0 asm("d0") = BIOS_AUDIO_PLAY_REPEAT;
-	register u32 A0 asm("a0") = (u32) track_number;
+  register u16 D0 asm("d0") = BIOS_AUDIO_PLAY_REPEAT;
+  register u32 A0 asm("a0") = (u32) track_number;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p2"
-		: "+d"(D0), "+a"(A0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(A0)
-		: "cc", "a1");
+    : "+d"(D0), "+a"(A0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(A0)
+    : "cc", "a1");
 };
 
 /**
@@ -202,15 +202,15 @@ static inline void bios_audio_play_repeat(u16 const * track_number)
  */
 static inline void bios_audio_play_from_time(u32 const * timecode)
 {
-	register u16 D0 asm("d0") = BIOS_AUDIO_PLAY_FROM_TIME;
-	register u32 A0 asm("a0") = (u32) timecode;
+  register u16 D0 asm("d0") = BIOS_AUDIO_PLAY_FROM_TIME;
+  register u32 A0 asm("a0") = (u32) timecode;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p2"
-		: "+d"(D0), "+a"(A0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(A0)
-		: "cc", "a1");
+    : "+d"(D0), "+a"(A0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(A0)
+    : "cc", "a1");
 };
 
 /**
@@ -220,15 +220,15 @@ static inline void bios_audio_play_from_time(u32 const * timecode)
  */
 static inline void bios_audio_seek(u16 const * track_number)
 {
-	register u16 D0 asm("d0") = BIOS_AUDIO_SEEK;
-	register u32 A0 asm("a0") = (u32) track_number;
+  register u16 D0 asm("d0") = BIOS_AUDIO_SEEK;
+  register u32 A0 asm("a0") = (u32) track_number;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p2"
-		: "+d"(D0), "+a"(A0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(A0)
-		: "cc", "a1");
+    : "+d"(D0), "+a"(A0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(A0)
+    : "cc", "a1");
 };
 
 /**
@@ -238,15 +238,15 @@ static inline void bios_audio_seek(u16 const * track_number)
  */
 static inline void bios_audio_seek_time(u32 const * timecode)
 {
-	register u16 D0 asm("d0") = BIOS_AUDIO_SEEK_TIME;
-	register u32 A0 asm("a0") = (u32) timecode;
+  register u16 D0 asm("d0") = BIOS_AUDIO_SEEK_TIME;
+  register u32 A0 asm("a0") = (u32) timecode;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p2"
-		: "+d"(D0), "+a"(A0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(A0)
-		: "cc", "a1");
+    : "+d"(D0), "+a"(A0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(A0)
+    : "cc", "a1");
 };
 
 /**
@@ -257,15 +257,15 @@ static inline void bios_audio_seek_time(u32 const * timecode)
  */
 static inline void bios_audio_seek_play_once(u16 const * track_number)
 {
-	register u16 D0 asm("d0") = BIOS_AUDIO_SEEK_PLAY_ONCE;
-	register u32 A0 asm("a0") = (u32) track_number;
+  register u16 D0 asm("d0") = BIOS_AUDIO_SEEK_PLAY_ONCE;
+  register u32 A0 asm("a0") = (u32) track_number;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p2"
-		: "+d"(D0), "+a"(A0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(A0)
-		: "cc", "a1");
+    : "+d"(D0), "+a"(A0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(A0)
+    : "cc", "a1");
 };
 
 /**
@@ -277,24 +277,23 @@ static inline void bios_audio_seek_play_once(u16 const * track_number)
  */
 static inline void bios_drive_open()
 {
-	register u16 D0 asm("d0") = BIOS_DRIVE_OPEN;
+  register u16 D0 asm("d0") = BIOS_DRIVE_OPEN;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p1"
-		: "+d"(D0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0)
-		: "cc", "a0", "a1");
+    : "+d"(D0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0)
+    : "cc", "a0", "a1");
 };
 
 /**
  * @brief Parameters of bios_drive_init
  * @ingroup bios_cdb
  */
-typedef struct DriveInitParams
-{
-	u8 toc_track_number; ///< First track to read the TOC for, usually 1
-	u8 last_track; ///< Last track to read, or 0xFF for all
+typedef struct DriveInitParams {
+  u8 toc_track_number; ///< First track to read the TOC for, usually 1
+  u8 last_track;       ///< Last track to read, or 0xFF for all
 } DriveInitParams;
 
 /**
@@ -309,15 +308,15 @@ typedef struct DriveInitParams
 static inline void
 bios_drive_init(struct DriveInitParams const * drive_init_params)
 {
-	register u16 D0 asm("d0") = BIOS_DRIVE_INIT;
-	register u32 a0_drv_init_param asm("a0") = (u32) drive_init_params;
+  register u16 D0 asm("d0") = BIOS_DRIVE_INIT;
+  register u32 a0_drv_init_param asm("a0") = (u32) drive_init_params;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p2"
-		: "+d"(D0), "+a"(a0_drv_init_param)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(a0_drv_init_param)
-		: "cc", "a1");
+    : "+d"(D0), "+a"(a0_drv_init_param)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(a0_drv_init_param)
+    : "cc", "a1");
 };
 
 /**
@@ -327,14 +326,14 @@ bios_drive_init(struct DriveInitParams const * drive_init_params)
  */
 static inline void bios_cdrom_pause()
 {
-	register u16 D0 asm("d0") = BIOS_CDROM_PAUSE;
+  register u16 D0 asm("d0") = BIOS_CDROM_PAUSE;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p1"
-		: "+d"(D0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0)
-		: "cc", "a0", "a1");
+    : "+d"(D0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0)
+    : "cc", "a0", "a1");
 };
 
 /**
@@ -344,14 +343,14 @@ static inline void bios_cdrom_pause()
  */
 static inline void bios_cdrom_resume()
 {
-	register u16 D0 asm("d0") = BIOS_CDROM_RESUME;
+  register u16 D0 asm("d0") = BIOS_CDROM_RESUME;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p1"
-		: "+d"(D0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0)
-		: "cc", "a0", "a1");
+    : "+d"(D0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0)
+    : "cc", "a0", "a1");
 };
 
 /**
@@ -369,15 +368,15 @@ static inline void bios_cdrom_resume()
  */
 static inline void bios_cdrom_read(u32 const * sector_number)
 {
-	register u16 D0 asm("d0") = BIOS_CDROM_READ;
-	register u32 A0 asm("a0") = (u32) sector_number;
+  register u16 D0 asm("d0") = BIOS_CDROM_READ;
+  register u32 A0 asm("a0") = (u32) sector_number;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p2"
-		: "+d"(D0), "+a"(A0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(A0)
-		: "cc", "a1");
+    : "+d"(D0), "+a"(A0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(A0)
+    : "cc", "a1");
 };
 
 /**
@@ -387,25 +386,25 @@ static inline void bios_cdrom_read(u32 const * sector_number)
  */
 static inline void bios_cdrom_seek(u32 const * sector_number)
 {
-	register u16 D0 asm("d0") = BIOS_CDROM_SEEK;
-	register u32 A0 asm("a0") = (u32) sector_number;
+  register u16 D0 asm("d0") = BIOS_CDROM_SEEK;
+  register u32 A0 asm("a0") = (u32) sector_number;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p2"
-		: "+d"(D0), "+a"(A0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(A0)
-		: "cc", "a1");
+    : "+d"(D0), "+a"(A0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(A0)
+    : "cc", "a1");
 };
 
 /**
  * @brief Parameters of bios_cdrom_read_count and bios_cdrom_read_range
  * @ingroup bios_cdrom
  */
-struct RomreadParams
-{
-	u32 start_sector; ///< First logical sector
-	u32 sector_count; ///< Number of sectors (read_count), or the last sector (read_range)
+struct RomreadParams {
+  u32 start_sector; ///< First logical sector
+  u32
+    sector_count; ///< Number of sectors (read_count), or the last sector (read_range)
 };
 
 /**
@@ -417,15 +416,15 @@ struct RomreadParams
  */
 static inline void bios_cdrom_read_count(struct RomreadParams const * param)
 {
-	register u16 D0 asm("d0") = BIOS_CDROM_READ_COUNT;
-	register u32 A0 asm("a0") = (u32) param;
+  register u16 D0 asm("d0") = BIOS_CDROM_READ_COUNT;
+  register u32 A0 asm("a0") = (u32) param;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p2"
-		: "+d"(D0), "+a"(A0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(A0)
-		: "cc", "a1");
+    : "+d"(D0), "+a"(A0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(A0)
+    : "cc", "a1");
 };
 
 /**
@@ -434,15 +433,15 @@ static inline void bios_cdrom_read_count(struct RomreadParams const * param)
  */
 static inline void bios_cdrom_read_range(struct RomreadParams const * param)
 {
-	register u16 D0 asm("d0") = BIOS_CDROM_READ_RANGE;
-	register u32 A0 asm("a0") = (u32) param;
+  register u16 D0 asm("d0") = BIOS_CDROM_READ_RANGE;
+  register u32 A0 asm("a0") = (u32) param;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p2"
-		: "+d"(D0), "+a"(A0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(A0)
-		: "cc", "a1");
+    : "+d"(D0), "+a"(A0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(A0)
+    : "cc", "a1");
 };
 
 /**
@@ -452,22 +451,22 @@ static inline void bios_cdrom_read_range(struct RomreadParams const * param)
  */
 static inline bool bios_check_command()
 {
-	register u16 D0 asm("d0") = BIOS_CHECK_COMMAND;
+  register u16 D0 asm("d0") = BIOS_CHECK_COMMAND;
 
-	asm goto(
-		"\
+  asm goto(
+    "\
 		jsr %p0 \n\
 		bcc %l[cmd_complete] \n\
 		"
-		:
-		: "i"(BIOS_CALL_VECTOR), "d"(D0)
-		: "cc"
-		: cmd_complete);
+    :
+    : "i"(BIOS_CALL_VECTOR), "d"(D0)
+    : "cc"
+    : cmd_complete);
 
-	return false;
+  return false;
 
 cmd_complete:
-	return true;
+  return true;
 };
 
 /**
@@ -476,13 +475,13 @@ cmd_complete:
  * field values.
  * @ingroup bios_cdb
  */
-struct BiosStatus
-{
-	u16 bios_status; ///< BIOS status word: high byte drive state, low byte BIOS state
-	u16 led; ///< LED state
-	u8	cdd_status[20]; ///< The last CDD status, 20 bytes
-	u32 volume; ///< Current fader volume
-	u32 header; ///< Disc header: absolute time of the current sector
+struct BiosStatus {
+  u16
+    bios_status; ///< BIOS status word: high byte drive state, low byte BIOS state
+  u16 led;       ///< LED state
+  u8  cdd_status[20]; ///< The last CDD status, 20 bytes
+  u32 volume;         ///< Current fader volume
+  u32 header;         ///< Disc header: absolute time of the current sector
 };
 
 /**
@@ -492,17 +491,17 @@ struct BiosStatus
  */
 static inline struct BiosStatus const * bios_get_status()
 {
-	register u16 D0 asm("d0") = BIOS_GET_STATUS;
-	register u32 A0 asm("a0");
+  register u16 D0 asm("d0") = BIOS_GET_STATUS;
+  register u32 A0 asm("a0");
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p2"
-		: "+d"(D0), "=a"(A0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0)
-		: "cc", "d1");
+    : "+d"(D0), "=a"(A0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0)
+    : "cc", "d1");
 
-	return (struct BiosStatus *) A0;
+  return (struct BiosStatus *) A0;
 }
 
 /**
@@ -522,15 +521,15 @@ static inline struct BiosStatus const * bios_get_status()
  */
 static inline void bios_fader_set(u16 const volume)
 {
-	register u16			 D0 asm("d0") = BIOS_FADER_SET;
-	register u16 const D1 asm("d1") = volume;
+  register u16       D0 asm("d0") = BIOS_FADER_SET;
+  register u16 const D1 asm("d1") = volume;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p1"
-		: "+d"(D0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0), "d"(D1)
-		: "cc");
+    : "+d"(D0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0), "d"(D1)
+    : "cc");
 };
 
 /**
@@ -550,15 +549,15 @@ static inline void bios_fader_set(u16 const volume)
  */
 static inline void bios_fader_change(u32 const volume)
 {
-	register u16 D0 asm("d0") = BIOS_FADER_CHANGE;
-	register u32 D1 asm("d1") = volume;
+  register u16 D0 asm("d0") = BIOS_FADER_CHANGE;
+  register u32 D1 asm("d1") = volume;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p1"
-		: "+d"(D0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0), "d"(D1)
-		: "cc");
+    : "+d"(D0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0), "d"(D1)
+    : "cc");
 };
 
 /**
@@ -566,14 +565,14 @@ static inline void bios_fader_change(u32 const volume)
  */
 static inline void bios_cdc_start()
 {
-	register u16 D0 asm("d0") = BIOS_CDC_START;
+  register u16 D0 asm("d0") = BIOS_CDC_START;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 		jsr %p1"
-		: "+d"(D0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0)
-		: "cc", "d1");
+    : "+d"(D0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0)
+    : "cc", "d1");
 };
 
 /**
@@ -581,14 +580,14 @@ static inline void bios_cdc_start()
  */
 static inline void bios_cdc_stop()
 {
-	register u16 D0 asm("d0") = BIOS_CDC_STOP;
+  register u16 D0 asm("d0") = BIOS_CDC_STOP;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 jsr %p1"
-		: "+d"(D0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0)
-		: "cc");
+    : "+d"(D0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0)
+    : "cc");
 };
 
 /**
@@ -596,14 +595,14 @@ jsr %p1"
  */
 static inline void bios_cdc_status()
 {
-	register u16 D0 asm("d0") = BIOS_CDC_STATUS;
+  register u16 D0 asm("d0") = BIOS_CDC_STATUS;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 jsr %p1"
-		: "+d"(D0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0)
-		: "cc", "d1");
+    : "+d"(D0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0)
+    : "cc", "d1");
 };
 
 /**
@@ -631,16 +630,16 @@ sector_ready:
  */
 static inline void bios_cdc_transfer(u8 * sector_dest, u8 * header_dest)
 {
-	register u16	D0 asm("d0") = BIOS_CDC_TRANSFER;
-	register u8 * a0_sector_dest asm("a0") = sector_dest;
-	register u8 * a1_header_dest asm("a1") = header_dest;
+  register u16  D0 asm("d0") = BIOS_CDC_TRANSFER;
+  register u8 * a0_sector_dest asm("a0") = sector_dest;
+  register u8 * a1_header_dest asm("a1") = header_dest;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 jsr %p3"
-		: "+d"(D0), "+a"(a0_sector_dest), "+a"(a1_header_dest)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(a0_sector_dest), "a"(a1_header_dest)
-		: "cc", "d1");
+    : "+d"(D0), "+a"(a0_sector_dest), "+a"(a1_header_dest)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0), "a"(a0_sector_dest), "a"(a1_header_dest)
+    : "cc", "d1");
 };
 
 /**
@@ -648,14 +647,14 @@ jsr %p3"
  */
 static inline void bios_cdc_ack()
 {
-	register u16 D0 asm("d0") = BIOS_CDC_ACK;
+  register u16 D0 asm("d0") = BIOS_CDC_ACK;
 
-	asm volatile(
-		"\
+  asm volatile(
+    "\
 jsr %p1"
-		: "+d"(D0)
-		: "i"(BIOS_CALL_VECTOR), "d"(D0)
-		: "cc");
+    : "+d"(D0)
+    : "i"(BIOS_CALL_VECTOR), "d"(D0)
+    : "cc");
 };
 
 #ifdef __cplusplus

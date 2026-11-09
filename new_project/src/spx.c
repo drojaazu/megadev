@@ -9,10 +9,10 @@ GLOBAL_SYM(MODULE_RAM_ORIGIN, 0x1E000);
 GLOBAL_SYM(MODULE_RAM_LENGTH, 0x2000);
 
 #include "shared.h"
+#include <cpu.h>
 #include <sub/cdrom.h>
 #include <sub/gate_arr.h>
 #include <sub/memmap.h>
-#include <system.h>
 
 void load_ipx();
 
@@ -27,11 +27,9 @@ void main()
 {
   enable_interrupts();
   register u16 command, param1;
-  do
-  {
+  do {
 
-    do
-    {
+    do {
       command = ga_sub_reg_comcmd0;
     } while (command == 0);
 
@@ -40,15 +38,13 @@ void main()
 
     param1 = ga_sub_reg_comcmd1;
 
-    switch (command)
-    {
+    switch (command) {
 
       // load MMD
       case CMD_LOAD_FILE:
         load_file(CDROM_LOAD_CDC, filenames[param1], (u8 *) WORD_RAM_2M);
         ga_sub_grant_2m();
-        if (access_op_result != CDROM_RESULT_OK)
-        {
+        if (access_op_result != CDROM_RESULT_OK) {
           sp_fatal();
         }
         break;
@@ -57,14 +53,12 @@ void main()
     // not reaching here?
     asm(".global test_label3\ntest_label3:");
     ga_sub_reg_comstat0 = ga_sub_reg_comcmd0;
-    do
-    {
+    do {
       asm("nop");
       command = ga_sub_reg_comcmd0;
     } while (command != 0);
 
-    do
-    {
+    do {
       asm("nop");
       command = ga_sub_reg_comcmd0;
     } while (command != 0);

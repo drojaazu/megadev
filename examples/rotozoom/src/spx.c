@@ -9,13 +9,13 @@ GLOBAL_SYM(MODULE_RAM_ORIGIN, 0x1E000);
 GLOBAL_SYM(MODULE_RAM_LENGTH, 0x2000);
 
 #include "shared.h"
-#include "xform.res.h"
+#include "spx.res.h"
+#include <cpu.h>
 #include <memory.h>
 #include <sub/cdrom.h>
 #include <sub/gate_arr.h>
 #include <sub/memmap.h>
-#include <system.h>
-#include <xform.h>
+#include <trace.h>
 
 #define STAMP_DATA_OFFSET  0x0
 #define STAMP_MAP_OFFSET   0x10000
@@ -24,8 +24,7 @@ GLOBAL_SYM(MODULE_RAM_LENGTH, 0x2000);
 #define IMG_WIDTH          256
 #define IMG_HEIGHT         256
 
-typedef struct
-{
+typedef struct {
   s16 x;
   s16 y;
   s16 delta_x;
@@ -52,11 +51,9 @@ void main()
   memset32(0, (u32 *) WORD_RAM_2M, 0x20000 * 2);
 
   register s16 command, param1, param2, param3, param4;
-  do
-  {
+  do {
 
-    do
-    {
+    do {
       command = ga_sub_reg_comcmd0;
     } while (command == 0);
 
@@ -68,15 +65,13 @@ void main()
     param3 = ga_sub_reg_comcmd3;
     param4 = ga_sub_reg_comcmd4;
 
-    switch (command)
-    {
+    switch (command) {
 
       // load MMD
       case CMD_LOAD_FILE:
         load_file(CDROM_LOAD_CDC, filenames[param1], (u8 *) WORD_RAM_2M);
         ga_sub_grant_2m();
-        if (access_op_result != CDROM_RESULT_OK)
-        {
+        if (access_op_result != CDROM_RESULT_OK) {
           sp_fatal();
         }
         break;
@@ -89,14 +84,12 @@ void main()
     // not reaching here?
     asm(".global test_label3\ntest_label3:");
     ga_sub_reg_comstat0 = ga_sub_reg_comcmd0;
-    do
-    {
+    do {
       asm("nop");
       command = ga_sub_reg_comcmd0;
     } while (command != 0);
 
-    do
-    {
+    do {
       asm("nop");
       command = ga_sub_reg_comcmd0;
     } while (command != 0);
@@ -146,15 +139,15 @@ void redraw(s16 trace_x, s16 trace_y, s16 trace_dx, s16 trace_dy)
 
   ga_sub_reg_stampmapbase = (u16) (STAMP_MAP_OFFSET / 4);
   ga_sub_reg_imgbufstart = (u16) (IMG_BUFFER_OFFSET / 4);
-  ga_sub_reg_stampsize = GA_SUB_STAMPSIZE_REPEAT_MASK | GA_SUB_STAMPSIZE_32x32_STAMP_MASK;
+  ga_sub_reg_stampsize =
+    GA_SUB_STAMPSIZE_REPEAT_MASK | GA_SUB_STAMPSIZE_32x32_STAMP_MASK;
   ga_sub_reg_imgbufvdotsize = IMG_HEIGHT;
   ga_sub_reg_imgbufhdotsize = IMG_WIDTH;
   ga_sub_reg_imgbufvsize = (IMG_HEIGHT / 8) - 1;
   ga_sub_reg_imgbufoffset = 0;
 
   for (u16 trace_table_line = 0; trace_table_line < IMG_HEIGHT;
-       ++trace_table_line)
-  {
+       ++trace_table_line) {
     (*trace_table)[trace_table_line].x = trace_x;
     (*trace_table)[trace_table_line].y = (trace_table_line << 3) + trace_y;
     (*trace_table)[trace_table_line].delta_x = trace_dx;
@@ -163,8 +156,7 @@ void redraw(s16 trace_x, s16 trace_y, s16 trace_dx, s16 trace_dy)
 
   ga_sub_reg_tracevectbase = (u16) (TRACE_TABLE_OFFSET / 4);
 
-  while (ga_sub_reg_gfxstat & GA_SUB_GRON_MASK)
-  {
+  while (ga_sub_reg_gfxstat & GA_SUB_GRON_MASK) {
     asm("nop");
   }
 

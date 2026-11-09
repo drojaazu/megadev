@@ -7,8 +7,8 @@
 
 #include <sub/bram.h>
 
-u8 bram_work_buff[0x640];
-u8 bram_string_buff[12];
+u8               bram_work_buff[0x640];
+u8               bram_string_buff[12];
 BramStatusResult bram_status_result;
 BramSearchResult bram_search_result;
-BramReadResult bram_read_result;
+BramReadResult   bram_read_result;

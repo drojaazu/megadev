@@ -1,7 +1,7 @@
 /**
  * [ M E G A D E V ]   a Sega Mega CD devkit
  *
- * @file system.h
+ * @file cpu.h
  * @brief System utilities
  */
 

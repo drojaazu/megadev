@@ -1,8 +1,8 @@
 #include "md_vectors.s"
 #include "md_header.s"
 #include "md_init.s"
-// exception vectors go to the crash handler (main/exvec.h)
-#include "main/exvec_cart.s"
+// exception vectors go to the crash handler (main/crash.h)
+#include "main/crash_cart.s"
 
 GLOBAL INIT_SSP 0xFFFFFC00
 GLOBAL INIT_PC init_system // init_system is located in md_init.s

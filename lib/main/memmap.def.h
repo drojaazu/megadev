@@ -82,35 +82,38 @@
  * @name System vector table
  * @brief The Boot ROM's jump table at 0xFFFD00, one `jmp xxx.l` per vector.
  * Each EXVEC_* names the address operand of its entry, so a handler is
- * installed with `*exvec_vblank = handler` or `move.l #handler, (EXVEC_LEVEL6)`.
+ * installed with `*exvec_vblank = handler` or `move.l #handler,
+ * (EXVEC_LEVEL6)`.
  */
 ///@{
-#define EXVEC_RESET    0xFFFD02 ///< Reset
-#define EXVEC_LEVEL6   0xFFFD08 ///< Level 6 interrupt: VBLANK
-#define EXVEC_VBLANK   EXVEC_LEVEL6 ///< VBLANK interrupt (EXVEC_LEVEL6)
-#define EXVEC_LEVEL4   0xFFFD0E ///< Level 4 interrupt: HBLANK
-#define EXVEC_HBLANK   EXVEC_LEVEL4 ///< HBLANK interrupt (EXVEC_LEVEL4)
-#define EXVEC_LEVEL2   0xFFFD14 ///< Level 2 interrupt: external port
-#define EXVEC_EXT      EXVEC_LEVEL2 ///< External port interrupt (EXVEC_LEVEL2)
-#define EXVEC_TRAP0    0xFFFD1A ///< TRAP #0
-#define EXVEC_TRAP1    0xFFFD20 ///< TRAP #1
-#define EXVEC_TRAP2    0xFFFD26 ///< TRAP #2
-#define EXVEC_TRAP3    0xFFFD2C ///< TRAP #3
-#define EXVEC_TRAP4    0xFFFD32 ///< TRAP #4
-#define EXVEC_TRAP5    0xFFFD38 ///< TRAP #5
-#define EXVEC_TRAP6    0xFFFD3E ///< TRAP #6
-#define EXVEC_TRAP7    0xFFFD44 ///< TRAP #7
-#define EXVEC_TRAP8    0xFFFD4A ///< TRAP #8
-#define EXVEC_TRAP9    0xFFFD50 ///< TRAP #9
-#define EXVEC_TRAPA    0xFFFD56 ///< TRAP #10
-#define EXVEC_TRAPB    0xFFFD5C ///< TRAP #11
-#define EXVEC_TRAPC    0xFFFD62 ///< TRAP #12
-#define EXVEC_TRAPD    0xFFFD68 ///< TRAP #13
-#define EXVEC_TRAPE    0xFFFD6E ///< TRAP #14
-#define EXVEC_TRAPF    0xFFFD74 ///< TRAP #15
-#define EXVEC_CHK      0xFFFD7A ///< CHK instruction out of bounds
-#define EXVEC_ADDRERR  0xFFFD80 ///< Address error; shares its entry with EXVEC_ILLEGAL
-#define EXVEC_ILLEGAL  0xFFFD80 ///< Illegal instruction; shares its entry with EXVEC_ADDRERR
+#define EXVEC_RESET  0xFFFD02     ///< Reset
+#define EXVEC_LEVEL6 0xFFFD08     ///< Level 6 interrupt: VBLANK
+#define EXVEC_VBLANK EXVEC_LEVEL6 ///< VBLANK interrupt (EXVEC_LEVEL6)
+#define EXVEC_LEVEL4 0xFFFD0E     ///< Level 4 interrupt: HBLANK
+#define EXVEC_HBLANK EXVEC_LEVEL4 ///< HBLANK interrupt (EXVEC_LEVEL4)
+#define EXVEC_LEVEL2 0xFFFD14     ///< Level 2 interrupt: external port
+#define EXVEC_EXT    EXVEC_LEVEL2 ///< External port interrupt (EXVEC_LEVEL2)
+#define EXVEC_TRAP0  0xFFFD1A     ///< TRAP #0
+#define EXVEC_TRAP1  0xFFFD20     ///< TRAP #1
+#define EXVEC_TRAP2  0xFFFD26     ///< TRAP #2
+#define EXVEC_TRAP3  0xFFFD2C     ///< TRAP #3
+#define EXVEC_TRAP4  0xFFFD32     ///< TRAP #4
+#define EXVEC_TRAP5  0xFFFD38     ///< TRAP #5
+#define EXVEC_TRAP6  0xFFFD3E     ///< TRAP #6
+#define EXVEC_TRAP7  0xFFFD44     ///< TRAP #7
+#define EXVEC_TRAP8  0xFFFD4A     ///< TRAP #8
+#define EXVEC_TRAP9  0xFFFD50     ///< TRAP #9
+#define EXVEC_TRAPA  0xFFFD56     ///< TRAP #10
+#define EXVEC_TRAPB  0xFFFD5C     ///< TRAP #11
+#define EXVEC_TRAPC  0xFFFD62     ///< TRAP #12
+#define EXVEC_TRAPD  0xFFFD68     ///< TRAP #13
+#define EXVEC_TRAPE  0xFFFD6E     ///< TRAP #14
+#define EXVEC_TRAPF  0xFFFD74     ///< TRAP #15
+#define EXVEC_CHK    0xFFFD7A     ///< CHK instruction out of bounds
+#define EXVEC_ADDRERR                                              \
+  0xFFFD80 ///< Address error; shares its entry with EXVEC_ILLEGAL
+#define EXVEC_ILLEGAL                                                    \
+  0xFFFD80 ///< Illegal instruction; shares its entry with EXVEC_ADDRERR
 #define EXVEC_ZERODIV  0xFFFD86 ///< Division by zero
 #define EXVEC_TRAPV    0xFFFD8C ///< TRAPV with overflow set
 #define EXVEC_LINE1010 0xFFFD92 ///< Line 1010 emulator (A-line opcode)

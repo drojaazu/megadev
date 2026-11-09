@@ -19,8 +19,8 @@ typedef u16 volatile * ga_main_reg;
 /**
  * @typedef ga_main_reg_ro
  * @brief A register this CPU may read but not write
- * @details Note that `ga_main_reg const` does NOT mean this: it is a const pointer
- * to a mutable register, which enforces nothing at the point of use.
+ * @details Note that `ga_main_reg const` does NOT mean this: it is a const
+ * pointer to a mutable register, which enforces nothing at the point of use.
  */
 typedef u16 volatile const * ga_main_reg_ro;
 
@@ -186,8 +186,8 @@ static inline void ga_main_grant_2m()
   beq      1b \n\
 		"
     :
-    :
-    [ga_dmna_bit] "i"(GA_MAIN_DMNA_POS), [ga_main_reg_memmmode] "i"(GA_MAIN_REG_MEMMODE));
+    : [ga_dmna_bit] "i"(GA_MAIN_DMNA_POS),
+      [ga_main_reg_memmmode] "i"(GA_MAIN_REG_MEMMODE));
 }
 
 /**

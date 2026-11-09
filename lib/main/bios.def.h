@@ -338,7 +338,8 @@
  */
 #define BIOS_VDP_UPDATE_FLAGS 0xFFFE29
 
-#define BIOS_BIT_COPY_PALETTE 0 ///< BIOS_VDP_UPDATE_FLAGS bit: copy the palette cache to CRAM
+#define BIOS_BIT_COPY_PALETTE                                      \
+  0 ///< BIOS_VDP_UPDATE_FLAGS bit: copy the palette cache to CRAM
 
 /**
  * @def BIOS_MASK_COPY_PALETTE
@@ -521,7 +522,8 @@
  * @ingroup bios_input
  *
  * @par Writes
- * @ref BIOS_JOY1_HIT, @ref BIOS_JOY1_HOLD, @ref BIOS_JOY2_HIT, @ref BIOS_JOY2_HOLD
+ * @ref BIOS_JOY1_HIT, @ref BIOS_JOY1_HOLD, @ref BIOS_JOY2_HIT, @ref
+ * BIOS_JOY2_HOLD
  * @clobber d6-d7/a5-a6
  * @sa BIOS_READ_JOYPAD
  */
@@ -1404,7 +1406,8 @@
 
 /**
  * @def BIOS_UNKNOWN_44
- * @brief Undocumented routine at slot 0x398; refers to the Boot ROM by absolute address, so it does not work in Mode 1
+ * @brief Undocumented routine at slot 0x398; refers to the Boot ROM by absolute
+ * address, so it does not work in Mode 1
  * @ingroup bios_unknown_main
  */
 #if TARGET == MEGACD_MODE1

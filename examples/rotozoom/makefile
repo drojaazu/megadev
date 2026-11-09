@@ -6,7 +6,7 @@
 ## Project ID
 # ASCII text only; maximum of 11 characters
 # *** REQUIRED!***
-PROJECT_ID:=xform
+PROJECT_ID:=rotozoom
 
 ## Build Target
 # Determines for which hardware this project is intended
@@ -16,7 +16,7 @@ TARGET:=MEGACD
 
 ## Project Name
 # ASCII text only; maximum of 48 characters
-PROJECT_NAME:="TRANSFORMS EXAMPLE"
+PROJECT_NAME:="ROTOZOOM EXAMPLE"
 
 ## Hardware Region
 # This is *very important* for Mega CD builds as it determines which security code to use. It can be changed at compile
@@ -88,7 +88,7 @@ clean:
 
 $(DISC_PATH)/ipx.mmd: \
 	main/ipx_init.s \
-	exvec_main.s \
+	crash_main.s \
 	ipx.res.s \
 	ipx.c \
 	main/io.macro.s
@@ -96,5 +96,5 @@ $(DISC_PATH)/ipx.mmd: \
 $(DISC_PATH)/spx.smd: \
 	std_init.s \
 	spx.c \
-	xform.res.s \
+	spx.res.s \
 	$(BUILD_PATH)/sp.bin
