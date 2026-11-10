@@ -138,6 +138,9 @@ replacement.
 
 ### Fixed
 
+- `z80_init` in `main/z80.h` never uploaded a Z80 program: its inline asm had
+  an unused output operand and no `volatile`, so the compiler removed it. All
+  four Z80 inline asm blocks are now `volatile` with memory clobbers.
 - CD-ROM access loop: a PCM wave RAM DMA destination advanced by 2 KB per
   sector where the hardware counts 4 KB, the Sub CPU's view of the bank, so
   the second sector of a bank overwrote the first's second half.
