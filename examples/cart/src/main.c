@@ -32,12 +32,15 @@ void read_inputs()
 
 // copy of VDP registers in memory
 // these need to be updated to the VDP whenever they are updated
-u16    vdp_regs[18];
+// VDP register shadow; the count comes from the default table below
+#define VDP_REG_COUNT (sizeof default_vdp_regs / sizeof default_vdp_regs[0])
+extern u16 const default_vdp_regs[17];
+u16          vdp_regs[17];
 Sprite sprites[80];
 
 void update_vdp_regs()
 {
-  for (u8 i = 0; i < 18; ++i)
+  for (u8 i = 0; i < VDP_REG_COUNT; ++i)
     vdp_ctrl = vdp_regs[i];
 }
 
@@ -116,7 +119,7 @@ vblank_done:
 #define VIDEO_SIGNAL 0
 #endif
 
-u16 const default_vdp_regs[] = {
+u16 const default_vdp_regs[17] = {
   VDP_REG_MODE1 | VDP_HICOLOR_ENABLE,
   VDP_REG_MODE2 | VDP_MD_DISPLAY_MODE | VDP_VBLANK_ENABLE | VIDEO_SIGNAL |
     VDP_DISPLAY_ENABLE,
@@ -151,7 +154,7 @@ void main()
   disable_interrupts();
   vblank_done = false;
   vblank_counter = 0;
-  memcpy16(default_vdp_regs, vdp_regs, 18);
+  memcpy16(default_vdp_regs, vdp_regs, VDP_REG_COUNT);
   update_vdp_regs();
 
   // note: seems to be important to set up vdp_regs first, then clear vram

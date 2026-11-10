@@ -435,6 +435,8 @@ There are a number of additional documents in the `docs` subdirectory. We recomm
 
 `crash_handler.md` - Installing the crash handler, which shows the CPU state when the program fails, on both CPUs.
 
+`debugging.md` - Debugging on hardware: the serial debug monitor, breakpoints and stepping, and GDB over the controller port.
+
 `dev_in_c.md` - Discusses important concepts for developing code in C for an embedded system.
 
 `disc.md` - Explains how to master a proper disc image for the Mega CD.

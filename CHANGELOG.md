@@ -8,6 +8,15 @@ replacement.
 
 ### Added
 
+- **Debug monitor and GDB on hardware**: `main/monitor.h` is a command
+  interpreter the host drives over the controller port serial link: memory
+  and VDP reads and writes, breakpoints (a `TRAP #15` written over code in
+  RAM, single-step compare for code in ROM), stepping, register access and
+  halting a running program. `tools/mdmon.py` is the command line host and
+  `tools/mdgdb.py` a GDB remote protocol server, so a 68000 GDB attaches with
+  `target remote`. `tools/prolink.py` loads a ROM into a Mega EverDrive PRO
+  and starts it from the host, and copies disc images to its card with a
+  CRC check. See `docs/debugging.md`.
 - **Partial loads and streaming**: the CD-ROM access loop loads part of a
   file, `part_count` sectors from `part_offset`, into any destination
   (`load_file_part`). The `pcm_playback` example now streams its audio from
@@ -138,6 +147,10 @@ replacement.
 
 ### Fixed
 
+- `examples/cart` wrote one word past its VDP register table, which left a
+  command latched in the VDP control port; the VRAM clear that followed was
+  lost. Invisible in emulators, garbage on a Mega EverDrive PRO. The table is
+  now sized by its initializer.
 - `z80_init` in `main/z80.h` never uploaded a Z80 program: its inline asm had
   an unused output operand and no `volatile`, so the compiler removed it. All
   four Z80 inline asm blocks are now `volatile` with memory clobbers.
