@@ -29,7 +29,7 @@ extern "C" {
 static inline void z80_request_bus()
 {
   // clang-format off
-	asm(
+	asm volatile(
 		"\
   move.w   #%c[_Z80_BUS_REQUEST], (%c[_Z80_REG_BUSREQ]) \n\
 0:btst     #%c[_Z80_BIT_STATUS], %c[_Z80_REG_BUSREQ] \n\
@@ -41,6 +41,7 @@ static inline void z80_request_bus()
 			[_Z80_BUS_REQUEST] "i"(Z80_BUS_REQUEST),
 			[_Z80_BIT_STATUS] "i"(Z80_BIT_STATUS)
 		:
+			"memory"
 	);
   // clang-format on
 }
@@ -49,7 +50,7 @@ static inline void z80_request_bus()
 static inline void z80_release_bus()
 {
   // clang-format off
-	asm(
+	asm volatile(
 		"\
   move.w   #%c[_Z80_BUS_RELEASE], %c[_Z80_REG_BUSREQ] \n\
 	"
@@ -58,6 +59,7 @@ static inline void z80_release_bus()
 			[_Z80_REG_BUSREQ] "i"(Z80_REG_BUSREQ),
 			[_Z80_BUS_RELEASE] "i"(Z80_BUS_RELEASE)
 		:
+			"memory"
 	);
   // clang-format on
 }
@@ -66,7 +68,7 @@ static inline void z80_release_bus()
 static inline void z80_reset_cpu()
 {
   // clang-format off
-	asm(
+	asm volatile(
 		"\
   move.w   #%c[_Z80_RESET_ASSERT], (%c[_Z80_REG_RESET]) \n\
   .rept 8 \n\
@@ -80,7 +82,7 @@ static inline void z80_reset_cpu()
 			[_Z80_RESET_ASSERT] "i"(Z80_RESET_ASSERT),
 			[_Z80_RESET_RELEASE] "i"(Z80_RESET_RELEASE)
 		:
-			"cc"
+			"cc", "memory"
 	);
   // clang-format on
 }
@@ -94,7 +96,7 @@ static inline void z80_init(
   register uint32_t scratch_a1;
 
   // clang-format off
-	asm(
+	asm volatile(
 		"\
   move.w   #%c[_Z80_BUS_REQUEST], (%c[_Z80_REG_BUSREQ]) \n\
   move.w   #%c[_Z80_RESET_RELEASE], (%c[_Z80_REG_RESET]) \n\
@@ -121,7 +123,7 @@ static inline void z80_init(
 			[_z80_program] "a"(z80_program),
 			[_z80_program_size] "d"(z80_program_size)
 		:
-			"cc"
+			"cc", "memory"
 	);
   // clang-format on
 };
