@@ -7,6 +7,9 @@
 
 .section .header
 sp_header:
+  // The Sub BIOS runs the SP only if its name starts with MAIN (or bytes 8-11
+  // are SYS, SUB or DAT and a zero); any other name is skipped silently.
+  // Retail discs use "MAIN       " or "MEGA_CD_SYS". See docs/boot.md.
   //       ###########
   .ascii  "MAIN       "
   .byte   0                       // flag
