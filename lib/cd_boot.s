@@ -11,6 +11,11 @@
 #define STR(x) XSTR(x)
 #define XSTR(x) #x
 
+// Stops the build, naming the define, when a header string is longer than its
+// field. Without it the overrun shows only as "attempt to move .org backwards".
+#define FIELD_FITS(start, size, message) \
+	.if (. - start) > size; .error message; .endif
+
 /** System Header **/
 
 /*
@@ -27,14 +32,17 @@ https://www.retrodev.com/segacd.html
 */
 
 .org 0
-.ascii STR(HEADER_DISC_ID)   // Disc Type (must be one of the allowed values!)
+9: .ascii STR(HEADER_DISC_ID)   // Disc Type (must be one of the allowed values!)
+FIELD_FITS(9b, 16, "HEADER_DISC_ID is longer than 16 characters")
 .org 0x10, 0x20
-.ascii STR(HEADER_VOL_ID)    // Volume Name
+9: .ascii STR(HEADER_VOL_ID)    // Volume Name
+FIELD_FITS(9b, 11, "HEADER_VOL_ID is longer than 11 characters (default: PROJECT_ID in upper case)")
 .org 0x1C, 0x20
 .word 0x0100                 // Volume Version (BCD)
 .word 0x0001                 // Type ()
 .org 0x20
-.ascii STR(HEADER_SYS_ID)    // System Name
+9: .ascii STR(HEADER_SYS_ID)    // System Name
+FIELD_FITS(9b, 11, "HEADER_SYS_ID is longer than 11 characters (default: PROJECT_ID in upper case)")
 .org 0x2C, 0x20
 .word 0x0100                 // System Version (BCD)
 .word 0                      // Always zero
@@ -65,15 +73,20 @@ SP_WORK_RAM:  .long 0
 /** Disc Header **/
 
 .org 0x100
-.ascii STR(HEADER_HARDWARE_ID)  // Hardware Type (must be one of the allowed values!)
+9: .ascii STR(HEADER_HARDWARE_ID)  // Hardware Type (must be one of the allowed values!)
+FIELD_FITS(9b, 16, "HEADER_HARDWARE_ID is longer than 16 characters")
 .org 0x110, 0x20
-.ascii STR(HEADER_COPYRIGHT)
+9: .ascii STR(HEADER_COPYRIGHT)
+FIELD_FITS(9b, 16, "HEADER_COPYRIGHT is longer than 16 characters")
 .org 0x120, 0x20
-.ascii STR(PROJECT_NAME_DOMESTIC)
+9: .ascii STR(PROJECT_NAME_DOMESTIC)
+FIELD_FITS(9b, 48, "PROJECT_NAME_DOMESTIC is longer than 48 characters (default: PROJECT_NAME)")
 .org 0x150, 0x20
-.ascii STR(PROJECT_NAME)
+9: .ascii STR(PROJECT_NAME)
+FIELD_FITS(9b, 48, "PROJECT_NAME is longer than 48 characters (default: PROJECT_ID)")
 .org 0x180, 0x20
-.ascii STR(HEADER_SOFTWARE_ID)
+9: .ascii STR(HEADER_SOFTWARE_ID)
+FIELD_FITS(9b, 16, "HEADER_SOFTWARE_ID is longer than 16 characters")
 .org 0x190, 0x20
 .ascii "J               "
 .ascii "                "
@@ -82,7 +95,8 @@ SP_WORK_RAM:  .long 0
 .ascii "                "
 .ascii "                "
 .org 0x1F0, 0x20
-.ascii STR(HEADER_REGION)
+9: .ascii STR(HEADER_REGION)
+FIELD_FITS(9b, 16, "HEADER_REGION is longer than 16 characters")
 
 // if all the above text is correct, we should be at 0x200 anyway
 .org 0x200, 0x20

@@ -35,9 +35,9 @@ ASM_SOURCES := $(shell find lib -name '*.s' | sort)
 # Assembly files that by contract cannot assemble on their own. Each entry
 # needs a reason. This list may only shrink.
 #   lib/cd_boot.s    .incbin of the project's built ip.bin and sp.bin
-#   lib/md_header.s  needs the project's fixed-length header strings; any
-#                    default would hide a string that overruns its field.
-#                    Exercised by the cart example build in loop 1.
+#   lib/md_header.s  needs the project's header strings (HEADER_*,
+#                    PROJECT_NAME); exercised by the cart and mode1 builds in
+#                    loop 1. It stops on a string longer than its field.
 ASM_STANDALONE_EXCLUDE := lib/cd_boot.s lib/md_header.s
 ASM_STANDALONE := $(filter-out $(ASM_STANDALONE_EXCLUDE),$(ASM_SOURCES))
 

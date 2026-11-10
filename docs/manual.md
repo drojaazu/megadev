@@ -192,7 +192,7 @@ If unspecified, uses the value of `PROJECT_NAME`.
 
 The is the name of the volume (the file system). This is different from the volume identifier within the ISO9660 Primary Volume Descriptor.
 
-**Masimum of 11 characters.**
+**Maximum of 11 characters.**
 
 If unspecified, uses the value of `PROJECT_ID`.
 
@@ -200,7 +200,7 @@ If unspecified, uses the value of `PROJECT_ID`.
 
 This is the name of the "developers operating system filename" (per official documentation), though this description is somewhat nebulous. This does not need to refer to an actual filename, and many games simply use this as a "short name" for the game, while others used it for the name of their game's "engine" or system.
 
-**Masimum of 11 characters.**
+**Maximum of 11 characters.**
 
 If unspecified, uses the value of `PROJECT_ID`.
 
