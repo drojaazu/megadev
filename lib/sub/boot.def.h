@@ -81,7 +81,7 @@
 #define DISC_NODISC   0x00 ///< No disc
 #define DISC_MUSIC    0x01 ///< Audio CD
 #define DISC_CDROM    0x02 ///< CD-ROM, not a Mega CD disc
-#define DISC_MIXED    0x03 ///< Mixed mode CD
+#define DISC_MIXED    0x03 ///< Mixed mode CD; also a data track without a Sega identifier, or a system or boot disc whose security code is for another region
 #define DISC_SYSTEM   0x04 ///< Mega CD system disc
 #define DISC_DATA     0x05 ///< Mega CD data disc
 #define DISC_BOOT     0x06 ///< Mega CD boot disc
