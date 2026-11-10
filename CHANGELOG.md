@@ -147,6 +147,9 @@ replacement.
 
 ### Fixed
 
+- Linking an IP or SP no longer warns "LOAD segment with RWX permissions":
+  their linker scripts now put code and data in separate segments. The built
+  images are unchanged.
 - A header string longer than its field (`PROJECT_NAME`, `HEADER_VOL_ID` and
   the other header settings) stopped the build with only "attempt to move
   .org backwards". The error now names the setting and its maximum length.
