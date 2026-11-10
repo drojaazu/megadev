@@ -404,7 +404,11 @@ static void handle_frame(void)
         reply_status(MONITOR_ST_NOT_STOPPED);
         return;
       }
-      uint8_t const * p = (uint8_t const *) &monitor_snapshot;
+      // the trace bit belongs to the monitor, which sets and clears it as the
+      // breakpoints require; the program never sees it, so neither does the host
+      CrashState      regs = monitor_snapshot;
+      uint8_t const * p = (uint8_t const *) &regs;
+      regs.sr &= (uint16_t) ~SR_TRACE;
       reply_begin(MONITOR_ST_OK, CRASH_STACK);
       for (uint8_t i = 0; i < CRASH_STACK; ++i)
         reply_byte(p[i]);
@@ -421,9 +425,12 @@ static void handle_frame(void)
         reply_status(MONITOR_ST_BAD_FRAME);
         return;
       }
-      uint8_t * p = (uint8_t *) &monitor_snapshot;
+      uint16_t const trace = monitor_snapshot.sr & SR_TRACE;
+      uint8_t *      p = (uint8_t *) &monitor_snapshot;
       for (uint8_t i = 0; i < CRASH_STACK; ++i)
         p[i] = body[1 + i];
+      monitor_snapshot.sr =
+        (uint16_t) ((monitor_snapshot.sr & ~SR_TRACE) | trace);
       reply_status(MONITOR_ST_OK);
       break;
     }

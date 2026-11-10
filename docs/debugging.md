@@ -155,7 +155,7 @@ A debugging loop that needs a trip to the console to press reset is a slow one. 
 
 It resets the console through the cartridge, writes the ROM into the cartridge's memory and starts it, following the cartridge's own USB protocol. `prolink.py status` checks the cartridge, `prolink.py reset` pulses reset, and `prolink.py reset hard` recovers a console whose CPU is wedged, which the cartridge reports as status 05. The Mega EverDrive X7 has a different protocol and is not supported by the script.
 
-Running a disc image from the PRO's SD card is possible from its menu, but the script does not upload images yet. Mode 1 programs are cartridges and load like any other.
+Disc images run from the PRO's SD card, not from the cartridge's memory. `prolink.py disc build/mygame.iso` copies the image into the card's `usb-games` folder through the cartridge's file commands, at about 300 KB per second, has the cartridge compute the file's CRC-32 and compares it with the local file, then asks the menu to start it. Menus from before that command ignore the request, and the script says so; the image is on the card either way, and starting it is one pick in the menu's `usb-games` folder instead of a card swap. `prolink.py sdput FILE SDPATH` copies any file the same way and `sdcrc` compares one. Mode 1 programs are cartridges and load like any other.
 
 Capturing the console's video output on the host, so that the screen is visible next to GDB, needs no kit support: any USB HDMI or composite capture device and a player with a low latency setting do it. Audio and video from the console reach the host with about half a second of delay.
 

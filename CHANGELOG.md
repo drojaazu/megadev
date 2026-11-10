@@ -15,7 +15,8 @@ replacement.
   halting a running program. `tools/mdmon.py` is the command line host and
   `tools/mdgdb.py` a GDB remote protocol server, so a 68000 GDB attaches with
   `target remote`. `tools/prolink.py` loads a ROM into a Mega EverDrive PRO
-  and starts it from the host. See `docs/debugging.md`.
+  and starts it from the host, and copies disc images to its card with a
+  CRC check. See `docs/debugging.md`.
 - **Partial loads and streaming**: the CD-ROM access loop loads part of a
   file, `part_count` sectors from `part_offset`, into any destination
   (`load_file_part`). The `pcm_playback` example now streams its audio from
