@@ -33,14 +33,17 @@
 .ascii "J"
 #endif
 .org 0x1A0, 0x20
-.long 0x0
+// ROM start
+.long 0
 // ROM end, filled in after linking by tools/romfix.sh
 .long 0
-# TODO add variables for Extra Memory and Modem
+// RAM start and end
+.long 0x00FF0000
+.long 0x00FFFFFF
+// Extra memory (0x1B0) and modem (0x1BC): none
 .ascii "            "
-//      ############
 .ascii "            "
-//      ############
-.fill 40
+// Memo
+.org 0x1F0, 0x20
 .ascii STR(HEADER_REGION)
-.fill 13
+.org 0x200, 0x20

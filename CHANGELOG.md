@@ -147,6 +147,10 @@ replacement.
 
 ### Fixed
 
+- The cartridge header (`md_header.s`) was 8 bytes short: it had no RAM start
+  and end fields, so the region code sat at 0x1E8 instead of 0x1F0 and code
+  began at 0x1F8. The header now follows Sega's layout, with the RAM range
+  filled in and the unused fields padded with spaces.
 - `examples/cart` wrote one word past its VDP register table, which left a
   command latched in the VDP control port; the VRAM clear that followed was
   lost. Invisible in emulators, garbage on a Mega EverDrive PRO. The table is
