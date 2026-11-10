@@ -147,6 +147,9 @@ replacement.
 
 ### Fixed
 
+- A header string longer than its field (`PROJECT_NAME`, `HEADER_VOL_ID` and
+  the other header settings) stopped the build with only "attempt to move
+  .org backwards". The error now names the setting and its maximum length.
 - The cartridge header (`md_header.s`) was 8 bytes short: it had no RAM start
   and end fields, so the region code sat at 0x1E8 instead of 0x1F0 and code
   began at 0x1F8. The header now follows Sega's layout, with the RAM range
