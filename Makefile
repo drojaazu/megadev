@@ -321,7 +321,8 @@ check-sections: check-init
 	@$(M68K_PREFIX)nm $(CHECK_DIR)/sections_gc.elf | grep -q ' T init$$' || { \
 	  printf 'FAIL sections: --gc-sections removed module init code\n'; exit 1; }
 	@$(STACK_LD) --gc-sections -T cfg/md_cart.ld $(CHECK_DIR)/sections_main.o $(CHECK_DIR)/sections_vec.o -o $(CHECK_DIR)/sections_gc.elf
-	@$(M68K_PREFIX)objdump -h $(CHECK_DIR)/sections_gc.elf | awk '$$2 == ".text" { exit !(strtonum("0x" $$3) >= 8) }' || { \
+	@size=$$($(M68K_PREFIX)objdump -h $(CHECK_DIR)/sections_gc.elf | awk '$$2 == ".text" { print $$3 }'); \
+	[ -n "$$size" ] && [ $$((0x$$size)) -ge 8 ] || { \
 	  printf 'FAIL sections: --gc-sections removed the cartridge vector table\n'; exit 1; }
 	@printf '== sections: every script defines the same layout symbols, zeroes common symbols and stops on static constructors; cartridge vectors start the ROM; --gc-sections keeps entry code\n'
 
