@@ -351,8 +351,8 @@ def song():
         s.volume(0, ch, 0x12)
     for ch in (PSG1, PSG2):
         s.instrument(0, ch, "psg_pad")
-    s.volume(0, PSG1, 0x03)
-    s.volume(0, PSG2, 0x05)
+    s.volume(0, PSG1, 0x01)
+    s.volume(0, PSG2, 0x02)
     s.volume(0, NOISE, 0x02)
 
     busy = {ch: 0 for ch in CHORD_VOICES}
