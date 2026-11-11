@@ -89,13 +89,6 @@ Unless a row says otherwise, a routine clobbers nothing but the registers listed
 | `TO_VDPPTR [dreg]` | dreg (default d0): a 16 bit VRAM address | | Convert in place to a VDP format address. |
 | `VDPPTR_TO [dreg]` | dreg (default d0): a VDP format address | | Convert in place to a 16 bit VRAM address. |
 
-## Input, `main/io.macro.s`
-
-| Macro | In | Out | Clobbers | Purpose |
-|---|---|---|---|---|
-| `INIT_JOYPADS` | | | a0 | Set TH to output on control ports 1 and 2 for 3 button pads. |
-| `READ_INPUT_JOYPAD` | a0: the port's data register | d0.b: buttons as SACBRLDU, 1 = pressed | d1 | Read a 3 button pad. |
-
 ## Serial port, `main/comm.macro.s`
 
 | Macro | In | Out | Clobbers | Purpose |

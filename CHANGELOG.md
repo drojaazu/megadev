@@ -140,6 +140,8 @@ replacement.
 - `str_util.s` and the C `hextoa8`, `hextoa16` and `hextoa32`. Format with
   `snprintf` (`%02X`, `%04X`, `%08lX`) and convert the result for the Boot
   ROM with `str_to_bios`. `strcmpt` and `str_to_bios` remain in `str_util.h`.
+- `main/io.macro.s` and its `INIT_JOYPADS` and `READ_INPUT_JOYPAD` macros,
+  which no example or library code used.
 - `lib/sysfont.1bpp.chr`, an unused copy of the Boot ROM font, which is
   Sega's.
 - The `hello_world` example. `docs/boot.md` describes the IP, and the
