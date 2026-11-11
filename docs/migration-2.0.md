@@ -32,7 +32,7 @@ Every macro-only assembly file now ends in `.macro.s`; the plural `.macros.s` is
 | `system.macros.s` | `cpu.macro.s` (see below) |
 | `main/comm.macros.s` | `main/comm.macro.s` |
 | `main/gate_arr.macros.s` | `main/gate_arr.macro.s` |
-| `main/io.macros.s` | `main/io.macro.s` |
+| `main/io.macros.s` | removed; on the Mega CD the Boot ROM reads the pads (`BIOS_READ_JOYPAD`), elsewhere read the ports defined in `main/io.def.h` |
 | `main/mmd.macros.s` | `main/mmd.macro.s` |
 | `main/vdp.macros.s` | `main/vdp.macro.s` |
 | `main/z80.macros.s` | `main/z80.macro.s` |
