@@ -29,13 +29,13 @@ it doubles as a worked example of the ESF format. After changing it:
     python3 tools/gen_song.py
 
 The song is an arrangement of "4chords" by Megadev's maintainer
-(audiotool.com/track/4chords), transcribed from the recording, and is under
-Megadev's license. C, G, Am, F at about 129 BPM: four bars of held chords, then
-a 32 bar loop where gated chords and drums are joined by the bass and then the
-lead. FM bass, FM square lead, three FM voices of chords (strings, then piano),
-PSG noise hi-hats, PCM kick and clap on FM6.
+(audiotool.com/track/4chords), under Megadev's license. Its notes and drum
+patterns are copied from the original Audiotool project; its synths are
+approximated with FM patches built in the generator: an FM bass with a sub
+octave, a saw lead, a three-voice chord synth on FM3-5, a two-channel PSG
+string fill, PSG noise hats and crash, and PCM kick and snare on FM6. Four bars
+of chords play once, then 32 bars loop.
 
-The FM instruments and the drum samples in `res/` are files from Echo's
-repository (github.com/sikthehedgehog/echo, `data/fm` and `data/pcm`), and the
-two PSG envelopes in the generator are copied from Echo's tester. They are
-under Echo's zlib license, `lib/main/echo/LICENSE`.
+The drum samples in `res/` and the piano of the second sound effect are files
+from Echo's repository (github.com/sikthehedgehog/echo, `data/pcm` and
+`data/fm`), under Echo's zlib license, `lib/main/echo/LICENSE`.

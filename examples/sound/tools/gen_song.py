@@ -13,8 +13,9 @@ Echo must find them.
     python3 tools/gen_song.py
 
 The song is an arrangement of "4chords" by the maintainer of Megadev and is
-under the same license as the rest of Megadev. The FM instruments, the PSG envelopes and the
-drum samples are Echo's own (zlib license, lib/main/echo/LICENSE).
+under the same license as the rest of Megadev. The drum samples and the piano
+of the second sound effect are Echo's own (zlib license,
+lib/main/echo/LICENSE).
 """
 
 import os
@@ -26,16 +27,93 @@ OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src", "son
 #
 # Echo numbers instruments by their position in the list passed to echo_init.
 # Each entry is (symbol, kind, data): data is a file in res/ to include, or the
-# bytes of a PSG envelope (EEF: one volume per tick, $FE loops the next value,
-# $FF ends; these two are copied from Echo's tester).
+# instrument's bytes.
+#
+# FM instruments (EIF) are the 29 YM2612 register values of one channel, built
+# by fm() below from readable operator settings. PSG instruments (EEF) are one
+# attenuation per tick (0 loudest, 15 silent); $FE marks the value to hold and
+# $FF ends.
+
+
+def op(mul=1, dt=0, tl=0, ar=31, d1r=0, d2r=0, sl=0, rr=15):
+    """One FM operator. dt: 0-3 detune up, 4-7 down. mul 0 is half."""
+    return dict(mul=mul, dt=dt, tl=tl, ar=ar, d1r=d1r, d2r=d2r, sl=sl, rr=rr)
+
+
+def fm(alg, fb, op1, op2, op3, op4):
+    """An EIF instrument. Operators are numbered as in Sega's manual (algorithm
+    4 is op1 -> op2 plus op3 -> op4); EIF stores them in register order, which
+    is op1, op3, op2, op4."""
+    ops = (op1, op3, op2, op4)
+    assert 0 <= alg <= 7 and 0 <= fb <= 7
+    for o in ops:
+        assert o["mul"] <= 15 and o["dt"] <= 7 and o["tl"] <= 127
+        assert o["ar"] <= 31 and o["d1r"] <= 31 and o["d2r"] <= 31
+        assert o["sl"] <= 15 and o["rr"] <= 15
+    out = [fb << 3 | alg]
+    out += [o["dt"] << 4 | o["mul"] for o in ops]
+    out += [o["tl"] for o in ops]
+    out += [o["ar"] for o in ops]                   # rate scaling 0
+    out += [o["d1r"] for o in ops]                  # amplitude modulation off
+    out += [o["d2r"] for o in ops]
+    out += [o["sl"] << 4 | o["rr"] for o in ops]
+    out += [0, 0, 0, 0]                             # SSG-EG off
+    return out
+
+
+# The patches imitate the original's synths. Two operator pairs (algorithm 4)
+# each give a modulator, standing in for a filter, over a carrier.
+
+# Bassline: a square wave and a square an octave down. Op2 at modulator ratio
+# 2:1 gives odd harmonics, a square; op4 at multiplier 0.5 is the sub octave.
+FM_BASS = fm(4, 0,
+             op(mul=2, tl=34, d1r=5, sl=4),
+             op(mul=1, tl=0, d1r=2, sl=1, rr=8),
+             op(mul=1, tl=40, d1r=5, sl=4),
+             op(mul=0, tl=4, d1r=2, sl=1, rr=8))
+
+# Lead: a saw (op1 feedback) phase-modulating a second saw, slower attack,
+# decay to about half, a release that rings past the note.
+FM_LEAD = fm(4, 6,
+             op(mul=1, tl=30, d1r=3, sl=2),
+             op(mul=1, dt=1, ar=24, d1r=7, sl=3, rr=6),
+             op(mul=1, tl=35, d1r=3, sl=2),
+             op(mul=1, dt=5, tl=3, ar=24, d1r=7, sl=3, rr=6))
+
+# Chord synth: oscillator 1 an octave down, oscillator 2 synced to it, through
+# a low-pass filter with a short filter envelope. Op4 at multiplier 0.5 is the
+# low oscillator; the modulators decay like the filter closing.
+FM_CHORD = fm(4, 3,
+              op(mul=1, tl=30, d1r=9, d2r=3, sl=6),
+              op(mul=1, tl=6, ar=30, d1r=5, d2r=2, sl=3, rr=9),
+              op(mul=0, tl=30, d1r=8, d2r=2, sl=5),
+              op(mul=0, ar=30, d1r=5, d2r=2, sl=3, rr=9))
+
+
+def ramp(values, hold):
+    return list(values) + [0xFE, hold, 0xFF]
+
 
 INSTRUMENTS = [
     ("instr_psg_flat",  "EEF", [0xFE, 0x00, 0xFF]),
-    ("instr_psg_hihat", "EEF", [0x00, 0x01, 0x02, 0x04, 0x06, 0x08, 0x0C,
-                                0xFE, 0x0F, 0xFF]),
-    ("instr_bass",      "EIF", "bass.eif"),
-    ("instr_square",    "EIF", "square.eif"),
-    ("instr_strings",   "EIF", "string.eif"),
+    # string fill: swell in, settle
+    ("instr_psg_pad",   "EEF", ramp([0x0C, 0x0A, 0x09, 0x08, 0x07, 0x06, 0x05,
+                                     0x05, 0x04, 0x04, 0x03, 0x03, 0x02, 0x02,
+                                     0x02, 0x02, 0x03, 0x03, 0x03, 0x03], 0x04)),
+    # drums on the noise channel, by decay length
+    ("instr_hat_closed", "EEF", ramp([0x00, 0x01, 0x02, 0x04, 0x06, 0x08, 0x0C], 0x0F)),
+    ("instr_hat_soft",  "EEF", ramp([0x03, 0x04, 0x06, 0x08, 0x0B, 0x0E], 0x0F)),
+    ("instr_hat_open",  "EEF", ramp([0x00, 0x00, 0x01, 0x01, 0x02, 0x02, 0x03,
+                                     0x03, 0x04, 0x04, 0x05, 0x06, 0x07, 0x08,
+                                     0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E], 0x0F)),
+    ("instr_crash",     "EEF", ramp([0x00] * 3 + [0x01] * 4 + [0x02] * 4 +
+                                    [0x03] * 5 + [0x04] * 5 + [0x05] * 6 +
+                                    [0x06] * 6 + [0x07] * 6 + [0x08] * 6 +
+                                    [0x09] * 6 + [0x0A] * 6 + [0x0B] * 6 +
+                                    [0x0C] * 6 + [0x0D] * 6 + [0x0E] * 6, 0x0F)),
+    ("instr_bass",      "EIF", FM_BASS),
+    ("instr_lead",      "EIF", FM_LEAD),
+    ("instr_chord",     "EIF", FM_CHORD),
     ("instr_piano",     "EIF", "piano.eif"),
     ("instr_kick",      "EWF", "kick.ewf"),
     ("instr_snare",     "EWF", "snare.ewf"),
@@ -135,47 +213,129 @@ def delay(ticks):
 # ------------------------------------------------------------------- the song
 #
 # "4chords", by the maintainer of Megadev, arranged for Echo from the original
-# recording (audiotool.com/track/4chords). C, G, Am, F, one chord a bar, a
-# sixteenth note every 7 ticks (about 129 BPM). The parts enter one by one:
+# Audiotool project (audiotool.com/track/4chords): notes and drum patterns as
+# written there, synths approximated with FM and PSG. 130 BPM, a sixteenth note
+# every 7 ticks. C, G, Am, F, a bar each:
 #
-#   bars  1-4   chords, held                  (played once)
-#   bars  5-12  chords gated, drums           (the loop starts here)
-#   bars 13-20  bass
-#   bars 21-36  lead melody, four times
+#   bars  1-4   chord synth; the drums come in during bar 4   (played once)
+#   bars  5-36  drums, string fill from bar 9, bass from 13,  (the loop)
+#               lead from 21
+#
+# Channels: FM1 bass, FM2 lead, FM3-5 chords, FM6 PCM drums, PSG1-2 string
+# fill, PSG3 free for sound effects, noise for hats and crash.
 
 STEP = 7
 BAR = 16 * STEP
 
-# The bass root is written an octave below where it sounds: bass.eif's only
-# carrier runs at twice the note frequency (multiplier 2).
-CHORDS = {
-    #      bass root  chord voicing
-    "C":  ("C1", ("C4", "E4", "G4")),
-    "G":  ("G1", ("B3", "D4", "G4")),
-    "Am": ("A1", ("C4", "E4", "A4")),
-    "F":  ("F1", ("C4", "F4", "A4")),
+# Note lists: (sixteenth in the bar, length in sixteenths, note)
+
+# Chord synth, one bar per chord: a chopped pattern over three voices
+def chord_bar(lo, mid, hi):
+    return [(0, 2, hi), (0, 4, lo), (0, 4, mid),
+            (4, 2, mid), (4, 4, lo), (4, 4, hi),
+            (6, 2, mid),
+            (8, 4, lo),
+            (10, 2, mid), (10, 2, hi),
+            (12, 4, lo),
+            (14, 2, mid), (14, 2, hi)]
+
+CHORDS = [chord_bar("C4", "E4", "G4"),              # C
+          chord_bar("G4", "B4", "D5"),              # G
+          chord_bar("A4", "C5", "E5"),              # Am
+          chord_bar("F4", "A4", "C5")]              # F
+
+BASS = [[(0, 8, "C2"), (8, 8, "E2")],
+        [(0, 8, "G2"), (8, 6, "G2"), (14, 2, "E2")],
+        [(0, 4, "A2"), (5, 3, "C3"), (8, 4, "E2"), (12, 4, "A2")],
+        [(0, 16, "F2")]]
+BASS_LONG_A = [(0, 5, "A2"), (5, 3, "C3"), (8, 4, "E2"), (12, 4, "A2")]
+
+LEAD = [[(0, 2, "E5"), (2, 2, "D5"), (4, 2, "C5"), (6, 2, "A4"),
+         (8, 2, "G4"), (10, 2, "E4"), (12, 2, "F4"), (14, 2, "G4")],
+        [(4, 2, "E4"), (10, 4, "C5"), (14, 2, "C4")],
+        [(2, 2, "A4"), (4, 4, "G4")],
+        [(0, 2, "A4"), (2, 1, "A4"), (3, 1, "C5"), (5, 2, "C5"),
+         (8, 4, "D5"), (13, 1, "D5"), (14, 2, "D#5")]]
+
+# String fill, four bars from its start: G for a bar, D for five beats, C for
+# four. Played on two PSG channels, the second an octave down.
+STRING_FILL = [(0, 16, "G5"), (16, 20, "D6"), (36, 16, "C6")]
+
+# Drum patterns from the original's drum machine, one character per sixteenth
+DRUMS = {
+    "A1": dict(kick="xx.xx.xx.xx.xx..", snare="....x.......x...",
+               closed=".xx.xx.xx.xx.x..", soft="..x...x...x...x.",
+               open="..............x.", crash="................"),
+    "A2": dict(kick="xx.xx.xx.x.x.xxx", snare="x...x...xx.x.xxx",
+               closed=".xx.xx.xx.xx.x..", soft="..x...x...x...x.",
+               open="................", crash="...............x"),
+    "A3": dict(kick="xx..xxx.xxx..xx.", snare="x...xxx.xxx..xx.",
+               closed=".xx.xx..x.x.x.x.", soft="..x...x...x...x.",
+               open="................", crash="...............x"),
+    "A4": dict(kick="........x.x.x.x.", snare="................",
+               closed="................", soft="................",
+               open="................", crash="..............x."),
 }
-CYCLE = ["C", "G", "Am", "F"]
 
-# Lead melody, one list per bar: (note, length in sixteenths); None is a rest.
-MELODY = [
-    [("E5", 2), ("D5", 2), ("C5", 2), ("A4", 2), ("C5", 1), ("G4", 2), ("A4", 1),
-     ("F4", 2), ("E4", 2)],
-    [("F4", 4), ("E4", 3), (None, 1), ("E4", 1), ("G4", 1), ("C5", 6)],
-    [(None, 2), ("A4", 2), ("G4", 6), (None, 6)],
-    [("A4", 3), ("C5", 5), ("D5", 6), ("D#5", 2)],
-]
+INTRO_BARS = 4
+LOOP_BARS = 32                          # bars 5 to 36
 
-# Sixteenths within a bar
-GATE = (0, 3, 6, 9, 12)                 # chord hits, two sixteenths each
-KICKS, CLAPS = (0, 3, 6, 9), (4, 12)
-HATS = (1, 2, 7, 8, 10, 11, 14)
-BASS = (2, 5, 8, 11, 14)
 
-INTRO_BARS, BARS = 4, 32                # 32 bars loop: 5 to 36
-BASS_FROM, MELODY_FROM = 8, 16          # loop bars where the parts enter
+def drum_pattern(bar):
+    """Pattern for a song bar (1-based), as arranged in the original."""
+    if bar == 4:
+        return "A4"
+    if bar == 36:
+        return "A3"
+    if bar in (12, 20, 28):
+        return "A2"
+    return "A1" if bar > 4 else None
 
-PAD = (FM3, FM4, FM5)
+
+CHORD_VOICES = (FM3, FM4, FM5)
+
+
+def chords(s, t, notes, busy):
+    """Give each note the first chord voice free at its start."""
+    for step, length, name in sorted(notes):
+        on = t + step * STEP
+        for ch in CHORD_VOICES:
+            if busy[ch] <= on:
+                break
+        else:
+            raise ValueError("more than three chord notes at once")
+        off = on + length * STEP - 1
+        busy[ch] = off + 1
+        s.note(on, ch, name)
+        s.off(off, ch)
+
+
+def mono(s, t, ch, notes, gap=1):
+    for step, length, name in notes:
+        on = t + step * STEP
+        s.note(on, ch, name)
+        s.off(on + length * STEP - gap, ch)
+
+
+def drums(s, t, name):
+    p = DRUMS[name]
+    for i in range(16):
+        on = t + i * STEP
+        # one PCM channel: the snare wins, and a kick right after a snare
+        # is dropped so the snare can ring
+        if p["snare"][i] == "x":
+            s.on(on, PCM, INSTR["snare"])
+        elif p["kick"][i] == "x" and not (i and p["snare"][i - 1] == "x"):
+            s.on(on, PCM, INSTR["kick"])
+        # one noise channel: the longest sound wins
+        for part, instr, noise in (("crash", "crash", 0x05),
+                                   ("open", "hat_open", 0x04),
+                                   ("soft", "hat_soft", 0x04),
+                                   ("closed", "hat_closed", 0x04)):
+            if p[part][i] == "x":
+                s.instrument(on, NOISE, instr)
+                s.on(on, NOISE, noise)
+                break
 
 
 def song():
@@ -184,58 +344,42 @@ def song():
     # setup: instruments and volumes (FM 0x00 loudest to 0x7F, PSG 0x0 to 0xF)
     s.instrument(0, FM1, "bass")
     s.volume(0, FM1, 0x02)
-    s.instrument(0, FM2, "square")
-    s.volume(0, FM2, 0x06)
-    for ch in PAD:
-        s.instrument(0, ch, "strings")
-        s.volume(0, ch, 0x10)
-    s.instrument(0, NOISE, "psg_hihat")
-    s.volume(0, NOISE, 0x05)
+    s.instrument(0, FM2, "lead")
+    s.volume(0, FM2, 0x08)
+    for ch in CHORD_VOICES:
+        s.instrument(0, ch, "chord")
+        s.volume(0, ch, 0x12)
+    for ch in (PSG1, PSG2):
+        s.instrument(0, ch, "psg_pad")
+    s.volume(0, PSG1, 0x03)
+    s.volume(0, PSG2, 0x05)
+    s.volume(0, NOISE, 0x02)
 
-    # intro: the chords held, a bar each
-    for bar in range(INTRO_BARS):
-        t = bar * BAR
-        for ch, name in zip(PAD, CHORDS[CYCLE[bar % 4]][1]):
-            s.note(t, ch, name)
-            s.off(t + BAR - 2, ch)
+    busy = {ch: 0 for ch in CHORD_VOICES}
+    for bar in range(1, INTRO_BARS + LOOP_BARS + 1):
+        t = (bar - 1) * BAR
+        if bar == INTRO_BARS + 1:
+            s.marker(t, LOOP_POINT)
+            busy = {ch: t for ch in CHORD_VOICES}
+        cycle = (bar - 1) % 4
+
+        chords(s, t, CHORDS[cycle], busy)
+        if drum_pattern(bar):
+            drums(s, t, drum_pattern(bar))
+        if bar >= 13:
+            mono(s, t, FM1, BASS_LONG_A if bar in (31, 35) else BASS[cycle], gap=2)
+        if bar >= 21:
+            mono(s, t, FM2, LEAD[cycle])
+        if bar >= 9 and (bar - 9) % 8 == 0:
+            for step, length, name in STRING_FILL:
+                on = t + step * STEP
+                s.note(on, PSG1, name)
+                s.note(on, PSG2, name[:-1] + str(int(name[-1]) - 1))
+                for ch in (PSG1, PSG2):
+                    s.off(on + length * STEP - 1, ch)
 
     start = INTRO_BARS * BAR
-    s.marker(start, LOOP_POINT)
-    for ch in PAD:                      # the chords turn to gated stabs
-        s.instrument(start, ch, "piano")
-        s.volume(start, ch, 0x0C)
-
-    for bar in range(BARS):
-        t = start + bar * BAR
-        root, chord = CHORDS[CYCLE[bar % 4]]
-
-        for step in GATE:
-            for ch, name in zip(PAD, chord):
-                s.note(t + step * STEP, ch, name)
-                s.off(t + (step + 2) * STEP - 2, ch)
-
-        for step in KICKS:
-            s.on(t + step * STEP, PCM, INSTR["kick"])
-        for step in CLAPS:
-            s.on(t + step * STEP, PCM, INSTR["snare"])
-        for step in HATS:
-            s.on(t + step * STEP, NOISE, 0x04)  # white noise, high
-
-        if bar >= BASS_FROM:
-            for step in BASS:
-                s.note(t + step * STEP, FM1, root)
-                s.off(t + (step + 2) * STEP - 3, FM1)
-
-        if bar >= MELODY_FROM:
-            pos = t
-            for name, length in MELODY[bar % 4]:
-                if name is not None:
-                    s.note(pos, FM2, name)
-                    s.off(pos + length * STEP - 1, FM2)
-                pos += length * STEP
-            assert pos == t + BAR, f"melody bar {bar % 4 + 1} is not 16 sixteenths"
-
-    end = start + BARS * BAR
+    end = (INTRO_BARS + LOOP_BARS) * BAR
     return s.encode(end, GO_TO_LOOP), end - start
 
 
