@@ -152,6 +152,8 @@ replacement.
 - Linking an IP or SP no longer warns "LOAD segment with RWX permissions":
   their linker scripts now put code and data in separate segments. The built
   images are unchanged.
+- The disc header's volume and system names end with a zero byte at 0x1B and
+  0x2B, as on retail discs, instead of a space.
 - A header string longer than its field (`PROJECT_NAME`, `HEADER_VOL_ID` and
   the other header settings) stopped the build with only "attempt to move
   .org backwards". The error now names the setting and its maximum length.
