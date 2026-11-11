@@ -57,6 +57,8 @@ A sound effect takes the channels its stream locks from the music and gives them
 
 Every Echo function may be called from the main program or from an interrupt handler: each takes the Z80 bus for a moment with interrupts masked.
 
+`examples/sound` puts this together: a song, two sound effects (one on a channel the music leaves free, one that borrows a music channel), pause, stop and volume. Its `tools/gen_song.py` writes Echo's stream format directly from note lists.
+
 # Rules while Echo runs
 
 The Z80 shares the 68000's bus to fetch its data, and two things the 68000 does disturb it. While Echo runs, a program does both of these with the Z80 bus held:
