@@ -72,13 +72,14 @@ FM_BASS = fm(4, 0,
              op(mul=1, tl=40, d1r=5, sl=4),
              op(mul=0, tl=4, d1r=2, sl=1, rr=8))
 
-# Lead: a saw (op1 feedback) phase-modulating a second saw, slower attack,
-# decay to about half, a release that rings past the note.
-FM_LEAD = fm(4, 6,
-             op(mul=1, tl=30, d1r=3, sl=2),
-             op(mul=1, dt=1, ar=24, d1r=7, sl=3, rr=6),
-             op(mul=1, tl=35, d1r=3, sl=2),
-             op(mul=1, dt=5, tl=3, ar=24, d1r=7, sl=3, rr=6))
+# Lead (revised in Furnace by the song's author): algorithm 6, a saw (op1
+# feedback) driving op2, with op3 and op4 sounding beside it; slow attacks and
+# a release that rings past the note.
+FM_LEAD = fm(6, 5,
+             op(mul=1, tl=30, ar=13, d1r=3, sl=2, rr=6),
+             op(mul=1, dt=1, ar=17, d1r=7, sl=3, rr=10),
+             op(mul=1, tl=35, ar=14, d1r=3, sl=2, rr=7),
+             op(mul=1, dt=5, tl=3, ar=16, d1r=7, sl=3, rr=10))
 
 # Chord synth: oscillator 1 an octave down, oscillator 2 synced to it, through
 # a low-pass filter with a short filter envelope. Op4 at multiplier 0.5 is the
@@ -245,10 +246,9 @@ CHORDS = [chord_bar("C4", "E4", "G4"),              # C
           chord_bar("F4", "A4", "C5")]              # F
 
 BASS = [[(0, 8, "C2"), (8, 8, "E2")],
-        [(0, 8, "G2"), (8, 6, "G2"), (14, 2, "E2")],
-        [(0, 4, "A2"), (5, 3, "C3"), (8, 4, "E2"), (12, 4, "A2")],
+        [(0, 14, "G2"), (14, 2, "E2")],
+        [(0, 4, "A2"), (4, 4, "C3"), (8, 4, "E2"), (12, 4, "A2")],
         [(0, 16, "F2")]]
-BASS_LONG_A = [(0, 5, "A2"), (5, 3, "C3"), (8, 4, "E2"), (12, 4, "A2")]
 
 LEAD = [[(0, 2, "E5"), (2, 2, "D5"), (4, 2, "C5"), (6, 2, "A4"),
          (8, 2, "G4"), (10, 2, "E4"), (12, 2, "F4"), (14, 2, "G4")],
@@ -367,7 +367,7 @@ def song():
         if drum_pattern(bar):
             drums(s, t, drum_pattern(bar))
         if bar >= 13:
-            mono(s, t, FM1, BASS_LONG_A if bar in (31, 35) else BASS[cycle], gap=2)
+            mono(s, t, FM1, BASS[cycle], gap=2)
         if bar >= 21:
             mono(s, t, FM2, LEAD[cycle])
         if bar >= 9 and (bar - 9) % 8 == 0:
