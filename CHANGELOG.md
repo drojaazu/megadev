@@ -11,7 +11,8 @@ replacement.
 - **Echo sound driver** (`main/echo.h`): music and sound effects on the
   YM2612 and PSG, played by Echo 1.65 on the Z80, with Echo's own C API.
   Cartridges and Mode 1 programs; data must be in cartridge ROM. See
-  `docs/sound.md`. Echo is zlib licensed (`lib/main/echo/LICENSE`).
+  `docs/sound.md` and `examples/sound`. Echo is zlib licensed
+  (`lib/main/echo/LICENSE`).
 - **Debug monitor and GDB on hardware**: `main/monitor.h` is a command
   interpreter the host drives over the controller port serial link: memory
   and VDP reads and writes, breakpoints (a `TRAP #15` written over code in
@@ -68,7 +69,7 @@ replacement.
   speed for the serial routines.
 - **Header dependency tracking**: editing a header rebuilds what uses it.
 - Examples: `ground_plane` (rotation and scaling hardware), `serial_debug`,
-  `mode1`.
+  `mode1`, `sound` (Echo music and sound effects).
 - Documentation: `gate_array.md`, `rotation_scaling.md`, `mode1.md`,
   `migration-2.0.md`.
 - Headers can be included from C++ (`extern "C"` guards). C++ is not
