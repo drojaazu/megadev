@@ -401,7 +401,7 @@ The `Makefile` at the root of the repository is maintainer tooling. It should no
 
 ## `make check`
 
-Run `make check` from the repository root before merging any branch. It must pass. It takes about ten seconds and needs the toolchain described under Build Environment, with `M68K_PREFIX` set as for any build, plus a host C compiler (`HOST_CC`, default `cc`). It stops at the first failure. Each step can also be run alone, for example `make check-link`.
+Run `make check` from the repository root before merging any branch. It must pass. It takes about ten seconds and needs the toolchain described under Build Environment, with `M68K_PREFIX` set as for any build (default `m68k-linux-gnu-`), plus a host C compiler (`HOST_CC`, default `cc`). It stops at the first failure. Each step can also be run alone, for example `make check-link`. GitHub runs it on every push to `develop` or `master` and on every pull request (`.github/workflows/check.yml`, in a Debian 13 container).
 
 | Step | Target | What it proves |
 |---|---|---|

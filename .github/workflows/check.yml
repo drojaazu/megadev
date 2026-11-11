@@ -1,0 +1,33 @@
+# [ M E G A D E V ]
+#
+# Runs the verification gate (`make check`, see docs/manual.md) on every push
+# to develop or master and on every pull request.
+#
+# Debian 13 is the oldest distribution whose m68k cross compiler meets the
+# kit's GCC 14 floor; Ubuntu's runner image ships GCC 13. `make docs` is not
+# run: its zero-warning standard holds for Doxygen 1.16, and Debian 13 has 1.9.
+
+name: check
+
+on:
+  push:
+    branches: [develop, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    container: debian:13-slim
+    steps:
+      - name: Install the toolchain
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends \
+            make gcc libc6-dev gcc-m68k-linux-gnu binutils-m68k-linux-gnu genisoimage
+          m68k-linux-gnu-gcc --version | head -n 1
+
+      - uses: actions/checkout@v4
+
+      - name: make check
+        run: make check
