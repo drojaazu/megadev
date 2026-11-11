@@ -37,13 +37,15 @@ FIELD_FITS(9b, 16, "HEADER_DISC_ID is longer than 16 characters")
 .org 0x10, 0x20
 9: .ascii STR(HEADER_VOL_ID)    // Volume Name
 FIELD_FITS(9b, 11, "HEADER_VOL_ID is longer than 11 characters (default: PROJECT_ID in upper case)")
-.org 0x1C, 0x20
+.org 0x1B, 0x20
+.byte 0                      // ends the name, as on retail discs
 .word 0x0100                 // Volume Version (BCD)
 .word 0x0001                 // Type ()
 .org 0x20
 9: .ascii STR(HEADER_SYS_ID)    // System Name
 FIELD_FITS(9b, 11, "HEADER_SYS_ID is longer than 11 characters (default: PROJECT_ID in upper case)")
-.org 0x2C, 0x20
+.org 0x2B, 0x20
+.byte 0                      // ends the name, as on retail discs
 .word 0x0100                 // System Version (BCD)
 .word 0                      // Always zero
 
