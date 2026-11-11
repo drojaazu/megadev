@@ -437,6 +437,8 @@ There are a number of additional documents in the `docs` subdirectory. We recomm
 
 `debugging.md` - Debugging on hardware: the serial debug monitor, breakpoints and stepping, and GDB over the controller port.
 
+`sound.md` - Music and sound effects with the Echo sound driver: data, playback, and the rules while it runs.
+
 `dev_in_c.md` - Discusses important concepts for developing code in C for an embedded system.
 
 `disc.md` - Explains how to master a proper disc image for the Mega CD.
