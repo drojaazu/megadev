@@ -21,6 +21,10 @@ HEADERS  := $(shell find lib -name '*.h' | sort)
 # Hardware targets a header must be valid for (see lib/build.def.h).
 TARGETS := MEGACD MEGACD_MODE1 MEGADRIVE
 
+# Same default as megadev.make, so the gate and the projects it builds use the
+# same compiler.
+M68K_PREFIX ?= m68k-linux-gnu-
+export M68K_PREFIX
 CC := $(M68K_PREFIX)gcc
 CHECK_DIR := build-check
 
