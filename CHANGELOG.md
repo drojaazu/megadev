@@ -8,6 +8,10 @@ replacement.
 
 ### Added
 
+- **Echo sound driver** (`main/echo.h`): music and sound effects on the
+  YM2612 and PSG, played by Echo 1.65 on the Z80, with Echo's own C API.
+  Cartridges and Mode 1 programs; data must be in cartridge ROM. See
+  `docs/sound.md`. Echo is zlib licensed (`lib/main/echo/LICENSE`).
 - **Debug monitor and GDB on hardware**: `main/monitor.h` is a command
   interpreter the host drives over the controller port serial link: memory
   and VDP reads and writes, breakpoints (a `TRAP #15` written over code in
