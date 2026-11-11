@@ -153,6 +153,10 @@ replacement.
 
 ### Fixed
 
+- `read_input_joypad` in `main/io.h` combined the two halves of the pad read
+  with register `d1` instead of its own scratch register, so it returned
+  garbage whenever the compiler put the scratch value elsewhere. Its
+  documentation now says what it always returned: active low, 0 = pressed.
 - Linking an IP or SP no longer warns "LOAD segment with RWX permissions":
   their linker scripts now put code and data in separate segments. The built
   images are unchanged.

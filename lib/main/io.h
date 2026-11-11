@@ -113,7 +113,7 @@ static inline void init_joypads()
 /**
  * @brief Read a 3 button pad
  * @param io_port Data port of the controller (io_data1 or io_data2)
- * @return Button states in SACBRLDU order (PAD_*), 1 = pressed
+ * @return Button states in SACBRLDU order (PAD_*), active low: 0 = pressed
  */
 static inline uint8_t read_input_joypad(io_reg io_port)
 {
@@ -133,7 +133,7 @@ static inline uint8_t read_input_joypad(io_reg io_port)
   andi.b   #0x3F, %[joypad_state] \n\
   andi.b   #0x30, %[scratch_d] \n\
   lsl.b    #2, %[scratch_d] \n\
-  or.b     d1, %[joypad_state] \n\
+  or.b     %[scratch_d], %[joypad_state] \n\
 		"
     : [joypad_state] "=d"(joypad_state), [scratch_d] "=&d"(scratch_d)
     : [io_port] "a"(io_port), [ctrl_pc6] "i"(CTRL_PC6)
