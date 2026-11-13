@@ -1,17 +1,25 @@
 This is an altered version of Echo's Z80 program.
 
 prog-z80.bin is Echo 1.65 (github.com/sikthehedgehog/echo, commit e326c87,
-built/prog-z80.bin) with one change: the PSG frequency table
-(PSGFreqTable in src-z80/player/freq.z80, Z80 address $1200-$128F) holds
-periods computed for the NTSC PSG clock (3579545 Hz) with A4 = 440 Hz,
-rounded to the nearest value. Echo's original table plays PSG notes 8 to 14
-cents sharp in its lowest octave and up to 119 cents sharp at the top, and
-about 10 cents sharp of Echo's own FM notes. Everything outside the table is
-byte-identical to the original.
+built/prog-z80.bin) with two changes, both offered upstream:
 
-Built with z80asm 1.8 from Echo's source with the table change applied; the
+1. The PSG frequency table (PSGFreqTable in src-z80/player/freq.z80, Z80
+   address $1200-$128F) holds periods computed for the NTSC PSG clock
+   (3579545 Hz) with A4 = 440 Hz, rounded to the nearest value. Echo's
+   original table plays PSG notes 8 to 14 cents sharp in its lowest octave
+   and up to 119 cents sharp at the top, and about 10 cents sharp of Echo's
+   own FM notes. (sikthehedgehog/echo pull request 33.)
+
+2. UpdatePSG (src-z80/player/psg.z80) keeps a PSG instrument's semitone
+   shift inside the frequency table, holding the note at C-3 or B-8. The
+   original reads past either end of the table and sends those bytes to the
+   PSG, which can change another channel's volume or silence the noise
+   channel. (sikthehedgehog/echo pull request 34.)
+
+Built with z80asm 1.8 from Echo's source with both changes applied; the
 unchanged source assembles to the original built/prog-z80.bin byte for byte.
-The change has been offered upstream.
+The second change adds 11 bytes of code, taken from the padding before the
+page-aligned tables, so code after it moves and the tables do not.
 
 Echo is by Javier Degirolmo and is distributed under the zlib license, in
 LICENSE beside this file.
