@@ -1,0 +1,17 @@
+This is an altered version of Echo's Z80 program.
+
+prog-z80.bin is Echo 1.65 (github.com/sikthehedgehog/echo, commit e326c87,
+built/prog-z80.bin) with one change: the PSG frequency table
+(PSGFreqTable in src-z80/player/freq.z80, Z80 address $1200-$128F) holds
+periods computed for the NTSC PSG clock (3579545 Hz) with A4 = 440 Hz,
+rounded to the nearest value. Echo's original table plays PSG notes 8 to 14
+cents sharp in its lowest octave and up to 119 cents sharp at the top, and
+about 10 cents sharp of Echo's own FM notes. Everything outside the table is
+byte-identical to the original.
+
+Built with z80asm 1.8 from Echo's source with the table change applied; the
+unchanged source assembles to the original built/prog-z80.bin byte for byte.
+The change has been offered upstream.
+
+Echo is by Javier Degirolmo and is distributed under the zlib license, in
+LICENSE beside this file.

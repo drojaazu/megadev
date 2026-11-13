@@ -15,7 +15,7 @@ Music and sound effects with the Echo sound driver: what it plays, where its dat
 
 The kit includes Echo, a sound driver by Javier Degirolmo that runs on the Z80 and drives the YM2612 (six FM channels, one of which can play 8-bit PCM samples) and the PSG (three square wave channels and noise). The 68000 starts it and sends it commands; the Z80 does the rest, so music costs the 68000 almost nothing.
 
-`main/echo.h` is Echo's own C API with Echo's function names, so Echo's documentation (`doc/` in its repository, github.com/sikthehedgehog/echo) applies as written. The kit links Echo 1.65's prebuilt Z80 program unmodified; no Z80 assembler is needed. Echo is distributed under the zlib license, kept with it in `lib/main/echo/LICENSE`. A program that never calls `echo_init` does not contain Echo.
+`main/echo.h` is Echo's own C API with Echo's function names, so Echo's documentation (`doc/` in its repository, github.com/sikthehedgehog/echo) applies as written. The kit links Echo 1.65's prebuilt Z80 program with one change: its PSG frequency table is retuned so PSG notes play in tune with FM notes on NTSC machines (stock Echo plays them 8 to 119 cents sharp, worst at the top). Nothing else differs, and no Z80 assembler is needed; `lib/main/echo/NOTICE` describes the change. Echo is distributed under the zlib license, kept with it in `lib/main/echo/LICENSE`. A program that never calls `echo_init` does not contain Echo.
 
 # Data
 
