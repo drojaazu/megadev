@@ -18,7 +18,8 @@ are not produced by or under license from Sega.
 
 lib/main/echo/prog-z80.bin and lib/runtime/echo.c are Echo, a sound driver
 by Javier Degirolmo, distributed under the zlib license in
-lib/main/echo/LICENSE. echo.c is adapted from Echo's C API.
+lib/main/echo/LICENSE. echo.c is adapted from Echo's C API. prog-z80.bin is
+altered (its PSG frequency table): lib/main/echo/NOTICE.
 
 SEGA, Mega Drive, Mega CD and related names and marks are the property of
 SEGA CORPORATION. Megadev is an unofficial, non-profit project with no
