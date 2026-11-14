@@ -416,7 +416,7 @@ Run `make check` from the repository root before merging any branch. It must pas
 | 9 | `check-odr` | Every header can be included by two translation units linked together, so no header defines storage or a non-static function. |
 | 10 | `check-incremental` | Header dependency tracking works: touching `lib/main/vdp.h` recompiles and relinks `examples/gfx`, and a second build does nothing. |
 | 11 | `check-inline` | Every `static inline` function in every header compiles when used. |
-| 12 | `check-asserts` | The register addresses and bit positions in the hardware definitions match the hardware manuals (`check/asserts`). |
+| 12 | `check-asserts` | The register addresses and bit positions in the hardware definitions match the hardware manuals, and the structures read by the hardware, the Boot ROM or the kit's assembly have the field offsets and bitfield positions that reader expects (`check/asserts`). |
 | 13 | `check-host` | The C library subset gives the right answers, compiled for and run on the host (`check/host/libc_test.c`). |
 
 `make clean` removes everything the gate produced.
