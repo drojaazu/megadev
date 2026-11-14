@@ -60,8 +60,11 @@ INLINE_EXCLUDE :=
 INLINE_FLAGS := -O1 -fomit-frame-pointer
 
 # Compile-time assertions about the hardware definitions (check/asserts).
+# ASSERT_BITS units are also compiled, and their .rodata is compared with the
+# bytes after "//=" on each initializer line.
 ASSERT_C := $(wildcard check/asserts/*.c)
 ASSERT_S := $(wildcard check/asserts/*.s)
+ASSERT_BITS := check/asserts/bitfields.c
 
 # Host compiler for the runtime library test; the runtime sources are plain C.
 HOST_CC ?= cc
@@ -416,9 +419,12 @@ check-inline:
 	[ $$fail = 0 ] && printf '== inline: %s functions instantiate, %s header(s) excluded\n' "$$total" "$$x" || exit 1
 
 # ---------------------------------------------------------------------------
-# Loop 8: the register definitions match the hardware manuals. check/asserts
-# holds _Static_assert units for C and .if/.error units for assembly; a wrong
-# address or bit position fails here instead of on hardware.
+# Loop 8: the register definitions match the hardware manuals, and the
+# structures that the hardware, the Boot ROM or the kit's assembly reads have
+# the layout that reader expects. check/asserts holds _Static_assert units for
+# C, .if/.error units for assembly, and bitfield units whose compiled bytes
+# are compared with the hardware format; a wrong address, bit position or
+# field offset fails here instead of on hardware.
 # ---------------------------------------------------------------------------
 check-asserts:
 	@mkdir -p $(CHECK_DIR)
@@ -427,13 +433,23 @@ check-asserts:
 	  $(CC) $(CHECK_FLAGS) -DTARGET=MEGACD -fsyntax-only "$$c" 2> $(CHECK_DIR)/assert.err \
 	    || { printf 'FAIL assert %s\n' "$$c"; cat $(CHECK_DIR)/assert.err; fail=1; }; \
 	done; \
+	for c in $(ASSERT_BITS); do \
+	  $(CC) $(CHECK_FLAGS) -DTARGET=MEGACD -c "$$c" -o $(CHECK_DIR)/bits.o 2> $(CHECK_DIR)/assert.err \
+	    && $(M68K_PREFIX)objcopy -O binary -j .rodata $(CHECK_DIR)/bits.o $(CHECK_DIR)/bits.bin \
+	    || { printf 'FAIL assert %s\n' "$$c"; cat $(CHECK_DIR)/assert.err; fail=1; continue; }; \
+	  got=$$(od -An -v -tx1 $(CHECK_DIR)/bits.bin | tr -s ' \n' '  ' | sed 's/^ //;s/ $$//'); \
+	  want=$$(sed -n 's|^ *{.*//= *||p' "$$c" | tr -s ' \n' '  ' | sed 's/^ //;s/ $$//'); \
+	  [ -n "$$want" ] && [ "$$got" = "$$want" ] \
+	    || { printf 'FAIL assert %s: bitfield bytes\n got  %s\n want %s\n' "$$c" "$$got" "$$want"; fail=1; }; \
+	done; \
 	for s in $(ASSERT_S); do \
 	  $(CC) $(CHECK_FLAGS) -DTARGET=MEGACD -Wa,--bitwise-or -x assembler-with-cpp -c "$$s" \
 	    -o $(CHECK_DIR)/assert.o 2> $(CHECK_DIR)/assert.err \
 	    || { printf 'FAIL assert %s\n' "$$s"; cat $(CHECK_DIR)/assert.err; fail=1; }; \
 	done; \
-	n=$$(cat $(ASSERT_C) | grep -c '_Static_assert'); m=$$(cat $(ASSERT_S) | grep -c '^ASSERT_EQ'); \
-	[ $$fail = 0 ] && printf '== asserts: %s C and %s assembly assertions hold\n' "$$n" "$$m" || exit 1
+	n=$$(cat $(ASSERT_C) | grep -c '^_Static_assert\|^ASSERT_[A-Z_]*('); m=$$(cat $(ASSERT_S) | grep -c '^ASSERT_EQ'); \
+	b=$$(cat $(ASSERT_BITS) | grep -c '^ *{.*//='); \
+	[ $$fail = 0 ] && printf '== asserts: %s C, %s assembly and %s bitfield assertions hold\n' "$$n" "$$m" "$$b" || exit 1
 
 # ---------------------------------------------------------------------------
 # Loop 9: the freestanding C library subset computes the right answers. The
