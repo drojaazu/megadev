@@ -4,19 +4,8 @@
 
 # Global Makefile & Build Settings
 
-# Toolchain Setup
-# we assume all commands appear somewhere in $PATH
-# if this is not the case, you will need to specify the full path in the
-# prefix
-M68K_PREFIX?=m68k-linux-gnu-
-
-CC:=$(M68K_PREFIX)gcc
-OBJCPY:=$(M68K_PREFIX)objcopy
-NM:=$(M68K_PREFIX)nm
-READELF:=$(M68K_PREFIX)readelf
-LD:=$(M68K_PREFIX)ld
-AS:=$(M68K_PREFIX)as
-AR:=$(M68K_PREFIX)ar
+# Toolchain Setup: M68K_PREFIX and CC come from toolchain.make, included
+# below once MEGADEV_PATH is known.
 
 # (Z80 building not yet supported)
 Z80_AS:=sjasmplus
@@ -76,6 +65,14 @@ endif
 ifeq ($(wildcard $(MEGADEV_PATH)/lib/build.def.h),)
 $(error MEGADEV_PATH ($(MEGADEV_PATH)) does not contain the Megadev library.)
 endif
+
+include $(MEGADEV_PATH)/toolchain.make
+OBJCPY:=$(M68K_PREFIX)objcopy
+NM:=$(M68K_PREFIX)nm
+READELF:=$(M68K_PREFIX)readelf
+LD:=$(M68K_PREFIX)ld
+AS:=$(M68K_PREFIX)as
+AR:=$(M68K_PREFIX)ar
 
 REGION?=US
 VIDEO?=NTSC
