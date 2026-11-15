@@ -39,6 +39,15 @@ replacement.
   copy and by DMA and checks it. Tested in BlastEm with 28 Boot ROM versions,
   and on a Japanese Mega CD (Boot ROM 1.00) without a disc.
   See `docs/mode1.md` and the `mode1` example.
+- **Mode 1 builds of the `bram`, `rotozoom` and `ground_plane` examples**:
+  `make MODE1=1` builds a cartridge that runs the example on a Mega CD with
+  no disc. The cartridge starts the Sub CPU with the SP and SPX together and
+  puts the first Main CPU module in Word RAM; the example code is unchanged.
+  `docs/mode1.md` describes the pattern, and the controller port setup a
+  Mode 1 program needs before reading the pads through the Boot ROM. All
+  three run on a Japanese Mega CD (Boot ROM 1.00) from a flash cartridge;
+  `bram` and `ground_plane` also run in BlastEm with 27 of the 28 Boot ROM
+  versions (not Mega-LD 1.05, whose Sub BIOS does not start in Mode 1).
 - **`ISO_BOOT`**: the boot sector image the ISO is mastered with. Defaults to
   the kit's boot sector for `MEGACD` and to none for `MEGACD_MODE1`, whose
   disc is read by the cartridge rather than booted.

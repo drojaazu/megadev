@@ -43,3 +43,12 @@ writes are a real cost -- see `docs/rotation_scaling.md` section 6.
 Edit the constants at the top of that script to change the field of view, the
 camera height, or how close to the horizon the plane is drawn. It refuses to
 generate a table that would exceed the step ceiling.
+
+## Mode 1 build
+
+`make MODE1=1` builds `ground.cart`, a cartridge that runs this example on a Mega CD
+with no disc in the drive (Mode 1). The example code is unchanged:
+`src/mode1_init.s` and `src/mode1_main.c` start the Sub CPU with the SP and
+the SPX together and put the first Main CPU module in Word RAM, the work `ip.s`
+and the disc do on a disc boot. See "Disc programs as cartridges" in
+`docs/mode1.md`.
