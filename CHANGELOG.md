@@ -36,7 +36,8 @@ replacement.
   CPU BIOS from the Boot ROM, starts the Sub CPU with your program and builds
   the system vector table. The Sub CPU reads the disc with the usual BIOS
   calls and access loop; the `mode1` example loads a file into Word RAM by CPU
-  copy and by DMA and checks it. Tested in BlastEm with 22 Boot ROM versions.
+  copy and by DMA and checks it. Tested in BlastEm with 28 Boot ROM versions,
+  and on a Japanese Mega CD (Boot ROM 1.00) without a disc.
   See `docs/mode1.md` and the `mode1` example.
 - **`ISO_BOOT`**: the boot sector image the ISO is mastered with. Defaults to
   the kit's boot sector for `MEGACD` and to none for `MEGACD_MODE1`, whose
