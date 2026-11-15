@@ -9,7 +9,7 @@ replacement.
 ### Added
 
 - **Echo sound driver** (`main/echo.h`): music and sound effects on the
-  YM2612 and PSG, played by Echo 1.65 on the Z80, with Echo's own C API.
+  YM2612 and PSG, played by Echo 1.68a on the Z80, with Echo's own C API.
   Cartridges and Mode 1 programs; data must be in cartridge ROM. See
   `docs/sound.md` and `examples/sound`. Echo is zlib licensed
   (`lib/main/echo/LICENSE`). The kit's copy has two fixes: Echo's PSG
