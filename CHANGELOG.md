@@ -158,6 +158,10 @@ replacement.
 
 ### Fixed
 
+- The `rotozoom` and `ground_plane` examples cleared 1 MB from the start of
+  Word RAM instead of its 256 KB (`memset32` counts longwords), which stops
+  the Sub CPU on a real Mega CD; emulators ignore the stray writes. Both now
+  run on hardware.
 - `read_input_joypad` in `main/io.h` combined the two halves of the pad read
   with register `d1` instead of its own scratch register, so it returned
   garbage whenever the compiler put the scratch value elsewhere. Its

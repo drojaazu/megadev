@@ -49,7 +49,8 @@ void main()
 
   ga_sub_wait_2m();
 
-  memset32(0, (u32 *) WORD_RAM_2M, 0x20000 * 2);
+  // clear the 256 KB of 2M Word RAM; memset32 counts longwords
+  memset32(0, (u32 *) WORD_RAM_2M, 0x40000 / 4);
 
   register s16 command, param1, param2, param3, param4;
   do {
