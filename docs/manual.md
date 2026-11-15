@@ -156,7 +156,7 @@ If unspecified, defaults to `US`.
 
 Specifies the video output mode.
 
-This is not directly used by Megadev, but can be used as a preprocessor directive in your code to determine the VDP configuration for your build target.
+Megadev uses it to pick the build of the Echo sound driver whose notes are tuned for the machine (`docs/sound.md`). It is also available as a preprocessor directive in your code to determine the VDP configuration for your build target. After changing it, run `make clean` so the kit's runtime is rebuilt.
 
 Valid values: `PAL`, `NTSC`.
 

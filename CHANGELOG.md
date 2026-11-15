@@ -12,9 +12,10 @@ replacement.
   YM2612 and PSG, played by Echo 1.68a on the Z80, with Echo's own C API.
   Cartridges and Mode 1 programs; data must be in cartridge ROM. See
   `docs/sound.md` and `examples/sound`. Echo is zlib licensed
-  (`lib/main/echo/LICENSE`). The kit's copy has two fixes: Echo's PSG
-  frequency table is retuned to the NTSC clock, so PSG notes are in tune with
-  FM notes, and PSG arpeggios past the top or bottom note no longer write
+  (`lib/main/echo/LICENSE`). The kit's copy has two fixes: Echo comes in
+  NTSC and PAL builds, picked by `VIDEO`, whose FM and PSG notes are tuned to
+  that machine's clocks, so PSG notes are in tune with FM notes (PAL values
+  calculated, tested in emulators only), and PSG arpeggios past the top or bottom note no longer write
   stray values to other channels (`lib/main/echo/NOTICE`).
 - **Debug monitor and GDB on hardware**: `main/monitor.h` is a command
   interpreter the host drives over the controller port serial link: memory

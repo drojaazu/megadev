@@ -1,15 +1,25 @@
 This is an altered version of Echo's Z80 program.
 
-prog-z80.bin is built/prog-z80.bin from Echo 1.68a-dr.1
-(github.com/drojaazu/echo, tag 1.68a-dr.1), a fork of Echo 1.68a
-(github.com/sikthehedgehog/echo, commit e326c87) with two changes:
+prog-z80.bin and prog-z80-pal.bin are built/prog-z80.bin and
+built/prog-z80-pal.bin from Echo 1.68a-dr.1 (github.com/drojaazu/echo, tag
+1.68a-dr.1), a fork of Echo 1.68a (github.com/sikthehedgehog/echo, commit
+e326c87) with these changes:
 
-1. The PSG frequency table (PSGFreqTable in src-z80/player/freq.z80, Z80
-   address $1200-$128F) holds periods computed for the NTSC PSG clock
-   (3579545 Hz) with A4 = 440 Hz, rounded to the nearest value. Echo's
-   original table plays PSG notes 8 to 14 cents sharp in its lowest octave
-   and up to 119 cents sharp at the top, and about 10 cents sharp of Echo's
-   own FM notes.
+1. Echo comes in two builds, tuned for NTSC and for PAL machines. Its note
+   tables (FMFreqTable and PSGFreqTable in src-z80/player/freq.z80, Z80
+   address $1200-$12A7) hold:
+
+   prog-z80.bin (NTSC): Echo's own FM table, and PSG periods for the NTSC
+   PSG clock (3579545 Hz) with A4 = 440 Hz, rounded to the nearest value.
+
+   prog-z80-pal.bin (PAL): Echo's FM table scaled by the ratio of the PAL and
+   NTSC clocks, and PSG periods for the PAL PSG clock (3546895 Hz).
+
+   Echo's original has one build, with an NTSC FM table and a PSG table
+   between the NTSC and PAL clocks whose upper octaves are rounded down. It
+   plays PSG notes about 10 cents sharp of Echo's own FM notes on either
+   machine type, and up to 119 cents sharp at the top. The PAL values are
+   calculated from the PAL clocks and tested in emulators only.
 
 2. UpdatePSG (src-z80/player/psg.z80) keeps a PSG instrument's semitone
    shift inside the frequency table, holding the note at C-3 or B-8. The
@@ -17,10 +27,9 @@ prog-z80.bin is built/prog-z80.bin from Echo 1.68a-dr.1
    PSG, which can change another channel's volume or silence the noise
    channel.
 
-Built with z80asm 1.8 from Echo's source with both changes applied; the
-unchanged source assembles to the original built/prog-z80.bin byte for byte.
-The second change adds 11 bytes of code, taken from the padding before the
-page-aligned tables, so code after it moves and the tables do not.
+Built with z80asm 1.8. Outside the note tables, the two programs are
+identical. The second change adds 11 bytes of code, taken from the padding
+before the page-aligned tables, so code after it moves and the tables do not.
 
 Echo is by Javier Degirolmo and is distributed under the zlib license, in
 LICENSE beside this file.
