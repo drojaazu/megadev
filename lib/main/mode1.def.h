@@ -50,6 +50,6 @@
 #define MODE1_ERR_SP_SIZE     4 ///< SP larger than MODE1_SP_MAX_SIZE
 
 /**
- * @brief Number of polls of the Sub side comm flags before giving up
+ * @brief Number of polls of IEN2 (the Sub BIOS enabling INT2) before giving up
  */
 #define MODE1_SUB_TIMEOUT 0x100000

@@ -110,8 +110,8 @@ SUB mode1_find_font
  * Program RAM, place the SP at 0x6000, write protect the BIOS, release reset,
  * release the bus. The Sub BIOS image is found by scanning the Boot ROM for
  * the loader call that unpacks it to the Program RAM window, since its
- * location differs per revision. Returns once the Sub side comm flags read
- * zero, which is how the Boot ROM knows the Sub BIOS is running.
+ * location differs per revision. Returns once the Sub BIOS has enabled INT2
+ * (IEN2 set), which it does early in its startup, after its checksum passes.
  */
 SUB mode1_load_sub
   movem.l d2-d7/a2-a6, -(sp)
@@ -201,14 +201,17 @@ SUB mode1_load_sub
 6:btst    #GA_MAIN_SUB_REQ_POS, (a5)
   bne.s   6b
 
-  // give the Sub BIOS a moment, clear the comm registers, wait for it
+  // give the Sub BIOS a moment, clear the comm registers, wait for it. The
+  // Sub BIOS enables INT2 early in its startup, once its checksum has passed
+  // (every revision), which the Main CPU sees as IEN2. The Sub side comm
+  // flags prove nothing here: they are already zero after reset.
   move.l  #0x8000, d1
 6:subq.l  #1, d1
   bne.s   6b
   GA_MAIN_CLEAR_COMM_REGS
   move.l  #MODE1_SUB_TIMEOUT, d1
-7:tst.b   (GA_MAIN_REG_COMFLAGS_SUB)
-  beq.s   10f
+7:btst    #GA_MAIN_INT2_MASKING_POS, (GA_MAIN_REG_INT2)
+  bne.s   10f
   subq.l  #1, d1
   bne.s   7b
   moveq   #MODE1_ERR_SUB_TIMEOUT, d0
