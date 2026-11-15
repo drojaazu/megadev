@@ -105,7 +105,8 @@ SUB mode1_find_font
  *
  * @details
  * Follows the Boot ROM's own sequence: hold the Sub CPU in reset and take its
- * bus, select Program RAM bank 0 in 2M mode, decompress the Sub BIOS into
+ * bus, clear all four Program RAM banks, select bank 0 in 2M mode,
+ * decompress the Sub BIOS into
  * Program RAM, place the SP at 0x6000, write protect the BIOS, release reset,
  * release the bus. The Sub BIOS image is found by scanning the Boot ROM for
  * the loader call that unpacks it to the Program RAM window, since its
@@ -131,8 +132,28 @@ SUB mode1_load_sub
 0:btst    #GA_MAIN_SUB_RESET_POS, (a5)
   bne.s   0b
 
-  // no write protection; bank 0, 2M mode, keep DMNA
+  // no write protection
   move.b  #0, (GA_MAIN_REG_WP)
+
+  // clear Program RAM, all four banks, as the Boot ROM does before a disc
+  // boot. The Sub BIOS checksums itself at startup over a fixed range, and
+  // in the Japanese 1.00 Boot ROMs its image ends short of that range: on
+  // power-on RAM the checksum fails and the Sub BIOS restarts forever. The
+  // SP also finds the zeroed Program RAM a disc boot leaves.
+  moveq   #0, d0
+  move.b  #GA_MAIN_MEMMODE_BANK_MASK, d3   // bank 3 first, bank 0 last
+0:move.b  (GA_MAIN_REG_MEMMODE), d1
+  andi.b  #GA_MAIN_DMNA_MASK, d1
+  or.b    d3, d1
+  move.b  d1, (GA_MAIN_REG_MEMMODE)
+  lea     MODE1_PRG_RAM, a0
+  move.w  #(0x20000 / 4) - 1, d1
+1:move.l  d0, (a0)+
+  dbra    d1, 1b
+  subi.b  #(1 << GA_MAIN_MEMMODE_BANK_POS), d3
+  bcc.s   0b
+
+  // bank 0, 2M mode, keep DMNA
   move.b  (GA_MAIN_REG_MEMMODE), d0
   andi.b  #GA_MAIN_DMNA_MASK, d0
   move.b  d0, (GA_MAIN_REG_MEMMODE)
