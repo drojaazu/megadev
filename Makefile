@@ -80,17 +80,32 @@ check: check-projects check-headers check-asm check-link check-stack check-init 
 # ---------------------------------------------------------------------------
 check-projects: $(PROJECTS)
 
+# Examples that also build as a Mode 1 cartridge with MODE1=1 (docs/mode1.md).
+# Each is built a second time that way, after its disc build.
+MODE1_PROJECTS := examples/bram/ examples/ground_plane/ examples/rotozoom/
+
 $(PROJECTS):
 	@printf '== build %s\n' '$@'
 	@$(MAKE) -s -C '$@' clean >/dev/null
 	@$(MAKE) -s -C '$@' >/dev/null
-	@id=$$($(MAKE) -s -C '$@' print-PROJECT_ID); \
-	for f in $$($(MAKE) -s -C '$@' print-DISC_CONTENTS) $$(cd '$@' && ls $$id.iso $$id.cart 2>/dev/null); do \
-	  if [ ! -s "$@/$$f" ]; then printf 'FAIL %s: %s missing or empty\n' '$@' "$$f"; exit 1; fi; \
+	$(call check_project_output,$@,)
+	$(if $(filter $@,$(MODE1_PROJECTS)),$(call build_mode1,$@))
+
+define build_mode1
+	@printf '== build %s (MODE1=1)\n' '$(1)'
+	@$(MAKE) -s -C '$(1)' MODE1=1 >/dev/null
+	$(call check_project_output,$(1),MODE1=1)
+endef
+
+# $(1) project directory, $(2) make variables of the build to check
+define check_project_output
+	@id=$$($(MAKE) -s -C '$(1)' $(2) print-PROJECT_ID); \
+	for f in $$($(MAKE) -s -C '$(1)' $(2) print-DISC_CONTENTS) $$(cd '$(1)' && ls $$id.iso $$id.cart 2>/dev/null); do \
+	  if [ ! -s "$(1)/$$f" ]; then printf 'FAIL %s: %s missing or empty\n' '$(1)' "$$f"; exit 1; fi; \
 	done
 	@# A cartridge header describes the ROM it is in, recomputed here
 	@# independently of tools/romfix.sh.
-	@id=$$($(MAKE) -s -C '$@' print-PROJECT_ID); f='$@'/$$id.cart; \
+	@id=$$($(MAKE) -s -C '$(1)' $(2) print-PROJECT_ID); f='$(1)'/$$id.cart; \
 	if [ -f "$$f" ]; then \
 	  sz=$$(stat -c %s "$$f"); \
 	  [ $$((sz % 2)) = 0 ] || { printf 'FAIL %s: odd size %s\n' "$$f" $$sz; exit 1; }; \
@@ -100,6 +115,7 @@ $(PROJECTS):
 	  hdr=$$(od -An -tx1 -j $$((0x18E)) -N2 "$$f" | tr -d ' \n'); \
 	  [ "$$sum" = "$$hdr" ] || { printf 'FAIL %s: header checksum %s, computed %s\n' "$$f" $$hdr $$sum; exit 1; }; \
 	fi
+endef
 
 # ---------------------------------------------------------------------------
 # Loop 2: every library header compiles on its own, for every hardware target.

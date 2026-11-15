@@ -57,6 +57,8 @@ This is the same for every Boot ROM version checked: JP 1.00c, JP 2.00c, WonderM
 
 The Boot ROM library expects the RAM state a disc boot leaves behind. Before using it, load its defaults: `BIOS_LOAD_DEFAULT_VDP_REGS`, `BIOS_CLEAR_VRAM`, `BIOS_CLEAR_TABLES` and `BIOS_CLEAR_VSRAM`. The default VDP registers leave the display off; enable it with `BIOS_VDP_DISP_ENABLE`.
 
+The controller ports need setting up too. A disc boot leaves TH as an output on each port, set by Boot ROM code that is not in its jump table, and `BIOS_READ_JOYPAD`, which `BIOS_VBLANK_HANDLER` calls, depends on it: with TH an input it reads only half the pad, and A and Start never register. Call `init_joypads` (`main/io.h`) before reading the pads through the Boot ROM.
+
 # Disc access
 
 The Sub CPU reads the disc, with the Sub BIOS calls and the kit's access loop (`docs/cdrom.md`) exactly as on a disc boot. Three things differ from a disc program:
@@ -68,6 +70,15 @@ The Sub CPU reads the disc, with the Sub BIOS calls and the kit's access loop (`
 The disc needs no boot sector: `ISO_BOOT` is empty for `MEGACD_MODE1`, so `make` masters a plain ISO 9660 image of `DISC_PATH`. Set `ISO_BOOT:=$(BUILD_PATH)/boot.bin`, and provide `ip.s` and `sp.s` for the disc, to master one that also boots on its own.
 
 The `mode1` example does all of this: on command from the Main CPU its SP initializes the drive, caches the root directory and loads `DATA.BIN` into Word RAM twice, by Sub CPU copy and by CDC DMA, and the Main CPU checks the content against a sum computed at build time.
+
+# Disc programs as cartridges
+
+A disc program whose disc carries only its own modules can also be built as a Mode 1 cartridge, and then needs no disc at all. The `bram`, `rotozoom` and `ground_plane` examples do this with `make MODE1=1`, which builds `<project>.cart` in place of the ISO. The cartridge does the work of the IP and the disc:
+
+- **The Sub CPU program and module go in together.** The makefile pads `sp.bin` so that `spx.smd`, appended after it, lands at Program RAM `0x10000`, where it is linked to run, and `mode1_load_sub` copies the whole image. The SP skips the drive init and the module load when `TARGET` is `MEGACD_MODE1` and jumps straight to `0x10000`.
+- **The first Main CPU module goes in Word RAM.** The cartridge loads the Boot ROM library defaults, sets up the controller ports and the VBLANK handler, copies the module to the start of Word RAM and jumps to its entry point at `WORD_RAM + 0x100`, as the IP does after loading it from the disc.
+
+The modules are compiled again for `MEGACD_MODE1`, since Word RAM and the Boot ROM library are at different addresses, but their source is unchanged. Each example's `src/mode1_init.s` and `src/mode1_main.c` are the cartridge side. A program that loads other files from its disc still needs the disc in Mode 1, or those files moved into the cartridge.
 
 # Testing in an emulator
 
