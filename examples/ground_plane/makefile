@@ -49,6 +49,17 @@ BUILD_PATH:=build
 
 DISC_PATH:=disc
 
+## Mode 1 build
+# `make MODE1=1` builds $(PROJECT_ID).cart instead of the disc: a cartridge
+# that runs this example on a Mega CD with no disc in the drive (docs/mode1.md).
+# Its files are built in build/mode1, and the modules are embedded in the
+# cartridge instead of placed on a disc.
+ifeq ($(MODE1),1)
+TARGET:=MEGACD_MODE1
+BUILD_PATH:=$(BUILD_PATH)/mode1
+DISC_PATH:=$(BUILD_PATH)
+endif
+
 # Files the build creates in DISC_PATH
 DISC_CONTENTS:= \
 	$(DISC_PATH)/ipx.mmd \
@@ -77,12 +88,22 @@ include $(MEGADEV_PATH)/megadev.make
 
 # Everything that must be built into $(DISC_PATH). The ISO depends on this,
 # so a parallel build cannot master the image before the modules exist.
+ifeq ($(MODE1),1)
+all: $(PROJECT_ID).cart
+else
 all: \
 	$(DISC_CONTENTS) \
 	$(PROJECT_ID).iso
+endif
 
+# Without MODE1=1, removes the output of both builds; with it, only the Mode 1
+# build's
 clean:
-	@rm -rf $(PROJECT_ID).iso $(DISC_PATH)/*.mmd $(DISC_PATH)/*.smd $(BUILD_PATH)/*
+ifeq ($(MODE1),1)
+	@rm -rf $(PROJECT_ID).cart $(BUILD_PATH)/*
+else
+	@rm -rf $(PROJECT_ID).iso $(PROJECT_ID).cart $(DISC_PATH)/*.mmd $(DISC_PATH)/*.smd $(BUILD_PATH)/*
+endif
 
 $(DISC_PATH)/ipx.mmd: \
 	main/ipx_init_stack.s \
@@ -97,3 +118,23 @@ $(DISC_PATH)/spx.smd: \
 	tables.s \
 	ground.res.s \
 	$(BUILD_PATH)/sp.bin
+
+# Mode 1 cartridge (make MODE1=1). mode1_init.s embeds the Sub CPU image and
+# the first module.
+$(PROJECT_ID).cart: \
+	mode1_init.s \
+	mode1_main.c \
+	mode1.s \
+	kos_cmp.s
+
+$(BUILD_PATH)/mode1_init.s.o: $(BUILD_PATH)/sp_mode1.bin $(DISC_PATH)/ipx.mmd
+
+# The Sub CPU image for mode1_load_sub, which copies it to Program RAM 0x6000:
+# the SP, padded so that the SPX after it lands at 0x10000, where it is linked
+# to run and where the SP jumps.
+$(BUILD_PATH)/sp_mode1.bin: $(BUILD_PATH)/sp.bin $(DISC_PATH)/spx.smd
+	@[ $$(wc -c < $<) -le $$((0x10000 - 0x6000)) ] || \
+	  { echo "sp.bin runs into the SPX at 0x10000" >&2; exit 1; }
+	@cp $< $@
+	@truncate -s $$((0x10000 - 0x6000)) $@
+	@cat $(DISC_PATH)/spx.smd >> $@

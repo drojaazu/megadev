@@ -20,6 +20,7 @@
   interrupts (INT2) have been enabled.
 */
 GLABEL sp_init
+#if TARGET != MEGACD_MODE1
   // it's important to drv_init/cdb_stat here even if bios already did it
   // otherwise there may be issues with CD audio track playback
   lea drv_init_tracklist, a0
@@ -28,6 +29,7 @@ GLABEL sp_init
 1:BIOS_CALL #BIOS_GET_STATUS
   andi.b   #0xF0, (BIOS_CD_STATUS).w
   bne      1b
+#endif
   GA_SUB_CLEAR_COMM_REGS
   // Put Word RAM into 2M mode and assert control of it
   andi.b   #~(GA_SUB_RETURN_2M_MASK | GA_SUB_WORDRAM_LAYOUT_MASK), GA_SUB_REG_MEMMODE
@@ -59,6 +61,14 @@ GLABEL sp_int2
   enabled.
 */
 GLABEL sp_main
+#if TARGET == MEGACD_MODE1
+  /*
+    Mode 1 build (make MODE1=1): there is no disc. The cartridge put the SPX
+    at 0x10000 along with this program (sp_mode1.bin in the makefile), and the
+    drive init in sp_init was skipped, as it would wait for a disc forever.
+  */
+  jbra 0x10000
+#else
   // First, we need to cache all the file metadata so we can just use filenames
   // when loading data instead of needing sector offsets
   // We place the load dir command in the access_op variable and wait for the
@@ -80,6 +90,7 @@ GLABEL sp_main
 spx_filename:
 .asciz "SPX.SMD;1"
 .align 2
+#endif
 
 
 // If something big blows up, we'll light up the LEDs to let us know there
