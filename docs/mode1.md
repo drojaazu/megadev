@@ -21,10 +21,13 @@ With a cartridge as the boot device, the Mega CD moves up by 0x400000 on the Mai
 Nothing on the Mega CD runs until the cartridge starts it. The Sub CPU BIOS is stored compressed inside the Boot ROM, and on a disc boot the Boot ROM unpacks it into Program RAM before releasing the Sub CPU. In Mode 1 the cartridge does this with `mode1_load_sub` (`main/mode1.h`, `main/mode1.s`):
 
 1. Hold the Sub CPU in reset and take its bus.
-2. Select Program RAM bank 0 in 2M mode, with write protection off.
+2. Turn write protection off and clear all four Program RAM banks, as the Boot ROM does, then select bank 0 in 2M mode.
 3. Find the Sub BIOS image in the Boot ROM and unpack it into Program RAM. Its location differs between Boot ROM versions, so it is found by searching the Boot ROM's loader code rather than by address.
 4. Copy the Sub CPU program (SP) to Program RAM `0x6000`, where the Sub BIOS expects it.
 5. Write protect the Sub BIOS, release reset, release the bus, and clear the comm registers.
+6. Wait for the Sub BIOS to enable INT2, which the Main CPU sees as the IEN2 bit of `GA_MAIN_REG_INT2`. Every Sub BIOS does this early in its startup, once its self-check has passed.
+
+The clear in step 2 is not optional. At startup the Sub BIOS checksums Program RAM from `0x200` up to a fixed end, and in the Japanese 1.00 Boot ROMs and the LaserActive 1.0x Boot ROMs the unpacked image ends short of that range. On a real console Program RAM holds a power-on pattern, not zeros, so without the clear the checksum fails and the Sub BIOS restarts forever, with interrupts off and the comm registers cleared on every pass. Emulators that start with zeroed RAM do not show this.
 
 The SP is the same kind of program a disc carries: a header and the `sp_init`, `sp_main`, `sp_int2` and `sp_user` entry points (`sub/sp_header.s`). The example builds it with the usual `sp.bin` rule and embeds it in the cartridge with the `FILE` macro. It may be up to `MODE1_SP_MAX_SIZE` bytes.
 
@@ -70,4 +73,6 @@ The `mode1` example does all of this: on command from the Main CPU its SP initia
 
 An emulator attaches the Mega CD to a cartridge when the cartridge header's device support field contains `C`. `md_header.s` writes `JC` there when `TARGET` is `MEGACD_MODE1`. The emulator needs a Mega CD Boot ROM; BlastEm reads it from `cdbios.bin` next to its executable. A disc goes in as BlastEm's lock-on media: `blastem -o project.iso project.cart`. MAME's Mega CD systems have no cartridge slot and cannot run Mode 1.
 
-The `mode1` example runs in BlastEm, with its disc attached, with every Mega CD, Wondermega, CDX and LaserActive Boot ROM version tested (22, Japanese and US), except the Mega-LD 1.05 Boot ROM: with it, the Sub CPU program does not start. Real hardware is untested.
+The `mode1` example runs in BlastEm, with its disc attached, with every Mega CD, Wondermega, CDX and LaserActive Boot ROM version tested (28, Japanese, US and European), except the Mega-LD 1.05 Boot ROM: with it, the Sub BIOS does not start and `mode1_load_sub` returns `MODE1_ERR_SUB_TIMEOUT`.
+
+On hardware it runs on a Japanese Mega CD (Boot ROM 1.00, December 1991) with a Mega Drive and a Mega EverDrive X7: the Sub CPU starts, answers the Main CPU and counts INT2, and with no disc in the drive the disc step times out as designed. The disc loads have not been tested on hardware.
