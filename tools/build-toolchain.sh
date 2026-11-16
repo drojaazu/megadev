@@ -12,6 +12,8 @@
 #           WORK/dist. Default a temporary directory, removed afterward. Needs
 #           about 4 gigabytes.
 #   JOBS    environment: parallel jobs, default the number of CPUs
+#   GNU_MIRROR  environment: where the GNU releases are fetched from, default
+#           https://ftp.gnu.org/gnu (the checksums below are checked either way)
 #
 # Needs a C++ compiler, make, curl, git, xz, and the GMP, MPFR and MPC
 # development headers.
@@ -24,7 +26,7 @@ BINUTILS=binutils-2.46.1
 BINUTILS_SHA512=a5c65e56e400ed3fb8906a995dbb93eb5bea54b16344244653d7f44ef29ceb60270da263b19d25302c37759784e14fcb4b9421b29e0e2c7f450bd99f6bb4595c
 GCC=gcc-16.2.0
 GCC_SHA512=c51c30ca7422d0cbecf504b2e0f33c3aca31e0f90a76b65217f465163fa6fa17b3f5de39e145c47e5bab90ac0ce7fff3b03c8d553ae36e01faaea5a50f8648d1
-GNU_MIRROR=https://ftp.gnu.org/gnu
+GNU_MIRROR=${GNU_MIRROR:-https://ftp.gnu.org/gnu}
 TARGET=m68k-elf
 
 # Bump when anything above or in tools/patches changes. Shown by gcc --version.
@@ -72,7 +74,7 @@ cd "$WORK/build-binutils"
   --disable-werror \
   MAKEINFO=true
 make -j"$JOBS"
-make install
+make install-strip
 
 mkdir "$WORK/build-gcc"
 cd "$WORK/build-gcc"
@@ -94,6 +96,6 @@ cd "$WORK/build-gcc"
   --disable-bootstrap \
   MAKEINFO=true
 make -j"$JOBS" all-gcc
-make install-gcc
+make install-strip-gcc
 
 "$PREFIX/bin/$TARGET-gcc" --version | head -1
