@@ -65,12 +65,19 @@ ASSERT_C := $(wildcard check/asserts/*.c)
 ASSERT_S := $(wildcard check/asserts/*.s)
 ASSERT_BITS := check/asserts/bitfields.c
 
+# Alignment gate (check/align): units of code that every m68k-linux GCC
+# compiles into misaligned word and long accesses (KB-68), the optimization
+# levels they are compiled at, and the scanner fixture that must fail.
+ALIGN_C := $(wildcard check/align/*.c)
+ALIGN_SELFTEST := check/align/selftest.s
+ALIGN_LEVELS := -O0 -O1 -O2 -Os
+
 # Host compiler for the runtime library test; the runtime sources are plain C.
 HOST_CC ?= cc
 
-.PHONY: check check-projects check-headers check-asm check-link check-stack check-init check-sections check-resident check-init check-odr check-incremental check-inline check-asserts check-host docs clean $(PROJECTS)
+.PHONY: check check-projects check-headers check-asm check-link check-stack check-init check-sections check-resident check-init check-odr check-incremental check-inline check-asserts check-align check-host docs clean $(PROJECTS)
 
-check: check-projects check-headers check-asm check-link check-stack check-init check-sections check-resident check-odr check-incremental check-inline check-asserts check-host
+check: check-projects check-headers check-asm check-link check-stack check-init check-sections check-resident check-odr check-incremental check-inline check-asserts check-align check-host
 	@printf '\ncheck: all passed\n'
 
 # ---------------------------------------------------------------------------
@@ -467,7 +474,42 @@ check-asserts:
 	[ $$fail = 0 ] && printf '== asserts: %s C, %s assembly and %s bitfield assertions hold\n' "$$n" "$$m" "$$b" || exit 1
 
 # ---------------------------------------------------------------------------
-# Loop 9: the freestanding C library subset computes the right answers. The
+# Loop 9: the compiler never relies on misaligned word or long access, which
+# is an address error on a 68000 and goes unnoticed in emulators that ignore
+# alignment. check/align holds code that every m68k-linux GCC compiles into
+# such accesses (KB-68); each unit is compiled at every level in
+# ALIGN_LEVELS and its disassembly scanned by check/align/scan.awk. The
+# scanner first proves it can fail: it must report exactly the lines of
+# check/align/selftest.s marked "bad", all in align_selftest_bad.
+# ---------------------------------------------------------------------------
+check-align:
+	@mkdir -p $(CHECK_DIR)
+	@$(CC) $(CHECK_FLAGS) -DTARGET=MEGACD -x assembler-with-cpp -c $(ALIGN_SELFTEST) -o $(CHECK_DIR)/align.o
+	@want=$$(grep -c '| bad' $(ALIGN_SELFTEST)); \
+	$(M68K_PREFIX)objdump -d $(CHECK_DIR)/align.o | awk -f check/align/scan.awk > $(CHECK_DIR)/align.txt; \
+	got=$$(grep -c '^align_selftest_bad ' $(CHECK_DIR)/align.txt); all=$$(grep -c . $(CHECK_DIR)/align.txt); \
+	[ "$$got" = "$$want" ] && [ "$$all" = "$$want" ] \
+	  || { printf 'FAIL align: scanner self-test reports %s of %s bad lines (%s in all)\n' "$$got" "$$want" "$$all"; cat $(CHECK_DIR)/align.txt; exit 1; }
+	@fail=0; fns=0; \
+	for c in $(ALIGN_C); do \
+	  for o in $(ALIGN_LEVELS); do \
+	    $(CC) $(CHECK_FLAGS) -DTARGET=MEGACD $$o -c "$$c" -o $(CHECK_DIR)/align.o 2> $(CHECK_DIR)/align.err \
+	      || { printf 'FAIL align %s %s\n' "$$c" "$$o"; cat $(CHECK_DIR)/align.err; fail=1; continue; }; \
+	    $(M68K_PREFIX)objdump -d $(CHECK_DIR)/align.o > $(CHECK_DIR)/align.dis; \
+	    [ "$$o" = "$(firstword $(ALIGN_LEVELS))" ] && fns=$$((fns + $$(grep -c '^[0-9a-f]* <' $(CHECK_DIR)/align.dis))); \
+	    awk -f check/align/scan.awk $(CHECK_DIR)/align.dis > $(CHECK_DIR)/align.txt; \
+	    if [ -s $(CHECK_DIR)/align.txt ]; then \
+	      printf 'FAIL align %s %s: word or long access not known to be even\n' "$$c" "$$o"; \
+	      sed 's/^/  /' $(CHECK_DIR)/align.txt; fail=1; \
+	    fi; \
+	  done; \
+	done; \
+	[ $$fail = 0 ] && printf '== align: %s functions in %s units at %s levels have no misaligned access\n' \
+	  "$$fns" "$$(echo $(ALIGN_C) | wc -w)" "$$(echo $(ALIGN_LEVELS) | wc -w)" || { \
+	  printf '   $(CC) targets %s; see docs/manual.md, "Why m68k-elf, and not your distribution'"'"'s m68k-linux-gnu"\n' "$$($(CC) -dumpmachine)"; exit 1; }
+
+# ---------------------------------------------------------------------------
+# Loop 10: the freestanding C library subset computes the right answers. The
 # runtime sources compile for the host, where check/host/libc_test.c runs
 # them against known results. The only loop in which code executes.
 # ---------------------------------------------------------------------------

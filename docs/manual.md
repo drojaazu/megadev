@@ -429,7 +429,8 @@ Run `make check` from the repository root before merging any branch. It must pas
 | 10 | `check-incremental` | Header dependency tracking works: touching `lib/main/vdp.h` recompiles and relinks `examples/gfx`, and a second build does nothing. |
 | 11 | `check-inline` | Every `static inline` function in every header compiles when used. |
 | 12 | `check-asserts` | The register addresses and bit positions in the hardware definitions match the hardware manuals, and the structures read by the hardware, the Boot ROM or the kit's assembly have the field offsets and bitfield positions that reader expects (`check/asserts`). |
-| 13 | `check-host` | The C library subset gives the right answers, compiled for and run on the host (`check/host/libc_test.c`). |
+| 13 | `check-align` | The compiler never relies on a misaligned word or long access, which is an address error on a 68000 that emulators ignoring alignment do not show. Code that every m68k-linux GCC compiles into such accesses (`check/align`) is compiled at `-O0`, `-O1`, `-O2` and `-Os`, and its disassembly may hold word or long accesses only at even stack offsets. The scanner first proves it reports every known-bad line of `check/align/selftest.s`. Fails with an m68k-linux compiler. |
+| 14 | `check-host` | The C library subset gives the right answers, compiled for and run on the host (`check/host/libc_test.c`). |
 
 `make clean` removes everything the gate produced.
 
