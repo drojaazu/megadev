@@ -3,8 +3,11 @@
 {
   "name": "megadev_project",
   "build": {
-    // Sets the run context to one level up instead of the .devcontainer folder.
-    "dockerfile": "Dockerfile"
+    "dockerfile": "Dockerfile",
+    // The Megadev branch the kit and its toolchain are built from.
+    "args": {
+      "MEGADEV_BRANCH": "master"
+    }
   },
   "customizations": {
     "vscode": {
@@ -16,7 +19,7 @@
         "editor.formatOnSave": true,
         "terminal.integrated.defaultProfile.linux": "bash",
         "C_Cpp.formatting": "clangFormat",
-        "C_Cpp.default.compilerPath": "/usr/bin/m68k-linux-gnu-gcc",
+        "C_Cpp.default.compilerPath": "/opt/megadev-toolchain/bin/m68k-elf-gcc",
         "C_Cpp.default.includePath": [
           "/opt/megadev/lib/**"
         ]

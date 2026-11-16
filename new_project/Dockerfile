@@ -1,3 +1,9 @@
+# Megadev dev container: the kit, cloned into MEGADEV_PATH, and the Megadev
+# toolchain, built from the same branch with tools/build-toolchain.sh (which
+# takes a while the first time). The toolchain's bin directory is on PATH, so
+# the kit's default M68K_PREFIX (m68k-elf-) finds it. .devcontainer.json passes
+# MEGADEV_BRANCH.
+
 ARG OS_VERSION=13
 ARG MEGADEV_REPO=https://github.com/drojaazu/megadev.git
 ARG MEGADEV_BRANCH=master
@@ -12,7 +18,6 @@ RUN \
 		libgmp10 \
 		libmpfr6 \
 		libmpc3 \
-		libnewlib-dev \
 		genisoimage \
 		xxd \
 		clang-format-19 \
@@ -66,8 +71,6 @@ USER megadev
 WORKDIR /home/megadev
 
 ENV PATH=${TOOLCHAIN_PATH}/bin:${PATH}
-ENV CC=${TOOLCHAIN_PATH}/bin/m68k-elf-gcc
-ENV M68K_PREFIX=m68k-elf-
 ENV MEGADEV_PATH=${MEGADEV_PATH}
 
 CMD ["bash"]

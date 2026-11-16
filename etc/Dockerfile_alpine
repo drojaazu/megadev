@@ -1,49 +1,61 @@
-FROM alpine:latest AS base
+# Megadev dev container on Alpine Linux, a smaller alternative to
+# new_project/Dockerfile: the kit, cloned into MEGADEV_PATH, and the Megadev
+# toolchain, built from the same branch with tools/build-toolchain.sh (which
+# takes a while the first time). The toolchain's bin directory is on PATH, so
+# the kit's default M68K_PREFIX (m68k-elf-) finds it.
+#
+# The Alpine release is pinned, since package names such as clangNN-extra-tools
+# change between releases.
+
+ARG ALPINE_VERSION=3.24
+ARG MEGADEV_REPO=https://github.com/drojaazu/megadev.git
+ARG MEGADEV_BRANCH=master
+ARG TOOLCHAIN_PATH=/opt/megadev-toolchain
+
+FROM alpine:${ALPINE_VERSION} AS base
 RUN \
 	apk add --no-cache \
-		alpine-sdk \
-		git \
-		openssh \
 		bash \
-		wget \
-		clang16-extra-tools \
+		git \
+		make \
+		openssh \
+		gmp \
+		mpfr4 \
+		mpc1 \
+		clang22-extra-tools \
 		xxd \
-		xz \
 		cdrkit
 
-FROM base AS build
+FROM base AS toolchain
 
-ARG RELEASE_BINUTILS=binutils-2.45
-ARG RELEASE_GCC=gcc-15.2.0
+ARG MEGADEV_REPO
+ARG MEGADEV_BRANCH
+ARG TOOLCHAIN_PATH
 
-WORKDIR /build
 RUN \
-	wget https://ftpmirror.gnu.org/gnu/binutils/${RELEASE_BINUTILS}.tar.xz && \
-	wget https://ftpmirror.gnu.org/gnu/gcc/${RELEASE_GCC}/${RELEASE_GCC}.tar.xz && \
-	tar -xf ${RELEASE_BINUTILS}.tar.xz && \
-	tar -xf ${RELEASE_GCC}.tar.xz && \
-	cd ${RELEASE_GCC} && \
-	./contrib/download_prerequisites
+	apk add --no-cache \
+		build-base \
+		curl \
+		xz \
+		gmp-dev \
+		mpfr-dev \
+		mpc1-dev \
+		&& \
+	git clone --depth 1 --branch ${MEGADEV_BRANCH} ${MEGADEV_REPO} /tmp/megadev && \
+	/tmp/megadev/tools/build-toolchain.sh ${TOOLCHAIN_PATH}
 
-WORKDIR /build/binutils
-RUN \
-	../${RELEASE_BINUTILS}/configure --prefix=/usr --program-prefix=m68k-linux-gnu- --target=m68k-elf --disable-nls --disable-multilib --enable-lto && \
-	make -j $(nproc --all) && \
-	make install
+FROM base AS dev_container
 
-WORKDIR /build/gcc
-RUN \
-	../${RELEASE_GCC}/configure --prefix=/usr --program-prefix=m68k-linux-gnu- --target=m68k-elf --with-arch=m68k --with-cpu=m68000 --enable-languages=c --disable-nls --disable-multilib --disable-libssp --enable-lto --without-headers && \
-	make -j $(nproc --all) && \
-	make install
-
-FROM build AS dev_container
-
+ARG MEGADEV_REPO
+ARG MEGADEV_BRANCH
+ARG TOOLCHAIN_PATH
 ARG MEGADEV_PATH=/opt/megadev
 
+COPY --from=toolchain ${TOOLCHAIN_PATH} ${TOOLCHAIN_PATH}
+
 RUN \
-	adduser -D megadev && \
-	git clone https://github.com/drojaazu/megadev.git ${MEGADEV_PATH} && \
+	adduser -D -s /bin/bash megadev && \
+	git clone --branch ${MEGADEV_BRANCH} ${MEGADEV_REPO} ${MEGADEV_PATH} && \
 	chown -R megadev:megadev ${MEGADEV_PATH} && \
 	printf "    __  __________________    ____  _______    __\n   /  |/  / ____/ ____/   |  / __ \\/ ____/ |  / /\n  / /|_/ / __/ / / __/ /| | / / / / __/  | | / / \n / /  / / /___/ /_/ / ___ |/ /_/ / /___  | |/ /  \n/_/  /_/_____/\\____/_/  |_/_____/_____/  |___/   \n    Sega Mega Drive/Mega CD development kit\n" > /etc/motd \
 		&& \
@@ -54,8 +66,7 @@ RUN \
 USER megadev
 WORKDIR /home/megadev
 
-ENV CC=/usr/bin/m68k-linux-gnu-gcc
-ENV M68K_PREFIX=m68k-linux-gnu-
+ENV PATH=${TOOLCHAIN_PATH}/bin:${PATH}
 ENV MEGADEV_PATH=${MEGADEV_PATH}
 
-CMD ["/bin/sh"]
+CMD ["bash"]
