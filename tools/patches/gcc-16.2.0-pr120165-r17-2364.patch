@@ -1,0 +1,104 @@
+From d9d70a5fbbe25ddbed66c05b9ec04fe97a23059f Mon Sep 17 00:00:00 2001
+From: "Vladimir N. Makarov" <vmakarov@redhat.com>
+Date: Mon, 13 Jul 2026 15:16:45 -0400
+Subject: [PATCH] [PR120165, LRA]: Prevent equivalence substitution resulting
+ in wrong reloads
+
+The PR is about wrong generation of insn involving memory-memory move
+with sp predecrement, another address post-increment, and input and
+output memory reloads with the address reg eliminated to sp.  As
+elimination offset is updated in LRA once per insn, the output reload
+insn uses the wrong offset.  As implementation of the separate offset
+updates requires a lot of changes in LRA code and using equivalence (a
+memory) actually is not profitable, we just prevent equivalence
+substitution in such cases.  There is no test case for the patch as
+m68k port is in transition to LRA and it requires -mlra option which
+will be probably removed.
+
+gcc/ChangeLog:
+
+	PR target/120165
+	* lra-constraints.cc (virtual_reg_p, contains_virtual_reg_p): New.
+	(reg_has_incdec_p): Ditto.
+	(lra_constraints): Use reg_has_incdec_p and contains_virtual_reg_p
+	to switch off the equiv.
+---
+ gcc/lra-constraints.cc | 58 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 57 insertions(+), 1 deletion(-)
+
+diff --git a/gcc/lra-constraints.cc b/gcc/lra-constraints.cc
+index 128857f86f61e..2d95758a5b73b 100644
+--- a/gcc/lra-constraints.cc
++++ b/gcc/lra-constraints.cc
+@@ -5885,6 +5885,54 @@ combine_reload_insn (rtx_insn *from, rtx_insn *to)
+   return false;
+ }
+ 
++static bool
++virtual_reg_p (const_rtx reg)
++{
++  return (VIRTUAL_REGISTER_P (reg)
++	  || (REGNO(reg) == ARG_POINTER_REGNUM
++	      && !HARD_FRAME_POINTER_IS_ARG_POINTER)
++	  || (REGNO(reg) == FRAME_POINTER_REGNUM
++	      && !HARD_FRAME_POINTER_IS_FRAME_POINTER));
++}
++
++/* Return true if X contains a virtual register.  */
++static bool
++contains_virtual_reg_p (rtx x)
++{
++  subrtx_iterator::array_type array;
++  FOR_EACH_SUBRTX (iter, array, x, NONCONST)
++    if (REG_P (*iter) && virtual_reg_p (*iter))
++      return true;
++  return false;
++}
++
++/* Return true if pseudo REGNO is an operand of an incdec rtx in any of its
++   insns.  */
++static bool
++reg_has_incdec_p (int regno)
++{
++  unsigned int uid;
++  bitmap_iterator bi;
++  EXECUTE_IF_SET_IN_BITMAP (&lra_reg_info[regno].insn_bitmap, 0, uid, bi)
++    {
++      rtx_insn *insn = lra_insn_recog_data[uid]->insn;
++      if (!NONDEBUG_INSN_P (insn))
++	continue;
++      subrtx_iterator::array_type array;
++      FOR_EACH_SUBRTX (iter, array, PATTERN (insn), NONCONST)
++	{
++	  const_rtx x = *iter;
++	  if ((GET_CODE (x) == PRE_INC || GET_CODE (x) == PRE_DEC
++	       || GET_CODE (x) == POST_INC || GET_CODE (x) == POST_DEC
++	       || GET_CODE (x) == PRE_MODIFY || GET_CODE (x) == POST_MODIFY)
++	      && REG_P (XEXP (x, 0))
++	      && REGNO (XEXP (x, 0)) == (unsigned int) regno)
++	    return true;
++	}
++    }
++  return false;
++}
++
+ /* Entry function of LRA constraint pass.  Return true if the
+    constraint pass did change the code.	 */
+ bool
+@@ -5989,7 +6037,15 @@ lra_constraints (bool first_p)
+ 		    && ((CONST_POOL_OK_P (PSEUDO_REGNO_MODE (i), x)
+ 			 && (targetm.preferred_reload_class
+ 			     (x, lra_get_allocno_class (i)) == NO_REGS))
+-			|| contains_symbol_ref_p (x))))
++			|| contains_symbol_ref_p (x)))
++		/* PR120165: An inc/dec changes the reg value, so we cannot
++		   substitute the equiv which might contain virtual regs
++		   requiring elimination.  An insn with inc/dec can also change
++		   the value of another reg (e.g. sp) against which we
++		   eliminate.  As we update elimination once per insn and an
++		   inc/dec operand might require input and output reloads, we
++		   can generate a wrong offset for a reload insn.  */
++		|| (contains_virtual_reg_p (x) && reg_has_incdec_p (i)))
+ 	      ira_reg_equiv[i].defined_p
+ 		= ira_reg_equiv[i].caller_save_p = false;
+ 	    if (contains_reg_p (x, false, true))
