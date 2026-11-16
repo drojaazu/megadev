@@ -56,7 +56,7 @@ Then add the install location's `bin` directory to your `PATH`. Megadev's defaul
 
 ### Why m68k-elf, and not your distribution's m68k-linux-gnu
 
-The 68000 can only read or write a word (16 bits) or a long (32 bits) at an even address. A word or long access at an odd address stops the CPU with an **address error**. The 68020 and later CPUs allow such accesses, and emulators that do not check alignment run them without complaint, so the bug is only seen on a real console.
+The 68000 can only read or write a word (16 bits) or a long (32 bits) at an even address. A word or long access at an odd address stops the CPU with an **address error**. The 68020 and later CPUs allow such accesses. MAME and BlastEm raise the address error as a 68000 does, but not every emulator checks alignment, and one that does not runs such code without complaint.
 
 GCC's m68k-linux target, which is what distributions package as `gcc-m68k-linux-gnu` or `m68k-linux-gnu-gcc`, is meant for Linux on the 68020 and later. Its configuration tells the compiler that misaligned accesses are allowed, and no option changes that: `-m68000` limits the instructions it uses but not this assumption, and `-mstrict-align` is accepted and ignored. Such a compiler copies and initializes byte data with word and long instructions whenever that is shorter, whether or not the address is even. Every m68k-linux GCC we tried does this (versions 13 to 16, at every optimization level). GCC's maintainers consider this correct for that target and point 68000 users to m68k-elf ([GCC bug 98627](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=98627)).
 
@@ -440,7 +440,7 @@ Run `make check` from the repository root before merging any branch. It must pas
 | 10 | `check-incremental` | Header dependency tracking works: touching `lib/main/vdp.h` recompiles and relinks `examples/gfx`, and a second build does nothing. |
 | 11 | `check-inline` | Every `static inline` function in every header compiles when used. |
 | 12 | `check-asserts` | The register addresses and bit positions in the hardware definitions match the hardware manuals, and the structures read by the hardware, the Boot ROM or the kit's assembly have the field offsets and bitfield positions that reader expects (`check/asserts`). |
-| 13 | `check-align` | The compiler never relies on a misaligned word or long access, which is an address error on a 68000 that emulators ignoring alignment do not show. Code that every m68k-linux GCC compiles into such accesses (`check/align`) is compiled at `-O0`, `-O1`, `-O2` and `-Os`, and its disassembly may hold word or long accesses only at even stack offsets. The scanner first proves it reports every known-bad line of `check/align/selftest.s`. Fails with an m68k-linux compiler. |
+| 13 | `check-align` | The compiler never relies on a misaligned word or long access, which is an address error on a 68000. Code that every m68k-linux GCC compiles into such accesses (`check/align`) is compiled at `-O0`, `-O1`, `-O2` and `-Os`, and its disassembly may hold word or long accesses only at even stack offsets. The scanner first proves it reports every known-bad line of `check/align/selftest.s`. Fails with an m68k-linux compiler. |
 | 14 | `check-host` | The C library subset gives the right answers, compiled for and run on the host (`check/host/libc_test.c`). |
 
 `make clean` removes everything the gate produced.

@@ -34,10 +34,11 @@ endif
 define MEGADEV_LINUX_GCC_MESSAGE
 $(CC) targets $(MEGADEV_CC_MACHINE).
   Linux m68k compilers assume the CPU allows word and long accesses at odd
-  addresses. The 68000 does not: such code runs in emulators but stops with
-  an address error on a real console. Megadev supports the Megadev toolchain
-  (tools/build-toolchain.sh). See docs/manual.md, "Why m68k-elf, and not your
-  distribution's m68k-linux-gnu". Set MEGADEV_ALLOW_LINUX_GCC=1 to hide this.
+  addresses. The 68000 does not: such code stops with an address error on a
+  real console, though emulators that do not check alignment run it. Megadev
+  supports the Megadev toolchain (tools/build-toolchain.sh). See
+  docs/manual.md, "Why m68k-elf, and not your distribution's m68k-linux-gnu".
+  Set MEGADEV_ALLOW_LINUX_GCC=1 to hide this.
 endef
 
 ifneq ($(findstring linux,$(MEGADEV_CC_MACHINE)),)

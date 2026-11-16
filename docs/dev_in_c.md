@@ -92,7 +92,7 @@ Instead, use the sized types (`char`, `short`, `long`) or better yet the `intN_t
 
 ## Alignment
 
-The 68000 reads and writes words (16 bits) and longs (32 bits) only at even addresses. A word or long access at an odd address stops the CPU with an address error, which the crash handler shows as `ADDRESS ERROR` (see `crash_handler.md`). Emulators that do not check alignment run such code without complaint, so test on hardware.
+The 68000 reads and writes words (16 bits) and longs (32 bits) only at even addresses. A word or long access at an odd address stops the CPU with an address error, which the crash handler shows as `ADDRESS ERROR` (see `crash_handler.md`). MAME and BlastEm raise the error too, but not every emulator checks alignment, so a program that runs in one emulator may still crash on hardware.
 
 The compiler takes care of most of this. `short`, `long`, pointers, and structs and arrays containing them are placed at even addresses. Data the compiler cannot prove to be even, such as `char` arrays, structs made only of `char`, fields of packed structs, and copies or clears of a few bytes, is accessed a byte at a time. This holds for the Megadev toolchain, but not for an m68k-linux GCC, which assumes misaligned access is allowed whatever the options; see "Why m68k-elf, and not your distribution's m68k-linux-gnu" in `manual.md`.
 

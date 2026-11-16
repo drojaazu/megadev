@@ -409,7 +409,7 @@ For `CDROM_LOAD_CDC_DMA`, `CDROM_LOAD_PRG_DMA` and `CDROM_LOAD_PCM_DMA`, set `fi
 
 Megadev 1.x defaulted to `M68K_PREFIX=m68k-linux-gnu-`, a distribution's m68k-linux compiler. Megadev 2.0 is built and tested with the Megadev toolchain, an m68k-elf GCC built for the 68000 by `tools/build-toolchain.sh`, and `M68K_PREFIX` defaults to `m68k-elf-`. Build the toolchain and put its `bin` directory on your `PATH`, or use the dev container, which builds it; then remove any `M68K_PREFIX` setting from your environment or makefile.
 
-The reason is a crash on real hardware: every m68k-linux GCC assumes the CPU allows word and long accesses at odd addresses, which on a 68000 is an address error, and no option turns that off. A program that runs in an emulator can crash on a console. `manual.md` explains this under "Why m68k-elf, and not your distribution's m68k-linux-gnu". A build with an m68k-linux compiler still works, with a warning; `MEGADEV_ALLOW_LINUX_GCC=1` hides it.
+The reason is a crash on real hardware: every m68k-linux GCC assumes the CPU allows word and long accesses at odd addresses, which on a 68000 is an address error, and no option turns that off. A program can run in an emulator that does not check alignment and crash on a console. `manual.md` explains this under "Why m68k-elf, and not your distribution's m68k-linux-gnu". A build with an m68k-linux compiler still works, with a warning; `MEGADEV_ALLOW_LINUX_GCC=1` hides it.
 
 The two targets differ in how functions return values, which matters only to your own assembly that C calls or that calls C:
 
