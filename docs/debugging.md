@@ -94,7 +94,15 @@ Memory can be read and written while the program runs; register access, stepping
 
 # GDB
 
-GDB for the 68000 is not in most distributions; `work/trace/build-m68k-gdb.sh` in the kit's maintainer notes builds GDB 16.3 as `m68k-elf-gdb` next to the toolchain. Any GDB with the m68k target works, including a `gdb-multiarch` where the distribution has one.
+GDB for the 68000 is not in most distributions, and the Megadev toolchain does not include it. Any GDB with the m68k target works, including a `gdb-multiarch` where the distribution has one. To build `m68k-elf-gdb` next to the toolchain, from the [GDB sources](https://www.gnu.org/software/gdb/) (16.3 is known to work), with the same packages the toolchain needs:
+
+    $ mkdir build && cd build
+    $ CFLAGS='-O2 -std=gnu17' ../gdb-16.3/configure --target=m68k-elf \
+        --prefix=/opt/megadev-toolchain --disable-tui --without-python \
+        --disable-sim --disable-gdbserver --disable-nls MAKEINFO=true
+    $ make all-gdb MAKEINFO=true && make install-gdb MAKEINFO=true
+
+`-std=gnu17` avoids a build failure in the readline copy bundled with GDB when the host compiler defaults to C23, as GCC 15 and later do.
 
 Start the server, then connect GDB to it with the ELF of the running build:
 

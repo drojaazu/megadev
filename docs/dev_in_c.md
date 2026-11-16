@@ -90,6 +90,24 @@ We recommend *not* using the `int` type for integers. With gcc-m68k, int is four
 
 Instead, use the sized types (`char`, `short`, `long`) or better yet the `intN_t` typedefs from `types.h` (`int8_t`/`uint8_t`, `int16_t`/`uint16_t`, `int32_t`/`uint32_t`). 
 
+## Alignment
+
+The 68000 reads and writes words (16 bits) and longs (32 bits) only at even addresses. A word or long access at an odd address stops the CPU with an address error, which the crash handler shows as `ADDRESS ERROR` (see `crash_handler.md`). Emulators that do not check alignment run such code without complaint, so test on hardware.
+
+The compiler takes care of most of this. `short`, `long`, pointers, and structs and arrays containing them are placed at even addresses. Data the compiler cannot prove to be even, such as `char` arrays, structs made only of `char`, fields of packed structs, and copies or clears of a few bytes, is accessed a byte at a time. This holds for the Megadev toolchain, but not for an m68k-linux GCC, which assumes misaligned access is allowed whatever the options; see "Why m68k-elf, and not your distribution's m68k-linux-gnu" in `manual.md`.
+
+What the compiler cannot check is a cast. Converting a byte pointer into a word or long pointer promises that it is even, and the compiler trusts it:
+
+```c
+uint8_t const * p = &level_data[offset];
+uint16_t risky = *(uint16_t const *) p; // address error if offset is odd
+uint16_t safe = (p[0] << 8) | p[1];     // works at any address
+```
+
+Data that the hardware reads a word at a time, such as tiles, palettes and anything sent by DMA, must start at an even address. Files included with the `FILE` and `FILE_NOSIZE` macros, and labels made with `GLABEL` (all in `macro.s`), are aligned to 2 unless told otherwise; give byte arrays declared in C `alignas(2)`.
+
+`__attribute__((packed))` removes the padding in a struct, so its `short` and `long` fields may be at odd offsets, and the compiler reads and writes them a byte at a time, which is slower. Do not take the address of such a field as a `short *` or `long *`; GCC warns about it (`-Waddress-of-packed-member`). Use packed structs only to match a format defined elsewhere.
+
 ## Fractional Types
 
 The M68000 CPU does not have a floating point unit and use of the `float` type will only work using software emulation that is not included with Megadev.

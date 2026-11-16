@@ -93,6 +93,17 @@ replacement.
 
 ### Changed
 
+- **Compiler: the Megadev toolchain.** Megadev is built and tested with
+  binutils 2.46.1 and GCC 16.2.0 for m68k-elf, built for the 68000 by
+  `tools/build-toolchain.sh`, and `M68K_PREFIX` defaults to `m68k-elf-`
+  (was `m68k-linux-gnu-`). Every m68k-linux GCC assumes word and long
+  accesses at odd addresses are allowed, which crashes a 68000 with an
+  address error, and no option changes that; see "Why m68k-elf, and not your
+  distribution's m68k-linux-gnu" in `docs/manual.md`. A build with an
+  m68k-linux compiler warns once (`MEGADEV_ALLOW_LINUX_GCC=1` hides it).
+  m68k-elf returns pointers in D0, not A0 (`docs/migration-2.0.md`). The dev
+  containers (Debian and Alpine) build the toolchain, and `make check` has a
+  step proving the compiler makes no misaligned accesses (`check-align`).
 - Reference documentation (`make docs`): every header member is documented
   and Doxygen reports no warnings, down from about 1200. Assembly sources are
   no longer Doxygen input (Doxygen cannot parse them); their routines are

@@ -331,7 +331,7 @@ Megadev now provides a freestanding subset of the C standard library (`string.h`
 
 `strcmpt`, the comparison with a caller-supplied terminator, keeps its name.
 
-`types.h` now defines `size_t`, `ptrdiff_t` and the `intN_t` types from the compiler's own type macros. On the 68000 they are the same sizes as before; `int32_t` is `int` rather than `long`, which only matters to code that printed or cast them by name.
+`types.h` now defines `size_t`, `ptrdiff_t` and the `intN_t` types from the compiler's own type macros. With the Megadev toolchain they are the same types as in 1.x (`size_t` is `unsigned long`, `int32_t` is `long`). With an m68k-linux compiler, `size_t` is `unsigned int` and `int32_t` is `int`, the same sizes, which only matters to code that printed or cast them by name.
 
 ## C23
 
@@ -404,6 +404,21 @@ In `sub/memmap.def.h`, each `EXVEC_*` now names the address operand of its jump 
 For `CDROM_LOAD_CDC_DMA`, `CDROM_LOAD_PRG_DMA` and `CDROM_LOAD_PCM_DMA`, set `filebuff` to the offset within the destination memory, a multiple of 8, instead of writing `GA_SUB_REG_DMAADDR`. The loop writes the register itself, per sector, just before each CDC read: selecting the destination resets the register, and the 1.00 series Sub BIOS reselects it when a read starts. In 1.x the address written beforehand was lost and every DMA load went to offset 0. `load_file_prg_dma` takes the destination in a1, like `load_file_sub`.
 
 # Build and link
+
+## The Megadev toolchain replaces the distribution compiler
+
+Megadev 1.x defaulted to `M68K_PREFIX=m68k-linux-gnu-`, a distribution's m68k-linux compiler. Megadev 2.0 is built and tested with the Megadev toolchain, an m68k-elf GCC built for the 68000 by `tools/build-toolchain.sh`, and `M68K_PREFIX` defaults to `m68k-elf-`. Build the toolchain and put its `bin` directory on your `PATH`, or use the dev container, which builds it; then remove any `M68K_PREFIX` setting from your environment or makefile.
+
+The reason is a crash on real hardware: every m68k-linux GCC assumes the CPU allows word and long accesses at odd addresses, which on a 68000 is an address error, and no option turns that off. A program that runs in an emulator can crash on a console. `manual.md` explains this under "Why m68k-elf, and not your distribution's m68k-linux-gnu". A build with an m68k-linux compiler still works, with a warning; `MEGADEV_ALLOW_LINUX_GCC=1` hides it.
+
+The two targets differ in how functions return values, which matters only to your own assembly that C calls or that calls C:
+
+| | m68k-linux-gnu (1.x default) | m68k-elf (2.0) |
+|---|---|---|
+| Function returning a pointer | A0 | D0 |
+| Address for a returned struct, passed by the caller | A1 | A0 |
+
+An assembly function that returns a pointer must return it in D0, or in both D0 and A0, as the kit's `memcpy`, `memmove` and `memset` do so they work with either compiler. Integers are returned in D0 by both.
 
 ## Code the 68000 cannot run fails to link
 

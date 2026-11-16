@@ -22,63 +22,74 @@ You should have a basic technical familiarity with the hardware before even begi
 
 ## Build Environment
 
-In order to compile code for the Mega Drive/CD, you will need a build environment that targets the M68000 CPU architecture. Megadev is designed to be used with GNU [binutils](https://www.gnu.org/software/binutils/) and [gcc](https://www.gnu.org/software/gcc/) compiled with the m68k-elf target. **GCC 14 or later is required**: the kit is compiled as C23 (`-std=gnu23`). In addition, you will need `mkisofs` to generate the .iso disc image for Mega CD games.
+In order to compile code for the Mega Drive/CD, you will need a build environment that targets the M68000 CPU architecture. Megadev is built and tested with the **Megadev toolchain**: GNU [binutils](https://www.gnu.org/software/binutils/) 2.46.1 and [GCC](https://www.gnu.org/software/gcc/) 16.2.0 for the bare-metal m68k-elf target, built for the 68000 by a script in the kit. In addition, you will need `mkisofs` (or `genisoimage`) to generate the .iso disc image for Mega CD games.
+
+Your distribution's m68k compiler is most likely not suitable. See [Why m68k-elf, and not your distribution's m68k-linux-gnu](#why-m68k-elf-and-not-your-distributions-m68k-linux-gnu) below.
 
 ### Docker / Dev Container
 
 The simplest way to set up such a build environment is to use a [dev container](https://containers.dev/). This is the modern, preferred method for development as it should work on any host platform (Windows, Linux, MacOS). (You will need Docker installed on your workstation in order to use this method.)
 
-The `new_project` directory includes `Dockerfile` and `.devcontainer.json` files to automatically spin up a development environment. Simply copy this directory into your personal workspace and open it in [VS Code](https://code.visualstudio.com/) or another IDE that supports dev containers and it should be automatically re-open as a container. The latest Megadev will be pulled from github, necessary support tools will be installed, and the Megadev toolchain will be built, which can take a while the first time. You are then ready to begin development!
+The `new_project` directory includes `Dockerfile` and `.devcontainer.json` files to automatically spin up a development environment. Simply copy this directory into your personal workspace and open it in [VS Code](https://code.visualstudio.com/) or another IDE that supports dev containers and it should be automatically re-open as a container. The latest Megadev will be pulled from github, necessary support tools will be installed, and the Megadev toolchain will be built, which takes several minutes the first time. You are then ready to begin development!
+
+The default Dockerfile uses the Debian "slim" distro. Alternatively, there is an Alpine Linux based `Dockerfile_alpine` within the `etc` subdirectory, which also builds the Megadev toolchain.
 
 ### Megadev Toolchain
 
-Megadev is tested with one specific toolchain: binutils and GCC for the m68k-elf target, defaulting to the 68000, with any fixes the compiler needs applied. The dev container uses it. To build it yourself, run:
+To build the toolchain yourself, run the script from the Megadev directory:
 
 ```
 tools/build-toolchain.sh /path/to/install
 ```
 
-The script lists what it needs in its header. Add the install location's `bin` directory to your `PATH` and set `M68K_PREFIX` to `m68k-elf-`.
+Without an argument it installs to `/opt/megadev-toolchain`, which must be writable. It downloads the binutils and GCC sources, checks them against pinned checksums, applies the patches in `tools/patches`, and builds the assembler, linker and C and C++ compilers. It needs about 4 GB of temporary space and installs about 90 MB; the build takes a few minutes on a fast machine. It needs a C++ compiler, `make`, `curl`, `git`, `xz`, and the GMP, MPFR and MPC development files:
 
-Other toolchains, such as the distro packages below, may work but are not tested. The two targets are not interchangeable: functions compiled for m68k-elf return pointers in D0, while those compiled for m68k-linux-gnu return them in A0, which matters to any assembly that returns a pointer to C.
+| Distribution | Packages |
+|---|---|
+| Debian, Ubuntu | `build-essential curl git xz-utils libgmp-dev libmpfr-dev libmpc-dev genisoimage` |
+| Fedora | `gcc-c++ make curl git xz gmp-devel mpfr-devel libmpc-devel genisoimage` |
+| Arch Linux | `base-devel curl git xz gmp mpfr libmpc cdrtools` |
 
-The default Dockerfile uses the Debian "slim" distro. Alternatively, there is a smaller Alpine Linux based `Dockerfile_alpine` within the `etc` subdirectory. If you want a super lean container, this is a good option. However, precompiled M68k-targeted GNU build tools are not available within the repo and must be built from scratch. This is done automatically when building the container the first time, but keep in mind that it does take a significant amount of time to compile.
+Then add the install location's `bin` directory to your `PATH`. Megadev's default `M68K_PREFIX` is `m68k-elf-`, so nothing else needs to be set. To use a compiler that is not on your `PATH`, set `M68K_PREFIX` to its full prefix, such as `/opt/megadev-toolchain/bin/m68k-elf-`.
 
-### Manual Installation - From Distro Repo
+`m68k-elf-gcc --version` names the toolchain revision, for example `m68k-elf-gcc (Megadev toolchain 1) 16.2.0`. The revision changes whenever the versions or patches change.
 
-#### Arch Linux
+### Why m68k-elf, and not your distribution's m68k-linux-gnu
 
-Install the following packages from the AUR:
+The 68000 can only read or write a word (16 bits) or a long (32 bits) at an even address. A word or long access at an odd address stops the CPU with an **address error**. The 68020 and later CPUs allow such accesses, and emulators that do not check alignment run them without complaint, so the bug is only seen on a real console.
 
-https://aur.archlinux.org/packages/m68k-elf-binutils/
+GCC's m68k-linux target, which is what distributions package as `gcc-m68k-linux-gnu` or `m68k-linux-gnu-gcc`, is meant for Linux on the 68020 and later. Its configuration tells the compiler that misaligned accesses are allowed, and no option changes that: `-m68000` limits the instructions it uses but not this assumption, and `-mstrict-align` is accepted and ignored. Such a compiler copies and initializes byte data with word and long instructions whenever that is shorter, whether or not the address is even. Every m68k-linux GCC we tried does this (versions 13 to 16, at every optimization level). GCC's maintainers consider this correct for that target and point 68000 users to m68k-elf ([GCC bug 98627](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=98627)).
 
-https://aur.archlinux.org/packages/m68k-elf-gcc/
+For example, this ordinary function:
 
-And install the following package from the standard repository:
+```c
+void enter_initials(void)
+{
+	char initials[3] = "AB";
+	show_name(initials);
+}
+```
 
-`cdrtools`
+compiles with an m68k-linux GCC to a single word store of both letters at an odd stack address, which crashes a 68000:
 
-#### Debian
+```
+	move.w #16706,-3(%fp)
+```
 
-Install the following packages from the standard repository:
+The Megadev toolchain stores them a byte at a time:
 
-`binutils-m68k-linux-gnu`
+```
+	move.b #65,-3(%fp)
+	move.b #66,-2(%fp)
+```
 
-`gcc-m68k-linux-gnu`
+Initialized local arrays and structs of odd size, copies of small structs of bytes, `memcpy` and `memset` of a few bytes, and fields of packed structs are all affected. The kit's own code is not, but your code may be, and it cannot be found by looking at the program afterward.
 
-`genisoimage`
+The m68k-elf target is GCC's bare-metal target for the whole 68k family, and when it is built for the 68000 it never assumes that data is better aligned than the C types guarantee. `make check` proves this for the Megadev toolchain (see `check-align` under [`make check`](#make-check)).
 
-### Manual Installation - From Source Code
+If the compiler you build with targets Linux, Megadev prints a warning once per build, naming this section, and goes on. Set `MEGADEV_ALLOW_LINUX_GCC=1` to hide it. Other m68k-elf builds, such as the AUR's `m68k-elf-gcc` package or a toolchain built by another script, are not tested; `make check-align` in the Megadev directory shows whether a compiler avoids misaligned accesses.
 
-If your distro does not maintain pre-built packages for the GNU build tools with the M68000 target, you can build them from scratch. The source for binutils and gcc can be found here:
-
-https://www.gnu.org/software/binutils/
-
-https://www.gnu.org/software/gcc/
-
-You *must* add `--target=m68k-elf` as an option when you run the configure script in order target the M68000 architecture! You will also need to modify the `M68K_PREFIX` variable in the Megadev project makefile to indicate the prefix used for the tools. By default, this should be `m68k-elf-`.
-
-You may wish to use a helper script [like the one found here](https://github.com/kentosama/m68k-elf-gcc).
+The two targets also differ in their calling conventions. A function compiled for m68k-elf returns a pointer in D0, and one compiled for m68k-linux-gnu returns it in A0; `size_t` is `unsigned long` on m68k-elf and `unsigned int` on m68k-linux-gnu. This matters to assembly that returns a pointer to C, or that calls C code expecting a pointer back. The kit's own assembly works with both.
 
 ### Windows
 
@@ -413,7 +424,7 @@ The `Makefile` at the root of the repository is maintainer tooling. It should no
 
 ## `make check`
 
-Run `make check` from the repository root before merging any branch. It must pass. It takes about ten seconds and needs the toolchain described under Build Environment, with `M68K_PREFIX` set as for any build (default `m68k-linux-gnu-`), plus a host C compiler (`HOST_CC`, default `cc`). It stops at the first failure. Each step can also be run alone, for example `make check-link`. GitHub runs it on every push to `develop` or `master` and on every pull request (`.github/workflows/check.yml`, in a Debian 13 container).
+Run `make check` from the repository root before merging any branch. It must pass. It takes about ten seconds and needs the Megadev toolchain (see Build Environment), with `M68K_PREFIX` set as for any build (default `m68k-elf-`), plus a host C compiler (`HOST_CC`, default `cc`). It stops at the first failure. Each step can also be run alone, for example `make check-link`. GitHub runs it on every push to `develop` or `master` and on every pull request (`.github/workflows/check.yml`, in a Debian 13 container).
 
 | Step | Target | What it proves |
 |---|---|---|
