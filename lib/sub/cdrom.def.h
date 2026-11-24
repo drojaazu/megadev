@@ -79,3 +79,23 @@
  * @brief Filename not found on load attempt
  */
 #define CDROM_RESULT_NOT_FOUND 0xFFFE
+
+/**
+ * @def CDROM_RESULT_DIR_TRUNCATED
+ * @brief File list loaded, but the root directory has more entries than the
+ * cache holds (CDROM_DIR_ENTRIES)
+ * @details The first CDROM_DIR_ENTRIES entries, in directory order, are
+ * cached and load normally; files after them are reported as not found.
+ */
+#define CDROM_RESULT_DIR_TRUNCATED 0xFFFD
+
+/**
+ * @def CDROM_DIR_ENTRIES
+ * @brief Root directory entries the access loop caches, 22 bytes each
+ * @details The count includes the directory's own `.` and `..` entries.
+ * To change it, define it before the first include of `sub/cdrom.def.h`
+ * (or pass `-DCDROM_DIR_ENTRIES=N` in `AS_FLAGS`).
+ */
+#ifndef CDROM_DIR_ENTRIES
+#define CDROM_DIR_ENTRIES 128
+#endif

@@ -263,11 +263,15 @@ access_op_load_dir:
   moveq   #0, d0
 2:move.b  0(a1), d0                        // no more entries? (size is 0)
   beq     7f                               // no more, jump down
+  cmpi.w  #CDROM_DIR_ENTRIES, dir_entry_count
+  bhs     load_dir_truncated               // cache full
   move.l  6(a1), 14(a0)                    // file start sector (big endian)
   move.l  0xE(a1), 18(a0)                  // file size in bytes (big endian)
   moveq   #0, d1                           // d1 will be filename char index
 4:move.b  0x21(a1,d1.w), (a0,d1.w)         // filename
   addq.w  #1, d1
+  cmpi.w  #14, d1                          // the entry's name field is 14 bytes:
+  bge     6f                               // a longer name is cut there
   cmp.b   0x20(a1), d1                     // length of filename (including version suffix)
   blt     4b                               // not done with filename yet
 5:cmpi.b  #0xC, d1                         // is filename less than 0xC characters in length?
@@ -287,6 +291,10 @@ load_file_list_end:
   bra     access_op_idle
 cdacc_loop_loaddir_err:
   move.w  #CDROM_RESULT_FILE_LIST_FAIL, access_op_result  // indicate bad result
+  bra     load_file_list_end
+load_dir_truncated:
+  // the cached entries are good: files among them load as usual
+  move.w  #CDROM_RESULT_DIR_TRUNCATED, access_op_result
   bra     load_file_list_end
 
 
@@ -603,8 +611,7 @@ record_size:
 sector_buffer: .space 0x800
 
 /**
- * Cache for the file info entries
- * 22 bytes per entry * 128 files = 2.75k buffer
- * This can be adjusted as necessary
+ * Cache for the file info entries: 22 bytes each (name 14, start sector 4,
+ * size 4), CDROM_DIR_ENTRIES of them (sub/cdrom.def.h)
  */
-dir_cache: .space 2816
+dir_cache: .space CDROM_DIR_ENTRIES * 22

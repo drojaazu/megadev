@@ -11,7 +11,7 @@ Include `sub/cdrom.s` or `sub/cdrom.h` in your code. In your SP init subroutine 
 
 Somewhere in your INT2 subroutine (`sp_int2`), make a call to the `PROCESS_ACC_LOOP` macro to keep the access loop moving. You may want to put this at the end of the subroutine or push the registers before calling as it will clobber a number of registers.
 
-Finally, in the early part of SP main subroutine (`sp_main`), you'll want to load and cache the file information by setting CDROM_LOAD_FILE_LIST as the access operation and waiting for it to complete. There is space allocated for 128 files by default, but this can be adjusted to match your project by changing the size of the `dir_cache` buffer in `sub/cdrom.s`.
+Finally, in the early part of SP main subroutine (`sp_main`), you'll want to load and cache the file information by setting CDROM_LOAD_FILE_LIST as the access operation and waiting for it to complete. The cache holds `CDROM_DIR_ENTRIES` root directory entries, 128 by default, counting the directory's own `.` and `..` entries; each takes 22 bytes of Sub CPU memory. To change it, define `CDROM_DIR_ENTRIES` before the first include of `sub/cdrom.def.h`, or pass `-DCDROM_DIR_ENTRIES=N` in `AS_FLAGS`. When the root directory has more entries than that, the file list operation stops at the limit and returns `CDROM_RESULT_DIR_TRUNCATED` instead of `CDROM_RESULT_OK`: the entries it cached load as usual, and files after them are reported as not found. Only the root directory is cached; subdirectories are not supported.
 
 ## Usage
 
@@ -76,6 +76,8 @@ CDROM_RESULT_OK
 CDROM_RESULT_LOAD_FAIL
 CDROM_RESULT_NOT_FOUND
 ```
+
+(The file list operation returns `CDROM_RESULT_OK`, `CDROM_RESULT_FILE_LIST_FAIL` or `CDROM_RESULT_DIR_TRUNCATED`, described above.)
 
 If the result is ok, your data should be ready in the buffer. The load fail result means there was a read failure of some sort (likely due to a damaged disc or old harware). Not found indicates the filename provided could not be found in the file system.
 
