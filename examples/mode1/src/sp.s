@@ -102,6 +102,7 @@ cmd_load_end:
 3:bset    #GA_SUB_RETURN_2M_POS, (GA_SUB_REG_MEMMODE)
   btst    #GA_SUB_RETURN_2M_POS, (GA_SUB_REG_MEMMODE)
   beq     3b
+  bra     cmd_done
 
 cmd_load_prg:
   move.l  #SP_PRG_OFFSET, filebuff   // address in Program RAM
@@ -110,15 +111,19 @@ cmd_load_prg:
   move.w  #CDROM_LOAD_PRG_DMA, access_op
   WAIT_FOR_ACC_OP
   move.w  d0, d1
+  cmpi.w  #CDROM_RESULT_OK, d0
+  bne     cmd_done                   // nothing arrived: no sum
   // sum the words that arrived, for the Main CPU to compare
   lea     PRG_RAM + SP_PRG_OFFSET, a0
   move.l  filesize, d2
   lsr.l   #1, d2
   moveq   #0, d0
+  tst.l   d2
+  beq     5f
 4:add.w   (a0)+, d0
   subq.l  #1, d2
   bne     4b
-  move.w  d0, (GA_SUB_REG_COMSTAT3)
+5:move.w  d0, (GA_SUB_REG_COMSTAT3)
   bra     cmd_done
 
 cmd_done:
