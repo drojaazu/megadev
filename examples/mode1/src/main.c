@@ -2,7 +2,8 @@
  * Mode 1 example: Main CPU program
  *
  * Detects the Mega CD, brings up the Sub CPU and uses the Boot ROM library
- * from the cartridge: default VDP registers, VRAM clear, text printing and the
+ * from the cartridge (with no Mega CD attached it says so without touching
+ * the Boot ROM, which is not there): default VDP registers, VRAM clear, text printing and the
  * VBLANK handler. With a disc in the drive, has the Sub CPU load DATA.BIN
  * into Word RAM, by CPU copy and by DMA, and checks what arrived.
  */
@@ -162,11 +163,54 @@ static char const * disc_text(u16 result)
   }
 }
 
+/**
+ * No Mega CD: say so and stop, without the Boot ROM
+ *
+ * Nothing is at the Boot ROM's addresses, so its VDP setup, VBLANK handler
+ * and print routines cannot be used. Set up the VDP directly (after reset
+ * VRAM holds whatever it held before) and print with the kit's text path.
+ */
+static __attribute__((noreturn)) void halt_no_megacd()
+{
+  static u16 const regs[] = {VDP_REG_MODE1 | VDP_HICOLOR_ENABLE,
+    VDP_REG_MODE2 | VDP_MD_DISPLAY_MODE, // display off while clearing
+    VDP_REG_PLA_ADDR | (PLANE_A_ADDR / 0x400), VDP_REG_WIN_ADDR,
+    VDP_REG_PLB_ADDR | (0xE000 / 0x2000), VDP_REG_SPR_ADDR | (0xB800 / 0x200),
+    VDP_REG_BGCOLOR, VDP_REG_MODE3, VDP_REG_MODE4 | VDP_WIDTH_40CELL_MASK,
+    VDP_REG_HS_ADDR | (0xBC00 / 0x400), VDP_REG_AUTOINC | 2,
+    VDP_REG_PL_SIZE | VDP_PL_64x32, VDP_REG_WIN_HPOS, VDP_REG_WIN_VPOS};
+
+  mode1_status = 0x00FF;
+  for (u16 i = 0; i < sizeof regs / sizeof regs[0]; ++i)
+    vdp_ctrl = regs[i];
+
+  vdp_ctrl_32 = to_vdp_addr(0) | VRAM_W;
+  for (u16 i = 0; i < 0x8000; ++i)
+    vdp_data = 0;
+  vdp_ctrl_32 = to_vdp_addr(0) | VSRAM_W;
+  for (u16 i = 0; i < 40; ++i)
+    vdp_data = 0;
+  vdp_ctrl_32 = to_vdp_addr(0) | CRAM_W;
+  vdp_data = 0x0000;
+  vdp_data = 0x0EEE;
+
+  vdp_load_1bpp_tiles(sysfont, SYSFONT_CHARS, FONT_TILE, 1, 0);
+  print_at("MODE 1 EXAMPLE", 2, 2);
+  print_at("MEGA CD: NOT FOUND", 2, 4);
+  vdp_ctrl = VDP_REG_MODE2 | VDP_MD_DISPLAY_MODE | VDP_DISPLAY_ENABLE;
+  for (;;)
+    ;
+}
+
 void main()
 {
   char buf[16];
 
   disable_interrupts();
+
+  // Before any Boot ROM call: without a Mega CD there is no Boot ROM
+  if (! mode1_detect())
+    halt_no_megacd();
 
   bios_load_vdp_regs_default();
   bios_clear_vram();
@@ -186,13 +230,6 @@ void main()
   enable_interrupts();
 
   print_at("MODE 1 EXAMPLE", 2, 2);
-
-  if (! mode1_detect()) {
-    mode1_status = 0x00FF;
-    print_at("MEGA CD: NOT FOUND", 2, 4);
-    for (;;)
-      bios_vblank_wait_default();
-  }
   print_at("MEGA CD: FOUND", 2, 4);
 
   // crash handler: Main CPU exceptions, and Sub CPU crashes reported below
