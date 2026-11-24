@@ -179,6 +179,13 @@ replacement.
 
 ### Fixed
 
+- The CD-ROM access loop's file list wrote past its directory cache when the
+  root directory had more than 128 entries (a pressed Sonic CD has 133), and
+  past an entry's start and size when a file name was longer than 14
+  characters. It now stops at the cache's size and returns the new
+  `CDROM_RESULT_DIR_TRUNCATED`, whose cached entries load as usual; the size
+  is `CDROM_DIR_ENTRIES` (default 128), settable per project. Long names are
+  cut to fit. See `docs/cdrom.md`.
 - The `rotozoom` and `ground_plane` examples cleared 1 MB from the start of
   Word RAM instead of its 256 KB (`memset32` counts longwords), which stops
   the Sub CPU on a real Mega CD; emulators ignore the stray writes. Both now

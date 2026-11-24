@@ -158,6 +158,8 @@ static char const * disc_text(u16 result)
       return "LOAD ERR";
     case 0x0100 | (CDROM_RESULT_FILE_LIST_FAIL & 0xFF):
       return "DIR ERR ";
+    case 0x0100 | (CDROM_RESULT_DIR_TRUNCATED & 0xFF):
+      return "DIR CUT "; // more root entries than CDROM_DIR_ENTRIES
     default:
       return "ERROR   ";
   }
@@ -257,7 +259,9 @@ void main()
     print_at("WAIT    ", 12, 12);
     mode1_disc = sub_command(SP_CMD_DRIVE);
     print_at(disc_text(mode1_disc), 12, 12);
-    if (mode1_disc == (0x0100 | CDROM_RESULT_OK)) {
+    // A truncated file list still holds its first entries: try the loads
+    if (mode1_disc == (0x0100 | CDROM_RESULT_OK) ||
+        mode1_disc == (0x0100 | (CDROM_RESULT_DIR_TRUNCATED & 0xFF))) {
       mode1_load = load_and_check(SP_CMD_LOAD, 0, &mode1_load_sum);
       print_at(disc_text(mode1_load), 12, 13);
       print_value(buf, "%04X", mode1_load_sum, 12, 16);
