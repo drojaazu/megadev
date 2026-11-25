@@ -75,9 +75,9 @@ ALIGN_LEVELS := -O0 -O1 -O2 -Os
 # Host compiler for the runtime library test; the runtime sources are plain C.
 HOST_CC ?= cc
 
-.PHONY: check check-projects check-headers check-asm check-link check-stack check-init check-sections check-resident check-init check-odr check-incremental check-inline check-asserts check-align check-host docs clean $(PROJECTS)
+.PHONY: check check-projects check-headers check-asm check-link check-stack check-init check-sections check-resident check-init check-odr check-incremental check-inline check-asserts check-align check-host check-emulate docs clean $(PROJECTS)
 
-check: check-projects check-headers check-asm check-link check-stack check-init check-sections check-resident check-odr check-incremental check-inline check-asserts check-align check-host
+check: check-projects check-headers check-asm check-link check-stack check-init check-sections check-resident check-odr check-incremental check-inline check-asserts check-align check-host check-emulate
 	@printf '\ncheck: all passed\n'
 
 # ---------------------------------------------------------------------------
@@ -520,6 +520,33 @@ check-host:
 	  check/host/libc_test.c -o $(CHECK_DIR)/libc_test
 	@$(CHECK_DIR)/libc_test
 	@printf '== host: libc subset passes %s checks\n' "$$(grep -c 'CHECK(' check/host/libc_test.c)"
+
+# ---------------------------------------------------------------------------
+# Loop 11 (optional): the mode1 example runs in BlastEm and loads from disc.
+# Only when BLASTEM names a BlastEm binary with a Mega CD Boot ROM beside it
+# (maintainers; skipped otherwise). Three generated discs: the example's own,
+# one without its file (F-39) and one with 143 root entries (KB-71).
+# check/emulate/blastem.py runs them and compares the results. Every file
+# here has a fixed name and is rewritten on each run.
+# ---------------------------------------------------------------------------
+MKISOFS ?= mkisofs
+EMU_DIR := $(CHECK_DIR)/emulate
+check-emulate:
+	@if [ -z "$(BLASTEM)" ]; then \
+	  printf '== emulate: skipped (set BLASTEM to a BlastEm binary to run examples/mode1 in it)\n'; exit 0; fi; \
+	set -e; mkdir -p $(EMU_DIR)/nofile $(EMU_DIR)/longdir; \
+	$(MAKE) -s -C examples/mode1 all > /dev/null; \
+	printf 'not the file the example loads\n' > $(EMU_DIR)/nofile/README.TXT; \
+	cp examples/mode1/disc/data.bin $(EMU_DIR)/longdir/DATA.BIN; \
+	i=0; while [ $$i -lt 140 ]; do printf x > $(EMU_DIR)/longdir/Z$$(printf %03d $$i).BIN; i=$$((i + 1)); done; \
+	$(MKISOFS) -quiet -o $(EMU_DIR)/nofile.iso $(EMU_DIR)/nofile; \
+	$(MKISOFS) -quiet -o $(EMU_DIR)/longdir.iso $(EMU_DIR)/longdir; \
+	start=$$(date +%s); \
+	python3 check/emulate/blastem.py "$(BLASTEM)" $(M68K_PREFIX)nm \
+	  examples/mode1/build/mode1.cart.elf examples/mode1/mode1.cart \
+	  examples/mode1/build/data_sum.h $(EMU_DIR) \
+	  own=examples/mode1/mode1.iso nofile=$(EMU_DIR)/nofile.iso longdir=$(EMU_DIR)/longdir.iso; \
+	printf '== emulate: mode1 in BlastEm loads from its own disc, reports a missing file, keeps the first 128 entries of a long directory (%s s)\n' $$(( $$(date +%s) - start ))
 
 docs:
 	@rm -rf docs/html; mkdir -p $(CHECK_DIR)
