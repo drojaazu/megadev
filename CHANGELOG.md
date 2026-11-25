@@ -103,6 +103,11 @@ replacement.
 
 ### Changed
 
+- **Disc images are padded to a burnable size.** A project's ISO is padded
+  with zeros to at least `ISO_MIN_SECTORS` sectors (default 1200, 2.4 MB)
+  after the ISO 9660 volume, so a small project's image is no longer refused
+  by burning tools, which reject a track under 4 seconds (300 sectors). The
+  padding is ignored when the disc is read; `ISO_MIN_SECTORS=0` turns it off.
 - **Compiler: the Megadev toolchain.** Megadev is built and tested with
   binutils 2.46.1 and GCC 16.2.0 for m68k-elf, built for the 68000 by
   `tools/build-toolchain.sh`, and `M68K_PREFIX` defaults to `m68k-elf-`
