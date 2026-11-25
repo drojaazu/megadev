@@ -442,6 +442,9 @@ Run `make check` from the repository root before merging any branch. It must pas
 | 12 | `check-asserts` | The register addresses and bit positions in the hardware definitions match the hardware manuals, and the structures read by the hardware, the Boot ROM or the kit's assembly have the field offsets and bitfield positions that reader expects (`check/asserts`). |
 | 13 | `check-align` | The compiler never relies on a misaligned word or long access, which is an address error on a 68000. Code that every m68k-linux GCC compiles into such accesses (`check/align`) is compiled at `-O0`, `-O1`, `-O2` and `-Os`, and its disassembly may hold word or long accesses only at even stack offsets. The scanner first proves it reports every known-bad line of `check/align/selftest.s`. Fails with an m68k-linux compiler. |
 | 14 | `check-host` | The C library subset gives the right answers, compiled for and run on the host (`check/host/libc_test.c`). |
+| 15 | `check-emulate` | Optional, skipped unless `BLASTEM` is set. The `mode1` example runs in BlastEm against three generated discs: its own (every load arrives with the right sum), one without its file (not found, three times, without a hang) and one with 143 root entries (the file list stops at 128 and the file still loads). Results are read through BlastEm's debugger (`check/emulate/blastem.py`, Python 3). |
+
+Step 15 is for maintainers who have BlastEm: `make check BLASTEM=/path/to/blastem`. That BlastEm needs a Mega CD Boot ROM where it looks for one (`cdbios.bin` beside the binary, or `system.scd_bios_*` in its `default.cfg`); Megadev ships none. It adds about 25 seconds. CI does not run it.
 
 `make clean` removes everything the gate produced.
 
