@@ -10,6 +10,8 @@ There are often misconceptions about CD images. You may be familiar with ISO fil
 
 When building your game in Megadev, an ISO file will be generated. This is your CD-ROM data track. You can run this in an emulator burn it to a CD as-is. The emulator or burning software will generate the necessary metadata to read/burn a simple CD-ROM disc.
 
+Burning tools refuse a track shorter than 4 seconds (300 sectors), so the build pads a small image with zeros after the ISO 9660 volume to `ISO_MIN_SECTORS` sectors (1200 by default; see `docs/manual.md`). The padding is ignored when the disc is read.
+
 ## CD Audio
 
 CD audio (CD-DA) is 16 bit stereo PCM data sampled at 44.1khz. Your burning software may allow you to use a variety of audio formats, but ideally your source audio should match this format: lossless 16 bit stereo 44.1khz WAV files. Lossy formats such as MP3 should be avoided if possible.

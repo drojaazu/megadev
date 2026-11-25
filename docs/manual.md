@@ -285,6 +285,10 @@ The ISO mastering tool. Defaults to `mkisofs`; `genisoimage` and `xorrisofs` acc
 
 Options passed to the mastering tool, replacing the defaults wholesale. The boot sector, volume ID and output file are always passed separately.
 
+#### `ISO_MIN_SECTORS`
+
+The smallest disc image the build writes, in 2048-byte sectors. Defaults to 1200 (2.4 MB). A smaller image is padded with zeros after the ISO 9660 volume, which is ignored when the disc is read. Burning tools refuse a track under 4 seconds (300 sectors), so a small project's unpadded image cannot be burned; 1200 is the size verified on hardware. Set it to 0 to turn padding off.
+
 #### `ISO_BOOT`
 
 The boot sector image written to the start of the disc. For `MEGACD` it defaults to the boot sector the build generates from `ip.s` and `sp.s`, which the Boot ROM needs to start the disc. For `MEGACD_MODE1` it defaults to empty: the cartridge program reads the disc and the Boot ROM never boots it, so a plain ISO 9660 image is mastered. Set it to `$(BUILD_PATH)/boot.bin` in a Mode 1 project to master a disc that also boots on its own.

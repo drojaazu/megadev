@@ -106,8 +106,6 @@ Echo's formats come from a tracker module through a converter. The kit's own con
 
 While Echo plays, the Main CPU keeps Word RAM. Before handing it to the Sub CPU, pause the music and stop sound effects (`echo_pause_bgm`, `echo_stop_sfx`) and wait a frame so that Echo has taken the commands; resume after Word RAM comes back. No example exercises this handover yet. In 1M mode the Main CPU sees only one bank at a time; Echo in 1M mode has not been tested.
 
-A disc image that small (`examples/sound_cd` is under 400 KB) can be too short to burn: cdrdao refuses a track under 4 seconds (300 sectors). Pad the image with zeros after the ISO 9660 volume, for example `truncate -s $((1200*2048)) game.iso`; the padding is ignored.
-
 # Sound commands from the Sub CPU
 
 On the Mega CD the game logic often runs on the Sub CPU, which cannot reach the Z80. `sub/sound.h` and `main/sound.h` pass sound commands across: the Sub CPU calls `sound_command(op, arg)` with an operation from `sound.def.h` (play or stop music, pause, resume, play or stop a sound effect, volume), and the Main CPU calls `sound_forward()` once per VBLANK, which passes the command to Echo and acknowledges it. Music and effects are numbered in tables the Main CPU registers with `sound_set_tables`.

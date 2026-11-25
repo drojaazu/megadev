@@ -15,6 +15,12 @@ Z80_AS:=sjasmplus
 MKISOFS?=mkisofs
 ISO_FLAGS?=-iso-level 1 -pad -sysid "MEGA_CD" -appid "" -publisher "" -preparer ""
 
+# Smallest ISO image the build writes, in 2048-byte sectors. A smaller image
+# is padded with zeros after the ISO 9660 volume; the padding is ignored when
+# the disc is read. Burning tools refuse a track under 4 seconds (300 sectors);
+# 1200 is the size verified on hardware. 0 turns padding off.
+ISO_MIN_SECTORS?=1200
+
 # Boot sector image written to the first 16 sectors of the ISO (mkisofs -G).
 # A MEGACD project needs the kit's boot sector (IP, SP and security block) to
 # boot from the disc. A MEGACD_MODE1 project's disc is read by the cartridge
@@ -338,6 +344,8 @@ $(BUILD_PATH)/boot.bin: $(BUILD_PATH)/ip.bin $(BUILD_PATH)/sp.bin
 	$(call msg_info,Generating ISO image $(notdir $@))
 	@mkdir -p $(DISC_PATH)
 	@$(MKISOFS) -quiet $(ISO_FLAGS) $(if $(ISO_BOOT),-G $(ISO_BOOT)) -V "$(HEADER_VOL_ID)" -o $@ $(DISC_PATH)
+	@min=$$(($(ISO_MIN_SECTORS) * 2048)); \
+	if [ $$(wc -c < $@) -lt $$min ]; then truncate -s $$min $@; fi
 	$(call msg_done,Completed build of $(PROJECT_ID) ($(TARGET) / $(REGION) / $(VIDEO)))
 
 # `make print-NAME` shows the value of a variable, e.g. make print-DISC_CONTENTS
