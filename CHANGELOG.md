@@ -10,13 +10,23 @@ replacement.
 
 - **Echo sound driver** (`main/echo.h`): music and sound effects on the
   YM2612 and PSG, played by Echo 1.68a on the Z80, with Echo's own C API.
-  Cartridges and Mode 1 programs; data must be in cartridge ROM. See
-  `docs/sound.md` and `examples/sound`. Echo is zlib licensed
+  On cartridges and in Mode 1 its data is in cartridge ROM; on a Mega CD disc
+  it is in 2M Word RAM owned by the Main CPU. **Echo on a disc goes against
+  Sega's documentation** (the Z80 may not read Word RAM or write the PSG) and
+  against how retail Mega CD games did it; it was verified on a Mega Drive 2
+  with a Japanese Mega-CD 2 only. See `docs/sound.md`, `examples/sound` and
+  `examples/sound_cd`. Echo is zlib licensed
   (`lib/main/echo/LICENSE`). The kit's copy has two fixes: Echo comes in
   NTSC and PAL builds, picked by `VIDEO`, whose FM and PSG notes are tuned to
   that machine's clocks, so PSG notes are in tune with FM notes (PAL values
   calculated, tested in emulators only), and PSG arpeggios past the top or bottom note no longer write
   stray values to other channels (`lib/main/echo/NOTICE`).
+- **Sound commands from the Sub CPU** (`sub/sound.h`, `main/sound.h`,
+  `sound.def.h`): a Sub CPU program sends play, stop, pause, resume, effect
+  and volume commands over one comm register pair (COMSTAT4/COMCMD4 by
+  default), and the Main CPU passes them to Echo once per VBLANK and
+  acknowledges them. `examples/sound_cd` runs its game logic on the Sub CPU
+  this way, as a disc and as a Mode 1 cartridge.
 - **Debug monitor and GDB on hardware**: `main/monitor.h` is a command
   interpreter the host drives over the controller port serial link: memory
   and VDP reads and writes, breakpoints (a `TRAP #15` written over code in

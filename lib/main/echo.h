@@ -12,10 +12,13 @@
  * distributed under the zlib license (lib/main/echo/LICENSE).
  *
  * The Z80 fetches streams and instruments itself, through its window onto
- * 68000 memory, for as long as they play. On the Mega Drive that window
- * reaches cartridge ROM but not Main Work RAM, so all Echo data must be in
- * cartridge ROM: cartridges and Mode 1 programs. Mega CD disc programs are not
- * supported yet.
+ * 68000 memory, for as long as they play. That window reaches cartridge ROM
+ * but not Main Work RAM, and Echo's addresses cannot reach 0x400000 to
+ * 0x7FFFFF. So Echo data goes in cartridge ROM on cartridges and Mode 1
+ * programs, and in Main-owned 2M Word RAM on Mega CD discs. Echo on a disc
+ * goes against Sega's documentation (the Z80 may not read Word RAM or write
+ * the PSG) and was verified on one Mega Drive 2 + Mega-CD 2 only: see
+ * docs/sound.md, "Mega CD programs".
  *
  * Every function takes the Z80 bus for a moment with interrupts masked, and
  * may be called from the main program or from an interrupt handler.

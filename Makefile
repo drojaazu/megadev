@@ -88,7 +88,7 @@ check-projects: $(PROJECTS)
 
 # Examples that also build as a Mode 1 cartridge with MODE1=1 (docs/mode1.md).
 # Each is built a second time that way, after its disc build.
-MODE1_PROJECTS := examples/bram/ examples/ground_plane/ examples/rotozoom/
+MODE1_PROJECTS := examples/bram/ examples/ground_plane/ examples/rotozoom/ examples/sound_cd/
 
 $(PROJECTS):
 	@printf '== build %s\n' '$@'
